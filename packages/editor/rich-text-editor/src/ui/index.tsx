@@ -1,30 +1,26 @@
 "use client";
+import * as React from "react";
+// editor-core
 import {
-  DeleteImage,
   EditorContainer,
   EditorContentWrapper,
   getEditorClassNames,
   IMentionHighlight,
   IMentionSuggestion,
-  RestoreImage,
-  UploadImage,
   useEditor,
   EditorRefApi,
+  TFileHandler,
 } from "@plane/editor-core";
-import * as React from "react";
+// extensions
 import { RichTextEditorExtensions } from "src/ui/extensions";
+// components
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 
 export type IRichTextEditor = {
   initialValue: string;
   value?: string | null;
   dragDropEnabled?: boolean;
-  fileHandler: {
-    cancel: () => void;
-    delete: DeleteImage;
-    upload: UploadImage;
-    restore: RestoreImage;
-  };
+  fileHandler: TFileHandler;
   id?: string;
   containerClassName?: string;
   editorClassName?: string;
@@ -35,6 +31,7 @@ export type IRichTextEditor = {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
 
@@ -50,6 +47,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     forwardedRef,
     // rerenderOnPropsChange,
     id = "",
+    placeholder,
     tabIndex,
     mentionHandler,
   } = props;
@@ -65,17 +63,20 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const editor = useEditor({
     id,
     editorClassName,
-    restoreFile: fileHandler.restore,
-    uploadFile: fileHandler.upload,
-    deleteFile: fileHandler.delete,
-    cancelUploadImage: fileHandler.cancel,
+    fileHandler,
     onChange,
     initialValue,
     value,
     forwardedRef,
     // rerenderOnPropsChange,
-    extensions: RichTextEditorExtensions(fileHandler.upload, dragDropEnabled, setHideDragHandleFunction),
+    extensions: RichTextEditorExtensions({
+      uploadFile: fileHandler.upload,
+      dragDropEnabled,
+      setHideDragHandle: setHideDragHandleFunction,
+    }),
+    tabIndex,
     mentionHandler,
+    placeholder,
   });
 
   const editorContainerClassName = getEditorClassNames({

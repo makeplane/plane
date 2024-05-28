@@ -55,6 +55,7 @@ from plane.utils.paginator import (
 # Module imports
 from .. import BaseViewSet
 
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 class IssueArchiveViewSet(BaseViewSet):
     permission_classes = [
@@ -247,45 +248,7 @@ class IssueArchiveViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
-            .filter(pk=pk)
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related(
-                        "issue", "actor"
-                    ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_link",
-                    queryset=IssueLink.objects.select_related("created_by"),
-                )
-            )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        issue_id=OuterRef("pk"),
-                        subscriber=request.user,
-                    )
-                )
-            )
-        ).first()
-        if not issue:
-            return Response(
-                {"error": "The required object does not exist."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = IssueDetailSerializer(issue, expand=self.expand)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        )
 
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(

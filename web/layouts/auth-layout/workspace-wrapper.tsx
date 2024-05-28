@@ -4,15 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { LogOut } from "lucide-react";
 // hooks
-import { Button, Spinner, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
+import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // images
-import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "public/workspace/workspace-not-available.png";
 
 export interface IWorkspaceAuthWrapper {
@@ -25,9 +26,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // next themes
-  const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   // store hooks
-  const { membership, signOut, currentUser } = useUser();
+  const { membership, signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const {
     workspace: { fetchWorkspaceMembers },
@@ -68,19 +69,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
 
   const handleSignOut = async () => {
-    await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      );
+    );
   };
 
   // if list of workspaces are not there then we have to render the spinner
@@ -88,7 +83,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <Spinner />
+          <LogoSpinner />
         </div>
       </div>
     );
@@ -101,16 +96,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     membership.hasPermissionToCurrentWorkspace === undefined
   ) {
     return (
-      <div className="relative w-full h-full flex flex-col justify-center items-center bg-custom-background-90">
-        <div className="relative container px-5 md:px-0 w-full h-full mx-auto py-14 overflow-hidden overflow-y-auto flex flex-col">
-          <div className="flex-shrink-0 relative flex justify-between items-center gap-4">
-            <div className="flex-shrink-0 py-4 z-10 bg-custom-background-90">
+      <div className="relative flex h-screen w-full flex-col items-center justify-center bg-custom-background-90 ">
+        <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
+          <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
+            <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
               <Image src={planeLogo} className="h-[26px] w-full" alt="Plane logo" />
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-sm font-medium">{currentUser?.email}</div>
               <div
-                className="relative flex-shrink-0 w-6 h-6 rounded overflow-hidden flex justify-center items-center cursor-pointer hover:bg-custom-background-80"
+                className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded hover:bg-custom-background-80"
                 onClick={handleSignOut}
               >
                 <Tooltip tooltipContent={"Sign out"} position="top" className="ml-2" isMobile={isMobile}>
@@ -119,15 +114,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
               </div>
             </div>
           </div>
-          <div className="space-y-3 w-full h-full flex-grow relative flex flex-col justify-center items-center">
-            <div className="flex-shrink-0 relative">
+          <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
+            <div className="relative flex-shrink-0">
               <Image src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
             </div>
-            <h3 className="text-lg font-semibold text-center">Workspace not found</h3>
-            <p className="text-sm text-custom-text-200 text-center">
+            <h3 className="text-center text-lg font-semibold">Workspace not found</h3>
+            <p className="text-center text-sm text-custom-text-200">
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
-            <div className="flex justify-center items-center gap-2 pt-4">
+            <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 1 && (
                 <Link href="/">
                   <Button>Go Home</Button>
@@ -139,7 +134,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             </div>
           </div>
 
-          <div className="absolute top-0 bottom-0 left-4 w-0 md:w-0.5 bg-custom-background-80" />
+          <div className="absolute bottom-0 left-4 top-0 w-0 bg-custom-background-80 md:w-0.5" />
         </div>
       </div>
     );

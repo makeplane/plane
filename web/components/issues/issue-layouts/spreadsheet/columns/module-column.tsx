@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import xor from "lodash/xor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 // hooks
@@ -26,23 +26,21 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
-    issues: { addModulesToIssue, removeModulesFromIssue },
+    issues: { changeModulesInIssue },
   } = useIssuesStore();
 
   const handleModule = useCallback(
     async (moduleIds: string[] | null) => {
-      if (!workspaceSlug || !issue || !issue.module_ids || !moduleIds) return;
+      if (!workspaceSlug || !issue || !issue.project_id || !issue.module_ids || !moduleIds) return;
 
       const updatedModuleIds = xor(issue.module_ids, moduleIds);
       const modulesToAdd: string[] = [];
       const modulesToRemove: string[] = [];
-      for (const moduleId of updatedModuleIds)
+      for (const moduleId of updatedModuleIds) {
         if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
         else modulesToAdd.push(moduleId);
-      if (issue.project_id && modulesToAdd.length > 0)
-        addModulesToIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd);
-      if (issue.project_id && modulesToRemove.length > 0)
-        removeModulesFromIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToRemove);
+      }
+      changeModulesInIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd, modulesToRemove);
 
       captureIssueEvent({
         eventName: "Issue updated",
@@ -55,7 +53,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         path: router.asPath,
       });
     },
-    [workspaceSlug, issue, addModulesToIssue, removeModulesFromIssue, captureIssueEvent, router.asPath]
+    [workspaceSlug, issue, changeModulesInIssue, captureIssueEvent, router.asPath]
   );
 
   return (
@@ -68,7 +66,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         placeholder="Select modules"
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full relative flex items-center p-2"
-        buttonClassName="relative border-[0.5px] border-custom-border-400 h-4.5"
+        buttonClassName="relative leading-4 h-4.5 bg-transparent"
         onClose={onClose}
         multiple
         showCount

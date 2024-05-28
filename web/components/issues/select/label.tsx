@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
@@ -20,10 +20,11 @@ type Props = {
   label?: JSX.Element;
   disabled?: boolean;
   tabIndex?: number;
+  createLabelEnabled?: boolean;
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
-  const { setIsOpen, value, onChange, projectId, label, disabled = false, tabIndex } = props;
+  const { setIsOpen, value, onChange, projectId, label, disabled = false, tabIndex, createLabelEnabled = true } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -56,6 +57,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const handleClose = () => {
     if (isDropdownOpen) setIsDropdownOpen(false);
     if (referenceElement) referenceElement.blur();
+    setQuery("");
   };
 
   const toggleDropdown = () => {
@@ -105,7 +107,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
           {label ? (
             label
           ) : value && value.length > 0 ? (
-            <span className="flex items-center justify-center gap-2 text-xs">
+            <span className="flex items-center justify-center gap-2 text-xs h-full">
               <IssueLabelsList
                 labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
                 length={3}
@@ -221,14 +223,16 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               ) : (
                 <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
               )}
-              <button
-                type="button"
-                className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-custom-background-80"
-                onClick={() => setIsOpen(true)}
-              >
-                <Plus className="h-3 w-3" aria-hidden="true" />
-                <span className="whitespace-nowrap">Create new label</span>
-              </button>
+              {createLabelEnabled && (
+                <button
+                  type="button"
+                  className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-custom-background-80"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <Plus className="h-3 w-3" aria-hidden="true" />
+                  <span className="whitespace-nowrap">Create new label</span>
+                </button>
+              )}
             </div>
           </div>
         </Combobox.Options>

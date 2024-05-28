@@ -14,6 +14,15 @@ import {
 
 export const ALL_ISSUES = "All Issues";
 
+export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
+  "state",
+  "priority",
+  "assignees",
+  "labels",
+  "module",
+  "cycle",
+];
+
 export enum EIssuesStoreType {
   GLOBAL = "GLOBAL",
   PROFILE = "PROFILE",
@@ -170,7 +179,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
       extra_options: {
         access: true,
-        values: ["show_empty_groups"],
+        values: ["show_empty_groups", "sub_issue"],
       },
     },
     kanban: {
@@ -347,7 +356,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
     },
     calendar: {
       filters: ["priority", "state", "cycle", "module", "assignees", "mentions", "created_by", "labels", "start_date"],
-      display_properties: true,
+      display_properties: false,
       display_filters: {
         type: [null, "active", "backlog"],
       },
@@ -412,38 +421,27 @@ export enum EIssueListRow {
   QUICK_ADD = "QUICK_ADD",
 }
 
-export const getValueFromObject = (object: Object, key: string): string | number | boolean | null => {
-  const keys = key ? key.split(".") : [];
-
-  let value: any = object;
-  if (!value || keys.length === 0) return null;
-
-  for (const _key of keys) value = value?.[_key];
-  return value;
-};
-
 // issue reactions
 export const issueReactionEmojis = ["128077", "128078", "128516", "128165", "128533", "129505", "9992", "128064"];
 
 export const groupReactionEmojis = (reactions: any) => {
-  let _groupedEmojis: any = {};
+  let groupedEmojis: any = {};
 
   issueReactionEmojis.map((_r) => {
-    _groupedEmojis = { ..._groupedEmojis, [_r]: [] };
+    groupedEmojis = { ...groupedEmojis, [_r]: [] };
   });
 
   if (reactions && reactions.length > 0) {
     reactions.map((_reaction: any) => {
-      _groupedEmojis = {
-        ..._groupedEmojis,
-        [_reaction.reaction]: [..._groupedEmojis[_reaction.reaction], _reaction],
+      groupedEmojis = {
+        ...groupedEmojis,
+        [_reaction.reaction]: [...groupedEmojis[_reaction.reaction], _reaction],
       };
     });
   }
 
-  return _groupedEmojis;
+  return groupedEmojis;
 };
-
 
 export enum EIssueGroupByToServerOptions {
   "state" = "state_id",

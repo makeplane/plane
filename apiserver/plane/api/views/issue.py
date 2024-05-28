@@ -48,10 +48,72 @@ from plane.db.models import (
     ProjectMember,
 )
 
-from .base import BaseAPIView, WebhookMixin
+from .base import BaseAPIView
 
 
-class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
+class WorkspaceIssueAPIEndpoint(BaseAPIView):
+    """
+    This viewset provides `retrieveByIssueId` on workspace level
+
+    """
+
+    model = Issue
+    webhook_event = "issue"
+    permission_classes = [ProjectEntityPermission]
+    serializer_class = IssueSerializer
+
+    @property
+    def project__identifier(self):
+        return self.kwargs.get("project__identifier", None)
+
+    def get_queryset(self):
+        return (
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__identifier=self.kwargs.get("project__identifier"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        ).distinct()
+
+    def get(
+        self, request, slug, project__identifier=None, issue__identifier=None
+    ):
+        if issue__identifier and project__identifier:
+            issue = Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            ).get(
+                workspace__slug=slug,
+                project__identifier=project__identifier,
+                sequence_id=issue__identifier,
+            )
+            return Response(
+                IssueSerializer(
+                    issue,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
+                status=status.HTTP_200_OK,
+            )
+
+
+class IssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue.
@@ -282,7 +344,7 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
         if serializer.is_valid():
             if (
-                str(request.data.get("external_id"))
+                request.data.get("external_id")
                 and (issue.external_id != str(request.data.get("external_id")))
                 and Issue.objects.filter(
                     project_id=project_id,
@@ -593,7 +655,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
+class IssueCommentAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to comments of the particular issue.

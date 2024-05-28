@@ -1,6 +1,7 @@
 import { action, makeObservable, runInAction, } from "mobx";
 // types
-import { TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse, TIssue } from "@plane/types";
+import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+// helpers
 // base class
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 // services

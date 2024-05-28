@@ -2,7 +2,7 @@ import { useContext } from "react";
 import merge from "lodash/merge";
 // mobx store
 import { EIssuesStoreType } from "@/constants/issue";
-import { StoreContext } from "@/contexts/store-context";
+import { StoreContext } from "@/lib/store-context";
 // types
 import { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
 import { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";

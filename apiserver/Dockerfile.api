@@ -42,11 +42,10 @@ RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
 RUN mkdir -p /code/plane/logs
-RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
+RUN chmod +x ./bin/*
 RUN chmod -R 777 /code
 
 # Expose container port and run entry point script
 EXPOSE 8000
 
-# CMD [ "./bin/takeoff" ]
 

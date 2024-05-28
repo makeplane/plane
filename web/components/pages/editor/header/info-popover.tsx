@@ -7,11 +7,11 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { IPageStore } from "@/store/pages/page.store";
 
 type Props = {
-  pageStore: IPageStore;
+  page: IPageStore;
 };
 
 export const PageInfoPopover: React.FC<Props> = (props) => {
-  const { pageStore } = props;
+  const { page } = props;
   // states
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
   // refs
@@ -22,7 +22,7 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
     placement: "bottom-start",
   });
   // derived values
-  const { created_at, updated_at } = pageStore;
+  const { created_at, updated_at } = page;
 
   return (
     <div onMouseEnter={() => setIsPopoverOpen(true)} onMouseLeave={() => setIsPopoverOpen(false)}>

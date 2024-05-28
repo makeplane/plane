@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, X } from "lucide-react";
 // hooks
@@ -34,7 +34,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     isParentIssueModalOpen,
     toggleParentIssueModal,
     removeSubIssue,
-    subIssues: { setSubIssueHelpers },
+    subIssues: { setSubIssueHelpers, fetchSubIssues },
   } = useIssueDetail();
 
   // derived values
@@ -47,7 +47,8 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     try {
       await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId });
       await issueOperations.fetch(workspaceSlug, projectId, issueId);
-      toggleParentIssueModal(false);
+      _issueId && (await fetchSubIssues(workspaceSlug, projectId, _issueId));
+      toggleParentIssueModal(null);
     } catch (error) {
       console.error("something went wrong while fetching the issue");
     }
@@ -62,11 +63,12 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     try {
       setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
       await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+      await fetchSubIssues(workspaceSlug, projectId, parentIssueId);
       setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: "Something went wrong",
       });
     }
@@ -79,8 +81,8 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
       <ParentIssuesListModal
         projectId={projectId}
         issueId={issueId}
-        isOpen={isParentIssueModalOpen}
-        handleClose={() => toggleParentIssueModal(false)}
+        isOpen={isParentIssueModalOpen === issueId}
+        handleClose={() => toggleParentIssueModal(null)}
         onChange={(issue: any) => handleParentIssue(issue?.id)}
       />
       <button
@@ -94,7 +96,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
           },
           className
         )}
-        onClick={() => toggleParentIssueModal(true)}
+        onClick={() => toggleParentIssueModal(issue.id)}
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (

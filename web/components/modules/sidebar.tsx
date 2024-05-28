@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // ui
 import {
   CustomMenu,
@@ -41,13 +41,14 @@ import {
   MODULE_LINK_UPDATED,
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker } from "@/hooks/store";
+import { useModule, useUser, useEventTracker, useIssues } from "@/hooks/store";
 // types
 
 const defaultValues: Partial<IModule> = {
@@ -82,6 +83,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
     useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.MODULE);
   const moduleDetails = getModuleById(moduleId);
 
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
@@ -121,7 +125,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link created",
+          title: "Success!",
           message: "Module link created successfully.",
         });
       })
@@ -147,7 +151,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link updated",
+          title: "Success!",
           message: "Module link updated successfully.",
         });
       })
@@ -171,7 +175,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Module link deleted",
+          title: "Success!",
           message: "Module link deleted successfully.",
         });
       })
@@ -244,6 +248,33 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         ...moduleDetails,
       });
   }, [moduleDetails, reset]);
+
+  const handleFiltersUpdate = useCallback(
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
+
+      if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
+        });
+      } else {
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        moduleId
+      );
+    },
+    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
+  );
 
   const startDate = getDate(moduleDetails?.start_date);
   const endDate = getDate(moduleDetails?.target_date);
@@ -449,7 +480,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           from: "Start date",
                           to: "Target date",
                         }}
-                        disabled={isArchived}
+                        disabled={!isEditingAllowed || isArchived}
                       />
                     );
                   }}
@@ -479,7 +510,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     multiple={false}
                     buttonVariant="background-with-text"
                     placeholder="Lead"
-                    disabled={isArchived}
+                    disabled={!isEditingAllowed || isArchived}
                   />
                 </div>
               )}
@@ -599,6 +630,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               totalIssues={moduleDetails.total_issues}
                               module={moduleDetails}
                               isPeekView={Boolean(peekModule)}
+                              filters={issueFilters}
+                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}
@@ -611,7 +644,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
-            <Disclosure>
+            {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
+            <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
@@ -640,18 +674,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               </div>
                             )}
 
-                            <LinksList
-                              links={moduleDetails.link_module}
-                              handleEditLink={handleEditLink}
-                              handleDeleteLink={handleDeleteLink}
-                              userAuth={{
-                                isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                                isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                                isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                                isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                              }}
-                              disabled={isArchived}
-                            />
+                            {moduleId && (
+                              <LinksList
+                                moduleId={moduleId}
+                                handleEditLink={handleEditLink}
+                                handleDeleteLink={handleDeleteLink}
+                                userAuth={{
+                                  isGuest: currentProjectRole === EUserProjectRoles.GUEST,
+                                  isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
+                                  isMember: currentProjectRole === EUserProjectRoles.MEMBER,
+                                  isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
+                                }}
+                                disabled={isArchived}
+                              />
+                            )}
                           </>
                         ) : (
                           <div className="flex items-center justify-between gap-2">

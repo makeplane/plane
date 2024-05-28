@@ -1,5 +1,4 @@
 import { FC, useCallback, useEffect } from "react";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { TGroupedIssues } from "@plane/types";
@@ -83,32 +82,27 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
       );
   }, [fetchIssues, storeType, startDate, endDate, layout, viewId]);
 
-  const onDragEnd = async (result: DropResult) => {
-    if (!result) return;
+  const handleDragAndDrop = async (
+    issueId: string | undefined,
+    sourceDate: string | undefined,
+    destinationDate: string | undefined
+  ) => {
+    if (!issueId || !destinationDate || !sourceDate) return;
 
-    // return if not dropped on the correct place
-    if (!result.destination) return;
-
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
-
-    if (handleDragDrop) {
-      await handleDragDrop(
-        result.source,
-        result.destination,
-        workspaceSlug?.toString(),
-        projectId?.toString(),
-        issueMap,
-        groupedIssueIds,
-        updateIssue
-      ).catch((err) => {
-        setToast({
-          title: "Error",
-          type: TOAST_TYPE.ERROR,
-          message: err?.detail ?? "Failed to perform this action",
-        });
+    await handleDragDrop(
+      issueId,
+      sourceDate,
+      destinationDate,
+      workspaceSlug?.toString(),
+      projectId?.toString(),
+      updateIssue
+    ).catch((err) => {
+      setToast({
+        title: "Error!",
+        type: TOAST_TYPE.ERROR,
+        message: err?.detail ?? "Failed to perform this action",
       });
-    }
+    });
   };
 
   const loadMoreIssues = useCallback(
@@ -129,8 +123,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   );
 
   return (
-    <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
-      <DragDropContext onDragEnd={onDragEnd}>
+    <>
+      <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
         <CalendarChart
           issuesFilterStore={issuesFilter}
           issues={issueMap}
@@ -138,8 +132,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           layout={displayFilters?.calendar?.layout}
           showWeekends={displayFilters?.calendar?.show_weekends ?? false}
           issueCalendarView={issueCalendarView}
-          quickActions={(issue, customActionButton, placement) => (
+          quickActions={({ issue, parentRef, customActionButton, placement }) => (
             <QuickActions
+              parentRef={parentRef}
               customActionButton={customActionButton}
               issue={issue}
               handleDelete={async () => removeIssue(issue.project_id, issue.id)}
@@ -158,8 +153,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           quickAddCallback={quickAddIssue}
           readOnly={!isEditingAllowed || isCompletedCycle}
           updateFilters={updateFilters}
+          handleDragAndDrop={handleDragAndDrop}
         />
-      </DragDropContext>
     </div>
+    </>
   );
 });

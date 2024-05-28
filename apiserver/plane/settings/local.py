@@ -13,7 +13,9 @@ MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # Only show emails in console don't send it to smtp
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
+)
 
 CACHES = {
     "default": {
@@ -29,13 +31,6 @@ INTERNAL_IPS = ("127.0.0.1",)
 
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")  # noqa
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:4000",
-    "http://127.0.0.1:4000",
-]
 
 LOG_DIR = os.path.join(BASE_DIR, "logs")  # noqa
 

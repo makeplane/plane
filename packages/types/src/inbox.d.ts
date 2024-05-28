@@ -20,7 +20,7 @@ export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
 export type TInboxIssueStatus = EInboxIssueStatus;
 
 // filters
-export type TInboxIssueFilterMemberKeys = "assignee" | "created_by";
+export type TInboxIssueFilterMemberKeys = "assignees" | "created_by";
 
 export type TInboxIssueFilterDateKeys = "created_at" | "updated_at";
 
@@ -29,6 +29,7 @@ export type TInboxIssueFilter = {
 } & {
   [key in TInboxIssueFilterDateKeys]: string[] | undefined;
 } & {
+  state: string[] | undefined;
   status: TInboxIssueStatus[] | undefined;
   priority: TIssuePriorities[] | undefined;
   labels: string[] | undefined;

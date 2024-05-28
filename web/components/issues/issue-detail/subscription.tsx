@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import isNil from "lodash/isNil";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // UI
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
@@ -33,7 +33,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       else await createSubscription(workspaceSlug, projectId, issueId);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        title: "Success!",
         message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
       });
       setLoading(false);
@@ -41,7 +41,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       setLoading(false);
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: "Something went wrong. Please try again later.",
       });
     }

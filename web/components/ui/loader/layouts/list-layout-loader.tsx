@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { Fragment, forwardRef } from "react";
 import { getRandomInt, getRandomLength } from "../utils";
 
 export const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
@@ -9,13 +9,13 @@ export const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
     </div>
     <div className="flex items-center gap-2">
       {[...Array(6)].map((_, index) => (
-        <>
+        <Fragment key={index}>
           {getRandomInt(1, 2) % 2 === 0 ? (
             <span key={index} className="h-5 w-5 bg-custom-background-80 rounded animate-pulse" />
           ) : (
             <span className="h-5 w-16 bg-custom-background-80 rounded animate-pulse" />
           )}
-        </>
+        </Fragment>
       ))}
     </div>
   </div>

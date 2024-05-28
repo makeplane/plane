@@ -1,27 +1,34 @@
 import { observer } from "mobx-react";
 // icons
-import { Pencil, Trash2, LinkIcon } from "lucide-react";
+import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
 import { ILinkDetails, UserAuth } from "@plane/types";
 // ui
-import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember, useModule } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 type Props = {
-  links: ILinkDetails[];
+  moduleId: string;
+
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
   disabled?: boolean;
 };
 
-export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth, disabled }) => {
+export const LinksList: React.FC<Props> = observer((props) => {
+  const { moduleId, handleDeleteLink, handleEditLink, userAuth, disabled } = props;
+  // hooks
   const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
+  const { getModuleById } = useModule();
+  // derived values
+  const currentModule = getModuleById(moduleId);
+  const moduleLinks = currentModule?.link_module || undefined;
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   const copyToClipboard = (text: string) => {
@@ -33,9 +40,10 @@ export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, h
     });
   };
 
+  if (!moduleLinks) return <></>;
   return (
     <>
-      {links.map((link) => {
+      {moduleLinks.map((link) => {
         const createdByDetails = getUserDetails(link.created_by);
         return (
           <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
@@ -73,7 +81,7 @@ export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, h
                     rel="noopener noreferrer"
                     className="flex items-center justify-center p-1 hover:bg-custom-background-80"
                   >
-                    <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                    <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
                   </a>
                   <button
                     type="button"

@@ -1,8 +1,8 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 // root store
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
-import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
@@ -156,14 +156,14 @@ export class IssueRootStore implements IIssueRootStore {
     this.rootStore = rootStore;
 
     autorun(() => {
-      if (rootStore.user.currentUser?.id) this.currentUserId = rootStore.user.currentUser?.id;
-      if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
-      if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
-      if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;
-      if (rootStore.app.router.moduleId) this.moduleId = rootStore.app.router.moduleId;
-      if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
-      if (rootStore.app.router.globalViewId) this.globalViewId = rootStore.app.router.globalViewId;
-      if (rootStore.app.router.userId) this.userId = rootStore.app.router.userId;
+      if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
+      if (rootStore.router.workspaceSlug) this.workspaceSlug = rootStore.router.workspaceSlug;
+      if (rootStore.router.projectId) this.projectId = rootStore.router.projectId;
+      if (rootStore.router.cycleId) this.cycleId = rootStore.router.cycleId;
+      if (rootStore.router.moduleId) this.moduleId = rootStore.router.moduleId;
+      if (rootStore.router.viewId) this.viewId = rootStore.router.viewId;
+      if (rootStore.router.globalViewId) this.globalViewId = rootStore.router.globalViewId;
+      if (rootStore.router.userId) this.userId = rootStore.router.userId;
       if (!isEmpty(rootStore?.state?.stateMap)) this.stateMap = rootStore?.state?.stateMap;
       if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
       if (!isEmpty(rootStore?.state?.workspaceStates)) this.workspaceStateDetails = rootStore?.state?.workspaceStates;

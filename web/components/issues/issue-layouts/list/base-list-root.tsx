@@ -1,27 +1,30 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 // types
-import { GroupByColumnTypes, TGroupedIssues, TIssue } from "@plane/types";
+import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useIssues, useUser } from "@/hooks/store";
 // hooks
+import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
-import { IQuickActionProps } from "./list-view-types";
+import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
+// constants
+// hooks
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.ARCHIVED
   | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE;
+  | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.ARCHIVED;
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
@@ -30,9 +33,16 @@ interface IBaseListRoot {
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
-
+  const {
+    QuickActions,
+    viewId,
+    addIssuesToView,
+    canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
+  } = props;
+  // router
   const storeType = useIssueStoreType() as ListStoreType;
+  //stores
   const { issuesFilter, issues } = useIssues(storeType);
   const {
     fetchIssues,
@@ -53,6 +63,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
+  const orderBy = displayFilters?.order_by || undefined;
 
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
@@ -76,9 +87,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue) => (
+  const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by);
+
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef }) => (
       <QuickActions
+        parentRef={parentRef}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
         handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
@@ -102,22 +116,24 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative h-full w-full bg-custom-background-90`}>
-        <List
-          issuesMap={issueMap}
-          displayProperties={displayProperties}
-          group_by={group_by}
-          updateIssue={updateIssue}
-          quickActions={renderQuickActions}
-          groupedIssueIds={groupedIssueIds ?? {}}
-          loadMoreIssues={loadMoreIssues}
-          showEmptyGroup={showEmptyGroup}
-          quickAddCallback={quickAddIssue}
-          enableIssueQuickAdd={!!enableQuickAdd}
-          canEditProperties={canEditProperties}
-          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-          addIssuesToView={addIssuesToView}
-          isCompletedCycle={isCompletedCycle}
-        />
+      <List
+        issuesMap={issueMap}
+        displayProperties={displayProperties}
+        group_by={group_by}
+        orderBy={orderBy}
+        updateIssue={updateIssue}
+        quickActions={renderQuickActions}
+        groupedIssueIds={groupedIssueIds ?? {}}
+        loadMoreIssues={loadMoreIssues}
+        showEmptyGroup={showEmptyGroup}
+        quickAddCallback={quickAddIssue}
+        enableIssueQuickAdd={!!enableQuickAdd}
+        canEditProperties={canEditProperties}
+        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+        addIssuesToView={addIssuesToView}
+        isCompletedCycle={isCompletedCycle}
+        handleOnDrop={handleOnDrop}
+      />
       </div>
     </IssueLayoutHOC>
   );

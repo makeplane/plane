@@ -8,13 +8,13 @@ import { useRouter } from "next/router";
 import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "@/components/core";
 // components
+import { ExistingIssuesListModal } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useCycle, useEventTracker, useIssues } from "@/hooks/store";
+import { useCommandPalette, useCycle, useEventTracker, useIssues } from "@/hooks/store";
 
 export const CycleEmptyState: React.FC = observer(() => {
   // router
@@ -25,9 +25,7 @@ export const CycleEmptyState: React.FC = observer(() => {
   // store hooks
   const { getCycleById } = useCycle();
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
@@ -87,8 +85,8 @@ export const CycleEmptyState: React.FC = observer(() => {
   const emptyStateType = isCompletedAndEmpty
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
     : isEmptyFilters
-      ? EmptyStateType.PROJECT_EMPTY_FILTER
-      : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
+    ? EmptyStateType.PROJECT_EMPTY_FILTER
+    : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
   const additionalPath = isCompletedAndEmpty ? undefined : activeLayout ?? "list";
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 

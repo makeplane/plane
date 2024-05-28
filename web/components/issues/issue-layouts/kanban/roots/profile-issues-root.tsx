@@ -1,8 +1,8 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { EUserProjectRoles } from "@/constants/project";
-import { useApplication, useUser } from "@/hooks/store";
+import { useAppRouter, useUser } from "@/hooks/store";
 // components
 // types
 // constants
@@ -12,9 +12,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
-  const {
-    router: { profileViewId },
-  } = useApplication();
+  const { profileViewId } = useAppRouter();
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];

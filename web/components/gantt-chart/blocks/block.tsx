@@ -40,7 +40,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
   } = props;
   // store hooks
   const { currentViewData, updateActiveBlockId, isBlockActive } = useGanttChart();
-  const { peekIssue } = useIssueDetail();
+  const { getIsIssuePeeked } = useIssueDetail();
 
   const block = getBlockById(blockId, currentViewData);
 
@@ -90,9 +90,10 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn("relative h-full", {
-          "bg-custom-background-80": isBlockActive(blockId),
-          "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
-            peekIssue?.issueId === block.data.id,
+          "bg-custom-background-80": isBlockActive(block.id),
+          "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
+            block.data.id
+          ),
         })}
         onMouseEnter={() => updateActiveBlockId(blockId)}
         onMouseLeave={() => updateActiveBlockId(null)}

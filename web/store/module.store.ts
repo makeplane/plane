@@ -1,5 +1,7 @@
+import concat from "lodash/concat";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import update from "lodash/update";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -33,6 +35,7 @@ export interface IModuleStore {
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
+  fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
@@ -91,6 +94,7 @@ export class ModulesStore implements IModuleStore {
       fetchWorkspaceModules: action,
       fetchModules: action,
       fetchArchivedModules: action,
+      fetchArchivedModuleDetails: action,
       fetchModuleDetails: action,
       createModule: action,
       updateModuleDetails: action,
@@ -117,7 +121,7 @@ export class ModulesStore implements IModuleStore {
    * get all module ids for the current project
    */
   get projectModuleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !m?.archived_at);
     projectModules = sortBy(projectModules, [(m) => m.sort_order]);
@@ -129,7 +133,7 @@ export class ModulesStore implements IModuleStore {
    * get all archived module ids for the current project
    */
   get projectArchivedModuleIds() {
-    const projectId = this.rootStore.app.router.projectId;
+    const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let archivedModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !!m?.archived_at);
     archivedModules = sortBy(archivedModules, [(m) => m.sort_order]);
@@ -281,6 +285,21 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @returns IModule
    */
+  fetchArchivedModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
+    await this.moduleArchiveService.getArchivedModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
+      runInAction(() => {
+        set(this.moduleMap, [response.id], { ...this.moduleMap?.[response.id], ...response });
+      });
+      return response;
+    });
+
+  /**
+   * @description fetch module details
+   * @param workspaceSlug
+   * @param projectId
+   * @param moduleId
+   * @returns IModule
+   */
   fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
     await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
       runInAction(() => {
@@ -354,13 +373,22 @@ export class ModulesStore implements IModuleStore {
    * @param data
    * @returns ILinkDetails
    */
-  createModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<ILinkDetails>) =>
-    await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data).then((response) => {
+  createModuleLink = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    data: Partial<ILinkDetails>
+  ) => {
+    try {
+      const moduleLink = await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data);
       runInAction(() => {
-        set(this.moduleMap, [moduleId, "link_module"], [response]);
+        update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) => concat(moduleLinks, moduleLink));
       });
-      return response;
-    });
+      return moduleLink;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * @description updates module link details
@@ -404,14 +432,19 @@ export class ModulesStore implements IModuleStore {
    * @param moduleId
    * @param linkId
    */
-  deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) =>
-    await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId).then(() => {
-      const moduleDetails = this.getModuleById(moduleId);
-      const linkModules = moduleDetails?.link_module?.filter((link) => link.id !== linkId);
+  deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) => {
+    try {
+      const moduleLink = await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId);
       runInAction(() => {
-        set(this.moduleMap, [moduleId, "link_module"], linkModules);
+        update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) =>
+          moduleLinks.filter((link: ILinkDetails) => link.id !== linkId)
+        );
       });
-    });
+      return moduleLink;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * @description adds a module to favorites

@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArchiveRestoreIcon, Check, LinkIcon, Lock, Pencil, Star, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
+// types
 import type { IProject } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+  ContextMenu,
+  TContextMenuItem,
+} from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
-// helpers
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject } from "@/hooks/store";
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// hooks
-// constants
 
 type Props = {
   project: IProject;
@@ -30,6 +40,8 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
   const [restoreProject, setRestoreProject] = useState(false);
+  // refs
+  const projectCardRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -80,14 +92,61 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
     });
   };
 
+  const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
   const handleCopyText = () =>
-    copyUrlToClipboard(`${workspaceSlug}/projects/${project.id}/issues`).then(() =>
+    copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       })
     );
+  const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "settings",
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
+      title: "Settings",
+      icon: Settings,
+      shouldRender: !isArchived && (isOwner || isMember),
+    },
+    {
+      key: "join",
+      action: () => setJoinProjectModal(true),
+      title: "Join",
+      icon: UserPlus,
+      shouldRender: !project.is_member && !isArchived,
+    },
+    {
+      key: "open-new-tab",
+      action: handleOpenInNewTab,
+      title: "Open in new tab",
+      icon: ExternalLink,
+      shouldRender: project.is_member && !isArchived,
+    },
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: "Copy link",
+      icon: LinkIcon,
+      shouldRender: !isArchived,
+    },
+    {
+      key: "restore",
+      action: () => setRestoreProject(true),
+      title: "Restore",
+      icon: ArchiveRestoreIcon,
+      shouldRender: isArchived && isOwner,
+    },
+    {
+      key: "delete",
+      action: () => setDeleteProjectModal(true),
+      title: "Delete",
+      icon: Trash2,
+      shouldRender: isArchived && isOwner,
+    },
+  ];
 
   return (
     <>
@@ -117,6 +176,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         />
       )}
       <Link
+        ref={projectCardRef}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
           if (!project.is_member || isArchived) {
@@ -127,6 +187,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         }}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
+        <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
@@ -166,19 +227,19 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 >
                   <LinkIcon className="h-3 w-3 text-white" />
                 </button>
-                <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                <FavoriteStar
+                  buttonClassName="h-6 w-6 bg-white/10"
+                  iconClassName={cn("h-3 w-3", {
+                    "text-white": !project.is_favorite,
+                  })}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     if (project.is_favorite) handleRemoveFromFavorites();
                     else handleAddToFavorites();
                   }}
-                >
-                  <Star
-                    className={`h-3 w-3 ${project.is_favorite ? "fill-amber-400 text-transparent" : "text-white"} `}
-                  />
-                </button>
+                  selected={project.is_favorite}
+                />
               </div>
             )}
           </div>
@@ -261,7 +322,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       }}
                       href={`/${workspaceSlug}/projects/${project.id}/settings`}
                     >
-                      <Pencil className="h-3.5 w-3.5" />
+                      <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-custom-text-400 text-sm">

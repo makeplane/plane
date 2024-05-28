@@ -11,6 +11,7 @@ import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -43,12 +44,12 @@ export const ArchivedModulesHeader: FC = observer(() => {
   const handleFilters = useCallback(
     (key: keyof TModuleFilters, value: string | string[]) => {
       if (!projectId) return;
-
       const newValues = currentProjectArchivedFilters?.[key] ?? [];
 
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       else {
         if (currentProjectArchivedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -69,6 +70,8 @@ export const ArchivedModulesHeader: FC = observer(() => {
       }
     }
   };
+
+  const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
 
   return (
     <div className="group relative flex border-b border-custom-border-200">
@@ -128,7 +131,12 @@ export const ArchivedModulesHeader: FC = observer(() => {
             });
           }}
         />
-        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={isFiltersApplied}
+        >
           <ModuleFiltersSelection
             displayFilters={currentProjectDisplayFilters ?? {}}
             filters={currentProjectArchivedFilters ?? {}}

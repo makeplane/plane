@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // ui
@@ -9,11 +9,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IProject } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useProjectPublish } from "@/hooks/store";
 // store
 import { IProjectPublishSettings, TProjectPublishViews } from "@/store/project/project-publish.store";
-// types
 // local components
 import { CustomPopover } from "./popover";
 
@@ -54,14 +55,15 @@ const viewOptions: {
 
 export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const { isOpen, project, onClose } = props;
+  // hooks
+  // const { instance } = useInstance();
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
-  let plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL;
+  // const plane_deploy_url = instance?.config?.space_base_url || "";
+  const SPACE_URL = (SPACE_BASE_URL === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
 
-  if (typeof window !== "undefined" && !plane_deploy_url)
-    plane_deploy_url = window.location.protocol + "//" + window.location.host + "/spaces";
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -137,13 +139,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const handlePublishProject = async (payload: IProjectPublishSettings) => {
     if (!workspaceSlug) return;
 
-    return publishProject(workspaceSlug.toString(), project.id, payload)
-      .then((res) => {
-        handleClose();
-        // window.open(`${plane_deploy_url}/${workspaceSlug}/${project.id}`, "_blank");
-        return res;
-      })
-      .catch((err) => err);
+    return publishProject(workspaceSlug.toString(), project.id, payload);
   };
 
   const handleUpdatePublishSettings = async (payload: IProjectPublishSettings) => {
@@ -172,10 +168,6 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     setIsUnPublishing(true);
 
     await unPublishProject(workspaceSlug.toString(), project.id, publishId)
-      .then((res) => {
-        handleClose();
-        return res;
-      })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -320,10 +312,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                         <>
                           <div className="relative flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 px-3 py-2">
                             <div className="flex-grow truncate text-sm">
-                              {`${plane_deploy_url}/${workspaceSlug}/${project.id}`}
+                              {`${SPACE_URL}/${workspaceSlug}/${project.id}`}
                             </div>
                             <div className="relative flex flex-shrink-0 items-center gap-1">
-                              <CopyLinkToClipboard copy_link={`${plane_deploy_url}/${workspaceSlug}/${project.id}`} />
+                              <CopyLinkToClipboard copy_link={`${SPACE_URL}/${workspaceSlug}/${project.id}`} />
                             </div>
                           </div>
                           <div className="mt-3 flex items-center gap-1 text-custom-primary-100">

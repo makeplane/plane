@@ -1,7 +1,8 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { X } from "lucide-react";
+// types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
-// hooks
+// components
 import {
   AppliedCycleFilters,
   AppliedDateFilters,
@@ -13,13 +14,12 @@ import {
   AppliedStateFilters,
   AppliedStateGroupFilters,
 } from "@/components/issues";
-import { EUserProjectRoles } from "@/constants/project";
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
-import { useApplication, useUser } from "@/hooks/store";
-// components
-// helpers
-// types
 // constants
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+// hooks
+import { useAppRouter, useUser } from "@/hooks/store";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -36,9 +36,7 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
   // store hooks
-  const {
-    router: { moduleId, cycleId },
-  } = useApplication();
+  const { moduleId, cycleId } = useAppRouter();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -50,7 +48,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const isEditingAllowed = alwaysAllowEditing || (currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER);
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100 truncate">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof IIssueFilterOptions;
 
@@ -60,9 +58,9 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         return (
           <div
             key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize truncate"
           >
-            <div className="flex flex-wrap items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 truncate">
               <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {membersFilters.includes(filterKey) && (
                 <AppliedMembersFilters
@@ -141,7 +139,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         <button
           type="button"
           onClick={handleClearAllFilters}
-          className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
+          className="flex items-center gap-2 flex-shrink-0 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
         >
           Clear all
           <X size={12} strokeWidth={2} />

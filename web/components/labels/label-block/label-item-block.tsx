@@ -1,14 +1,12 @@
-import { useRef, useState } from "react";
-import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
+import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 import { IIssueLabel } from "@plane/types";
 //ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, DragHandle } from "@plane/ui";
 //types
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 //hooks
 //components
-import { DragHandle } from "./drag-handle";
 import { LabelName } from "./label-name";
 
 //types
@@ -24,13 +22,13 @@ interface ILabelItemBlock {
   label: IIssueLabel;
   isDragging: boolean;
   customMenuItems: ICustomMenuItem[];
-  dragHandleProps: DraggableProvidedDragHandleProps;
   handleLabelDelete: (label: IIssueLabel) => void;
   isLabelGroup?: boolean;
+  dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
 }
 
 export const LabelItemBlock = (props: ILabelItemBlock) => {
-  const { label, isDragging, customMenuItems, dragHandleProps, handleLabelDelete, isLabelGroup } = props;
+  const { label, isDragging, customMenuItems, handleLabelDelete, isLabelGroup, dragHandleRef } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
@@ -41,7 +39,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        <DragHandle isDragging={isDragging} dragHandleProps={dragHandleProps} />
+        <DragHandle isDragging={isDragging} ref={dragHandleRef} />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
 
@@ -53,7 +51,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
             : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
         } ${isLabelGroup && "-top-0.5"}`}
       >
-        <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-custom-sidebar-text-400">
+        <CustomMenu ellipsis>
           {customMenuItems.map(
             ({ isVisible, onClick, CustomIcon, text, key }) =>
               isVisible && (

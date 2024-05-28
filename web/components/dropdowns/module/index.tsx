@@ -2,19 +2,18 @@ import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// ui
 import { DiceIcon, Tooltip } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useModule } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "../buttons";
-// icons
-// helpers
-// types
 import { BUTTON_VARIANTS_WITHOUT_TEXT } from "../constants";
+// types
 import { TDropdownProps } from "../types";
 // constants
 import { ModuleOptions } from "./module-options";
@@ -73,7 +72,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     return (
       <>
         {showCount ? (
-          <div className="relative flex items-center gap-1 max-w-full">
+          <div className="relative flex items-center max-w-full gap-1">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
               <div className="max-w-40 flex-grow truncate">
@@ -178,31 +177,18 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
 
   const { getModuleNameById } = useModule();
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    setIsOpen,
+  });
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
     if (!multiple) handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   const comboboxProps: any = {
     value,

@@ -1,28 +1,21 @@
-import Placeholder from "@tiptap/extension-placeholder";
 import { IssueWidgetPlaceholder } from "src/ui/extensions/widgets/issue-embed-widget";
 
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
 import { UploadImage } from "@plane/editor-core";
+import { CollaborationProvider } from "src/providers/collaboration-provider";
+import Collaboration from "@tiptap/extension-collaboration";
 
-export const DocumentEditorExtensions = (
-  uploadFile: UploadImage,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
-) => [
+type TArguments = {
+  uploadFile: UploadImage;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
+  provider: CollaborationProvider;
+};
+
+export const DocumentEditorExtensions = ({ uploadFile, setHideDragHandle, provider }: TArguments) => [
   SlashCommand(uploadFile),
   DragAndDrop(setHideDragHandle),
-  Placeholder.configure({
-    placeholder: ({ editor, node }) => {
-      if (node.type.name === "heading") {
-        return `Heading ${node.attrs.level}`;
-      }
-
-      if (editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image")) {
-        return "";
-      }
-
-      return "Press '/' for commands...";
-    },
-    includeChildren: true,
-  }),
   IssueWidgetPlaceholder(),
+  Collaboration.configure({
+    document: provider.document,
+  }),
 ];

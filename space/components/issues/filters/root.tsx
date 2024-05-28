@@ -1,64 +1,60 @@
+"use client";
+
 import { FC, useCallback } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // components
-import { useMobxStore } from "@/lib/mobx/store-provider";
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/store/issues/helpers";
-import { IIssueFilterOptions } from "@/store/issues/types";
-import { RootStore } from "@/store/root";
-import { FiltersDropdown } from "./helpers/dropdown";
-import { FilterSelection } from "./selection";
-// types
+import { FiltersDropdown } from "@/components/issues/filters/helpers/dropdown";
+import { FilterSelection } from "@/components/issues/filters/selection";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
-// store
+import { queryParamGenerator } from "@/helpers/query-param-generator";
+// hooks
+import { useIssue, useIssueFilter } from "@/hooks/store";
+// types
+import { TIssueQueryFilters } from "@/types/issue";
 
-export const IssueFiltersDropdown: FC = observer(() => {
+type IssueFiltersDropdownProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((props) => {
   const router = useRouter();
-  const { workspace_slug: workspaceSlug, project_slug: projectId } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-  };
+  const { workspaceSlug, projectId } = props;
+  // hooks
+  const { issueFilters, updateIssueFilters } = useIssueFilter();
+  const { states, labels } = useIssue();
 
-  const {
-    project: { activeBoard },
-    issue: { states, labels },
-    issuesFilter: { issueFilters, updateFilters },
-  }: RootStore = useMobxStore();
+  const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const updateRouteParams = useCallback(
-    (key: keyof IIssueFilterOptions, value: string[]) => {
+    (key: keyof TIssueQueryFilters, value: string[]) => {
       const state = key === "state" ? value : issueFilters?.filters?.state ?? [];
       const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
 
-      let params: any = { board: activeBoard || "list" };
-      if (priority.length > 0) params = { ...params, priorities: priority.join(",") };
-      if (state.length > 0) params = { ...params, states: state.join(",") };
-      if (labels.length > 0) params = { ...params, labels: labels.join(",") };
-
-      router.push({ pathname: `/${workspaceSlug}/${projectId}`, query: { ...params } }, undefined, { shallow: true });
+      const { queryParam } = queryParamGenerator({ board: activeLayout, priority, state, labels });
+      router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
     },
-    [workspaceSlug, projectId, activeBoard, issueFilters, router]
+    [workspaceSlug, projectId, activeLayout, issueFilters, router]
   );
 
   const handleFilters = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+    (key: keyof TIssueQueryFilters, value: string) => {
+      if (!projectId || !value) return;
 
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
+      const newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
 
-      updateFilters(projectId, { [key]: newValues });
+      if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+      else newValues.push(value);
+
+      updateIssueFilters(projectId, "filters", key, newValues);
       updateRouteParams(key, newValues);
     },
-    [projectId, issueFilters, updateFilters, updateRouteParams]
+    [projectId, issueFilters, updateIssueFilters, updateRouteParams]
   );
 
   return (
@@ -66,8 +62,8 @@ export const IssueFiltersDropdown: FC = observer(() => {
       <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
-          handleFilters={handleFilters}
-          layoutDisplayFiltersOptions={activeBoard ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeBoard] : undefined}
+          handleFilters={handleFilters as any}
+          layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT?.[activeLayout]?.filters : []}
           states={states ?? undefined}
           labels={labels ?? undefined}
         />

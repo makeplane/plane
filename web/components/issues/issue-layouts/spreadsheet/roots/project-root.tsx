@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // mobx store
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";

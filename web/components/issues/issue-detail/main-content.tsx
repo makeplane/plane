@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -24,15 +24,16 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   isEditable: boolean;
+  isArchived: boolean;
   swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, swrIssueDetails } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, swrIssueDetails } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },
@@ -53,7 +54,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="rounded-lg space-y-4 pl-3">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}
@@ -84,6 +85,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           issueOperations={issueOperations}
           disabled={!isEditable}
           value={issue.name}
+          containerClassName="-ml-3"
         />
 
         {/* {issue?.description_html === issueDescription && ( */}
@@ -96,6 +98,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
+          containerClassName="-ml-3 !mb-6 border-none"
         />
         {/* )} */}
 
@@ -105,6 +108,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             projectId={projectId}
             issueId={issueId}
             currentUser={currentUser}
+            disabled={isArchived}
           />
         )}
 
@@ -119,14 +123,18 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        disabled={!isEditable}
-      />
+      <div className="pl-3">
+        <IssueAttachmentRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={!isEditable}
+        />
+      </div>
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
+      <div className="pl-3">
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
+      </div>
     </>
   );
 });

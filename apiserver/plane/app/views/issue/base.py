@@ -31,6 +31,7 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
@@ -62,12 +63,11 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
+from .. import BaseAPIView, BaseViewSet
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 # Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
-
-# Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
+from .. import BaseAPIView, BaseViewSet
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -142,17 +142,46 @@ class IssueListEndpoint(BaseAPIView):
             sub_group_by=sub_group_by,
         )
 
-        return Response(
-            issue_on_results(
-                group_by=group_by,
-                issues=issue_queryset,
-                sub_group_by=sub_group_by,
-            ),
-            status=status.HTTP_200_OK,
-        )
+        if self.fields or self.expand:
+            issues = IssueSerializer(
+                queryset, many=True, fields=self.fields, expand=self.expand
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issues, datetime_fields, request.user.user_timezone
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
 
-class IssueViewSet(WebhookMixin, BaseViewSet):
+class IssueViewSet(BaseViewSet):
     def get_serializer_class(self):
         return (
             IssueCreateSerializer
@@ -314,6 +343,11 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
             )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(
+                issues, datetime_fields, request.user.user_timezone
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -380,6 +414,10 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     "archived_at",
                 )
                 .first()
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issue = user_timezone_converter(
+                issue, datetime_fields, request.user.user_timezone
             )
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

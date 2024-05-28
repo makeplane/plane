@@ -9,10 +9,9 @@ import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
-// mobx store
-import { useMobxStore } from "@/lib/mobx/store-provider";
-// store
-import { RootStore } from "@/store/root";
+// hooks
+import { useIssueDetails, useProject, useUser } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { Comment } from "@/types/issue";
 
@@ -23,11 +22,14 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, workspaceSlug } = props;
-  const { project }: RootStore = useMobxStore();
-  const workspaceId = project.workspace?.id;
+  // store hooks
+  const { workspace } = useProject();
+  const { peekId, deleteIssueComment, updateIssueComment } = useIssueDetails();
+  const { data: currentUser } = useUser();
+  const isInIframe = useIsInIframe();
+  // derived values
+  const workspaceId = workspace?.id;
 
-  // store
-  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
@@ -43,15 +45,14 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   });
 
   const handleDelete = () => {
-    if (!workspaceSlug || !issueDetailStore.peekId) return;
-    issueDetailStore.deleteIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id);
+    if (!workspaceSlug || !peekId) return;
+    deleteIssueComment(workspaceSlug, comment.project, peekId, comment.id);
   };
 
   const handleCommentUpdate = async (formData: Comment) => {
-    if (!workspaceSlug || !issueDetailStore.peekId) return;
-    issueDetailStore.updateIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id, formData);
+    if (!workspaceSlug || !peekId) return;
+    updateIssueComment(workspaceSlug, comment.project, peekId, comment.id, formData);
     setIsEditing(false);
-
     editorRef.current?.setEditorValue(formData.comment_html);
     showEditorRef.current?.setEditorValue(formData.comment_html);
   };
@@ -134,12 +135,12 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
             <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html} />
-            <CommentReactions commentId={comment.id} projectId={comment.project} />
+            <CommentReactions commentId={comment.id} projectId={comment.project} workspaceSlug={workspaceSlug} />
           </div>
         </div>
       </div>
 
-      {userStore?.currentUser?.id === comment?.actor_detail?.id && (
+      {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"

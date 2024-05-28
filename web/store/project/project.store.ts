@@ -161,8 +161,8 @@ export class ProjectStore implements IProjectStore {
    * Returns current project details
    */
   get currentProjectDetails() {
-    if (!this.rootStore.app.router.projectId) return;
-    return this.projectMap?.[this.rootStore.app.router.projectId];
+    if (!this.rootStore.router.projectId) return;
+    return this.projectMap?.[this.rootStore.router.projectId];
   }
 
   /**

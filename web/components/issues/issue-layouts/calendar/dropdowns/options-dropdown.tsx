@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
 import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
@@ -94,7 +94,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   };
 
   return (
-    <Popover className="relative">
+    <Popover className="relative flex items-center">
       {({ open, close: closePopover }) => (
         <>
           <Popover.Button as={React.Fragment}>

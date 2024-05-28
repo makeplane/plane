@@ -15,22 +15,57 @@ http {
         add_header Referrer-Policy           "no-referrer-when-downgrade" always;
         add_header Permissions-Policy        "interest-cohort=()" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Forwarded-Proto         "${dollar}scheme";
+        add_header X-Forwarded-Host          "${dollar}host";
+        add_header X-Forwarded-For           "${dollar}proxy_add_x_forwarded_for";
+        add_header X-Real-IP                 "${dollar}remote_addr";
 
         location / {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
             proxy_pass http://web:3000/;
         }
 
+        location /god-mode/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
+            proxy_pass http://admin:3000/god-mode/;
+        }
+
         location /api/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
             proxy_pass http://api:8000/api/;
         }
 
+        location /auth/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
+            proxy_pass http://api:8000/auth/;
+        }
+
         location /spaces/ {
-            rewrite ^/spaces/?$ /spaces/login break;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
             proxy_pass http://space:3000/spaces/;
         }
 
         location /${BUCKET_NAME}/ {
-            proxy_pass http://plane-minio:9000/${BUCKET_NAME}/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
+            proxy_pass http://plane-minio:9000/uploads/;
         }
     }
 }

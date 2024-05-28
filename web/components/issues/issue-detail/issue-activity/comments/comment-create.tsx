@@ -18,10 +18,11 @@ type TIssueCommentCreate = {
   workspaceSlug: string;
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
+  issueId: string;
 };
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
-  const { workspaceSlug, projectId, activityOperations, showAccessSpecifier = false } = props;
+  const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier = false } = props;
   // refs
   const editorRef = useRef<any>(null);
   // store hooks
@@ -50,7 +51,11 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     });
 
   const commentHTML = watch("comment_html");
-  const isEmpty = commentHTML?.trim() === "" || commentHTML === "<p></p>" || isEmptyHtmlString(commentHTML ?? "");
+
+  const isEmpty =
+    commentHTML?.trim() === "" ||
+    commentHTML === "<p></p>" ||
+    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
 
   return (
     <div
@@ -68,9 +73,13 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
                 workspaceId={workspaceId}
+                id={"add_comment_" + issueId}
+                value={"<p></p>"}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
-                onEnterKeyPress={(e) => handleSubmit(onSubmit)(e)}
+                onEnterKeyPress={(e) => {
+                  if (!isEmpty && !isSubmitting) handleSubmit(onSubmit)(e);
+                }}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
                 containerClassName="min-h-[35px]"

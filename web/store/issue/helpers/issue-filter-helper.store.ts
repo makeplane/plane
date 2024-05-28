@@ -17,6 +17,7 @@ import {
   EIssuesStoreType,
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
+  EIssueLayoutTypes,
 } from "@/constants/issue";
 // lib
 import { storage } from "@/lib/local-storage";
@@ -188,7 +189,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
         show_weekends: filters?.calendar?.show_weekends || false,
         layout: filters?.calendar?.layout || "month",
       },
-      layout: filters?.layout || "list",
+      layout: filters?.layout || EIssueLayoutTypes.LIST,
       order_by: filters?.order_by || "sort_order",
       group_by: filters?.group_by || null,
       sub_group_by: filters?.sub_group_by || null,

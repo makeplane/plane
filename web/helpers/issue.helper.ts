@@ -1,20 +1,23 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { v4 as uuidv4 } from "uuid";
-// helpers
-import { getDate } from "@/helpers/date-time.helper";
-import { orderArrayBy } from "@/helpers/array.helper";
 // types
-import { IGanttBlock } from "@/components/gantt-chart";
-// constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { STATE_GROUPS } from "@/constants/state";
 import {
+  TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueParams,
   TStateGroups,
+  TSubGroupedIssues,
+  TUnGroupedIssues,
 } from "@plane/types";
+import { IGanttBlock } from "@/components/gantt-chart";
+// constants
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
+// helpers
+import { orderArrayBy } from "@/helpers/array.helper";
+import { getDate } from "@/helpers/date-time.helper";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -203,4 +206,50 @@ export const formatTextList = (TextArray: string[]): string => {
     default:
       return `${TextArray.slice(0, 3).join(", ")}, and +${count - 3} more`;
   }
+};
+
+export const getDescriptionPlaceholder = (isFocused: boolean, description: string | undefined): string => {
+  const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
+  if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
+  else return "Click to add description";
+};
+
+export const issueCountBasedOnFilters = (
+  issueIds: TGroupedIssues | TUnGroupedIssues | TSubGroupedIssues,
+  layout: EIssueLayoutTypes,
+  groupBy: string | undefined,
+  subGroupBy: string | undefined
+): number => {
+  let issuesCount = 0;
+  if (!layout) return issuesCount;
+
+  if (["spreadsheet", "gantt_chart"].includes(layout)) {
+    issuesCount = (issueIds as TUnGroupedIssues)?.length;
+  } else if (layout === "calendar") {
+    Object.keys(issueIds || {}).map((groupId) => {
+      issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+    });
+  } else if (layout === "list") {
+    if (groupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+      });
+    } else {
+      issuesCount = (issueIds as TUnGroupedIssues)?.length;
+    }
+  } else if (layout === "kanban") {
+    if (groupBy && subGroupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        Object.keys((issueIds as TSubGroupedIssues)?.[groupId] || {}).map((subGroupId) => {
+          issuesCount += (issueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId]?.length || 0;
+        });
+      });
+    } else if (groupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+      });
+    }
+  }
+
+  return issuesCount;
 };

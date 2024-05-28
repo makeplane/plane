@@ -8,7 +8,8 @@ export type TButtonVariant =
   | "accent-danger"
   | "outline-danger"
   | "link-danger"
-  | "tertiary-danger";
+  | "tertiary-danger"
+  | "link-neutral";
 
 export type TButtonSizes = "sm" | "md" | "lg" | "xl";
 
@@ -43,9 +44,9 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-10 text-custom-primary-100`,
-    hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
-    pressed: `focus:bg-custom-primary-20`,
+    default: `bg-custom-primary-100/20 text-custom-primary-100`,
+    hover: `hover:bg-custom-primary-100/10 hover:text-custom-primary-200`,
+    pressed: `focus:bg-custom-primary-100/10`,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
@@ -96,6 +97,12 @@ export const buttonStyling: IButtonStyling = {
     hover: `hover:bg-red-50 hover:border-red-300`,
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,
+  },
+  "link-neutral": {
+    default: `text-custom-text-300`,
+    hover: `hover:text-custom-text-200`,
+    pressed: `focus:text-custom-text-100`,
+    disabled: `cursor-not-allowed !text-custom-text-400`,
   },
 };
 

@@ -2,22 +2,24 @@ import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// hooks
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+// types
 import { TIssue } from "@plane/types";
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// ui
+import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { STATE_GROUPS } from "@/constants/state";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
-import { useEventTracker, useIssues, useProjectState, useUser } from "@/hooks/store";
-// ui
-// components
 // helpers
+import { cn } from "@/helpers/common.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useEventTracker, useIssues, useProjectState, useUser } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-// constant
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -28,7 +30,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     customActionButton,
     portalElement,
     readOnly = false,
-    placements = "bottom-start",
+    placements = "bottom-end",
+    parentRef,
   } = props;
   // router
   const router = useRouter();
@@ -56,9 +59,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const isDeletingAllowed = isEditingAllowed;
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
-
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
-
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
       setToast({
@@ -67,6 +67,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         message: "Issue link copied to clipboard",
       })
     );
+  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
 
   const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
 
@@ -78,6 +79,63 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     },
     ["id"]
   );
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "edit",
+      title: "Edit",
+      icon: Pencil,
+      action: () => {
+        setTrackElement(activeLayout);
+        setIssueToEdit(issue);
+        setCreateUpdateIssueModal(true);
+      },
+      shouldRender: isEditingAllowed,
+    },
+    {
+      key: "make-a-copy",
+      title: "Make a copy",
+      icon: Copy,
+      action: () => {
+        setTrackElement(activeLayout);
+        setCreateUpdateIssueModal(true);
+      },
+      shouldRender: isEditingAllowed,
+    },
+    {
+      key: "open-in-new-tab",
+      title: "Open in new tab",
+      icon: ExternalLink,
+      action: handleOpenInNewTab,
+    },
+    {
+      key: "copy-link",
+      title: "Copy link",
+      icon: Link,
+      action: handleCopyIssueLink,
+    },
+    {
+      key: "archive",
+      title: "Archive",
+      description: isInArchivableGroup ? undefined : "Only completed or canceled\nissues can be archived",
+      icon: ArchiveIcon,
+      className: "items-start",
+      iconClassName: "mt-1",
+      action: () => setArchiveIssueModal(true),
+      disabled: !isInArchivableGroup,
+      shouldRender: isArchivingAllowed,
+    },
+    {
+      key: "delete",
+      title: "Delete",
+      icon: Trash2,
+      action: () => {
+        setTrackElement(activeLayout);
+        setDeleteIssueModal(true);
+      },
+      shouldRender: isDeletingAllowed,
+    },
+  ];
 
   return (
     <>
@@ -106,89 +164,51 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         storeType={EIssuesStoreType.PROJECT}
         isDraft={isDraftIssue}
       />
+      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
-        menuItemsClassName="z-[14]"
+        ellipsis
         placement={placements}
         customButton={customActionButton}
         portalElement={portalElement}
+        menuItemsClassName="z-[14]"
         maxHeight="lg"
         closeOnSelect
-        ellipsis
       >
-        {isEditingAllowed && (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              setTrackElement(activeLayout);
-              setIssueToEdit(issue);
-              setCreateUpdateIssueModal(true);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Pencil className="h-3 w-3" />
-              Edit
-            </div>
-          </CustomMenu.MenuItem>
-        )}
-        <CustomMenu.MenuItem onClick={handleOpenInNewTab}>
-          <div className="flex items-center gap-2">
-            <ExternalLink className="h-3 w-3" />
-            Open in new tab
-          </div>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
-          <div className="flex items-center gap-2">
-            <Link className="h-3 w-3" />
-            Copy link
-          </div>
-        </CustomMenu.MenuItem>
-        {isEditingAllowed && (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              setTrackElement(activeLayout);
-              setCreateUpdateIssueModal(true);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Copy className="h-3 w-3" />
-              Make a copy
-            </div>
-          </CustomMenu.MenuItem>
-        )}
-        {isArchivingAllowed && (
-          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)} disabled={!isInArchivableGroup}>
-            {isInArchivableGroup ? (
-              <div className="flex items-center gap-2">
-                <ArchiveIcon className="h-3 w-3" />
-                Archive
-              </div>
-            ) : (
-              <div className="flex items-start gap-2">
-                <ArchiveIcon className="h-3 w-3" />
-                <div className="-mt-1">
-                  <p>Archive</p>
-                  <p className="text-xs text-custom-text-400">
-                    Only completed or canceled
-                    <br />
-                    issues can be archived
+        {MENU_ITEMS.map((item) => {
+          if (item.shouldRender === false) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                item.action();
+              }}
+              className={cn(
+                "flex items-center gap-2",
+                {
+                  "text-custom-text-400": item.disabled,
+                },
+                item.className
+              )}
+              disabled={item.disabled}
+            >
+              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+              <div>
+                <h5>{item.title}</h5>
+                {item.description && (
+                  <p
+                    className={cn("text-custom-text-300 whitespace-pre-line", {
+                      "text-custom-text-400": item.disabled,
+                    })}
+                  >
+                    {item.description}
                   </p>
-                </div>
+                )}
               </div>
-            )}
-          </CustomMenu.MenuItem>
-        )}
-        {isDeletingAllowed && (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              setTrackElement(activeLayout);
-              setDeleteIssueModal(true);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Trash2 className="h-3 w-3" />
-              Delete
-            </div>
-          </CustomMenu.MenuItem>
-        )}
+            </CustomMenu.MenuItem>
+          );
+        })}
       </CustomMenu>
     </>
   );

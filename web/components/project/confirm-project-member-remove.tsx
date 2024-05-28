@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { AlertTriangle } from "lucide-react";
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-import { IUserLite } from "@plane/types";
-// hooks
-import { Button } from "@plane/ui";
-import { useUser } from "@/hooks/store";
-// ui
 // types
+import { IUserLite } from "@plane/types";
+// ui
+import { Button } from "@plane/ui";
+// hooks
+import { useProject, useUser } from "@/hooks/store";
 
 type Props = {
   data: IUserLite;
@@ -18,10 +20,14 @@ type Props = {
 
 export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
   const { data, onSubmit, isOpen, onClose } = props;
+  // router
+  const router = useRouter();
+  const { projectId } = router.query;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
+  const { getProjectById } = useProject();
 
   const handleClose = () => {
     onClose();
@@ -36,7 +42,10 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
     handleClose();
   };
 
+  if (!projectId) return <></>;
+
   const isCurrentUser = currentUser?.id === data?.id;
+  const currentProjectDetails = getProjectById(projectId.toString());
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -76,9 +85,19 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to remove member-{" "}
-                          <span className="font-bold">{data?.display_name}</span>? They will no longer have access to
-                          this project. This action cannot be undone.
+                          {isCurrentUser ? (
+                            <>
+                              Are you sure you want to leave the{" "}
+                              <span className="font-bold">{currentProjectDetails?.name}</span> project? You will be able
+                              to join the project if invited again or if it{"'"}s public.
+                            </>
+                          ) : (
+                            <>
+                              Are you sure you want to remove member-{" "}
+                              <span className="font-bold">{data?.display_name}</span>? They will no longer have access
+                              to this project. This action cannot be undone.
+                            </>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -94,8 +113,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                        ? "Removing..."
-                        : "Remove"}
+                      ? "Removing..."
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

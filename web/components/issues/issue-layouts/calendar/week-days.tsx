@@ -1,4 +1,3 @@
-import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // components
@@ -10,6 +9,7 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { TRenderQuickActions } from "../list/list-view-types";
 import { ICalendarDate, ICalendarWeek } from "./types";
 
 type Props = {
@@ -17,13 +17,18 @@ type Props = {
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
+  quickActions: TRenderQuickActions
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
+  handleDragAndDrop: (
+    issueId: string | undefined,
+    sourceDate: string | undefined,
+    destinationDate: string | undefined
+  ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
   selectedDate: Date;
@@ -35,6 +40,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     issuesFilterStore,
     issues,
     groupedIssueIds,
+    handleDragAndDrop,
     week,
     loadMoreIssues,
     getPaginationData,
@@ -56,7 +62,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`grid md:divide-x-[0.5px] divide-custom-border-200 ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
+      className={`grid divide-custom-border-200 md:divide-x-[0.5px] ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
         calendarLayout === "month" ? "" : "h-full"
       }`}
     >
@@ -81,6 +87,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
+            handleDragAndDrop={handleDragAndDrop}
           />
         );
       })}

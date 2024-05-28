@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
-// hooks
-import { DiscordIcon } from "@plane/ui";
-import { useApplication } from "@/hooks/store";
 // ui
+import { DiscordIcon } from "@plane/ui";
+// hooks
+import { useCommandPalette } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -11,10 +11,8 @@ type Props = {
 
 export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
   const { closePalette } = props;
-
-  const {
-    commandPalette: { toggleShortcutModal },
-  } = useApplication();
+  // hooks
+  const { toggleShortcutModal } = useCommandPalette();
 
   return (
     <Command.Group heading="Help">

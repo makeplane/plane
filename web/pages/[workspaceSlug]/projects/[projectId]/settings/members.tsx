@@ -31,7 +31,7 @@ const MembersSettingsPage: NextPageWithLayout = observer(() => {
 
 MembersSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectSettingHeader title="Members Settings" />} withProjectWrapper>
+    <AppLayout header={<ProjectSettingHeader />} withProjectWrapper>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

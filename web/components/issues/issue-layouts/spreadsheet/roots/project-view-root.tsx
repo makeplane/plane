@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // mobx store
 // components
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";

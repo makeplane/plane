@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { MoveRight, MoveDiagonal, Link2, Trash2, ArchiveRestoreIcon } from "lucide-react";
+import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // ui
 import {
   ArchiveIcon,
@@ -9,8 +9,8 @@ import {
   CustomSelect,
   FullScreenPanelIcon,
   SidePanelIcon,
-  Tooltip,
   TOAST_TYPE,
+  Tooltip,
   setToast,
 } from "@plane/ui";
 // components
@@ -23,7 +23,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
@@ -54,7 +53,7 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   toggleDeleteIssueModal: (issueId: string | null) => void;
-  toggleArchiveIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (issueId: string | null) => void;
   handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
@@ -75,7 +74,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     isSubmitting,
   } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -112,22 +111,28 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       }`}
     >
       <div className="flex items-center gap-4">
-        <button onClick={removeRoutePeekId}>
-          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-        </button>
+        <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
+          <button onClick={removeRoutePeekId}>
+            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          </button>
+        </Tooltip>
 
-        <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
-          <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-        </Link>
+        <Tooltip tooltipContent="Open issue in full screen" isMobile={isMobile}>
+          <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
+            <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          </Link>
+        </Tooltip>
         {currentMode && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <CustomSelect
               value={currentMode}
               onChange={(val: any) => setPeekMode(val)}
               customButton={
-                <button type="button" className="">
-                  <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-                </button>
+                <Tooltip tooltipContent="Toggle peek view layout" isMobile={isMobile}>
+                  <button type="button" className="">
+                    <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                  </button>
+                </Tooltip>
               }
             >
               {PEEK_OPTIONS.map((mode) => (
@@ -172,7 +177,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
                 })}
                 onClick={() => {
                   if (!isInArchivableGroup) return;
-                  toggleArchiveIssueModal(true);
+                  toggleArchiveIssueModal(issueId);
                 }}
               >
                 <ArchiveIcon className="h-4 w-4" />

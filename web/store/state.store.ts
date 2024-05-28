@@ -71,7 +71,7 @@ export class StateStore implements IStateStore {
       moveStatePosition: action,
     });
     this.stateService = new ProjectStateService();
-    this.router = _rootStore.app.router;
+    this.router = _rootStore.router;
   }
 
   /**

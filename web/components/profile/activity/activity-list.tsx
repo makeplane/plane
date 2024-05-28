@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
+// icons
 import { History, MessageSquare } from "lucide-react";
 import { IUserActivityResponse } from "@plane/types";
 // hooks
@@ -11,8 +12,8 @@ import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/ric
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useUser } from "@/hooks/store";
-// types
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -21,7 +22,7 @@ type Props = {
 export const ActivityList: React.FC<Props> = observer((props) => {
   const { activity } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
 
   // TODO: refactor this component
   return (
@@ -45,7 +46,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                           className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
                         />
                       ) : (
-                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white capitalize">
+                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-white">
                           {activityItem.actor_detail.display_name?.[0]}
                         </div>
                       )}
@@ -97,10 +98,10 @@ export const ActivityList: React.FC<Props> = observer((props) => {
               return (
                 <li key={activityItem.id}>
                   <div className="relative pb-1">
-                    <div className="relative flex items-center space-x-2">
+                    <div className="relative flex items-start space-x-2">
                       <>
                         <div>
-                          <div className="relative px-1.5">
+                          <div className="relative px-1.5 mt-4">
                             <div className="mt-1.5">
                               <div className="flex h-6 w-6 items-center justify-center">
                                 {activityItem.field ? (
@@ -118,7 +119,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                                     className="h-full w-full rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white capitalize">
+                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
                                     {activityItem.actor_detail.display_name?.[0]}
                                   </div>
                                 )}
@@ -127,7 +128,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                           </div>
                         </div>
                         <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
-                          <div className="flex gap-1 break-words text-sm text-custom-text-200">
+                          <div className="break-words text-sm text-custom-text-200">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (
@@ -135,6 +136,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                             ) : (
                               <Link
                                 href={`/${activityItem.workspace_detail?.slug}/profile/${activityItem.actor_detail.id}`}
+                                className="inline"
                               >
                                 <span className="text-gray font-medium">
                                   {currentUser?.id === activityItem.actor_detail.id
@@ -143,7 +145,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                                 </span>
                               </Link>
                             )}{" "}
-                            <div className="flex gap-1 truncate">
+                            <div className="inline gap-1">
                               {message}{" "}
                               <span className="flex-shrink-0 whitespace-nowrap">
                                 {calculateTimeAgo(activityItem.created_at)}

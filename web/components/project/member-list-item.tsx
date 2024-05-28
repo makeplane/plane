@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
@@ -29,9 +29,9 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
-    currentUser,
     membership: { currentProjectRole, leaveProject },
   } = useUser();
+  const { data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
@@ -55,10 +55,10 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           await fetchProjects(workspaceSlug.toString());
           router.push(`/${workspaceSlug}/projects`);
         })
-        .catch((err) =>
+        .catch((err: any) =>
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error",
+            title: "Error!",
             message: err?.error || "Something went wrong. Please try again.",
           })
         );
@@ -67,7 +67,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         (err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error",
+            title: "Error!",
             message: err?.error || "Something went wrong. Please try again.",
           })
       );

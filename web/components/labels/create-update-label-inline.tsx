@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -63,9 +63,9 @@ export const CreateUpdateLabelInline = observer(
         })
         .catch((error) => {
           setToast({
-            title: "Oops!",
+            title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: error?.error ?? "Error while adding the label",
+            message: error?.detail ?? "Something went wrong. Please try again later.",
           });
           reset(formData);
         });

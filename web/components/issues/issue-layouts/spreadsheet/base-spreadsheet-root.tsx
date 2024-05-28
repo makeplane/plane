@@ -1,8 +1,8 @@
 import { FC, useCallback, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
-// constants
+import { IIssueDisplayFilterOptions } from "@plane/types";
+// hooks
 import { ALL_ISSUES, EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
@@ -13,7 +13,9 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // stores
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { IQuickActionProps } from "../list/list-view-types";
+// types
+// constants
+import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
 
 export type SpreadsheetStoreType =
@@ -83,9 +85,10 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [projectId, updateFilters]
   );
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
       <QuickActions
+        parentRef={parentRef}
         customActionButton={customActionButton}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
@@ -95,6 +98,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
         readOnly={!isEditingAllowed || isCompletedCycle}
+        placements={placement}
       />
     ),
     [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]

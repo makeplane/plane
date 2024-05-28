@@ -9,12 +9,15 @@ import {
   IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
 } from "@plane/types";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // components
-import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import { TRenderQuickActions } from "../list/list-view-types";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
@@ -27,8 +30,8 @@ interface ISubGroupSwimlaneHeader {
     subGroupId: string | undefined,
     isSubGroupCumulative: boolean
   ) => number | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   list: IGroupByColumn[];
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
@@ -89,15 +92,14 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   ) => number | undefined;
   showEmptyGroup: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
-  updateIssue:
-    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   enableQuickIssueCreate: boolean;
+  orderBy: TIssueOrderByOptions | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
@@ -125,7 +127,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     addIssuesToView,
     quickAddCallback,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
+    orderBy,
   } = props;
 
   const visibilitySubGroupBy = (
@@ -149,24 +152,23 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map((_list: any) => {
+        list.map((_list: IGroupByColumn) => {
           const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
           const subGroupByVisibilityToggle = visibilitySubGroupBy(_list, issueCount);
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
-              <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
-                <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
+              <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
+                <div className="sticky left-0 flex-shrink-0">
                   <HeaderSubGroupByCard
                     column_id={_list.id}
-                    icon={_list.Icon}
+                    icon={_list.icon}
                     title={_list.name || ""}
                     count={issueCount}
                     kanbanFilters={kanbanFilters}
                     handleKanbanFilters={handleKanbanFilters}
                   />
                 </div>
-                <div className="w-full border-b border-dashed border-custom-border-400" />
               </div>
 
               {subGroupByVisibilityToggle.showIssues && (
@@ -189,8 +191,14 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     addIssuesToView={addIssuesToView}
                     quickAddCallback={quickAddCallback}
                     scrollableContainerRef={scrollableContainerRef}
-                    isDragStarted={isDragStarted}
                     loadMoreIssues={loadMoreIssues}
+                    handleOnDrop={handleOnDrop}
+                    orderBy={orderBy}
+                    isDropDisabled={_list.isDropDisabled}
+                    dropErrorMessage={_list.dropErrorMessage}
+                    subGroupIssueHeaderCount={(groupByListId: string) =>
+                      getGroupIssueCount(groupByListId, _list.id, true) ?? 0
+                    }
                   />
                 </div>
               )}
@@ -210,23 +218,22 @@ export interface IKanBanSwimLanes {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
-  updateIssue:
-    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   showEmptyGroup: boolean;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   enableQuickIssueCreate: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  orderBy: TIssueOrderByOptions | undefined;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -237,13 +244,14 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     displayProperties,
     sub_group_by,
     group_by,
+    orderBy,
     updateIssue,
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
     loadMoreIssues,
     showEmptyGroup,
-    isDragStarted,
+    handleOnDrop,
     disableIssueCreation,
     enableQuickIssueCreate,
     canEditProperties,
@@ -288,7 +296,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90">
+      <div className="sticky top-0 z-[4] h-[50px] bg-custom-background-90 px-2">
         <SubGroupSwimlaneHeader
           getGroupIssueCount={getGroupIssueCount}
           group_by={group_by}
@@ -309,13 +317,14 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           displayProperties={displayProperties}
           group_by={group_by}
           sub_group_by={sub_group_by}
+          orderBy={orderBy}
           updateIssue={updateIssue}
           quickActions={quickActions}
           kanbanFilters={kanbanFilters}
           handleKanbanFilters={handleKanbanFilters}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
-          isDragStarted={isDragStarted}
+          handleOnDrop={handleOnDrop}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           addIssuesToView={addIssuesToView}

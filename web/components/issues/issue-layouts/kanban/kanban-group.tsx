@@ -1,31 +1,45 @@
-import { MutableRefObject, useRef } from "react";
-import { Droppable } from "@hello-pangea/dnd";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+//types
+import {
+  TGroupedIssues,
+  TIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  TSubGroupedIssues,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+} from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
+import { KanbanIssueBlockLoader } from "@/components/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { TGroupedIssues, TIssue, IIssueDisplayProperties, IIssueMap, TSubGroupedIssues } from "@plane/types";
-//components
-import { KanbanIssueBlockLoader } from "@/components/ui/loader";
-//hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-//types
+import { GroupDragOverlay } from "../group-drag-overlay";
+import { TRenderQuickActions } from "../list/list-view-types";
+import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-  peekIssueId?: string;
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   sub_group_id: string;
   isDragDisabled: boolean;
-  updateIssue:
-    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  isDropDisabled: boolean;
+  dropErrorMessage: string | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
@@ -33,7 +47,8 @@ interface IKanbanGroup {
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
+  orderBy: TIssueOrderByOptions | undefined;
 }
 
 export const KanbanGroup = observer((props: IKanbanGroup) => {
@@ -41,12 +56,13 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     groupId,
     sub_group_id,
     group_by,
+    orderBy,
     sub_group_by,
     issuesMap,
     displayProperties,
     groupedIssueIds,
-    peekIssueId,
-    isDragDisabled,
+    isDropDisabled,
+    dropErrorMessage,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -55,7 +71,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     disableIssueCreation,
     quickAddCallback,
     scrollableContainerRef,
-    isDragStarted,
+    handleOnDrop,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -67,10 +83,63 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const intersectionRef = useRef<HTMLSpanElement | null>(null);
 
   useIntersectionObserver(scrollableContainerRef, intersectionRef, loadMoreIssues, `0% 100% 50% 100%`);
+  const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
+
+  const columnRef = useRef<HTMLDivElement | null>(null);
+
+  // Enable Kanban Columns as Drop Targets
+  useEffect(() => {
+    const element = columnRef.current;
+
+    if (!element) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        getData: () => ({ groupId, subGroupId: sub_group_id, columnId: `${groupId}__${sub_group_id}`, type: "COLUMN" }),
+        onDragEnter: () => {
+          setIsDraggingOverColumn(true);
+        },
+        onDragLeave: () => {
+          setIsDraggingOverColumn(false);
+        },
+        onDragStart: () => {
+          setIsDraggingOverColumn(true);
+        },
+        onDrop: (payload) => {
+          setIsDraggingOverColumn(false);
+          const source = getSourceFromDropPayload(payload);
+          const destination = getDestinationFromDropPayload(payload);
+
+          if (!source || !destination) return;
+
+          if (isDropDisabled) {
+            dropErrorMessage &&
+              setToast({
+                type: TOAST_TYPE.WARNING,
+                title: "Warning!",
+                message: dropErrorMessage,
+              });
+            return;
+          }
+
+          handleOnDrop(source, destination);
+
+          highlightIssueOnDrop(
+            getIssueBlockId(source.id, destination?.groupId, destination?.subGroupId),
+            orderBy !== "sort_order"
+          );
+        },
+      }),
+      autoScrollForElements({
+        element,
+      })
+    );
+  }, [columnRef, groupId, sub_group_id, setIsDraggingOverColumn, orderBy, isDropDisabled, dropErrorMessage, handleOnDrop]);
 
   const prePopulateQuickAddData = (
-    groupByKey: string | null,
-    subGroupByKey: string | null,
+    groupByKey: string | undefined,
+    subGroupByKey: string | undefined | null,
     groupValue: string,
     subGroupValue: string
   ) => {
@@ -148,51 +217,55 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     nextPageResults === undefined && groupIssueCount !== undefined
       ? issueIds?.length < groupIssueCount
       : !!nextPageResults;
+      const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
-    <div className={`relative w-full h-full transition-all`}>
-      <Droppable droppableId={`${groupId}__${sub_group_id}`}>
-        {(provided: any, snapshot: any) => (
-          <div
-            className={`relative h-full transition-all ${snapshot.isDraggingOver ? `bg-custom-background-80` : ``}`}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            <KanbanIssueBlocksList
-              sub_group_id={sub_group_id}
-              columnId={groupId}
-              issuesMap={issuesMap}
-              peekIssueId={peekIssueId}
-              issueIds={issueIds}
-              displayProperties={displayProperties}
-              isDragDisabled={isDragDisabled}
-              updateIssue={updateIssue}
-              quickActions={quickActions}
-              canEditProperties={canEditProperties}
-              scrollableContainerRef={scrollableContainerRef}
-              isDragStarted={isDragStarted}
-            />
+    <div
+      id={`${groupId}__${sub_group_id}`}
+      className={cn(
+        "relative h-full transition-all min-h-[120px]",
+        { "bg-custom-background-80 rounded": isDraggingOverColumn },
+        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
+      )}
+      ref={columnRef}
+    >
+      <GroupDragOverlay
+        dragColumnOrientation={sub_group_by ? "justify-start": "justify-center" }
+        canOverlayBeVisible={canOverlayBeVisible}
+        isDropDisabled={isDropDisabled}
+        dropErrorMessage={dropErrorMessage}
+        orderBy={orderBy}
+        isDraggingOverColumn={isDraggingOverColumn}
+      />
+      <KanbanIssueBlocksList
+        sub_group_id={sub_group_id}
+        groupId={groupId}
+        issuesMap={issuesMap}
+        issueIds={issueIds || []}
+        displayProperties={displayProperties}
+        updateIssue={updateIssue}
+        quickActions={quickActions}
+        canEditProperties={canEditProperties}
+        scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
+        canDropOverIssue={!canOverlayBeVisible}
+      />
 
-            {provided.placeholder}
+{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={intersectionRef} />)}
 
-            {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={intersectionRef} />)}
-
-            {enableQuickIssueCreate && !disableIssueCreation && (
-              <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
-                <KanBanQuickAddIssueForm
-                  formKey="name"
-                  groupId={groupId}
-                  subGroupId={sub_group_id}
-                  prePopulatedData={{
-                    ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-                  }}
-                  quickAddCallback={quickAddCallback}
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </Droppable>
+      {enableQuickIssueCreate && !disableIssueCreation && (
+        <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
+          <KanBanQuickAddIssueForm
+            formKey="name"
+            groupId={groupId}
+            subGroupId={sub_group_id}
+            prePopulatedData={{
+              ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+            }}
+            quickAddCallback={quickAddCallback}
+          />
+        </div>
+      )}
     </div>
   );
 });

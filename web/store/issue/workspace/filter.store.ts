@@ -4,7 +4,7 @@ import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
 import { WorkspaceService } from "@/services/workspace.service";
 import {
@@ -140,7 +140,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters, { layout: "spreadsheet" });
+      displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+        layout: EIssueLayoutTypes.SPREADSHEET,
+      });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       kanbanFilters = {
         group_by: _filters?.kanban_filters?.group_by || [],

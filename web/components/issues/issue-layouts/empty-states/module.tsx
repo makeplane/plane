@@ -2,7 +2,6 @@ import { useState } from "react";
 import size from "lodash/size";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// hooks
 // types
 import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 // ui
@@ -13,7 +12,8 @@ import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useApplication, useEventTracker, useIssues } from "@/hooks/store";
+// hooks
+import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store"
 
 export const ModuleEmptyState: React.FC = observer(() => {
   // router
@@ -22,10 +22,8 @@ export const ModuleEmptyState: React.FC = observer(() => {
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // store hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
-  const {
-    commandPalette: { toggleCreateIssueModal },
-  } = useApplication();
+  const { issues,issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
 
   const userFilters = issuesFilter?.issueFilters?.filters;
@@ -79,6 +77,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
   const isEmptyFilters = issueFilterCount > 0;
   const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_MODULE_ISSUES;
   const additionalPath = activeLayout ?? "list";
+  const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -94,6 +93,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
         <EmptyState
           type={emptyStateType}
           additionalPath={additionalPath}
+          size={emptyStateSize}
           primaryButtonOnClick={
             isEmptyFilters
               ? undefined

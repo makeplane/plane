@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // store hooks
@@ -64,7 +64,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
-      <section className="w-full overflow-y-auto py-8 pr-9 ">
+      <section className="w-full overflow-y-auto md:pr-9 pr-4">
         {tokens.length > 0 ? (
           <>
             <div className="flex items-center justify-between border-b border-custom-border-200 py-3.5">
@@ -99,7 +99,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
 
 ApiTokensPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="API Tokens" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

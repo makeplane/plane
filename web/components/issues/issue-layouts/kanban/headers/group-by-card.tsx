@@ -1,9 +1,9 @@
 import React, { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
-import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
+import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -16,8 +16,8 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 
 interface IHeaderGroupByCard {
-  sub_group_by: string | null;
-  group_by: string | null;
+  sub_group_by: TIssueGroupByOptions | undefined;
+  group_by: TIssueGroupByOptions | undefined;
   column_id: string;
   icon?: React.ReactNode;
   title: string;
@@ -110,8 +110,8 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         </div>
 
         <div
-          className={`relative flex items-center gap-1 overflow-hidden ${
-            verticalAlignPosition ? `flex-col` : `w-full flex-row`
+          className={`relative flex items-center gap-1 ${
+            verticalAlignPosition ? `flex-col` : `w-full flex-row overflow-hidden`
           }`}
         >
           <div

@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// icons
-import { Info, Star } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Info, MoveRight, User2 } from "lucide-react";
 // ui
-import { Avatar, AvatarGroup, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
+import { LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
 // components
+import { FavoriteStar } from "@/components/core";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
@@ -24,6 +25,8 @@ type Props = {
 
 export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -139,112 +142,116 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
+  const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
+
   return (
-    <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-      <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
-        <div>
-          <div className="flex items-center justify-between gap-2">
-            <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-              <span className="truncate text-base font-medium">{moduleDetails.name}</span>
-            </Tooltip>
-            <div className="flex items-center gap-2">
-              {moduleStatus && (
-                <span
-                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
-                  style={{
-                    color: moduleStatus.color,
-                    backgroundColor: `${moduleStatus.color}20`,
-                  }}
-                >
-                  {moduleStatus.label}
-                </span>
-              )}
-              <button onClick={openModuleOverview}>
-                <Info className="h-4 w-4 text-custom-text-400" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-custom-text-200">
-              <LayersIcon className="h-4 w-4 text-custom-text-300" />
-              <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
-            </div>
-            {moduleDetails.member_ids?.length > 0 && (
-              <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`} isMobile={isMobile}>
-                <div className="flex cursor-default items-center gap-1">
-                  <AvatarGroup showTooltip={false}>
-                    {moduleDetails.member_ids.map((member_id) => {
-                      const member = getUserDetails(member_id);
-                      return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-                    })}
-                  </AvatarGroup>
-                </div>
+    <div className="relative">
+      <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
+        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
+                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
               </Tooltip>
-            )}
-          </div>
-
-          <Tooltip
-            isMobile={isMobile}
-            tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
-            position="top-left"
-          >
-            <div className="flex w-full items-center">
-              <div
-                className="bar relative h-1.5 w-full rounded bg-custom-background-90"
-                style={{
-                  boxShadow: "1px 1px 4px 0px rgba(161, 169, 191, 0.35) inset",
-                }}
-              >
-                <div
-                  className="absolute left-0 top-0 h-1.5 rounded bg-blue-600 duration-300"
-                  style={{
-                    width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
-                  }}
-                />
+              <div className="flex items-center gap-2">
+                {moduleStatus && (
+                  <span
+                    className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
+                    style={{
+                      color: moduleStatus.color,
+                      backgroundColor: `${moduleStatus.color}20`,
+                    }}
+                  >
+                    {moduleStatus.label}
+                  </span>
+                )}
+                <button onClick={openModuleOverview}>
+                  <Info className="h-4 w-4 text-custom-text-400" />
+                </button>
               </div>
             </div>
-          </Tooltip>
+          </div>
 
-          <div className="flex items-center justify-between">
-            {isDateValid ? (
-              <>
-                <span className="text-xs text-custom-text-300">
-                  {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-custom-text-200">
+                <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
+              </div>
+              {moduleLeadDetails ? (
+                <span className="cursor-default">
+                  <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
                 </span>
-              </>
-            ) : (
-              <span className="text-xs text-custom-text-400">No due date</span>
-            )}
+              ) : (
+                <Tooltip tooltipContent="No lead">
+                  <span className="cursor-default flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+                    <User2 className="h-4 w-4 text-custom-text-400" />
+                  </span>
+                </Tooltip>
+              )}
+            </div>
 
-            <div className="z-[5] flex items-center gap-1.5">
-              {isEditingAllowed &&
-                (moduleDetails.is_favorite ? (
-                  <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                  </button>
-                ) : (
-                  <button type="button" onClick={handleAddToFavorites}>
-                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                  </button>
-                ))}
-              {workspaceSlug && projectId && (
-                <ModuleQuickActions
-                  moduleId={moduleId}
-                  projectId={projectId.toString()}
-                  workspaceSlug={workspaceSlug.toString()}
-                />
+            <Tooltip
+              isMobile={isMobile}
+              tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
+              position="top-left"
+            >
+              <div className="flex w-full items-center">
+                <div
+                  className="bar relative h-1.5 w-full rounded bg-custom-background-90"
+                  style={{
+                    boxShadow: "1px 1px 4px 0px rgba(161, 169, 191, 0.35) inset",
+                  }}
+                >
+                  <div
+                    className="absolute left-0 top-0 h-1.5 rounded bg-blue-600 duration-300"
+                    style={{
+                      width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </Tooltip>
+
+            <div className="flex items-center justify-between py-0.5">
+              {isDateValid ? (
+                <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+                  <CalendarClock className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+                  <MoveRight className="h-3 w-3 flex-shrink-0" />
+                  <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+                </div>
+              ) : (
+                <span className="text-xs text-custom-text-400">No due date</span>
               )}
             </div>
           </div>
         </div>
+      </Link>
+      <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
+        {isEditingAllowed && (
+          <FavoriteStar
+            onClick={(e) => {
+              if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+              else handleAddToFavorites(e);
+            }}
+            selected={!!moduleDetails.is_favorite}
+          />
+        )}
+        {workspaceSlug && projectId && (
+          <ModuleQuickActions
+            parentRef={parentRef}
+            moduleId={moduleId}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        )}
       </div>
-    </Link>
+    </div>
   );
 });

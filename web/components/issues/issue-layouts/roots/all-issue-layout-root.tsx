@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
+import { IIssueDisplayFilterOptions } from "@plane/types";
+// hooks
 // components
 import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
@@ -25,6 +26,7 @@ import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-propert
 // store
 import { IssuePeekOverview } from "../../peek-overview";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
+import { TRenderQuickActions } from "../list/list-view-types";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -137,9 +139,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [updateFilters, workspaceSlug, globalViewId]
   );
 
-  const renderQuickActions = useCallback(
-    (issue: TIssue, customActionButton?: React.ReactElement, portalElement?: HTMLDivElement | null) => (
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
       <AllIssueQuickActions
+        parentRef={parentRef}
         customActionButton={customActionButton}
         issue={issue}
         handleDelete={async () => removeIssue(issue.project_id, issue.id)}
@@ -147,6 +150,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
         readOnly={!canEditProperties(issue.project_id ?? undefined)}
+        placements={placement}
       />
     ),
     [canEditProperties, removeIssue, updateIssue, archiveIssue]

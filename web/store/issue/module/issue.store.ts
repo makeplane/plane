@@ -4,13 +4,14 @@ import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store"
 // services
 // types
 import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+// store
 import { IIssueRootStore } from "../root.store";
 import { IModuleIssuesFilter } from "./filter.store";
-import get from "lodash/get";
 
 export interface IModuleIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
   // actions
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -217,15 +218,20 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
 
       // call overridden create issue
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
-      return response;
-    } catch (error) {
-      throw error;
-    } finally {
+
       // remove temp Issue from store list
       runInAction(() => {
         this.removeIssueFromList(data.id);
         this.rootIssueStore.issues.removeIssue(data.id);
       });
+
+
+      if (data.cycle_id && data.cycle_id !== "") {
+        await this.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id);
+      }
+      return response;
+    } catch (error) {
+      throw error;
     }
   };
 }

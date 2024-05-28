@@ -1,12 +1,13 @@
 import { useEffect, useState, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IWorkspace } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 import { DeleteWorkspaceModal } from "@/components/workspace";
 // constants
@@ -75,7 +76,7 @@ export const WorkspaceDetails: FC = observer(() => {
           },
         });
         setToast({
-          title: "Success",
+          title: "Success!",
           type: TOAST_TYPE.SUCCESS,
           message: "Workspace updated successfully",
         });
@@ -145,7 +146,7 @@ export const WorkspaceDetails: FC = observer(() => {
   if (!currentWorkspace)
     return (
       <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 
@@ -174,7 +175,7 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full overflow-y-auto md:py-8 py-4 md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
@@ -195,7 +196,7 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
-            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
+            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (

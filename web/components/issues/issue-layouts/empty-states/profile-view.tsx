@@ -4,15 +4,13 @@ import { EmptyState } from "@/components/empty-state";
 // constants
 import { EMPTY_STATE_DETAILS } from "@/constants/empty-state";
 // hooks
-import { useApplication } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/store";
 
 // assets
 
 export const ProfileViewEmptyState: React.FC = observer(() => {
   // store hooks
-  const {
-    router: { profileViewId },
-  } = useApplication();
+  const { profileViewId } = useAppRouter();
 
   if (!profileViewId) return null;
 

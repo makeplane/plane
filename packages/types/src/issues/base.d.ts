@@ -35,3 +35,5 @@ export type TIssuePaginationData = {
 export type TGroupedIssueCount = {
   [group_id: string]: number;
 };
+
+export type TUnGroupedIssues = string[];

@@ -3,7 +3,6 @@ import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } fr
 import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
-import { getTrimmedHTML } from "src/lib/utils";
 import { DeleteImage } from "src/types/delete-image";
 import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
@@ -14,17 +13,21 @@ import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items
 import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 
-interface CustomEditorProps {
+export type TFileHandler = {
+  cancel: () => void;
+  delete: DeleteImage;
+  upload: UploadImage;
+  restore: RestoreImage;
+};
+
+export interface CustomEditorProps {
   id?: string;
-  uploadFile: UploadImage;
-  restoreFile: RestoreImage;
-  deleteFile: DeleteImage;
-  cancelUploadImage?: () => any;
-  initialValue: string;
+  fileHandler: TFileHandler;
+  initialValue?: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
-  value: string | null | undefined;
+  value?: string | null | undefined;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -34,39 +37,45 @@ interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   handleEditorReady?: (value: boolean) => void;
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  tabIndex?: number;
 }
 
 export const useEditor = ({
-  uploadFile,
   id = "",
-  deleteFile,
-  cancelUploadImage,
   editorProps = {},
   initialValue,
   editorClassName,
   value,
   extensions = [],
+  fileHandler,
   onChange,
   forwardedRef,
-  restoreFile,
+  tabIndex,
   handleEditorReady,
   mentionHandler,
+  placeholder,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
-      ...CoreEditorProps(uploadFile, editorClassName),
+      ...CoreEditorProps(editorClassName),
       ...editorProps,
     },
     extensions: [
-      ...CoreEditorExtensions(
-        {
+      ...CoreEditorExtensions({
+        mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights ?? [],
         },
-        deleteFile,
-        restoreFile,
-        cancelUploadImage
-      ),
+        fileConfig: {
+          uploadFile: fileHandler.upload,
+          deleteFile: fileHandler.delete,
+          restoreFile: fileHandler.restore,
+          cancelUploadImage: fileHandler.cancel,
+        },
+        placeholder,
+        tabIndex,
+      }),
       ...extensions,
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
@@ -77,25 +86,44 @@ export const useEditor = ({
       setSavedSelection(editor.state.selection);
     },
     onUpdate: async ({ editor }) => {
-      onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+      onChange?.(editor.getJSON(), editor.getHTML());
     },
     onDestroy: async () => {
       handleEditorReady?.(false);
     },
   });
 
-  // for syncing swr data on tab refocus etc, can remove it once this is merged
-  // https://github.com/ueberdosis/tiptap/pull/4453
+  const editorRef: MutableRefObject<Editor | null> = useRef(null);
+
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+
+  // Inside your component or hook
+  const savedSelectionRef = useRef(savedSelection);
+
+  // Update the ref whenever savedSelection changes
+  useEffect(() => {
+    savedSelectionRef.current = savedSelection;
+  }, [savedSelection]);
+
+  // Effect for syncing SWR data
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(value);
+    if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
+      try {
+        editor.commands.setContent(value);
+        const currentSavedSelection = savedSelectionRef.current;
+        if (currentSavedSelection) {
+          const docLength = editor.state.doc.content.size;
+          const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+          editor.commands.setTextSelection(relativePosition);
+        }
+      } catch (error) {
+        console.error("Error syncing editor content with external value:", error);
+      }
+    }
   }, [editor, value, id]);
-
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
-
-  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
   useImperativeHandle(
     forwardedRef,
@@ -112,13 +140,13 @@ export const useEditor = ({
         }
       },
       executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
-        const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
 
         const item = getEditorMenuItem(itemName);
         if (item) {
-          if (item.name === "image") {
+          if (item.key === "image") {
             item.command(savedSelection);
           } else {
             item.command();
@@ -128,9 +156,9 @@ export const useEditor = ({
         }
       },
       isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
@@ -150,20 +178,33 @@ export const useEditor = ({
         const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
         return markdownOutput;
       },
+      getHTML: (): string => {
+        const htmlOutput = editorRef.current?.getHTML() ?? "<p></p>";
+        return htmlOutput;
+      },
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
       setFocusAtPosition: (position: number) => {
-        if (!editorRef.current) return;
-        editorRef.current
-          .chain()
-          .insertContentAt(position, [{ type: "paragraph" }])
-          .focus()
-          .run();
+        if (!editorRef.current || editorRef.current.isDestroyed) {
+          console.error("Editor reference is not available or has been destroyed.");
+          return;
+        }
+        try {
+          const docSize = editorRef.current.state.doc.content.size;
+          const safePosition = Math.max(0, Math.min(position, docSize));
+          editorRef.current
+            .chain()
+            .insertContentAt(safePosition, [{ type: "paragraph" }])
+            .focus()
+            .run();
+        } catch (error) {
+          console.error("An error occurred while setting focus at position:", error);
+        }
       },
     }),
-    [editorRef, savedSelection, uploadFile]
+    [editorRef, savedSelection, fileHandler.upload]
   );
 
   if (!editor) {

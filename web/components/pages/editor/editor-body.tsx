@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Control, Controller } from "react-hook-form";
-// document editor
+// document-editor
 import {
   DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
@@ -11,14 +10,15 @@ import {
   IMarking,
 } from "@plane/document-editor";
 // types
-import { IUserLite, TPage } from "@plane/types";
+import { IUserLite } from "@plane/types";
 // components
-import { PageContentBrowser, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
-import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+import { usePageDescription } from "@/hooks/use-page-description";
+import { usePageFilters } from "@/hooks/use-page-filters";
 // services
 import { FileService } from "@/services/file.service";
 // store
@@ -27,13 +27,10 @@ import { IPageStore } from "@/store/pages/page.store";
 const fileService = new FileService();
 
 type Props = {
-  control: Control<TPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  swrPageDetails: TPage | undefined;
-  handleSubmit: () => void;
   markings: IMarking[];
-  pageStore: IPageStore;
+  page: IPageStore;
   sidePeekVisible: boolean;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
@@ -42,15 +39,12 @@ type Props = {
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
-    control,
     handleReadOnlyEditorReady,
     handleEditorReady,
     editorRef,
     markings,
     readOnlyEditorRef,
-    handleSubmit,
-    pageStore,
-    swrPageDetails,
+    page,
     sidePeekVisible,
     updateMarkings,
   } = props;
@@ -58,7 +52,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const {
     getUserDetails,
@@ -66,12 +60,19 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
-  const pageTitle = pageStore?.name ?? "";
-  const pageDescription = pageStore?.description_html ?? "<p></p>";
-  const isFullWidth = !!pageStore?.view_props?.full_width;
-  const { description_html, isContentEditable, updateTitle, isSubmitting, setIsSubmitting } = pageStore;
+  const pageId = page?.id;
+  const pageTitle = page?.name ?? "";
+  const pageDescription = page?.description_html;
+  const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  // project-description
+  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS } = usePageDescription({
+    editorRef,
+    page,
+    projectId,
+    workspaceSlug,
+  });
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -79,20 +80,22 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
-
-  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  // page filters
+  const { isFullWidth } = usePageFilters();
 
   useEffect(() => {
-    updateMarkings(description_html ?? "<p></p>");
-  }, [description_html, updateMarkings]);
+    updateMarkings(pageDescription ?? "<p></p>");
+  }, [pageDescription, updateMarkings]);
+
+  if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
       <div
         className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full p-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
-          "w-56 lg:w-72": !isFullWidth,
-          "w-[10%]": isFullWidth,
+          "w-40 lg:w-56": !isFullWidth,
+          "w-[5%]": isFullWidth,
         })}
       >
         {!isFullWidth && (
@@ -104,12 +107,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       </div>
       <div
         className={cn("h-full w-full pt-5", {
-          "md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]": !isFullWidth,
-          "w-[80%]": isFullWidth,
+          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-14rem-14rem)]": !isFullWidth,
+          "md:w-[90%]": isFullWidth,
         })}
       >
         <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="w-full flex-shrink-0 ml-5">
+          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
             <PageEditorTitle
               editorRef={editorRef}
               title={pageTitle}
@@ -118,43 +121,32 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           </div>
           {isContentEditable ? (
-            <Controller
-              name="description_html"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <DocumentEditorWithRef
-                  fileHandler={{
-                    cancel: fileService.cancelUpload,
-                    delete: fileService.getDeleteImageFunction(workspaceId),
-                    restore: fileService.getRestoreImageFunction(workspaceId),
-                    upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
-                  }}
-                  handleEditorReady={handleEditorReady}
-                  initialValue={pageDescription}
-                  value={swrPageDetails?.description_html ?? "<p></p>"}
-                  ref={editorRef}
-                  containerClassName="p-0 pb-64"
-                  editorClassName="px-10"
-                  onChange={(_description_json, description_html) => {
-                    setIsSubmitting("submitting");
-                    setShowAlert(true);
-                    onChange(description_html);
-                    handleSubmit();
-                  }}
-                  mentionHandler={{
-                    highlights: mentionHighlights,
-                    suggestions: mentionSuggestions,
-                  }}
-                />
-              )}
+            <DocumentEditorWithRef
+              id={pageId}
+              fileHandler={{
+                cancel: fileService.cancelUpload,
+                delete: fileService.getDeleteImageFunction(workspaceId),
+                restore: fileService.getRestoreImageFunction(workspaceId),
+                upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
+              }}
+              handleEditorReady={handleEditorReady}
+              value={pageDescriptionYJS}
+              ref={editorRef}
+              containerClassName="p-0 pb-64"
+              editorClassName="pl-10"
+              onChange={handleDescriptionChange}
+              mentionHandler={{
+                highlights: mentionHighlights,
+                suggestions: mentionSuggestions,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
               ref={readOnlyEditorRef}
-              initialValue={pageDescription}
+              initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
-              editorClassName="px-10"
+              editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
               }}
@@ -163,9 +155,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div
-        className={cn("hidden lg:block h-full flex-shrink-0", {
-          "w-56 lg:w-72": !isFullWidth,
-          "w-[10%]": isFullWidth,
+        className={cn("hidden xl:block flex-shrink-0", {
+          "w-40 lg:w-56": !isFullWidth,
+          "w-[5%]": isFullWidth,
         })}
       />
     </div>

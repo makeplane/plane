@@ -154,6 +154,13 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             state=state,
         )
 
+        # create an inbox issue
+        inbox_issue = InboxIssue.objects.create(
+            inbox_id=inbox.id,
+            project_id=project_id,
+            issue=issue,
+            source=request.data.get("source", "in-app"),
+        )
         # Create an Issue Activity
         issue_activity.delay(
             type="issue.activity.created",
@@ -163,14 +170,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
-        )
-
-        # create an inbox issue
-        inbox_issue = InboxIssue.objects.create(
-            inbox_id=inbox.id,
-            project_id=project_id,
-            issue=issue,
-            source=request.data.get("source", "in-app"),
+            inbox=str(inbox_issue.id),
         )
 
         serializer = InboxIssueSerializer(inbox_issue)
@@ -260,6 +260,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                             cls=DjangoJSONEncoder,
                         ),
                         epoch=int(timezone.now().timestamp()),
+                        inbox=(inbox_issue.id),
                     )
                 issue_serializer.save()
             else:
@@ -271,6 +272,9 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         if project_member.role > 10:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
+            )
+            current_instance = json.dumps(
+                InboxIssueSerializer(inbox_issue).data, cls=DjangoJSONEncoder
             )
 
             if serializer.is_valid():
@@ -310,6 +314,22 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                         if state is not None:
                             issue.state = state
                             issue.save()
+
+                # create a activity for status change
+                issue_activity.delay(
+                    type="inbox.activity.created",
+                    requested_data=json.dumps(
+                        request.data, cls=DjangoJSONEncoder
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=str(issue_id),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=False,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                    inbox=str(inbox_issue.id),
+                )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(

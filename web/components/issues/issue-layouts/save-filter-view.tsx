@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import { Plus } from "lucide-react";
 import { Button } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal } from "@/components/views";
@@ -25,7 +24,7 @@ export const SaveFilterView: FC<ISaveFilterView> = (props) => {
         onClose={() => setViewModal(false)}
       />
 
-      <Button size="sm" prependIcon={<Plus />} onClick={() => setViewModal(true)}>
+      <Button size="sm" onClick={() => setViewModal(true)}>
         Save View
       </Button>
     </div>

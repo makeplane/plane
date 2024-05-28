@@ -11,6 +11,7 @@ import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -34,12 +35,12 @@ export const ArchivedCyclesHeader: FC = observer(() => {
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
       if (!projectId) return;
-
       const newValues = currentProjectArchivedFilters?.[key] ?? [];
 
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       else {
         if (currentProjectArchivedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
@@ -60,6 +61,8 @@ export const ArchivedCyclesHeader: FC = observer(() => {
       }
     }
   };
+
+  const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
 
   return (
     <div className="group relative flex border-b border-custom-border-200">
@@ -110,7 +113,12 @@ export const ArchivedCyclesHeader: FC = observer(() => {
             </button>
           )}
         </div>
-        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={isFiltersApplied}
+        >
           <CycleFiltersSelection
             filters={currentProjectArchivedFilters ?? {}}
             handleFiltersUpdate={handleFilters}

@@ -36,6 +36,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   projectId,
   issueId,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -56,6 +57,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
     if (!isOpen || !workspaceSlug || !projectId) return;
 
     setIsSearching(true);
+    setIsLoading(true);
 
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
@@ -65,7 +67,10 @@ export const ParentIssuesListModal: React.FC<Props> = ({
         workspace_search: isWorkspaceLevel,
       })
       .then((res) => setIssues(res))
-      .finally(() => setIsSearching(false));
+      .finally(() => {
+        setIsSearching(false);
+        setIsLoading(false);
+      });
   }, [debouncedSearchTerm, isOpen, issueId, isWorkspaceLevel, projectId, workspaceSlug]);
 
   return (
@@ -153,14 +158,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </h5>
                     )}
 
-                    <IssueSearchModalEmptyState
-                      debouncedSearchTerm={debouncedSearchTerm}
-                      isSearching={isSearching}
-                      issues={issues}
-                      searchTerm={searchTerm}
-                    />
-
-                    {isSearching ? (
+                    {isSearching || isLoading ? (
                       <Loader className="space-y-3 p-3">
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
@@ -168,41 +166,52 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                         <Loader.Item height="40px" />
                       </Loader>
                     ) : (
-                      <ul className={`text-sm ${issues.length > 0 ? "p-2" : ""}`}>
-                        {issues.map((issue) => (
-                          <Combobox.Option
-                            key={issue.id}
-                            value={issue}
-                            className={({ active, selected }) =>
-                              `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                active ? "bg-custom-background-80 text-custom-text-100" : ""
-                              } ${selected ? "text-custom-text-100" : ""}`
-                            }
-                          >
-                            <div className="flex flex-grow items-center gap-2 truncate">
-                              <span
-                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: issue.state__color,
-                                }}
-                              />
-                              <span className="flex-shrink-0 text-xs">
-                                {issue.project__identifier}-{issue.sequence_id}
-                              </span>{" "}
-                              <span className="truncate">{issue.name}</span>
-                            </div>
-                            <a
-                              href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
-                              target="_blank"
-                              className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Rocket className="h-4 w-4" />
-                            </a>
-                          </Combobox.Option>
-                        ))}
-                      </ul>
+                      <>
+                        {issues.length === 0 ? (
+                          <IssueSearchModalEmptyState
+                            debouncedSearchTerm={debouncedSearchTerm}
+                            isSearching={isSearching}
+                            issues={issues}
+                            searchTerm={searchTerm}
+                          />
+                        ) : (
+                          <ul className={`text-sm ${issues.length > 0 ? "p-2" : ""}`}>
+                            {issues.map((issue) => (
+                              <Combobox.Option
+                                key={issue.id}
+                                value={issue}
+                                className={({ active, selected }) =>
+                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
+                                  } ${selected ? "text-custom-text-100" : ""}`
+                                }
+                              >
+                                <div className="flex flex-grow items-center gap-2 truncate">
+                                  <span
+                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor: issue.state__color,
+                                    }}
+                                  />
+                                  <span className="flex-shrink-0 text-xs">
+                                    {issue.project__identifier}-{issue.sequence_id}
+                                  </span>{" "}
+                                  <span className="truncate">{issue.name}</span>
+                                </div>
+                                <a
+                                  href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+                                  target="_blank"
+                                  className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Rocket className="h-4 w-4" />
+                                </a>
+                              </Combobox.Option>
+                            ))}
+                          </ul>
+                        )}
+                      </>
                     )}
                   </Combobox.Options>
                 </Combobox>

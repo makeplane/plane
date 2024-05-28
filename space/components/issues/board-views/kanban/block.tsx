@@ -1,53 +1,51 @@
 "use client";
 
-// mobx react lite
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
+// components
 import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
 import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
 import { IssueBlockState } from "@/components/issues/board-views/block-state";
-import { useMobxStore } from "@/lib/mobx/store-provider";
-
-// components
+// helpers
+import { queryParamGenerator } from "@/helpers/query-param-generator";
+// hooks
+import { useIssueDetails, useProject } from "@/hooks/store";
 // interfaces
-import { RootStore } from "@/store/root";
-import { IIssue } from "types/issue";
+import { IIssue } from "@/types/issue";
 
-export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
-  const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+type IssueKanBanBlockProps = {
+  issue: IIssue;
+  workspaceSlug: string;
+  projectId: string;
+  params: any;
+};
 
-  // router
+export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
   const router = useRouter();
-  const { workspace_slug, project_slug, board, priorities, states, labels } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-    board: string;
-    priorities: string;
-    states: string;
-    labels: string;
-  };
+  const searchParams = useSearchParams();
+  // query params
+  const board = searchParams.get("board") || undefined;
+  const state = searchParams.get("state") || undefined;
+  const priority = searchParams.get("priority") || undefined;
+  const labels = searchParams.get("labels") || undefined;
+  // props
+  const { workspaceSlug, projectId, issue } = props;
+  // hooks
+  const { project } = useProject();
+  const { setPeekId } = useIssueDetails();
 
   const handleBlockClick = () => {
-    issueDetailStore.setPeekId(issue.id);
-    const params: any = { board: board, peekId: issue.id };
-    if (states && states.length > 0) params.states = states;
-    if (priorities && priorities.length > 0) params.priorities = priorities;
-    if (labels && labels.length > 0) params.labels = labels;
-    router.push(
-      {
-        pathname: `/${workspace_slug}/${project_slug}`,
-        query: { ...params },
-      },
-      undefined,
-      { shallow: true }
-    );
+    setPeekId(issue.id);
+    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
   };
 
   return (
     <div className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs">
       {/* id */}
       <div className="break-words text-xs text-custom-text-300">
-        {projectStore?.project?.identifier}-{issue?.sequence_id}
+        {project?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}

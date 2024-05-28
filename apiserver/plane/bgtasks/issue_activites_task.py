@@ -31,6 +31,7 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+from plane.bgtasks.webhook_task import webhook_activity
 
 
 # Track Changes in name
@@ -1296,7 +1297,7 @@ def create_issue_vote_activity(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="created",
+                verb="updated",
                 old_value=None,
                 new_value=requested_data.get("vote"),
                 field="vote",
@@ -1365,7 +1366,7 @@ def create_issue_relation_activity(
                 IssueActivity(
                     issue_id=issue_id,
                     actor_id=actor_id,
-                    verb="created",
+                    verb="updated",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                     field=requested_data.get("relation_type"),
@@ -1380,7 +1381,7 @@ def create_issue_relation_activity(
                 IssueActivity(
                     issue_id=related_issue,
                     actor_id=actor_id,
-                    verb="created",
+                    verb="updated",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                     field=(
@@ -1553,6 +1554,46 @@ def delete_draft_issue_activity(
     )
 
 
+def create_inbox_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    status_dict = {
+        -2: "Pending",
+        -1: "Rejected",
+        0: "Snoozed",
+        1: "Accepted",
+        2: "Duplicate",
+    }
+    if requested_data.get("status") is not None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the inbox status",
+                field="inbox",
+                verb=requested_data.get("status"),
+                actor_id=actor_id,
+                epoch=epoch,
+                old_value=status_dict.get(current_instance.get("status")),
+                new_value=status_dict.get(requested_data.get("status")),
+            )
+        )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1566,6 +1607,7 @@ def issue_activity(
     subscriber=True,
     notification=False,
     origin=None,
+    inbox=None,
 ):
     try:
         issue_activities = []
@@ -1613,6 +1655,7 @@ def issue_activity(
             "issue_draft.activity.created": create_draft_issue_activity,
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
+            "inbox.activity.created": create_inbox_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -1650,6 +1693,41 @@ def issue_activity(
                         )
             except Exception as e:
                 log_exception(e)
+
+            for activity in issue_activities_created:
+                webhook_activity.delay(
+                    event=(
+                        "issue_comment"
+                        if activity.field == "comment"
+                        else "inbox_issue" if inbox else "issue"
+                    ),
+                    event_id=(
+                        activity.issue_comment_id
+                        if activity.field == "comment"
+                        else inbox if inbox else activity.issue_id
+                    ),
+                    verb=activity.verb,
+                    field=(
+                        "description"
+                        if activity.field == "comment"
+                        else activity.field
+                    ),
+                    old_value=(
+                        activity.old_value
+                        if activity.old_value != ""
+                        else None
+                    ),
+                    new_value=(
+                        activity.new_value
+                        if activity.new_value != ""
+                        else None
+                    ),
+                    actor_id=activity.actor_id,
+                    current_site=origin,
+                    slug=activity.workspace.slug,
+                    old_identifier=activity.old_identifier,
+                    new_identifier=activity.new_identifier,
+                )
 
         if notification:
             notifications.delay(

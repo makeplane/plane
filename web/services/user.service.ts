@@ -1,7 +1,4 @@
 // services
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { APIService } from "@/services/api.service";
-// types
 import type {
   TIssue,
   IUser,
@@ -12,7 +9,11 @@ import type {
   IUserSettings,
   IUserEmailNotificationSettings,
   TIssuesResponse,
+  TUserProfile,
 } from "@plane/types";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
+// types
 // helpers
 
 export class UserService extends APIService {
@@ -23,7 +24,6 @@ export class UserService extends APIService {
   currentUserConfig() {
     return {
       url: `${this.baseURL}/api/users/me/`,
-      headers: this.getHeaders(),
     };
   }
 
@@ -47,6 +47,29 @@ export class UserService extends APIService {
 
   async currentUser(): Promise<IUser> {
     return this.get("/api/users/me/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async getCurrentUserProfile(): Promise<TUserProfile> {
+    return this.get("/api/users/me/profile/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+  async updateCurrentUserProfile(data: any): Promise<any> {
+    return this.patch("/api/users/me/profile/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async getCurrentUserAccounts(): Promise<any> {
+    return this.get("/api/users/me/accounts/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -121,8 +144,12 @@ export class UserService extends APIService {
       });
   }
 
-  async changePassword(data: { old_password: string; new_password: string; confirm_password: string }): Promise<any> {
-    return this.post(`/api/users/me/change-password/`, data)
+  async changePassword(token: string, data: { old_password: string; new_password: string }): Promise<any> {
+    return this.post(`/auth/change-password/`, data, {
+      headers: {
+        "X-CSRFTOKEN": token,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
+// headless ui
 import { Tab, Popover } from "@headlessui/react";
-// hooks
+// ui
 import { Button, Input, Loader } from "@plane/ui";
-import { MAX_FILE_SIZE } from "@/constants/common";
-import { useApplication, useWorkspace } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-// services
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { FileService } from "@/services/file.service";
-// hooks
-// components
 // constants
+import { MAX_FILE_SIZE } from "@/constants/common";
+// hooks
+import { useWorkspace, useInstance } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// services
+import { FileService } from "@/services/file.service";
 
 const tabOptions = [
   {
@@ -62,9 +62,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    config: { envConfig },
-  } = useApplication();
+  const { config } = useInstance();
   const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
@@ -92,7 +90,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {
@@ -204,7 +202,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   );
                 })}
               </Tab.List>
-              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
+              <Tab.Panels className="vertical-scrollbar scrollbar-md h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
                 {(unsplashImages || !unsplashError) && (
                   <Tab.Panel className="mt-4 h-full w-full space-y-4">
                     <div className="flex gap-x-2">

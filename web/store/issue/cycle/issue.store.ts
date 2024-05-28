@@ -1,11 +1,16 @@
 import { action, observable, makeObservable, runInAction } from "mobx";
 // base class
 // types
-import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+import concat from "lodash/concat";
+import get from "lodash/get";
+import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
+// types
+import { TIssue,  TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { ICycleIssuesFilter } from "./filter.store";
-import { concat, get, set, uniq, update } from "lodash";
 import { computedFn } from "mobx-utils";
 import { ALL_ISSUES } from "@/constants/issue";
 
@@ -25,6 +30,7 @@ export interface ICycleIssues extends IBaseIssuesStore {
   //action helpers
   getActiveCycleById: (cycleId: string) => ActiveCycleIssueDetails | undefined;
   // actions
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -376,15 +382,19 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
       // call overridden create issue
       const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
-      return response;
-    } catch (error) {
-      throw error;
-    } finally {
+
       // remove temp Issue from store list
       runInAction(() => {
         this.removeIssueFromList(data.id);
         this.rootIssueStore.issues.removeIssue(data.id);
       });
+
+      if (data.module_ids && data.module_ids.length > 0) {
+        await this.changeModulesInIssue(workspaceSlug, projectId, response.id, data.module_ids, []);
+      }
+      return response;
+    } catch (error) {
+      throw error;
     }
   };
 }

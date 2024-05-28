@@ -1,8 +1,7 @@
 import { FC, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
-// ui
-import { Spinner } from "@plane/ui";
+import { observer } from "mobx-react";
 // components
+import { LogoSpinner } from "@/components/common";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -41,7 +40,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,
@@ -87,8 +86,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     <>
       {issue && !is_archived && (
         <ArchiveIssueModal
-          isOpen={isArchiveIssueModalOpen}
-          handleClose={() => toggleArchiveIssueModal(false)}
+          isOpen={isArchiveIssueModalOpen === issueId}
+          handleClose={() => toggleArchiveIssueModal(null)}
           data={issue}
           onSubmit={async () => {
             if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
@@ -144,7 +143,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
               {isLoading && !issue ? (
                 <div className="flex h-full w-full items-center justify-center">
-                  <Spinner />
+                  <LogoSpinner />
                 </div>
               ) : (
                 issue && (
@@ -157,6 +156,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueId={issueId}
                           issueOperations={issueOperations}
                           disabled={disabled || is_archived}
+                          isArchived={is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
@@ -190,7 +190,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          disabled={disabled || is_archived}
+                          disabled={is_archived}
                         />
                       </div>
                     ) : (
@@ -203,6 +203,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               issueId={issueId}
                               issueOperations={issueOperations}
                               disabled={disabled || is_archived}
+                              isArchived={is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
@@ -228,7 +229,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
                               issueId={issueId}
-                              disabled={disabled || is_archived}
+                              disabled={is_archived}
                             />
                           </div>
                         </div>

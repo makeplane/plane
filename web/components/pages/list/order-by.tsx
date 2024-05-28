@@ -47,7 +47,7 @@ export const PageOrderByDropdown: React.FC<Props> = (props) => {
           {sortKey === option.key && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2" />
+      <hr className="my-2 border-custom-border-200" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {

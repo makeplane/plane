@@ -3,68 +3,61 @@ import { observer } from "mobx-react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { KanbanIssueBlock } from "@/components/issues";
+import { TRenderQuickActions } from "../list/list-view-types";
 // components
 
 interface IssueBlocksListProps {
   sub_group_id: string;
-  columnId: string;
+  groupId: string;
   issuesMap: IIssueMap;
-  peekIssueId?: string;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
-  isDragDisabled: boolean;
-  updateIssue:
-    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
+  canDropOverIssue: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  isDragStarted?: boolean;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
   const {
     sub_group_id,
-    columnId,
+    groupId,
     issuesMap,
-    peekIssueId,
     issueIds,
     displayProperties,
-    isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
-    isDragStarted,
   } = props;
 
   return (
     <>
       {issueIds && issueIds.length > 0 ? (
         <>
-          {issueIds.map((issueId, index) => {
+          {issueIds.map((issueId) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
-            if (columnId) draggableId = `${draggableId}__${columnId}`;
+            if (groupId) draggableId = `${draggableId}__${groupId}`;
             if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
             return (
               <KanbanIssueBlock
                 key={draggableId}
-                peekIssueId={peekIssueId}
                 issueId={issueId}
+                groupId={groupId}
+                subGroupId={sub_group_id}
                 issuesMap={issuesMap}
                 displayProperties={displayProperties}
                 updateIssue={updateIssue}
                 quickActions={quickActions}
                 draggableId={draggableId}
-                index={index}
-                isDragDisabled={isDragDisabled}
+                canDropOverIssue={canDropOverIssue}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
-                isDragStarted={isDragStarted}
-                issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
               />
             );
           })}

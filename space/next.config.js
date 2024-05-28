@@ -4,17 +4,19 @@ require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
+  trailingSlash: true,
+  output: "standalone",
+  basePath: process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "",
+  reactStrictMode: false,
+  swcMinify: true,
   async headers() {
     return [
       {
         source: "/",
-        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }], // clickjacking protection
       },
     ];
   },
-  basePath: process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? "/spaces" : "",
-  reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -24,11 +26,11 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  output: "standalone",
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0", 10)) {
-  module.exports = withSentryConfig(nextConfig,
+  module.exports = withSentryConfig(
+    nextConfig,
     { silent: true, authToken: process.env.SENTRY_AUTH_TOKEN },
     { hideSourceMaps: true }
   );

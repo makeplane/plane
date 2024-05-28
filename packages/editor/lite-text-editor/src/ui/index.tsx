@@ -1,27 +1,22 @@
 import * as React from "react";
+// editor-core
 import {
-  UploadImage,
-  DeleteImage,
   IMentionSuggestion,
-  RestoreImage,
   EditorContainer,
   EditorContentWrapper,
   getEditorClassNames,
   useEditor,
   IMentionHighlight,
   EditorRefApi,
+  TFileHandler,
 } from "@plane/editor-core";
+// extensions
 import { LiteTextEditorExtensions } from "src/ui/extensions";
 
 export interface ILiteTextEditor {
   initialValue: string;
   value?: string | null;
-  fileHandler: {
-    cancel: () => void;
-    delete: DeleteImage;
-    upload: UploadImage;
-    restore: RestoreImage;
-  };
+  fileHandler: TFileHandler;
   containerClassName?: string;
   editorClassName?: string;
   onChange?: (json: object, html: string) => void;
@@ -32,6 +27,8 @@ export interface ILiteTextEditor {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  id?: string;
 }
 
 const LiteTextEditor = (props: ILiteTextEditor) => {
@@ -46,20 +43,22 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
     onEnterKeyPress,
     tabIndex,
     mentionHandler,
+    placeholder = "Add comment...",
+    id = "",
   } = props;
 
   const editor = useEditor({
     onChange,
     initialValue,
     value,
+    id,
     editorClassName,
-    restoreFile: fileHandler.restore,
-    uploadFile: fileHandler.upload,
-    deleteFile: fileHandler.delete,
-    cancelUploadImage: fileHandler.cancel,
+    fileHandler,
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
     mentionHandler,
+    placeholder,
+    tabIndex,
   });
 
   const editorContainerClassName = getEditorClassNames({

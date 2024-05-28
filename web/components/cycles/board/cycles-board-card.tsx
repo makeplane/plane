@@ -1,26 +1,24 @@
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// components
-import { Info, Star } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Info, MoveRight } from "lucide-react";
+// types
 import type { TCycleGroups } from "@plane/types";
-import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "@/components/cycles";
-// hooks
 // ui
-// icons
-// helpers
-// import { copyTextToClipboard } from "@/helpers/string.helper";
+import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
+// components
+import { FavoriteStar } from "@/components/core";
+import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
-// constants
+// hooks
 import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-//.types
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -30,6 +28,8 @@ export interface ICyclesBoardCard {
 
 export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
+  // refs
+  const parentRef = useRef(null);
   // router
   const router = useRouter();
   // store
@@ -69,8 +69,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
@@ -151,8 +151,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
-    <div>
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
+    <div className="relative">
+      <Link ref={parentRef} href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
@@ -226,31 +226,37 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
             </Tooltip>
 
             <div className="flex items-center justify-between">
-              {isDateValid ? (
-                <span className="text-xs text-custom-text-300">
-                  {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
-                </span>
-              ) : (
-                <span className="text-xs text-custom-text-400">No due date</span>
+              {isDateValid && (
+                <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
+                  <CalendarClock className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
+                  <MoveRight className="h-3 w-3 flex-shrink-0" />
+                  <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
+                  <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
+                </div>
               )}
-              <div className="z-[5] flex items-center gap-1.5">
-                {isEditingAllowed &&
-                  (cycleDetails.is_favorite ? (
-                    <button type="button" onClick={handleRemoveFromFavorites}>
-                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                    </button>
-                  ) : (
-                    <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                    </button>
-                  ))}
-
-                <CycleQuickActions cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
-              </div>
             </div>
           </div>
         </div>
       </Link>
+      <div className="absolute right-4 bottom-3.5 flex items-center gap-1.5">
+        {isEditingAllowed && (
+          <FavoriteStar
+            onClick={(e) => {
+              if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
+              else handleAddToFavorites(e);
+            }}
+            selected={!!cycleDetails.is_favorite}
+          />
+        )}
+
+        <CycleQuickActions
+          parentRef={parentRef}
+          cycleId={cycleId}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+        />
+      </div>
     </div>
   );
 });

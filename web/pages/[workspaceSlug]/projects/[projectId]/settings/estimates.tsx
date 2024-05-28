@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { PageHead } from "@/components/core";
 import { EstimatesList } from "@/components/estimates";
@@ -35,7 +35,7 @@ const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
 
 EstimatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectSettingHeader title="Estimates Settings" />} withProjectWrapper>
+    <AppLayout header={<ProjectSettingHeader />} withProjectWrapper>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

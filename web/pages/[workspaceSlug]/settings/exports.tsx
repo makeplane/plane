@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { PageHead } from "@/components/core";
 import ExportGuide from "@/components/exporter/guide";
@@ -38,7 +38,7 @@ const ExportsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full overflow-y-auto py-8 pr-9">
+      <div className="w-full overflow-y-auto md:pr-9 pr-4">
         <div className="flex items-center border-b border-custom-border-100 py-3.5">
           <h3 className="text-xl font-medium">Exports</h3>
         </div>
@@ -50,7 +50,7 @@ const ExportsPage: NextPageWithLayout = observer(() => {
 
 ExportsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

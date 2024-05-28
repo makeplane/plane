@@ -1,5 +1,12 @@
 import { EIssueLayoutTypes } from "constants/issue";
 
+export type TIssueLayouts =
+  | "list"
+  | "kanban"
+  | "calendar"
+  | "spreadsheet"
+  | "gantt_chart";
+
 export type TIssueGroupByOptions =
   | "state"
   | "priority"
@@ -96,7 +103,7 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: TIssueLayouts;
+  layout?: EIssueLayoutTypes;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;

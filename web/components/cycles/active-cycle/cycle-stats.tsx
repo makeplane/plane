@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
+// headless ui
 import { Tab } from "@headlessui/react";
 // types
 import { ICycle } from "@plane/types";
@@ -76,7 +77,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   useIntersectionObserver(issuesContainerRef, issuesLoaderRef, loadMoreIssues, `0% 0% 100% 0%`);
 
   return (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <Tab.Group
         as={Fragment}
         defaultIndex={currentValue(tab)}

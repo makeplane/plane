@@ -1,5 +1,3 @@
-import { Draggable } from "@hello-pangea/dnd";
-import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // components
@@ -7,16 +5,17 @@ import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+import { TRenderQuickActions } from "../list/list-view-types";
 // types
 
 type Props = {
   date: Date;
   issues: TIssueMap | undefined;
-  issueIdList: string[];
-  quickActions: (issue: TIssue, customActionButton?: React.ReactElement, placement?: Placement) => React.ReactNode;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
+  issueIdList: string[];
+  quickActions: TRenderQuickActions;
   isDragDisabled?: boolean;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
@@ -41,7 +40,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     readOnly,
     isMobileView = false,
   } = props;
-  // states
   const formattedDatePayload = renderFormattedPayloadDate(date);
 
   const {
@@ -61,38 +59,25 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {issueIdList?.map((issueId, index) =>
-        !isMobileView ? (
-          <Draggable key={issueId} draggableId={issueId} index={index} isDragDisabled={isDragDisabled}>
-            {(provided, snapshot) => (
-              <div
-                className="relative cursor-pointer p-1 px-2"
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                ref={provided.innerRef}
-              >
-                <CalendarIssueBlockRoot
-                  issues={issues}
-                  issueId={issueId}
-                  quickActions={quickActions}
-                  isDragging={snapshot.isDragging}
-                />
-              </div>
-            )}
-          </Draggable>
-        ) : (
-          <CalendarIssueBlockRoot key={issueId} issues={issues} issueId={issueId} quickActions={quickActions} />
-        )
-      )}
+      {issueIdList?.map((issueId) => (
+        <div key={issueId} className="relative cursor-pointer p-1 px-2">
+          <CalendarIssueBlockRoot
+            issues={issues}
+            issueId={issueId}
+            quickActions={quickActions}
+            isDragDisabled={isDragDisabled || isMobileView}
+          />
+        </div>
+      ))}
 
-      {isPaginating && (
+{isPaginating && (
         <div className="p-1 px-2">
           <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
         </div>
       )}
 
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
-        <div className="px-1 md:px-2 py-1 border-custom-border-200 border-b md:border-none md:hidden group-hover:block">
+        <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
           <CalendarQuickAddIssueForm
             formKey="target_date"
             groupId={formattedDatePayload}

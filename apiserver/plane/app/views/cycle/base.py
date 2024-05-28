@@ -1,10 +1,9 @@
 # Python imports
 import json
 
+# Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-
-# Django imports
 from django.db.models import (
     Case,
     CharField,
@@ -21,17 +20,16 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
 )
 from plane.app.serializers import (
-    CycleFavoriteSerializer,
     CycleSerializer,
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
@@ -39,8 +37,8 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Cycle,
-    CycleFavorite,
     CycleIssue,
+    UserFavorite,
     CycleUserProperties,
     Issue,
     Label,
@@ -49,10 +47,11 @@ from plane.db.models import (
 from plane.utils.analytics_plot import burndown_plot
 
 # Module imports
-from .. import BaseAPIView, BaseViewSet, WebhookMixin
+from .. import BaseAPIView, BaseViewSet
+from plane.bgtasks.webhook_task import model_activity
 
 
-class CycleViewSet(WebhookMixin, BaseViewSet):
+class CycleViewSet(BaseViewSet):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
@@ -67,9 +66,10 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def get_queryset(self):
-        favorite_subquery = CycleFavorite.objects.filter(
+        favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            cycle_id=OuterRef("pk"),
+            entity_identifier=OuterRef("pk"),
+            entity_type="cycle",
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -241,6 +241,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             )
 
             if data:
@@ -365,6 +366,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             "backlog_issues",
             "assignee_ids",
             "status",
+            "created_by",
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -414,6 +416,17 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .first()
                 )
+
+                # Send the model activity
+                model_activity.delay(
+                    model_name="cycle",
+                    model_id=str(cycle["id"]),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -436,6 +449,11 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 {"error": "Archived cycle cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        current_instance = json.dumps(
+            CycleSerializer(cycle).data, cls=DjangoJSONEncoder
+        )
+
         request_data = request.data
 
         if (
@@ -489,6 +507,18 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "assignee_ids",
                 "status",
             ).first()
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="cycle",
+                model_id=str(cycle["id"]),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -536,6 +566,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             )
             .first()
         )
@@ -686,197 +717,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleArchiveUnarchiveEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get_queryset(self):
-        favorite_subquery = CycleFavorite.objects.filter(
-            user=self.request.user,
-            cycle_id=OuterRef("pk"),
-            project_id=self.kwargs.get("project_id"),
-            workspace__slug=self.kwargs.get("slug"),
-        )
-        return (
-            Cycle.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(archived_at__isnull=False)
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
-            .filter(project__archived_at__isnull=True)
-            .select_related("project", "workspace", "owned_by")
-            .prefetch_related(
-                Prefetch(
-                    "issue_cycle__issue__assignees",
-                    queryset=User.objects.only(
-                        "avatar", "first_name", "id"
-                    ).distinct(),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_cycle__issue__labels",
-                    queryset=Label.objects.only(
-                        "name", "color", "id"
-                    ).distinct(),
-                )
-            )
-            .annotate(is_favorite=Exists(favorite_subquery))
-            .annotate(
-                completed_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="cancelled",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                unstarted_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="unstarted",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                backlog_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="backlog",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                status=Case(
-                    When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
-                        then=Value("CURRENT"),
-                    ),
-                    When(
-                        start_date__gt=timezone.now(), then=Value("UPCOMING")
-                    ),
-                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
-                    When(
-                        Q(start_date__isnull=True) & Q(end_date__isnull=True),
-                        then=Value("DRAFT"),
-                    ),
-                    default=Value("DRAFT"),
-                    output_field=CharField(),
-                )
-            )
-            .annotate(
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_cycle__issue__assignees__id",
-                        distinct=True,
-                        filter=~Q(
-                            issue_cycle__issue__assignees__id__isnull=True
-                        )
-                        & Q(
-                            issue_cycle__issue__assignees__member_project__is_active=True
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                )
-            )
-            .order_by("-is_favorite", "name")
-            .distinct()
-        )
-
-    def get(self, request, slug, project_id):
-        queryset = (
-            self.get_queryset()
-            .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .values(
-                # necessary fields
-                "id",
-                "workspace_id",
-                "project_id",
-                # model fields
-                "name",
-                "description",
-                "start_date",
-                "end_date",
-                "owned_by_id",
-                "view_props",
-                "sort_order",
-                "external_source",
-                "external_id",
-                "progress_snapshot",
-                # meta fields
-                "total_issues",
-                "is_favorite",
-                "cancelled_issues",
-                "completed_issues",
-                "started_issues",
-                "unstarted_issues",
-                "backlog_issues",
-                "assignee_ids",
-                "status",
-                "archived_at",
-            )
-        ).order_by("-is_favorite", "-created_at")
-        return Response(queryset, status=status.HTTP_200_OK)
-
-    def post(self, request, slug, project_id, cycle_id):
-        cycle = Cycle.objects.get(
-            pk=cycle_id, project_id=project_id, workspace__slug=slug
-        )
-        cycle.archived_at = timezone.now()
-        cycle.save()
-        return Response(
-            {"archived_at": str(cycle.archived_at)},
-            status=status.HTTP_200_OK,
-        )
-
-    def delete(self, request, slug, project_id, cycle_id):
-        cycle = Cycle.objects.get(
-            pk=cycle_id, project_id=project_id, workspace__slug=slug
-        )
-        cycle.archived_at = None
-        cycle.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class CycleDateCheckEndpoint(BaseAPIView):
     permission_classes = [
         ProjectEntityPermission,
@@ -914,8 +754,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-    serializer_class = CycleFavoriteSerializer
-    model = CycleFavorite
+    model = UserFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -927,18 +766,21 @@ class CycleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        serializer = CycleFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user, project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        _ = UserFavorite.objects.create(
+            project_id=project_id,
+            user=request.user,
+            entity_type="cycle",
+            entity_identifier=request.data.get("cycle"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, cycle_id):
-        cycle_favorite = CycleFavorite.objects.get(
+        cycle_favorite = UserFavorite.objects.get(
             project=project_id,
+            entity_type="cycle",
             user=request.user,
             workspace__slug=slug,
-            cycle_id=cycle_id,
+            entity_identifier=cycle_id,
         )
         cycle_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

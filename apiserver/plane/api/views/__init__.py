@@ -3,6 +3,7 @@ from .project import ProjectAPIEndpoint, ProjectArchiveUnarchiveAPIEndpoint
 from .state import StateAPIEndpoint
 
 from .issue import (
+    WorkspaceIssueAPIEndpoint,
     IssueAPIEndpoint,
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,

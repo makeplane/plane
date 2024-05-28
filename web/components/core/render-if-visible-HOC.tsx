@@ -12,7 +12,6 @@ type Props = {
   alwaysRender?: boolean;
   placeholderChildren?: ReactNode;
   pauseHeightUpdateWhileRendering?: boolean;
-  changingReference?: any;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {

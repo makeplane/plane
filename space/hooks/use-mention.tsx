@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
-import { UserService } from "services/user.service";
 import useSWR from "swr";
 import { IUser } from "@plane/types";
+import { UserService } from "services/user.service";
 
 export const useMention = () => {
   const userService = new UserService();
@@ -11,7 +11,6 @@ export const useMention = () => {
 
   useEffect(() => {
     if (userRef) {
-      // @ts-expect-error mismatch in types
       userRef.current = user;
     }
   }, [user]);

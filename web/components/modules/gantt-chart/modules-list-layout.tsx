@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IModule } from "@plane/types";
 // mobx store
@@ -8,7 +8,7 @@ import { ChartDataType, GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } f
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
 import { ModuleGanttBlock } from "@/components/modules";
 import { getDate } from "@/helpers/date-time.helper";
-import { useModule, useProject } from "@/hooks/store";
+import { useModule, useModuleFilter, useProject } from "@/hooks/store";
 // types
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
@@ -18,6 +18,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   // store
   const { currentProjectDetails } = useProject();
   const { getFilteredModuleIds, getModuleById, updateModuleDetails } = useModule();
+  const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
   // derived values
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
@@ -69,7 +70,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
-        enableReorder={isAllowed}
+        enableReorder={isAllowed && displayFilters?.order_by === "sort_order"}
         enableAddBlock={isAllowed}
         showAllBlocks
       />

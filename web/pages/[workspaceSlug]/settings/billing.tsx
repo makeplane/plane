@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { Button } from "@plane/ui";
 import { PageHead } from "@/components/core";
@@ -37,7 +37,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto py-8 pr-9">
+      <section className="w-full overflow-y-auto md:pr-9 pr-4">
         <div>
           <div className="flex  items-center border-b border-custom-border-100 py-3.5">
             <h3 className="text-xl font-medium">Billing & Plans</h3>
@@ -59,7 +59,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
 
 BillingSettingsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Billing & Plans Settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

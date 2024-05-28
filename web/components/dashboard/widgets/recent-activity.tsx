@@ -1,26 +1,26 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { History } from "lucide-react";
+// types
 import { TRecentActivityWidgetResponse } from "@plane/types";
-// hooks
-// components
+// UI
 import { Avatar, getButtonStyling } from "@plane/ui";
+// components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
-// ui
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useDashboard, useUser } from "@/hooks/store";
-// types
 
 const WIDGET_KEY = "recent_activity";
 
 export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: currentUser } = useUser();
   // derived values
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
@@ -68,8 +68,8 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                   </div>
                 )}
               </div>
-              <div className="-mt-1 break-words">
-                <p className="text-sm text-custom-text-200">
+              <div className="-mt-2 break-words">
+                <p className="inline text-sm text-custom-text-200">
                   <span className="font-medium text-custom-text-100">
                     {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail?.display_name}{" "}
                   </span>
@@ -81,7 +81,9 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
+                <p className="text-xs text-custom-text-200 whitespace-nowrap">
+                  {calculateTimeAgo(activity.created_at)}
+                </p>
               </div>
             </div>
           ))}

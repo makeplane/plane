@@ -1,37 +1,59 @@
-import { MutableRefObject, useRef } from "react";
-import isNil from "lodash/isNil";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { isNil } from "lodash";
 import { observer } from "mobx-react";
-//types
-import { GroupByColumnTypes, TIssue, IIssueDisplayProperties, TIssueMap, IGroupByColumn } from "@plane/types";
+import { cn } from "@plane/editor-core";
+// plane packages
+import {
+  IGroupByColumn,
+  TIssueMap,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  TIssue,
+  IIssueDisplayProperties,
+} from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
 import { ListLoaderItemRow } from "@/components/ui";
+// constants
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // hooks
+import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { IStateStore } from "@/store/state.store";
-// utils
+import { GroupDragOverlay } from "../group-drag-overlay";
+import {
+  GroupDropLocation,
+  getDestinationFromDropPayload,
+  getIssueBlockId,
+  getSourceFromDropPayload,
+  highlightIssueOnDrop,
+} from "../utils";
+import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
+import { TRenderQuickActions } from "./list-view-types";
+import { ListQuickAddIssueForm } from "./quick-add-issue-form";
 
 interface Props {
   groupIssueIds: string[] | undefined;
   group: IGroupByColumn;
   issuesMap: TIssueMap;
-  group_by: GroupByColumnTypes | null;
-  updateIssue:
-    | ((projectId: string | null | undefined, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
-  quickActions: (issue: TIssue) => React.ReactNode;
+  group_by: TIssueGroupByOptions | null;
+  orderBy: TIssueOrderByOptions | undefined;
+  getGroupIndex: (groupId: string | undefined) => number;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
-  projectState: IStateStore;
-  containerRef: MutableRefObject<HTMLDivElement | null>;
-  showEmptyGroup?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
+  containerRef: MutableRefObject<HTMLDivElement | null>;
+  quickAddCallback?: ((projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>) | undefined;
+  handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
-  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
+  showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
 }
 
@@ -39,28 +61,34 @@ export const ListGroup = observer((props: Props) => {
   const {
     groupIssueIds,
     group,
-    addIssuesToView,
-    group_by,
-    showEmptyGroup,
-    projectState,
-    disableIssueCreation,
-    containerRef,
     issuesMap,
+    group_by,
+    orderBy,
+    getGroupIndex,
     updateIssue,
     quickActions,
     displayProperties,
     enableIssueQuickAdd,
     canEditProperties,
-    loadMoreIssues,
+    containerRef,
     quickAddCallback,
-    isCompletedCycle = false,
+    handleOnDrop,
+    disableIssueCreation,
+    addIssuesToView,
+    isCompletedCycle,
+    showEmptyGroup,
+    loadMoreIssues,
   } = props;
+
+  const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
+  const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
+  const groupRef = useRef<HTMLDivElement | null>(null);
+
+  const projectState = useProjectState();
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
   } = useIssuesStore();
-
-  const isGroupByCreatedBy = group_by === "created_by";
 
   const intersectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -122,9 +150,76 @@ export const ListGroup = observer((props: Props) => {
     return preloadedData;
   };
 
+  useEffect(() => {
+    const element = groupRef.current;
+
+    if (!element) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        getData: () => ({ groupId: group.id, type: "COLUMN" }),
+        onDragEnter: () => {
+          setIsDraggingOverColumn(true);
+        },
+        onDragLeave: () => {
+          setIsDraggingOverColumn(false);
+        },
+        onDragStart: () => {
+          setIsDraggingOverColumn(true);
+        },
+        onDrag: ({ source }) => {
+          const sourceGroupId = source?.data?.groupId as string | undefined;
+          const currentGroupId = group.id;
+
+          const sourceIndex = getGroupIndex(sourceGroupId);
+          const currentIndex = getGroupIndex(currentGroupId);
+
+          if (sourceIndex > currentIndex) {
+            setDragColumnOrientation("justify-end");
+          } else {
+            setDragColumnOrientation("justify-start");
+          }
+        },
+        onDrop: (payload) => {
+          setIsDraggingOverColumn(false);
+          const source = getSourceFromDropPayload(payload);
+          const destination = getDestinationFromDropPayload(payload);
+
+          if (!source || !destination) return;
+
+          if (group.isDropDisabled) {
+            group.dropErrorMessage &&
+              setToast({
+                type: TOAST_TYPE.WARNING,
+                title: "Warning!",
+                message: group.dropErrorMessage,
+              });
+            return;
+          }
+
+          handleOnDrop(source, destination);
+
+          highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
+        },
+      })
+    );
+  }, [groupRef?.current, group, orderBy, getGroupIndex, setDragColumnOrientation, setIsDraggingOverColumn]);
+
+  const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
+  const canOverlayBeVisible = orderBy !== "sort_order" || !!group.isDropDisabled;
+
+  const isGroupByCreatedBy = group_by === "created_by";
+
   return groupIssueIds && !isNil(groupIssueCount) && validateEmptyIssueGroups(groupIssueCount) ? (
-    <div key={group.id} className={`flex flex-shrink-0 flex-col`}>
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
+    <div
+      ref={groupRef}
+      className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
+        "border-custom-primary-100": isDraggingOverColumn,
+        "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
+      })}
+    >
+      <div className="sticky top-0 z-[3] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 pl-5 py-1">
         <HeaderGroupByCard
           icon={group.icon}
           title={group.name || ""}
@@ -134,26 +229,41 @@ export const ListGroup = observer((props: Props) => {
           addIssuesToView={addIssuesToView}
         />
       </div>
-
-      {groupIssueIds && (
-        <IssueBlocksList
-          issueIds={groupIssueIds}
-          issuesMap={issuesMap}
-          updateIssue={updateIssue}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          canEditProperties={canEditProperties}
-          containerRef={containerRef}
-        />
-      )}
-      {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={intersectionRef} />)}
-
-      {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
-        <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-          <ListQuickAddIssueForm
-            prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
-            quickAddCallback={quickAddCallback}
+      {!!groupIssueCount && (
+        <div className="relative">
+          <GroupDragOverlay
+            dragColumnOrientation={dragColumnOrientation}
+            canOverlayBeVisible={canOverlayBeVisible}
+            isDropDisabled={!!group.isDropDisabled}
+            dropErrorMessage={group.dropErrorMessage}
+            orderBy={orderBy}
+            isDraggingOverColumn={isDraggingOverColumn}
           />
+          {groupIssueIds && (
+            <IssueBlocksList
+              issueIds={groupIssueIds}
+              groupId={group.id}
+              issuesMap={issuesMap}
+              updateIssue={updateIssue}
+              quickActions={quickActions}
+              displayProperties={displayProperties}
+              canEditProperties={canEditProperties}
+              containerRef={containerRef}
+              isDragAllowed={isDragAllowed}
+              canDropOverIssue={!canOverlayBeVisible}
+            />
+          )}
+
+          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={intersectionRef} />)}
+
+          {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
+            <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+              <ListQuickAddIssueForm
+                prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
+                quickAddCallback={quickAddCallback}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

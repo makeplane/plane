@@ -1,11 +1,11 @@
-import { useState, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { FC, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
@@ -28,10 +28,11 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    currentUser,
-    currentUserSettings,
+    // currentUser,
+    // currentUserSettings,
     membership: { currentWorkspaceRole, leaveWorkspace },
   } = useUser();
+  const { data: currentUser } = useUser();
   const {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
@@ -41,7 +42,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const memberDetails = getWorkspaceMemberDetails(memberId);
 
   const handleLeaveWorkspace = async () => {
-    if (!workspaceSlug || !currentUserSettings) return;
+    if (!workspaceSlug || !currentUser) return;
 
     await leaveWorkspace(workspaceSlug.toString())
       .then(() => {
@@ -51,10 +52,10 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         });
         router.push("/profile");
       })
-      .catch((err) =>
+      .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error",
+          title: "Error!",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );
@@ -66,7 +67,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id).catch((err) =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
+        title: "Error!",
         message: err?.error || "Something went wrong. Please try again.",
       })
     );
@@ -104,8 +105,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         }}
         onSubmit={handleRemove}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
-        <div className="flex items-center gap-x-4 gap-y-2">
+      <div className="group w-full flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
+        <div className="flex w-full items-center gap-x-4 gap-y-2">
           {memberDetails.member.avatar && memberDetails.member.avatar.trim() !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${memberDetails.member.id}`}>
               <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
@@ -123,86 +124,90 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
               </span>
             </Link>
           )}
-          <div>
-            <Link href={`/${workspaceSlug}/profile/${memberDetails.member.id}`}>
-              <span className="text-sm font-medium">
-                {memberDetails.member.first_name} {memberDetails.member.last_name}
-              </span>
-            </Link>
-            <div className="flex items-center">
-              <p className="text-xs text-custom-text-300">{memberDetails.member.display_name}</p>
-              {isAdmin && (
-                <>
-                  <Dot height={16} width={16} className="text-custom-text-300" />
-                  <p className="text-xs text-custom-text-300">{memberDetails.member.email}</p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 text-xs">
-          <CustomSelect
-            customButton={
-              <div className="item-center flex gap-1 rounded px-2 py-0.5">
-                <span
-                  className={`flex items-center rounded text-xs font-medium ${
-                    hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
-                  }`}
-                >
-                  {ROLE[memberDetails.role]}
-                </span>
-                {hasRoleChangeAccess && (
-                  <span className="grid place-items-center">
-                    <ChevronDown className="h-3 w-3" />
+          <div className="w-full truncate flex items-center justify-between">
+            <div className="truncate">
+              <Link href={`/${workspaceSlug}/profile/${memberDetails.member.id}`} className="truncate">
+                <div className="w-full truncate">
+                  <span className="text-sm font-medium truncate">
+                    {memberDetails.member.first_name} {memberDetails.member.last_name}
                   </span>
+                </div>
+              </Link>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center truncate">
+                <p className="text-xs text-custom-text-300">{memberDetails.member.display_name}</p>
+                {isAdmin && (
+                  <>
+                    <Dot height={16} width={16} className="text-custom-text-300 hidden sm:block" />
+                    <p className="text-xs text-custom-text-300 line-clamp-1 truncate">{memberDetails.member.email}</p>
+                  </>
                 )}
               </div>
-            }
-            value={memberDetails.role}
-            onChange={(value: EUserWorkspaceRoles) => {
-              if (!workspaceSlug || !value) return;
+            </div>
+            <div className="flex flex-shrink-0 items-center gap-2 text-xs">
+              <CustomSelect
+                customButton={
+                  <div className="item-center flex gap-1 rounded px-2 py-0.5">
+                    <span
+                      className={`flex items-center rounded text-xs font-medium ${
+                        hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
+                      }`}
+                    >
+                      {ROLE[memberDetails.role]}
+                    </span>
+                    {hasRoleChangeAccess && (
+                      <span className="grid place-items-center">
+                        <ChevronDown className="h-3 w-3" />
+                      </span>
+                    )}
+                  </div>
+                }
+                value={memberDetails.role}
+                onChange={(value: EUserWorkspaceRoles) => {
+                  if (!workspaceSlug || !value) return;
 
-              updateMember(workspaceSlug.toString(), memberDetails.member.id, {
-                role: value,
-              }).catch(() => {
-                setToast({
-                  type: TOAST_TYPE.ERROR,
-                  title: "Error!",
-                  message: "An error occurred while updating member role. Please try again.",
-                });
-              });
-            }}
-            disabled={!hasRoleChangeAccess}
-            placement="bottom-end"
-          >
-            {Object.keys(ROLE).map((key) => {
-              if (currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < parseInt(key))
-                return null;
+                  updateMember(workspaceSlug.toString(), memberDetails.member.id, {
+                    role: value,
+                  }).catch(() => {
+                    setToast({
+                      type: TOAST_TYPE.ERROR,
+                      title: "Error!",
+                      message: "An error occurred while updating member role. Please try again.",
+                    });
+                  });
+                }}
+                disabled={!hasRoleChangeAccess}
+                placement="bottom-end"
+              >
+                {Object.keys(ROLE).map((key) => {
+                  if (currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < parseInt(key))
+                    return null;
 
-              return (
-                <CustomSelect.Option key={key} value={parseInt(key, 10)}>
-                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                </CustomSelect.Option>
-              );
-            })}
-          </CustomSelect>
-          <Tooltip
-            isMobile={isMobile}
-            tooltipContent={isCurrentUser ? "Leave workspace" : "Remove member"}
-            disabled={!isAdmin && !isCurrentUser}
-          >
-            <button
-              type="button"
-              onClick={() => setRemoveMemberModal(true)}
-              className={
-                isAdmin || isCurrentUser
-                  ? "pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
-                  : "pointer-events-none opacity-0"
-              }
-            >
-              <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
-            </button>
-          </Tooltip>
+                  return (
+                    <CustomSelect.Option key={key} value={parseInt(key, 10)}>
+                      <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                    </CustomSelect.Option>
+                  );
+                })}
+              </CustomSelect>
+              <Tooltip
+                isMobile={isMobile}
+                tooltipContent={isCurrentUser ? "Leave workspace" : "Remove member"}
+                disabled={!isAdmin && !isCurrentUser}
+              >
+                <button
+                  type="button"
+                  onClick={() => setRemoveMemberModal(true)}
+                  className={
+                    isAdmin || isCurrentUser
+                      ? "pointer-events-none md:opacity-0 group-hover:pointer-events-auto md:group-hover:opacity-100"
+                      : "pointer-events-none hidden md:opacity-0 md:block"
+                  }
+                >
+                  <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
         </div>
       </div>
     </>

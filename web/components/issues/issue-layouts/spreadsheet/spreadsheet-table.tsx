@@ -6,6 +6,7 @@ import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
+import { TRenderQuickActions } from "../list/list-view-types";
 import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
@@ -16,14 +17,8 @@ type Props = {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issueIds: string[];
   isEstimateEnabled: boolean;
-  quickActions: (
-    issue: TIssue,
-    customActionButton?: React.ReactElement,
-    portalElement?: HTMLDivElement | null
-  ) => React.ReactNode;
-  updateIssue:
-    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
+  quickActions: TRenderQuickActions;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
