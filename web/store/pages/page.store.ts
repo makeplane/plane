@@ -9,12 +9,11 @@ import { EUserProjectRoles } from "@/constants/project";
 import { PageService } from "@/services/page.service";
 import { RootStore } from "../root.store";
 
-export type TLoader = "submitting" | "submitted" | "saved" | undefined;
+export type TLoader = "submitting" | "submitted" | "saved";
 
 export interface IPageStore extends TPage {
   // observables
-  isSubmitting: "submitting" | "submitted" | "saved";
-  loader: TLoader;
+  isSubmitting: TLoader;
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
@@ -27,12 +26,12 @@ export interface IPageStore extends TPage {
   isContentEditable: boolean;
   // helpers
   oldName: string;
-  updateTitle: (name: string) => void;
-  updateDescription: (description: string) => void;
-  setIsSubmitting: (isSubmitting: "submitting" | "submitted" | "saved") => void;
+  setIsSubmitting: (value: TLoader) => void;
   cleanup: () => void;
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
+  updateTitle: (title: string) => void;
+  updateDescription: (binaryString: string, descriptionHTML: string) => Promise<void>;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
@@ -45,8 +44,7 @@ export interface IPageStore extends TPage {
 
 export class PageStore implements IPageStore {
   // loaders
-  isSubmitting: "submitting" | "submitted" | "saved" = "saved";
-  loader: TLoader = undefined;
+  isSubmitting: TLoader = "saved";
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -68,7 +66,7 @@ export class PageStore implements IPageStore {
   oldName: string = "";
   // reactions
   disposers: Array<() => void> = [];
-  // service
+  // services
   pageService: PageService;
 
   constructor(
@@ -96,7 +94,6 @@ export class PageStore implements IPageStore {
     makeObservable(this, {
       // loaders
       isSubmitting: observable.ref,
-      loader: observable.ref,
       // page properties
       id: observable.ref,
       name: observable.ref,
@@ -115,7 +112,9 @@ export class PageStore implements IPageStore {
       created_at: observable.ref,
       updated_at: observable.ref,
       // helpers
-      oldName: observable,
+      oldName: observable.ref,
+      setIsSubmitting: action,
+      cleanup: action,
       // computed
       asJSON: computed,
       isCurrentUserOwner: computed,
@@ -126,13 +125,10 @@ export class PageStore implements IPageStore {
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       isContentEditable: computed,
-      // helper actions
-      updateTitle: action,
-      updateDescription: action.bound,
-      setIsSubmitting: action,
-      cleanup: action,
       // actions
       update: action,
+      updateTitle: action,
+      updateDescription: action,
       makePublic: action,
       makePrivate: action,
       lock: action,
@@ -169,27 +165,7 @@ export class PageStore implements IPageStore {
       { delay: 2000 }
     );
 
-    const descriptionDisposer = reaction(
-      () => this.description_html,
-      (description_html) => {
-        //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
-        const { workspaceSlug, projectId } = this.store.router;
-        if (!workspaceSlug || !projectId || !this.id) return;
-        this.isSubmitting = "submitting";
-        this.pageService
-          .update(workspaceSlug, projectId, this.id, {
-            description_html,
-          })
-          .finally(() =>
-            runInAction(() => {
-              this.isSubmitting = "submitted";
-            })
-          );
-      },
-      { delay: 3000 }
-    );
-
-    this.disposers.push(titleDisposer, descriptionDisposer);
+    this.disposers.push(titleDisposer);
   }
 
   // computed
@@ -284,24 +260,21 @@ export class PageStore implements IPageStore {
     );
   }
 
-  updateTitle = action("updateTitle", (name: string) => {
-    this.oldName = this.name ?? "";
-    this.name = name;
-  });
+  /**
+   * @description update the submitting state
+   * @param value
+   */
+  setIsSubmitting = (value: TLoader) => {
+    runInAction(() => {
+      this.isSubmitting = value;
+    });
+  };
 
-  updateDescription = action("updateDescription", (description_html: string) => {
-    this.description_html = description_html;
-  });
-
-  setIsSubmitting = action("setIsSubmitting", (isSubmitting: "submitting" | "submitted" | "saved") => {
-    this.isSubmitting = isSubmitting;
-  });
-
-  cleanup = action("cleanup", () => {
+  cleanup = () => {
     this.disposers.forEach((disposer) => {
       disposer();
     });
-  });
+  };
 
   /**
    * @description update the page
@@ -313,20 +286,56 @@ export class PageStore implements IPageStore {
 
     const currentPage = this.asJSON;
     try {
-      const currentPageResponse = await this.pageService.update(workspaceSlug, projectId, this.id, currentPage);
-      if (currentPageResponse)
-        runInAction(() => {
-          Object.keys(pageData).forEach((key) => {
-            const currentPageKey = key as keyof TPage;
-            set(this, key, currentPageResponse?.[currentPageKey] || undefined);
-          });
+      runInAction(() => {
+        Object.keys(pageData).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(this, key, pageData[currentPageKey] || undefined);
         });
+      });
+
+      await this.pageService.update(workspaceSlug, projectId, this.id, currentPage);
     } catch (error) {
       runInAction(() => {
         Object.keys(pageData).forEach((key) => {
           const currentPageKey = key as keyof TPage;
           set(this, key, currentPage?.[currentPageKey] || undefined);
         });
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description update the page title
+   * @param title
+   */
+  updateTitle = (title: string) => {
+    this.oldName = this.name ?? "";
+    this.name = title;
+  };
+
+  /**
+   * @description update the page description
+   * @param {string} binaryString
+   * @param {string} descriptionHTML
+   */
+  updateDescription = async (binaryString: string, descriptionHTML: string) => {
+    const { workspaceSlug, projectId } = this.store.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+
+    const currentDescription = this.description_html;
+    runInAction(() => {
+      this.description_html = descriptionHTML;
+    });
+
+    try {
+      await this.pageService.updateDescriptionYJS(workspaceSlug, projectId, this.id, {
+        description_binary: binaryString,
+        description_html: descriptionHTML,
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.description_html = currentDescription;
       });
       throw error;
     }

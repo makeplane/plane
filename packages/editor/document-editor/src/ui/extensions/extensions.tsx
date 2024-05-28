@@ -1,3 +1,4 @@
+import Collaboration from "@tiptap/extension-collaboration";
 import Placeholder from "@tiptap/extension-placeholder";
 // plane imports
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
@@ -5,12 +6,18 @@ import { UploadImage, ISlashCommandItem } from "@plane/editor-core";
 // ui
 import { LayersIcon } from "@plane/ui";
 import { IssueEmbedSuggestions, IssueWidget, IssueListRenderer, TIssueEmbedConfig } from "src/ui/extensions";
+import { CollaborationProvider } from "src/providers/collaboration-provider";
 
-export const DocumentEditorExtensions = (
-  uploadFile: UploadImage,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
-  issueEmbedConfig?: TIssueEmbedConfig
-) => {
+type TArguments = {
+  uploadFile: UploadImage;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
+  issueEmbedConfig?: TIssueEmbedConfig;
+  provider: CollaborationProvider;
+};
+
+export const DocumentEditorExtensions = (props: TArguments) => {
+  const { uploadFile, setHideDragHandle, issueEmbedConfig, provider } = props;
+
   const additionalOptions: ISlashCommandItem[] = [
     {
       key: "issue_embed",
@@ -47,11 +54,13 @@ export const DocumentEditorExtensions = (
       },
       includeChildren: true,
     }),
+    Collaboration.configure({
+      document: provider.document,
+    }),
   ];
 
   if (issueEmbedConfig) {
     extensions.push(
-      // TODO: check this
       // @ts-expect-error resolve this
       IssueWidget({
         widgetCallback: issueEmbedConfig.widgetCallback,

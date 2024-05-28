@@ -8,6 +8,10 @@ from django.utils import timezone
 from plane.db.models import Account
 
 from .base import Adapter
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 
 
 class OauthAdapter(Adapter):
@@ -50,20 +54,42 @@ class OauthAdapter(Adapter):
         return self.complete_login_or_signup()
 
     def get_user_token(self, data, headers=None):
-        headers = headers or {}
-        response = requests.post(
-            self.get_token_url(), data=data, headers=headers
-        )
-        response.raise_for_status()
-        return response.json()
+        try:
+            headers = headers or {}
+            response = requests.post(
+                self.get_token_url(), data=data, headers=headers
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException:
+            code = (
+                "GOOGLE_OAUTH_PROVIDER_ERROR"
+                if self.provider == "google"
+                else "GITHUB_OAUTH_PROVIDER_ERROR"
+            )
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[code],
+                error_message=str(code),
+            )
 
     def get_user_response(self):
-        headers = {
-            "Authorization": f"Bearer {self.token_data.get('access_token')}"
-        }
-        response = requests.get(self.get_user_info_url(), headers=headers)
-        response.raise_for_status()
-        return response.json()
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.token_data.get('access_token')}"
+            }
+            response = requests.get(self.get_user_info_url(), headers=headers)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException:
+            code = (
+                "GOOGLE_OAUTH_PROVIDER_ERROR"
+                if self.provider == "google"
+                else "GITHUB_OAUTH_PROVIDER_ERROR"
+            )
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[code],
+                error_message=str(code),
+            )
 
     def set_user_data(self, data):
         self.user_data = data
