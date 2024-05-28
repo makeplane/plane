@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
@@ -11,7 +11,8 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 // helper
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
-import { useCommandPalette, usePage, useProject } from "@/hooks/store";
+import { usePage, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;

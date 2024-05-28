@@ -208,8 +208,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               const root = createRoot(container);
               root.render(
                 <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
-                  <div className="flex items-center h-7 w-5 grid place-items-center flex-shrink-0">
-                    {project && <ProjectLogo logo={project?.logo_props} />}
+                  <div className="h-7 w-7 grid place-items-center flex-shrink-0">
+                    {project && <Logo logo={project?.logo_props} />}
                   </div>
                   <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
                 </div>
