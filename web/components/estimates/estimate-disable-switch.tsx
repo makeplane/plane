@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useProjectEstimates } from "@/hooks/store";
 
 type TEstimateDisableSwitch = {
   workspaceSlug: string;
@@ -14,11 +14,17 @@ export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
   const { updateProject, currentProjectDetails } = useProject();
+  const { currentActiveEstimateId } = useProjectEstimates();
+
+  const currentProjectActiveEstimate = currentProjectDetails?.estimate || undefined;
 
   const disableEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
+
     try {
-      await updateProject(workspaceSlug, projectId, { estimate: null });
+      await updateProject(workspaceSlug, projectId, {
+        estimate: currentProjectActiveEstimate ? null : currentActiveEstimateId,
+      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -35,7 +41,7 @@ export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props
 
   return (
     <ToggleSwitch
-      value={Boolean(currentProjectDetails?.estimate)}
+      value={Boolean(currentProjectActiveEstimate)}
       onChange={disableEstimate}
       disabled={!isAdmin}
       size="sm"

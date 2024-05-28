@@ -10,12 +10,13 @@ import { useProjectEstimates } from "@/hooks/store";
 type TEstimateListItem = {
   estimateId: string;
   isAdmin: boolean;
+  isEstimateEnabled: boolean;
   isEditable: boolean;
   onEditClick?: (estimateId: string) => void;
 };
 
 export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
-  const { estimateId, isAdmin, isEditable, onEditClick } = props;
+  const { estimateId, isAdmin, isEstimateEnabled, isEditable, onEditClick } = props;
   // hooks
   const { estimateById } = useProjectEstimates();
 
@@ -27,7 +28,7 @@ export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
     <div
       className={cn(
         "relative border-b border-custom-border-200 flex justify-between items-center gap-3 py-3.5",
-        isAdmin && isEditable ? `text-custom-text-100` : `text-custom-text-200`
+        isAdmin && isEditable && isEstimateEnabled ? `text-custom-text-100` : `text-custom-text-200`
       )}
     >
       <div className="space-y-1">

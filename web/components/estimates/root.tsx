@@ -11,7 +11,7 @@ import {
   EstimateList,
 } from "@/components/estimates";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProject, useProjectEstimates } from "@/hooks/store";
 
 type TEstimateRoot = {
   workspaceSlug: string;
@@ -22,6 +22,7 @@ type TEstimateRoot = {
 export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
+  const { currentProjectDetails } = useProject();
   const { loader, currentActiveEstimateId, archivedEstimateIds, getProjectEstimates } = useProjectEstimates();
   // states
   const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(false);
@@ -59,6 +60,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
               <EstimateList
                 estimateIds={[currentActiveEstimateId]}
                 isAdmin={isAdmin}
+                isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
                 isEditable
                 onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
               />

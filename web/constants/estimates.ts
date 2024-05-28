@@ -16,6 +16,40 @@ export enum EEstimateUpdateStages {
 export const maxEstimatesCount = 11;
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
+  categories: {
+    name: "Categories",
+    templates: {
+      t_shirt_sizes: {
+        title: "T-Shirt Sizes",
+        values: [
+          { id: undefined, key: 1, value: "XS" },
+          { id: undefined, key: 2, value: "S" },
+          { id: undefined, key: 3, value: "M" },
+          { id: undefined, key: 4, value: "L" },
+          { id: undefined, key: 5, value: "XL" },
+          { id: undefined, key: 6, value: "XXL" },
+        ],
+      },
+      easy_to_hard: {
+        title: "Easy to hard",
+        values: [
+          { id: undefined, key: 1, value: "Easy" },
+          { id: undefined, key: 2, value: "Medium" },
+          { id: undefined, key: 3, value: "Hard" },
+          { id: undefined, key: 4, value: "Very Hard" },
+        ],
+      },
+      custom: {
+        title: "Custom",
+        values: [
+          { id: undefined, key: 1, value: "1" },
+          { id: undefined, key: 2, value: "2" },
+        ],
+        hide: true,
+      },
+    },
+    is_available: true,
+  },
   points: {
     name: "Points",
     templates: {
@@ -55,40 +89,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
           { id: undefined, key: 4, value: "16" },
           { id: undefined, key: 5, value: "25" },
           { id: undefined, key: 6, value: "36" },
-        ],
-      },
-      custom: {
-        title: "Custom",
-        values: [
-          { id: undefined, key: 1, value: "1" },
-          { id: undefined, key: 2, value: "2" },
-        ],
-        hide: true,
-      },
-    },
-    is_available: true,
-  },
-  categories: {
-    name: "Categories",
-    templates: {
-      t_shirt_sizes: {
-        title: "T-Shirt Sizes",
-        values: [
-          { id: undefined, key: 1, value: "XS" },
-          { id: undefined, key: 2, value: "S" },
-          { id: undefined, key: 3, value: "M" },
-          { id: undefined, key: 4, value: "L" },
-          { id: undefined, key: 5, value: "XL" },
-          { id: undefined, key: 6, value: "XXL" },
-        ],
-      },
-      easy_to_hard: {
-        title: "Easy to hard",
-        values: [
-          { id: undefined, key: 1, value: "Easy" },
-          { id: undefined, key: 2, value: "Medium" },
-          { id: undefined, key: 3, value: "Hard" },
-          { id: undefined, key: 4, value: "Very Hard" },
         ],
       },
       custom: {

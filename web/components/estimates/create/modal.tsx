@@ -24,7 +24,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   // hooks
   const { createEstimate } = useProjectEstimates();
   // states
-  const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
+  const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.CATEGORIES);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
   const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);

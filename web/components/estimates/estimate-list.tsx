@@ -6,12 +6,13 @@ import { EstimateListItem } from "@/components/estimates";
 type TEstimateList = {
   estimateIds: string[] | undefined;
   isAdmin: boolean;
+  isEstimateEnabled?: boolean;
   isEditable?: boolean;
   onEditClick?: (estimateId: string) => void;
 };
 
 export const EstimateList: FC<TEstimateList> = observer((props) => {
-  const { estimateIds, isAdmin, isEditable = false, onEditClick } = props;
+  const { estimateIds, isAdmin, isEstimateEnabled = false, isEditable = false, onEditClick } = props;
 
   if (!estimateIds || estimateIds?.length <= 0) return <></>;
   return (
@@ -22,6 +23,7 @@ export const EstimateList: FC<TEstimateList> = observer((props) => {
             key={estimateId}
             estimateId={estimateId}
             isAdmin={isAdmin}
+            isEstimateEnabled={isEstimateEnabled}
             isEditable={isEditable}
             onEditClick={onEditClick}
           />

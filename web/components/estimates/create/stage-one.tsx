@@ -38,7 +38,6 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
       </div>
       <div className="space-y-3">
         <div className="text-sm font-medium text-custom-text-200">Start from scratch</div>
-
         <button
           className="border border-custom-border-200 rounded-md p-2 text-left flex-1 w-full block"
           onClick={() => handleEstimatePoints("custom")}
