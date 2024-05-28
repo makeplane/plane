@@ -15,8 +15,10 @@ class Instance(BaseModel):
     instance_id = models.CharField(max_length=25, unique=True)
     license_key = models.CharField(max_length=256, null=True, blank=True)
     api_key = models.CharField(max_length=16)
-    version = models.CharField(max_length=10)
-    # Instnace specifics
+    current_version = models.CharField(max_length=10)
+    new_version = models.CharField(max_length=10, blank=True, null=True)
+    product = models.CharField(max_length=50, blank=True, null=True)
+    # Instance specifics
     last_checked_at = models.DateTimeField()
     namespace = models.CharField(max_length=50, blank=True, null=True)
     # telemetry and support

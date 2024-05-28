@@ -44,7 +44,7 @@ from plane.db.models import (
     ProjectMember,
     IssueReaction,
     CommentReaction,
-    ProjectDeployBoard,
+    DeployBoard,
     IssueVote,
     ProjectPublicMember,
 )
@@ -76,7 +76,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
+            project_deploy_board = DeployBoard.objects.get(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
@@ -103,11 +103,11 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     .distinct()
                 ).order_by("created_at")
             return IssueComment.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return IssueComment.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
 
@@ -151,7 +151,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, issue_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
 
@@ -184,7 +184,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, issue_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
 
@@ -221,7 +221,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
+            project_deploy_board = DeployBoard.objects.get(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
@@ -236,11 +236,11 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     .distinct()
                 )
             return IssueReaction.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return IssueReaction.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
 
@@ -280,7 +280,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
 
@@ -319,7 +319,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
+            project_deploy_board = DeployBoard.objects.get(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
@@ -334,11 +334,11 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     .distinct()
                 )
             return CommentReaction.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return CommentReaction.objects.none()
 
     def create(self, request, slug, project_id, comment_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
 
@@ -380,7 +380,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
         if not project_deploy_board.reactions:
@@ -421,7 +421,7 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
+            project_deploy_board = DeployBoard.objects.get(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
@@ -434,7 +434,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                     .filter(project_id=self.kwargs.get("project_id"))
                 )
             return IssueVote.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return IssueVote.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
@@ -513,7 +513,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        if not ProjectDeployBoard.objects.filter(
+        if not DeployBoard.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).exists():
             return Response(
