@@ -2,6 +2,8 @@ import React, { FC } from "react";
 import Link from "next/link";
 // ui
 import { Tooltip } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 interface IListItemProps {
   title: string;
@@ -12,6 +14,7 @@ interface IListItemProps {
   actionableItems?: JSX.Element;
   isMobile?: boolean;
   parentRef: React.RefObject<HTMLDivElement>;
+  className?: string;
 }
 
 export const ListItem: FC<IListItemProps> = (props) => {
@@ -24,12 +27,18 @@ export const ListItem: FC<IListItemProps> = (props) => {
     onItemClick,
     isMobile = false,
     parentRef,
+    className = "",
   } = props;
 
   return (
     <div ref={parentRef} className="relative">
       <Link href={itemLink} onClick={onItemClick}>
-        <div className="group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row">
+        <div
+          className={cn(
+            "group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row",
+            className
+          )}
+        >
           <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
             <div className="relative flex w-full items-center gap-3 overflow-hidden">
               <div className="flex items-center gap-4 truncate">

@@ -154,12 +154,11 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <div className="relative flex h-full w-full flex-col">
+      <div className="relative flex h-full w-full flex-col overflow-auto">
         <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
         {issueIds.length === 0 ? (
           <EmptyState
             type={emptyStateType as keyof typeof EMPTY_STATE_DETAILS}
-            size="sm"
             primaryButtonOnClick={
               (workspaceProjectIds ?? []).length > 0
                 ? currentView !== "custom-view" && currentView !== "subscribed"

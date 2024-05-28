@@ -42,6 +42,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const router = useRouter();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const { createInboxIssue } = useProjectInbox();
@@ -139,6 +140,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             handleData={handleFormData}
             editorRef={descriptionEditorRef}
             containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
+            onEnterKeyPress={() => submitBtnRef?.current?.click()}
           />
           <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
         </div>
@@ -158,6 +160,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           </Button>
           <Button
             variant="primary"
+            ref={submitBtnRef}
             size="sm"
             type="submit"
             loading={formSubmitting}

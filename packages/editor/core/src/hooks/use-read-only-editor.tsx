@@ -68,6 +68,10 @@ export const useReadOnlyEditor = ({
       const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
       return markdownOutput;
     },
+    getHTML: (): string => {
+      const htmlOutput = editorRef.current?.getHTML() ?? "<p></p>";
+      return htmlOutput;
+    },
     scrollSummary: (marking: IMarking): void => {
       if (!editorRef.current) return;
       scrollSummary(editorRef.current, marking);
