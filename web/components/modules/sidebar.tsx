@@ -12,8 +12,9 @@ import {
   Info,
   LinkIcon,
   Plus,
+  SquareUser,
   Trash2,
-  UserCircle2,
+  Users,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -24,7 +25,6 @@ import {
   LayersIcon,
   CustomSelect,
   ModuleStatusIcon,
-  UserGroupIcon,
   TOAST_TYPE,
   setToast,
   ArchiveIcon,
@@ -498,7 +498,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <UserCircle2 className="h-4 w-4" />
+              <SquareUser className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
             <Controller
@@ -516,6 +516,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     buttonVariant="background-with-text"
                     placeholder="Lead"
                     disabled={!isEditingAllowed || isArchived}
+                    icon={SquareUser}
                   />
                 </div>
               )}
@@ -523,7 +524,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <UserGroupIcon className="h-4 w-4" />
+              <Users className="h-4 w-4" />
               <span className="text-base">Members</span>
             </div>
             <Controller

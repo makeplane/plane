@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // icons
-import { CalendarCheck2, CalendarClock, MoveRight, User2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, MoveRight, SquareUser } from "lucide-react";
 // types
 import { IModule } from "@plane/types";
 // ui
@@ -140,9 +140,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         </span>
       ) : (
         <Tooltip tooltipContent="No lead">
-          <span className="cursor-default flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-            <User2 className="h-4 w-4 text-custom-text-400" />
-          </span>
+          <SquareUser className="h-4 w-4 text-custom-text-300" />
         </Tooltip>
       )}
 
