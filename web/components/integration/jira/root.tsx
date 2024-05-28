@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, Check, List, Settings } from "lucide-react";
+import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
 import { IJiraImporterForm } from "@plane/types";
 // services
 // fetch keys
 // components
-import { Button, UserGroupIcon } from "@plane/ui";
+import { Button } from "@plane/ui";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // assets
 import { JiraImporterService } from "@/services/integrations";
@@ -44,7 +44,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Users",
     key: "import-users",
-    icon: UserGroupIcon,
+    icon: Users,
   },
   {
     title: "Confirm",

@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Link from "next/link";
 // types
 import { ICycle } from "@plane/types";
 // ui
@@ -10,11 +11,13 @@ import { CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
 import { EmptyStateType } from "@/constants/empty-state";
 
 export type ActiveCycleProgressProps = {
+  workspaceSlug: string;
+  projectId: string;
   cycle: ICycle;
 };
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
-  const { cycle } = props;
+  const { workspaceSlug, projectId, cycle } = props;
 
   const progressIndicatorData = CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -31,7 +34,10 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
   };
 
   return (
-    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+    <Link
+      href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}
+      className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg"
+    >
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <h3 className="text-base text-custom-text-300 font-semibold">Progress</h3>
@@ -85,6 +91,6 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
           <EmptyState type={EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE} layout="screen-simple" size="sm" />
         </div>
       )}
-    </div>
+    </Link>
   );
 };

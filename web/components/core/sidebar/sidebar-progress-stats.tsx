@@ -1,5 +1,5 @@
 import React from "react";
-
+import { observer } from "mobx-react";
 import Image from "next/image";
 // headless ui
 import { Tab } from "@headlessui/react";
@@ -15,6 +15,7 @@ import {
 // hooks
 import { Avatar, StateGroupIcon } from "@plane/ui";
 import { SingleProgressStats } from "@/components/core";
+import { useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // images
 import emptyLabel from "public/empty-state/empty_label.svg";
@@ -44,19 +45,22 @@ type Props = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
 };
 
-export const SidebarProgressStats: React.FC<Props> = ({
-  distribution,
-  groupedIssues,
-  totalIssues,
-  module,
-  roundedTab,
-  noBackground,
-  isPeekView = false,
-  isCompleted = false,
-  filters,
-  handleFiltersUpdate,
-}) => {
+export const SidebarProgressStats: React.FC<Props> = observer((props) => {
+  const {
+    distribution,
+    groupedIssues,
+    totalIssues,
+    module,
+    roundedTab,
+    noBackground,
+    isPeekView = false,
+    isCompleted = false,
+    filters,
+    handleFiltersUpdate,
+  } = props;
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
+
+  const { groupedProjectStates } = useProjectState();
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -69,6 +73,12 @@ export const SidebarProgressStats: React.FC<Props> = ({
       default:
         return 0;
     }
+  };
+
+  const getStateGroupState = (stateGroup: string) => {
+    const stateGroupStates = groupedProjectStates?.[stateGroup];
+    const stateGroupStatesId = stateGroupStates?.map((state) => state.id);
+    return stateGroupStatesId;
   };
 
   return (
@@ -261,10 +271,14 @@ export const SidebarProgressStats: React.FC<Props> = ({
               }
               completed={groupedIssues[group]}
               total={totalIssues}
+              {...(!isPeekView &&
+                !isCompleted && {
+                  onClick: () => handleFiltersUpdate("state", getStateGroupState(group) ?? []),
+                })}
             />
           ))}
         </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>
   );
-};
+});

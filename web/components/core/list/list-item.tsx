@@ -2,6 +2,8 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 interface IListItemProps {
   title: string;
@@ -13,6 +15,7 @@ interface IListItemProps {
   isMobile?: boolean;
   parentRef: React.RefObject<HTMLDivElement>;
   disableLink?: boolean;
+  className?: string;
 }
 
 export const ListItem: FC<IListItemProps> = (props) => {
@@ -26,6 +29,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
     isMobile = false,
     parentRef,
     disableLink = false,
+    className = "",
   } = props;
 
   // router
@@ -40,7 +44,12 @@ export const ListItem: FC<IListItemProps> = (props) => {
   return (
     <div ref={parentRef} className="relative">
       <ControlLink href={itemLink} onClick={handleControlLinkClick} disabled={disableLink}>
-        <div className="group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row">
+        <div
+          className={cn(
+            "group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row",
+            className
+          )}
+        >
           <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
             <div className="relative flex w-full items-center gap-3 overflow-hidden">
               <div className="flex items-center gap-4 truncate">

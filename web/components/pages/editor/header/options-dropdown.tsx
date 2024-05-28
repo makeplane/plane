@@ -16,11 +16,11 @@ import { IPageStore } from "@/store/pages/page.store";
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
-  pageStore: IPageStore;
+  page: IPageStore;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, pageStore } = props;
+  const { editorRef, handleDuplicatePage, page } = props;
   // store values
   const {
     archived_at,
@@ -33,7 +33,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
     restore,
-  } = pageStore;
+  } = page;
   // store hooks
   const { workspaceSlug, projectId } = useAppRouter();
   // page filters
