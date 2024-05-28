@@ -511,7 +511,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     buttonVariant="background-with-text"
                     placeholder="Lead"
                     disabled={!isEditingAllowed || isArchived}
-                    Icon={SquareUser}
+                    icon={SquareUser}
                   />
                 </div>
               )}

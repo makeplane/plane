@@ -9,11 +9,11 @@ import { useMember } from "@/hooks/store";
 type AvatarProps = {
   showTooltip: boolean;
   userIds: string | string[] | null;
-  Icon?: LucideIcon;
+  icon?: LucideIcon;
 };
 
 export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
-  const { showTooltip, userIds, Icon } = props;
+  const { showTooltip, userIds, icon: Icon } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
