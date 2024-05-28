@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { CalendarCheck2, CopyPlus, Signal, Tag } from "lucide-react";
+import { CalendarCheck2, CopyPlus, Signal, Tag, Users } from "lucide-react";
 import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
-import { ControlLink, DoubleCircleIcon, Tooltip, UserGroupIcon } from "@plane/ui";
+import { ControlLink, DoubleCircleIcon, Tooltip } from "@plane/ui";
 // components
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 import { IssueLabel, TIssueOperations } from "@/components/issues";
@@ -64,7 +64,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
             {/* Assignee */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+                <Users className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
               <MemberDropdown

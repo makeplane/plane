@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, User2 } from "lucide-react";
+import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
 // hooks
@@ -172,7 +172,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                         <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                           {!watch("avatar") || watch("avatar") === "" ? (
                             <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
-                              <User2 className="h-full w-full text-custom-text-200" />
+                              <CircleUserRound className="h-full w-full text-custom-text-200" />
                             </div>
                           ) : (
                             <div className="relative h-16 w-16 overflow-hidden">
