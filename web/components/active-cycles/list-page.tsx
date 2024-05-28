@@ -1,9 +1,8 @@
 import { FC, useEffect } from "react";
 import useSWR from "swr";
-// ui
-import { Spinner } from "@plane/ui";
 // components
 import { ActiveCycleInfoCard } from "@/components/active-cycles";
+import { WorkspaceActiveCycleLoader } from "@/components/ui";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 // services
@@ -22,7 +21,7 @@ export const ActiveCyclesListPage: FC<ActiveCyclesListPageProps> = (props) => {
   const { workspaceSlug, cursor, perPage, updateTotalPages, updateResultsCount } = props;
 
   // fetching active cycles in workspace
-  const { data: workspaceActiveCycles } = useSWR(
+  const { data: workspaceActiveCycles, isLoading } = useSWR(
     workspaceSlug && cursor ? WORKSPACE_ACTIVE_CYCLES_LIST(workspaceSlug as string, cursor, `${perPage}`) : null,
     workspaceSlug && cursor ? () => cycleService.workspaceActiveCycles(workspaceSlug.toString(), cursor, perPage) : null
   );
@@ -34,12 +33,8 @@ export const ActiveCyclesListPage: FC<ActiveCyclesListPageProps> = (props) => {
     }
   }, [updateTotalPages, updateResultsCount, workspaceActiveCycles]);
 
-  if (!workspaceActiveCycles) {
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
+  if (!workspaceActiveCycles || isLoading) {
+    return <WorkspaceActiveCycleLoader />;
   }
 
   return (
