@@ -8,6 +8,8 @@ import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/estimates";
 // constants
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
+// helpers
+import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 
@@ -30,7 +32,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setEstimateSystem(EEstimateSystem.CATEGORIES);
       setEstimatePoints(undefined);
     }
@@ -56,21 +58,29 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
       }
 
       if (validatedEstimatePoints.length === estimatePoints?.length) {
-        const payload: IEstimateFormData = {
-          estimate: {
-            name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
-            type: estimateSystem,
-            last_used: true,
-          },
-          estimate_points: validatedEstimatePoints,
-        };
-        await createEstimate(workspaceSlug, projectId, payload);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Estimate system created",
-          message: "Created and Enabled successfully",
-        });
-        handleClose();
+        const isRepeated = isEstimatePointValuesRepeated(
+          estimatePoints.map((point) => point.value),
+          estimateSystem
+        );
+        console.log("isRepeated", isRepeated);
+        if (!isRepeated) {
+          const payload: IEstimateFormData = {
+            estimate: {
+              name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
+              type: estimateSystem,
+              last_used: true,
+            },
+            estimate_points: validatedEstimatePoints,
+          };
+          await createEstimate(workspaceSlug, projectId, payload);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Estimate system created",
+            message: "Created and Enabled successfully",
+          });
+          handleClose();
+        } else {
+        }
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,

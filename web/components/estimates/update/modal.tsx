@@ -29,7 +29,7 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
   const [estimateSystemSwitchType, setEstimateSystemSwitchType] = useState<TEstimateSystemKeys | undefined>(undefined);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setEstimateEditType(undefined);
       setEstimateSystemSwitchType(undefined);
     }
