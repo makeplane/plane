@@ -29,11 +29,10 @@ import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issu
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
 import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
-import useKeypress from "@/hooks/use-keypress";
-import useKeypressWithEvent from "@/hooks/use-keypress-with-event";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
