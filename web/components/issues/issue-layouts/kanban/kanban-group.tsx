@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -81,11 +81,17 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   } = useIssuesStore();
 
   const intersectionRef = useRef<HTMLSpanElement | null>(null);
+  const columnRef = useRef<HTMLDivElement | null>(null);
 
-  useIntersectionObserver(scrollableContainerRef, intersectionRef, loadMoreIssues, `0% 100% 50% 100%`);
+  const containerRef = sub_group_by ? scrollableContainerRef : columnRef;
+
+  const loadMoreIssuesInThisGroup = useCallback(() => {
+    loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
+  }, [loadMoreIssues, groupId, sub_group_id])
+
+  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssuesInThisGroup, `0% 100% 100% 100%`);
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
-  const columnRef = useRef<HTMLDivElement | null>(null);
 
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
@@ -206,7 +212,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   ) : (
     <div
       className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
-      onClick={() => loadMoreIssues(groupId, sub_group_id)}
+      onClick={loadMoreIssuesInThisGroup}
     >
       {" "}
       Load more &darr;
@@ -247,7 +253,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         updateIssue={updateIssue}
         quickActions={quickActions}
         canEditProperties={canEditProperties}
-        scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
+        scrollableContainerRef={containerRef}
         canDropOverIssue={!canOverlayBeVisible}
       />
 
