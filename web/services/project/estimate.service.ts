@@ -61,7 +61,7 @@ export class EstimateService extends APIService {
     projectId: string,
     estimateId: string,
     payload: Partial<IEstimateFormData>
-  ): Promise<{ points: IEstimatePoint[] } | undefined> {
+  ): Promise<IEstimate | undefined> {
     try {
       const { data } = await this.patch(
         `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`,

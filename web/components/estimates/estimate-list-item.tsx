@@ -1,11 +1,10 @@
 import { FC } from "react";
-import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { Pen } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useEstimate, useProjectEstimates } from "@/hooks/store";
 
 type TEstimateListItem = {
   estimateId: string;
@@ -19,11 +18,16 @@ export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
   const { estimateId, isAdmin, isEstimateEnabled, isEditable, onEditClick } = props;
   // hooks
   const { estimateById } = useProjectEstimates();
-
+  const { estimatePointIds, estimatePointById } = useEstimate(estimateId);
   const currentEstimate = estimateById(estimateId);
 
-  if (!currentEstimate) return <></>;
+  // derived values
+  const estimatePointValues = estimatePointIds?.map((estimatePointId) => {
+    const estimatePoint = estimatePointById(estimatePointId);
+    if (estimatePoint) return estimatePoint.value;
+  });
 
+  if (!currentEstimate) return <></>;
   return (
     <div
       className={cn(
@@ -33,11 +37,7 @@ export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
     >
       <div className="space-y-1">
         <h3 className="font-medium text-base">{currentEstimate?.name}</h3>
-        <p className="text-xs">
-          {sortBy(currentEstimate?.points, ["key"])
-            ?.map((estimatePoint) => estimatePoint?.value)
-            .join(", ")}
-        </p>
+        <p className="text-xs">{(estimatePointValues || [])?.join(", ")}</p>
       </div>
       {isAdmin && isEditable && (
         <div

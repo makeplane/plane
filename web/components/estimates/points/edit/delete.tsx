@@ -19,7 +19,7 @@ type TEstimatePointDelete = {
 export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) => {
   const { workspaceSlug, projectId, estimateId, estimatePointId, callback } = props;
   // hooks
-  const { asJson: estimate, deleteEstimatePoint } = useEstimate(estimateId);
+  const { estimatePointIds, estimatePointById, deleteEstimatePoint } = useEstimate(estimateId);
   const { asJson: estimatePoint } = useEstimatePoint(estimateId, estimatePointId);
   // states
   const [loader, setLoader] = useState(false);
@@ -47,8 +47,12 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
   };
 
   // derived values
-  const selectDropdownOptions =
-    estimate && estimate?.points ? estimate?.points.filter((point) => point.id !== estimatePointId) : [];
+  const selectDropdownOptionIds = estimatePointIds?.filter((pointId) => pointId != estimatePointId) as string[];
+  const selectDropdownOptions = (selectDropdownOptionIds || [])?.map((pointId) => {
+    const estimatePoint = estimatePointById(pointId);
+    if (estimatePoint && estimatePoint?.id)
+      return { id: estimatePoint.id, key: estimatePoint.key, value: estimatePoint.value };
+  });
 
   return (
     <div className="relative flex items-center gap-2 text-base">

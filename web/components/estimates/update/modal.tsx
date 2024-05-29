@@ -1,13 +1,15 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-import { TEstimateUpdateStageKeys } from "@plane/types";
+import { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateUpdateStageOne, EstimatePointEditRoot, EstimatePointSwitchRoot } from "@/components/estimates";
 // constants
-import { EEstimateUpdateStages } from "@/constants/estimates";
+import { EEstimateSystem, EEstimateUpdateStages } from "@/constants/estimates";
+// hooks
+import { useEstimate } from "@/hooks/store";
 
 type TUpdateEstimateModal = {
   workspaceSlug: string;
@@ -20,16 +22,26 @@ type TUpdateEstimateModal = {
 export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) => {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
+  // hooks
+  const { asJson: estimate } = useEstimate(estimateId);
   // states
   const [estimateEditType, setEstimateEditType] = useState<TEstimateUpdateStageKeys | undefined>(undefined);
+  const [estimateSystemSwitchType, setEstimateSystemSwitchType] = useState<TEstimateSystemKeys | undefined>(undefined);
 
   useEffect(() => {
-    if (!isOpen) setEstimateEditType(undefined);
+    if (!isOpen) {
+      setEstimateEditType(undefined);
+      setEstimateSystemSwitchType(undefined);
+    }
   }, [isOpen]);
 
-  const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => setEstimateEditType(type);
-
-  const handleSwitchEstimate = () => {};
+  const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => {
+    if (type === EEstimateUpdateStages.SWITCH && estimate?.type)
+      setEstimateSystemSwitchType(
+        estimate?.type === EEstimateSystem.CATEGORIES ? EEstimateSystem.POINTS : EEstimateSystem.CATEGORIES
+      );
+    setEstimateEditType(type);
+  };
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -62,23 +74,24 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
               {estimateEditType === EEstimateUpdateStages.EDIT && (
                 <EstimatePointEditRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
               )}
-              {estimateEditType === EEstimateUpdateStages.SWITCH && (
-                <EstimatePointSwitchRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+              {estimateEditType === EEstimateUpdateStages.SWITCH && estimateSystemSwitchType && (
+                <EstimatePointSwitchRoot
+                  estimateSystemSwitchType={estimateSystemSwitchType}
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  estimateId={estimateId}
+                  handleClose={handleClose}
+                />
               )}
             </>
           )}
         </div>
 
-        {[EEstimateUpdateStages.SWITCH, undefined].includes(estimateEditType) && (
+        {estimateEditType === undefined && (
           <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-100">
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               Cancel
             </Button>
-            {estimateEditType === EEstimateUpdateStages.SWITCH && (
-              <Button variant="primary" size="sm" onClick={handleSwitchEstimate}>
-                Update
-              </Button>
-            )}
           </div>
         )}
       </div>

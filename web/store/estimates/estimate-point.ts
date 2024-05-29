@@ -16,6 +16,8 @@ export interface IEstimatePoint extends IEstimatePointType {
   error: TErrorCodes | undefined;
   // computed
   asJson: IEstimatePointType;
+  // helper actions
+  updateEstimatePointObject: (estimatePoint: Partial<IEstimatePointType>) => void;
   // actions
   updateEstimatePoint: (
     workspaceSlug: string,
@@ -98,6 +100,14 @@ export class EstimatePoint implements IEstimatePoint {
       updated_by: this.updated_by,
     };
   }
+
+  // helper actions
+  updateEstimatePointObject = (estimatePoint: Partial<IEstimatePointType>) => {
+    Object.keys(estimatePoint).map((key) => {
+      const estimatePointKey = key as keyof IEstimatePointType;
+      set(this, estimatePointKey, estimatePoint[estimatePointKey]);
+    });
+  };
 
   // actions
   /**

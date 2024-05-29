@@ -122,7 +122,12 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        _ = Estimate.objects.get(pk=estimate_id)
+        estimate = Estimate.objects.get(pk=estimate_id)
+
+        if request.data.get("estimate"):
+            estimate.name = request.data.get("estimate").get("name", estimate.name)
+            estimate.type = request.data.get("estimate").get("type", estimate.type)
+            estimate.save()
 
         estimate_points_data = request.data.get("estimate_points", [])
 
@@ -159,13 +164,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             batch_size=10,
         )
 
-        estimate_point_serializer = EstimatePointSerializer(
-            estimate_points, many=True
-        )
+        estimate_serializer = EstimateReadSerializer(estimate)
         return Response(
-            {
-                "points": estimate_point_serializer.data,
-            },
+            estimate_serializer.data,
             status=status.HTTP_200_OK,
         )
 

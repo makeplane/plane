@@ -21,25 +21,25 @@ type TErrorCodes = {
   message?: string;
 };
 
-export interface IEstimate extends IEstimateType {
+export interface IEstimate extends Omit<IEstimateType, "points"> {
   // observables
   error: TErrorCodes | undefined;
   estimatePoints: Record<string, IEstimatePoint>;
   // computed
-  asJson: IEstimateType;
+  asJson: Omit<IEstimateType, "points">;
   estimatePointIds: string[] | undefined;
   estimatePointById: (estimatePointId: string) => IEstimatePointType | undefined;
   // actions
-  updateEstimate: (
-    workspaceSlug: string,
-    projectId: string,
-    payload: Partial<IEstimateFormData>
-  ) => Promise<IEstimateType | undefined>;
   updateEstimateSortOrder: (
     workspaceSlug: string,
     projectId: string,
     payload: TEstimatePointsObject[]
-  ) => Promise<void>;
+  ) => Promise<IEstimateType | undefined>;
+  updateEstimateSwitch: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: IEstimateFormData
+  ) => Promise<IEstimateType | undefined>;
   creteEstimatePoint: (
     workspaceSlug: string,
     projectId: string,
@@ -59,7 +59,6 @@ export class Estimate implements IEstimate {
   name: string | undefined = undefined;
   description: string | undefined = undefined;
   type: TEstimateSystemKeys | undefined = undefined;
-  points: IEstimatePointType[] | undefined = undefined;
   workspace: string | undefined = undefined;
   project: string | undefined = undefined;
   last_used: boolean | undefined = undefined;
@@ -83,7 +82,6 @@ export class Estimate implements IEstimate {
       name: observable.ref,
       description: observable.ref,
       type: observable.ref,
-      points: observable,
       workspace: observable.ref,
       project: observable.ref,
       last_used: observable.ref,
@@ -98,8 +96,8 @@ export class Estimate implements IEstimate {
       asJson: computed,
       estimatePointIds: computed,
       // actions
-      updateEstimate: action,
       updateEstimateSortOrder: action,
+      updateEstimateSwitch: action,
       creteEstimatePoint: action,
       deleteEstimatePoint: action,
     });
@@ -107,7 +105,6 @@ export class Estimate implements IEstimate {
     this.name = this.data.name;
     this.description = this.data.description;
     this.type = this.data.type;
-    this.points = this.data.points;
     this.workspace = this.data.workspace;
     this.project = this.data.project;
     this.last_used = this.data.last_used;
@@ -130,7 +127,6 @@ export class Estimate implements IEstimate {
       name: this.name,
       description: this.description,
       type: this.type,
-      points: this.points,
       workspace: this.workspace,
       project: this.project,
       last_used: this.last_used,
@@ -159,22 +155,32 @@ export class Estimate implements IEstimate {
 
   // actions
   /**
-   * @description update an estimate
+   * @description update an estimate sort order
    * @param { string } workspaceSlug
    * @param { string } projectId
-   * @param { Partial<IEstimateFormData> } payload
+   * @param { TEstimatePointsObject[] } payload
    * @returns { IEstimateType | undefined }
    */
-  updateEstimate = async (
+  updateEstimateSortOrder = async (
     workspaceSlug: string,
     projectId: string,
-    payload: Partial<IEstimateFormData>
+    payload: TEstimatePointsObject[]
   ): Promise<IEstimateType | undefined> => {
     try {
       if (!this.id || !payload) return;
 
-      const estimate = await this.service.updateEstimate(workspaceSlug, projectId, this.id, payload);
-      return estimate as any;
+      const estimate = await this.service.updateEstimate(workspaceSlug, projectId, this.id, {
+        estimate_points: payload,
+      });
+      runInAction(() => {
+        estimate?.points &&
+          estimate?.points.map((estimatePoint) => {
+            if (estimatePoint.id)
+              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+          });
+      });
+
+      return estimate;
     } catch (error) {
       throw error;
     }
@@ -184,28 +190,34 @@ export class Estimate implements IEstimate {
    * @description update an estimate sort order
    * @param { string } workspaceSlug
    * @param { string } projectId
-   * @param { Partial<IEstimateFormData> } payload
-   * @returns { void }
+   * @param { IEstimateFormData} payload
+   * @returns { IEstimateType | undefined }
    */
-  updateEstimateSortOrder = async (
+  updateEstimateSwitch = async (
     workspaceSlug: string,
     projectId: string,
-    payload: TEstimatePointsObject[]
-  ): Promise<void> => {
+    payload: IEstimateFormData
+  ): Promise<IEstimateType | undefined> => {
     try {
       if (!this.id || !payload) return;
 
-      const estimatePoints = await this.service.updateEstimate(workspaceSlug, projectId, this.id, {
-        estimate_points: payload,
-      });
-      if (estimatePoints?.points && estimatePoints?.points.length > 0) {
+      const estimate = await this.service.updateEstimate(workspaceSlug, projectId, this.id, payload);
+      if (estimate) {
         runInAction(() => {
-          estimatePoints?.points.map((estimatePoint) => {
-            if (estimatePoint.id)
-              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
-          });
+          this.name = estimate?.name;
+          this.type = estimate?.type;
+          estimate?.points &&
+            estimate?.points.map((estimatePoint) => {
+              if (estimatePoint.id)
+                this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
+                  key: estimatePoint.key,
+                  value: estimatePoint.value,
+                });
+            });
         });
       }
+
+      return estimate;
     } catch (error) {
       throw error;
     }
