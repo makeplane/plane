@@ -10,14 +10,17 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.app.permissions.workspace import WorkspaceEntityPermission
-from plane.db.models import WorkspaceMember
+from plane.app.permissions.workspace import (
+    WorkSpaceAdminPermission,
+    WorkspaceUserPermission,
+)
+from plane.db.models import WorkspaceMember, Workspace
 
 
 class ProductEndpoint(BaseAPIView):
 
     permission_classes = [
-        WorkspaceEntityPermission,
+        WorkSpaceAdminPermission,
     ]
 
     def get(self, request, slug):
@@ -46,26 +49,29 @@ class ProductEndpoint(BaseAPIView):
             )
 
 
-class PaymentLinkEndpoint(BaseAPIView):
+class WorkspaceProductEndpoint(BaseAPIView):
 
-    def post(self, request):
+    permission_classes = [
+        WorkspaceUserPermission,
+    ]
+
+    def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-                data = request.data
-                response = requests.post(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/payment-links/",
-                    json=data,
+                workspace = Workspace.objects.get(slug=slug)
+                response = requests.get(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace.id)}/",
                     headers={"content-type": "application/json"},
                 )
                 response = response.json()
                 return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"error": "error fetching payment link"},
+                    {"error": "error fetching product details"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException:
             return Response(
-                {"error": "error fetching payment link"},
+                {"error": "error fetching product details"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
