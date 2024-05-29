@@ -6,13 +6,15 @@ import { ViewListLoader } from "@/components/ui";
 import { ProjectViewListItem } from "@/components/views";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { E_VIEWS_EMPTY_STATE } from "@/constants/event-tracker";
 // hooks
-import { useCommandPalette, useProjectView } from "@/hooks/store";
+import { useCommandPalette, useProjectView, useEventTracker } from "@/hooks/store";
 
 export const ProjectViewsList = observer(() => {
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { projectViewIds, getViewById, loader, searchQuery } = useProjectView();
+  const { setTrackElement } = useEventTracker();
 
   if (loader || !projectViewIds) return <ViewListLoader />;
 
@@ -34,7 +36,13 @@ export const ProjectViewsList = observer(() => {
           </ListLayout>
         </div>
       ) : (
-        <EmptyState type={EmptyStateType.PROJECT_VIEW} primaryButtonOnClick={() => toggleCreateViewModal(true)} />
+        <EmptyState
+          type={EmptyStateType.PROJECT_VIEW}
+          primaryButtonOnClick={() => {
+            setTrackElement(E_VIEWS_EMPTY_STATE);
+            toggleCreateViewModal(true);
+          }}
+        />
       )}
     </>
   );

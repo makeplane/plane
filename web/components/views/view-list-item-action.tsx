@@ -7,11 +7,12 @@ import { IProjectView } from "@plane/types";
 import { FavoriteStar } from "@/components/core";
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // constants
+import { E_VIEWS, VIEW_FAVORITED, VIEW_UNFAVORITED } from "constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useMember, useProjectView, useUser } from "@/hooks/store";
+import { useMember, useProjectView, useUser, useEventTracker } from "@/hooks/store";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -33,6 +34,7 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
   } = useUser();
   const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
   const { getUserDetails } = useMember();
+  const { captureEvent } = useEventTracker();
 
   // derived values
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -43,13 +45,23 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
+      captureEvent(VIEW_FAVORITED, {
+        view_id: view.id,
+        element: E_VIEWS,
+      });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
+      captureEvent(VIEW_UNFAVORITED, {
+        view_id: view.id,
+        element: E_VIEWS,
+      });
+    });
   };
 
   const createdByDetails = view.created_by ? getUserDetails(view.created_by) : undefined;

@@ -9,7 +9,8 @@ import { ProjectLogo } from "@/components/project";
 import { ViewListHeader } from "@/components/views";
 import { EUserProjectRoles } from "@/constants/project";
 // constants
-import { useCommandPalette, useProject, useUser } from "@/hooks/store";
+import { E_VIEWS } from "@/constants/event-tracker";
+import { useCommandPalette, useProject, useUser, useEventTracker } from "@/hooks/store";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
@@ -21,6 +22,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { setTrackElement } = useEventTracker();
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -60,7 +62,14 @@ export const ProjectViewsHeader: React.FC = observer(() => {
           <div className="flex flex-shrink-0 items-center gap-2">
             <ViewListHeader />
             <div>
-              <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  setTrackElement(E_VIEWS);
+                  toggleCreateViewModal(true);
+                }}
+              >
                 Add View
               </Button>
             </div>

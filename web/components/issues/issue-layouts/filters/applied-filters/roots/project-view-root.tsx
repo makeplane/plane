@@ -3,14 +3,14 @@ import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IIssueFilterOptions } from "@plane/types";
-// hooks
 import { Button } from "@plane/ui";
-import { AppliedFiltersList } from "@/components/issues";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useIssues, useLabel, useProjectState, useProjectView } from "@/hooks/store";
 // components
-// ui
-// types
+import { AppliedFiltersList } from "@/components/issues";
+// constants
+import { VIEW_UPDATED } from "constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+// hooks
+import { useIssues, useLabel, useProjectState, useProjectView, useEventTracker } from "@/hooks/store";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -23,6 +23,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
+  const { captureEvent } = useEventTracker();
   // derived values
   const viewDetails = viewId ? viewMap[viewId.toString()] : null;
   const userFilters = issueFilters?.filters;

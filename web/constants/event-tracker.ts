@@ -170,6 +170,12 @@ export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
 export const ISSUE_RESTORED = "Issue restored";
 export const ISSUE_OPENED = "Issue opened";
+// Project View Events
+export const VIEW_CREATED = "View created";
+export const VIEW_UPDATED = "View updated";
+export const VIEW_DELETED = "View deleted";
+export const VIEW_FAVORITED = "View favorited";
+export const VIEW_UNFAVORITED = "View unfavorited";
 // Project State Events
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
@@ -222,3 +228,7 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+// Elements
+export const E_VIEWS = "Views page";
+export const E_VIEWS_EMPTY_STATE = "Views empty state";

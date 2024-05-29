@@ -7,8 +7,10 @@ import { IProjectView } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AlertModalCore } from "@/components/core";
+// constants
+import { E_VIEWS, VIEW_DELETED } from "constants/event-tracker";
 // hooks
-import { useProjectView } from "@/hooks/store";
+import { useProjectView, useEventTracker } from "@/hooks/store";
 
 type Props = {
   data: IProjectView;
@@ -25,6 +27,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteView } = useProjectView();
+  const { captureEvent } = useEventTracker();
 
   const handleClose = () => {
     onClose();
@@ -39,20 +42,29 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
     await deleteView(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         handleClose();
-
+        captureEvent(VIEW_DELETED, {
+          view_id: data.id,
+          element: E_VIEWS,
+          state: "SUCCESS",
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View deleted successfully.",
         });
       })
-      .catch(() =>
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
-        })
-      )
+        });
+        captureEvent(VIEW_DELETED, {
+          view_id: data.id,
+          element: E_VIEWS,
+          state: "FAILED",
+        });
+      })
       .finally(() => {
         setIsDeleteLoading(false);
       });
