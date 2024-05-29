@@ -1,16 +1,16 @@
 import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import EmojiPicker from "emoji-picker-react";
 import { Popover, Tab } from "@headlessui/react";
-// components
-import { IconsList } from "./icons-list";
+import EmojiPicker from "emoji-picker-react";
 // helpers
 import { cn } from "../../helpers";
 // hooks
 import useOutsideClickDetector from "../hooks/use-outside-click-detector";
+import { LucideIconsList } from "./lucide-icons-list";
+// helpers
 import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
 
-export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
+export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
   const {
     isOpen,
     handleToggle,
@@ -113,7 +113,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                     />
                   </Tab.Panel>
                   <Tab.Panel className="h-80 w-full">
-                    <IconsList
+                    <LucideIconsList
                       defaultColor={defaultIconColor}
                       onChange={(val) => {
                         onChange({

@@ -1,3 +1,60 @@
+import { Placement } from "@popperjs/core";
+import { EmojiClickData, Theme } from "emoji-picker-react";
+
+export enum EmojiIconPickerTypes {
+  EMOJI = "emoji",
+  ICON = "icon",
+}
+
+export const TABS_LIST = [
+  {
+    key: EmojiIconPickerTypes.EMOJI,
+    title: "Emojis",
+  },
+  {
+    key: EmojiIconPickerTypes.ICON,
+    title: "Icons",
+  },
+];
+
+export type TChangeHandlerProps =
+  | {
+      type: EmojiIconPickerTypes.EMOJI;
+      value: EmojiClickData;
+    }
+  | {
+      type: EmojiIconPickerTypes.ICON;
+      value: {
+        name: string;
+        color: string;
+      };
+    };
+
+export type TCustomEmojiPicker = {
+  isOpen: boolean;
+  handleToggle: (value: boolean) => void;
+  buttonClassName?: string;
+  className?: string;
+  closeOnSelect?: boolean;
+  defaultIconColor?: string;
+  defaultOpen?: EmojiIconPickerTypes;
+  disabled?: boolean;
+  dropdownClassName?: string;
+  label: React.ReactNode;
+  onChange: (value: TChangeHandlerProps) => void;
+  placement?: Placement;
+  searchPlaceholder?: string;
+  theme?: Theme;
+  iconType?: "material" | "lucide";
+};
+
+export const DEFAULT_COLORS = ["#95999f", "#6d7b8a", "#5e6ad2", "#02b5ed", "#02b55c", "#f2be02", "#e57a00", "#f38e82"];
+
+export type TIconsListProps = {
+  defaultColor: string;
+  onChange: (val: { name: string; color: string }) => void;
+};
+
 /**
  * Adjusts the given hex color to ensure it has enough contrast.
  * @param {string} hex - The hex color code input by the user.

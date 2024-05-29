@@ -5,11 +5,12 @@ import { Input } from "../form-fields";
 import { cn } from "../../helpers";
 import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
 // icons
-import { MATERIAL_ICONS_LIST } from "./icons";
 import { InfoIcon } from "../icons";
+// constants
+import { LUCIDE_ICONS_LIST } from "./icons";
 import { Search } from "lucide-react";
 
-export const IconsList: React.FC<TIconsListProps> = (props) => {
+export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
   const { defaultColor, onChange } = props;
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
@@ -26,7 +27,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
     }
   }, [defaultColor]);
 
-  const filteredArray = MATERIAL_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredArray = LUCIDE_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <>
@@ -118,12 +119,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
               });
             }}
           >
-            <span
-              style={{ color: activeColor }}
-              className="material-symbols-rounded !text-[1.25rem] !leading-[1.25rem]"
-            >
-              {icon.name}
-            </span>
+            <icon.element style={{ color: activeColor }} className="size-4" />
           </button>
         ))}
       </div>
