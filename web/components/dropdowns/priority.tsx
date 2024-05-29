@@ -1,7 +1,7 @@
 import { Fragment, ReactNode, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // types
 import { TIssuePriorities } from "@plane/types";
@@ -26,7 +26,7 @@ type Props = TDropdownProps & {
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
   onClose?: () => void;
-  value: TIssuePriorities;
+  value: TIssuePriorities | undefined;
 };
 
 type ButtonProps = {
@@ -37,7 +37,8 @@ type ButtonProps = {
   hideText?: boolean;
   isActive?: boolean;
   highlightUrgent: boolean;
-  priority: TIssuePriorities;
+  placeholder: string;
+  priority: TIssuePriorities | undefined;
   showTooltip: boolean;
 };
 
@@ -49,6 +50,7 @@ const BorderButton = (props: ButtonProps) => {
     hideIcon = false,
     hideText = false,
     highlightUrgent,
+    placeholder,
     priority,
     showTooltip,
   } = props;
@@ -75,7 +77,7 @@ const BorderButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
-          priorityClasses[priority],
+          priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -85,30 +87,33 @@ const BorderButton = (props: ButtonProps) => {
           className
         )}
       >
-        {!hideIcon && (
-          <div
-            className={cn({
-              // highlight just the icon if text is visible and priority is urgent
-              "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
-            })}
-          >
-            <PriorityIcon
-              priority={priority}
-              size={12}
-              className={cn("flex-shrink-0", {
-                // increase the icon size if text is hidden
-                "h-3.5 w-3.5": hideText,
-                // centre align the icons if text is hidden
-                "translate-x-[0.0625rem]": hideText && priority === "high",
-                "translate-x-0.5": hideText && priority === "medium",
-                "translate-x-1": hideText && priority === "low",
-                // highlight the icon if priority is urgent
-                "text-white": priority === "urgent" && highlightUrgent,
+        {!hideIcon &&
+          (priority ? (
+            <div
+              className={cn({
+                // highlight just the icon if text is visible and priority is urgent
+                "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
               })}
-            />
-          </div>
-        )}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+            >
+              <PriorityIcon
+                priority={priority}
+                size={12}
+                className={cn("flex-shrink-0", {
+                  // increase the icon size if text is hidden
+                  "h-3.5 w-3.5": hideText,
+                  // centre align the icons if text is hidden
+                  "translate-x-[0.0625rem]": hideText && priority === "high",
+                  "translate-x-0.5": hideText && priority === "medium",
+                  "translate-x-1": hideText && priority === "low",
+                  // highlight the icon if priority is urgent
+                  "text-white": priority === "urgent" && highlightUrgent,
+                })}
+              />
+            </div>
+          ) : (
+            <SignalHigh className="size-3" />
+          ))}
+        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -125,6 +130,7 @@ const BackgroundButton = (props: ButtonProps) => {
     hideIcon = false,
     hideText = false,
     highlightUrgent,
+    placeholder,
     priority,
     showTooltip,
   } = props;
@@ -151,7 +157,7 @@ const BackgroundButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
-          priorityClasses[priority],
+          priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -161,30 +167,33 @@ const BackgroundButton = (props: ButtonProps) => {
           className
         )}
       >
-        {!hideIcon && (
-          <div
-            className={cn({
-              // highlight just the icon if text is visible and priority is urgent
-              "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
-            })}
-          >
-            <PriorityIcon
-              priority={priority}
-              size={12}
-              className={cn("flex-shrink-0", {
-                // increase the icon size if text is hidden
-                "h-3.5 w-3.5": hideText,
-                // centre align the icons if text is hidden
-                "translate-x-[0.0625rem]": hideText && priority === "high",
-                "translate-x-0.5": hideText && priority === "medium",
-                "translate-x-1": hideText && priority === "low",
-                // highlight the icon if priority is urgent
-                "text-white": priority === "urgent" && highlightUrgent,
+        {!hideIcon &&
+          (priority ? (
+            <div
+              className={cn({
+                // highlight just the icon if text is visible and priority is urgent
+                "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
               })}
-            />
-          </div>
-        )}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+            >
+              <PriorityIcon
+                priority={priority}
+                size={12}
+                className={cn("flex-shrink-0", {
+                  // increase the icon size if text is hidden
+                  "h-3.5 w-3.5": hideText,
+                  // centre align the icons if text is hidden
+                  "translate-x-[0.0625rem]": hideText && priority === "high",
+                  "translate-x-0.5": hideText && priority === "medium",
+                  "translate-x-1": hideText && priority === "low",
+                  // highlight the icon if priority is urgent
+                  "text-white": priority === "urgent" && highlightUrgent,
+                })}
+              />
+            </div>
+          ) : (
+            <SignalHigh className="size-3" />
+          ))}
+        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -202,6 +211,7 @@ const TransparentButton = (props: ButtonProps) => {
     hideText = false,
     isActive = false,
     highlightUrgent,
+    placeholder,
     priority,
     showTooltip,
   } = props;
@@ -228,7 +238,7 @@ const TransparentButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          priorityClasses[priority],
+          priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -239,30 +249,33 @@ const TransparentButton = (props: ButtonProps) => {
           className
         )}
       >
-        {!hideIcon && (
-          <div
-            className={cn({
-              // highlight just the icon if text is visible and priority is urgent
-              "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
-            })}
-          >
-            <PriorityIcon
-              priority={priority}
-              size={12}
-              className={cn("flex-shrink-0", {
-                // increase the icon size if text is hidden
-                "h-3.5 w-3.5": hideText,
-                // centre align the icons if text is hidden
-                "translate-x-[0.0625rem]": hideText && priority === "high",
-                "translate-x-0.5": hideText && priority === "medium",
-                "translate-x-1": hideText && priority === "low",
-                // highlight the icon if priority is urgent
-                "text-white": priority === "urgent" && highlightUrgent,
+        {!hideIcon &&
+          (priority ? (
+            <div
+              className={cn({
+                // highlight just the icon if text is visible and priority is urgent
+                "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
               })}
-            />
-          </div>
-        )}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title}</span>}
+            >
+              <PriorityIcon
+                priority={priority}
+                size={12}
+                className={cn("flex-shrink-0", {
+                  // increase the icon size if text is hidden
+                  "h-3.5 w-3.5": hideText,
+                  // centre align the icons if text is hidden
+                  "translate-x-[0.0625rem]": hideText && priority === "high",
+                  "translate-x-0.5": hideText && priority === "medium",
+                  "translate-x-1": hideText && priority === "low",
+                  // highlight the icon if priority is urgent
+                  "text-white": priority === "urgent" && highlightUrgent,
+                })}
+              />
+            </div>
+          ) : (
+            <SignalHigh className="size-3" />
+          ))}
+        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -285,6 +298,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     highlightUrgent = true,
     onChange,
     onClose,
+    placeholder = "Priority",
     placement,
     showTooltip = false,
     tabIndex,
@@ -400,6 +414,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
               dropdownArrow={dropdownArrow && !disabled}
               dropdownArrowClassName={dropdownArrowClassName}
               hideIcon={hideIcon}
+              placeholder={placeholder}
               showTooltip={showTooltip}
               hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
             />

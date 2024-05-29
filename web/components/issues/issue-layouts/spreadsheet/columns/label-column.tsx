@@ -1,10 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { TIssue } from "@plane/types";
-// components
 // hooks
 import { useLabel } from "@/hooks/store";
-// types
+// components
 import { IssuePropertyLabels } from "../../properties";
 
 type Props = {
@@ -27,8 +27,8 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
       value={issue.label_ids}
       defaultOptions={defaultLabelOptions}
       onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
-      className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-      buttonClassName="px-2.5 h-full"
+      className="h-11 w-full border-b-[0.5px] border-custom-border-200"
+      buttonClassName="px-2.5 h-full group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
       hideDropdownArrow
       maxRender={1}
       disabled={disabled}
