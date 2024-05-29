@@ -4,7 +4,7 @@ import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
@@ -56,7 +56,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
     <ListItem
       prependTitleElement={
         <>
-          <CustomEmojiIconPicker
+          <EmojiIconPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center"
@@ -64,7 +64,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
             label={
               <>
                 {logo_props?.in_use ? (
-                  <Logo logo={logo_props} size={16} />
+                  <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
                   <FileText className="h-4 w-4 text-custom-text-300" />
                 )}

@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { IProjectView, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Button, CustomEmojiIconPicker, EmojiIconPickerTypes, Input, PhotoFilterIcon, TextArea } from "@plane/ui";
+import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, PhotoFilterIcon, TextArea } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
@@ -121,16 +121,16 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
-            <CustomEmojiIconPicker
+            <EmojiIconPicker
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
               className="flex items-center justify-center flex-shrink0"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-80">
+                <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
                   <>
                     {logoValue?.in_use ? (
-                      <Logo logo={logoValue} size={18} />
+                      <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
                       <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
                     )}

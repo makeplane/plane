@@ -5,7 +5,7 @@ import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomEmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
+import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helper
@@ -100,7 +100,7 @@ export const PageDetailsHeader = observer(() => {
                 <BreadcrumbLink
                   label={name ?? "Page"}
                   icon={
-                    <CustomEmojiIconPicker
+                    <EmojiIconPicker
                       isOpen={isOpen}
                       handleToggle={(val: boolean) => setIsOpen(val)}
                       className="flex items-center justify-center"
@@ -108,7 +108,7 @@ export const PageDetailsHeader = observer(() => {
                       label={
                         <>
                           {logo_props?.in_use ? (
-                            <Logo logo={logo_props} size={16} />
+                            <Logo logo={logo_props} size={16} type="lucide" />
                           ) : (
                             <FileText className="h-4 w-4 text-custom-text-300" />
                           )}

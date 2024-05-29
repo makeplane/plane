@@ -164,7 +164,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 label={
                   <>
                     {viewDetails?.logo_props?.in_use ? (
-                      <Logo logo={viewDetails.logo_props} size={12} />
+                      <Logo logo={viewDetails.logo_props} size={12} type="lucide" />
                     ) : (
                       <PhotoFilterIcon height={12} width={12} />
                     )}
@@ -186,7 +186,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                         className="flex items-center gap-1.5"
                       >
                         {view?.logo_props?.in_use ? (
-                          <Logo logo={view.logo_props} size={12} />
+                          <Logo logo={view.logo_props} size={12} type="lucide" />
                         ) : (
                           <PhotoFilterIcon height={12} width={12} />
                         )}

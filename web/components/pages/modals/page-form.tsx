@@ -3,7 +3,7 @@ import { FormEvent, useState } from "react";
 import { FileText } from "lucide-react";
 import { TPage } from "@plane/types";
 // ui
-import { Button, CustomEmojiIconPicker, EmojiIconPickerTypes, Input, Tooltip } from "@plane/ui";
+import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, Tooltip } from "@plane/ui";
 import { Logo } from "@/components/common";
 // constants
 import { PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
@@ -46,16 +46,16 @@ export const PageForm: React.FC<Props> = (props) => {
       <div className="space-y-5 p-5">
         <h3 className="text-xl font-medium text-custom-text-200">Create Page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
-          <CustomEmojiIconPicker
+          <EmojiIconPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center flex-shrink0"
             buttonClassName="flex items-center justify-center"
             label={
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-80">
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
                 <>
                   {formData?.logo_props?.in_use ? (
-                    <Logo logo={formData?.logo_props} size={18} />
+                    <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
                     <FileText className="h-4 w-4 text-custom-text-300" />
                   )}

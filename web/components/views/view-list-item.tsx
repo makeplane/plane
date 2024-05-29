@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // types
 import { IProjectView, TLogoProps } from "@plane/types";
 // ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, PhotoFilterIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmojiIconPicker, EmojiIconPickerTypes, PhotoFilterIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
@@ -58,7 +58,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
     <ListItem
       prependTitleElement={
         <>
-          <CustomEmojiIconPicker
+          <EmojiIconPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center"
@@ -66,7 +66,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
             label={
               <>
                 {view?.logo_props?.in_use ? (
-                  <Logo logo={view?.logo_props} size={16} />
+                  <Logo logo={view?.logo_props} size={16} type="lucide" />
                 ) : (
                   <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
                 )}
