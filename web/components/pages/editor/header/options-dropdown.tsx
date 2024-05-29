@@ -7,11 +7,12 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useAppRouter } from "@/hooks/store";
+import { useAppRouter, useEventTracker } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 
 // store
 import { IPageStore } from "@/store/pages/page.store";
+import { E_PAGES_DETAIL, PAGE_ARCHIVED, PAGE_LOCKED, PAGE_RESTORED, PAGE_UNLOCKED } from "@/constants/event-tracker";
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
@@ -33,46 +34,84 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
     restore,
+    access,
   } = page;
   // store hooks
   const { workspaceSlug, projectId } = useAppRouter();
+  const { captureEvent } = useEventTracker();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
   const handleArchivePage = async () =>
-    await archive().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be archived. Please try again later.",
-      })
-    );
+    await archive()
+      .then(() =>
+        captureEvent(PAGE_ARCHIVED, {
+          page_id: id,
+          access: access === 1 ? "private" : "public",
+          element: E_PAGES_DETAIL,
+          state: "SUCCESS",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be archived. Please try again later.",
+        })
+      );
 
   const handleRestorePage = async () =>
-    await restore().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be restored. Please try again later.",
-      })
-    );
+    await restore()
+      .then(() =>
+        captureEvent(PAGE_RESTORED, {
+          page_id: id,
+          access: access === 1 ? "private" : "public",
+          element: E_PAGES_DETAIL,
+          state: "SUCCESS",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be restored. Please try again later.",
+        })
+      );
 
   const handleLockPage = async () =>
-    await lock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be locked. Please try again later.",
-      })
-    );
+    await lock()
+      .then(() =>
+        captureEvent(PAGE_LOCKED, {
+          page_id: id,
+          access: access === 1 ? "private" : "public",
+          element: E_PAGES_DETAIL,
+          state: "SUCCESS",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be locked. Please try again later.",
+        })
+      );
 
   const handleUnlockPage = async () =>
-    await unlock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be unlocked. Please try again later.",
-      })
-    );
+    await unlock()
+      .then(() =>
+        captureEvent(PAGE_UNLOCKED, {
+          page_id: id,
+          access: access === 1 ? "private" : "public",
+          element: E_PAGES_DETAIL,
+          state: "SUCCESS",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be unlocked. Please try again later.",
+        })
+      );
 
   // menu items list
   const MENU_ITEMS: {

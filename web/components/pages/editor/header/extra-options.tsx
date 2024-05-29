@@ -8,10 +8,12 @@ import { ArchiveIcon } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
+// constants
+import { AI_RES_REGENERATED, AI_RES_USED, AI_TRIGGERED, E_PAGES_DETAIL } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance, useEventTracker } from "@/hooks/store";
 // store
 import { IPageStore } from "@/store/pages/page.store";
 
@@ -29,12 +31,19 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
   const { config } = useInstance();
+  const { captureEvent } = useEventTracker();
   // derived values
-  const { archived_at, isContentEditable, is_locked } = page;
+  const { archived_at, isContentEditable, is_locked, id } = page;
 
-  const handleAiAssistance = async (response: string) => {
+  const handleAiAssistance = async (task: string, response: string) => {
     if (!editorRef) return;
     editorRef.current?.setEditorValueAtCursorPosition(response);
+    captureEvent(AI_RES_USED, {
+      page_id: id,
+      element: E_PAGES_DETAIL,
+      question: task,
+      answer: response,
+    });
   };
 
   return (
@@ -61,6 +70,21 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
             // reset(getValues());
           }}
           onResponse={handleAiAssistance}
+          onGenerateResponse={(task) =>
+            captureEvent(AI_TRIGGERED, {
+              page_id: id,
+              element: E_PAGES_DETAIL,
+              question: task,
+            })
+          }
+          onReGenerateResponse={(task, response) =>
+            captureEvent(AI_RES_REGENERATED, {
+              page_id: id,
+              element: E_PAGES_DETAIL,
+              question: task,
+              prev_answer: response,
+            })
+          }
           placement="top-end"
           button={
             <button

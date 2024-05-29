@@ -2,8 +2,12 @@ import { FC } from "react";
 import Link from "next/link";
 // types
 import { TPageNavigationTabs } from "@plane/types";
+// constants
+import { PAGES_TAB_CHANGED, E_PAGES } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 
 type TPageTabNavigation = {
   workspaceSlug: string;
@@ -29,9 +33,15 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
 
 export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
   const { workspaceSlug, projectId, pageType } = props;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
     if (tabKey === pageType) e.preventDefault();
+    captureEvent(PAGES_TAB_CHANGED, {
+      tab: tabKey,
+      element: E_PAGES,
+    });
   };
 
   return (

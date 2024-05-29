@@ -17,7 +17,9 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  onResponse: (response: any) => void;
+  onResponse: (task: string, response: any) => void;
+  onGenerateResponse?: (task: string, response: any) => void;
+  onReGenerateResponse?: (task: string, response: any) => void;
   onError?: (error: any) => void;
   placement?: Placement;
   prompt?: string;
@@ -33,7 +35,19 @@ type FormData = {
 const aiService = new AIService();
 
 export const GptAssistantPopover: React.FC<Props> = (props) => {
-  const { isOpen, projectId, handleClose, onResponse, onError, placement, prompt, button, className = "" } = props;
+  const {
+    isOpen,
+    projectId,
+    handleClose,
+    onResponse,
+    onGenerateResponse,
+    onReGenerateResponse,
+    onError,
+    placement,
+    prompt,
+    button,
+    className = "",
+  } = props;
   // states
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
@@ -54,6 +68,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     control,
     reset,
     setFocus,
+    getValues,
     formState: { isSubmitting },
   } = useForm<FormData>({
     defaultValues: {
@@ -118,6 +133,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     }
 
     await callAIService(formData);
+    if (response !== "" && onReGenerateResponse) onReGenerateResponse(formData.task, response);
+    else if (response === "" && onGenerateResponse) onGenerateResponse(formData.task, response);
   };
 
   useEffect(() => {
@@ -162,7 +179,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     <Button
       variant="primary"
       onClick={() => {
-        onResponse(response);
+        onResponse(getValues("task"),response);
         onClose();
       }}
     >
@@ -173,8 +190,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-    ? "Generate response"
-    : "Generate again";
+      ? "Generate response"
+      : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>

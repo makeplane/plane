@@ -1,15 +1,15 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
-// hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helpers
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
-import { EUserProjectRoles } from "@/constants/project";
 // constants
-// components
+import { E_PAGES } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const PagesHeader = observer(() => {
@@ -61,7 +61,7 @@ export const PagesHeader = observer(() => {
             variant="primary"
             size="sm"
             onClick={() => {
-              setTrackElement("Project pages page");
+              setTrackElement(E_PAGES);
               toggleCreatePageModal(true);
             }}
           >

@@ -15,10 +15,12 @@ import { PageHead } from "@/components/core";
 import { PageDetailsHeader } from "@/components/headers";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
+// constants
+import { E_PAGES_DETAIL, PAGE_DUPLICATED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { usePage, useProjectPages } from "@/hooks/store";
+import { usePage, useProjectPages, useEventTracker } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // lib
@@ -38,7 +40,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
   const page = usePage(pageId?.toString() ?? "");
-  const { description_html, id, name } = page;
+  const { captureEvent } = useEventTracker();
+  const { description_html, id, name, access } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // fetch page details
@@ -84,7 +87,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     };
 
     await handleCreatePage(formData)
-      .then((res) => router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res?.id}`))
+      .then((res) => {
+        router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res?.id}`);
+        captureEvent(PAGE_DUPLICATED, {
+          page_id: pageId,
+          access: access == 1 ? "private" : "public",
+          element: E_PAGES_DETAIL,
+          state: "SUCCESS",
+        });
+      })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

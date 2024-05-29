@@ -178,6 +178,21 @@ export const STATE_DELETED = "State deleted";
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";
 export const PAGE_DELETED = "Page deleted";
+export const PAGE_FAVORITED = "Page favorited";
+export const PAGE_UNFAVORITED = "Page unfavorited";
+export const PAGE_ARCHIVED = "Page archived";
+export const PAGE_LOCKED = "Page locked";
+export const PAGE_UNLOCKED = "Page unlocked";
+export const PAGE_DUPLICATED = "Page duplicated";
+export const PAGE_RESTORED = "Page restored";
+export const PAGES_TAB_CHANGED = "Pages tab changed";
+export const PAGES_SORT_UPDATED = "Pages sort updated";
+export const PAGES_FILTER_APPLIED = "Pages filter applied";
+export const PAGES_FILTER_REMOVED = "Pages filter removed";
+// AI Assistant Events
+export const AI_TRIGGERED = "AI triggered";
+export const AI_RES_USED = "AI response used";
+export const AI_RES_REGENERATED = "AI response regenerated";
 // Member Events
 export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";
@@ -222,3 +237,7 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+//Elements
+export const E_PAGES = "Pages page"
+export const E_PAGES_DETAIL = "Pages detail page"
