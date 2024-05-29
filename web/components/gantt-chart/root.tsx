@@ -18,6 +18,7 @@ type GanttChartRootProps = {
   enableBlockMove?: boolean;
   enableReorder?: boolean;
   enableAddBlock?: boolean;
+  enableSelection?: boolean;
   bottomSpacing?: boolean;
   showAllBlocks?: boolean;
 };
@@ -36,6 +37,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
     enableBlockMove = false,
     enableReorder = false,
     enableAddBlock = false,
+    enableSelection = false,
     bottomSpacing = false,
     showAllBlocks = false,
     quickAdd,
@@ -56,6 +58,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
         enableBlockMove={enableBlockMove}
         enableReorder={enableReorder}
         enableAddBlock={enableAddBlock}
+        enableSelection={enableSelection}
         bottomSpacing={bottomSpacing}
         showAllBlocks={showAllBlocks}
         quickAdd={quickAdd}

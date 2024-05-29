@@ -7,11 +7,15 @@ import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // components
+import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+// constants
+import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -34,6 +38,7 @@ interface Props {
   issueIds: string[];
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -51,12 +56,16 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     issueIds,
     spreadsheetColumnsList,
     spacingLeft = 6,
+    selectionHelpers,
   } = props;
-
+  // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
+  // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail();
-
+  // derived values
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
+  const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
 
   return (
     <>
@@ -65,7 +74,13 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         as="tr"
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
-        placeholderChildren={<td colSpan={100} className="border-b-[0.5px] border-custom-border-200" />}
+        placeholderChildren={
+          <td colSpan={100} className="border-[0.5px] border-transparent border-b-custom-border-200" />
+        }
+        classNames={cn("bg-custom-background-100 transition-[background-color]", {
+          "group selected-issue-row": isIssueSelected,
+          "border-[0.5px] border-custom-border-400": isIssueActive,
+        })}
       >
         <IssueRowDetails
           issueId={issueId}
@@ -81,13 +96,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           isExpanded={isExpanded}
           setExpanded={setExpanded}
           spreadsheetColumnsList={spreadsheetColumnsList}
+          selectionHelpers={selectionHelpers}
         />
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssueId: string) => (
+        subIssues?.map((subIssueId) => (
           <SpreadsheetIssueRow
             key={subIssueId}
             issueId={subIssueId}
@@ -103,6 +117,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             containerRef={containerRef}
             issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
+            selectionHelpers={selectionHelpers}
           />
         ))}
     </>
@@ -123,6 +138,7 @@ interface IssueRowDetailsProps {
   setExpanded: Dispatch<SetStateAction<boolean>>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
+  selectionHelpers: TSelectionHelper;
 }
 
 const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
@@ -140,6 +156,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     setExpanded,
     spreadsheetColumnsList,
     spacingLeft = 6,
+    selectionHelpers,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -148,7 +165,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // hooks
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();
@@ -171,7 +188,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const issueDetail = issue.getIssueById(issueId);
 
-  const paddingLeft = `${spacingLeft}px`;
+  const marginLeft = `${spacingLeft}px`;
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -204,16 +221,22 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const disableUserActions = !canEditProperties(issueDetail.project_id);
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
+  const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
 
   return (
     <>
-      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10">
+      <td
+        id={`issue-${issueId}`}
+        ref={cellRef}
+        tabIndex={0}
+        className="sticky left-0 z-10 group/list-block bg-custom-background-100"
+      >
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
               "border border-custom-primary-70 hover:border-custom-primary-70":
@@ -223,23 +246,51 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           )}
           disabled={!!issueDetail?.tempId}
         >
-          <div
-            className="flex min-w-min items-center gap-0.5 px-4 py-2.5 pl-1.5 pr-0"
-            style={nestingLevel !== 0 ? { paddingLeft } : {}}
-          >
-            <div className="flex items-center">
-              {/* bulk ops */}
-              <span className="size-3.5" />
-              <div className="flex size-4 items-center justify-center">
-                {subIssuesCount > 0 && (
-                  <button
-                    className="flex items-center justify-center size-4 cursor-pointer rounded-sm text-custom-text-400 hover:text-custom-text-300"
-                    onClick={handleToggleExpand}
-                  >
-                    <ChevronRight className={`size-4 ${isExpanded ? "rotate-90" : ""}`} />
-                  </button>
-                )}
-              </div>
+          <div className="flex items-center gap-1 min-w-min py-2.5 pl-2">
+            {/* select checkbox */}
+            {projectId && !disableUserActions && (
+              <Tooltip
+                tooltipContent={
+                  <>
+                    Only issues within the current
+                    <br />
+                    project can be selected.
+                  </>
+                }
+                disabled={issueDetail.project_id === projectId}
+              >
+                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                  <MultipleSelectEntityAction
+                    className={cn(
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                      {
+                        "opacity-100 pointer-events-auto": isIssueSelected,
+                      }
+                    )}
+                    groupId={SPREADSHEET_SELECT_GROUP}
+                    id={issueDetail.id}
+                    selectionHelpers={selectionHelpers}
+                    disabled={issueDetail.project_id !== projectId}
+                  />
+                </div>
+              </Tooltip>
+            )}
+            {/* sub-issues chevron */}
+            <div className="grid place-items-center size-4" style={nestingLevel !== 0 ? { marginLeft } : {}}>
+              {subIssuesCount > 0 && (
+                <button
+                  type="button"
+                  className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                  onClick={handleToggleExpand}
+                >
+                  <ChevronRight
+                    className={cn("size-4", {
+                      "rotate-90": isExpanded,
+                    })}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              )}
             </div>
 
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
