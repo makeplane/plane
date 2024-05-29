@@ -253,7 +253,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         updateIssue={updateIssue}
         quickActions={quickActions}
         canEditProperties={canEditProperties}
-        scrollableContainerRef={containerRef}
+        scrollableContainerRef={scrollableContainerRef}
         canDropOverIssue={!canOverlayBeVisible}
       />
 
