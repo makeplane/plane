@@ -43,6 +43,7 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
+import { convertToISODateString } from "@/helpers/date-time.helper";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -290,7 +291,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
-    const displayFilters = this.rootIssueStore?.projectViewIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters || !groupedIssueIds) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
@@ -1509,7 +1510,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
     const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
-    const array = orderBy(issues, "created_at", ["desc"]);
+    const array = orderBy(issues, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
 
     switch (key) {
       case "sort_order":
@@ -1524,13 +1525,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         );
       // dates
       case "created_at":
-        return getIssueIds(orderBy(array, "created_at"));
+        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["created_at"])));
       case "-created_at":
-        return getIssueIds(orderBy(array, "created_at", ["desc"]));
+        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]));
       case "updated_at":
-        return getIssueIds(orderBy(array, "updated_at"));
+        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["updated_at"])));
       case "-updated_at":
-        return getIssueIds(orderBy(array, "updated_at", ["desc"]));
+        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["updated_at"]), ["desc"]));
       case "start_date":
         return getIssueIds(orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"])); //preferring sorting based on empty values to always keep the empty values below
       case "-start_date":
