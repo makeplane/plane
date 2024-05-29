@@ -108,7 +108,7 @@ export const ListGroup = observer((props: Props) => {
   ) : (
     <div
       className={
-        "h-11 relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+        "h-11 relative flex items-center gap-3 bg-custom-background-100 border-t border-b-custom-border-200 pl-12 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
       }
       onClick={() => loadMoreIssues(group.id)}
     >
