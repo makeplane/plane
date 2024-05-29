@@ -191,7 +191,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        canDrag: () => !disableDrag,
+        canDrag: () => !disableDrag && !isCollapsed,
         dragHandle: dragHandleElement ?? undefined,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
@@ -292,7 +292,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 "group relative flex w-full items-center rounded-md py-1 text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
                 {
                   "bg-custom-sidebar-background-80": isMenuActive,
-                  "pl-8": disableDrag,
+                  "pl-7": disableDrag && !isCollapsed,
                 }
               )}
             >
@@ -311,6 +311,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         "group-hover:opacity-100": !isCollapsed,
                         "cursor-not-allowed opacity-60": project.sort_order === null,
                         flex: isMenuActive,
+                        hidden: isCollapsed,
                       }
                     )}
                     ref={dragHandleRef}
@@ -331,7 +332,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   )}
                 >
                   <div
-                    className={cn("flex w-full flex-grow items-center gap-1 truncate -ml-1", {
+                    className={cn("flex w-full flex-grow items-center gap-1 truncate", {
                       "justify-center": isCollapsed,
                     })}
                   >

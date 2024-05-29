@@ -36,7 +36,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDecline}
-      isDeleting={isDeclining}
+      isSubmitting={isDeclining}
       isOpen={isOpen}
       title="Decline Issue"
       content={
