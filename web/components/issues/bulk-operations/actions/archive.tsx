@@ -13,11 +13,11 @@ import { useAppRouter, useIssueDetail, useProjectState } from "@/hooks/store";
 
 type Props = {
   handleClearSelection: () => void;
-  selectedEntityIds: string[];
+  selectedIssueIds: string[];
 };
 
 export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
-  const { handleClearSelection, selectedEntityIds } = props;
+  const { handleClearSelection, selectedIssueIds } = props;
   // states
   const [isBulkArchiveModalOpen, setIsBulkArchiveModalOpen] = useState(false);
   // store hooks
@@ -26,7 +26,7 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  const canAllIssuesBeArchived = selectedEntityIds.every((issueId) => {
+  const canAllIssuesBeArchived = selectedIssueIds.every((issueId) => {
     const issueDetails = getIssueById(issueId);
     if (!issueDetails) return false;
     const stateDetails = getStateById(issueDetails.state_id);
@@ -40,10 +40,10 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
         <BulkArchiveConfirmationModal
           isOpen={isBulkArchiveModalOpen}
           handleClose={() => setIsBulkArchiveModalOpen(false)}
-          issueIds={selectedEntityIds}
+          issueIds={selectedIssueIds}
           onSubmit={handleClearSelection}
-          projectId={projectId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
         />
       )}
       <Tooltip

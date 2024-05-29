@@ -19,6 +19,7 @@ export type IMultipleSelectStore = {
   getPreviousActiveEntity: () => TEntityDetails | null;
   getNextActiveEntity: () => TEntityDetails | null;
   getActiveEntityDetails: () => TEntityDetails | null;
+  getEntityDetailsFromEntityID: (entityID: string) => TEntityDetails | null;
   // entity actions
   updateSelectedEntityDetails: (entityDetails: TEntityDetails, action: "add" | "remove") => void;
   bulkUpdateSelectedEntityDetails: (entitiesList: TEntityDetails[], action: "add" | "remove") => void;
@@ -118,6 +119,16 @@ export class MultipleSelectStore implements IMultipleSelectStore {
    * @returns {TEntityDetails}
    */
   getActiveEntityDetails = computedFn(() => this.activeEntityDetails);
+
+  /**
+   * @description get the entity details from entityID
+   * @param {string} entityID
+   * @returns {TEntityDetails | null}
+   */
+  getEntityDetailsFromEntityID = computedFn(
+    (entityID: string): TEntityDetails | null =>
+      this.selectedEntityDetails.find((en) => en.entityID === entityID) ?? null
+  );
 
   // entity actions
   /**

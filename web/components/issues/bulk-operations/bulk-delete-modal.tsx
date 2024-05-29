@@ -34,8 +34,8 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Issues deleted successfully.",
+          title: "",
+          message: `${issueIds.length} ${issueIds.length > 1 ? "issues have" : "issue has"} been deleted successfully.`,
         });
         onSubmit?.();
         handleClose();

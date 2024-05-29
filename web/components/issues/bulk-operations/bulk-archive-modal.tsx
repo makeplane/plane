@@ -35,8 +35,8 @@ export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) =>
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Issues archived successfully.",
+          title: "",
+          message: `${issueIds.length} ${issueIds.length > 1 ? "issues have" : "issue has"} been archived successfully.`,
         });
         onSubmit?.();
         handleClose();
