@@ -50,6 +50,8 @@ export async function startImageUpload(
   };
 
   try {
+    view.focus();
+
     const src = await uploadAndValidateImage(file, uploadFile);
 
     if (src == null) {
@@ -72,10 +74,10 @@ export async function startImageUpload(
     }
 
     // insert the image node at the position of the placeholder and remove the placeholder
-    const transaction = view.state.tr.insert(pos - 1, node).setMeta(uploadKey, { remove: { id } });
+    const transaction = view.state.tr.insert(pos, node).setMeta(uploadKey, { remove: { id } });
 
     view.dispatch(transaction);
-    if (view.hasFocus()) view.focus();
+
     editor.storage.image.uploadInProgress = false;
   } catch (error) {
     console.error("Error in uploading and inserting image: ", error);

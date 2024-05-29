@@ -147,7 +147,7 @@ export const useEditor = ({
         const item = getEditorMenuItem(itemName);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelection);
+            item.command(savedSelectionRef.current);
           } else {
             item.command();
           }
