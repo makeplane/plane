@@ -52,7 +52,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store
-  const { currentTab, deleteInboxIssue, inboxIssuesArray } = useProjectInbox();
+  const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
   const {
     membership: { currentProjectRole },
@@ -76,11 +76,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
-    const currentIssueIndex = inboxIssuesArray.findIndex((i) => i.issue.id === currentInboxIssueId);
-    if (inboxIssuesArray[currentIssueIndex + 1])
-      nextOrPreviousIssueId = inboxIssuesArray[currentIssueIndex + 1].issue.id;
-    else if (inboxIssuesArray[currentIssueIndex - 1])
-      nextOrPreviousIssueId = inboxIssuesArray[currentIssueIndex - 1].issue.id;
+    const currentIssueIndex = filteredInboxIssueIds.findIndex((id) => id === currentInboxIssueId);
+    if (filteredInboxIssueIds[currentIssueIndex + 1])
+      nextOrPreviousIssueId = filteredInboxIssueIds[currentIssueIndex + 1];
+    else if (filteredInboxIssueIds[currentIssueIndex - 1])
+      nextOrPreviousIssueId = filteredInboxIssueIds[currentIssueIndex - 1];
     else nextOrPreviousIssueId = undefined;
     return nextOrPreviousIssueId;
   };
@@ -134,22 +134,22 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       })
     );
 
-  const currentIssueIndex = inboxIssuesArray.findIndex((issue) => issue.issue.id === currentInboxIssueId) ?? 0;
+  const currentIssueIndex = filteredInboxIssueIds.findIndex((issueId) => issueId === currentInboxIssueId) ?? 0;
 
   const handleInboxIssueNavigation = useCallback(
     (direction: "next" | "prev") => {
-      if (!inboxIssuesArray || !currentInboxIssueId) return;
+      if (!filteredInboxIssueIds || !currentInboxIssueId) return;
       const activeElement = document.activeElement as HTMLElement;
       if (activeElement && (activeElement.classList.contains("tiptap") || activeElement.id === "title-input")) return;
       const nextIssueIndex =
         direction === "next"
-          ? (currentIssueIndex + 1) % inboxIssuesArray.length
-          : (currentIssueIndex - 1 + inboxIssuesArray.length) % inboxIssuesArray.length;
-      const nextIssueId = inboxIssuesArray[nextIssueIndex].issue.id;
+          ? (currentIssueIndex + 1) % filteredInboxIssueIds.length
+          : (currentIssueIndex - 1 + filteredInboxIssueIds.length) % filteredInboxIssueIds.length;
+      const nextIssueId = filteredInboxIssueIds[nextIssueIndex];
       if (!nextIssueId) return;
       router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${nextIssueId}`);
     },
-    [currentInboxIssueId, currentIssueIndex, inboxIssuesArray, projectId, router, workspaceSlug]
+    [currentInboxIssueId, currentIssueIndex, filteredInboxIssueIds, projectId, router, workspaceSlug]
   );
 
   const onKeyDown = useCallback(
