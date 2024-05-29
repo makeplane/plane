@@ -65,6 +65,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   // derived values
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
+  const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
 
   return (
     <>
@@ -73,9 +74,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         as="tr"
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
-        placeholderChildren={<td colSpan={100} className="border-b-[0.5px] border-custom-border-200" />}
-        classNames={cn("bg-custom-background-100 transition-colors", {
+        placeholderChildren={
+          <td colSpan={100} className="border-[0.5px] border-transparent border-b-custom-border-200" />
+        }
+        classNames={cn("bg-custom-background-100 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
+          "border-[0.5px] border-custom-border-400": isIssueActive,
         })}
       >
         <IssueRowDetails

@@ -74,6 +74,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
   };
 
   const isBlockSelected = selectionHelpers.getIsEntitySelected(block.id);
+  const isBlockFocused = selectionHelpers.getIsEntityActive(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);
 
   return (
@@ -86,12 +87,11 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn("relative h-full", {
+          "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
           "bg-custom-background-90": isBlockHoveredOn,
-          "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
-            block.data.id
-          ),
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isBlockSelected,
           "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
+          "border border-r-0 border-custom-border-400": isBlockFocused,
         })}
         onMouseEnter={() => updateActiveBlockId(block.id)}
         onMouseLeave={() => updateActiveBlockId(null)}

@@ -34,15 +34,15 @@ export const IssuesSidebarBlock = observer((props: Props) => {
   const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
   const isIssueSelected = selectionHelpers?.getIsEntitySelected(block.id);
+  const isIssueFocused = selectionHelpers?.getIsEntityActive(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);
 
   return (
     <div
       className={cn("group/list-block", {
         "rounded bg-custom-background-80": isDragging,
-        "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
-          block.data.id
-        ),
+        "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
+        "border border-r-0 border-custom-border-400": isIssueFocused,
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
