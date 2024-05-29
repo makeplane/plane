@@ -20,7 +20,6 @@ import { AuthService } from "@/services/auth.service";
 
 type Props = {
   email: string;
-  isPasswordAutoset: boolean;
   isSMTPConfigured: boolean;
   mode: EAuthModes;
   handleEmailClear: () => void;
@@ -104,6 +103,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         : true,
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
+
+  const password = passwordFormData?.password ?? "";
+  const confirmPassword = passwordFormData?.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
 
   return (
     <form
@@ -201,7 +204,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            !isRetryPasswordInputFocused && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
         </div>
       )}
 

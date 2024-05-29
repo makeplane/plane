@@ -54,7 +54,7 @@ const FeaturesSettingsPage: NextPageWithLayout = observer(() => {
 
 FeaturesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectSettingHeader title="Features Settings" />} withProjectWrapper>
+    <AppLayout header={<ProjectSettingHeader />} withProjectWrapper>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

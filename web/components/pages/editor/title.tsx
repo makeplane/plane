@@ -33,12 +33,11 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
       ) : (
         <>
           <TextArea
-            onChange={(e) => updateTitle(e.target.value)}
             className="w-full bg-custom-background text-[1.75rem] font-semibold outline-none p-0 border-none resize-none rounded-none"
             style={{
               lineHeight: "1.2",
             }}
-            placeholder="Untitled Page"
+            placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -46,6 +45,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
               }
             }}
             value={title}
+            onChange={(e) => updateTitle(e.target.value)}
             maxLength={255}
             onFocus={() => setIsLengthVisible(true)}
             onBlur={() => setIsLengthVisible(false)}
@@ -60,7 +60,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           >
             <span
               className={cn({
-                "text-red-500": title.length === 0 || title.length > 255,
+                "text-red-500": title.length > 255,
               })}
             >
               {title.length}

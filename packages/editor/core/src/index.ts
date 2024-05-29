@@ -24,6 +24,7 @@ export * from "src/ui/menus/menu-items";
 export * from "src/lib/editor-commands";
 
 // types
+export type { CustomEditorProps, TFileHandler } from "src/hooks/use-editor";
 export type { DeleteImage } from "src/types/delete-image";
 export type { UploadImage } from "src/types/upload-image";
 export type { EditorRefApi, EditorReadOnlyRefApi } from "src/types/editor-ref-api";

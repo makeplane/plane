@@ -16,14 +16,15 @@ const useReloadConfirmations = (isActive = true) => {
   );
 
   const handleRouteChangeStart = useCallback(
-    (url: string) => {
+    (url: string, { shallow }: { shallow: boolean }) => {
       if (!isActive || !showAlert) return;
       const leave = confirm("Are you sure you want to leave? Changes you made may not be saved.");
       if (!leave) {
-        router.events.emit("routeChangeError");
+        router.events.emit("routeChangeError", new Error("Route change cancelled by user"), url, shallow);
+        throw "routeChange aborted.";
       }
     },
-    [isActive, showAlert, router.events]
+    [isActive, router.events, showAlert]
   );
 
   useEffect(() => {

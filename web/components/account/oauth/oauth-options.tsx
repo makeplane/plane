@@ -8,17 +8,13 @@ type TOAuthOptionProps = {
   isSignUp?: boolean;
 };
 
-export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
-  const { isSignUp = false } = props;
+export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   // hooks
-  const { instance } = useInstance();
+  const { config } = useInstance();
 
-  const isOAuthEnabled =
-    (instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled)) || false;
+  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled)) || false;
 
   if (!isOAuthEnabled) return null;
-
-  const oauthProviderButtonText = `Sign ${isSignUp ? "up" : "in"} with`;
 
   return (
     <>
@@ -28,12 +24,12 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer((props) => {
         <hr className="w-full border-onboarding-border-100" />
       </div>
       <div className={`mt-7 grid gap-4 overflow-hidden`}>
-        {instance?.config?.is_google_enabled && (
+        {config?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
-            <GoogleOAuthButton text={`${oauthProviderButtonText} Google`} />
+            <GoogleOAuthButton text="Continue with Google" />
           </div>
         )}
-        {instance?.config?.is_github_enabled && <GithubOAuthButton text={`${oauthProviderButtonText} Github`} />}
+        {config?.is_github_enabled && <GithubOAuthButton text="Continue with Github" />}
       </div>
     </>
   );

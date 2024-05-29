@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock, MoveRight, User2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, MoveRight, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
@@ -146,9 +146,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
               })}
             </AvatarGroup>
           ) : (
-            <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-              <User2 className="h-4 w-4 text-custom-text-400" />
-            </span>
+            <Users className="h-4 w-4 text-custom-text-300" />
           )}
         </div>
       </Tooltip>

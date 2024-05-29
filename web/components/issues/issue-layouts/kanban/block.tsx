@@ -29,6 +29,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   draggableId: string;
+  canDropOverIssue: boolean;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -63,7 +64,9 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
           <div
-            className="absolute -top-1 right-0 hidden group-hover/kanban-block:block"
+            className={cn("absolute -top-1 right-0", {
+              "hidden group-hover/kanban-block:block": !isMobile,
+            })}
             onClick={handleEventPropagation}
           >
             {quickActions({
@@ -106,6 +109,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     issuesMap,
     displayProperties,
     isDragDisabled,
+    canDropOverIssue,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -116,6 +120,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -164,6 +169,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       }),
       dropTargetForElements({
         element,
+        canDrop: ({ source }) => source?.data?.id !== issue?.id && canDropOverIssue,
         getData: () => ({ id: issue?.id, type: "ISSUE" }),
         onDragEnter: () => {
           setIsDraggingOverBlock(true);
@@ -176,7 +182,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         },
       })
     );
-  }, [cardRef?.current, issue?.id, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
+  }, [cardRef?.current, issue?.id, isDragAllowed, canDropOverIssue, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
 
   if (!issue) return null;
 
@@ -210,7 +216,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           )}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId}
+          disabled={!!issue?.tempId || isMobile}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"

@@ -24,7 +24,7 @@ export const CopyField: React.FC<Props> = (props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm text-custom-text-300">{label}</h4>
+      <h4 className="text-sm text-custom-text-200">{label}</h4>
       <Button
         variant="neutral-primary"
         className="flex items-center justify-between py-2"
@@ -40,7 +40,7 @@ export const CopyField: React.FC<Props> = (props) => {
         <p className="text-sm font-medium">{url}</p>
         <Copy size={18} color="#B9B9B9" />
       </Button>
-      <div className="text-xs text-custom-text-400">{description}</div>
+      <div className="text-xs text-custom-text-300">{description}</div>
     </div>
   );
 };

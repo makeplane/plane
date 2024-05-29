@@ -174,6 +174,13 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
 
+      // update sub-issues_count of the parent issue
+      set(
+        this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
+        [parentIssueId, "sub_issues_count"],
+        this.subIssues[parentIssueId].length
+      );
+
       return;
     } catch (error) {
       throw error;
@@ -270,6 +277,12 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       runInAction(() => {
         pull(this.subIssues[parentIssueId], issueId);
+        // update sub-issues_count of the parent issue
+        set(
+          this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
+          [parentIssueId, "sub_issues_count"],
+          this.subIssues[parentIssueId].length
+        );
       });
 
       return;
@@ -301,6 +314,12 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       runInAction(() => {
         pull(this.subIssues[parentIssueId], issueId);
+        // update sub-issues_count of the parent issue
+        set(
+          this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
+          [parentIssueId, "sub_issues_count"],
+          this.subIssues[parentIssueId].length
+        );
       });
 
       return;

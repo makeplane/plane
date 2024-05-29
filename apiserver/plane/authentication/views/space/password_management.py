@@ -1,6 +1,6 @@
 # Python imports
 import os
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode
 
 # Third party imports
 from rest_framework import status
@@ -32,6 +32,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+from plane.authentication.rate_limit import AuthenticationThrottle
 
 
 def generate_password_token(user):
@@ -44,6 +45,10 @@ def generate_password_token(user):
 class ForgotPasswordSpaceEndpoint(APIView):
     permission_classes = [
         AllowAny,
+    ]
+
+    throttle_classes = [
+        AuthenticationThrottle,
     ]
 
     def post(self, request):
@@ -145,10 +150,7 @@ class ResetPasswordSpaceEndpoint(View):
                     error_message="INVALID_PASSWORD_TOKEN",
                 )
                 params = exc.get_error_dict()
-                url = urljoin(
-                    base_host(request=request, is_space=True),
-                    "accounts/reset-password?" + urlencode(params),
-                )
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
                 return HttpResponseRedirect(url)
 
             password = request.POST.get("password", False)
@@ -158,10 +160,7 @@ class ResetPasswordSpaceEndpoint(View):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = urljoin(
-                    base_host(request=request, is_space=True),
-                    "?" + urlencode(exc.get_error_dict()),
-                )
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
                 return HttpResponseRedirect(url)
 
             # Check the password complexity
@@ -171,11 +170,7 @@ class ResetPasswordSpaceEndpoint(View):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = urljoin(
-                    base_host(request=request, is_space=True),
-                    "accounts/reset-password?"
-                    + urlencode(exc.get_error_dict()),
-                )
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
                 return HttpResponseRedirect(url)
 
             # set_password also hashes the password that the user will get
@@ -193,8 +188,5 @@ class ResetPasswordSpaceEndpoint(View):
                 ],
                 error_message="EXPIRED_PASSWORD_TOKEN",
             )
-            url = urljoin(
-                base_host(request=request, is_space=True),
-                "accounts/reset-password?" + urlencode(exc.get_error_dict()),
-            )
+            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
             return HttpResponseRedirect(url)

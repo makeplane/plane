@@ -21,8 +21,11 @@ class EmailProvider(CredentialAdapter):
         key=None,
         code=None,
         is_signup=False,
+        callback=None,
     ):
-        super().__init__(request, self.provider)
+        super().__init__(
+            request=request, provider=self.provider, callback=callback
+        )
         self.key = key
         self.code = code
         self.is_signup = is_signup
@@ -38,8 +41,10 @@ class EmailProvider(CredentialAdapter):
 
         if ENABLE_EMAIL_PASSWORD == "0":
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["ENABLE_EMAIL_PASSWORD"],
-                error_message="ENABLE_EMAIL_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "EMAIL_PASSWORD_AUTHENTICATION_DISABLED"
+                ],
+                error_message="EMAIL_PASSWORD_AUTHENTICATION_DISABLED",
             )
 
     def set_user_data(self):

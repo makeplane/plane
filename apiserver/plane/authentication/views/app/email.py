@@ -13,8 +13,8 @@ from plane.authentication.utils.login import user_login
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.workspace_project_join import (
-    process_workspace_project_invitations,
+from plane.authentication.utils.user_auth_workflow import (
+    post_user_auth_workflow,
 )
 from plane.db.models import User
 from plane.authentication.adapter.error import (
@@ -125,13 +125,15 @@ class SignInAuthEndpoint(View):
 
         try:
             provider = EmailProvider(
-                request=request, key=email, code=password, is_signup=False
+                request=request,
+                key=email,
+                code=password,
+                is_signup=False,
+                callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
             # Get the redirection path
             if next_path:
                 path = str(next_path)
@@ -252,13 +254,15 @@ class SignUpAuthEndpoint(View):
 
         try:
             provider = EmailProvider(
-                request=request, key=email, code=password, is_signup=True
+                request=request,
+                key=email,
+                code=password,
+                is_signup=True,
+                callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            # Process workspace and project invitations
-            process_workspace_project_invitations(user=user)
             # Get the redirection path
             if next_path:
                 path = next_path

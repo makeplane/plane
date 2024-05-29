@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 // types
 import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
-import { Invitations, OnboardingHeader, SwitchOrDeleteAccountDropdown, CreateWorkspace } from "@/components/onboarding";
+import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
@@ -55,7 +55,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
         <div className="flex items-center justify-between">
           <OnboardingHeader currentStep={totalSteps - 1} totalSteps={totalSteps} />
           <div className="shrink-0 lg:hidden">
-            <SwitchOrDeleteAccountDropdown />
+            <SwitchAccountDropdown />
           </div>
         </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
@@ -79,7 +79,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <SwitchOrDeleteAccountDropdown />
+        <SwitchAccountDropdown />
         <div className="absolute inset-0 z-0">
           <Image
             src={resolvedTheme === "dark" ? CreateJoinWorkspaceDark : CreateJoinWorkspace}

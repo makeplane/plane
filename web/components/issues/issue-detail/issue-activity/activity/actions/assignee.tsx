@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
-import { UserGroupIcon } from "@plane/ui";
+// icons
+import { Users } from "lucide-react";
+// hooks;
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
-// icons
 
 type TIssueAssigneeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
@@ -21,7 +21,7 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<UserGroupIcon className="h-4 w-4 flex-shrink-0" />}
+      icon={<Users className="h-3 w-3 flex-shrink-0" />}
       activityId={activityId}
       ends={ends}
     >

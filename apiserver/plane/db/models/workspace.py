@@ -244,6 +244,7 @@ class Team(BaseModel):
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="workspace_team"
     )
+    logo_props = models.JSONField(default=dict)
 
     def __str__(self):
         """Return name of the team"""
@@ -325,7 +326,7 @@ class WorkspaceUserProperties(BaseModel):
         unique_together = ["workspace", "user"]
         verbose_name = "Workspace User Property"
         verbose_name_plural = "Workspace User Property"
-        db_table = "Workspace_user_properties"
+        db_table = "workspace_user_properties"
         ordering = ("-created_at",)
 
     def __str__(self):

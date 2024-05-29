@@ -45,7 +45,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
 
   // scope data
   const pendingIssues = defaultAnalytics?.pending_issue_user ?? [];
-  const pendingUnAssignedIssues = pendingIssues?.filter((issue) => issue.assignees__id === null);
+  const pendingUnAssignedIssuesUser = pendingIssues?.find((issue) => issue.assignees__id === null);
   const pendingAssignedIssues = pendingIssues?.filter((issue) => issue.assignees__id !== null);
 
   return (
@@ -56,7 +56,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
             <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "md:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope
-                pendingUnAssignedIssues={pendingUnAssignedIssues}
+                pendingUnAssignedIssuesUser={pendingUnAssignedIssuesUser}
                 pendingAssignedIssues={pendingAssignedIssues}
               />
               <AnalyticsLeaderBoard

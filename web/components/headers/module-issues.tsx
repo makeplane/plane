@@ -71,6 +71,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters },
+    issues: { issuesCount },
   } = useIssues(EIssuesStoreType.MODULE);
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
@@ -145,12 +146,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issueCount = moduleDetails
-    ? !issueFilters?.displayFilters?.sub_issue && moduleDetails.sub_issues
-      ? moduleDetails.total_issues - moduleDetails.sub_issues
-      : moduleDetails.total_issues
-    : undefined;
-
   const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
@@ -209,16 +204,16 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                         <DiceIcon className="h-3 w-3" />
                         <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
                           <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
-                          {issueCount && issueCount > 0 ? (
+                          {issuesCount && issuesCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issueCount} ${
-                                issueCount > 1 ? "issues" : "issue"
+                              tooltipContent={`There are ${issuesCount} ${
+                                issuesCount > 1 ? "issues" : "issue"
                               } in this module`}
                               position="bottom"
                             >
                               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
-                                {issueCount}
+                                {issuesCount}
                               </span>
                             </Tooltip>
                           ) : null}

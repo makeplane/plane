@@ -56,7 +56,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
             Sibling issues
           </div>
 
-          <IssueParentSiblings currentIssue={issue} parentIssue={parentIssue} />
+          <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
 
           <CustomMenu.MenuItem
             onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: null })}

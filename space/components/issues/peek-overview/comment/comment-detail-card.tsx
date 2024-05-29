@@ -11,6 +11,7 @@ import { CommentReactions } from "@/components/issues/peek-overview";
 import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetails, useProject, useUser } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { Comment } from "@/types/issue";
 
@@ -25,6 +26,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const { workspace } = useProject();
   const { peekId, deleteIssueComment, updateIssueComment } = useIssueDetails();
   const { data: currentUser } = useUser();
+  const isInIframe = useIsInIframe();
   // derived values
   const workspaceId = workspace?.id;
 
@@ -138,7 +140,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         </div>
       </div>
 
-      {currentUser?.id === comment?.actor_detail?.id && (
+      {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"

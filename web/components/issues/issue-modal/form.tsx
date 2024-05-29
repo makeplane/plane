@@ -111,6 +111,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -118,7 +119,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
   const { projectId: routeProjectId } = useAppRouter();
-  const { instance } = useInstance();
+  const { config } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
 
@@ -437,7 +438,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               ) : (
                 <>
                   <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
-                    {issueName && issueName.trim() !== "" && instance?.config?.has_openai_configured && (
+                    {issueName && issueName.trim() !== "" && config?.has_openai_configured && (
                       <button
                         type="button"
                         className={`flex items-center gap-1 rounded bg-custom-background-90 px-1.5 py-1 text-xs ${
@@ -456,7 +457,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         )}
                       </button>
                     )}
-                    {instance?.config?.has_openai_configured && (
+                    {config?.has_openai_configured && (
                       <GptAssistantPopover
                         isOpen={gptAssistantModal}
                         projectId={projectId}
@@ -497,6 +498,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           handleFormChange();
                         }}
+                        onEnterKeyPress={() => submitBtnRef?.current?.click()}
                         ref={editorRef}
                         tabIndex={getTabIndex("description_html")}
                         placeholder={getDescriptionPlaceholder}
@@ -812,6 +814,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               variant="primary"
               type="submit"
               size="sm"
+              ref={submitBtnRef}
               loading={isSubmitting}
               tabIndex={isDraft ? getTabIndex("submit_button") : getTabIndex("draft_button")}
             >

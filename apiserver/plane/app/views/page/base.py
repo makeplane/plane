@@ -1,5 +1,6 @@
 # Python imports
 import json
+import base64
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -8,6 +9,7 @@ from django.db import connection
 from django.db.models import Exists, OuterRef, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.http import StreamingHttpResponse
 
 # Third party imports
 from rest_framework import status
@@ -15,7 +17,6 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import (
-    PageFavoriteSerializer,
     PageLogSerializer,
     PageSerializer,
     SubPageSerializer,
@@ -23,8 +24,8 @@ from plane.app.serializers import (
 )
 from plane.db.models import (
     Page,
-    PageFavorite,
     PageLog,
+    UserFavorite,
     ProjectMember,
 )
 
@@ -61,9 +62,10 @@ class PageViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        subquery = PageFavorite.objects.filter(
+        subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            page_id=OuterRef("pk"),
+            entity_type="page",
+            entity_identifier=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -303,23 +305,24 @@ class PageFavoriteViewSet(BaseViewSet):
         ProjectEntityPermission,
     ]
 
-    serializer_class = PageFavoriteSerializer
-    model = PageFavorite
+    model = UserFavorite
 
     def create(self, request, slug, project_id, pk):
-        _ = PageFavorite.objects.create(
+        _ = UserFavorite.objects.create(
             project_id=project_id,
-            page_id=pk,
+            entity_identifier=pk,
+            entity_type="page",
             user=request.user,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, pk):
-        page_favorite = PageFavorite.objects.get(
+        page_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,
             workspace__slug=slug,
-            page_id=pk,
+            entity_identifier=pk,
+            entity_type="page",
         )
         page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -387,3 +390,48 @@ class SubPagesEndpoint(BaseAPIView):
         return Response(
             SubPageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
+
+
+class PagesDescriptionViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def retrieve(self, request, slug, project_id, pk):
+        page = Page.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        binary_data = page.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="page_description.bin"'
+        )
+        return response
+
+    def partial_update(self, request, slug, project_id, pk):
+        page = Page.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+
+        base64_data = request.data.get("description_binary")
+
+        if base64_data:
+            # Decode the base64 data to bytes
+            new_binary_data = base64.b64decode(base64_data)
+
+            # Store the updated binary data
+            page.description_binary = new_binary_data
+            page.description_html = request.data.get("description_html")
+            page.save()
+            return Response({"message": "Updated successfully"})
+        else:
+            return Response({"error": "No binary data provided"})

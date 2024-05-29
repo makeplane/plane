@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { useIssues, useUser } from "@/hooks/store";
-
+import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { List } from "./default";
@@ -17,9 +17,9 @@ type ListStoreType =
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.ARCHIVED
   | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE;
+  | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.ARCHIVED;
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   viewId?: string;
@@ -37,7 +37,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
   } = props;
-
+  // router
+  //stores
   const { issuesFilter, issues } = useIssues(storeType);
   const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } = useIssuesActions(storeType);
   // mobx store
@@ -66,7 +67,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
 
   const group_by = displayFilters?.group_by || null;
+  const orderBy = displayFilters?.order_by || undefined;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+
+  const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by);
 
   const renderQuickActions: TRenderQuickActions = useCallback(
     ({ issue, parentRef }) => (
@@ -91,6 +95,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         issuesMap={issueMap}
         displayProperties={displayProperties}
         group_by={group_by}
+        orderBy={orderBy}
         updateIssue={updateIssue}
         quickActions={renderQuickActions}
         issueIds={issueIds}
@@ -103,6 +108,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         storeType={storeType}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}
+        handleOnDrop={handleOnDrop}
       />
     </div>
   );

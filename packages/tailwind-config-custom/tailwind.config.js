@@ -1,4 +1,6 @@
 const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
+const convertToRGBA = (variableName, alpha) =>
+  `rgba(var(${variableName}), ${alpha})`;
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -14,6 +16,7 @@ module.exports = {
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
       "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
+      "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -87,6 +90,7 @@ module.exports = {
             800: convertToRGB("--color-background-800"),
             900: convertToRGB("--color-background-900"),
             1000: "rgb(0, 0, 0)",
+            overlay: convertToRGBA("--color-background-80", 0.95),
             primary: convertToRGB(" --color-background-primary"),
             error: convertToRGB(" --color-background-error"),
             DEFAULT: convertToRGB("--color-background-100"),
@@ -105,6 +109,7 @@ module.exports = {
             100: convertToRGB("--color-text-100"),
             200: convertToRGB("--color-text-200"),
             300: convertToRGB("--color-text-300"),
+            350: convertToRGB("--color-text-350"),
             400: convertToRGB("--color-text-400"),
             500: convertToRGB("--color-text-500"),
             600: convertToRGB("--color-text-600"),

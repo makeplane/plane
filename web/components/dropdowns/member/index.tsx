@@ -1,14 +1,13 @@
 import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LucideIcon } from "lucide-react";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -20,6 +19,7 @@ import { MemberDropdownProps } from "./types";
 
 type Props = {
   projectId?: string;
+  icon?: LucideIcon;
   onClose?: () => void;
 } & MemberDropdownProps;
 
@@ -44,6 +44,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
+    icon,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -62,31 +63,17 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   };
   if (multiple) comboboxProps.multiple = true;
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    onClose,
+    setIsOpen,
+  });
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
     if (!multiple) handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
@@ -130,7 +117,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} />}
+              {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
                 <span className="flex-grow truncate text-xs leading-5">
                   {Array.isArray(value) && value.length > 0

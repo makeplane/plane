@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
 import { useTheme } from "next-themes";
@@ -7,10 +8,16 @@ import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
-import { PasswordStrengthMeter } from "@/components/account";
+import { AuthBanner, PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 // helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
+import {
+  EAuthenticationErrorCodes,
+  EErrorAlertType,
+  EPageTypes,
+  TAuthErrorInfo,
+  authErrorHandler,
+} from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // layouts
@@ -24,7 +31,8 @@ import { AuthService } from "@/services/auth.service";
 // images
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -43,9 +51,12 @@ const authService = new AuthService();
 const ResetPasswordPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
-  const { uidb64, token, email } = router.query;
+  const { uidb64, token, email, error_code } = router.query;
   // states
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    retypePassword: false,
+  });
   const [resetFormData, setResetFormData] = useState<TResetPasswordFormValues>({
     ...defaultValues,
     email: email ? email.toString() : "",
@@ -53,9 +64,13 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
 
   // hooks
   const { resolvedTheme } = useTheme();
+
+  const handleShowPassword = (key: keyof typeof showPassword) =>
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleFormChange = (key: keyof TResetPasswordFormValues, value: string) =>
     setResetFormData((prev) => ({ ...prev, [key]: value }));
@@ -75,9 +90,24 @@ const ResetPasswordPage: NextPageWithLayout = () => {
     [resetFormData]
   );
 
+  useEffect(() => {
+    if (error_code) {
+      const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
+      if (errorhandler) {
+        setErrorInfo(errorhandler);
+      }
+    }
+  }, [error_code]);
+
+  const password = resetFormData?.password ?? "";
+  const confirmPassword = resetFormData?.confirm_password ?? "";
+  const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
+
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <PageHead title="Reset Password" />
+      <PageHead title="Reset Password - Plane" />
       <div className="absolute inset-0 z-0">
         <Image
           src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
@@ -88,8 +118,9 @@ const ResetPasswordPage: NextPageWithLayout = () => {
       <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
         <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
           <div className="flex items-center gap-x-2 py-10">
-            <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
-            <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
+            <Link href={`/`} className="h-[30px] w-[133px]">
+              <Image src={logo} alt="Plane logo" />
+            </Link>
           </div>
         </div>
         <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
@@ -100,6 +131,9 @@ const ResetPasswordPage: NextPageWithLayout = () => {
               </h3>
               <p className="font-medium text-onboarding-text-400">Secure your account with a strong password</p>
             </div>
+            {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+              <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+            )}
             <form
               className="mt-5 space-y-4"
               method="POST"
@@ -129,7 +163,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                 </label>
                 <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword.password ? "text" : "password"}
                     name="password"
                     value={resetFormData.password}
                     onChange={(e) => handleFormChange("password", e.target.value)}
@@ -141,15 +175,15 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                     onBlur={() => setIsPasswordInputFocused(false)}
                     autoFocus
                   />
-                  {showPassword ? (
+                  {showPassword.password ? (
                     <EyeOff
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(false)}
+                      onClick={() => handleShowPassword("password")}
                     />
                   ) : (
                     <Eye
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(true)}
+                      onClick={() => handleShowPassword("password")}
                     />
                   )}
                 </div>
@@ -161,7 +195,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                 </label>
                 <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword.retypePassword ? "text" : "password"}
                     name="confirm_password"
                     value={resetFormData.confirm_password}
                     onChange={(e) => handleFormChange("confirm_password", e.target.value)}
@@ -170,23 +204,21 @@ const ResetPasswordPage: NextPageWithLayout = () => {
                     onFocus={() => setIsRetryPasswordInputFocused(true)}
                     onBlur={() => setIsRetryPasswordInputFocused(false)}
                   />
-                  {showPassword ? (
+                  {showPassword.retypePassword ? (
                     <EyeOff
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(false)}
+                      onClick={() => handleShowPassword("retypePassword")}
                     />
                   ) : (
                     <Eye
                       className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => setShowPassword(true)}
+                      onClick={() => handleShowPassword("retypePassword")}
                     />
                   )}
                 </div>
                 {!!resetFormData.confirm_password &&
                   resetFormData.password !== resetFormData.confirm_password &&
-                  !isRetryPasswordInputFocused && (
-                    <span className="text-sm text-red-500">Passwords don{"'"}t match</span>
-                  )}
+                  renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
               </div>
               <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
                 Set password

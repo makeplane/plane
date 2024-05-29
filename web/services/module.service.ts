@@ -97,7 +97,7 @@ export class ModuleService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: { modules: string[] }
+    data: { modules: string[]; removed_modules?: string[] }
   ): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/modules/`, data)
       .then((response) => response?.data)
