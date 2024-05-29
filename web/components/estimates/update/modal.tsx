@@ -88,7 +88,7 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
         </div>
 
         {estimateEditType === undefined && (
-          <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-100">
+          <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               Cancel
             </Button>

@@ -11,7 +11,7 @@ import {
   TEstimatePointsObject,
 } from "@plane/types";
 // services
-import { EstimateService } from "@/services/project/estimate.service";
+import estimateService from "@/services/project/estimate.service";
 // store
 import { IEstimatePoint, EstimatePoint } from "@/store/estimates/estimate-point";
 import { RootStore } from "@/store/root.store";
@@ -69,8 +69,6 @@ export class Estimate implements IEstimate {
   // observables
   error: TErrorCodes | undefined = undefined;
   estimatePoints: Record<string, IEstimatePoint> = {};
-  // service
-  service: EstimateService;
 
   constructor(
     private store: RootStore,
@@ -116,8 +114,6 @@ export class Estimate implements IEstimate {
       if (estimationPoint.id)
         set(this.estimatePoints, [estimationPoint.id], new EstimatePoint(this.store, this.data, estimationPoint));
     });
-    // service
-    this.service = new EstimateService();
   }
 
   // computed
@@ -169,7 +165,7 @@ export class Estimate implements IEstimate {
     try {
       if (!this.id || !payload) return;
 
-      const estimate = await this.service.updateEstimate(workspaceSlug, projectId, this.id, {
+      const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, {
         estimate_points: payload,
       });
       runInAction(() => {
@@ -201,7 +197,7 @@ export class Estimate implements IEstimate {
     try {
       if (!this.id || !payload) return;
 
-      const estimate = await this.service.updateEstimate(workspaceSlug, projectId, this.id, payload);
+      const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, payload);
       if (estimate) {
         runInAction(() => {
           this.name = estimate?.name;
@@ -238,7 +234,7 @@ export class Estimate implements IEstimate {
     try {
       if (!this.id || !payload) return;
 
-      const estimatePoint = await this.service.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
+      const estimatePoint = await estimateService.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
       if (estimatePoint) {
         runInAction(() => {
           if (estimatePoint.id) {
@@ -268,7 +264,7 @@ export class Estimate implements IEstimate {
     try {
       if (!this.id) return;
 
-      const deleteEstimatePoint = await this.service.removeEstimatePoint(
+      const deleteEstimatePoint = await estimateService.removeEstimatePoint(
         workspaceSlug,
         projectId,
         this.id,

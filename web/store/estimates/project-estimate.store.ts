@@ -5,7 +5,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { IEstimate as IEstimateType, IEstimateFormData } from "@plane/types";
 // services
-import { EstimateService } from "@/services/project/estimate.service";
+import estimateService from "@/services/project/estimate.service";
 // store
 import { IEstimate, Estimate } from "@/store/estimates/estimate";
 import { RootStore } from "@/store/root.store";
@@ -47,8 +47,6 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   loader: TEstimateLoader = undefined;
   estimates: Record<string, IEstimate> = {}; // estimate_id -> estimate
   error: TErrorCodes | undefined = undefined;
-  // service
-  service: EstimateService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -65,12 +63,9 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       getEstimateById: action,
       createEstimate: action,
     });
-    // service
-    this.service = new EstimateService();
   }
 
   // computed
-
   /**
    * @description get current active estimate id for a project
    * @returns { string | undefined }
@@ -146,7 +141,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
       if (Object.keys(this.estimates || {}).length <= 0) this.loader = loader ? loader : "init-loader";
 
-      const estimates = await this.service.fetchWorkspaceEstimates(workspaceSlug);
+      const estimates = await estimateService.fetchWorkspaceEstimates(workspaceSlug);
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
@@ -181,7 +176,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
       if (!this.estimateIdsByProjectId(projectId)) this.loader = loader ? loader : "init-loader";
 
-      const estimates = await this.service.fetchProjectEstimates(workspaceSlug, projectId);
+      const estimates = await estimateService.fetchProjectEstimates(workspaceSlug, projectId);
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
@@ -216,7 +211,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
     try {
       this.error = undefined;
 
-      const estimate = await this.service.fetchEstimateById(workspaceSlug, projectId, estimateId);
+      const estimate = await estimateService.fetchEstimateById(workspaceSlug, projectId, estimateId);
       if (estimate) {
         runInAction(() => {
           if (estimate.id)
@@ -252,7 +247,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
     try {
       this.error = undefined;
 
-      const estimate = await this.service.createEstimate(workspaceSlug, projectId, payload);
+      const estimate = await estimateService.createEstimate(workspaceSlug, projectId, payload);
       if (estimate) {
         await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
           estimate: estimate.id,

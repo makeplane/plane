@@ -37,7 +37,11 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
             <GripVertical size={14} className="text-custom-text-200" />
           </div>
           <div ref={EstimatePointValueRef} className="py-2.5 w-full">
-            {estimatePoint?.value}
+            {estimatePoint?.value ? (
+              estimatePoint?.value
+            ) : (
+              <span className="text-custom-text-400">Enter estimate point</span>
+            )}
           </div>
           <div
             className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"

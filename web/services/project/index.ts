@@ -1,5 +1,4 @@
 export * from "./project.service";
-export * from "./project-estimate.service";
 export * from "./estimate.service";
 export * from "./project-export.service";
 export * from "./project-member.service";

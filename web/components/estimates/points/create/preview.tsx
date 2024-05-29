@@ -34,7 +34,7 @@ export const EstimatePointItemCreatePreview: FC<TEstimatePointItemCreatePreview>
             {estimatePoint?.value ? (
               estimatePoint?.value
             ) : (
-              <span className="text-custom-text-200">Enter Estimate Value</span>
+              <span className="text-custom-text-400">Enter estimate point</span>
             )}
           </div>
           <div

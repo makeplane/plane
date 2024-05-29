@@ -2,7 +2,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { IEstimate, IEstimatePoint as IEstimatePointType } from "@plane/types";
 // services
-import { EstimateService } from "@/services/project/estimate.service";
+import estimateService from "@/services/project/estimate.service";
 // store
 import { RootStore } from "@/store/root.store";
 
@@ -41,8 +41,6 @@ export class EstimatePoint implements IEstimatePoint {
   updated_by: string | undefined = undefined;
   // observables
   error: TErrorCodes | undefined = undefined;
-  // service
-  service: EstimateService;
 
   constructor(
     private store: RootStore,
@@ -80,8 +78,6 @@ export class EstimatePoint implements IEstimatePoint {
     this.updated_at = this.data.updated_at;
     this.created_by = this.data.created_by;
     this.updated_by = this.data.updated_by;
-    // service
-    this.service = new EstimateService();
   }
 
   // computed
@@ -102,6 +98,11 @@ export class EstimatePoint implements IEstimatePoint {
   }
 
   // helper actions
+  /**
+   * @description updating an estimate point object in local store
+   * @param { Partial<IEstimatePointType> } estimatePoint
+   * @returns { void }
+   */
   updateEstimatePointObject = (estimatePoint: Partial<IEstimatePointType>) => {
     Object.keys(estimatePoint).map((key) => {
       const estimatePointKey = key as keyof IEstimatePointType;
@@ -123,7 +124,7 @@ export class EstimatePoint implements IEstimatePoint {
     try {
       if (!this.projectEstimate?.id || !this.id || !payload) return undefined;
 
-      const estimatePoint = await this.service.updateEstimatePoint(
+      const estimatePoint = await estimateService.updateEstimatePoint(
         workspaceSlug,
         projectId,
         this.projectEstimate?.id,

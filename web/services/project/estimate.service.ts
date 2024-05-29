@@ -5,7 +5,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-export class EstimateService extends APIService {
+class EstimateService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -125,3 +125,6 @@ export class EstimateService extends APIService {
       });
   }
 }
+const estimateService = new EstimateService();
+
+export default estimateService;

@@ -28,7 +28,7 @@ export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "Estimates have been disabled",
+        message: currentProjectActiveEstimate ? "Estimates have been disabled" : "Estimates have been enabled",
       });
     } catch (err) {
       setToast({

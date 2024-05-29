@@ -90,6 +90,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
           value={estimateInputValue}
           onChange={(e) => setEstimateInputValue(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
+          placeholder="Enter estimate point"
           autoFocus
         />
         {error && (
