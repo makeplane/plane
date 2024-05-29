@@ -1,11 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
-import { Spinner, Tooltip } from "@plane/ui";
+import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
 
@@ -20,7 +21,7 @@ type TEstimatePointUpdate = {
 export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) => {
   const { workspaceSlug, projectId, estimateId, estimatePointId, callback } = props;
   // hooks
-  const { asJson: estimate, estimatePointIds } = useEstimate(estimateId);
+  const { asJson: estimate, estimatePointIds, estimatePointById } = useEstimate(estimateId);
   const { asJson: estimatePoint, updateEstimatePoint } = useEstimatePoint(estimateId, estimatePointId);
   // states
   const [loader, setLoader] = useState(false);
@@ -36,7 +37,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
     callback();
   };
 
-  const handleCreate = async () => {
+  const handleUpdate = async () => {
     if (!workspaceSlug || !projectId || !projectId || !estimatePointIds) return;
     if (estimateInputValue)
       try {
@@ -56,17 +57,34 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
           }
         }
 
-        if (isEstimateValid) {
-          const payload = {
-            value: estimateInputValue,
-          };
-          await updateEstimatePoint(workspaceSlug, projectId, payload);
-          setLoader(false);
-          setError(undefined);
-          handleClose();
+        const currentEstimatePointValues = estimatePointIds
+          .map((estimatePointId) => estimatePointById(estimatePointId)?.value || undefined)
+          .filter((estimateValue) => estimateValue != undefined) as string[];
+        const isRepeated =
+          (estimateType &&
+            isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||
+          false;
+
+        if (!isRepeated) {
+          if (isEstimateValid) {
+            const payload = {
+              value: estimateInputValue,
+            };
+            await updateEstimatePoint(workspaceSlug, projectId, payload);
+            setLoader(false);
+            setError(undefined);
+            handleClose();
+          } else {
+            setLoader(false);
+            setError("please enter a valid estimate value");
+          }
         } else {
           setLoader(false);
-          setError("please enter a valid estimate value");
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Estimate point values cannot be repeated",
+          });
         }
       } catch {
         setLoader(false);
@@ -110,7 +128,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
       ) : (
         <div
           className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
-          onClick={handleCreate}
+          onClick={handleUpdate}
         >
           <Check size={14} />
         </div>

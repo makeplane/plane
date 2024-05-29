@@ -16,7 +16,7 @@
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.3.0",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@blueprintjs/popover2": "^1.13.3",
-    "@headlessui/react": "^2.0.3",
+    "@headlessui/react": "^2.0.4",
     "@nivo/bar": "0.80.0",
     "@nivo/calendar": "0.80.0",
     "@nivo/core": "0.80.0",

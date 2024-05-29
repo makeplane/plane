@@ -1,11 +1,12 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
-import { Spinner, Tooltip } from "@plane/ui";
+import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useEstimate } from "@/hooks/store";
 
@@ -19,7 +20,7 @@ type TEstimatePointCreate = {
 export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) => {
   const { workspaceSlug, projectId, estimateId, callback } = props;
   // hooks
-  const { asJson: estimate, estimatePointIds, creteEstimatePoint } = useEstimate(estimateId);
+  const { asJson: estimate, estimatePointIds, estimatePointById, creteEstimatePoint } = useEstimate(estimateId);
   // states
   const [loader, setLoader] = useState(false);
   const [estimateInputValue, setEstimateInputValue] = useState("");
@@ -50,18 +51,35 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
           }
         }
 
-        if (isEstimateValid) {
-          const payload = {
-            key: estimatePointIds?.length + 1,
-            value: estimateInputValue,
-          };
-          await creteEstimatePoint(workspaceSlug, projectId, payload);
-          setLoader(false);
-          setError(undefined);
-          handleClose();
+        const currentEstimatePointValues = estimatePointIds
+          .map((estimatePointId) => estimatePointById(estimatePointId)?.value || undefined)
+          .filter((estimateValue) => estimateValue != undefined) as string[];
+        const isRepeated =
+          (estimateType &&
+            isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||
+          false;
+
+        if (!isRepeated) {
+          if (isEstimateValid) {
+            const payload = {
+              key: estimatePointIds?.length + 1,
+              value: estimateInputValue,
+            };
+            await creteEstimatePoint(workspaceSlug, projectId, payload);
+            setLoader(false);
+            setError(undefined);
+            handleClose();
+          } else {
+            setLoader(false);
+            setError("please enter a valid estimate value");
+          }
         } else {
           setLoader(false);
-          setError("please enter a valid estimate value");
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Estimate point values cannot be repeated",
+          });
         }
       } catch {
         setLoader(false);

@@ -62,7 +62,6 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           estimatePoints.map((point) => point.value),
           estimateSystem
         );
-        console.log("isRepeated", isRepeated);
         if (!isRepeated) {
           const payload: IEstimateFormData = {
             estimate: {
@@ -80,6 +79,11 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           });
           handleClose();
         } else {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Estimate point values cannot be repeated",
+          });
         }
       } else {
         setToast({

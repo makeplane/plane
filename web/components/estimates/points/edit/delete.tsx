@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { Info, MoveRight, Trash2, X } from "lucide-react";
-import { Select } from "@headlessui/react";
-import { Spinner, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { MoveRight, Trash2, X } from "lucide-react";
+import { TEstimatePointsObject } from "@plane/types";
+import { Spinner } from "@plane/ui";
+// components
+import { EstimatePointDropdown } from "@/components/estimates/points";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
 
@@ -31,28 +31,37 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
     callback();
   };
 
-  const handleCreate = async () => {
+  const handleDelete = async () => {
     if (!workspaceSlug || !projectId || !projectId) return;
-    try {
-      setLoader(true);
-      setError(undefined);
-      await deleteEstimatePoint(workspaceSlug, projectId, estimatePointId, estimateInputValue);
-      setLoader(false);
-      setError(undefined);
-      handleClose();
-    } catch {
-      setLoader(false);
-      setError("something went wrong. please try again later");
-    }
+    if (estimateInputValue)
+      try {
+        setLoader(true);
+        setError(undefined);
+        await deleteEstimatePoint(
+          workspaceSlug,
+          projectId,
+          estimatePointId,
+          estimateInputValue === "none" ? undefined : estimateInputValue
+        );
+        setLoader(false);
+        setError(undefined);
+        handleClose();
+      } catch {
+        setLoader(false);
+        setError("something went wrong. please try again later");
+      }
+    else setError("please select option");
   };
 
   // derived values
   const selectDropdownOptionIds = estimatePointIds?.filter((pointId) => pointId != estimatePointId) as string[];
-  const selectDropdownOptions = (selectDropdownOptionIds || [])?.map((pointId) => {
-    const estimatePoint = estimatePointById(pointId);
-    if (estimatePoint && estimatePoint?.id)
-      return { id: estimatePoint.id, key: estimatePoint.key, value: estimatePoint.value };
-  });
+  const selectDropdownOptions = (selectDropdownOptionIds || [])
+    ?.map((pointId) => {
+      const estimatePoint = estimatePointById(pointId);
+      if (estimatePoint && estimatePoint?.id)
+        return { id: estimatePoint.id, key: estimatePoint.key, value: estimatePoint.value };
+    })
+    .filter((estimatePoint) => estimatePoint != undefined) as TEstimatePointsObject[];
 
   return (
     <div className="relative flex items-center gap-2 text-base">
@@ -60,37 +69,17 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
         <div className="w-full border border-custom-border-200 rounded p-2.5 bg-custom-background-90">
           {estimatePoint?.value}
         </div>
-        <div className="relative flex justify-center items-center gap-2 whitespace-nowrap">
+        <div className="text-sm first-letter:relative flex justify-center items-center gap-2 whitespace-nowrap">
           Mark as <MoveRight size={14} />
         </div>
-        <div
-          className={cn(
-            "relative w-full rounded border flex items-center gap-3 p-2.5",
-            error ? `border-red-500` : `border-custom-border-200`
-          )}
-        >
-          <Select
-            className="bg-transparent flex-grow focus:ring-0 focus:border-0 focus:outline-none"
-            value={estimateInputValue}
-            onChange={(e) => setEstimateInputValue(e.target.value)}
-          >
-            <option value={undefined}>None</option>
-            {selectDropdownOptions.map((option) => (
-              <option key={option?.id} value={option?.value}>
-                {option?.value}
-              </option>
-            ))}
-          </Select>
-          {error && (
-            <>
-              <Tooltip tooltipContent={error} position="bottom">
-                <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden relative flex justify-center items-center text-red-500">
-                  <Info size={14} />
-                </div>
-              </Tooltip>
-            </>
-          )}
-        </div>
+        <EstimatePointDropdown
+          options={selectDropdownOptions}
+          error={error}
+          callback={(estimateId: string) => {
+            setEstimateInputValue(estimateId);
+            setError(undefined);
+          }}
+        />
       </div>
       {loader ? (
         <div className="w-6 h-6 flex-shrink-0 relative flex justify-center items-center rota">
@@ -99,7 +88,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
       ) : (
         <div
           className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-red-500"
-          onClick={handleCreate}
+          onClick={handleDelete}
         >
           <Trash2 size={14} />
         </div>
