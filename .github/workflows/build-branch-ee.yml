@@ -111,7 +111,7 @@ jobs:
     runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
-      ADMIN_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      ADMIN_TAG: makeplane/admin-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -121,12 +121,12 @@ jobs:
       - name: Set Admin Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:stable
-            TAG=${TAG},${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:${{ github.event.release.tag_name }}
+            TAG=makeplane/admin-enterprise:stable
+            TAG=${TAG},makeplane/admin-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:stable
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/admin-enterprise:latest
+            TAG=makeplane/admin-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:latest
           else
             TAG=${{ env.ADMIN_TAG }}
@@ -176,7 +176,7 @@ jobs:
     runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
-      WEB_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      WEB_TAG: makeplane/web-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -186,12 +186,12 @@ jobs:
       - name: Set Web Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:stable
-            TAG=${TAG},${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:${{ github.event.release.tag_name }}
+            TAG=makeplane/web-enterprise:stable
+            TAG=${TAG},makeplane/web-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:stable
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/web-enterprise:latest
+            TAG=makeplane/web-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:latest
           else
             TAG=${{ env.WEB_TAG }}
@@ -241,7 +241,7 @@ jobs:
     runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
-      SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/space-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      SPACE_TAG: makeplane/space-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -251,12 +251,12 @@ jobs:
       - name: Set Space Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/space-enterprise:stable
-            TAG=${TAG},${{ secrets.DOCKERHUB_USERNAME }}/space-enterprise:${{ github.event.release.tag_name }}
+            TAG=makeplane/space-enterprise:stable
+            TAG=${TAG},makeplane/space-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:stable
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/space-enterprise:latest
+            TAG=makeplane/space-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:latest
           else
             TAG=${{ env.SPACE_TAG }}
@@ -306,7 +306,7 @@ jobs:
     runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
-      BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/backend-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BACKEND_TAG: makeplane/backend-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -316,12 +316,12 @@ jobs:
       - name: Set Backend Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/backend-enterprise:stable
-            TAG=${TAG},${{ secrets.DOCKERHUB_USERNAME }}/backend-enterprise:${{ github.event.release.tag_name }}
+            TAG=makeplane/backend-enterprise:stable
+            TAG=${TAG},makeplane/backend-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:stable
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/backend-enterprise:latest
+            TAG=makeplane/backend-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:latest
           else
             TAG=${{ env.BACKEND_TAG }}
@@ -371,7 +371,7 @@ jobs:
     runs-on: ${{vars.ACTION_RUNS_ON}}
     needs: [branch_build_setup]
     env:
-      PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/proxy-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      PROXY_TAG: makeplane/proxy-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -381,12 +381,12 @@ jobs:
       - name: Set Proxy Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/proxy-enterprise:stable
-            TAG=${TAG},${{ secrets.DOCKERHUB_USERNAME }}/proxy-enterprise:${{ github.event.release.tag_name }}
+            TAG=makeplane/proxy-enterprise:stable
+            TAG=${TAG},makeplane/proxy-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:stable
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/proxy-enterprise:latest
+            TAG=makeplane/proxy-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:latest
           else
             TAG=${{ env.PROXY_TAG }}
