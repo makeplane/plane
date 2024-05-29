@@ -5,7 +5,7 @@ import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject } from "@
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
-import { EstimateCreateStageOne, EstimateCreateStageTwo } from "@/components/estimates";
+import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/estimates";
 // constants
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
 // hooks
@@ -35,9 +35,6 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
       setEstimatePoints(undefined);
     }
   }, [isOpen]);
-
-  // derived values
-  const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
 
   const handleCreateEstimate = async () => {
     try {
@@ -90,6 +87,9 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
     }
   };
 
+  // derived values
+  const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <div className="relative space-y-6 py-5">
@@ -107,7 +107,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
                 <ChevronLeft className="w-4 h-4" />
               </div>
             )}
-            <div className="text-xl font-medium text-custom-text-200 ">New Estimate System</div>
+            <div className="text-xl font-medium text-custom-text-100">New Estimate System</div>
           </div>
           <div className="text-xs text-gray-400">Step {renderEstimateStepsCount}/2</div>
         </div>
@@ -124,12 +124,10 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             />
           )}
           {estimatePoints && (
-            <EstimateCreateStageTwo
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              estimateSystem={estimateSystem}
+            <EstimatePointCreateRoot
+              estimateType={estimateSystem}
               estimatePoints={estimatePoints}
-              handleEstimatePoints={handleUpdatePoints}
+              setEstimatePoints={setEstimatePoints}
             />
           )}
         </div>

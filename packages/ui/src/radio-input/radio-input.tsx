@@ -5,9 +5,12 @@ import { cn } from "../../helpers";
 
 type RadioInputProps = {
   label: string | React.ReactNode | undefined;
+  wrapperClassName?: string;
+  fieldClassName?: string;
+  buttonClassName?: string;
   labelClassName?: string;
   ariaLabel?: string;
-  options: { label: string; value: string; disabled?: boolean }[];
+  options: { label: string | React.ReactNode; value: string; disabled?: boolean }[];
   vertical?: boolean;
   selected: string;
   onChange: (value: string) => void;
@@ -16,7 +19,10 @@ type RadioInputProps = {
 
 export const RadioInput = ({
   label: inputLabel,
-  labelClassName: inputLabelClassName,
+  labelClassName: inputLabelClassName = "",
+  wrapperClassName: inputWrapperClassName = "",
+  fieldClassName: inputFieldClassName = "",
+  buttonClassName: inputButtonClassName = "",
   options,
   vertical,
   selected,
@@ -42,15 +48,15 @@ export const RadioInput = ({
   return (
     <RadioGroup value={selected} onChange={setSelected} aria-label={aria} className={className}>
       <Label className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</Label>
-      <div className={`${wrapperClass}`}>
-        {options.map(({ value, label, disabled }) => (
-          <Field key={label} className="flex items-center gap-2">
+      <div className={cn(`${wrapperClass}`, inputWrapperClassName)}>
+        {options.map(({ value, label, disabled }, index) => (
+          <Field key={index} className={cn("flex items-center gap-2", inputFieldClassName)}>
             <Radio
               value={value}
-              className="group flex size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 data-[checked]:bg-custom-primary-200 data-[checked]:border-custom-primary-100 cursor-pointer
-              data-[disabled]:bg-custom-background-200
-              data-[disabled]:border-custom-border-200
-              data-[disabled]:cursor-not-allowed"
+              className={cn(
+                "group flex size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 data-[checked]:bg-custom-primary-200 data-[checked]:border-custom-primary-100 cursor-pointer data-[disabled]:bg-custom-background-200 data-[disabled]:border-custom-border-200 data-[disabled]:cursor-not-allowed",
+                inputButtonClassName
+              )}
               disabled={disabled}
             >
               <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
