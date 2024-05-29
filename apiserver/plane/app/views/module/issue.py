@@ -29,9 +29,10 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
+
 
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
@@ -203,7 +204,6 @@ class ModuleIssueViewSet(BaseViewSet):
         modules = request.data.get("modules", [])
         removed_modules = request.data.get("removed_modules", [])
         project = Project.objects.get(pk=project_id)
-
 
         if modules:
             _ = ModuleIssue.objects.bulk_create(

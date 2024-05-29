@@ -1,6 +1,7 @@
 import concat from "lodash/concat";
 import pull from "lodash/pull";
 import set from "lodash/set";
+import union from "lodash/union";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
@@ -344,7 +345,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
               // convert existing value to an array
               const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
               this.rootIssueStore.issues.updateIssue(issueId, {
-                [property]: [newExistingValue, ...propertyValue],
+                [property]: union(newExistingValue, propertyValue),
               });
             } else {
               // if property value is not an array, simply update the value
