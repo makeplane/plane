@@ -140,7 +140,7 @@ export class IssueDetail implements IIssueDetail {
     this.rootIssueStore = rootStore;
     this.issue = new IssueStore(this);
     this.reaction = new IssueReactionStore(this);
-    this.attachment = new IssueAttachmentStore(this);
+    this.attachment = new IssueAttachmentStore(rootStore);
     this.activity = new IssueActivityStore(this);
     this.comment = new IssueCommentStore(this);
     this.commentReaction = new IssueCommentReactionStore(this);

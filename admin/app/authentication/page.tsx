@@ -119,14 +119,14 @@ const InstanceAuthenticationPage = observer(() => {
   return (
     <>
       <PageHeader title="Authentication - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">Manage authentication for your instance</div>
           <div className="text-sm font-normal text-custom-text-300">
             Configure authentication modes for your team and restrict sign ups to be invite only.
           </div>
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-auto">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <div className="space-y-3">
               <div className="text-lg font-medium">Authentication modes</div>

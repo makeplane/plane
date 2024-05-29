@@ -14,6 +14,7 @@ import { RootStore } from "../root.store";
 
 export interface IProjectStore {
   // observables
+  loader: boolean;
   projectMap: {
     [projectId: string]: IProject; // projectId: project Info
   };
@@ -47,6 +48,7 @@ export interface IProjectStore {
 
 export class ProjectStore implements IProjectStore {
   // observables
+  loader: boolean = false;
   projectMap: {
     [projectId: string]: IProject; // projectId: project Info
   } = {};
@@ -62,6 +64,7 @@ export class ProjectStore implements IProjectStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
+      loader: observable.ref,
       projectMap: observable,
       // computed
       filteredProjectIds: computed,
@@ -208,15 +211,18 @@ export class ProjectStore implements IProjectStore {
    */
   fetchProjects = async (workspaceSlug: string) => {
     try {
+      this.loader = true;
       const projectsResponse = await this.projectService.getProjects(workspaceSlug);
       runInAction(() => {
         projectsResponse.forEach((project) => {
           set(this.projectMap, [project.id], project);
         });
+        this.loader = false;
       });
       return projectsResponse;
     } catch (error) {
       console.log("Failed to fetch project from workspace store");
+      this.loader = false;
       throw error;
     }
   };
