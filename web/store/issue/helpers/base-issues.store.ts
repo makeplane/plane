@@ -1068,6 +1068,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
+    const accumulatedUpdatesForCount = {};
     runInAction(() => {
       // The issueUpdates
       for (const issueUpdate of issueUpdates) {
@@ -1077,8 +1078,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => {
             return this.issuesSortWithOrderBy(uniq(concat(issueIds, issue.id)), this.orderBy);
           });
-          // increment the issue count at the key corresponding to the path
-          this.updateIssueCount(issueUpdate.path, 1);
         }
 
         //if update is delete, remove it at a particular path
@@ -1087,9 +1086,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => {
             return pull(issueIds, issue.id);
           });
-          // decrement the issue count at the key corresponding to the path
-          this.updateIssueCount(issueUpdate.path, -1);
         }
+
+        // accumulate the updates so that we don't end up updating the count twice for the same issue
+        this.accumulateIssueUpdates(accumulatedUpdatesForCount, issueUpdate.path, issueUpdate.action);
 
         //if update is reorder, reorder it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.REORDER) {
@@ -1099,6 +1099,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           });
         }
       }
+
+      // update the respective counts from the accumulation object
+      this.updateIssueCount(accumulatedUpdatesForCount);
     });
   }
 
@@ -1282,36 +1285,81 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   /**
+   * For Every issue update, accumulate it so that when an single issue is added to two groups, it doesn't increment the total count twice
+   * @param accumulator
+   * @param path
+   * @param action
+   * @returns
+   */
+  accumulateIssueUpdates(
+    accumulator: { [key: string]: EIssueGroupedAction },
+    path: string[],
+    action: EIssueGroupedAction
+  ) {
+    const [groupId, subGroupId] = path;
+
+    if (action !== EIssueGroupedAction.ADD && action !== EIssueGroupedAction.DELETE) return;
+
+    // if both groupId && subGroupId exists update the subgroup key
+    if (subGroupId && groupId) {
+      const groupKey = getGroupKey(groupId, subGroupId);
+      this.updateUpdateAccumulator(accumulator, groupKey, action);
+    }
+
+    // after above, if groupId exists update the group key
+    if (groupId) {
+      this.updateUpdateAccumulator(accumulator, groupId, action);
+    }
+
+    // if groupId is not ALL_ISSUES then update the  All_ISSUES key
+    // (if groupId is equal to ALL_ISSUES, it would have updated in the previous condition)
+    if (groupId !== ALL_ISSUES) {
+      this.updateUpdateAccumulator(accumulator, ALL_ISSUES, action);
+    }
+  }
+
+  /**
+   * This method's job is just to check and update the accumulator key
+   * @param accumulator accumulator object
+   * @param key object key like, subgroupKey, Group Key or ALL_ISSUES
+   * @param action
+   * @returns
+   */
+  updateUpdateAccumulator(
+    accumulator: { [key: string]: EIssueGroupedAction },
+    key: string,
+    action: EIssueGroupedAction
+  ) {
+    // if the key for accumulator is undefined, they update it with the action
+    if (!accumulator[key]) {
+      accumulator[key] = action;
+      return;
+    }
+
+    // if the key for accumulator is not the current action,
+    // Meaning if the key already has an action ADD and the current one is REMOVE,
+    // The the key is deleted as both the actions cancel each other out
+    if (accumulator[key] !== action) {
+      delete accumulator[key];
+    }
+  }
+
+  /**
    * This method is used to update the count of the issues at the path with the increment
    * @param path issuePath, corresponding key is to be incremented
    * @param increment
    */
-  updateIssueCount(path: string[], increment: number) {
-    const [groupId, subGroupId] = path;
+  updateIssueCount(accumulatedUpdatesForCount: { [key: string]: EIssueGroupedAction }) {
+    const updateKeys = Object.keys(accumulatedUpdatesForCount);
+    for (const updateKey of updateKeys) {
+      const update = accumulatedUpdatesForCount[updateKey];
+      if (!update) continue;
 
-    // if both groupId && subGroupId exists
-    if (subGroupId && groupId) {
-      // get the compound key from groupId && subGroupId
-      const groupKey = getGroupKey(groupId, subGroupId);
+      const increment = update === EIssueGroupedAction.ADD ? 1 : -1;
       // get current count at the key
-      const subGroupIssueCount = get(this.groupedIssueCount, groupKey) ?? 0;
+      const issueCount = get(this.groupedIssueCount, updateKey) ?? 0;
       // update the count at the key
-      set(this.groupedIssueCount, groupKey, subGroupIssueCount + increment);
-    }
-
-    // after above, if groupId exists increment the count of that
-    if (groupId) {
-      const groupIssueCount = get(this.groupedIssueCount, [groupId]) ?? 0;
-
-      set(this.groupedIssueCount, groupId, groupIssueCount + increment);
-    }
-
-    // if groupId is not ALL_ISSUES then increment the All_ISSUES count
-    // (if groupId is equal to ALL_ISSUES, it would have updated in the previous condition)
-    if (groupId !== ALL_ISSUES) {
-      const totalIssueCount = get(this.groupedIssueCount, [ALL_ISSUES]) ?? 0;
-
-      set(this.groupedIssueCount, ALL_ISSUES, totalIssueCount + increment);
+      set(this.groupedIssueCount, updateKey, issueCount + increment);
     }
   }
 
