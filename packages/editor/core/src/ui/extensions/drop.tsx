@@ -1,7 +1,7 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { UploadImage } from "src/types/upload-image";
-import { startImageUpload } from "../plugins/upload-image";
+import { startImageUpload } from "src/ui/plugins/image/image-upload-handler";
 
 export const DropHandlerExtension = (uploadFile: UploadImage) =>
   Extension.create({
