@@ -50,9 +50,12 @@ export async function startImageUpload(
   };
 
   try {
+    const fileNameTrimmed = trimFileName(file.name);
+    const fileWithTrimmedName = new File([file], fileNameTrimmed, { type: file.type });
+
     view.focus();
 
-    const src = await uploadAndValidateImage(file, uploadFile);
+    const src = await uploadAndValidateImage(fileWithTrimmedName, uploadFile);
 
     if (src == null) {
       throw new Error("Resolved image URL is undefined.");
@@ -111,4 +114,15 @@ async function uploadAndValidateImage(file: File, uploadFile: UploadImage): Prom
     // throw error to remove the placeholder
     throw error;
   }
+}
+
+function trimFileName(fileName: string, maxLength = 100) {
+  if (fileName.length > maxLength) {
+    const extension = fileName.split(".").pop();
+    const nameWithoutExtension = fileName.slice(0, -(extension?.length ?? 0 + 1));
+    const allowedNameLength = maxLength - (extension?.length ?? 0) - 1; // -1 for the dot
+    return `${nameWithoutExtension.slice(0, allowedNameLength)}.${extension}`;
+  }
+
+  return fileName;
 }
