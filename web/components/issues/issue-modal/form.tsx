@@ -122,7 +122,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
 
-  function handleKeyDown(event: KeyboardEvent) {
+  const handleKeyDown = (event: KeyboardEvent) => {
     if (editorRef.current?.isEditorReadyToDiscard()) {
       onClose();
     } else {
@@ -133,7 +133,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
-  }
+  };
 
   useKeypress("Escape", handleKeyDown);
 
