@@ -104,6 +104,7 @@ export class ProfileStore implements IUserProfileStore {
           message: "Failed to fetch user profile",
         };
       });
+      throw error;
     }
   };
 
