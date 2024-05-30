@@ -3,14 +3,13 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
-// services
-import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "@/constants/fetch-keys";
-import { NotificationService } from "@/services/notification.service";
-// fetch-keys
-// type
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// constant
+import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "@/constants/fetch-keys";
+// services
+import { NotificationService } from "@/services/notification.service";
 
 const PER_PAGE = 30;
 
@@ -258,7 +257,7 @@ const useUserNotification = (): any => {
 
     if (snoozed) markAsReadParams = { archived: false, snoozed: true };
     else if (archived) markAsReadParams = { archived: true, snoozed: false };
-    else markAsReadParams = { archived: false, snoozed: false, type: selectedTab };
+    else markAsReadParams = { archived: false, snoozed: false, type: readNotification ? "all" : selectedTab };
 
     await userNotificationServices
       .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
