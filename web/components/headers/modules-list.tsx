@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 // ui
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { ModuleViewHeader } from "@/components/modules";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
@@ -41,7 +40,7 @@ export const ModulesListHeader: React.FC = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

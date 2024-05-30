@@ -199,6 +199,7 @@ class ModuleSerializer(DynamicBaseSerializer):
             "sort_order",
             "external_source",
             "external_id",
+            "logo_props",
             # computed fields
             "is_favorite",
             "total_issues",

@@ -1,4 +1,4 @@
-import { TProjectLogoProps } from "@plane/types";
+import { TLogoProps } from "@plane/types";
 
 export type TWorkspaceDetails = {
   name: string;
@@ -19,7 +19,7 @@ export type TProjectDetails = {
   identifier: string;
   name: string;
   cover_image: string | undefined;
-  logo_props: TProjectLogoProps;
+  logo_props: TLogoProps;
   description: string;
 };
 
