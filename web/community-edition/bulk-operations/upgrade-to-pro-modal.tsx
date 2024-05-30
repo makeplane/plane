@@ -65,6 +65,7 @@ export const BulkOperationsUpgradeToProModal: React.FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
+                as="div"
                 className={cn(
                   "relative transform rounded-xl bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full md:w-[95%] lg:w-3/4 grid grid-cols-2 bg-gradient-to-l overflow-hidden",
                   {
@@ -122,7 +123,7 @@ export const BulkOperationsUpgradeToProModal: React.FC<Props> = (props) => {
                     </a>
                   </div>
                 </div>
-                <div className="relative grid place-items-end">
+                <div className="relative flex items-end justify-end">
                   <div className="h-4/5 grid place-items-end">
                     <Image src={mainImage} className="rounded-tl-lg rounded-br-xl" alt="Upgrade to Pro main image" />
                   </div>
