@@ -17,6 +17,5 @@ export const RichTextEditorExtensions = ({
 }: TArguments) => [
   SlashCommand(uploadFile),
   dragDropEnabled === true && DragAndDrop(setHideDragHandle),
-  // TODO; add the extension conditionally for forms that don't require it
-  // EnterKeyExtension(onEnterKeyPress),
+  onEnterKeyPress && EnterKeyExtension(onEnterKeyPress),
 ];
