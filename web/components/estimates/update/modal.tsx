@@ -67,12 +67,18 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
           )}
         </div>
 
-        <div className="px-5">
-          {!estimateEditType && <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />}
+        <div>
+          {!estimateEditType && (
+            <div className="px-5">
+              <EstimateUpdateStageOne handleEstimateEditType={handleEstimateEditType} />
+            </div>
+          )}
           {estimateEditType && estimateId && (
             <>
               {estimateEditType === EEstimateUpdateStages.EDIT && (
-                <EstimatePointEditRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+                <div className="px-5">
+                  <EstimatePointEditRoot workspaceSlug={workspaceSlug} projectId={projectId} estimateId={estimateId} />
+                </div>
               )}
               {estimateEditType === EEstimateUpdateStages.SWITCH && estimateSystemSwitchType && (
                 <EstimatePointSwitchRoot
