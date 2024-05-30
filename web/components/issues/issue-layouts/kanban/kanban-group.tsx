@@ -169,9 +169,9 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         preloadedData = { ...preloadedData, state_id: subGroupValue };
       } else if (subGroupByKey === "priority") {
         preloadedData = { ...preloadedData, priority: subGroupValue };
-      } else if (groupByKey === "cycle") {
+      } else if (subGroupByKey === "cycle") {
         preloadedData = { ...preloadedData, cycle_id: subGroupValue };
-      } else if (groupByKey === "module") {
+      } else if (subGroupByKey === "module") {
         preloadedData = { ...preloadedData, module_ids: [subGroupValue] };
       } else if (subGroupByKey === "labels" && subGroupValue != "None") {
         preloadedData = { ...preloadedData, label_ids: [subGroupValue] };

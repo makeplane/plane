@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 },
                 json={
                     "machine_signature": str(machine_signature),
+                    "domain": domain,
                 },
             )
 

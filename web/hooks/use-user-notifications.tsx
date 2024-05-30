@@ -258,7 +258,7 @@ const useUserNotification: any = () => {
 
     if (snoozed) markAsReadParams = { archived: false, snoozed: true };
     else if (archived) markAsReadParams = { archived: true, snoozed: false };
-    else markAsReadParams = { archived: false, snoozed: false, type: selectedTab };
+    else markAsReadParams = { archived: false, snoozed: false, type: readNotification ? "all" : selectedTab };
 
     await userNotificationServices
       .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
