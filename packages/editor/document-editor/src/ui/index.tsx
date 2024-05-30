@@ -11,6 +11,8 @@ import {
 import { PageRenderer } from "src/ui/components/page-renderer";
 // hooks
 import { useDocumentEditor } from "src/hooks/use-document-editor";
+// extensions
+import { TEmbedConfig } from "src/ui/extensions";
 
 interface IDocumentEditor {
   id: string;
@@ -26,6 +28,8 @@ interface IDocumentEditor {
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
   tabIndex?: number;
+  // embed configuration
+  embedHandler?: TEmbedConfig;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 }
 
@@ -41,6 +45,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     forwardedRef,
     tabIndex,
+    embedHandler,
     placeholder,
   } = props;
   // states
@@ -64,6 +69,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     placeholder,
     setHideDragHandleFunction,
     tabIndex,
+    embedHandler,
   });
 
   const editorContainerClassNames = getEditorClassNames({

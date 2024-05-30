@@ -1,6 +1,6 @@
 # Python imports
 from datetime import datetime
-
+import uuid
 import jwt
 
 # Django imports
@@ -22,7 +22,7 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import (
     User,
@@ -227,13 +227,20 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     workspace_invite.delete()
 
                 # Send event
-                workspace_invite_event.delay(
-                    user=user.id if user is not None else None,
+                track_event.delay(
                     email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
                     event_name="MEMBER_ACCEPTED",
-                    accepted_from="EMAIL",
+                    properties={
+                        "event_id": uuid.uuid4().hex,
+                        "user": {"email": email, "id": str(user)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR", None),
+                            "user_agent": request.META.get(
+                                "HTTP_USER_AGENT", None
+                            ),
+                        },
+                        "accepted_from": "EMAIL",
+                    },
                 )
 
                 return Response(
