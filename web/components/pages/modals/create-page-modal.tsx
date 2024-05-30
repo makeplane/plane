@@ -26,6 +26,7 @@ export const CreatePageModal: FC<Props> = (props) => {
     id: undefined,
     name: "",
     access: EPageAccess.PUBLIC,
+    logo_props: undefined,
   });
   // router
   const router = useRouter();
