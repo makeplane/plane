@@ -1,5 +1,7 @@
 import { FC } from "react";
+import { Crown } from "lucide-react";
 import { TEstimateUpdateStageKeys } from "@plane/types";
+import { Tooltip } from "@plane/ui";
 // constants
 import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/constants/estimates";
 // helpers
@@ -19,11 +21,19 @@ export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
           <div
             key={stage.key}
             className={cn(
-              "border border-custom-border-300 cursor-pointer space-y-1 p-3 rounded hover:bg-custom-background-90 transition-colors"
+              "border border-custom-border-300 cursor-pointer space-y-1 p-3 rounded transition-colors",
+              stage?.is_active ? `bg-custom-background-90` : `hover:bg-custom-background-90`
             )}
-            onClick={() => handleEstimateEditType(stage.key)}
+            onClick={() => !stage?.is_active && handleEstimateEditType(stage.key)}
           >
-            <h3 className="text-base font-medium">{stage.title}</h3>
+            <h3 className="text-base font-medium relative flex items-center gap-2">
+              {stage.title}
+              {stage?.is_active && (
+                <Tooltip tooltipContent={"upgrade"}>
+                  <Crown size={12} className="text-amber-400" />
+                </Tooltip>
+              )}
+            </h3>
             <p className="text-sm text-custom-text-200">{stage.description}</p>
           </div>
         ))}

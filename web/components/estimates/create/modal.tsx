@@ -113,7 +113,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             {estimatePoints && (
               <div
                 onClick={() => {
-                  setEstimateSystem(EEstimateSystem.POINTS);
+                  setEstimateSystem(EEstimateSystem.CATEGORIES);
                   handleUpdatePoints(undefined);
                 }}
                 className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
@@ -123,7 +123,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             )}
             <div className="text-xl font-medium text-custom-text-100">New Estimate System</div>
           </div>
-          <div className="text-xs text-gray-400">Step {renderEstimateStepsCount}/2</div>
+          <div className="text-xs text-gray-400">Step {renderEstimateStepsCount} of 2</div>
         </div>
 
         {/* estimate steps */}

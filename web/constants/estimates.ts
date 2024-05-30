@@ -49,6 +49,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: true,
+    is_active: false,
   },
   points: {
     name: "Points",
@@ -101,6 +102,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: true,
+    is_active: true,
   },
   time: {
     name: "Time",
@@ -122,6 +124,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: false,
+    is_active: true,
   },
 };
 
@@ -130,10 +133,12 @@ export const ESTIMATE_OPTIONS_STAGE_ONE = [
     key: EEstimateUpdateStages.EDIT,
     title: "Add, update or remove estimates",
     description: "Manage current system either adding, updating or removing the points or categories.",
+    is_active: false,
   },
   {
     key: EEstimateUpdateStages.SWITCH,
     title: "Change estimate type",
     description: "Convert your points system to categories system and vice versa.",
+    is_active: true,
   },
 ];
