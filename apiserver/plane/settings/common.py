@@ -351,4 +351,4 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
-APP_BASE_URL = os.environ.get("APP_BASE_URL") or os.environ.get("WEB_URL")
+APP_BASE_URL = os.environ.get("APP_BASE_URL")
