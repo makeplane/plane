@@ -13,15 +13,14 @@ type TConfirmPageDeletionProps = {
   isOpen: boolean;
   onClose: () => void;
   pageId: string;
-  projectId: string;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { pageId, projectId, isOpen, onClose } = props;
+  const { pageId, isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
-  const { removePage } = useProjectPages(projectId);
+  const { removePage } = useProjectPages();
   const { capturePageEvent } = useEventTracker();
   const page = usePage(pageId);
 

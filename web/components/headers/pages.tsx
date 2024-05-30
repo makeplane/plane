@@ -1,21 +1,21 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
-// hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helpers
+// components
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
-import { EUserProjectRoles } from "@/constants/project";
 // constants
-// components
+import { EPageAccess } from "@/constants/page";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const PagesHeader = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, type: pageType } = router.query;
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
   const {
@@ -62,7 +62,10 @@ export const PagesHeader = observer(() => {
             size="sm"
             onClick={() => {
               setTrackElement("Project pages page");
-              toggleCreatePageModal(true);
+              toggleCreatePageModal({
+                isOpen: true,
+                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+              });
             }}
           >
             Add Page

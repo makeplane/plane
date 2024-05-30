@@ -5,15 +5,12 @@ import { cn } from "@/helpers/common.helper";
 import { useProjectPages } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
-export type TPageSearchInput = { projectId: string };
-
-export const PageSearchInput: FC<TPageSearchInput> = observer((props) => {
-  const { projectId } = props;
+export const PageSearchInput: FC = observer(() => {
   // hooks
   const {
     filters: { searchQuery },
     updateFilters,
-  } = useProjectPages(projectId);
+  } = useProjectPages();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
