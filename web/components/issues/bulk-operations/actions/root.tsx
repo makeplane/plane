@@ -1,4 +1,7 @@
-import { BulkArchiveIssues, BulkDeleteIssues, BulkSubscribeIssues, BulkTransferIssues } from "@/components/issues";
+// community-edition
+import { BulkSubscribeIssues, BulkTransferIssues } from "@plane/bulk-operations";
+// components
+import { BulkArchiveIssues, BulkDeleteIssues } from "@/components/issues";
 
 type Props = {
   handleClearSelection: () => void;

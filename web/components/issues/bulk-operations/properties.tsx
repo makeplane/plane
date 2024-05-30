@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
+// community-edition
+import { BulkOperationsExtraProperties } from "@plane/bulk-operations";
 // types
 import { TBulkIssueProperties } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@/components/dropdowns";
-import { BulkOperationsExtraProperties } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // constants
@@ -113,10 +114,11 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
             render={({ field: { onChange, value } }) => (
               <StateDropdown
                 value={value}
-                onChange={onChange}
+                onChange={(val) => onChange(value === val ? "" : val)}
                 projectId={projectId?.toString() ?? ""}
                 buttonVariant="border-with-text"
                 disabled={isUpdateDisabled}
+                showDefaultState={false}
               />
             )}
           />
@@ -128,7 +130,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
             render={({ field: { onChange, value } }) => (
               <PriorityDropdown
                 value={value}
-                onChange={onChange}
+                onChange={(val) => onChange(value === val ? undefined : val)}
                 buttonVariant="border-with-text"
                 buttonClassName="!text-custom-text-300"
                 disabled={isUpdateDisabled}

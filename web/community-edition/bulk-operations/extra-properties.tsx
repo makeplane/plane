@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { CircleDot, CopyPlus, Crown, Ellipsis, LayoutPanelTop, XCircle } from "lucide-react";
+// community-edition
+import { BulkOperationsUpgradeToProModal } from "@plane/bulk-operations";
 // ui
 import { ContrastIcon, CustomSearchSelect, DiceIcon, RelatedIcon } from "@plane/ui";
-// components
-import { UpgradeToProModal } from "@/components/core";
+// constants
+import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 
 const EXTRA_PROPERTIES_LIST = [
   {
@@ -63,12 +65,15 @@ export const BulkOperationsExtraProperties = () => {
 
   return (
     <>
-      <UpgradeToProModal isOpen={isUpgradeToProModalOpen} onClose={() => setIsUpgradeToProModalOpen(false)} />
+      <BulkOperationsUpgradeToProModal
+        isOpen={isUpgradeToProModalOpen}
+        onClose={() => setIsUpgradeToProModalOpen(false)}
+      />
       <CustomSearchSelect
         value={null}
         onChange={() => {
           if (window.innerWidth >= 768) setIsUpgradeToProModalOpen(true);
-          else window.open("https://plane.so/pricing", "_blank");
+          else window.open(MARKETING_PRICING_PAGE_LINK, "_blank");
         }}
         buttonClassName="size-6 p-0"
         label={<Ellipsis className="size-3" />}

@@ -170,8 +170,11 @@ export class MultipleSelectStore implements IMultipleSelectStore {
         if (entitiesList.length > 0) this.updateLastSelectedEntityDetails(entitiesList[entitiesList.length - 1]);
       });
     } else {
+      const newEntities = differenceWith(this.selectedEntityDetails, entitiesList, (obj1, obj2) =>
+        isEqual(obj1.entityID, obj2.entityID)
+      );
       runInAction(() => {
-        this.selectedEntityDetails = differenceWith(this.selectedEntityDetails, entitiesList, isEqual);
+        this.selectedEntityDetails = newEntities;
       });
     }
   };

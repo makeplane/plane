@@ -250,10 +250,6 @@ export const useMultipleSelect = (props: Props) => {
     (groupID: string) => {
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
       const groupSelectionStatus = isGroupSelected(groupID);
-      // groupEntities.map((entity) => {
-      //   console.log("group click");
-      //   handleEntitySelection(entity, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
-      // });
       handleEntitySelection(groupEntities, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
     },
     [entitiesList, handleEntitySelection, isGroupSelected]

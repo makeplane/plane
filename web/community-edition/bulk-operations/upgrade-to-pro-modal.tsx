@@ -4,7 +4,9 @@ import { useTheme } from "next-themes";
 import { Check, Crown, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/ui";
+// constants
+import { MARKETING_CONTACT_US_PAGE_LINK, MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // assets
@@ -24,7 +26,7 @@ const PRO_FEATURES_LIST = [
   "Change cycles, modules and many more\nproperties at once.",
 ];
 
-export const UpgradeToProModal: React.FC<Props> = (props) => {
+export const BulkOperationsUpgradeToProModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   // next-themes
   const { resolvedTheme } = useTheme();
@@ -85,11 +87,11 @@ export const UpgradeToProModal: React.FC<Props> = (props) => {
                     </h4>
                     <div className="space-y-5">
                       {PRO_FEATURES_LIST.map((feature, index) => (
-                        <div key={index} className="flex items-start gap-3 text-custom-text-200">
+                        <div key={index} className="flex items-start gap-3">
                           <span>
-                            <Check className="size-5" />
+                            <Check className="size-5 text-custom-primary-100" />
                           </span>
-                          <p className="text-base font-medium whitespace-pre-line">{feature}</p>
+                          <p className="text-base font-medium text-custom-text-200 whitespace-pre-line">{feature}</p>
                         </div>
                       ))}
                     </div>
@@ -100,7 +102,7 @@ export const UpgradeToProModal: React.FC<Props> = (props) => {
                   </div>
                   <div className="mt-7 flex items-center gap-3">
                     <a
-                      href="https://plane.so/pricing"
+                      href={MARKETING_PRICING_PAGE_LINK}
                       className={cn(getButtonStyling("primary", "md"), "flex items-center")}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -109,7 +111,7 @@ export const UpgradeToProModal: React.FC<Props> = (props) => {
                       Upgrade
                     </a>
                     <a
-                      href="https://plane.so/contact"
+                      href={MARKETING_CONTACT_US_PAGE_LINK}
                       className={cn("text-custom-primary-100 underline font-medium text-base", {
                         "text-custom-text-100": resolvedTheme === "dark",
                       })}
