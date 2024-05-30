@@ -30,14 +30,8 @@ export const useGroupIssuesDragNDrop = (
   } = useIssueDetail();
   const { updateIssue } = useIssuesActions(storeType);
   const {
-    issues: { getIssueIds },
+    issues: { getIssueIds, addCycleToIssue, removeCycleFromIssue, changeModulesInIssue },
   } = useIssues(storeType);
-  const {
-    issues: { addCycleToIssue, removeCycleFromIssue },
-  } = useIssues(EIssuesStoreType.CYCLE);
-  const {
-    issues: { changeModulesInIssue },
-  } = useIssues(EIssuesStoreType.MODULE);
 
   /**
    * update Issue on Drop, checks if modules or cycles are changed and then calls appropriate functions
