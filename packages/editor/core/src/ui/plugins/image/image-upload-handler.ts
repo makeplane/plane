@@ -53,6 +53,19 @@ export async function startImageUpload(
     const fileNameTrimmed = trimFileName(file.name);
     const fileWithTrimmedName = new File([file], fileNameTrimmed, { type: file.type });
 
+    const resolvedPos = view.state.doc.resolve(pos ?? 0);
+    const nodeBefore = resolvedPos.nodeBefore;
+
+    // if the image is at the start of the line i.e. when nodeBefore is null
+    if (nodeBefore === null) {
+      if (pos) {
+        // so that the image is not inserted at the next line, else incase the
+        // image is inserted at any line where there's some content, the
+        // position is kept as it is to be inserted at the next line
+        pos -= 1;
+      }
+    }
+
     view.focus();
 
     const src = await uploadAndValidateImage(fileWithTrimmedName, uploadFile);
