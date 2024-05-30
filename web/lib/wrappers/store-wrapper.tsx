@@ -14,7 +14,7 @@ type TStoreWrapper = {
 const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   const { children } = props;
   // theme
-  const { setTheme } = useTheme();
+  const {resolvedTheme, setTheme } = useTheme();
   // router
   const router = useRouter();
   // store hooks
@@ -38,7 +38,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
    * Setting up the theme of the user by fetching it from local storage
    */
   useEffect(() => {
-    setTheme(userProfile?.theme?.theme || "system");
+    setTheme(userProfile?.theme?.theme || resolvedTheme || "system");
     if (!userProfile?.theme?.theme) return;
 
     if (userProfile?.theme?.theme === "custom" && userProfile?.theme?.palette) {
