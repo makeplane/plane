@@ -225,6 +225,7 @@ class ModuleViewSet(BaseViewSet):
                     "sort_order",
                     "external_source",
                     "external_id",
+                    "logo_props",
                     # computed fields
                     "is_favorite",
                     "cancelled_issues",
@@ -281,6 +282,7 @@ class ModuleViewSet(BaseViewSet):
                 "sort_order",
                 "external_source",
                 "external_id",
+                "logo_props",
                 # computed fields
                 "total_issues",
                 "is_favorite",
@@ -465,6 +467,7 @@ class ModuleViewSet(BaseViewSet):
                 "sort_order",
                 "external_source",
                 "external_id",
+                "logo_props",
                 # computed fields
                 "is_favorite",
                 "cancelled_issues",

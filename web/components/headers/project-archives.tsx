@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -49,7 +48,7 @@ export const ProjectArchivesHeader: FC = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

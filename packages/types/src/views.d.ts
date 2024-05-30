@@ -1,3 +1,4 @@
+import { TLogoProps } from "./common";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -21,4 +22,5 @@ export interface IProjectView {
   query_data: IIssueFilterOptions;
   project: string;
   workspace: string;
+  logo_props: TLogoProps | undefined;
 }
