@@ -10,12 +10,12 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 //
-import { AuthService } from "@/services/auth.service";
+// import { AuthService } from "@/services/auth.service";
 // layouts
 // ui
 
 // services
-const authService = new AuthService();
+// const authService = new AuthService();
 
 type props = {
   error: Error & { digest?: string };
@@ -33,16 +33,16 @@ const CustomErrorComponent = ({ error }: props) => {
   };
 
   const handleSignOut = async () => {
-    await authService
-      .signOut(API_BASE_URL)
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      )
-      .finally(() => router.push("/"));
+    // await authService
+    //   .signOut(API_BASE_URL)
+    //   .catch(() =>
+    //     setToast({
+    //       type: TOAST_TYPE.ERROR,
+    //       title: "Error!",
+    //       message: "Failed to sign out. Please try again.",
+    //     })
+    //   )
+    //   .finally(() => router.push("/"));
   };
 
   return (

@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, FC, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
@@ -16,7 +16,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   // theme
   const { setTheme } = useTheme();
   // router
-  const router = useRouter();
+  // const router = useRouter();
   // store hooks
   const { setQuery } = useAppRouter();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
@@ -73,10 +73,10 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
     return () => observer.disconnect();
   }, [dom]);
 
-  useEffect(() => {
-    if (!router.query) return;
-    setQuery(router.query);
-  }, [router.query, setQuery]);
+  // useEffect(() => {
+  //   if (!router.query) return;
+  //   setQuery(router.query);
+  // }, [router.query, setQuery]);
 
   return <>{children}</>;
 });

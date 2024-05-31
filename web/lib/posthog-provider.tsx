@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
@@ -65,10 +65,10 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
     const handleRouteChange = () => {
       posthog?.capture("$pageview");
     };
-    router.events.on("routeChangeComplete", handleRouteChange);
+    // router.events.on("routeChangeComplete", handleRouteChange);
 
     return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
+      // router.events.off("routeChangeComplete", handleRouteChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
