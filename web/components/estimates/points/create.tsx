@@ -2,7 +2,7 @@ import { FC, FormEvent, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
-import { Spinner, Tooltip } from "@plane/ui";
+import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
 // helpers
@@ -91,21 +91,34 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
 
               setLoader(false);
               setError(undefined);
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: "Estimate point updated",
+                message: "The estimate point has been updated successfully.",
+              });
               handleClose();
             } catch {
               setLoader(false);
-              setError("something went wrong. please try again later");
+              setError("We are unable to process your request, please try again.");
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: "Estimate point failed to updated",
+                message: "We are unable to process your request, please try again.",
+              });
             }
           } else {
             handleSuccess(estimateInputValue);
-            setError("Please fill the input field");
           }
         } else {
           setLoader(false);
-          setError("please enter a valid estimate value");
+          setError(
+            [EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateType)
+              ? "Estimate point needs to be a numeric value."
+              : "Estimate point needs to be a character value."
+          );
         }
-      } else setError("Estimate point values cannot be repeated");
-    } else setError("Please fill the input field");
+      } else setError("Estimate value already exists.");
+    } else setError("Estimate value cannot be empty.");
   };
 
   return (

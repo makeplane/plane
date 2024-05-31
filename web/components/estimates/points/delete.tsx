@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
 import { TEstimatePointsObject } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EstimatePointDropdown } from "@/components/estimates/points";
 // hooks
@@ -49,10 +49,20 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
 
         setLoader(false);
         setError(undefined);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Estimate point updated",
+          message: "The estimate point has been updated successfully.",
+        });
         handleClose();
       } catch {
         setLoader(false);
         setError("something went wrong. please try again later");
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Estimate point failed to updated",
+          message: "We are unable to process your request, please try again.",
+        });
       }
     else setError("please select option");
   };
