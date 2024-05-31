@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { usePopper } from "react-popper";
 import { CircleDot, CopyPlus, Crown, Ellipsis, LayoutPanelTop, Search, XCircle } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// community-edition
-import { BulkOperationsUpgradeToProModal } from "@plane/bulk-operations";
 // ui
 import { ContrastIcon, DiceIcon, RelatedIcon } from "@plane/ui";
 // constants
@@ -77,10 +75,6 @@ export const BulkOperationsExtraProperties = () => {
 
   return (
     <>
-      <BulkOperationsUpgradeToProModal
-        isOpen={isUpgradeToProModalOpen}
-        onClose={() => setIsUpgradeToProModalOpen(false)}
-      />
       <Combobox as="div" className="relative flex-shrink-0">
         <Combobox.Button as={React.Fragment}>
           <button
