@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
@@ -13,11 +14,11 @@ import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // constants
 import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 
 type Props = {
@@ -35,7 +36,7 @@ const defaultValues: TBulkIssueProperties = {
   label_ids: [],
 };
 
-export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
+export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
   const { snapshot } = props;
   // states
   const [createLabelModal, setCreateLabelModal] = useState(false);
@@ -43,9 +44,10 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
+  const storeType = useIssueStoreType();
   const {
     issues: { bulkUpdateProperties },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssues(storeType);
   // form info
   const {
     control,
@@ -200,4 +202,4 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
       )}
     </form>
   );
-};
+});

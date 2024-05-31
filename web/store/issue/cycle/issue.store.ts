@@ -7,7 +7,7 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 // types
-import { TIssue,  TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags } from "@plane/types";
+import { TIssue,  TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { ICycleIssuesFilter } from "./filter.store";
@@ -74,6 +74,8 @@ export interface ICycleIssues extends IBaseIssuesStore {
     cycleId: string
   ) => Promise<TIssue | undefined>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
   transferIssuesFromCycle: (
     workspaceSlug: string,
@@ -397,4 +399,6 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       throw error;
     }
   };
+
+  archiveBulkIssues = this.bulkArchiveIssues;
 }

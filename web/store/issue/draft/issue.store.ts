@@ -2,7 +2,7 @@ import { action, makeObservable, runInAction } from "mobx";
 // base class
 // services
 // types
-import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse, TBulkOperationsPayload } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { IDraftIssuesFilter } from "./filter.store";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
@@ -32,7 +32,10 @@ export interface IDraftIssues extends IBaseIssuesStore {
   ) => Promise<TIssuesResponse | undefined>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
+  archiveBulkIssues: undefined;
   quickAddIssue: undefined;
 }
 
@@ -160,5 +163,6 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
   createIssue = this.createDraftIssue;
   updateIssue = this.updateDraftIssue;
 
+  archiveBulkIssues = undefined;
   quickAddIssue = undefined;
 }

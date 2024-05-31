@@ -224,7 +224,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       removeIssue: action.bound,
       archiveIssue: action.bound,
       removeBulkIssues: action.bound,
-      archiveBulkIssues: action.bound,
+      bulkArchiveIssues: action.bound,
       bulkUpdateProperties: action.bound,
 
       addIssueToCycle: action.bound,
@@ -728,7 +728,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param projectId
    * @param issueIds
    */
-  archiveBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+  bulkArchiveIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
     try {
       const response = await this.issueService.bulkArchiveIssues(workspaceSlug, projectId, { issue_ids: issueIds });
 
@@ -769,7 +769,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
               // convert existing value to an array
               const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
               this.rootIssueStore.issues.updateIssue(issueId, {
-                [property]: [newExistingValue, ...propertyValue],
+                [property]: uniq([newExistingValue, ...propertyValue]),
               });
             } else {
               // if property value is not an array, simply update the value

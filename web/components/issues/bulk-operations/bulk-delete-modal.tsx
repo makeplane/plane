@@ -5,9 +5,9 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AlertModalCore, EModalPosition, EModalWidth } from "@/components/core";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   handleClose: () => void;
@@ -23,9 +23,10 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
+  const storeType = useIssueStoreType();
   const {
     issues: { removeBulkIssues },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssues(storeType);
 
   const handleSubmit = async () => {
     setIsDeleting(true);

@@ -1,7 +1,7 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
 import { WorkspaceService } from "@/services/workspace.service";
-import { IssuePaginationOptions, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
+import { IssuePaginationOptions, TBulkOperationsPayload, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
 // services
 // types
 import { IIssueRootStore } from "../root.store";
@@ -33,6 +33,9 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
   quickAddIssue: undefined;
   clear(): void;
@@ -149,5 +152,6 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions);
   };
 
+  archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = undefined;
 }

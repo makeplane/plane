@@ -1,7 +1,7 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
 import { UserService } from "@/services/user.service";
-import { TIssue, TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags } from "@plane/types";
+import { TIssue, TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
 
 // services
 // types
@@ -38,6 +38,9 @@ export interface IProfileIssues extends IBaseIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
   quickAddIssue: undefined;
 }
@@ -201,5 +204,6 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView);
   };
 
+  archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = undefined;
 }

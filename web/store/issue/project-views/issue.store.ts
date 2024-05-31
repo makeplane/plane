@@ -1,6 +1,13 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+import {
+  TIssue,
+  TLoader,
+  ViewFlags,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // services
 // types
 import { IIssueRootStore } from "../root.store";
@@ -33,6 +40,8 @@ export interface IProjectViewIssues extends IBaseIssuesStore {
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
 export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIssues {
@@ -145,5 +154,6 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions);
   };
 
+  archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;
 }

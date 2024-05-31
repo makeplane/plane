@@ -6,9 +6,9 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { AlertModalCore, EModalPosition, EModalWidth } from "@/components/core";
 // constants
 import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   handleClose: () => void;
@@ -24,32 +24,34 @@ export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) =>
   // states
   const [isArchiving, setIsDeleting] = useState(false);
   // store hooks
+  const storeType = useIssueStoreType();
   const {
     issues: { archiveBulkIssues },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssues(storeType);
 
   const handleSubmit = async () => {
     setIsDeleting(true);
 
-    await archiveBulkIssues(workspaceSlug, projectId, issueIds)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Issues archived successfully.",
-        });
-        onSubmit?.();
-        handleClose();
-      })
-      .catch((error) => {
-        const errorInfo = ERROR_DETAILS[error?.error_code as EErrorCodes] ?? undefined;
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: errorInfo?.title ?? "Error!",
-          message: errorInfo?.message ?? "Something went wrong. Please try again.",
-        });
-      })
-      .finally(() => setIsDeleting(false));
+    archiveBulkIssues &&
+      (await archiveBulkIssues(workspaceSlug, projectId, issueIds)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Issues archived successfully.",
+          });
+          onSubmit?.();
+          handleClose();
+        })
+        .catch((error) => {
+          const errorInfo = ERROR_DETAILS[error?.error_code as EErrorCodes] ?? undefined;
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: errorInfo?.title ?? "Error!",
+            message: errorInfo?.message ?? "Something went wrong. Please try again.",
+          });
+        })
+        .finally(() => setIsDeleting(false)));
   };
 
   const issueVariant = issueIds.length > 1 ? "issues" : "issue";

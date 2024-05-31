@@ -3,7 +3,14 @@ import { action, makeObservable, runInAction } from "mobx";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 // services
 // types
-import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
+import {
+  TIssue,
+  TLoader,
+  ViewFlags,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // store
 import { IIssueRootStore } from "../root.store";
 import { IModuleIssuesFilter } from "./filter.store";
@@ -43,6 +50,8 @@ export interface IModuleIssues extends IBaseIssuesStore {
     moduleId: string
   ) => Promise<TIssue | undefined>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
 export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
@@ -225,7 +234,6 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
         this.rootIssueStore.issues.removeIssue(data.id);
       });
 
-
       if (data.cycle_id && data.cycle_id !== "") {
         await this.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id);
       }
@@ -234,4 +242,6 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       throw error;
     }
   };
+
+  archiveBulkIssues = this.bulkArchiveIssues;
 }
