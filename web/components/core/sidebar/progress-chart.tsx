@@ -56,21 +56,18 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
       dates = eachDayOfInterval({ start, end });
     }
 
-    const maxDates = 4;
-    const totalDates = dates.length;
+    if (dates.length === 0) return [];
 
-    if (totalDates <= maxDates) return dates.map((d) => renderFormattedDateWithoutYear(d));
-    else {
-      const interval = Math.ceil(totalDates / maxDates);
-      const limitedDates = [];
+    const formattedDates = dates.map((d) => renderFormattedDateWithoutYear(d));
+    const firstDate = formattedDates[0];
+    const lastDate = formattedDates[formattedDates.length - 1];
 
-      for (let i = 0; i < totalDates; i += interval) limitedDates.push(renderFormattedDateWithoutYear(dates[i]));
+    if (formattedDates.length <= 2) return [firstDate, lastDate];
 
-      if (!limitedDates.includes(renderFormattedDateWithoutYear(dates[totalDates - 1])))
-        limitedDates.push(renderFormattedDateWithoutYear(dates[totalDates - 1]));
+    const middleDateIndex = Math.floor(formattedDates.length / 2);
+    const middleDate = formattedDates[middleDateIndex];
 
-      return limitedDates;
-    }
+    return [firstDate, middleDate, lastDate];
   };
 
   return (
