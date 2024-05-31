@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-// hooks
-import { ProjectLogo } from "@/components/project";
-import { useProject } from "@/hooks/store";
 // components
+import { Logo } from "@/components/common";
+// hooks
+import { useProject } from "@/hooks/store";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -26,7 +26,7 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
         return (
           <div key={projectId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-              <ProjectLogo logo={projectDetails.logo_props} className="text-sm" />
+              <Logo logo={projectDetails.logo_props} size={12} />
             </span>
             <span className="normal-case">{projectDetails.name}</span>
             {editable && (

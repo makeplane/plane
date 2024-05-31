@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// components
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+// helpers
+import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
@@ -41,7 +40,7 @@ export const PagesHeader = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

@@ -7,8 +7,8 @@ import { TRecentProjectsWidgetResponse } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // components
+import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
@@ -38,7 +38,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         className={`grid h-[3.375rem] w-[3.375rem] flex-shrink-0 place-items-center rounded border border-transparent ${randomBgColor}`}
       >
         <div className="grid h-7 w-7 place-items-center">
-          <ProjectLogo logo={projectDetails.logo_props} className="text-xl" />
+          <Logo logo={projectDetails.logo_props} size={20} />
         </div>
       </div>
       <div className="flex-grow truncate">

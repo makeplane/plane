@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
 import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { useProject } from "@/hooks/store";
 // components
@@ -52,7 +51,7 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

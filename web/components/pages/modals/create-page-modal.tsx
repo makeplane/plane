@@ -26,6 +26,7 @@ export const CreatePageModal: FC<Props> = (props) => {
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
     id: undefined,
     name: "",
+    logo_props: undefined,
   });
   // router
   const router = useRouter();

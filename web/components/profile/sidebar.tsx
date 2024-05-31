@@ -5,13 +5,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
-// ui
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// icons
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
+// components
+import { Logo } from "@/components/common";
 // fetch-keys
-import { ProjectLogo } from "@/components/project";
 import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -151,7 +151,7 @@ export const ProfileSidebar = observer(() => {
                         <Disclosure.Button className="flex w-full items-center justify-between gap-2">
                           <div className="flex w-3/4 items-center gap-2">
                             <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                              <ProjectLogo logo={projectDetails.logo_props} />
+                              <Logo logo={projectDetails.logo_props} />
                             </span>
                             <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>
                           </div>
