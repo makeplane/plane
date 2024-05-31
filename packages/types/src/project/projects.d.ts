@@ -57,6 +57,12 @@ export interface IProjectLite {
   id: string;
   name: string;
   identifier: string;
+  emoji: string | null;
+  logo_props: TProjectLogoProps;
+  icon_prop: {
+    name: string;
+    color: string;
+  } | null;
 }
 
 type ProjectPreferences = {

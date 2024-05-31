@@ -7,7 +7,7 @@ import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler, useE
 // custom provider
 import { CollaborationProvider } from "src/providers/collaboration-provider";
 // extensions
-import { DocumentEditorExtensions } from "src/ui/extensions";
+import { DocumentEditorExtensions, TEmbedConfig } from "src/ui/extensions";
 
 type DocumentEditorProps = {
   id: string;
@@ -25,6 +25,7 @@ type DocumentEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
+  embedHandler?: TEmbedConfig;
 };
 
 export const useDocumentEditor = ({
@@ -39,6 +40,7 @@ export const useDocumentEditor = ({
   handleEditorReady,
   mentionHandler,
   placeholder,
+  embedHandler,
   setHideDragHandleFunction,
 }: DocumentEditorProps) => {
   const provider = useMemo(
@@ -75,6 +77,7 @@ export const useDocumentEditor = ({
     extensions: DocumentEditorExtensions({
       uploadFile: fileHandler.upload,
       setHideDragHandle: setHideDragHandleFunction,
+      issueEmbedConfig: embedHandler?.issue,
       provider,
     }),
     placeholder,

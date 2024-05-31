@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 // store
-import { observer } from "mobx-react-lite";
-// components
+import { observer } from "mobx-react";
+// layouts
 import { PageHead } from "@/components/core";
 import { UserProfileHeader } from "@/components/headers";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
