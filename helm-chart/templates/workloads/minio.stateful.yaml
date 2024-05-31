@@ -1,0 +1,122 @@
+{{- if .Values.minio.local_setup }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-minio
+  labels:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-minio
+spec:
+  clusterIP: None
+  ports:
+  - name: minio-api-9000
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  - name: minio-console-9090
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-minio
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-minio-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-minio
+  serviceName:  {{ .Release.Name }}-minio
+  template:
+    metadata:
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-minio
+    spec:
+      containers:
+      - image: {{ .Values.minio.image }}
+        imagePullPolicy: Always
+        name: {{ .Release.Name }}-minio
+        stdin: true
+        tty: true
+        # command:
+        args:
+          - server
+          - /data
+          - --console-address 
+          - :9090
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-doc-store-vars
+              optional: false
+          - secretRef:
+              name: {{ .Release.Name }}-doc-store-secrets
+              optional: false
+        volumeMounts:
+        - mountPath: /data
+          name: pvc-{{ .Release.Name }}-minio-vol
+          subPath: ''
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: {{ .Release.Namespace }}
+      name: pvc-{{ .Release.Name }}-minio-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.minio.volumeSize | default "5Gi" | quote }}
+      storageClassName: {{ .Values.minio.storageClass }}
+      volumeMode: Filesystem
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-minio-bucket
+spec:
+  backoffLimit: 6
+  completionMode: NonIndexed
+  template:
+    metadata:
+      namespace: {{ .Release.Namespace }}
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: init
+          image: busybox
+          command: ['sh', '-c', "until nslookup  {{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for  {{ .Release.Name }}-minio; sleep 2; done"]
+      containers:
+        - command:
+            - /bin/sh
+          args:
+            - '-c'
+            - >-
+              /usr/bin/mc config host add plane-app-minio
+              http://{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000 "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"; 
+              /usr/bin/mc mb plane-app-minio/$AWS_S3_BUCKET_NAME; 
+              /usr/bin/mc anonymous set download plane-app-minio/$AWS_S3_BUCKET_NAME; exit 0;
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-doc-store-vars
+                optional: false
+            - secretRef:
+                name: {{ .Release.Name }}-doc-store-secrets
+                optional: false
+          image: minio/mc
+          imagePullPolicy: Always
+          name: {{ .Release.Name }}-minio-bucket
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+      terminationGracePeriodSeconds: 120
+{{- end }}

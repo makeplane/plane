@@ -1,0 +1,83 @@
+{{- if and .Values.ingress.enabled .Values.ingress.appHost }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.clientMaxBodySize | default "5m" | quote}}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClass }}
+  rules:
+    - host: {{ .Values.ingress.appHost }}
+      http:
+        paths:
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: {{ .Release.Name }}-web
+            path: /
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 8000
+                name: {{ .Release.Name }}-api
+            path: /api
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 8000
+                name: {{ .Release.Name }}-api
+            path: /auth
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: {{ .Release.Name }}-space
+            path: /spaces
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: {{ .Release.Name }}-admin
+            path: /god-mode
+            pathType: Prefix
+          {{- if and .Values.minio.local_setup .Values.env.docstore_bucket }}
+          - backend:
+              service:
+                port:
+                  number: 9000
+                name: {{ .Release.Name }}-minio
+            path: /{{ .Values.env.docstore_bucket }}
+            pathType: Prefix
+          {{- end }}
+
+    {{- if and .Values.minio.local_setup .Values.ingress.minioHost }}
+    - host: {{ .Values.ingress.minioHost }}
+      http:
+        paths:
+          - backend:
+              service:
+                port:
+                  number: 9090
+                name: {{ .Release.Name }}-minio
+            path: /
+            pathType: Prefix
+    {{- end }}
+  {{- if .Values.ssl.generateCerts }}
+  tls:
+    - hosts:
+      - {{ .Values.ingress.appHost | quote }}
+      {{- if and .Values.minio.local_setup .Values.ingress.minioHost }}
+      - {{ .Values.ingress.minioHost | quote }}
+      {{ end }}
+      secretName: {{ .Release.Name }}-ssl-cert
+  {{- end }}
+
+{{- end }}

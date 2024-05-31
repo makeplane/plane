@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-beat-worker-wl
+spec:
+  replicas: {{ .Values.beatworker.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-beat-worker
+  template:
+    metadata:
+      namespace: {{ .Release.Namespace }}
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-beat-worker
+      annotations:
+        timestamp: {{ now | quote }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-beat-worker
+        imagePullPolicy: Always
+        image: {{ .Values.beatworker.image | default "makeplane/plane-backend" }}:{{ .Values.planeVersion }}
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: {{ .Values.beatworker.memoryLimit  | default "1000Mi" | quote }}
+            cpu: {{ .Values.beatworker.cpuLimit | default "500m" | quote}}
+        command:
+          - ./bin/docker-entrypoint-beat.sh
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-app-vars
+              optional: false
+          - secretRef:
+              name: {{ .Release.Name }}-app-secrets
+              optional: false
+          - configMapRef:
+              name: {{ .Release.Name }}-doc-store-vars
+              optional: false
+          - secretRef:
+              name: {{ .Release.Name }}-doc-store-secrets
+              optional: false
+
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+
+---

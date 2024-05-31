@@ -1,0 +1,17 @@
+apiVersion: v2
+
+name: plane-ce
+description: Meet Plane. An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind.
+
+type: application
+
+version: 1.0.18
+appVersion: "0.20.0"
+
+home: https://plane.so
+icon: https://plane.so/favicon/favicon-32x32.png
+sources:
+  - https://github.com/makeplane/plane
+
+annotations:
+  artifacthub.io/license: AGPL-3.0

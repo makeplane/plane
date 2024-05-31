@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plane Helm Charts</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    .nav-link {
+      --bs-nav-link-color: #005cc5 !important;
+    }
+    .nav-link.active {
+      font-weight: 500 !important;
+      color: green !important;
+      /* border-bottom-color: currentcolor; */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row mx-0 px-0 pt-2 border-bottom mb-2">
+      <div class="col h4 px-0 ">Plane Helm Chart Setup</div>
+      <div class="col h4 px-0 text-end">
+        <a href="https://plane.so" target="_blank" class="text-dark" title="Visit Website (www.plane.so)"><i class="fa-solid fa-globe"></i></a>
+        <a href="https://github.com/makeplane/plane" target="_blank" class="text-dark" title="Visit Github"><i class="fa-brands fa-github"></i></a>
+      </div>
+    </div>
+    <div class="mb-3">
+      Plane is a simple, extensible, open source project and product management tool.
+      It allows users to start with a basic task tracking tool and gradually adopt various project management frameworks
+      like Agile, Waterfall, and many more.
+    </div>
+    <ul class="bg-body mb-2 nav nav-underline sticky-top" id="helmSetup" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" aria-current="page" href="javascript://" id="setup-tab" data-bs-toggle="tab"
+          data-bs-target="#setup-tab-pane" type="button" role="tab" aria-controls="setup-tab-pane"
+          aria-selected="true">Setup</a>
+      </li>
+      <!-- <li class="nav-item" role="presentation">
+        <a class="nav-link" href="javascript://" id="ssl-tab" data-bs-toggle="tab" data-bs-target="#ssl-tab-pane"
+          type="button" role="tab" aria-controls="ssl-tab-pane" aria-selected="true">SSL Certificate</a>
+      </li> -->
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" href="javascript://" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-tab-pane"
+          type="button" role="tab" aria-controls="config-tab-pane" aria-selected="true">Configuration</a>
+      </li>
+    </ul>
+    <div class="tab-content p-2 border" id="myTabContent">
+      <div class="tab-pane fade show active" id="setup-tab-pane" role="tabpanel" aria-labelledby="setup-tab"
+        tabindex="0">
+        <zero-md src="./content/setup.md"></zero-md>
+      </div>
+      <!-- <div class="tab-pane fade" id="ssl-tab-pane" role="tabpanel" aria-labelledby="ssl-tab" tabindex="0">
+        <zero-md src="./content/ssl.md"></zero-md>
+      </div> -->
+      <div class="tab-pane fade" id="config-tab-pane" role="tabpanel" aria-labelledby="config-tab" tabindex="0">
+        <zero-md src="./content/config.md"></zero-md>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+    integrity="sha512-uKQ39gEGiyUJl4AI6L+ekBdGKpGw4xJ55+xyJG7YFlJokPNYegn9KwQ3P8A7aFQAUtUsAQHep+d/lrGqrbPIDQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Lightweight client-side loader that feature-detects and load polyfills only when necessary -->
+  <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+
+  <!-- Load the element definition -->
+  <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+</body>
+
+</html>

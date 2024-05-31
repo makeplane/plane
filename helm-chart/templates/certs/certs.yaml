@@ -1,0 +1,18 @@
+{{- if and .Values.ingress.enabled .Values.ssl.createIssuer .Values.ssl.generateCerts }}
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-ssl-cert
+spec:
+  dnsNames:
+  - {{ .Values.ingress.appHost | quote }}
+  {{- if and .Values.minio.local_setup .Values.ingress.minioHost }}
+  - {{ .Values.ingress.minioHost | quote }}
+  {{- end }}
+  issuerRef:
+    name: {{ .Release.Name }}-cert-issuer
+  secretName: {{ .Release.Name }}-ssl-cert
+
+{{- end}}

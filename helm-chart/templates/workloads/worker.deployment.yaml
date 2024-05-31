@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-worker-wl
+spec:
+  replicas: {{ .Values.worker.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-worker
+  template:
+    metadata:
+      namespace: {{ .Release.Namespace }}
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-worker
+      annotations:
+        timestamp: {{ now | quote }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-worker
+        imagePullPolicy: Always
+        image: {{ .Values.worker.image | default "makeplane/plane-backend" }}:{{ .Values.planeVersion }}
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: {{ .Values.worker.memoryLimit  | default "1000Mi" | quote }}
+            cpu: {{ .Values.worker.cpuLimit | default "500m" | quote}}
+        command:
+          - ./bin/docker-entrypoint-worker.sh
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-app-vars
+              optional: false
+          - secretRef:
+              name: {{ .Release.Name }}-app-secrets
+              optional: false
+          - configMapRef:
+              name: {{ .Release.Name }}-doc-store-vars
+              optional: false
+          - secretRef:
+              name: {{ .Release.Name }}-doc-store-secrets
+              optional: false
+
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+
+---

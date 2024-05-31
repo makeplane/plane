@@ -1,0 +1,12 @@
+{{- if .Values.dockerRegistry.enabled }}
+
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-docker-registry-credentials
+data:
+  .dockerconfigjson: {{ include "imagePullSecret" .}}
+type: kubernetes.io/dockerconfigjson
+
+{{- end }}

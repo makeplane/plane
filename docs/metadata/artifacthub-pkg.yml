@@ -1,0 +1,68 @@
+# # Artifact Hub package metadata file
+# version: A SemVer 2 version (required)
+# name: The name of the package (only alphanum, no spaces, dashes allowed) (required)
+# alternativeName: Alternative name of the package (optional)
+# category: Category of the package (optional) # One of: ai-machine-learning, database, integration-delivery, monitoring-logging, networking, security, storage, streaming-messaging or skip-prediction
+# displayName: The name of the package nicely formatted (required)
+# createdAt: The date this package was created (RFC3339 layout) (required)
+# description: A short description of the package (required)
+# logoPath: Path to the logo image file relative to the package directory (optional, but it improves package visibility)
+# logoURL: The URL of the logo image (optional, an alternative to logoPath if the image is hosted somewhere else)
+# digest: String that uniquely identifies this package version (optional)
+# license: SPDX identifier of the package license (https://spdx.org/licenses/) (optional)
+# homeURL: The URL of the project home page (optional)
+# appVersion: The version of the app that this contains (optional)
+# containersImages: # (optional)
+#   - name: Image identifier (optional)
+#     image: The format should match ${REGISTRYHOST}/${USERNAME}/${NAME}:${TAG}
+#     whitelisted: When set to true, this image won't be scanned for security vulnerabilities
+#     platforms: # (optional)
+#       - A list of platforms supported by this image (linux/amd64, etc)
+# containsSecurityUpdates: Whether this package version contains security updates (optional, boolean)
+# operator: Whether this package is an Operator (optional, boolean)
+# deprecated: Whether this package is deprecated (optional, boolean)
+# prerelease: Whether this package version is a pre-release (optional, boolean)
+# keywords: # (optional)
+#   - A list of keywords about this package
+#   - Using one or more categories names as keywords will improve package visibility
+# links: # (optional)
+#   - name: Title of the link (required for each link)
+#     url: URL of the link (required for each link)
+# readme: | # (optional, can be provided from a README.md file as well)
+#   Package documentation in markdown format
+
+#   Content added here will be rendered on Artifact Hub
+# install: | # (optional)
+#   Brief install instructions in markdown format
+
+#   Content added here will be displayed when the INSTALL button on the package details page is clicked.
+# changes: # (optional - it is also possible to provide a list of strings with just the descriptions instead of using objects)
+#   - kind: added # Supported kinds are: added, changed, deprecated, removed, fixed and security
+#     description: cool feature
+#     links:
+#       - name: GitHub Issue
+#         url: https://github.com/issue-url
+#       - name: GitHub PR
+#         url: https://github.com/pr-url
+#   - kind: fixed
+#     description: minor bug
+#     links:
+#       - name: GitHub Issue
+#         url: https://github.com/issue-url
+# maintainers: # (optional)
+#   - name: The maintainer name (required for each maintainer)
+#     email: The maintainer email (required for each maintainer)
+# provider: # (optional)
+#   name: The name of the individual, company, or service that provides this package
+# ignore: # (optional, used to ignore some falco rules or opa policies files in a package)
+#   - lib # Entries use .gitignore syntax)
+# recommendations: # (optional, list of recommended packages)
+#   - url: https://artifacthub.io/packages/helm/artifact-hub/artifact-hub
+# screenshots: # (optional, list of screenshots)
+#   - title: Sample screenshot 1
+#     url: https://example.com/screenshot1.jpg
+#   - title: Sample screenshot 2
+#     url: https://example.com/screenshot2.jpg
+# annotations: # (optional, keys and values must be strings)
+#   key1: value1
+#   key2: value2

@@ -1,0 +1,42 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/license: AGPL-3.0
+apiVersion: v2
+appVersion: 0.14.0
+dependencies:
+- - alias: cert-manager
+  condition: cert-manager.enabled
+  name: cert-manager
+  repository: https://charts.jetstack.io
+  version: 1.13.2
+description: Meet Plane. An open-source software development tool to manage issues,
+  sprints, and product roadmaps with peace of mind.
+home: https://plane.so
+icon: https://plane.so/favicon/favicon-32x32.png
+name: plane-ce
+sources:
+- - https://github.com/makeplane/plane
+type: application
+version: 1.0.5
+
+...
+files:
+  plane-ce-1.0.5.tgz: sha256:8945504c63dc535b48b92f045f6edb452b9c46ed07bfa501780d6d02df2f6d12
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCgAQBQJlaceDCRB4JLCWnZHeZAAA6QcQADL6a8l2HLyCCKDt1LeuWXP+
+6l0KCL2fNYuXsTs8H5qFz0rDlEKJYRSE+opWOL6nLB/Je77mjB3tAWjHps9m8rYG
+OZM2uCGayVsBqqu2cZXMgD67wP/YznjST/4dNLgQO9u2cjkqKxsibQMwqPEx5rPd
+ssoxMZlRtwi9PYlSdEH/DZsrHBMNtG6RiphOMZ7oF0fui/YZb0N+ZVIcziUQDmTH
+TTIGRGwslz04xy2spaMzhrVQ91VjrUVTN9G+j4W/PC2UFw8a/1T2EP2bsYh8pIyj
+xAFxoreWZ1KLpX2qMh/mUJxHApa+s4tEtppGblawEBOHYS1T5SSDQc2Hxqq8jkAN
+B4o5lqSmZr401sXZXjL7V51aJiSoJJdcfD3790hcl5gsFdrM8K6phRxD1BfcJ9Cl
+a9QW8nkGk6IRNMf1w/avNA7HBYKAONEcABreVFg9S1HCzVk7vxwTrQsEeK/A4GP6
+xqNVbxxbbRWS5gh2nuvUcck9CXv47UnPQraQ5bBOVh4Ch6DC7A/7bVTDNlu/Shqz
+VUmPHW5a+qm+jjgDlJJC84d8IVExYXuGPx5fAzbP6uMxqCHfgDDOJ9MA2GZVKMKd
+egwCE97MwpA/GhGuN2/KJQ2iXtszWMouxCZV2SCwGOIrZyg4di6a+tQQnhvHTY2H
+RCawmxYrohpsBhjDJROj
+=o4dd
+-----END PGP SIGNATURE-----

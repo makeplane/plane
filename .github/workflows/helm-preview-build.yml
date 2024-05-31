@@ -1,0 +1,86 @@
+name: Helm Preview Build
+
+on:
+  workflow_dispatch:
+
+env:
+  PREVIEW_BUILD_FOLDER: helm-preview
+  AWS_ACCESS_KEY_ID: ${{ secrets.HELM_PREVIEW_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.HELM_PREVIEW_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ vars.HELM_PREVIEW_AWS_REGION }}
+  AWS_BUCKET: ${{ vars.HELM_PREVIEW_BUCKET }}
+  HELM_SUB_FOLDER: ${{ github.run_id }}
+  CHART_PREFIX: ${{ github.run_id }}
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+          path: code
+
+      - name: Configure Git
+        working-directory: code
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          mkdir -p helm-preview
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Prepare GPG key #this step is for using exported keys and make your github runner
+        working-directory: code
+        run: |
+          gpg_dir=.cr-gpg
+          mkdir "$gpg_dir"
+          keyring="$gpg_dir/secring.gpg" #referring keyring to private key of gpg
+          base64 -d <<< "$GPG_KEYRING_BASE64" > "$keyring" #storing base64 GPG key into keyring 
+          passphrase_file="$gpg_dir/passphrase"
+          echo "$GPG_PASSPHRASE" > "$passphrase_file" #storing passphrase data into a file
+          echo "CR_PASSPHRASE_FILE=$passphrase_file" >> "$GITHUB_ENV" #saving passphrase into github-environment
+          echo "CR_KEYRING=$keyring" >> "$GITHUB_ENV" #saving private key into github-environemnt
+        env:
+          GPG_KEYRING_BASE64: "${{ secrets.GPG_KEYRING_BASE64 }}" #Referring secrets of github above
+          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
+
+      - id: package-helm-chart
+        name: Package Helm Chart
+        working-directory: code
+        env:
+          EXPORT_DIR: ${{env.PREVIEW_BUILD_FOLDER}}
+          CHART_REPO: helm-chart
+        run: |
+          flatBranchName=$(echo "${{ github.ref_name}}" | sed 's/\//\-/g')
+          sed -i "s/name: ${{env.CHART_REPO}}/name: ${{ env.CHART_PREFIX }}-${{env.CHART_REPO}}/" ${{env.CHART_REPO}}/Chart.yaml
+          sed -i "s/description: .*/description: ${flatBranchName}/g" ${{env.CHART_REPO}}/Chart.yaml
+          helm package --sign --key "Plane" --keyring $CR_KEYRING --passphrase-file "$CR_PASSPHRASE_FILE" $CHART_REPO -u -d ${{ env.EXPORT_DIR }}/${{env.CHART_REPO}}/charts
+          cp ${{env.CHART_REPO}}/README.md ${{ env.EXPORT_DIR }}/${{env.CHART_REPO}}/${{env.CHART_REPO}}.md
+          helm repo index ${{ env.EXPORT_DIR }}/${{env.CHART_REPO}}
+
+
+      - name: Publish
+        working-directory: code
+        run: |
+
+          touch ${{env.PREVIEW_BUILD_FOLDER}}/index.html
+          
+          HTML_CONTENT="
+          <p>Helm Preview Build for Branch:${{github.ref_name}}</p>
+          <ul> 
+          <li><a href='helm-chart/index.yaml'>Preview Link</a></li>
+          </ul>"
+          
+          echo $HTML_CONTENT >> ${{env.PREVIEW_BUILD_FOLDER}}/index.html
+
+          pip install awscli
+          aws s3 cp ${{env.PREVIEW_BUILD_FOLDER}} s3://${{env.AWS_BUCKET}}/${{ env.HELM_SUB_FOLDER }} --recursive
+
+          echo "************************************************"
+          echo "http://${{env.AWS_BUCKET}}.s3-website.${{env.AWS_REGION}}.amazonaws.com/${{env.HELM_SUB_FOLDER}}"
+          echo "************************************************"
+

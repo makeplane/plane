@@ -1,0 +1,98 @@
+{{- if .Values.postgres.local_setup }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-pgdb
+  labels:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-pgdb
+spec:
+  clusterIP: None
+  ports:
+  - name: pg-{{ .Values.postgres.servicePort }}
+    port: {{ .Values.postgres.servicePort }}
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-pgdb
+---
+{{- if and .Values.postgres.cliConnectPort .Values.postgres.cliConnectPort | int }}
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-pgdb-cli-connect
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: pg-{{ .Values.postgres.cliConnectPort | default 30000 }}
+      nodePort: {{ .Values.postgres.cliConnectPort | default 30000 }}
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-pgdb
+  sessionAffinity: None
+  type: NodePort
+---
+{{- end }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-pgdb-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-pgdb
+  serviceName:  {{ .Release.Name }}-pgdb
+  template:
+    metadata:
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-pgdb
+    spec:
+      containers:
+      - image: {{ .Values.postgres.image }}
+        imagePullPolicy: Always
+        name: {{ .Release.Name }}-pgdb
+        stdin: true
+        tty: true
+        env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/plane
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-pgdb-vars
+              optional: false
+          - secretRef:
+              name: {{ .Release.Name }}-pgdb-secrets
+              optional: false
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pvc-{{ .Release.Name }}-pgdb-vol
+          subPath: ''
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: {{ .Release.Namespace }}
+      name: pvc-{{ .Release.Name }}-pgdb-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.postgres.volumeSize | default "5Gi" | quote }}
+      storageClassName: {{ .Values.postgres.storageClass }}
+      volumeMode: Filesystem
+      
+{{- end }}

@@ -1,0 +1,357 @@
+apiVersion: v1
+entries:
+  plane-ce:
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.20.0
+    created: "2024-05-28T09:58:54.814067599Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 1604c3dfd28a0438fcd31d340dae542dda6a5b0960c970ed9769fb167aa09711
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.18.tgz
+    version: 1.0.18
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.20.0
+    created: "2024-05-28T09:58:54.812547057Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: c458b648400975f61eabdccb7d20ef7565f86ea3241b0616bf03204776627bfc
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.17.tgz
+    version: 1.0.17
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.19.0
+    created: "2024-05-28T09:58:54.811943225Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: d1ef854b1c511ba54bd3ad27c463f482185a0d071be9185cad7d70a688c44114
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.16.tgz
+    version: 1.0.16
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.17.0
+    created: "2024-05-28T09:58:54.811342959Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: f5852b4c35eb5c7147a33ab2ae130a18d160cb1be7c01c7639c48413213ddff2
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.15.tgz
+    version: 1.0.15
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.17.0
+    created: "2024-05-28T09:58:54.810719871Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 0417c80adb56ff91a8261f9434c7ffc4a76f110136c6ef4ab993d73e556b8f0a
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.14.tgz
+    version: 1.0.14
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.17.0
+    created: "2024-05-28T09:58:54.810136137Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 8b145bef3d69b1adbfc577354617d96afe6ea877d1f0f6f0b231032b92f11da3
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.13.tgz
+    version: 1.0.13
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.15.0
+    created: "2024-05-28T09:58:54.80953017Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 90566daff2e3e229c6f6485d39d6a12d997fdf4274a79523d12d798d312cb1f7
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.12.tgz
+    version: 1.0.12
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.15.0
+    created: "2024-05-28T09:58:54.806342433Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 44dcd184180b795b18efbc6ae94c34cfc105b315a45b0fa9c5e5fc05da2a9f9f
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.11.tgz
+    version: 1.0.11
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.15.0
+    created: "2024-05-28T09:58:54.80141741Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 0b0fb1d729dab5266e0a57b067ba1e36b83077eaceb3b2c8923297c4ab9e7f74
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.10.tgz
+    version: 1.0.10
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.2
+    created: "2024-05-28T09:58:54.846832935Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: ef0018c726c4c87c8a6eb13b2ce09b85d6d49c4b8cd2faea0faa20d59e7ae19c
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.9.tgz
+    version: 1.0.9
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.2
+    created: "2024-05-28T09:58:54.842117983Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: d44fc844d4133237001a9abd5e30b42714dbf8c4a66bcf75b24e0601d6309a4e
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.8.tgz
+    version: 1.0.8
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.2
+    created: "2024-05-28T09:58:54.838996961Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: b41718f3dbe1187462e5776f3de73a06112a5c232b2b4f535d3fcc9bca29d914
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.8-develop.tgz
+    version: 1.0.8-develop
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.2
+    created: "2024-05-28T09:58:54.834101273Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: b9aaa32f523ab48b41194641f6091c8145173c3a657f1ca0deb65ff80cbdfd22
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.7.tgz
+    version: 1.0.7
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.2
+    created: "2024-05-28T09:58:54.830917313Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 717d228477eabf9f84b0cd0602cf6156655394156a4a728e76b452a96cc234b9
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.7-develop.tgz
+    version: 1.0.7-develop
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.0
+    created: "2024-05-28T09:58:54.826119085Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 2c000aab3476a4e9e2d87587bef1d39a2155462d32024d1ba692dd2800960aec
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.6.tgz
+    version: 1.0.6
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 0.14.0
+    created: "2024-05-28T09:58:54.822715463Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 8945504c63dc535b48b92f045f6edb452b9c46ed07bfa501780d6d02df2f6d12
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
+    appVersion: 0.14.0
+    created: "2024-05-28T09:58:54.818018928Z"
+    dependencies:
+    - alias: cert-manager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.2
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: c99a1345899ae40e534c11c2be0e02859a771c3a2fa2ab50d9f1ee77219e8221
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - charts/plane-ce-1.0.4.tgz
+    version: 1.0.4
+generated: "2024-05-28T09:58:54.797878415Z"

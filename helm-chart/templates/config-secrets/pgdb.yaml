@@ -1,0 +1,21 @@
+{{- if .Values.postgres.local_setup }}
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-pgdb-secrets
+data:
+  POSTGRES_PASSWORD: {{ .Values.env.pgdb_password | default "plane" | b64enc | quote }}
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-pgdb-vars
+data:
+  POSTGRES_DB: {{ .Values.env.pgdb_name | default "plane" | quote }}
+  POSTGRES_USER: {{ .Values.env.pgdb_username | default "plane" | quote }}
+--- 
+{{- end}}

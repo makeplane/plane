@@ -1,0 +1,46 @@
+{{- if and .Values.ingress.enabled .Values.ssl.createIssuer }}
+
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-issuer-api-token-secret
+type: Opaque
+stringData:
+  api-token: {{ .Values.ssl.token | default "default-api-token" | quote }}
+  
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-cert-issuer
+spec:
+  acme:
+    email: {{ .Values.ssl.email }}
+    server: {{ .Values.ssl.server }}
+    privateKeySecretRef:
+      name: {{ .Release.Name }}-cert-issuer-key
+    solvers:
+    {{- if eq .Values.ssl.issuer "cloudflare" }}
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: {{ .Release.Name }}-issuer-api-token-secret
+            key: api-token
+    {{- end }}
+    {{- if eq .Values.ssl.issuer "digitalocean" }}
+    - dns01:
+        digitalocean:
+          tokenSecretRef:
+            name: {{ .Release.Name }}-issuer-api-token-secret
+            key: api-token
+    {{- end }}
+    {{- if eq .Values.ssl.issuer "http" }}
+    - http01:
+        ingress:
+          ingressClassName: {{ .Values.ingress.ingressClass }}
+    {{- end }}
+
+--- 
+{{- end}}

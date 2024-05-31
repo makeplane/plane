@@ -1,0 +1,16 @@
+# Artifact Hub repository metadata file
+#
+# Some settings like the verified publisher flag or the ignored packages won't
+# be applied until the next time the repository is processed. Please keep in
+# mind that the repository won't be processed if it has not changed since the
+# last time it was processed. Depending on the repository kind, this is checked
+# in a different way. For Helm http based repositories, we consider it has
+# changed if the `index.yaml` file changes. For git based repositories, it does
+# when the hash of the last commit in the branch you set up changes. This does
+# NOT apply to ownership claim operations, which are processed immediately.
+#
+repositoryID: 1f012931-5011-4f86-bd8e-c0ef4f819ace
+
+ignore:
+  - name: plane-ce
+    version: develop

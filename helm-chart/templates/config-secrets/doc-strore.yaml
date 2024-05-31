@@ -1,0 +1,37 @@
+
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-doc-store-secrets
+data:
+  {{ if .Values.minio.local_setup }}
+  MINIO_ROOT_PASSWORD: {{ .Values.minio.root_password | default "password" | b64enc | quote}}
+  AWS_SECRET_ACCESS_KEY: {{ .Values.minio.root_password | default "password" | b64enc | quote  }}
+  {{ else }}
+  AWS_SECRET_ACCESS_KEY: {{ .Values.env.aws_secret_access_key | default "" | b64enc | quote  }}
+  {{ end }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-doc-store-vars
+data:
+  FILE_SIZE_LIMIT: {{ .Values.env.doc_upload_size_limit | default 5242880 | quote }}
+  AWS_S3_BUCKET_NAME: {{ .Values.env.docstore_bucket | default "" | quote  }}
+  {{ if .Values.minio.local_setup }}
+  MINIO_ROOT_USER: {{ .Values.minio.root_user | default "admin" | quote }}
+  AWS_ACCESS_KEY_ID: {{ .Values.minio.root_user | default "admin" | quote }}
+  AWS_S3_ENDPOINT_URL: http://{{ .Release.Name }}-minio:9000
+  USE_MINIO: "1"
+  {{ else }}
+  USE_MINIO: "0"
+  AWS_ACCESS_KEY_ID: {{ .Values.env.aws_access_key | default "" | quote }}
+  AWS_REGION: {{ .Values.env.aws_region | default "" | quote  }}
+  # AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+  {{ end }}
+---

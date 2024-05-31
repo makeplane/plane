@@ -1,0 +1,112 @@
+planeVersion: stable
+
+dockerRegistry:
+  enabled: false
+  host: "index.docker.io/v1/"
+  loginid: makeplane
+  password: ''
+
+ingress:
+  enabled: true
+  appHost: 'plane.example.com'
+  minioHost: 'plane-minio.example.com'
+  ingressClass: 'nginx'
+  clientMaxBodySize: 10m
+
+# SSL Configuration - Valid only if ingress.enabled is true
+ssl:
+  createIssuer: false
+  issuer: "http" # Allowed : cloudflare, digitalocean, http
+  token: "" # not required for http
+  server: https://acme-v02.api.letsencrypt.org/directory
+  email: plane@example.com
+  generateCerts: false
+
+redis:
+  local_setup: true
+  image: redis:7.2.4-alpine
+  servicePort: 6379
+  storageClass: longhorn
+  volumeSize: 1Gi
+
+postgres:
+  local_setup: true
+  image: postgres:15.5-alpine
+  servicePort: 5432
+  cliConnectPort: ''
+  storageClass: longhorn
+  volumeSize: 5Gi
+
+minio:
+  local_setup: true
+  image: minio/minio:latest
+  storageClass: longhorn
+  volumeSize: 5Gi
+  root_user: admin
+  root_password: password
+
+web:
+  replicas: 1
+  memoryLimit: 1000Mi
+  cpuLimit: 500m
+  image: makeplane/plane-frontend
+  
+
+space:
+  replicas: 1
+  memoryLimit: 1000Mi
+  cpuLimit: 500m
+  image: makeplane/plane-space
+
+admin:
+  replicas: 1
+  memoryLimit: 1000Mi
+  cpuLimit: 500m
+  image: makeplane/plane-admin
+
+api:
+  replicas: 1
+  memoryLimit: 1000Mi
+  cpuLimit: 500m
+  image: makeplane/plane-backend
+
+worker:
+  replicas: 1
+  memoryLimit: 1000Mi
+  cpuLimit: 500m
+  image: makeplane/plane-backend
+
+beatworker:
+  replicas: 1
+  memoryLimit: 1000Mi
+  cpuLimit: 500m
+  image: makeplane/plane-backend
+
+env:
+  pgdb_username: plane
+  pgdb_password: plane
+  pgdb_name: plane
+  pgdb_remote_url: "" #INCASE OF REMOTE PG DB URL ONLY
+
+  # NEXT_PUBLIC_DEPLOY_URL:  ""
+  # REDIS
+  remote_redis_url: "" #INCASE OF REMOTE REDIS ONLY
+  # POSTGRES DB VALUES
+
+  # DATA STORE
+  docstore_bucket: "uploads"
+  doc_upload_size_limit: "5242880" # 5MB
+
+  # REQUIRED IF MINIO LOCAL SETUP IS FALSE
+  aws_access_key: ""
+  aws_secret_access_key: ""
+  aws_region: ""
+  
+  secret_key: "60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
+
+  sentry_dsn: ""
+  sentry_environment: ""
+
+  gunicorn_api_workers: 1
+  
+  cors_allowed_origins: ""

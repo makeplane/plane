@@ -1,0 +1,36 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/license: AGPL-3.0
+apiVersion: v2
+appVersion: 0.20.0
+description: Meet Plane. An open-source software development tool to manage issues,
+  sprints, and product roadmaps with peace of mind.
+home: https://plane.so
+icon: https://plane.so/favicon/favicon-32x32.png
+name: plane-ce
+sources:
+- - https://github.com/makeplane/plane
+type: application
+version: 1.0.17
+
+...
+files:
+  plane-ce-1.0.17.tgz: sha256:c458b648400975f61eabdccb7d20ef7565f86ea3241b0616bf03204776627bfc
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCgAQBQJmUDJzCRB4JLCWnZHeZAAAGs4QAKPo4WQ/K8/6gLv9kE5g1+UX
+g0O5vZpGQ48MMVat4f+yf3lHjptqqU9NzJZeZGWAvhOKcIyE7KKDz75d1Kpdej0N
+5Ib1mJl9HxdGW4AUUoE1hExJ7ihbfdwmYJ+f1W0dp2Y4S2/siSCxOeDN1CBnqOHT
+MUX9eVSiHSIb46w3a/YH64Bsmg6IWAd41z+UpCOfvYNtdSWGucCW62B0xB+7M9WQ
+FVaAcF0I2lua1WoGdepOIAAFp1isbMnJOLVJQKWb6DtGIjWkP7SYziywzAotYOgT
+FXbnivmfHhNw4nkipRyu9QB4xXpBIVe5Ips6aR/tJH9wS24LRliKycqoX6cIYx+R
+FXRrHFJqItGdvMLZQv67lUFptoPCzbBo63I5NiirREkV/UMEBHH6y6pzhghEgoxt
+SDGKe3dwpxdD0yRo/qJu2yIatjSzZXTWAg0ZoHbA5fVFpdQqId4w/CINmIWJP4em
+008XEFnUwi2iC5ewmcCWadpmXt95gs8yxPu9ByScmGIhfCwfGq2BJjD47F7LOxMG
+4nbRBnbSQzunCnkeNsvkqvkrNnTP6/Zr2QtuoszYCud0+Mvo4l1PRGBhCuHTGq28
+BNlg2/8VAdizA54XQuJoKvnHRNeNsnO+tXJYyl1Xb6XW+3fd3ooEaSfAyveg3Xuj
+L+MEASJX+VV0E2ySY7TJ
+=qCEb
+-----END PGP SIGNATURE-----

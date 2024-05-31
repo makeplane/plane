@@ -1,0 +1,364 @@
+questions:
+
+- variable: dockerRegistry.enabled
+  label: Docker Registry Enabled
+  type: boolean
+  default: false
+  group: "Docker Registry"
+  show_subquestion_if: true
+  subquestions:
+  - variable: dockerRegistry.loginid
+    label: "Registry Host"
+    type: string
+  - variable: dockerRegistry.loginid
+    label: "Login ID"
+    type: string
+  - variable: dockerRegistry.password
+    label: "Password/Token"
+    type: password
+
+- variable: planeVersion
+  label: Plane Version (Docker Image Tag)
+  type: string
+  default: stable
+  required: true
+  group: "Docker Images"
+  subquestions:
+  - variable: web.image
+    label: Frontend Docker Image
+    type: string
+    required: true
+    default: "makeplane/plane-frontend"
+  - variable: space.image
+    label: Space Docker Image
+    type: string
+    required: true
+    default: "makeplane/plane-space"
+  - variable: admin.image
+    label: Admin Docker Image
+    type: string
+    required: true
+    default: "makeplane/plane-admin"
+  - variable: api.image
+    label: Backend Docker Image
+    type: string
+    required: true
+    default: "makeplane/plane-backend"
+    description: "Used by API, Worker, Beat-Worker"
+
+- variable: web.replicas
+  label: "Default Replica Count"
+  type: int
+  default: 1
+  group: "Web Setup"
+  subquestions:
+  - variable: web.memoryLimit
+    label: "Memory Limit"
+    type: string
+    default: 1000Mi
+  - variable: web.cpuLimit
+    label: "CPU Limit"
+    type: string
+    default: 500m
+  
+- variable: space.replicas
+  label: "Default Replica Count"
+  type: int
+  default: 1
+  group: "Spaces Setup"
+  subquestions:
+  - variable: space.memoryLimit
+    label: "Memory Limit"
+    type: string
+    default: 1000Mi
+  - variable: space.cpuLimit
+    label: "CPU Limit"
+    type: string
+    default: 500m
+
+- variable: admin.replicas
+  label: "Default Replica Count"
+  type: int
+  default: 1
+  group: "Admin Setup"
+  subquestions:
+  - variable: admin.memoryLimit
+    label: "Memory Limit"
+    type: string
+    default: 1000Mi
+  - variable: admin.cpuLimit
+    label: "CPU Limit"
+    type: string
+    default: 500m
+
+- variable: api.replicas
+  label: "Default Replica Count"
+  type: int
+  default: 1
+  group: "API Setup"
+  subquestions:
+  - variable: api.memoryLimit
+    label: "Memory Limit"
+    type: string
+    default: 1000Mi
+  - variable: api.cpuLimit
+    label: "CPU Limit"
+    type: string
+    default: 500m
+  - variable: env.gunicorn_api_workers
+    label: "Workers"
+    type: int
+    default: 1
+  - variable: env.cors_allowed_origins
+    label: "CORS Allowed Origins"
+    type: string
+    default: ""
+
+- variable: worker.replicas
+  label: "Default Replica Count"
+  type: int
+  default: 1
+  group: "Worker Setup"
+  subquestions:
+  - variable: worker.memoryLimit
+    label: "Memory Limit"
+    type: string
+    default: 1000Mi
+  - variable: worker.cpuLimit
+    label: "CPU Limit"
+    type: string
+    default: 500m
+
+- variable: beatworker.replicas
+  label: "Default Replica Count"
+  type: int
+  default: 1
+  group: "Beat Worker Setup"
+  subquestions:
+  - variable: beatworker.memoryLimit
+    label: "Memory Limit"
+    type: string
+    default: 1000Mi
+  - variable: beatworker.cpuLimit
+    label: "CPU Limit"
+    type: string
+    default: 500m
+
+- variable: redis.local_setup
+  label: "Install Redis"
+  type: boolean
+  default: true
+  group: "Redis Setup"
+  subquestions:
+  - variable: redis.image
+    label: "Docker Image"
+    type: string
+    default: "redis:6.2.7-alpine"
+    show_if: "redis.local_setup=true"
+  - variable: redis.servicePort
+    label: Port
+    type: int
+    default: 6379
+    show_if: "redis.local_setup=true"
+  - variable: redis.storageClass
+    label: "Storage Class"
+    type: string
+    default: "longhorn"
+    show_if: "redis.local_setup=true"
+  - variable: redis.volumeSize
+    label: "Volume Size"
+    type: string
+    default: "1Gi"
+    show_if: "redis.local_setup=true"
+  - variable: env.remote_redis_url
+    label: "Remote Redis URL"
+    type: string
+    default: "redis://"
+    show_if: "redis.local_setup=false"
+
+- variable: postgres.local_setup
+  label: "Install Postgres"
+  type: boolean
+  default: true
+  group: "Postgres Setup"
+  # show_subquestion_if: true
+  subquestions:
+  - variable: postgres.image
+    label: "Docker Image"
+    type: string
+    default: "postgres:15.2-alpine"
+    show_if: "postgres.local_setup=true"
+  - variable: postgres.servicePort
+    label: Service Port
+    type: int
+    default: 5432
+    show_if: "postgres.local_setup=true"
+  - variable: postgres.cliConnectPort
+    label: CLI Connect Port
+    type: int
+    show_if: "postgres.local_setup=true"
+  - variable: postgres.storageClass
+    label: "Storage Class"
+    type: string
+    default: "longhorn"
+    show_if: "postgres.local_setup=true"
+  - variable: postgres.volumeSize
+    label: "Volume Size"
+    type: string
+    default: "5Gi"
+    show_if: "postgres.local_setup=true"
+  - variable: env.pgdb_username
+    label: "Username"
+    type: string
+    default: "plane"
+    show_if: "postgres.local_setup=true"
+  - variable: env.pgdb_password
+    label: "Password"
+    type: password
+    default: "plane"
+    show_if: "postgres.local_setup=true"
+  - variable: env.pgdb_name
+    label: "DB Name"
+    type: string
+    default: "plane"
+    show_if: "postgres.local_setup=true"
+  - variable: env.pgdb_remote_url
+    label: "Remote URL"
+    type: string
+    default: "postrgres://"
+    show_if: "postgres.local_setup=false"
+
+- variable: minio.local_setup
+  label: "Install Minio"
+  type: boolean
+  default: true
+  group: "Storage Setup"
+  subquestions:
+  - variable: minio.image
+    label: "Docker Image"
+    type: string
+    default: "minio/minio:RELEASE.2023-10-25T06-33-25Z"
+    show_if: "minio.local_setup=true"
+  - variable: minio.root_user
+    label: "Root User"
+    type: string
+    default: "admin"
+    show_if: "minio.local_setup=true"
+  - variable: minio.root_password
+    label: "Root Password"
+    type: password
+    default: "password"
+    show_if: "minio.local_setup=true"
+  - variable: minio.storageClass
+    label: "Storage Class"
+    type: string
+    default: "longhorn"
+    show_if: "minio.local_setup=true"
+  - variable: minio.volumeSize
+    label: "Volume Size"
+    type: string
+    default: "5Gi"
+    show_if: "minio.local_setup=true"
+  - variable: env.aws_access_key
+    label: "AWS Access Key"
+    type: string
+    default: ""
+    show_if: "minio.local_setup=false"
+  - variable: env.aws_secret_access_key
+    label: "AWS Secret Key"
+    type: password
+    default: ""
+    show_if: "minio.local_setup=false"
+  - variable: env.aws_region
+    label: "AWS Region"
+    type: string
+    default: ""
+    show_if: "minio.local_setup=false"
+  - variable: env.docstore_bucket
+    label: "Bucket Name"
+    type: string
+    default: "uploads"
+  - variable: env.doc_upload_size_limit
+    label: "FIle Upload Size Limit"
+    type: string
+    default: "5242880"
+
+
+- variable: ingress.enabled
+  label: "Install Ingress"
+  type: boolean
+  default: true
+  required: true
+  group: "Ingress"
+  show_subquestion_if: true
+  subquestions:
+  - variable: ingress.appHost
+    label: "App. Host"
+    type: string
+    default: "plane.example.com"
+    required: true
+  - variable: ingress.minioHost
+    label: "Minio Host"
+    type: string
+    default: "plane-minio.example.com"
+    show_if: "minio.local_setup=true"
+  - variable: ingress.ingressClass
+    label: "Ingress Classname"
+    type: string
+    required: true
+    default: "nginx"
+  - variable: ingress.clientMaxBodySize
+    label: "Max Body Size"
+    type: string
+    required: true
+    default: "10m"
+
+- variable: ssl.createIssuer
+  label: "Create Issuer"
+  type: boolean
+  default: false
+  group: "Ingress"
+  show_if: "ingress.enabled=true"
+  show_subquestion_if: true
+  subquestions:
+  - variable: ssl.issuer
+    label: "SSL Issuer"
+    type: enum
+    options:
+      - "http"
+      - "cloudflare"
+      - "digitalocean"
+    default: "http"
+  - variable: ssl.server
+    label: "Let's Encrypt Server URL"
+    type: string
+    default: "https://acme-staging-v02.api.letsencrypt.org/directory"
+  - variable: ssl.email
+    label: "Let's Encrypt Reg. Email"
+    type: string
+    default: "plane@example.com"
+  - variable: ssl.token
+    label: "Provider API Token"
+    type: password
+    default: ""
+    description: "Not required for 'http' issuer"
+  - variable: ssl.generateCerts
+    label: "Enable to generate certificates"
+    type: boolean
+    default: false
+    
+- variable: env.sentry_dsn
+  label: "Sentry DSN"
+  type: string
+  default: ""
+  group: "Misc."
+  subquestions:
+  - variable: env.sentry_environment
+    label: "Sentry Environment"
+    type: string
+    default: "Development"
+  - variable: env.secret_key
+    label: "Random Secret Key"
+    type: string
+    required: true
+    default: "60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"

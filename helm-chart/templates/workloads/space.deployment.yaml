@@ -1,0 +1,60 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-space
+  labels:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-space
+spec:
+  clusterIP: None
+  ports:
+  - name: space-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-space
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-space-wl
+spec:
+  replicas: {{ .Values.space.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-space
+  template:
+    metadata:
+      namespace: {{ .Release.Namespace }}
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-space
+      annotations:
+        timestamp: {{ now | quote }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-space
+        imagePullPolicy: Always
+        image: {{ .Values.space.images | default "makeplane/plane-space" }}:{{ .Values.planeVersion }}
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: {{ .Values.web.memoryLimit  | default "1000Mi" | quote }}
+            cpu: {{ .Values.web.cpuLimit | default "500m" | quote}}
+        command:
+          - node
+        args:
+          - space/server.js
+          - space
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+
+---

@@ -1,0 +1,60 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-admin
+  labels:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-admin
+spec:
+  clusterIP: None
+  ports:
+  - name: admin-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-admin
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-admin-wl
+spec:
+  replicas: {{ .Values.admin.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-admin
+  template:
+    metadata:
+      namespace: {{ .Release.Namespace }}
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-admin
+      annotations:
+        timestamp: {{ now | quote }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-admin
+        imagePullPolicy: Always
+        image: {{ .Values.admin.image | default "makeplane/plane-frontend" }}:{{ .Values.planeVersion }}
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: {{ .Values.admin.memoryLimit  | default "1000Mi" | quote }}
+            cpu: {{ .Values.admin.cpuLimit | default "500m" | quote}}
+        command:
+          - node
+        args:
+          - admin/server.js
+          - admin
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+
+---

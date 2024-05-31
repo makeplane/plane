@@ -1,0 +1,99 @@
+name: Helm Build
+
+on:
+  pull_request:
+    types: ["opened", "synchronize"]
+    branches:
+      - master
+    paths:
+      - 'helm-chart/**'
+
+jobs:
+  build:
+    if: github.event.pull_request.head.ref == 'preview' && github.event_name == 'pull_request'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+          path: code
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 2
+
+      - name: Checkout Source Master
+        uses: actions/checkout@v4
+        with:
+          path: master
+          ref: master
+          fetch-depth: 2
+      
+      - name: Merge Docs from Master to code
+        run: |
+          rm -rf master/docs/content
+          rm -rf master/docs/images
+          rm -rf master/docs/metadata
+          rm -rf master/docs/artifacthub-repo.yml
+          rm -rf master/docs/README.md
+          rm -rf master/docs/index.html
+
+          cp -r master/docs code
+
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v42
+        with:
+          path: code
+          files_yaml: |
+            helm_chart:
+              - helm-chart/**
+
+      - name: Configure Git
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        working-directory: code
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Set up Helm
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        uses: azure/setup-helm@v4
+
+      - name: Prepare GPG key #this step is for using exported keys and make your github runner
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        working-directory: code
+        run: |
+          gpg_dir=.cr-gpg
+          mkdir "$gpg_dir"
+          keyring="$gpg_dir/secring.gpg" #referring keyring to private key of gpg
+          base64 -d <<< "$GPG_KEYRING_BASE64" > "$keyring" #storing base64 GPG key into keyring 
+          passphrase_file="$gpg_dir/passphrase"
+          echo "$GPG_PASSPHRASE" > "$passphrase_file" #storing passphrase data into a file
+          echo "CR_PASSPHRASE_FILE=$passphrase_file" >> "$GITHUB_ENV" #saving passphrase into github-environment
+          echo "CR_KEYRING=$keyring" >> "$GITHUB_ENV" #saving private key into github-environemnt
+        env:
+          GPG_KEYRING_BASE64: "${{ secrets.GPG_KEYRING_BASE64 }}" #Referring secrets of github above
+          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
+
+      - id: package-helm-chart
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        name: Build Helm Chart
+        working-directory: code
+        env:
+          EXPORT_DIR: docs
+          CHART_REPO: helm-chart
+        run: |
+          helm package --sign --key "Plane" --keyring $CR_KEYRING --passphrase-file "$CR_PASSPHRASE_FILE" $CHART_REPO -u -d ${{ env.EXPORT_DIR }}/charts
+          helm repo index docs
+
+      - name: Publish
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        working-directory: code
+        run: |
+          git add docs
+          git commit -m "Publishing Helm Charts"
+          git push origin ${{ github.event.pull_request.head.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
