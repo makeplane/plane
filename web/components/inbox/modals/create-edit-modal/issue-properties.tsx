@@ -142,10 +142,10 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       )}
 
       {/* estimate */}
-      {isVisible && areEstimateEnabledByProjectId(projectId) && (
+      {isVisible && projectId && areEstimateEnabledByProjectId(projectId) && (
         <div className="h-7">
           <EstimateDropdown
-            value={data?.estimate_point || null}
+            value={data?.estimate_point || undefined}
             onChange={(estimatePoint) => handleData("estimate_point", estimatePoint)}
             projectId={projectId}
             buttonVariant="border-with-text"

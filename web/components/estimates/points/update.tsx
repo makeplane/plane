@@ -69,7 +69,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
       let isEstimateValid = false;
 
       const currentEstimatePointValues = estimatePoints
-        .map((point) => point?.value || undefined)
+        .map((point) => (point?.id != estimatePoint?.id ? point?.value : undefined))
         .filter((value) => value != undefined) as string[];
       const isRepeated =
         (estimateType && isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||

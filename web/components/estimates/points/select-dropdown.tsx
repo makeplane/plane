@@ -1,6 +1,6 @@
 import { FC, useRef, Fragment, useState } from "react";
 import { Info, Check, ChevronDown } from "lucide-react";
-import { Listbox, ListboxButton, ListboxOptions, Transition, ListboxOption } from "@headlessui/react";
+import { Listbox, Transition } from "@headlessui/react";
 import { TEstimatePointsObject } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // helpers
@@ -51,7 +51,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
         }}
         className="w-full flex-shrink-0 text-left"
       >
-        <ListboxButton
+        <Listbox.Button
           type="button"
           ref={buttonRef}
           onClick={() => setIsDropdownOpen((prev) => !prev)}
@@ -75,7 +75,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
               </Tooltip>
             </>
           )}
-        </ListboxButton>
+        </Listbox.Button>
         <Transition
           show={isDropdownOpen}
           as={Fragment}
@@ -86,12 +86,12 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <ListboxOptions
+          <Listbox.Options
             ref={dropdownRef}
             className="fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 shadow-sm focus:outline-none"
           >
             <div className="p-1.5">
-              <ListboxOption
+              <Listbox.Option
                 value={"none"}
                 className={cn(
                   `cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-90`,
@@ -102,9 +102,9 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
                   <div className="text-sm font-medium w-full line-clamp-1">None</div>
                   {selectedOption === "none" && <Check size={12} />}
                 </div>
-              </ListboxOption>
+              </Listbox.Option>
               {options.map((option) => (
-                <ListboxOption
+                <Listbox.Option
                   key={option?.key}
                   value={option?.id}
                   className={cn(
@@ -116,10 +116,10 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
                     <div className="text-sm font-medium w-full line-clamp-1">{option.value}</div>
                     {selectedOption === option?.id && <Check size={12} />}
                   </div>
-                </ListboxOption>
+                </Listbox.Option>
               ))}
             </div>
-          </ListboxOptions>
+          </Listbox.Options>
         </Transition>
       </Listbox>
     </div>

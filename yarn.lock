@@ -1592,7 +1592,7 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.2.tgz#d8bae93ac8b815b2bd7a98078cf91e2724ef11e5"
   integrity sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==
 
-"@headlessui/react@^1.7.13", "@headlessui/react@^1.7.19":
+"@headlessui/react@^1.7.13", "@headlessui/react@^1.7.19", "@headlessui/react@^1.7.3":
   version "1.7.19"
   resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-1.7.19.tgz#91c78cf5fcb254f4a0ebe96936d48421caf75f40"
   integrity sha512-Ll+8q3OlMJfJbAKM/+/Y2q6PPYbryqNTXDbryx7SXLIDamkF6iQFbriYHga0dY44PvDhvvBWCx1Xj4U5+G4hOw==
@@ -1600,7 +1600,7 @@
     "@tanstack/react-virtual" "^3.0.0-beta.60"
     client-only "^0.0.1"
 
-"@headlessui/react@^2.0.3", "@headlessui/react@^2.0.4":
+"@headlessui/react@^2.0.3":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-2.0.4.tgz#46cb39ca9dde3c2d15f4706c81dad78405b608f0"
   integrity sha512-16d/rOLeYsFsmPlRmXGu8DCBzrWD0zV1Ccx3n73wN87yFu8Y9+X04zflv8EJEt9TAYRyLKOmQXUnOnqQl6NgpA==

@@ -1,6 +1,6 @@
 import { Ref, useState } from "react";
 import { usePopper } from "react-popper";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // popper
 // helper
 import { getButtonStyling } from "@plane/ui";
@@ -42,7 +42,7 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
 
   return (
     <Popover>
-      <PopoverButton ref={setReferenceElement} onClick={onClick} disabled={disabled}>
+      <Popover.Button ref={setReferenceElement} onClick={onClick} disabled={disabled}>
         <div className={`flex items-center gap-2.5 ${getButtonStyling("primary", "lg", disabled)}`}>
           {icon}
           <span className="leading-4">{label}</span>
@@ -55,9 +55,9 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
             <div className={`absolute bg-blue-400/40 right-0 h-1.5 w-1.5 mt-0.5 mr-0.5 rounded-full`} />
           </span>
         </div>
-      </PopoverButton>
+      </Popover.Button>
       {isHovered && (
-        <PopoverPanel
+        <Popover.Panel
           as="div"
           className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100 p-5 relative min-w-80"
           ref={setPopperElement as Ref<HTMLDivElement>}
@@ -68,7 +68,7 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
           <div className="absolute w-2 h-2 bg-custom-background-100 border rounded-lb-sm  border-custom-border-200 border-r-0 border-t-0 transform rotate-45 bottom-2 -left-[5px]" />
           <h3 className="text-lg font-semibold w-full">{title}</h3>
           <h4 className="mt-1 text-sm">{description}</h4>
-        </PopoverPanel>
+        </Popover.Panel>
       )}
     </Popover>
   );

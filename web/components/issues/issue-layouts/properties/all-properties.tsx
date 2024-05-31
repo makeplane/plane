@@ -220,7 +220,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       );
   };
 
-  const handleEstimate = (value: number | null) => {
+  const handleEstimate = (value: string | undefined) => {
     updateIssue &&
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
@@ -398,7 +398,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
           <div className="h-5" onClick={handleEventPropagation}>
             <EstimateDropdown
-              value={issue.estimate_point}
+              value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
               projectId={issue.project_id}
               disabled={isReadOnly}

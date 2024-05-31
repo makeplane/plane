@@ -673,7 +673,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <EstimateDropdown
-                        value={value}
+                        value={value || undefined}
                         onChange={(estimatePoint) => {
                           onChange(estimatePoint);
                           handleFormChange();
