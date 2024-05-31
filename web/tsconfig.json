@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "paths": {
       "@/*": ["*"],
-      "@plane/*": ["community-edition/*"]
+      "@plane/*": ["enterprise-edition/*"]
     },
     "plugins": [
       {

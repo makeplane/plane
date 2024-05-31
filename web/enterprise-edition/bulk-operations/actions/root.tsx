@@ -1,7 +1,5 @@
-// community-edition
-import { BulkSubscribeIssues, BulkTransferIssues } from "@plane/bulk-operations";
-// components
-import { BulkArchiveIssues, BulkDeleteIssues } from "@/components/issues";
+// edition-specific
+import { BulkArchiveIssues, BulkDeleteIssues, BulkSubscribeIssues } from "@plane/bulk-operations";
 
 type Props = {
   handleClearSelection: () => void;
@@ -14,8 +12,7 @@ export const BulkOperationsActionsRoot: React.FC<Props> = (props) => {
   return (
     <>
       <div className="h-7 px-3 flex items-center gap-6 flex-shrink-0">
-        <BulkSubscribeIssues />
-        <BulkTransferIssues />
+        <BulkSubscribeIssues handleClearSelection={handleClearSelection} selectedIssueIds={selectedEntityIds} />
         <BulkArchiveIssues handleClearSelection={handleClearSelection} selectedIssueIds={selectedEntityIds} />
       </div>
       <div className="h-7 px-3 flex items-center gap-3 flex-shrink-0">

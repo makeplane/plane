@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Trash2 } from "lucide-react";
+// edition-specific
+import { BulkSubscribeConfirmationModal } from "@plane/bulk-operations";
 // ui
-import { Tooltip } from "@plane/ui";
-// components
-import { BulkDeleteConfirmationModal } from "@/components/issues";
+import { SubscribeIcon, Tooltip } from "@plane/ui";
 // hooks
 import { useAppRouter } from "@/hooks/store";
 
@@ -13,32 +12,32 @@ type Props = {
   selectedIssueIds: string[];
 };
 
-export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
+export const BulkSubscribeIssues: React.FC<Props> = observer((props) => {
   const { handleClearSelection, selectedIssueIds } = props;
   // states
-  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+  const [isBulkSubscribeModalOpen, setIsBulkSubscribeModalOpen] = useState(false);
   // store hooks
   const { projectId, workspaceSlug } = useAppRouter();
 
   return (
     <>
       {projectId && workspaceSlug && (
-        <BulkDeleteConfirmationModal
-          isOpen={isBulkDeleteModalOpen}
-          handleClose={() => setIsBulkDeleteModalOpen(false)}
+        <BulkSubscribeConfirmationModal
+          isOpen={isBulkSubscribeModalOpen}
+          handleClose={() => setIsBulkSubscribeModalOpen(false)}
           issueIds={selectedIssueIds}
           onSubmit={handleClearSelection}
           projectId={projectId.toString()}
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
-      <Tooltip tooltipHeading="Delete" tooltipContent="">
+      <Tooltip tooltipHeading="Subscribe" tooltipContent="">
         <button
           type="button"
           className="outline-none grid place-items-center"
-          onClick={() => setIsBulkDeleteModalOpen(true)}
+          onClick={() => setIsBulkSubscribeModalOpen(true)}
         >
-          <Trash2 className="size-4" />
+          <SubscribeIcon className="size-4" />
         </button>
       </Tooltip>
     </>

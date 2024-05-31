@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
-// community-edition
-import { BulkOperationsExtraProperties } from "@plane/bulk-operations";
 // types
 import { TBulkIssueProperties } from "@plane/types";
 // ui
@@ -214,7 +212,6 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
             )}
           />
         )}
-        <BulkOperationsExtraProperties />
       </div>
       {isDirty && (
         <Button type="submit" variant="primary" size="sm" className="py-1" loading={isSubmitting}>
