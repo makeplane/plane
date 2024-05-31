@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// hooks
-import { ProjectLogo } from "@/components/project";
-import { NETWORK_CHOICES } from "@/constants/project";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useCycle, useMember, useModule, useProject } from "@/hooks/store";
 // components
-// helpers
+import { Logo } from "@/components/common";
 // constants
+import { NETWORK_CHOICES } from "@/constants/project";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useCycle, useMember, useModule, useProject } from "@/hooks/store";
 
 export const CustomAnalyticsSidebarHeader = observer(() => {
   const router = useRouter();
@@ -84,7 +84,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             <div className="flex items-center gap-1">
               {projectDetails && (
                 <span className="h-6 w-6 grid place-items-center flex-shrink-0">
-                  <ProjectLogo logo={projectDetails.logo_props} />
+                  <Logo logo={projectDetails.logo_props} />
                 </span>
               )}
               <h4 className="break-words font-medium">{projectDetails?.name}</h4>

@@ -6,7 +6,7 @@ import { Combobox } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
 // components
-import { ProjectLogo } from "@/components/project";
+import { Logo } from "@/components/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -83,7 +83,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-2">
           {projectDetails && (
             <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-              <ProjectLogo logo={projectDetails?.logo_props} className="text-sm" />
+              <Logo logo={projectDetails?.logo_props} size={12} />
             </span>
           )}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
@@ -157,7 +157,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && selectedProject && (
                 <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                  <ProjectLogo logo={selectedProject.logo_props} className="text-sm" />
+                  <Logo logo={selectedProject.logo_props} size={12} />
                 </span>
               )}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
