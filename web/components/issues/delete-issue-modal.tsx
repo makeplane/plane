@@ -66,7 +66,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
     <AlertModalCore
       handleClose={onClose}
       handleSubmit={handleIssueDelete}
-      isDeleting={isDeleting}
+      isSubmitting={isDeleting}
       isOpen={isOpen}
       title="Delete Issue"
       content={
