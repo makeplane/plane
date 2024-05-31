@@ -1,16 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2 } from "lucide-react";
+// types
 import { TIssue } from "@plane/types";
-// hooks
 // components
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+// hooks
 import { useProjectState } from "@/hooks/store";
-// types
 
 type Props = {
   issue: TIssue;
@@ -47,9 +47,12 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
-        buttonClassName={cn("rounded-none text-left", {
-          "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-        })}
+        buttonClassName={cn(
+          "rounded-none text-left group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+          {
+            "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+          }
+        )}
         clearIconClassName="!text-custom-text-100"
         onClose={onClose}
       />
