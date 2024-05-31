@@ -13,12 +13,9 @@ class InstanceSerializer(BaseSerializer):
         model = Instance
         exclude = [
             "license_key",
-            "api_key",
-            "version",
         ]
         read_only_fields = [
             "id",
-            "instance_id",
             "email",
             "last_checked_at",
             "is_setup_done",
