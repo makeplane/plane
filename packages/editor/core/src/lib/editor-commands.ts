@@ -1,5 +1,5 @@
 import { Editor, Range } from "@tiptap/core";
-import { startImageUpload } from "src/ui/plugins/upload-image";
+import { startImageUpload } from "src/ui/plugins/image/image-upload-handler";
 import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";
@@ -194,7 +194,7 @@ export const insertImageCommand = (
   if (range) editor.chain().focus().deleteRange(range).run();
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = "image/*";
+  input.accept = ".jpeg, .jpg, .png, .webp, .svg";
   input.onchange = async () => {
     if (input.files?.length) {
       const file = input.files[0];

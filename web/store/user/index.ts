@@ -97,9 +97,11 @@ export class UserStore implements IUserStore {
       });
       const user = await this.userService.currentUser();
       if (user && user?.id) {
-        await this.userProfile.fetchUserProfile();
-        await this.userSettings.fetchCurrentUserSettings();
-        await this.store.workspaceRoot.fetchWorkspaces();
+        await Promise.all([
+          this.userProfile.fetchUserProfile(),
+          this.userSettings.fetchCurrentUserSettings(),
+          this.store.workspaceRoot.fetchWorkspaces(),
+        ]);
         runInAction(() => {
           this.data = user;
           this.isLoading = false;
