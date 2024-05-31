@@ -1,3 +1,6 @@
+# Python imports
+from enum import Enum
+
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -8,14 +11,22 @@ from plane.db.models import BaseModel
 ROLE_CHOICES = ((20, "Admin"),)
 
 
+class ProductTypes(Enum):
+    PLANE_CE = "plane-ce"
+
+
 class Instance(BaseModel):
     # General informations
     instance_name = models.CharField(max_length=255)
     whitelist_emails = models.TextField(blank=True, null=True)
     instance_id = models.CharField(max_length=25, unique=True)
     license_key = models.CharField(max_length=256, null=True, blank=True)
-    api_key = models.CharField(max_length=16)
-    version = models.CharField(max_length=10)
+    current_version = models.CharField(max_length=10)
+    latest_version = models.CharField(max_length=10, null=True, blank=True)
+    product = models.CharField(
+        max_length=50, default=ProductTypes.PLANE_CE.value
+    )
+    domain = models.TextField(blank=True)
     # Instnace specifics
     last_checked_at = models.DateTimeField()
     namespace = models.CharField(max_length=50, blank=True, null=True)
@@ -69,4 +80,21 @@ class InstanceConfiguration(BaseModel):
         verbose_name = "Instance Configuration"
         verbose_name_plural = "Instance Configurations"
         db_table = "instance_configurations"
+        ordering = ("-created_at",)
+
+
+class ChangeLog(BaseModel):
+    """Change Log model to store the release changelogs made in the application."""
+
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    version = models.CharField(max_length=100)
+    tags = models.JSONField(default=list)
+    release_date = models.DateTimeField(null=True)
+    is_release_candidate = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Change Log"
+        verbose_name_plural = "Change Logs"
+        db_table = "changelogs"
         ordering = ("-created_at",)
