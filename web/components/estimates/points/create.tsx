@@ -93,8 +93,8 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
               setError(undefined);
               setToast({
                 type: TOAST_TYPE.SUCCESS,
-                title: "Estimate point updated",
-                message: "The estimate point has been updated successfully.",
+                title: "Estimate point created",
+                message: "The estimate point has been created successfully.",
               });
               handleClose();
             } catch {
@@ -102,8 +102,8 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
               setError("We are unable to process your request, please try again.");
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Estimate point failed to updated",
-                message: "We are unable to process your request, please try again.",
+                title: "Estimate point creation failed",
+                message: "We were unable to create the new estimate point, please try again.",
               });
             }
           } else {

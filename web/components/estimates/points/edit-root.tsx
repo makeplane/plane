@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { TEstimatePointsObject } from "@plane/types";
-import { Button, Draggable, Sortable } from "@plane/ui";
+import { Button, Draggable, Sortable, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EstimatePointItemPreview, EstimatePointCreate } from "@/components/estimates/points";
 // constants
@@ -52,9 +52,22 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
     }
   };
 
-  const handleDragEstimatePoints = (updatedEstimatedOrder: TEstimatePointsObject[]) => {
-    const updatedEstimateKeysOrder = updatedEstimatedOrder.map((item, index) => ({ ...item, key: index + 1 }));
-    updateEstimateSortOrder(workspaceSlug, projectId, updatedEstimateKeysOrder);
+  const handleDragEstimatePoints = async (updatedEstimatedOrder: TEstimatePointsObject[]) => {
+    try {
+      const updatedEstimateKeysOrder = updatedEstimatedOrder.map((item, index) => ({ ...item, key: index + 1 }));
+      await updateEstimateSortOrder(workspaceSlug, projectId, updatedEstimateKeysOrder);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Estimates re-ordered",
+        message: "Estimates have been re-ordered in your project.",
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Estimate re-order failed",
+        message: "We were unable to re-order the estimates, please try again",
+      });
+    }
   };
 
   if (!workspaceSlug || !projectId || !estimateId) return <></>;

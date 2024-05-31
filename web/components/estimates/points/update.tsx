@@ -88,31 +88,36 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
 
         if (isEstimateValid) {
           if (estimateId != undefined) {
-            try {
-              setLoader(true);
-
-              const payload = {
-                value: estimateInputValue,
-              };
-              await updateEstimatePoint(workspaceSlug, projectId, payload);
-
+            if (estimateInputValue === estimatePoint.value) {
               setLoader(false);
               setError(undefined);
               handleClose();
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "Estimate point updated",
-                message: "The estimate point has been updated successfully.",
-              });
-            } catch {
-              setLoader(false);
-              setError("We are unable to process your request, please try again.");
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Estimate point failed to updated",
-                message: "We are unable to process your request, please try again.",
-              });
-            }
+            } else
+              try {
+                setLoader(true);
+
+                const payload = {
+                  value: estimateInputValue,
+                };
+                await updateEstimatePoint(workspaceSlug, projectId, payload);
+
+                setLoader(false);
+                setError(undefined);
+                handleClose();
+                setToast({
+                  type: TOAST_TYPE.SUCCESS,
+                  title: "Estimate modified",
+                  message: "The estimate point has been updated in your project.",
+                });
+              } catch {
+                setLoader(false);
+                setError("We are unable to process your request, please try again.");
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: "Estimate modification failed",
+                  message: "We were unable to modify the estimate, please try again",
+                });
+              }
           } else {
             handleSuccess(estimateInputValue);
           }

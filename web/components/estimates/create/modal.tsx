@@ -8,8 +8,6 @@ import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/estimates";
 // constants
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
-// helpers
-import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 
@@ -40,63 +38,29 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
 
   const handleCreateEstimate = async () => {
     try {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !estimatePoints) return;
 
-      const validatedEstimatePoints: TEstimatePointsObject[] = [];
-      if ([EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateSystem)) {
-        estimatePoints?.map((estimatePoint) => {
-          if (
-            estimatePoint.value &&
-            ((estimatePoint.value != "0" && Number(estimatePoint.value)) || estimatePoint.value === "0")
-          )
-            validatedEstimatePoints.push(estimatePoint);
-        });
-      } else {
-        estimatePoints?.map((estimatePoint) => {
-          if (estimatePoint.value) validatedEstimatePoints.push(estimatePoint);
-        });
-      }
+      const payload: IEstimateFormData = {
+        estimate: {
+          name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
+          type: estimateSystem,
+          last_used: true,
+        },
+        estimate_points: estimatePoints,
+      };
+      await createEstimate(workspaceSlug, projectId, payload);
 
-      if (validatedEstimatePoints.length === estimatePoints?.length) {
-        const isRepeated = isEstimatePointValuesRepeated(
-          estimatePoints.map((point) => point.value),
-          estimateSystem
-        );
-        if (!isRepeated) {
-          const payload: IEstimateFormData = {
-            estimate: {
-              name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
-              type: estimateSystem,
-              last_used: true,
-            },
-            estimate_points: validatedEstimatePoints,
-          };
-          await createEstimate(workspaceSlug, projectId, payload);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Estimate system created",
-            message: "Created and Enabled successfully",
-          });
-          handleClose();
-        } else {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Estimate point values cannot be repeated",
-          });
-        }
-      } else {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "something went wrong",
-        });
-      }
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Estimate created",
+        message: "Created and Enabled successfully",
+      });
+      handleClose();
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "something went wrong",
+        title: "Estimate creation failed",
+        message: "We were unable to create the new estimate, please try again.",
       });
     }
   };
