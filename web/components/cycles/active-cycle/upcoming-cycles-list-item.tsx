@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { User2 } from "lucide-react";
+import { Users } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
 // components
@@ -112,9 +112,7 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
             })}
           </AvatarGroup>
         ) : (
-          <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-            <User2 className="h-4 w-4 text-custom-text-400" />
-          </span>
+          <Users className="h-4 w-4 text-custom-text-300" />
         )}
 
         <FavoriteStar

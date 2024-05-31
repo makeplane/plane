@@ -10,10 +10,10 @@ import {
   ChevronDown,
   LinkIcon,
   Trash2,
-  UserCircle2,
   AlertCircle,
   ChevronRight,
   CalendarClock,
+  SquareUser,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
@@ -432,7 +432,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <UserCircle2 className="h-4 w-4" />
+              <SquareUser className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
             <div className="flex w-3/5 items-center rounded-sm">

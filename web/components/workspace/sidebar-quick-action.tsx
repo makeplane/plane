@@ -72,8 +72,6 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
           isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
         }`}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
       >
         {isAuthorizedUser && (
           <div
@@ -82,6 +80,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                 ? "px-2 hover:bg-custom-sidebar-background-80"
                 : "border-[0.5px] border-custom-border-200 px-3 shadow-custom-sidebar-shadow-2xs"
             }`}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
           >
             <button
               type="button"

@@ -29,6 +29,7 @@ import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issu
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
 import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
 import { AIService } from "@/services/ai.service";
@@ -109,6 +110,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -119,6 +121,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { config } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (editorRef.current?.isEditorReadyToDiscard()) {
+      onClose();
+    } else {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is still processing changes. Please wait before proceeding.",
+      });
+      event.preventDefault(); // Prevent default action if editor is not ready to discard
+    }
+  };
+
+  useKeypress("Escape", handleKeyDown);
 
   const {
     issue: { getIssueById },
@@ -167,6 +184,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
+    // Check if the editor is ready to discard
+    if (!editorRef.current?.isEditorReadyToDiscard()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is not ready to discard changes.",
+      });
+      return;
+    }
+
     const submitData = !data?.id
       ? formData
       : {
@@ -423,6 +450,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           handleFormChange();
                         }}
+                        onEnterKeyPress={() => submitBtnRef?.current?.click()}
                         ref={editorRef}
                         tabIndex={getTabIndex("description_html")}
                         placeholder={getDescriptionPlaceholder}
@@ -738,7 +766,22 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
+            <Button
+              variant="neutral-primary"
+              size="sm"
+              onClick={() => {
+                if (editorRef.current?.isEditorReadyToDiscard()) {
+                  onClose();
+                } else {
+                  setToast({
+                    type: TOAST_TYPE.ERROR,
+                    title: "Error!",
+                    message: "Editor is still processing changes. Please wait before proceeding.",
+                  });
+                }
+              }}
+              tabIndex={getTabIndex("discard_button")}
+            >
               Discard
             </Button>
             {isDraft && (
@@ -770,6 +813,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               variant="primary"
               type="submit"
               size="sm"
+              ref={submitBtnRef}
               loading={isSubmitting}
               tabIndex={isDraft ? getTabIndex("submit_button") : getTabIndex("draft_button")}
             >

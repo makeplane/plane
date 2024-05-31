@@ -502,7 +502,7 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        set the name to <span className="break-all">{activity.new_value}</span>
+        set the title to <span className="break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
