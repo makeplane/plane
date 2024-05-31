@@ -293,8 +293,8 @@ const emptyStateDetails = {
           "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
       },
     },
-    accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    accessType: "project",
+    access: EUserProjectRoles.MEMBER,
   },
   [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
