@@ -16,7 +16,7 @@ class ProductTypes(Enum):
 
 
 class Instance(BaseModel):
-    # General informations
+    # General information
     instance_name = models.CharField(max_length=255)
     whitelist_emails = models.TextField(blank=True, null=True)
     instance_id = models.CharField(max_length=255, unique=True)
@@ -27,7 +27,7 @@ class Instance(BaseModel):
         max_length=50, default=ProductTypes.PLANE_CE.value
     )
     domain = models.TextField(blank=True)
-    # Instnace specifics
+    # Instance specifics
     last_checked_at = models.DateTimeField()
     namespace = models.CharField(max_length=50, blank=True, null=True)
     # telemetry and support
