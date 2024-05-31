@@ -42,8 +42,8 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       custom: {
         title: "Custom",
         values: [
-          { id: undefined, key: 1, value: "1" },
-          { id: undefined, key: 2, value: "2" },
+          { id: undefined, key: 1, value: "Easy" },
+          { id: undefined, key: 2, value: "Hard" },
         ],
         hide: true,
       },
