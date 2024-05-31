@@ -4,6 +4,7 @@ import { IIssueLabel } from "@plane/types";
 //ui
 import { CustomMenu, DragHandle } from "@plane/ui";
 //types
+import { cn } from "@/helpers/common.helper";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 //hooks
 //components
@@ -39,7 +40,12 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        <DragHandle isDragging={isDragging} ref={dragHandleRef} />
+        <DragHandle
+          className={cn("opacity-0 group-hover:opacity-100", {
+            "opacity-100": isDragging,
+          })}
+          ref={dragHandleRef}
+        />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
 
