@@ -19,6 +19,7 @@ export type IMultipleSelectStore = {
   getPreviousActiveEntity: () => TEntityDetails | null;
   getNextActiveEntity: () => TEntityDetails | null;
   getActiveEntityDetails: () => TEntityDetails | null;
+  getEntityDetailsFromEntityID: (entityID: string) => TEntityDetails | null;
   // entity actions
   updateSelectedEntityDetails: (entityDetails: TEntityDetails, action: "add" | "remove") => void;
   bulkUpdateSelectedEntityDetails: (entitiesList: TEntityDetails[], action: "add" | "remove") => void;
@@ -119,6 +120,16 @@ export class MultipleSelectStore implements IMultipleSelectStore {
    */
   getActiveEntityDetails = computedFn(() => this.activeEntityDetails);
 
+  /**
+   * @description get the entity details from entityID
+   * @param {string} entityID
+   * @returns {TEntityDetails | null}
+   */
+  getEntityDetailsFromEntityID = computedFn(
+    (entityID: string): TEntityDetails | null =>
+      this.selectedEntityDetails.find((en) => en.entityID === entityID) ?? null
+  );
+
   // entity actions
   /**
    * @description add or remove entities
@@ -159,8 +170,11 @@ export class MultipleSelectStore implements IMultipleSelectStore {
         if (entitiesList.length > 0) this.updateLastSelectedEntityDetails(entitiesList[entitiesList.length - 1]);
       });
     } else {
+      const newEntities = differenceWith(this.selectedEntityDetails, entitiesList, (obj1, obj2) =>
+        isEqual(obj1.entityID, obj2.entityID)
+      );
       runInAction(() => {
-        this.selectedEntityDetails = differenceWith(this.selectedEntityDetails, entitiesList, isEqual);
+        this.selectedEntityDetails = newEntities;
       });
     }
   };

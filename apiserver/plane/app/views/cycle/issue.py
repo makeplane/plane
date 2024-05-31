@@ -36,9 +36,10 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
+
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer

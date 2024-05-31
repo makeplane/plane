@@ -10,11 +10,11 @@ import { useAppRouter } from "@/hooks/store";
 
 type Props = {
   handleClearSelection: () => void;
-  selectedEntityIds: string[];
+  selectedIssueIds: string[];
 };
 
 export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
-  const { handleClearSelection, selectedEntityIds } = props;
+  const { handleClearSelection, selectedIssueIds } = props;
   // states
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   // store hooks
@@ -26,7 +26,7 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
         <BulkDeleteConfirmationModal
           isOpen={isBulkDeleteModalOpen}
           handleClose={() => setIsBulkDeleteModalOpen(false)}
-          issueIds={selectedEntityIds}
+          issueIds={selectedIssueIds}
           onSubmit={handleClearSelection}
           projectId={projectId.toString()}
           workspaceSlug={workspaceSlug.toString()}

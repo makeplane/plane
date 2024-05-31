@@ -37,7 +37,7 @@ from plane.app.serializers import (
     ModuleUserPropertiesSerializer,
     ModuleWriteSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     Module,
@@ -225,6 +225,7 @@ class ModuleViewSet(BaseViewSet):
                     "sort_order",
                     "external_source",
                     "external_id",
+                    "logo_props",
                     # computed fields
                     "is_favorite",
                     "cancelled_issues",
@@ -281,6 +282,7 @@ class ModuleViewSet(BaseViewSet):
                 "sort_order",
                 "external_source",
                 "external_id",
+                "logo_props",
                 # computed fields
                 "total_issues",
                 "is_favorite",
@@ -465,6 +467,7 @@ class ModuleViewSet(BaseViewSet):
                 "sort_order",
                 "external_source",
                 "external_id",
+                "logo_props",
                 # computed fields
                 "is_favorite",
                 "cancelled_issues",

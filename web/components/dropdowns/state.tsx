@@ -24,7 +24,8 @@ type Props = TDropdownProps & {
   onChange: (val: string) => void;
   onClose?: () => void;
   projectId: string;
-  value: string;
+  showDefaultState?: boolean;
+  value: string | undefined;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -42,6 +43,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     onClose,
     placement,
     projectId,
+    showDefaultState = true,
     showTooltip = false,
     tabIndex,
     value,
@@ -72,8 +74,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useAppRouter();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
-  const defaultStateList = statesList?.find((state) => state.default);
-  const stateValue = value ? value : defaultStateList?.id;
+  const defaultState = statesList?.find((state) => state.default);
+  const stateValue = value ?? (showDefaultState ? defaultState?.id : undefined);
 
   const options = statesList?.map((state) => ({
     value: state.id,
@@ -170,7 +172,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                   {!hideIcon && (
                     <StateGroupIcon
                       stateGroup={selectedState?.group ?? "backlog"}
-                      color={selectedState?.color}
+                      color={selectedState?.color ?? "rgba(var(--color-text-300))"}
                       className="h-3 w-3 flex-shrink-0"
                     />
                   )}
