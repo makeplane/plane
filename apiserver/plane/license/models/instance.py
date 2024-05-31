@@ -19,7 +19,7 @@ class Instance(BaseModel):
     # General informations
     instance_name = models.CharField(max_length=255)
     whitelist_emails = models.TextField(blank=True, null=True)
-    instance_id = models.CharField(max_length=25, unique=True)
+    instance_id = models.CharField(max_length=255, unique=True)
     license_key = models.CharField(max_length=256, null=True, blank=True)
     current_version = models.CharField(max_length=10)
     latest_version = models.CharField(max_length=10, null=True, blank=True)
