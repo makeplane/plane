@@ -471,7 +471,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                       <DateRangeDropdown
                         buttonContainerClassName="w-full"
                         buttonVariant="background-with-text"
-                        minDate={new Date()}
                         value={{
                           from: startDate,
                           to: endDate,
