@@ -16,6 +16,7 @@ from plane.db.models import (
     IssueSubscriber,
     ProjectMember,
     Issue,
+    Workspace
 )
 
 
@@ -133,6 +134,7 @@ class BulkSubscribeIssuesEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
+        workspace = Workspace.objects.filter(slug=slug).first()
 
         if not len(issue_ids):
             return Response(
@@ -150,6 +152,7 @@ class BulkSubscribeIssuesEndpoint(BaseAPIView):
                     subscriber_id=request.user.id,
                     issue=issue,
                     project_id=project_id,
+                    workspace_id=workspace.id,
                     created_by_id=request.user.id,
                     updated_by_id=request.user.id,
                 )
