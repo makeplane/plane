@@ -1,6 +1,7 @@
+import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 
-export const getUserRole = (role: EUserWorkspaceRoles) => {
+export const getUserRole = (role: EUserWorkspaceRoles | EUserProjectRoles) => {
   switch (role) {
     case EUserWorkspaceRoles.GUEST:
       return "GUEST";
