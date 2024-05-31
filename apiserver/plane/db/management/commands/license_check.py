@@ -30,6 +30,7 @@ class Command(BaseCommand):
                 headers={
                     "Content-Type": "application/json",
                     "X-Api-Key": str(license_key),
+                    "X-Machine-Signature": str(machine_signature),
                 },
                 json={
                     "machine_signature": str(machine_signature),
@@ -51,6 +52,7 @@ class Command(BaseCommand):
                         headers={
                             "Content-Type": "application/json",
                             "X-Api-Key": str(license_key),
+                            "X-Machine-Signature": str(machine_signature),
                         },
                         json={
                             "machine_signature": str(machine_signature),
