@@ -54,7 +54,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
       <div className="flex items-center gap-3">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
-          <h6 className="text-sm font-medium">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="text-sm font-medium">{state.name}</h6>
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>
