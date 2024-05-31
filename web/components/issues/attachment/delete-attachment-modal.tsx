@@ -35,7 +35,7 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={() => handleDeletion(data.id)}
-      isDeleting={loader}
+      isSubmitting={loader}
       isOpen={isOpen}
       title="Delete attachment"
       content={
