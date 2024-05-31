@@ -1,14 +1,15 @@
-import React from "react";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
 import { MoreVertical } from "lucide-react";
+// helpers
+import { cn } from "../helpers";
 
 interface IDragHandle {
-  isDragging: boolean;
+  className?: string;
   disabled?: boolean;
 }
 
 export const DragHandle = forwardRef<HTMLButtonElement | null, IDragHandle>((props, ref) => {
-  const { isDragging, disabled = false } = props;
+  const { className, disabled = false } = props;
 
   if (disabled) {
     return <div className="w-[14px] h-[18px]" />;
@@ -17,9 +18,10 @@ export const DragHandle = forwardRef<HTMLButtonElement | null, IDragHandle>((pro
   return (
     <button
       type="button"
-      className={` p-[2px] flex flex-shrink-0 rounded bg-custom-background-90 text-custom-sidebar-text-200 group-hover:opacity-100 cursor-grab ${
-        isDragging ? "opacity-100" : "opacity-0"
-      }`}
+      className={cn(
+        "p-0.5 flex flex-shrink-0 rounded bg-custom-background-90 text-custom-sidebar-text-200 cursor-grab",
+        className
+      )}
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();
