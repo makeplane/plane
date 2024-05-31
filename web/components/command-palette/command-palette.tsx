@@ -52,7 +52,7 @@ export const CommandPalette: FC = observer(() => {
     toggleCreateIssueModal,
     isCreateCycleModalOpen,
     toggleCreateCycleModal,
-    isCreatePageModalOpen,
+    createPageModal,
     toggleCreatePageModal,
     isCreateProjectModalOpen,
     toggleCreateProjectModal,
@@ -152,7 +152,7 @@ export const CommandPalette: FC = observer(() => {
         d: {
           title: "Create a new page",
           description: "Create a new page in the current project",
-          action: () => toggleCreatePageModal(true),
+          action: () => toggleCreatePageModal({ isOpen: true }),
         },
         m: {
           title: "Create a new module",
@@ -299,8 +299,9 @@ export const CommandPalette: FC = observer(() => {
           <CreatePageModal
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
-            isModalOpen={isCreatePageModalOpen}
-            handleModalClose={() => toggleCreatePageModal(false)}
+            isModalOpen={createPageModal.isOpen}
+            pageAccess={createPageModal.pageAccess}
+            handleModalClose={() => toggleCreatePageModal({ isOpen: false })}
             redirectionEnabled
           />
         </>

@@ -36,7 +36,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
+  const { createPage, getPageById } = useProjectPages();
   const page = usePage(pageId?.toString() ?? "");
   const { access, description_html, id, name } = page;
   // editor markings hook
