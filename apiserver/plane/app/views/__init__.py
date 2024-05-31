@@ -149,6 +149,7 @@ from .issue.sub_issue import (
 
 from .issue.subscriber import (
     IssueSubscriberViewSet,
+    BulkSubscribeIssuesEndpoint,
 )
 
 
