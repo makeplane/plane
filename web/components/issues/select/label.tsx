@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// components
 import { IssueLabelsList } from "@/components/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// ui
-// icons
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,10 +22,21 @@ type Props = {
   disabled?: boolean;
   tabIndex?: number;
   createLabelEnabled?: boolean;
+  buttonClassName?: string;
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
-  const { setIsOpen, value, onChange, projectId, label, disabled = false, tabIndex, createLabelEnabled = true } = props;
+  const {
+    setIsOpen,
+    value,
+    onChange,
+    projectId,
+    label,
+    disabled = false,
+    tabIndex,
+    createLabelEnabled = true,
+    buttonClassName,
+  } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -101,7 +113,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
         <button
           type="button"
           ref={setReferenceElement}
-          className="h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
+          className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200", buttonClassName)}
           onClick={handleOnClick}
         >
           {label ? (

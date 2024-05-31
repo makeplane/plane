@@ -1,22 +1,52 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
+// types
+import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
+// helper
+import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+
+export interface IPagesHeaderProps {
+  showButton?: boolean;
+}
 
 export const PageDetailsHeader = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
+  // state
+  const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { isContentEditable, isSubmitting, name } = usePage(pageId?.toString() ?? "");
+  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
+
+  const handlePageLogoUpdate = async (data: TLogoProps) => {
+    if (data) {
+      updatePageLogo(data)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Logo Updated successfully.",
+          });
+        })
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Something went wrong. Please try again.",
+          });
+        });
+    }
+  };
   // use platform
   const { platform } = usePlatformOS();
   // derived values
@@ -38,7 +68,7 @@ export const PageDetailsHeader = observer(() => {
                       icon={
                         currentProjectDetails && (
                           <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                            <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
                           </span>
                         )
                       }
@@ -67,7 +97,49 @@ export const PageDetailsHeader = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink label={name ?? "Page"} icon={<FileText className="h-4 w-4 text-custom-text-300" />} />
+                <BreadcrumbLink
+                  label={name ?? "Page"}
+                  icon={
+                    <EmojiIconPicker
+                      isOpen={isOpen}
+                      handleToggle={(val: boolean) => setIsOpen(val)}
+                      className="flex items-center justify-center"
+                      buttonClassName="flex items-center justify-center"
+                      label={
+                        <>
+                          {logo_props?.in_use ? (
+                            <Logo logo={logo_props} size={16} type="lucide" />
+                          ) : (
+                            <FileText className="h-4 w-4 text-custom-text-300" />
+                          )}
+                        </>
+                      }
+                      onChange={(val) => {
+                        let logoValue = {};
+
+                        if (val?.type === "emoji")
+                          logoValue = {
+                            value: convertHexEmojiToDecimal(val.value.unified),
+                            url: val.value.imageUrl,
+                          };
+                        else if (val?.type === "icon") logoValue = val.value;
+
+                        handlePageLogoUpdate({
+                          in_use: val?.type,
+                          [val?.type]: logoValue,
+                        }).finally(() => setIsOpen(false));
+                      }}
+                      defaultIconColor={
+                        logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
+                      }
+                      defaultOpen={
+                        logo_props?.in_use && logo_props?.in_use === "emoji"
+                          ? EmojiIconPickerTypes.EMOJI
+                          : EmojiIconPickerTypes.ICON
+                      }
+                    />
+                  }
+                />
               }
             />
           </Breadcrumbs>

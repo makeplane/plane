@@ -9,9 +9,8 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -130,7 +129,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                       currentProjectDetails ? (
                         currentProjectDetails && (
                           <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                            <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
                           </span>
                         )
                       ) : (

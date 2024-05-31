@@ -39,6 +39,7 @@ class PageSerializer(BaseSerializer):
             "created_by",
             "updated_by",
             "view_props",
+            "logo_props",
         ]
         read_only_fields = [
             "workspace",

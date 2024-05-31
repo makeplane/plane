@@ -59,13 +59,17 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     }
   };
 
+  const handleArchivedModuleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    openModuleOverview(e);
+  };
+
+  const handleItemClick = moduleDetails.archived_at ? handleArchivedModuleClick : undefined;
+
   return (
     <ListItem
       title={moduleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
-      onItemClick={(e) => {
-        if (moduleDetails.archived_at) openModuleOverview(e);
-      }}
+      onItemClick={handleItemClick}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {completedModuleCheck ? (

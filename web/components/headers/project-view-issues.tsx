@@ -7,9 +7,8 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -141,7 +140,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 icon={
                   currentProjectDetails && (
                     <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                      <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                      <Logo logo={currentProjectDetails?.logo_props} size={16} />
                     </span>
                   )
                 }
@@ -164,7 +163,11 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               <CustomMenu
                 label={
                   <>
-                    <PhotoFilterIcon height={12} width={12} />
+                    {viewDetails?.logo_props?.in_use ? (
+                      <Logo logo={viewDetails.logo_props} size={12} type="lucide" />
+                    ) : (
+                      <PhotoFilterIcon height={12} width={12} />
+                    )}
                     {viewDetails?.name && truncateText(viewDetails.name, 40)}
                   </>
                 }
@@ -182,7 +185,11 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                         href={`/${workspaceSlug}/projects/${projectId}/views/${viewId}`}
                         className="flex items-center gap-1.5"
                       >
-                        <PhotoFilterIcon height={12} width={12} />
+                        {view?.logo_props?.in_use ? (
+                          <Logo logo={view.logo_props} size={12} type="lucide" />
+                        ) : (
+                          <PhotoFilterIcon height={12} width={12} />
+                        )}
                         {truncateText(view.name, 40)}
                       </Link>
                     </CustomMenu.MenuItem>

@@ -1,4 +1,4 @@
-import { AlertTriangle, LucideIcon } from "lucide-react";
+import { AlertTriangle, Info, LucideIcon } from "lucide-react";
 // ui
 import { Button, TButtonVariant } from "@plane/ui";
 // components
@@ -6,14 +6,14 @@ import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
-export type TModalVariant = "danger";
+export type TModalVariant = "danger" | "primary";
 
 type Props = {
   content: React.ReactNode | string;
   handleClose: () => void;
   handleSubmit: () => Promise<void>;
   hideIcon?: boolean;
-  isDeleting: boolean;
+  isSubmitting: boolean;
   isOpen: boolean;
   position?: EModalPosition;
   primaryButtonText?: {
@@ -28,14 +28,17 @@ type Props = {
 
 const VARIANT_ICONS: Record<TModalVariant, LucideIcon> = {
   danger: AlertTriangle,
+  primary: Info,
 };
 
 const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {
   danger: "danger",
+  primary: "primary",
 };
 
 const VARIANT_CLASSES: Record<TModalVariant, string> = {
   danger: "bg-red-500/20 text-red-500",
+  primary: "bg-custom-primary-100/20 text-custom-primary-100",
 };
 
 export const AlertModalCore: React.FC<Props> = (props) => {
@@ -44,7 +47,7 @@ export const AlertModalCore: React.FC<Props> = (props) => {
     handleClose,
     handleSubmit,
     hideIcon = false,
-    isDeleting,
+    isSubmitting,
     isOpen,
     position = EModalPosition.CENTER,
     primaryButtonText = {
@@ -81,8 +84,8 @@ export const AlertModalCore: React.FC<Props> = (props) => {
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           {secondaryButtonText}
         </Button>
-        <Button variant={BUTTON_VARIANTS[variant]} size="sm" tabIndex={1} onClick={handleSubmit} loading={isDeleting}>
-          {isDeleting ? primaryButtonText.loading : primaryButtonText.default}
+        <Button variant={BUTTON_VARIANTS[variant]} size="sm" tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
+          {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
       </div>
     </ModalCore>

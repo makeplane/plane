@@ -1,14 +1,13 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// hooks
-// components
+// ui
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
-import { BreadcrumbLink } from "@/components/common";
-// helpers
-import { ProjectLogo } from "@/components/project";
+// components
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
-import { EUserProjectRoles } from "@/constants/project";
 // constants
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useCommandPalette, useProject, useUser } from "@/hooks/store";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
@@ -40,7 +39,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
                     icon={
                       currentProjectDetails && (
                         <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                          <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                          <Logo logo={currentProjectDetails?.logo_props} size={16} />
                         </span>
                       )
                     }
