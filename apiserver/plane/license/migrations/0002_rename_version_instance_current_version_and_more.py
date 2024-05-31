@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="instance",
-            name="new_version",
+            name="latest_version",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
         migrations.AddField(

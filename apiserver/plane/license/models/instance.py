@@ -22,7 +22,7 @@ class Instance(BaseModel):
     instance_id = models.CharField(max_length=25, unique=True)
     license_key = models.CharField(max_length=256, null=True, blank=True)
     current_version = models.CharField(max_length=10)
-    new_version = models.CharField(max_length=10, null=True, blank=True)
+    latest_version = models.CharField(max_length=10, null=True, blank=True)
     product = models.CharField(
         max_length=50, default=ProductTypes.PLANE_CE.value
     )
