@@ -71,7 +71,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           onSelect={() => {
             closePalette();
             setTrackElement("Command palette");
-            toggleCreatePageModal(true);
+            toggleCreatePageModal({ isOpen: true });
           }}
           className="focus:outline-none"
         >
