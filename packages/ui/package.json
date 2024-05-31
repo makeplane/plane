@@ -26,6 +26,7 @@
     "@popperjs/core": "^2.11.8",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
+    "lucide-react": "^0.379.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",

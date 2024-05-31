@@ -5,6 +5,7 @@ import pull from "lodash/pull";
 import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
+// types
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -13,12 +14,14 @@ import {
   TIssue,
   TIssueGroupByOptions,
 } from "@plane/types";
+// ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
-import { ProjectLogo } from "@/components/project";
-// stores
+import { Logo } from "@/components/common";
+// constants
 import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
+// stores
 import { ICycleStore } from "@/store/cycle.store";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
 import { ILabelStore } from "@/store/label.store";
@@ -26,9 +29,6 @@ import { IMemberRootStore } from "@/store/member";
 import { IModuleStore } from "@/store/module.store";
 import { IProjectStore } from "@/store/project/project.store";
 import { IStateStore } from "@/store/state.store";
-// helpers
-// constants
-// types
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
@@ -101,7 +101,7 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
         name: project.name,
         icon: (
           <div className="w-6 h-6 grid place-items-center flex-shrink-0">
-            <ProjectLogo logo={project.logo_props} />
+            <Logo logo={project.logo_props} />
           </div>
         ),
         payload: { project_id: project.id },

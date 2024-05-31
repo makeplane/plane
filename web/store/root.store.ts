@@ -14,6 +14,7 @@ import { ILabelStore, LabelStore } from "./label.store";
 import { IMemberRootStore, MemberRootStore } from "./member";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
+import { IMultipleSelectStore, MultipleSelectStore } from "./multiple_select.store";
 import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
@@ -48,6 +49,7 @@ export class RootStore {
   instance: IInstanceStore;
   user: IUserStore;
   projectInbox: IProjectInboxStore;
+  multipleSelect: IMultipleSelectStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -70,6 +72,7 @@ export class RootStore {
     this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.instance = new InstanceStore();
+    this.multipleSelect = new MultipleSelectStore();
     // inbox
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
@@ -101,5 +104,6 @@ export class RootStore {
     this.user = new UserStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
+    this.multipleSelect = new MultipleSelectStore();
   }
 }
