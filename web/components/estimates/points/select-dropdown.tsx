@@ -29,7 +29,15 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
   useOutsideClickDetector(dropdownContainerRef, () => setIsDropdownOpen(false));
 
   // derived values
-  const selectedValue = options.find((option) => option?.id === selectedOption) || undefined;
+  const selectedValue = selectedOption
+    ? selectedOption === "none"
+      ? {
+          id: undefined,
+          key: undefined,
+          value: "None",
+        }
+      : options.find((option) => option?.id === selectedOption)
+    : undefined;
 
   return (
     <div ref={dropdownContainerRef} className="w-full relative">

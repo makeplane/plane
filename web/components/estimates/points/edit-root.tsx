@@ -60,17 +60,20 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
   if (!workspaceSlug || !projectId || !estimateId) return <></>;
   return (
     <div className="space-y-3">
-      <div className="text-sm font-medium text-custom-text-200">{estimate?.type}</div>
+      <div className="text-sm font-medium text-custom-text-200 capitalize">{estimate?.type}</div>
       <Sortable
         data={estimatePoints}
         render={(value: TEstimatePointsObject) => (
           <Draggable data={value}>
-            {value?.id && (
+            {value?.id && estimate?.type && (
               <EstimatePointItemPreview
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 estimateId={estimateId}
                 estimatePointId={value?.id}
+                estimateType={estimate?.type}
+                estimatePoint={value}
+                estimatePoints={estimatePoints}
               />
             )}
           </Draggable>
@@ -80,15 +83,20 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
       />
 
       {estimatePointCreate &&
-        estimatePointCreate.map((estimatePoint) => (
-          <EstimatePointCreate
-            key={estimatePoint?.key}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            estimateId={estimateId}
-            callback={() => handleEstimatePointCreate("remove", estimatePoint)}
-          />
-        ))}
+        estimatePointCreate.map(
+          (estimatePoint) =>
+            estimate?.type && (
+              <EstimatePointCreate
+                key={estimatePoint?.key}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                estimateId={estimateId}
+                estimateType={estimate?.type}
+                closeCallBack={() => handleEstimatePointCreate("remove", estimatePoint)}
+                estimatePoints={estimatePoints}
+              />
+            )
+        )}
       {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount && (
         <Button
           variant="link-primary"

@@ -1,22 +1,34 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
+import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 // components
 import { EstimatePointUpdate, EstimatePointDelete } from "@/components/estimates/points";
-// hooks
-import { useEstimatePoint } from "@/hooks/store";
 
 type TEstimatePointItemPreview = {
   workspaceSlug: string;
   projectId: string;
-  estimateId: string;
-  estimatePointId: string;
+  estimateId: string | undefined;
+  estimateType: TEstimateSystemKeys;
+  estimatePointId: string | undefined;
+  estimatePoint: TEstimatePointsObject;
+  estimatePoints: TEstimatePointsObject[];
+  handleEstimatePointValueUpdate?: (estimateValue: string) => void;
+  handleEstimatePointValueRemove?: () => void;
 };
 
 export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
-  const { workspaceSlug, projectId, estimateId, estimatePointId } = props;
-  // hooks
-  const { asJson: estimatePoint } = useEstimatePoint(estimateId, estimatePointId);
+  const {
+    workspaceSlug,
+    projectId,
+    estimateId,
+    estimateType,
+    estimatePointId,
+    estimatePoint,
+    estimatePoints,
+    handleEstimatePointValueUpdate,
+    handleEstimatePointValueRemove,
+  } = props;
   // state
   const [estimatePointEditToggle, setEstimatePointEditToggle] = useState(false);
   const [estimatePointDeleteToggle, setEstimatePointDeleteToggle] = useState(false);
@@ -28,7 +40,6 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
       EstimatePointValueRef?.current?.addEventListener("dblclick", () => setEstimatePointEditToggle(true));
   }, [estimatePointDeleteToggle, estimatePointEditToggle]);
 
-  if (!estimatePoint?.id) return <></>;
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
@@ -38,7 +49,7 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
           </div>
           <div ref={EstimatePointValueRef} className="py-2.5 w-full">
             {estimatePoint?.value ? (
-              estimatePoint?.value
+              `${estimatePoint?.value}`
             ) : (
               <span className="text-custom-text-400">Enter estimate point</span>
             )}
@@ -51,7 +62,11 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
           </div>
           <div
             className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
-            onClick={() => setEstimatePointDeleteToggle(true)}
+            onClick={() =>
+              estimateId && estimatePointId
+                ? setEstimatePointDeleteToggle(true)
+                : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
+            }
           >
             <Trash2 size={14} className="text-custom-text-200" />
           </div>
@@ -63,18 +78,24 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           estimateId={estimateId}
+          estimateType={estimateType}
           estimatePointId={estimatePointId}
-          callback={() => setEstimatePointEditToggle(false)}
+          estimatePoints={estimatePoints}
+          estimatePoint={estimatePoint}
+          handleEstimatePointValueUpdate={(estimatePointValue: string) =>
+            handleEstimatePointValueUpdate && handleEstimatePointValueUpdate(estimatePointValue)
+          }
+          closeCallBack={() => setEstimatePointEditToggle(false)}
         />
       )}
 
-      {estimatePoint && estimatePointDeleteToggle && (
+      {estimateId && estimatePointId && estimatePointDeleteToggle && (
         <EstimatePointDelete
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           estimateId={estimateId}
           estimatePointId={estimatePointId}
-          callback={() => setEstimatePointDeleteToggle(false)}
+          callback={() => estimateId && setEstimatePointDeleteToggle(false)}
         />
       )}
     </div>

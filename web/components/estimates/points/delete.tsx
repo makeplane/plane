@@ -33,16 +33,20 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
 
   const handleDelete = async () => {
     if (!workspaceSlug || !projectId || !projectId) return;
+
+    setError(undefined);
+
     if (estimateInputValue)
       try {
         setLoader(true);
-        setError(undefined);
+
         await deleteEstimatePoint(
           workspaceSlug,
           projectId,
           estimatePointId,
           estimateInputValue === "none" ? undefined : estimateInputValue
         );
+
         setLoader(false);
         setError(undefined);
         handleClose();

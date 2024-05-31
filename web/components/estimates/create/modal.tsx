@@ -138,11 +138,16 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             />
           )}
           {estimatePoints && (
-            <EstimatePointCreateRoot
-              estimateType={estimateSystem}
-              estimatePoints={estimatePoints}
-              setEstimatePoints={setEstimatePoints}
-            />
+            <>
+              <EstimatePointCreateRoot
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                estimateId={undefined}
+                estimateType={estimateSystem}
+                estimatePoints={estimatePoints}
+                setEstimatePoints={setEstimatePoints}
+              />
+            </>
           )}
         </div>
 
