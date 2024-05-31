@@ -2,8 +2,6 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-// edition-specific
-import { IssueBulkOperationsRoot } from "@plane/bulk-operations";
 // types
 import {
   GroupByColumnTypes,
@@ -18,6 +16,7 @@ import {
 } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core";
+import { IssueBulkOperationsRoot } from "@/components/issues";
 // hooks
 import { EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";

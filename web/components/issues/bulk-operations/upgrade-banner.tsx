@@ -1,23 +1,16 @@
-import { observer } from "mobx-react";
 // ui
 import { getButtonStyling } from "@plane/ui";
 // constants
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@/constants/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
-import { useMultipleSelectStore } from "@/hooks/store";
 
 type Props = {
   className?: string;
 };
 
-export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
+export const BulkOperationsUpgradeBanner: React.FC<Props> = (props) => {
   const { className } = props;
-  // store hooks
-  const { isSelectionActive } = useMultipleSelectStore();
-
-  if (!isSelectionActive) return null;
 
   return (
     <div className={cn("sticky bottom-0 left-0 h-20 z-[2] px-3.5 grid place-items-center", className)}>
@@ -36,4 +29,4 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
       </div>
     </div>
   );
-});
+};
