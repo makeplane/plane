@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
