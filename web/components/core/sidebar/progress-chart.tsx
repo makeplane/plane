@@ -65,9 +65,9 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
     if (formattedDates.length <= 2) return [firstDate, lastDate];
 
     const middleDateIndex = Math.floor(formattedDates.length / 2);
-    const middleDate = formattedDates.length > 2 ? formattedDates[middleDateIndex] : null;
+    const middleDate = formattedDates[middleDateIndex];
 
-    return middleDate ? [firstDate, middleDate, lastDate] : [firstDate, lastDate];
+    return [firstDate, middleDate, lastDate];
   };
 
   return (
