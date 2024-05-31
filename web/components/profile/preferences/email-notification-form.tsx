@@ -99,7 +99,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               render={({ field: { value, onChange } }) => (
                 <Checkbox
                   checked={value}
-                  indeterminate={!value && watch("issue_completed")}
+                  intermediate={!value && watch("issue_completed")}
                   onChange={() => {
                     setValue("issue_completed", !value, { shouldDirty: true });
                     onChange(!value);
