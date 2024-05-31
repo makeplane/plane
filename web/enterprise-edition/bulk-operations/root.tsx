@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // ui
 import { Checkbox } from "@plane/ui";
 // components
-import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@/components/issues";
+import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@plane/bulk-operations";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

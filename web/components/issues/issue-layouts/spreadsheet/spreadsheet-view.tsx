@@ -1,11 +1,13 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
+// edition-specific
+import { IssueBulkOperationsRoot } from "@plane/bulk-operations";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
-import { IssueBulkOperationsRoot, SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
 import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // hooks
 import { useProject } from "@/hooks/store";

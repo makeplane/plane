@@ -40,6 +40,7 @@ export interface IProjectIssues {
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  subscribeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
@@ -75,6 +76,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       archiveIssue: action,
       removeBulkIssues: action,
       archiveBulkIssues: action,
+      subscribeBulkIssues: action,
       bulkUpdateProperties: action,
       quickAddIssue: action,
     });
@@ -315,6 +317,22 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
             archived_at: response.archived_at,
           });
         });
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  subscribeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      const response = await this.issueService.bulkSubscribeIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+
+      runInAction(() => {
+        // issueIds.forEach((issueId) => {
+        //   this.rootStore.issues.updateIssue(issueId, {
+        //     archived_at: response.archived_at,
+        //   });
+        // });
       });
     } catch (error) {
       throw error;
