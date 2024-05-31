@@ -14,6 +14,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name="instance",
+            name="instance_id",
+            field=models.CharField(max_length=255, unique=True),
+        ),
         migrations.RenameField(
             model_name="instance",
             old_name="version",
