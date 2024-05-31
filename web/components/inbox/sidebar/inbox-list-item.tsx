@@ -12,31 +12,30 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// store
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
   projectId: string;
   projectIdentifier?: string;
-  inboxIssue: IInboxIssueStore;
+  inboxIssueId: string;
   setIsMobileSidebar: (value: boolean) => void;
 };
 
 export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, projectIdentifier, setIsMobileSidebar } = props;
+  const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const router = useRouter();
-  const { inboxIssueId } = router.query;
+  const { inboxIssueId: selectedInboxIssueId } = router.query;
   // store
-  const { currentTab } = useProjectInbox();
+  const { currentTab, getIssueInboxByIssueId } = useProjectInbox();
   const { projectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
   const { getUserDetails } = useMember();
-  const issue = inboxIssue.issue;
+  const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
+  const issue = inboxIssue?.issue;
 
   const handleIssueRedirection = (event: MouseEvent, currentIssueId: string | undefined) => {
-    if (inboxIssueId === currentIssueId) event.preventDefault();
+    if (selectedInboxIssueId === currentIssueId) event.preventDefault();
     setIsMobileSidebar(false);
   };
 
@@ -55,7 +54,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
         <div
           className={cn(
             `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-custom-border-200 p-4 hover:bg-custom-primary/5 cursor-pointer transition-all`,
-            { "border-custom-primary-100 border": inboxIssueId === issue.id }
+            { "border-custom-primary-100 border": selectedInboxIssueId === issue.id }
           )}
         >
           <div className="space-y-1">

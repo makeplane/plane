@@ -44,7 +44,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     currentTab,
     handleCurrentTab,
     loader,
-    inboxIssuesArray,
+    inboxIssueIds,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
     getAppliedFiltersCount,
@@ -56,13 +56,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
   }, [workspaceSlug, projectId, fetchInboxPaginationIssues]);
+
   // page observer
-  useIntersectionObserver({
-    containerRef,
-    elementRef,
-    callback: fetchNextPages,
-    rootMargin: "20%",
-  });
+  useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
 
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
@@ -108,13 +104,13 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
             ref={containerRef}
           >
-            {inboxIssuesArray.length > 0 ? (
+            {inboxIssueIds.length > 0 ? (
               <InboxIssueList
                 setIsMobileSidebar={setIsMobileSidebar}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={inboxIssuesArray}
+                inboxIssueIds={inboxIssueIds}
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full">
@@ -130,15 +126,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 />
               </div>
             )}
-
-            <div ref={elementRef}>
-              {inboxIssuePaginationInfo?.next_page_results && (
+            {inboxIssuePaginationInfo?.next_page_results && (
+              <div ref={elementRef}>
                 <Loader className="mx-auto w-full space-y-4 py-4 px-2">
                   <Loader.Item height="64px" width="w-100" />
                   <Loader.Item height="64px" width="w-100" />
                 </Loader>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>
