@@ -1,11 +1,13 @@
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
-//components
+// components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
@@ -25,6 +27,7 @@ type Props = {
   canLoadMoreIssues: boolean;
   loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  selectionHelpers: TSelectionHelper;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -42,6 +45,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     containerRef,
     loadMoreIssues,
     spreadsheetColumnsList,
+    selectionHelpers,
   } = props;
 
   // states
@@ -95,8 +99,10 @@ export const SpreadsheetTable = observer((props: Props) => {
         displayProperties={displayProperties}
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}
+        selectionHelpers={selectionHelpers}
       />
       <tbody>
         {issueIds.map((id) => (
@@ -114,6 +120,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             isScrolled={isScrolled}
             issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
+            selectionHelpers={selectionHelpers}
           />
         ))}
       </tbody>

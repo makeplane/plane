@@ -84,4 +84,19 @@ export type TIssuesResponse = {
   total_pages: number;
   extra_stats: null;
   results: TIssueResponseResults;
+}
+
+export type TBulkIssueProperties = Pick<
+  TIssue,
+  | "state_id"
+  | "priority"
+  | "label_ids"
+  | "assignee_ids"
+  | "start_date"
+  | "target_date"
+>;
+
+export type TBulkOperationsPayload = {
+  issue_ids: string[];
+  properties: Partial<TBulkIssueProperties>;
 };

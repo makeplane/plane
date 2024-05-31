@@ -53,9 +53,10 @@ from plane.utils.paginator import (
 )
 
 # Module imports
-from .. import BaseViewSet
+from .. import BaseViewSet, BaseAPIView
 
 from plane.utils.user_timezone_converter import user_timezone_converter
+
 
 class IssueArchiveViewSet(BaseViewSet):
     permission_classes = [
@@ -312,3 +313,58 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BulkArchiveIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        issue_ids = request.data.get("issue_ids", [])
+
+        if not len(issue_ids):
+            return Response(
+                {"error": "Issue IDs are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issues = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+        ).select_related("state")
+        bulk_archive_issues = []
+        for issue in issues:
+            if issue.state.group not in ["completed", "cancelled"]:
+                return Response(
+                    {
+                        "error_code": 4091,
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps(
+                    {
+                        "archived_at": str(timezone.now().date()),
+                        "automation": False,
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(issue.id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    IssueSerializer(issue).data, cls=DjangoJSONEncoder
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            issue.archived_at = timezone.now().date()
+            bulk_archive_issues.append(issue)
+        Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
+
+        return Response(
+            {"archived_at": str(timezone.now().date())},
+            status=status.HTTP_200_OK,
+        )

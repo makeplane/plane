@@ -3,6 +3,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
+// types
 import { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
 // components
 import { DropIndicator } from "@plane/ui";
@@ -10,6 +11,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueBlock } from "@/components/issues/issue-layouts/list";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId } from "../utils";
@@ -26,6 +28,7 @@ type Props = {
   nestingLevel: number;
   spacingLeft?: number;
   containerRef: MutableRefObject<HTMLDivElement | null>;
+  selectionHelpers: TSelectionHelper;
   groupId: string;
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
@@ -50,6 +53,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     canDropOverIssue,
     isParentIssueBeingDragged = false,
     isLastChild = false,
+    selectionHelpers,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -132,6 +136,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
           setExpanded={setExpanded}
           nestingLevel={nestingLevel}
           spacingLeft={spacingLeft}
+          selectionHelpers={selectionHelpers}
           canDrag={!isSubIssue && isDragAllowed}
           isCurrentBlockDragging={isParentIssueBeingDragged || isCurrentBlockDragging}
           setIsCurrentBlockDragging={setIsCurrentBlockDragging}
@@ -139,9 +144,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssueId: string) => (
+        subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueIds={issueIds}
@@ -154,6 +157,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             nestingLevel={nestingLevel + 1}
             spacingLeft={spacingLeft + (displayProperties?.key ? 12 : 0)}
             containerRef={containerRef}
+            selectionHelpers={selectionHelpers}
             groupId={groupId}
             isDragAllowed={isDragAllowed}
             canDropOverIssue={canDropOverIssue}

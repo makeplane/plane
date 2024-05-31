@@ -5,6 +5,7 @@ import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useIssues, useUser } from "@/hooks/store";
 // hooks
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
@@ -13,9 +14,8 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
+// types
 import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
-// constants
-// hooks
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -58,7 +58,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-
   const { issueMap } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
@@ -72,11 +71,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
   }, [fetchIssues, storeType, group_by, viewId]);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
-
+// auth
+const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
@@ -115,7 +115,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
-      <div className={`relative h-full w-full bg-custom-background-90`}>
+      <div className={`relative size-full bg-custom-background-90`}>
       <List
         issuesMap={issueMap}
         displayProperties={displayProperties}

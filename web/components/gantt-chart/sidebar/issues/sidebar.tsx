@@ -3,12 +3,14 @@ import { observer } from "mobx-react";
 // components
 // ui
 import { Loader } from "@plane/ui";
-// types
+// components
 import { IGanttBlock, IBlockUpdateData } from "@/components/gantt-chart/types";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
+// types
 import { IssuesSidebarBlock } from "./block";
 
 type Props = {
@@ -18,8 +20,10 @@ type Props = {
   loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
   blockIds: string[];
+  enableSelection: boolean;
   enableReorder: boolean;
   showAllBlocks?: boolean;
+  selectionHelpers?: TSelectionHelper;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
@@ -28,10 +32,12 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     blockIds,
     getBlockById,
     enableReorder,
+    enableSelection,
     loadMoreBlocks,
     canLoadMoreBlocks,
     ganttContainerRef,
     showAllBlocks = false,
+    selectionHelpers
   } = props;
 
   const intersectionRef = useRef<HTMLDivElement | null>(null);
@@ -69,8 +75,10 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                   <IssuesSidebarBlock
                     block={block}
                     enableReorder={enableReorder}
+                    enableSelection={enableSelection}
                     isDragging={isDragging}
                     dragHandleRef={dragHandleRef}
+                    selectionHelpers={selectionHelpers}
                   />
                 )}
               </GanttDnDHOC>

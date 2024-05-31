@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { TIssue } from "@plane/types";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
-// types
 
 type Props = {
   issue: TIssue;
@@ -36,7 +36,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
         buttonVariant={
           issue?.assignee_ids && issue.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"
         }
-        buttonClassName="text-left"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />

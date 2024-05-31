@@ -1,14 +1,13 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// types
 import { TIssue } from "@plane/types";
-// hooks
+// components
 import { CycleDropdown } from "@/components/dropdowns";
+// hooks
 import { useEventTracker } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-// components
-// types
-// constants
 
 type Props = {
   issue: TIssue;
@@ -17,11 +16,10 @@ type Props = {
 };
 
 export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
+  const { issue, disabled, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // props
-  const { issue, disabled, onClose } = props;
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
@@ -56,8 +54,8 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
         disabled={disabled}
         placeholder="Select cycle"
         buttonVariant="transparent-with-text"
-        buttonContainerClassName="w-full relative flex items-center p-2"
-        buttonClassName="relative leading-4 h-4.5 bg-transparent"
+        buttonContainerClassName="w-full relative flex items-center p-2 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
+        buttonClassName="relative leading-4 h-4.5 bg-transparent hover:bg-transparent"
         onClose={onClose}
       />
     </div>

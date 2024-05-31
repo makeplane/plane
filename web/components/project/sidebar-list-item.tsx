@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { createRoot } from "react-dom/client";
+// icons
 import {
   MoreVertical,
   PenSquare,
@@ -21,8 +22,8 @@ import {
   MoreHorizontal,
   Inbox,
 } from "lucide-react";
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// icons
 // ui
 import {
   CustomMenu,
@@ -35,8 +36,12 @@ import {
   setPromiseToast,
   DropIndicator,
 } from "@plane/ui";
-import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
+// components
+import { Logo } from "@/components/common";
+import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useProject } from "@/hooks/store";
@@ -186,7 +191,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        canDrag: () => !disableDrag,
+        canDrag: () => !disableDrag && !isCollapsed,
         dragHandle: dragHandleElement ?? undefined,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
@@ -203,8 +208,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               const root = createRoot(container);
               root.render(
                 <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
-                  <div className="flex items-center h-7 w-5 grid place-items-center flex-shrink-0">
-                    {project && <ProjectLogo logo={project?.logo_props} />}
+                  <div className="h-7 w-7 grid place-items-center flex-shrink-0">
+                    {project && <Logo logo={project?.logo_props} />}
                   </div>
                   <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
                 </div>
@@ -287,7 +292,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 "group relative flex w-full items-center rounded-md py-1 text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
                 {
                   "bg-custom-sidebar-background-80": isMenuActive,
-                  "pl-8": disableDrag,
+                  "pl-7": disableDrag && !isCollapsed,
                 }
               )}
             >
@@ -306,6 +311,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         "group-hover:opacity-100": !isCollapsed,
                         "cursor-not-allowed opacity-60": project.sort_order === null,
                         flex: isMenuActive,
+                        hidden: isCollapsed,
                       }
                     )}
                     ref={dragHandleRef}
@@ -326,12 +332,12 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   )}
                 >
                   <div
-                    className={cn("flex w-full flex-grow items-center gap-1 truncate -ml-1", {
+                    className={cn("flex w-full flex-grow items-center gap-1 truncate", {
                       "justify-center": isCollapsed,
                     })}
                   >
-                    <div className="h-7 w-5 grid place-items-center flex-shrink-0">
-                      <ProjectLogo logo={project.logo_props} />
+                    <div className="h-7 w-7 grid place-items-center flex-shrink-0">
+                      <Logo logo={project.logo_props} />
                     </div>
                     {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
                   </div>

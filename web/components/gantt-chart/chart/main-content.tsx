@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-// hooks
 // components
+import { MultipleSelectGroup } from "@/components/core";
 import {
   BiWeekChartView,
   ChartDataType,
@@ -19,8 +19,12 @@ import {
   WeekChartView,
   YearChartView,
 } from "@/components/gantt-chart";
+import { IssueBulkOperationsRoot } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// constants
+import { GANTT_SELECT_GROUP } from "../constants";
+// hooks
 import { useGanttChart } from "../hooks/use-gantt-chart";
 
 type Props = {
@@ -35,6 +39,7 @@ type Props = {
   enableBlockMove: boolean;
   enableBlockRightResize: boolean;
   enableReorder: boolean;
+  enableSelection: boolean;
   enableAddBlock: boolean;
   itemsContainerWidth: number;
   showAllBlocks: boolean;
@@ -57,6 +62,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     enableBlockRightResize,
     enableReorder,
     enableAddBlock,
+    enableSelection,
     itemsContainerWidth,
     showAllBlocks,
     sidebarToRender,
@@ -112,19 +118,27 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const ActiveChartView = CHART_VIEW_COMPONENTS[currentView];
 
   return (
-    <div
-      // DO NOT REMOVE THE ID
-      id="gantt-container"
-      className={cn(
-        "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
-        {
-          "mb-8": bottomSpacing,
-        }
-      )}
-      ref={ganttContainerRef}
-      onScroll={onScroll}
+    <MultipleSelectGroup
+      containerRef={ganttContainerRef}
+      entities={{
+        [GANTT_SELECT_GROUP]: blockIds ?? [],
+      }}
     >
-      <GanttChartSidebar
+      {(helpers) => (
+        <>
+          <div
+            // DO NOT REMOVE THE ID
+            id="gantt-container"
+            className={cn(
+              "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
+              {
+                "mb-8": bottomSpacing,
+              }
+            )}
+            ref={ganttContainerRef}
+            onScroll={onScroll}
+          >
+            <GanttChartSidebar
         blockIds={blockIds}
         getBlockById={getBlockById}
         loadMoreBlocks={loadMoreBlocks}
@@ -132,9 +146,11 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
         ganttContainerRef={ganttContainerRef}
         blockUpdateHandler={blockUpdateHandler}
         enableReorder={enableReorder}
+        enableSelection={enableSelection}
         sidebarToRender={sidebarToRender}
         title={title}
         quickAdd={quickAdd}
+        selectionHelpers={helpers}
       />
       <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
         <ActiveChartView />
@@ -151,9 +167,14 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
             enableAddBlock={enableAddBlock}
             ganttContainerRef={ganttContainerRef}
             showAllBlocks={showAllBlocks}
+            selectionHelpers={helpers}
           />
         )}
       </div>
-    </div>
+          </div>
+          <IssueBulkOperationsRoot selectionHelpers={helpers} />
+        </>
+      )}
+    </MultipleSelectGroup>
   );
 });

@@ -55,7 +55,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
-      isDeleting={isDeleting}
+      isSubmitting={isDeleting}
       isOpen={isOpen}
       title="Delete webhook"
       content={

@@ -33,3 +33,5 @@ export const STATE_GROUPS: {
     color: "#dc2626",
   },
 };
+
+export const ARCHIVABLE_STATE_GROUPS = [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key];

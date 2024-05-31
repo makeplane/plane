@@ -1,12 +1,20 @@
 import { FC } from "react";
-// icons
-import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarCheck2, CalendarClock, Users } from "lucide-react";
+import {
+  CalendarDays,
+  Link2,
+  Signal,
+  Tag,
+  Triangle,
+  Paperclip,
+  CalendarCheck2,
+  CalendarClock,
+  Users,
+} from "lucide-react";
 // types
 import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 // ui
 import { LayersIcon, DoubleCircleIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
-// components
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
@@ -184,3 +192,5 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "attachment_count",
   "sub_issue_count",
 ];
+
+export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";

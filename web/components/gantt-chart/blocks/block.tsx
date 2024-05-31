@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
-// hooks
-// components
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// hooks
 import { useIssueDetail } from "@/hooks/store";
-// types
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
 import { BLOCK_HEIGHT } from "../constants";
+// components
 import { ChartAddBlock, ChartDraggable } from "../helpers";
 import { useGanttChart } from "../hooks";
 import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
@@ -23,6 +23,7 @@ type Props = {
   enableBlockMove: boolean;
   enableAddBlock: boolean;
   ganttContainerRef: React.RefObject<HTMLDivElement>;
+  selectionHelpers: TSelectionHelper;
 };
 
 export const GanttChartBlock: React.FC<Props> = observer((props) => {
@@ -37,6 +38,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     enableBlockMove,
     enableAddBlock,
     ganttContainerRef,
+    selectionHelpers,
   } = props;
   // store hooks
   const { currentViewData, updateActiveBlockId, isBlockActive } = useGanttChart();
@@ -81,6 +83,10 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
 
   if (!block.data) return null;
 
+  const isBlockSelected = selectionHelpers.getIsEntitySelected(block.id);
+  const isBlockFocused = selectionHelpers.getIsEntityActive(block.id);
+  const isBlockHoveredOn = isBlockActive(block.id);
+
   return (
     <div
       className="relative min-w-full w-max"
@@ -90,10 +96,11 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn("relative h-full", {
-          "bg-custom-background-80": isBlockActive(block.id),
-          "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(
-            block.data.id
-          ),
+          "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
+          "bg-custom-background-90": isBlockHoveredOn,
+          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isBlockSelected,
+          "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
+          "border border-r-0 border-custom-border-400": isBlockFocused,
         })}
         onMouseEnter={() => updateActiveBlockId(blockId)}
         onMouseLeave={() => updateActiveBlockId(null)}

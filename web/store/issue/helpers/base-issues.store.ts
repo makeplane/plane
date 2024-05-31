@@ -25,6 +25,7 @@ import {
   TIssuePaginationData,
   TGroupedIssueCount,
   TPaginationData,
+  TBulkOperationsPayload,
 } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
@@ -223,6 +224,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       removeIssue: action.bound,
       archiveIssue: action.bound,
       removeBulkIssues: action.bound,
+      archiveBulkIssues: action.bound,
+      bulkUpdateProperties: action.bound,
 
       addIssueToCycle: action.bound,
       removeIssueFromCycle: action.bound,
@@ -718,6 +721,71 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       throw error;
     }
   }
+
+  /**
+   * Bulk Archive issues
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueIds
+   */
+  archiveBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      const response = await this.issueService.bulkArchiveIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          this.updateIssue(workspaceSlug, projectId, issueId, {
+            archived_at: response.archived_at,
+          });
+          this.removeIssueFromList(issueId);
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * @description bulk update properties of selected issues
+   * @param {TBulkOperationsPayload} data
+   */
+  bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
+    const issueIds = data.issue_ids;
+    try {
+      // make request to update issue properties
+      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+      // update issues in the store
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+          if (!issueBeforeUpdate) throw new Error("Issue not found");
+          Object.keys(data.properties).forEach((key) => {
+            const property = key as keyof TBulkOperationsPayload["properties"];
+            const propertyValue = data.properties[property];
+            // update root issue map properties
+            if (Array.isArray(propertyValue)) {
+              // if property value is array, append it to the existing values
+              const existingValue = issueBeforeUpdate[property];
+              // convert existing value to an array
+              const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: [newExistingValue, ...propertyValue],
+              });
+            } else {
+              // if property value is not an array, simply update the value
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: propertyValue,
+              });
+            }
+          });
+          const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
+          this.updateIssueList(issueDetails, issueBeforeUpdate);
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * This method is used to add issues to a particular Cycle
