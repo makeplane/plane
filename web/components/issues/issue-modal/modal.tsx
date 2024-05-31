@@ -139,6 +139,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     }
 
     setActiveProjectId(null);
+    setChangesMade(null);
     onClose();
   };
 

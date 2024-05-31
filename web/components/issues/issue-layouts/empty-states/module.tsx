@@ -77,7 +77,6 @@ export const ModuleEmptyState: React.FC = observer(() => {
   const isEmptyFilters = issueFilterCount > 0;
   const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_MODULE_ISSUES;
   const additionalPath = activeLayout ?? "list";
-  const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -93,7 +92,6 @@ export const ModuleEmptyState: React.FC = observer(() => {
         <EmptyState
           type={emptyStateType}
           additionalPath={additionalPath}
-          size={emptyStateSize}
           primaryButtonOnClick={
             isEmptyFilters
               ? undefined

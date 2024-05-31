@@ -73,6 +73,7 @@ export class UserSettingsStore implements IUserSettingsStore {
           message: "Failed to fetch user settings",
         };
       });
+      throw error;
     }
   };
 }

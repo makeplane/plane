@@ -147,7 +147,6 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     <DateRangeDropdown
                       buttonVariant="border-with-text"
                       className="h-7"
-                      minDate={new Date()}
                       value={{
                         from: getDate(startDateValue),
                         to: getDate(endDateValue),

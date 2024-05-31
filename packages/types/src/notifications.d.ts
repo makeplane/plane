@@ -57,7 +57,7 @@ export interface INotificationIssueLite {
   state_group: string;
 }
 
-export type NotificationType = "created" | "assigned" | "watching" | null;
+export type NotificationType = "created" | "assigned" | "watching" | "all";
 
 export interface INotificationParams {
   snoozed?: boolean;
