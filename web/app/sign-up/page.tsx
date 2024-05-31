@@ -13,9 +13,8 @@ import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
-// wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
 // assets
+import { AuthenticationWrapper } from "@/lib/wrappers";
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";

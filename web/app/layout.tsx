@@ -40,7 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div id="context-menu-portal" />
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>{children}</div>
+        </AppProvider>
       </body>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script defer data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.js" />

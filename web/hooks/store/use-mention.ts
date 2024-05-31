@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useEffect } from "react";
 // types
 import { IUser, IUserLite } from "@plane/types";

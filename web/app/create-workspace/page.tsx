@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { IWorkspace } from "@plane/types";
 // components
