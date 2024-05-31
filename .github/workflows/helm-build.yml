@@ -22,7 +22,17 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 2
 
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v42
+        with:
+          path: code
+          files_yaml: |
+            helm_chart:
+              - helm-chart/**
+
       - name: Checkout Source Master
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
         uses: actions/checkout@v4
         with:
           path: master
@@ -30,6 +40,7 @@ jobs:
           fetch-depth: 2
       
       - name: Merge Docs from Master to code
+        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
         run: |
           rm -rf master/docs/content
           rm -rf master/docs/images
@@ -39,15 +50,6 @@ jobs:
           rm -rf master/docs/index.html
 
           cp -r master/docs code
-
-      - name: Get changed files
-        id: changed_files
-        uses: tj-actions/changed-files@v42
-        with:
-          path: code
-          files_yaml: |
-            helm_chart:
-              - helm-chart/**
 
       - name: Configure Git
         if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
