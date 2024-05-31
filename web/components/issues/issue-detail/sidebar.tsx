@@ -48,7 +48,7 @@ import {
 } from "@/components/issues";
 // helpers
 // types
-import { STATE_GROUPS } from "@/constants/state";
+import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
@@ -117,8 +117,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const stateDetails = getStateById(issue.state_id);
   // auth
   const isArchivingAllowed = !is_archived && issueOperations.archive && isEditable;
-  const isInArchivableGroup =
-    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
