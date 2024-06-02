@@ -134,7 +134,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entrypoint-beat.sh
+    command: chmod +x ./bin/docker-entrypoint-beat.sh && ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -153,7 +153,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
+    command: chmod +x ./bin/docker-entrypoint-migrator.sh && ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apiserver/.env
     depends_on:
