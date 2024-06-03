@@ -127,7 +127,7 @@ class Issue(ProjectBaseModel):
     estimate_point = models.ForeignKey(
         "db.EstimatePoint",
         on_delete=models.SET_NULL,
-        related_name="issue_estimate",
+        related_name="issue_estimates",
         null=True,
         blank=True,
     )

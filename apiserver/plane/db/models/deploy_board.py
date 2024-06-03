@@ -38,7 +38,7 @@ class DeployBoard(WorkspaceBaseModel):
         null=True,
     )
     votes = models.BooleanField(default=False)
-    views = models.JSONField(default=dict)
+    view_props = models.JSONField(default=dict)
 
     def __str__(self):
         """Return name of the deploy board"""
