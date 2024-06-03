@@ -8,7 +8,7 @@ import { ModuleViewHeader } from "@/components/modules";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser, } from "@/hooks/store";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
@@ -16,7 +16,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();

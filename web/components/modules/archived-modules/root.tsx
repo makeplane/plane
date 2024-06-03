@@ -10,10 +10,11 @@ import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modu
 import { CycleModuleListLayout } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { MODULES_FILTER_REMOVED } from "@/constants/event-tracker";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useModule, useModuleFilter } from "@/hooks/store";
+import { useModule, useModuleFilter, useEventTracker } from "@/hooks/store";
 
 export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   // router
@@ -21,6 +22,7 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { fetchArchivedModules, projectArchivedModuleIds, loader } = useModule();
+  const { captureEvent } = useEventTracker();
   // module filters hook
   const { clearAllFilters, currentProjectArchivedFilters, updateFilters } = useModuleFilter();
   // derived values
@@ -43,6 +45,12 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
 
       if (!value) newValues = [];
       else newValues = newValues.filter((val) => val !== value);
+
+      captureEvent(MODULES_FILTER_REMOVED, {
+        filter_type: key,
+        filter_property: value,
+        current_filters: currentProjectArchivedFilters,
+      });
 
       updateFilters(projectId.toString(), { [key]: newValues }, "archived");
     },

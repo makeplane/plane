@@ -8,6 +8,7 @@ import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, set
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // constants
+import { E_MODULES, MODULE_ARCHIVED, MODULE_RESTORED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -31,7 +32,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const [archiveModuleModal, setArchiveModuleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -58,7 +59,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const handleOpenInNewTab = () => window.open(`/${moduleLink}`, "_blank");
 
   const handleEditModule = () => {
-    setTrackElement("Modules page list layout");
+    setTrackElement(E_MODULES);
     setEditModal(true);
   };
 
@@ -73,6 +74,9 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           message: "Your module can be found in project modules.",
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
+        captureEvent(MODULE_RESTORED, {
+          module_id: moduleId,
+        });
       })
       .catch(() =>
         setToast({
@@ -83,7 +87,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
       );
 
   const handleDeleteModule = () => {
-    setTrackElement("Modules page list layout");
+    setTrackElement(E_MODULES);
     setDeleteModal(true);
   };
 

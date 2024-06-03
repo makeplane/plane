@@ -163,6 +163,12 @@ export const MODULE_UNFAVORITED = "Module unfavorited";
 export const MODULE_LINK_CREATED = "Module link created";
 export const MODULE_LINK_UPDATED = "Module link updated";
 export const MODULE_LINK_DELETED = "Module link deleted";
+export const MODULES_LAYOUT_CHANGED = "Modules layout changed";
+export const MODULES_SORT_UPDATED = "Modules sort updated";
+export const MODULES_FILTER_APPLIED = "Modules filter applied";
+export const MODULES_FILTER_REMOVED = "Modules filter removed";
+export const MODULE_ARCHIVED = "Module archived";
+export const MODULE_RESTORED = "Module restored";
 // Issue Events
 export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";
@@ -222,3 +228,8 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+// Elements
+export const E_MODULES = "Modules Page";
+export const E_GRID_LAYOUT = "Grid Layout";
+export const E_LIST_LAYOUT = "List Layout";

@@ -11,7 +11,7 @@ import { Tooltip, setPromiseToast } from "@plane/ui";
 import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { E_LIST_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -59,7 +59,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
-          element: "Grid layout",
+          element: E_LIST_LAYOUT,
           state: "SUCCESS",
         });
       }
@@ -90,7 +90,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
     ).then(() => {
       captureEvent(MODULE_UNFAVORITED, {
         module_id: moduleId,
-        element: "Grid layout",
+        element: E_LIST_LAYOUT,
         state: "SUCCESS",
       });
     });
