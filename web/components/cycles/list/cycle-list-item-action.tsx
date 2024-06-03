@@ -57,7 +57,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
-          element: "List layout",
           state: "SUCCESS",
         });
       }
@@ -87,7 +86,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     ).then(() => {
       captureEvent(CYCLE_UNFAVORITED, {
         cycle_id: cycleId,
-        element: "List layout",
         state: "SUCCESS",
       });
     });

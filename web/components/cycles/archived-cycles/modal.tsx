@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { CYCLE_ARCHIVED } from "@/constants/event-tracker";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle, useEventTracker } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -23,6 +25,7 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
   const [isArchiving, setIsArchiving] = useState(false);
   // store hooks
   const { getCycleNameById, archiveCycle } = useCycle();
+  const {captureEvent}  =useEventTracker();
 
   const cycleName = getCycleNameById(cycleId);
 
@@ -42,6 +45,9 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
+        captureEvent(CYCLE_ARCHIVED, {
+          cycle_id: cycleId,
+        });
       })
       .catch(() =>
         setToast({

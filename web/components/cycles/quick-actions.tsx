@@ -8,6 +8,7 @@ import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, set
 // components
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // constants
+import { CYCLE_ARCHIVED, CYCLE_RESTORED, E_CYCLES } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -31,7 +32,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -56,7 +57,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
 
   const handleEditCycle = () => {
-    setTrackElement("Cycles page list layout");
+    setTrackElement(E_CYCLES);
     setUpdateModal(true);
   };
 
@@ -65,6 +66,9 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const handleRestoreCycle = async () =>
     await restoreCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
+        captureEvent(CYCLE_RESTORED, {
+          cycle_id: cycleId,
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
@@ -81,7 +85,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       );
 
   const handleDeleteCycle = () => {
-    setTrackElement("Cycles page list layout");
+    setTrackElement(E_CYCLES);
     setDeleteModal(true);
   };
 

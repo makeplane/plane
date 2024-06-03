@@ -154,6 +154,12 @@ export const CYCLE_UPDATED = "Cycle updated";
 export const CYCLE_DELETED = "Cycle deleted";
 export const CYCLE_FAVORITED = "Cycle favorited";
 export const CYCLE_UNFAVORITED = "Cycle unfavorited";
+export const ACYCLE_TAB_CHANGED = "Active cycle tab changed";
+export const CYCLES_FILTER_APPLIED = "Cycles filter applied";
+export const CYCLES_FILTER_REMOVED = "Cycles filter removed";
+export const CYCLE_ARCHIVED = "Cycle archived";
+export const CYCLE_RESTORED = "Cycle restored";
+export const CYCLE_LAYOUT_CHANGED = "Cycle layout changed";
 // Module Events
 export const MODULE_CREATED = "Module created";
 export const MODULE_UPDATED = "Module updated";
@@ -222,3 +228,6 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+// Elements
+export const E_CYCLES = "Cycles";

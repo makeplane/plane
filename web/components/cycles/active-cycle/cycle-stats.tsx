@@ -15,13 +15,14 @@ import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { ACYCLE_TAB_CHANGED } from "@/constants/event-tracker";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useProject } from "@/hooks/store";
+import { useIssues, useProject, useEventTracker } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
@@ -34,6 +35,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
+  const { captureEvent } = useEventTracker();
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -45,6 +47,18 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         return 2;
       default:
         return 0;
+    }
+  };
+  const getCurrentTab = (index: number) => {
+    switch (index) {
+      case 0:
+        return "Priority-Issues";
+      case 1:
+        return "Assignees";
+      case 2:
+        return "Labels";
+      default:
+        return "Priority-Issues";
     }
   };
   const {
@@ -66,17 +80,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         as={Fragment}
         defaultIndex={currentValue(tab)}
         onChange={(i) => {
-          switch (i) {
-            case 0:
-              return setTab("Priority-Issues");
-            case 1:
-              return setTab("Assignees");
-            case 2:
-              return setTab("Labels");
-
-            default:
-              return setTab("Priority-Issues");
-          }
+          const currentTab = getCurrentTab(i);
+          setTab(currentTab);
+          captureEvent(ACYCLE_TAB_CHANGED, { tab: currentTab });
         }}
       >
         <Tab.List

@@ -7,11 +7,13 @@ import { TCycleFilters } from "@plane/types";
 // components
 import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
+// constants
+import { CYCLES_FILTER_APPLIED, CYCLES_FILTER_REMOVED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useCycleFilter } from "@/hooks/store";
+import { useCycleFilter, useEventTracker } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type Props = {
@@ -24,6 +26,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   // hooks
   const { currentProjectFilters, searchQuery, updateFilters, updateSearchQuery } = useCycleFilter();
+  const { captureEvent } = useEventTracker();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // outside click detector hook
@@ -34,7 +37,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
       if (!projectId) return;
-      const newValues = currentProjectFilters?.[key] ?? [];
+      const newValues = Array.from(currentProjectFilters?.[key] ?? []);
 
       if (Array.isArray(value))
         value.forEach((val) => {
@@ -46,6 +49,14 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
         else newValues.push(value);
       }
 
+      captureEvent(
+        (currentProjectFilters?.[key] ?? []).length > newValues.length ? CYCLES_FILTER_REMOVED : CYCLES_FILTER_APPLIED,
+        {
+          filter_type: key,
+          filter_property: value,
+          current_filters: currentProjectFilters,
+        }
+      );
       updateFilters(projectId, { [key]: newValues });
     },
     [currentProjectFilters, projectId, updateFilters]

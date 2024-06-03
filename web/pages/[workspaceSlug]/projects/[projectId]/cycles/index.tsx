@@ -12,6 +12,7 @@ import { CyclesHeader } from "@/components/headers";
 import { CycleModuleListLayout } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { CYCLES_FILTER_REMOVED } from "@/constants/event-tracker";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -25,7 +26,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
   const [createModal, setCreateModal] = useState(false);
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement,captureEvent } = useEventTracker();
   const { currentProjectCycleIds, loader } = useCycle();
   const { getProjectById, currentProjectDetails } = useProject();
   // router
@@ -45,6 +46,12 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     if (!value) newValues = [];
     else newValues = newValues.filter((val) => val !== value);
 
+    captureEvent(CYCLES_FILTER_REMOVED, {
+      filter_type: key,
+      filter_property: value,
+      current_filters: currentProjectFilters,
+    });
+  
     updateFilters(projectId.toString(), { [key]: newValues });
   };
 
