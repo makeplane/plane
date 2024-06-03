@@ -2,9 +2,9 @@ import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
-import { Button, Draggable, Sortable } from "@plane/ui";
+import { Button, Sortable } from "@plane/ui";
 // components
-import { EstimatePointItemPreview, EstimatePointCreate } from "@/components/estimates/points";
+import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
 // constants
 import { maxEstimatesCount } from "@/constants/estimates";
 // hooks
@@ -83,27 +83,28 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium text-custom-text-200 capitalize">{estimate?.type}</div>
-      <Sortable
-        data={estimatePoints}
-        render={(value: TEstimatePointsObject) => (
-          <EstimatePointItemPreview
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            estimateId={estimateId}
-            estimateType={estimateType}
-            estimatePointId={value?.id}
-            estimatePoints={estimatePoints}
-            estimatePoint={value}
-            handleEstimatePointValueUpdate={(estimatePointValue: string) =>
-              handleEstimatePoint("update", { ...value, value: estimatePointValue })
-            }
-            handleEstimatePointValueRemove={() => handleEstimatePoint("remove", value)}
-          />
-        )}
-        onChange={(data: TEstimatePointsObject[]) => handleDragEstimatePoints(data)}
-        keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
-      />
-
+      <div>
+        <Sortable
+          data={estimatePoints}
+          render={(value: TEstimatePointsObject) => (
+            <EstimatePointItemPreview
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              estimateId={estimateId}
+              estimateType={estimateType}
+              estimatePointId={value?.id}
+              estimatePoints={estimatePoints}
+              estimatePoint={value}
+              handleEstimatePointValueUpdate={(estimatePointValue: string) =>
+                handleEstimatePoint("update", { ...value, value: estimatePointValue })
+              }
+              handleEstimatePointValueRemove={() => handleEstimatePoint("remove", value)}
+            />
+          )}
+          onChange={(data: TEstimatePointsObject[]) => handleDragEstimatePoints(data)}
+          keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
+        />
+      </div>
       {estimatePointCreate &&
         estimatePointCreate.map((estimatePoint) => (
           <EstimatePointCreate
