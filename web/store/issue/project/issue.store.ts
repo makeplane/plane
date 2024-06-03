@@ -257,17 +257,21 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
         data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
 
       const multipleIssuePromises = [];
-      if (currentCycleId)
+      if (currentCycleId) {
         multipleIssuePromises.push(
           this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id)
         );
+      }
 
-      if (currentModuleIds.length > 0)
+      if (currentModuleIds.length > 0) {
         multipleIssuePromises.push(
           this.rootStore.moduleIssues.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, [])
         );
+      }
 
-      if (multipleIssuePromises && multipleIssuePromises.length > 0) await Promise.all(multipleIssuePromises);
+      if (multipleIssuePromises && multipleIssuePromises.length > 0) {
+        await Promise.all(multipleIssuePromises);
+      }
 
       return response;
     } catch (error) {

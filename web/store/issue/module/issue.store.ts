@@ -302,8 +302,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       }
 
       const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
-      if (currentCycleId)
+      if (currentCycleId) {
         await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id);
+      }
 
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
