@@ -1,6 +1,6 @@
 {
   "name": "@plane/rich-text-editor",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Rich Text Editor that powers Plane",
   "private": true,
   "main": "./dist/index.mjs",
