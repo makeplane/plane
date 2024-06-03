@@ -211,11 +211,11 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full sticky bottom-0 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-text-350 hover:text-custom-text-300 hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
     >
       {" "}
-      Load more &darr;
+      Load More &darr;
     </div>
   );
 
