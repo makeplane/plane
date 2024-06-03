@@ -10,6 +10,7 @@ import { InboxLayoutLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
@@ -18,22 +19,25 @@ type TInboxIssueRoot = {
   projectId: string;
   inboxIssueId: string | undefined;
   inboxAccessible: boolean;
+  navigationTab?: EInboxIssueCurrentTab | undefined;
 };
 
 export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssueId, inboxAccessible } = props;
+  const { workspaceSlug, projectId, inboxIssueId, inboxAccessible, navigationTab } = props;
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);
   // hooks
-  const { loader, error, fetchInboxIssues } = useProjectInbox();
+  const { loader, error, currentTab, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
 
   useSWR(
     inboxAccessible && workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
     async () => {
-      inboxAccessible &&
-        workspaceSlug &&
-        projectId &&
-        (await fetchInboxIssues(workspaceSlug.toString(), projectId.toString()));
+      if (!inboxAccessible || !workspaceSlug || !projectId) return;
+      if (navigationTab && navigationTab !== currentTab) {
+        handleCurrentTab(navigationTab);
+      } else {
+        await fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+      }
     },
     { revalidateOnFocus: false, revalidateIfStale: false }
   );

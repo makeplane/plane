@@ -72,8 +72,10 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
               )}
               onClick={() => {
-                if (currentTab != option?.key) handleCurrentTab(option?.key);
-                router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                if (currentTab != option?.key) {
+                  handleCurrentTab(option?.key);
+                  router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                }
               }}
             >
               <div>{option?.label}</div>
