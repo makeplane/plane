@@ -5,7 +5,7 @@ import {
   TStateGroups,
 } from ".";
 
-type TLoginMediums = "email" | "magic-code" | "github" | "google";
+type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
 export interface IUser {
   id: string;
