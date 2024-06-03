@@ -9,6 +9,51 @@ import plane.db.models.deploy_board
 
 
 def issue_estimate_point(apps, schema_editor):
+    Issue = apps.get_model("db", "Issue")
+    Project = apps.get_model("db", "Project")
+    EstimatePoint = apps.get_model("db", "EstimatePoint")
+    IssueActivity = apps.get_model("db", "IssueActivity")
+    updated_estimate_point = []
+    updated_issue_activity = []
+
+    # loop through all the projects
+    for project in Project.objects.filter(estimate__isnull=False):
+        estimate_points = EstimatePoint.objects.filter(
+            estimate=project.estimate, project=project
+        )
+
+        for issue_activity in IssueActivity.objects.filter(
+            field="estimate_point", project=project
+        ):
+            if issue_activity.new_value:
+                new_value = estimate_points.filter(
+                    key=issue_activity.new_value
+                ).first().id
+                issue_activity.new_value = new_value
+            if issue_activity.old_value:
+                old_value = estimate_points.filter(
+                    key=issue_activity.old_value
+                ).first().id
+                issue_activity.old_value = old_value
+            updated_issue_activity.append(issue_activity)
+
+        for issue in Issue.objects.filter(
+            point__isnull=False, project=project
+        ):
+            # get the estimate id for the corresponding estimate point in the issue
+            estimate = estimate_points.filter(key=issue.point).first()
+            issue.estimate_point = estimate
+            updated_estimate_point.append(issue)
+
+    Issue.objects.bulk_update(
+        updated_estimate_point, ["estimate_point"], batch_size=1000
+    )
+    IssueActivity.objects.bulk_update(
+        updated_issue_activity, ["new_value", "old_value"], batch_size=1000
+    )
+
+
+def issue_activity_estimate_point(apps, schema_editor):
     Project = apps.get_model("db", "Project")
     EstimatePoint = apps.get_model("db", "EstimatePoint")
     Issue = apps.get_model("db", "Issue")
