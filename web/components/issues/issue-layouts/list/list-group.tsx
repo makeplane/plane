@@ -86,6 +86,7 @@ export const ListGroup = observer((props: Props) => {
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
+  const [isExpanded, setIsExpanded] = useState(true);
   const groupRef = useRef<HTMLDivElement | null>(null);
 
   const projectState = useProjectState();
@@ -123,6 +124,10 @@ export const ListGroup = observer((props: Props) => {
   const validateEmptyIssueGroups = (issueCount: number = 0) => {
     if (!showEmptyGroup && issueCount <= 0) return false;
     return true;
+  };
+
+  const toggleListGroup = () => {
+    setIsExpanded((prevState) => !prevState);
   };
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
@@ -214,6 +219,7 @@ export const ListGroup = observer((props: Props) => {
   const canOverlayBeVisible = orderBy !== "sort_order" || !!group.isDropDisabled;
 
   const isGroupByCreatedBy = group_by === "created_by";
+  const shouldExpand = (!!groupIssueCount && isExpanded) || !group_by;
 
   return groupIssueIds && !isNil(groupIssueCount) && validateEmptyIssueGroups(groupIssueCount) ? (
     <div
@@ -234,9 +240,10 @@ export const ListGroup = observer((props: Props) => {
           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
+          toggleListGroup={toggleListGroup}
         />
       </div>
-      {!!groupIssueCount && (
+      {shouldExpand && (
         <div className="relative">
           <GroupDragOverlay
             dragColumnOrientation={dragColumnOrientation}
