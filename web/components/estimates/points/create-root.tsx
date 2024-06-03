@@ -7,8 +7,6 @@ import { Button, Sortable } from "@plane/ui";
 import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
 // constants
 import { maxEstimatesCount } from "@/constants/estimates";
-// hooks
-import { useEstimate } from "@/hooks/store";
 
 type TEstimatePointCreateRoot = {
   workspaceSlug: string;
@@ -22,8 +20,6 @@ type TEstimatePointCreateRoot = {
 export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
   // props
   const { workspaceSlug, projectId, estimateId, estimateType, estimatePoints, setEstimatePoints } = props;
-  // hooks
-  const { asJson: estimate, updateEstimateSortOrder } = useEstimate(estimateId);
   // states
   const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
@@ -76,13 +72,14 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
 
   const handleDragEstimatePoints = (updatedEstimatedOrder: TEstimatePointsObject[]) => {
     const updatedEstimateKeysOrder = updatedEstimatedOrder.map((item, index) => ({ ...item, key: index + 1 }));
-    updateEstimateSortOrder(workspaceSlug, projectId, updatedEstimateKeysOrder);
+    setEstimatePoints(() => updatedEstimateKeysOrder);
   };
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="space-y-3">
-      <div className="text-sm font-medium text-custom-text-200 capitalize">{estimate?.type}</div>
+      <div className="text-sm font-medium text-custom-text-200 capitalize">{estimateType}</div>
+
       <div>
         <Sortable
           data={estimatePoints}
@@ -105,6 +102,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
           keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
         />
       </div>
+
       {estimatePointCreate &&
         estimatePointCreate.map((estimatePoint) => (
           <EstimatePointCreate
@@ -133,7 +131,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
             })
           }
         >
-          Add {estimate?.type}
+          Add {estimateType}
         </Button>
       )}
     </div>

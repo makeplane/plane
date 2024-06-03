@@ -2,7 +2,7 @@ import { FC, Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { TEstimatePointsObject } from "@plane/types";
-import { Button, Draggable, Sortable, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Sortable, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EstimatePointItemPreview, EstimatePointCreate } from "@/components/estimates/points";
 // constants
