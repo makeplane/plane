@@ -9,10 +9,11 @@ type TEstimateList = {
   isEstimateEnabled?: boolean;
   isEditable?: boolean;
   onEditClick?: (estimateId: string) => void;
+  onDeleteClick?: (estimateId: string) => void;
 };
 
 export const EstimateList: FC<TEstimateList> = observer((props) => {
-  const { estimateIds, isAdmin, isEstimateEnabled = false, isEditable = false, onEditClick } = props;
+  const { estimateIds, isAdmin, isEstimateEnabled = false, isEditable = false, onEditClick, onDeleteClick } = props;
 
   if (!estimateIds || estimateIds?.length <= 0) return <></>;
   return (
@@ -26,6 +27,7 @@ export const EstimateList: FC<TEstimateList> = observer((props) => {
             isEstimateEnabled={isEstimateEnabled}
             isEditable={isEditable}
             onEditClick={onEditClick}
+            onDeleteClick={onDeleteClick}
           />
         ))}
     </div>

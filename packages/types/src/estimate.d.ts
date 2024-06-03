@@ -63,7 +63,7 @@ export type TEstimateSystem = {
   name: string;
   templates: Record<string, TTemplateValues>;
   is_available: boolean;
-  is_active: boolean;
+  is_ee: boolean;
 };
 
 export type TEstimateSystems = {

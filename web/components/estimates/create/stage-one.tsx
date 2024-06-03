@@ -31,7 +31,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
                     <Info size={12} />
                   </Tooltip>
                 </div>
-              ) : ESTIMATE_SYSTEMS[currentSystem]?.is_active ? (
+              ) : ESTIMATE_SYSTEMS[currentSystem]?.is_ee ? (
                 <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
                   {ESTIMATE_SYSTEMS[currentSystem]?.name}
                   <Tooltip tooltipContent={"upgrade"}>
@@ -42,7 +42,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
                 <div>{ESTIMATE_SYSTEMS[currentSystem]?.name}</div>
               ),
               value: system,
-              disabled: !ESTIMATE_SYSTEMS[currentSystem]?.is_available || ESTIMATE_SYSTEMS[currentSystem]?.is_active,
+              disabled: !ESTIMATE_SYSTEMS[currentSystem]?.is_available || ESTIMATE_SYSTEMS[currentSystem]?.is_ee,
             };
           })}
           label="Choose an estimate system"
@@ -55,7 +55,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
         />
       </div>
 
-      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && !ESTIMATE_SYSTEMS[estimateSystem]?.is_active && (
+      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && !ESTIMATE_SYSTEMS[estimateSystem]?.is_ee && (
         <>
           <div className="space-y-1.5">
             <div className="text-sm font-medium text-custom-text-200">Start from scratch</div>

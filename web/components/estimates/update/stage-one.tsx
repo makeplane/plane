@@ -22,13 +22,13 @@ export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
             key={stage.key}
             className={cn(
               "border border-custom-border-300 cursor-pointer space-y-1 p-3 rounded transition-colors",
-              stage?.is_active ? `bg-custom-background-90` : `hover:bg-custom-background-90`
+              stage?.is_ee ? `bg-custom-background-90` : `hover:bg-custom-background-90`
             )}
-            onClick={() => !stage?.is_active && handleEstimateEditType(stage.key)}
+            onClick={() => !stage?.is_ee && handleEstimateEditType(stage.key)}
           >
             <h3 className="text-base font-medium relative flex items-center gap-2">
               {stage.title}
-              {stage?.is_active && (
+              {stage?.is_ee && (
                 <Tooltip tooltipContent={"upgrade"}>
                   <Crown size={12} className="text-amber-400" />
                 </Tooltip>

@@ -26,6 +26,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   // states
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.CATEGORIES);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
+  const [buttonLoader, setButtonLoader] = useState(false);
 
   const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
 
@@ -39,7 +40,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const handleCreateEstimate = async () => {
     try {
       if (!workspaceSlug || !projectId || !estimatePoints) return;
-
+      setButtonLoader(true);
       const payload: IEstimateFormData = {
         estimate: {
           name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
@@ -50,13 +51,15 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
       };
       await createEstimate(workspaceSlug, projectId, payload);
 
+      setButtonLoader(false);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Estimate created",
-        message: "Created and Enabled successfully",
+        message: "A new estimate has been added in your project.",
       });
       handleClose();
     } catch (error) {
+      setButtonLoader(false);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Estimate creation failed",
@@ -116,12 +119,12 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
         </div>
 
         <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
             Cancel
           </Button>
           {estimatePoints && (
-            <Button variant="primary" size="sm" onClick={handleCreateEstimate}>
-              Create Estimate
+            <Button variant="primary" size="sm" onClick={handleCreateEstimate} disabled={buttonLoader}>
+              {buttonLoader ? `Creating` : `Create Estimate`}
             </Button>
           )}
         </div>

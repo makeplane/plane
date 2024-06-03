@@ -1,5 +1,6 @@
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
+import unset from "lodash/unset";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -40,6 +41,7 @@ export interface IProjectEstimateStore {
     projectId: string,
     data: IEstimateFormData
   ) => Promise<IEstimateType | undefined>;
+  deleteEstimate: (workspaceSlug: string, projectId: string, estimateId: string) => Promise<void>;
 }
 
 export class ProjectEstimateStore implements IProjectEstimateStore {
@@ -62,6 +64,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       getProjectEstimates: action,
       getEstimateById: action,
       createEstimate: action,
+      deleteEstimate: action,
     });
   }
 
@@ -249,9 +252,10 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
 
       const estimate = await estimateService.createEstimate(workspaceSlug, projectId, payload);
       if (estimate) {
-        await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
-          estimate: estimate.id,
-        });
+        // update estimate_id in current project
+        // await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
+        //   estimate: estimate.id,
+        // });
         runInAction(() => {
           if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
         });
@@ -268,16 +272,21 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   };
 
   /**
-   * @description deletes the given estimate for the given project
+   * @description delete the estimate for a project
    * @param workspaceSlug
    * @param projectId
    * @param estimateId
    */
   deleteEstimate = async (workspaceSlug: string, projectId: string, estimateId: string) => {
-    await estimateService.deleteEstimate(workspaceSlug, projectId, estimateId).then(() => {
-      runInAction(() => {
-        delete this.estimates[estimateId];
-      });
-    });
+    try {
+      await estimateService.deleteEstimate(workspaceSlug, projectId, estimateId);
+      runInAction(() => estimateId && unset(this.estimates, [estimateId]));
+    } catch (error) {
+      this.error = {
+        status: "error",
+        message: "Error deleting estimate",
+      };
+      throw error;
+    }
   };
 }

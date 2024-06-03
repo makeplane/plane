@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pen } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -13,10 +12,11 @@ type TEstimateListItem = {
   isEstimateEnabled: boolean;
   isEditable: boolean;
   onEditClick?: (estimateId: string) => void;
+  onDeleteClick?: (estimateId: string) => void;
 };
 
 export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
-  const { estimateId, isAdmin, isEstimateEnabled, isEditable, onEditClick } = props;
+  const { estimateId, isAdmin, isEstimateEnabled, isEditable } = props;
   // hooks
   const { estimateById } = useProjectEstimates();
   const { estimatePointIds, estimatePointById } = useEstimate(estimateId);

@@ -8,7 +8,9 @@ import {
   EstimateDisableSwitch,
   CreateEstimateModal,
   UpdateEstimateModal,
+  DeleteEstimateModal,
   EstimateList,
+  EstimateEEBanner,
 } from "@/components/estimates";
 // hooks
 import { useProject, useProjectEstimates } from "@/hooks/store";
@@ -27,6 +29,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
   // states
   const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(false);
   const [estimateToUpdate, setEstimateToUpdate] = useState<string | undefined>();
+  const [estimateToDelete, setEstimateToDelete] = useState<string | undefined>();
 
   const { isLoading: isSWRLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
@@ -38,7 +41,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
       {loader === "init-loader" || isSWRLoading ? (
         <EstimateLoaderScreen />
       ) : (
-        <div className="space-y-10">
+        <div className="space-y-12">
           {/* header */}
           <div className="text-xl font-medium text-custom-text-100 border-b border-custom-border-200 py-3.5">
             Estimates
@@ -46,7 +49,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
 
           {/* current active estimate section */}
           {currentActiveEstimateId ? (
-            <div className="space-y-4">
+            <div className="">
               {/* estimates activated deactivated section */}
               <div className="relative border-b border-custom-border-200 pb-4 flex justify-between items-center gap-3">
                 <div className="space-y-1">
@@ -64,6 +67,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
                 isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
                 isEditable
                 onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
+                onDeleteClick={(estimateId: string) => setEstimateToDelete(estimateId)}
               />
             </div>
           ) : (
@@ -72,7 +76,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
 
           {/* archived estimates section */}
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
-            <div>
+            <div className="">
               <div className="border-b border-custom-border-200 space-y-1 pb-4">
                 <h3 className="text-lg font-medium text-custom-text-100">Archived estimates</h3>
                 <p className="text-sm text-custom-text-200">
@@ -89,25 +93,28 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
         </div>
       )}
 
+      {/* <EstimateEEBanner /> */}
+
       {/* CRUD modals */}
       <CreateEstimateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         isOpen={isEstimateCreateModalOpen}
-        handleClose={() => {
-          setIsEstimateCreateModalOpen(false);
-          setEstimateToUpdate(undefined);
-        }}
+        handleClose={() => setIsEstimateCreateModalOpen(false)}
       />
       <UpdateEstimateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         estimateId={estimateToUpdate ? estimateToUpdate : undefined}
         isOpen={estimateToUpdate ? true : false}
-        handleClose={() => {
-          setIsEstimateCreateModalOpen(false);
-          setEstimateToUpdate(undefined);
-        }}
+        handleClose={() => setEstimateToUpdate(undefined)}
+      />
+      <DeleteEstimateModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        estimateId={estimateToDelete ? estimateToDelete : undefined}
+        isOpen={estimateToDelete ? true : false}
+        handleClose={() => setEstimateToDelete(undefined)}
       />
     </div>
   );

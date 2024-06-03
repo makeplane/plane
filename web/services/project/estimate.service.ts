@@ -73,7 +73,7 @@ class EstimateService extends APIService {
     }
   }
 
-  async deleteEstimate(workspaceSlug: string, projectId: string, estimateId: string): Promise<any> {
+  async deleteEstimate(workspaceSlug: string, projectId: string, estimateId: string): Promise<void> {
     try {
       await this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`);
     } catch (error) {
