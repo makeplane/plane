@@ -16,7 +16,7 @@ type TPageView = {
 export const PagesListView: React.FC<TPageView> = observer((props) => {
   const { workspaceSlug, projectId, pageType, children } = props;
   // store hooks
-  const { getAllPages } = useProjectPages(projectId);
+  const { isAnyPageAvailable, getAllPages } = useProjectPages();
   // fetching pages list
   useSWR(projectId ? `PROJECT_PAGES_${projectId}` : null, projectId ? () => getAllPages(pageType) : null);
 
@@ -24,10 +24,10 @@ export const PagesListView: React.FC<TPageView> = observer((props) => {
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       {/* tab header */}
-      <PagesListHeaderRoot pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
-      <PagesListMainContent pageType={pageType} projectId={projectId}>
-        {children}
-      </PagesListMainContent>
+      {isAnyPageAvailable && (
+        <PagesListHeaderRoot pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
+      )}
+      <PagesListMainContent pageType={pageType}>{children}</PagesListMainContent>
     </div>
   );
 });

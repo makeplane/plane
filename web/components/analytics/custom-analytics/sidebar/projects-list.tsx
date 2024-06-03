@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
-// hooks
 // icons
 import { Contrast, LayoutGrid, Users } from "lucide-react";
+// components
+import { Logo } from "@/components/common";
 // helpers
-import { ProjectLogo } from "@/components/project";
 import { truncateText } from "@/helpers/string.helper";
+// hooks
 import { useProject } from "@/hooks/store";
 
 type Props = {
@@ -29,7 +30,7 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
             <div key={projectId} className="w-full">
               <div className="flex items-center gap-1 text-sm">
                 <div className="h-6 w-6 grid place-items-center">
-                  <ProjectLogo logo={project.logo_props} />
+                  <Logo logo={project.logo_props} />
                 </div>
                 <h5 className="flex items-center gap-1">
                   <p className="break-words">{truncateText(project.name, 20)}</p>

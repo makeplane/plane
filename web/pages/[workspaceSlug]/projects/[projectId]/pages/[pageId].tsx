@@ -36,9 +36,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
   // store hooks
-  const { createPage, getPageById } = useProjectPages(projectId?.toString() ?? "");
+  const { createPage, getPageById } = useProjectPages();
   const page = usePage(pageId?.toString() ?? "");
-  const { description_html, id, name } = page;
+  const { access, description_html, id, name } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // fetch page details
@@ -81,6 +81,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const formData: Partial<TPage> = {
       name: "Copy of " + name,
       description_html: description_html ?? "<p></p>",
+      access,
     };
 
     await handleCreatePage(formData)

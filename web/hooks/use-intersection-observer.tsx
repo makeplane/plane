@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect } from "react";
+import { RefObject, useEffect } from "react";
 
 export type UseIntersectionObserverProps = {
   containerRef: RefObject<HTMLDivElement>;
@@ -7,18 +7,19 @@ export type UseIntersectionObserverProps = {
   rootMargin?: string;
 };
 
-export const useIntersectionObserver = (props: UseIntersectionObserverProps) => {
-  const { containerRef, elementRef, callback, rootMargin = "0px" } = props;
-  const [isVisible, setVisibility] = useState(false);
-
+export const useIntersectionObserver = (
+  containerRef: RefObject<HTMLDivElement>,
+  elementRef: RefObject<HTMLDivElement>,
+  callback: () => void,
+  rootMargin?: string
+) => {
   useEffect(() => {
     if (elementRef.current) {
       const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
+        (entries) => {
+          if (entries[entries.length - 1].isIntersecting) {
             callback();
           }
-          setVisibility(entry.isIntersecting);
         },
         {
           root: containerRef.current,
@@ -37,6 +38,4 @@ export const useIntersectionObserver = (props: UseIntersectionObserverProps) => 
     // fix this eslint warning with caution
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootMargin, callback, elementRef.current, containerRef.current]);
-
-  return isVisible;
 };
