@@ -266,4 +266,18 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       throw error;
     }
   };
+
+  /**
+   * @description deletes the given estimate for the given project
+   * @param workspaceSlug
+   * @param projectId
+   * @param estimateId
+   */
+  deleteEstimate = async (workspaceSlug: string, projectId: string, estimateId: string) => {
+    await estimateService.deleteEstimate(workspaceSlug, projectId, estimateId).then(() => {
+      runInAction(() => {
+        delete this.estimates[estimateId];
+      });
+    });
+  };
 }

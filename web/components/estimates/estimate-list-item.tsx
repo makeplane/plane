@@ -5,6 +5,7 @@ import { Pen } from "lucide-react";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimate, useProjectEstimates } from "@/hooks/store";
+import { EstimateListItemButtons } from "./estimate-list-item-buttons";
 
 type TEstimateListItem = {
   estimateId: string;
@@ -39,14 +40,7 @@ export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
         <h3 className="font-medium text-base">{currentEstimate?.name}</h3>
         <p className="text-xs">{(estimatePointValues || [])?.join(", ")}</p>
       </div>
-      {isAdmin && isEditable && (
-        <div
-          className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
-          onClick={() => onEditClick && onEditClick(estimateId)}
-        >
-          <Pen size={12} />
-        </div>
-      )}
+      <EstimateListItemButtons {...props} />
     </div>
   );
 });
