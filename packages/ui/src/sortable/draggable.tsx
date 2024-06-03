@@ -5,6 +5,7 @@ import { isEqual } from "lodash";
 import { cn } from "../../helpers";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "../drop-indicator";
+
 type Props = {
   children: React.ReactNode;
   data: any; //@todo make this generic
@@ -37,7 +38,7 @@ const Draggable = ({ children, data, className }: Props) => {
           onDrop: () => {
             setIsDraggedOver(false);
           },
-          canDrop: ({ source }) => !isEqual(source.data, data),
+          canDrop: ({ source }) => !isEqual(source.data, data) && source.data.__uuid__ === data.__uuid__,
           getData: ({ input, element }) =>
             attachClosestEdge(data, {
               input,

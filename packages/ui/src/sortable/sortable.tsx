@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useMemo } from "react";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Draggable } from "./draggable";
 
@@ -8,6 +8,7 @@ type Props<T> = {
   onChange: (data: T[]) => void;
   keyExtractor: (item: T, index: number) => string;
   containerClassName?: string;
+  id: string;
 };
 
 const moveItem = <T,>(
@@ -43,7 +44,7 @@ const moveItem = <T,>(
   return newData;
 };
 
-export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerClassName }: Props<T>) => {
+export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) => {
   useEffect(() => {
     const unsubscribe = monitorForElements({
       onDrop({ source, location }) {
@@ -57,11 +58,16 @@ export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerCl
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [data, onChange]);
+  }, [data, keyExtractor, onChange]);
+
+  const enhancedData = useMemo(() => {
+    const uuid = id ? id : Math.random().toString(36).substring(7);
+    return data.map((item) => ({ ...item, __uuid__: uuid }));
+  }, [data]);
 
   return (
     <>
-      {data.map((item, index) => (
+      {enhancedData.map((item, index) => (
         <Draggable key={keyExtractor(item, index)} data={item} className={containerClassName}>
           <Fragment>{render(item, index)} </Fragment>
         </Draggable>
