@@ -93,7 +93,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
         </div>
       )}
 
-      {/* <EstimateEEBanner /> */}
+      <EstimateEEBanner />
 
       {/* CRUD modals */}
       <CreateEstimateModal
