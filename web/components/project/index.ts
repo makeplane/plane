@@ -18,7 +18,6 @@ export * from "./sidebar-list";
 export * from "./integration-card";
 export * from "./member-list";
 export * from "./member-list-item";
-export * from "./project-logo";
 export * from "./project-settings-member-defaults";
 export * from "./send-project-invitation-modal";
 export * from "./confirm-project-member-remove";

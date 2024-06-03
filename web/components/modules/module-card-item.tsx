@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CalendarCheck2, CalendarClock, Info, MoveRight, User2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
 import { LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
 // components
@@ -188,9 +188,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 </span>
               ) : (
                 <Tooltip tooltipContent="No lead">
-                  <span className="cursor-default flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-                    <User2 className="h-4 w-4 text-custom-text-400" />
-                  </span>
+                  <SquareUser className="h-4 w-4 mx-1 text-custom-text-300 " />
                 </Tooltip>
               )}
             </div>

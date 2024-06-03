@@ -15,7 +15,7 @@ import {
 } from "@plane/ui";
 // components
 import { IssueSubscription, IssueUpdateStatus } from "@/components/issues";
-import { STATE_GROUPS } from "@/constants/state";
+import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -100,8 +100,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   };
   // auth
   const isArchivingAllowed = !isArchived && !disabled;
-  const isInArchivableGroup =
-    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isRestoringAllowed = isArchived && !disabled;
 
   return (

@@ -13,17 +13,21 @@ import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items
 import { EditorRefApi } from "src/types/editor-ref-api";
 import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 
-interface CustomEditorProps {
+export type TFileHandler = {
+  cancel: () => void;
+  delete: DeleteImage;
+  upload: UploadImage;
+  restore: RestoreImage;
+};
+
+export interface CustomEditorProps {
   id?: string;
-  uploadFile: UploadImage;
-  restoreFile: RestoreImage;
-  deleteFile: DeleteImage;
-  cancelUploadImage?: () => void;
-  initialValue: string;
+  fileHandler: TFileHandler;
+  initialValue?: string;
   editorClassName: string;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
-  value: string | null | undefined;
+  value?: string | null | undefined;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -38,19 +42,16 @@ interface CustomEditorProps {
 }
 
 export const useEditor = ({
-  uploadFile,
   id = "",
-  deleteFile,
-  cancelUploadImage,
   editorProps = {},
   initialValue,
   editorClassName,
   value,
   extensions = [],
+  fileHandler,
   onChange,
   forwardedRef,
   tabIndex,
-  restoreFile,
   handleEditorReady,
   mentionHandler,
   placeholder,
@@ -67,10 +68,10 @@ export const useEditor = ({
           mentionHighlights: mentionHandler.highlights ?? [],
         },
         fileConfig: {
-          deleteFile,
-          restoreFile,
-          cancelUploadImage,
-          uploadFile,
+          uploadFile: fileHandler.upload,
+          deleteFile: fileHandler.delete,
+          restoreFile: fileHandler.restore,
+          cancelUploadImage: fileHandler.cancel,
         },
         placeholder,
         tabIndex,
@@ -139,14 +140,14 @@ export const useEditor = ({
         }
       },
       executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
-        const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
         const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
 
         const item = getEditorMenuItem(itemName);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelection);
+            item.command(savedSelectionRef.current);
           } else {
             item.command();
           }
@@ -155,7 +156,7 @@ export const useEditor = ({
         }
       },
       isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
         const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
@@ -177,10 +178,15 @@ export const useEditor = ({
         const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
         return markdownOutput;
       },
+      getHTML: (): string => {
+        const htmlOutput = editorRef.current?.getHTML() ?? "<p></p>";
+        return htmlOutput;
+      },
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
+      isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editorRef.current || editorRef.current.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
@@ -199,7 +205,7 @@ export const useEditor = ({
         }
       },
     }),
-    [editorRef, savedSelection, uploadFile]
+    [editorRef, savedSelection, fileHandler.upload]
   );
 
   if (!editor) {

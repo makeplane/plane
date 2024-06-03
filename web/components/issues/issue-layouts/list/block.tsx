@@ -67,8 +67,8 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     !getIsIssuePeeked(issue.id) &&
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
-    const issue = issuesMap[issueId];
-    const subIssuesCount = issue.sub_issues_count;
+  const issue = issuesMap[issueId];
+  const subIssuesCount = issue?.sub_issues_count ?? 0;
 
   const { isMobile } = usePlatformOS();
 
@@ -131,8 +131,14 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       <div className="flex w-full truncate" style={nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
-            <div className="flex items-center group">
-              <DragHandle isDragging={isCurrentBlockDragging} ref={dragHandleRef} disabled={!canDrag} />
+            <div className="flex items-center">
+              <DragHandle
+                ref={dragHandleRef}
+                disabled={!canDrag}
+                className={cn("opacity-0 group-hover:opacity-100", {
+                  "opacity-100": isCurrentBlockDragging,
+                })}
+              />
               <div className="flex h-5 w-5 items-center justify-center">
                 {subIssuesCount > 0 && (
                   <button

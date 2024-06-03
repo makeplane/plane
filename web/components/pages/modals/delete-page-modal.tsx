@@ -13,21 +13,20 @@ type TConfirmPageDeletionProps = {
   isOpen: boolean;
   onClose: () => void;
   pageId: string;
-  projectId: string;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { pageId, projectId, isOpen, onClose } = props;
+  const { pageId, isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
-  const { removePage } = useProjectPages(projectId);
+  const { removePage } = useProjectPages();
   const { capturePageEvent } = useEventTracker();
-  const pageStore = usePage(pageId);
+  const page = usePage(pageId);
 
-  if (!pageStore) return null;
+  if (!page) return null;
 
-  const { name } = pageStore;
+  const { name } = page;
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -41,7 +40,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         capturePageEvent({
           eventName: PAGE_DELETED,
           payload: {
-            ...pageStore,
+            ...page,
             state: "SUCCESS",
           },
         });
@@ -56,7 +55,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         capturePageEvent({
           eventName: PAGE_DELETED,
           payload: {
-            ...pageStore,
+            ...page,
             state: "FAILED",
           },
         });
@@ -74,7 +73,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
-      isDeleting={isDeleting}
+      isSubmitting={isDeleting}
       isOpen={isOpen}
       title="Delete Page"
       content={

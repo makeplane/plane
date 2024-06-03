@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-const useKeypress = (key: string, callback: () => void) => {
+const useKeypress = (key: string, callback: (event: KeyboardEvent) => void) => {
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === key) {
-        callback();
+        callback(event);
       }
     };
 
@@ -13,7 +13,7 @@ const useKeypress = (key: string, callback: () => void) => {
     return () => {
       document.removeEventListener("keydown", handleKeydown);
     };
-  });
+  }, [key, callback]);
 };
 
 export default useKeypress;

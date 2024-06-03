@@ -239,8 +239,5 @@ export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImag
   ];
 }
 
-export type EditorMenuItemNames = ReturnType<typeof getEditorMenuItems> extends (infer U)[]
-  ? U extends { key: infer N }
-    ? N
-    : never
-  : never;
+export type EditorMenuItemNames =
+  ReturnType<typeof getEditorMenuItems> extends (infer U)[] ? (U extends { key: infer N } ? N : never) : never;

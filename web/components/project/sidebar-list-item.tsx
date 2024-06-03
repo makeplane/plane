@@ -1,8 +1,14 @@
-import { useRef, useState } from "react";
-import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { createRoot } from "react-dom/client";
+// icons
 import {
   MoreVertical,
   PenSquare,
@@ -16,8 +22,8 @@ import {
   MoreHorizontal,
   Inbox,
 } from "lucide-react";
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// icons
 // ui
 import {
   CustomMenu,
@@ -28,25 +34,36 @@ import {
   ContrastIcon,
   LayersIcon,
   setPromiseToast,
+  DropIndicator,
 } from "@plane/ui";
-import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "@/components/project";
+// components
+import { Logo } from "@/components/common";
+import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useProject } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../issues/issue-layouts/utils";
 // helpers
 
 // components
 
 type Props = {
   projectId: string;
-  provided?: DraggableProvided;
-  snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
-  shortContextMenu?: boolean;
+  handleOnProjectDrop?: (
+    sourceId: string | undefined,
+    destinationId: string | undefined,
+    shouldDropAtEnd: boolean
+  ) => void;
+  projectListType: "JOINED" | "FAVORITES";
   disableDrag?: boolean;
+  disableDrop?: boolean;
+  isLastChild: boolean;
 };
 
 const navigation = (workspaceSlug: string, projectId: string) => [
@@ -89,7 +106,8 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false, disableDrag } = props;
+  const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop, projectListType } =
+    props;
   // store hooks
   const { sidebarCollapsed: isCollapsed, toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
@@ -99,8 +117,12 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const projectRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = router.query;
@@ -160,7 +182,97 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     }
   };
 
+  useEffect(() => {
+    const element = projectRef.current;
+    const dragHandleElement = dragHandleRef.current;
+
+    if (!element) return;
+
+    return combine(
+      draggable({
+        element,
+        canDrag: () => !disableDrag && !isCollapsed,
+        dragHandle: dragHandleElement ?? undefined,
+        getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
+        onDragStart: () => {
+          setIsDragging(true);
+        },
+        onDrop: () => {
+          setIsDragging(false);
+        },
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
+          // Add a custom drag image
+          setCustomNativeDragPreview({
+            getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
+            render: ({ container }) => {
+              const root = createRoot(container);
+              root.render(
+                <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
+                  <div className="h-7 w-7 grid place-items-center flex-shrink-0">
+                    {project && <Logo logo={project?.logo_props} />}
+                  </div>
+                  <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
+                </div>
+              );
+              return () => root.unmount();
+            },
+            nativeSetDragImage,
+          });
+        },
+      }),
+      dropTargetForElements({
+        element,
+        canDrop: ({ source }) =>
+          !disableDrop && source?.data?.id !== projectId && source?.data?.dragInstanceId === "PROJECTS",
+        getData: ({ input, element }) => {
+          const data = { id: projectId };
+
+          // attach instruction for last in list
+          return attachInstruction(data, {
+            input,
+            element,
+            currentLevel: 0,
+            indentPerLevel: 0,
+            mode: isLastChild ? "last-in-group" : "standard",
+          });
+        },
+        onDrag: ({ self }) => {
+          const extractedInstruction = extractInstruction(self?.data)?.type;
+          // check if the highlight is to be shown above or below
+          setInstruction(
+            extractedInstruction
+              ? extractedInstruction === "reorder-below" && isLastChild
+                ? "DRAG_BELOW"
+                : "DRAG_OVER"
+              : undefined
+          );
+        },
+        onDragLeave: () => {
+          setInstruction(undefined);
+        },
+        onDrop: ({ self, source }) => {
+          setInstruction(undefined);
+          const extractedInstruction = extractInstruction(self?.data)?.type;
+          const currentInstruction = extractedInstruction
+            ? extractedInstruction === "reorder-below" && isLastChild
+              ? "DRAG_BELOW"
+              : "DRAG_OVER"
+            : undefined;
+          if (!currentInstruction) return;
+
+          const sourceId = source?.data?.id as string | undefined;
+          const destinationId = self?.data?.id as string | undefined;
+
+          handleOnProjectDrop && handleOnProjectDrop(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
+
+          highlightIssueOnDrop(`sidebar-${sourceId}-${projectListType}`);
+        },
+      })
+    );
+  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
+
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
+  useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
   if (!project) return null;
 
@@ -168,48 +280,48 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
-      <Disclosure key={`${project.id} ${URLProjectId}`} defaultOpen={URLProjectId === project.id}>
+      <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={URLProjectId === project.id}>
         {({ open }) => (
-          <>
+          <div
+            id={`sidebar-${projectId}-${projectListType}`}
+            className={cn("rounded relative", { "bg-custom-sidebar-background-80 opacity-60": isDragging })}
+          >
+            <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
             <div
               className={cn(
-                "group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
+                "group relative flex w-full items-center rounded-md py-1 text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
                 {
-                  "opacity-60": snapshot?.isDragging,
                   "bg-custom-sidebar-background-80": isMenuActive,
+                  "pl-7": disableDrag && !isCollapsed,
                 }
               )}
             >
-              {provided && !disableDrag && (
+              {!disableDrag && (
                 <Tooltip
                   isMobile={isMobile}
                   tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
                   position="top-right"
+                  disabled={isDragging}
                 >
                   <button
                     type="button"
                     className={cn(
-                      "absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-custom-sidebar-text-400",
+                      "flex opacity-0 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 ml-2",
                       {
-                        "group-hover:flex": !isCollapsed,
+                        "group-hover:opacity-100": !isCollapsed,
                         "cursor-not-allowed opacity-60": project.sort_order === null,
                         flex: isMenuActive,
+                        hidden: isCollapsed,
                       }
                     )}
-                    {...provided?.dragHandleProps}
+                    ref={dragHandleRef}
                   >
-                    <MoreVertical className="h-3.5" />
+                    <MoreVertical className="-ml-3 h-3.5" />
                     <MoreVertical className="-ml-5 h-3.5" />
                   </button>
                 </Tooltip>
               )}
-              <Tooltip
-                tooltipContent={`${project.name}`}
-                position="right"
-                className="ml-2"
-                disabled={!isCollapsed}
-                isMobile={isMobile}
-              >
+              <Tooltip tooltipContent={`${project.name}`} position="right" disabled={!isCollapsed} isMobile={isMobile}>
                 <Disclosure.Button
                   as="div"
                   className={cn(
@@ -225,7 +337,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     })}
                   >
                     <div className="h-7 w-7 grid place-items-center flex-shrink-0">
-                      <ProjectLogo logo={project.logo_props} />
+                      <Logo logo={project.logo_props} />
                     </div>
                     {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
                   </div>
@@ -380,7 +492,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 })}
               </Disclosure.Panel>
             </Transition>
-          </>
+            {isLastChild && <DropIndicator isVisible={instruction === "DRAG_BELOW"} />}
+          </div>
         )}
       </Disclosure>
     </>

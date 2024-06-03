@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// hooks
-// ui
-import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
-import { IState } from "@plane/types";
-import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
-// helpers
-import { addSpaceIfCamelCase } from "@/helpers/string.helper";
+import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
+// types
+import { IState } from "@plane/types";
+// ui
+import { Tooltip, StateGroupIcon } from "@plane/ui";
+// hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
 
 type Props = {
   index: number;
@@ -54,7 +52,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
       <div className="flex items-center gap-3">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
-          <h6 className="text-sm font-medium">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="text-sm font-medium">{state.name}</h6>
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>

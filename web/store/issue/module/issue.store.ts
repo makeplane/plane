@@ -1,6 +1,5 @@
 import concat from "lodash/concat";
 import pull from "lodash/pull";
-import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
@@ -148,20 +147,20 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     const moduleIssueIds = this.issues[moduleId];
     if (!moduleIssueIds) return;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds, "un-archived");
-    if (!_issues) return [];
+    const currentIssues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds, "un-archived");
+    if (!currentIssues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
-      else issues = this.unGroupedIssues(orderBy, _issues);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, currentIssues);
+      else issues = this.unGroupedIssues(orderBy, currentIssues);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
-      else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, currentIssues);
+      else issues = this.groupedIssues(groupBy, orderBy, currentIssues);
+    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", currentIssues, true);
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", currentIssues);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", currentIssues);
 
     return issues;
   }
@@ -294,17 +293,20 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
 
-      if (data.cycle_id && data.cycle_id !== "")
-        await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, data.cycle_id, [response.id]);
-
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
       const quickAddIssueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0)
+      if (quickAddIssueIndex >= 0) {
         runInAction(() => {
           this.issues[moduleId].splice(quickAddIssueIndex, 1);
           this.rootIssueStore.issues.removeIssue(data.id);
         });
+      }
+
+      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
+      if (currentCycleId) {
+        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id);
+      }
+
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
     } catch (error) {

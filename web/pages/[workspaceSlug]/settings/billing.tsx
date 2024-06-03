@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { Button } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { WorkspaceSettingHeader } from "@/components/headers";
+import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useUser, useWorkspace } from "@/hooks/store";
 // layouts
@@ -47,7 +48,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
           <div>
             <h4 className="text-md mb-1 leading-6">Current plan</h4>
             <p className="mb-3 text-sm text-custom-text-200">You are currently using the free plan</p>
-            <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
+            <a href={MARKETING_PRICING_PAGE_LINK} target="_blank" rel="noreferrer">
               <Button variant="neutral-primary">View Plans</Button>
             </a>
           </div>
@@ -59,7 +60,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
 
 BillingSettingsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Billing & Plans Settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );
