@@ -1,5 +1,6 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 import { EUserProjectRoles } from "@/constants/project";
@@ -15,14 +16,25 @@ type TInboxContentRoot = {
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, isMobileSidebar, setIsMobileSidebar } = props;
+  /// router
+  const router = useRouter();
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
-  const { fetchInboxIssueById, getIssueInboxByIssueId } = useProjectInbox();
+  const { currentTab, fetchInboxIssueById, getIssueInboxByIssueId, getIsIssueAvailable } = useProjectInbox();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
   const {
     membership: { currentProjectRole },
   } = useUser();
+  // derived values
+  const isIssueAvailable = getIsIssueAvailable(inboxIssueId?.toString() || "");
+
+  useEffect(() => {
+    if (!isIssueAvailable && inboxIssueId) {
+      router.replace(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isIssueAvailable]);
 
   useSWR(
     workspaceSlug && projectId && inboxIssueId

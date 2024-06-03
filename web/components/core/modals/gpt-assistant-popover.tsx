@@ -173,13 +173,15 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-    ? "Generate response"
-    : "Generate again";
+      ? "Generate response"
+      : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>
       <Popover.Button as={Fragment}>
-        <button ref={setReferenceElement}>{button}</button>
+        <button ref={setReferenceElement} className="flex items-center">
+          {button}
+        </button>
       </Popover.Button>
       <Transition
         show={isOpen}

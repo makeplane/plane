@@ -85,12 +85,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <DeletePageModal
-        isOpen={deletePageModal}
-        onClose={() => setDeletePageModal(false)}
-        pageId={pageId}
-        projectId={projectId}
-      />
+      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
         {MENU_ITEMS.map((item) => {

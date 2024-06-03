@@ -6,6 +6,7 @@ import { Crown } from "lucide-react";
 // ui
 import { getButtonStyling } from "@plane/ui";
 // constants
+import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";
@@ -36,7 +37,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           <div className="flex items-center gap-3">
             <a
               className={`${getButtonStyling("primary", "md")} cursor-pointer`}
-              href="https://plane.so/pricing"
+              href={MARKETING_PRICING_PAGE_LINK}
               target="_blank"
               rel="noreferrer"
             >
