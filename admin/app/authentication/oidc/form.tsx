@@ -55,7 +55,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_CLIENT_ID",
       type: "text",
       label: "Client ID",
-      description: "Your authentication provider's public identifier for the client.",
+      description: "A unique ID for this Plane app that you register on your IdP",
       placeholder: "abc123xyz789",
       error: Boolean(errors.OIDC_CLIENT_ID),
       required: true,
@@ -64,7 +64,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_CLIENT_SECRET",
       type: "password",
       label: "Client secret",
-      description: "Secret key provided by your authentication provider for the client.",
+      description: "The secret key that authenticates this Plane app to your IdP",
       placeholder: "s3cr3tK3y123!",
       error: Boolean(errors.OIDC_CLIENT_SECRET),
       required: true,
@@ -73,7 +73,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_AUTHORIZE_URL",
       type: "text",
       label: "Authorize URL",
-      description: "The URL for interacting with the resource owner to obtain an authorization grant.",
+      description: "The URL that brings up your IdP's authentication screen when your users click `Sign in with <name of IdP>`",
       placeholder: "https://example.com/",
       error: Boolean(errors.OIDC_AUTHORIZE_URL),
       required: true,
@@ -82,7 +82,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_TOKEN_URL",
       type: "text",
       label: "Token URL",
-      description: "URL to fetch the access token from a grant or refresh token.",
+      description: "The URL that talks to the IdP and persists user authentication on Plane",
       placeholder: "https://example.com/oauth/token",
       error: Boolean(errors.OIDC_TOKEN_URL),
       required: true,
@@ -90,8 +90,8 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
     {
       key: "OIDC_USERINFO_URL",
       type: "text",
-      label: "UserInfo URL",
-      description: "The URL to fetch user claims and information.",
+      label: "Users' info URL",
+      description: "The URL that fetches your users' info from your IdP",
       placeholder: "https://example.com/userinfo",
       error: Boolean(errors.OIDC_USERINFO_URL),
       required: true,
@@ -100,7 +100,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_LOGOUT_URL",
       type: "text",
       label: "Logout URL",
-      description: "Add your OIDC logout URL here for seamless session management.",
+      description: "Optional field that controls where your users go after they log out of Plane",
       placeholder: "https://example.com/logout",
       error: Boolean(errors.OIDC_LOGOUT_URL),
       required: false,
@@ -108,8 +108,8 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
     {
       key: "OIDC_PROVIDER_NAME",
       type: "text",
-      label: "Identity provider name",
-      description: "This name will be shown on sign in and create account CTA buttons.",
+      label: "IdP's name",
+      description: "Optional field for the name that your users see on the `Sign in with` button",
       placeholder: "Okta",
       error: Boolean(errors.OIDC_PROVIDER_NAME),
       required: false,
@@ -121,20 +121,20 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "Origin_URI",
       label: "Origin URI",
       url: `${originURL}/auth/oidc/`,
-      description: "We will auto-generate this. Add this as a trusted origin in your identity provider.",
+      description: "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
     },
     {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/oidc/callback/`,
       description:
-        "We will auto generate this. Paste this in the sign-in redirect URI section in your identity provider.",
+        "We will generate this for you. Add this in the `Sign-in redirect URI` field of your IdP.",
     },
     {
       key: "Logout_URI",
       label: "Logout URI",
       url: `${originURL}/auth/oidc/logout/`,
-      description: "We will auto-generate this. Paste this in sign-out redirect URI in your identity provider",
+      description: "We will generate this for you. Add this in the `Logout redirect URI` field of your IdP.",
     },
   ];
 
@@ -145,8 +145,8 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       .then((response = []) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "OIDC Configuration Settings updated successfully",
+          title: "Done!",
+          message: "Your OIDC-based authentication is configured. You should test it now.",
         });
         reset({
           OIDC_CLIENT_ID: response.find((item) => item.key === "OIDC_CLIENT_ID")?.value,
@@ -178,7 +178,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
-            <div className="pt-2 text-xl font-medium">Configuration</div>
+            <div className="pt-2 text-xl font-medium">IdP-provided details for Plane</div>
             {OIDC_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -209,7 +209,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="flex flex-col gap-y-4 px-6 py-4 my-2 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Service provider details</div>
+              <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
               {OIDC_SERVICE_DETAILS.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}
