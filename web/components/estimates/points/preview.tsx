@@ -43,7 +43,7 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="border border-custom-border-200 rounded relative flex items-center px-2.5 gap-2 text-base">
+        <div className="border border-custom-border-200 rounded relative flex items-center px-2.5 gap-2 text-base  my-1">
           <div className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer">
             <GripVertical size={14} className="text-custom-text-200" />
           </div>

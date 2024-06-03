@@ -86,21 +86,19 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
       <Sortable
         data={estimatePoints}
         render={(value: TEstimatePointsObject) => (
-          <Draggable data={value}>
-            <EstimatePointItemPreview
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              estimateId={estimateId}
-              estimateType={estimateType}
-              estimatePointId={value?.id}
-              estimatePoints={estimatePoints}
-              estimatePoint={value}
-              handleEstimatePointValueUpdate={(estimatePointValue: string) =>
-                handleEstimatePoint("update", { ...value, value: estimatePointValue })
-              }
-              handleEstimatePointValueRemove={() => handleEstimatePoint("remove", value)}
-            />
-          </Draggable>
+          <EstimatePointItemPreview
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            estimateId={estimateId}
+            estimateType={estimateType}
+            estimatePointId={value?.id}
+            estimatePoints={estimatePoints}
+            estimatePoint={value}
+            handleEstimatePointValueUpdate={(estimatePointValue: string) =>
+              handleEstimatePoint("update", { ...value, value: estimatePointValue })
+            }
+            handleEstimatePointValueRemove={() => handleEstimatePoint("remove", value)}
+          />
         )}
         onChange={(data: TEstimatePointsObject[]) => handleDragEstimatePoints(data)}
         keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}

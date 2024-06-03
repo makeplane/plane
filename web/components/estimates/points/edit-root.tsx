@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { TEstimatePointsObject } from "@plane/types";
@@ -74,26 +74,28 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium text-custom-text-200 capitalize">{estimate?.type}</div>
-      <Sortable
-        data={estimatePoints}
-        render={(value: TEstimatePointsObject) => (
-          <Draggable data={value}>
-            {value?.id && estimate?.type && (
-              <EstimatePointItemPreview
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                estimateId={estimateId}
-                estimatePointId={value?.id}
-                estimateType={estimate?.type}
-                estimatePoint={value}
-                estimatePoints={estimatePoints}
-              />
-            )}
-          </Draggable>
-        )}
-        onChange={(data: TEstimatePointsObject[]) => handleDragEstimatePoints(data)}
-        keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
-      />
+      <div>
+        <Sortable
+          data={estimatePoints}
+          render={(value: TEstimatePointsObject) => (
+            <Fragment>
+              {value?.id && estimate?.type ? (
+                <EstimatePointItemPreview
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  estimateId={estimateId}
+                  estimatePointId={value?.id}
+                  estimateType={estimate?.type}
+                  estimatePoint={value}
+                  estimatePoints={estimatePoints}
+                />
+              ) : null}
+            </Fragment>
+          )}
+          onChange={(data: TEstimatePointsObject[]) => handleDragEstimatePoints(data)}
+          keyExtractor={(item: TEstimatePointsObject) => item?.id?.toString() || item.value.toString()}
+        />
+      </div>
 
       {estimatePointCreate &&
         estimatePointCreate.map(
