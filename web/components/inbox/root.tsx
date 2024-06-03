@@ -1,6 +1,5 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 import { Inbox, PanelLeft } from "lucide-react";
 // components
 import { EmptyState } from "@/components/empty-state";
@@ -29,18 +28,15 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   // hooks
   const { loader, error, currentTab, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
 
-  useSWR(
-    inboxAccessible && workspaceSlug && projectId ? `PROJECT_INBOX_ISSUES_${workspaceSlug}_${projectId}` : null,
-    async () => {
-      if (!inboxAccessible || !workspaceSlug || !projectId) return;
-      if (navigationTab && navigationTab !== currentTab) {
-        handleCurrentTab(navigationTab);
-      } else {
-        await fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
-      }
-    },
-    { revalidateOnFocus: false, revalidateIfStale: false }
-  );
+  useEffect(() => {
+    if (!inboxAccessible || !workspaceSlug || !projectId) return;
+    if (navigationTab && navigationTab !== currentTab) {
+      handleCurrentTab(navigationTab);
+    } else {
+      fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inboxAccessible, workspaceSlug, projectId]);
 
   // loader
   if (loader === "init-loading")

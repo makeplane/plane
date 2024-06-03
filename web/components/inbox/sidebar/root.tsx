@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { TInboxIssueCurrentTab } from "@plane/types";
@@ -37,7 +37,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const { workspaceSlug, projectId, setIsMobileSidebar } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
+  const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
   // store
   const { currentProjectDetails } = useProject();
   const {
@@ -128,14 +128,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 />
               </div>
             )}
-            {inboxIssuePaginationInfo?.next_page_results && (
-              <div ref={elementRef}>
+              <div ref={setElementRef}>
+                {inboxIssuePaginationInfo?.next_page_results && (
                 <Loader className="mx-auto w-full space-y-4 py-4 px-2">
                   <Loader.Item height="64px" width="w-100" />
                   <Loader.Item height="64px" width="w-100" />
                 </Loader>
+                )}
               </div>
-            )}
           </div>
         )}
       </div>
