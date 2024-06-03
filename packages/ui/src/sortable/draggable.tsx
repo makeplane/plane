@@ -53,7 +53,7 @@ const Draggable = ({ children, data, className }: Props) => {
     <div ref={ref} className={cn(dragging && "opacity-25", className)}>
       {<DropIndicator isVisible={isDraggedOver && closestEdge === "top"} />}
       {children}
-      {<DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} classNames="absolute w-full" />}
+      {<DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />}
     </div>
   );
 };
