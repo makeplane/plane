@@ -3,6 +3,10 @@ name: Helm Build
 on:
   pull_request:
     types: ["opened", "synchronize"]
+    branches: 
+      - master
+      - preview
+      - develop
     paths:
       - 'helm-chart/**'
 
@@ -12,7 +16,7 @@ env:
 
 jobs:
   build:
-    if: github.event.pull_request.head.ref != 'master' && github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'master'
     permissions:
       contents: write
     runs-on: ubuntu-latest
