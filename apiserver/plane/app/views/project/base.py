@@ -646,16 +646,15 @@ class DeployBoardViewSet(BaseViewSet):
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
-            )
-            .select_related("project")
-        )
+    def list(self, request, slug, project_id):
+        project_deploy_board = DeployBoard.objects.filter(
+            entity_name="project",
+            entity_identifier=project_id,
+            workspace__slug=slug,
+        ).first()
+
+        serializer = DeployBoardSerializer(project_deploy_board)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         comments = request.data.get("comments", False)
