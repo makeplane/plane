@@ -1,5 +1,5 @@
 import { IWorkspaceLite } from "@plane/types";
-import { TProjectDetails, TViewDetails } from "./project";
+import { TProjectDetails, TViewDetails } from "@/types/project";
 
 export type TPublishEntityType = "project";
 

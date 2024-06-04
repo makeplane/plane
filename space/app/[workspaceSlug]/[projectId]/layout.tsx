@@ -6,10 +6,10 @@ type Props = {
   };
 };
 
-const ProjectIssuesLayout = async (props: Props) => {
+const IssuesLayout = async (props: Props) => {
   const { children } = props;
 
   return <>{children}</>;
 };
 
-export default ProjectIssuesLayout;
+export default IssuesLayout;

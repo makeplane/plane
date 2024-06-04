@@ -5,14 +5,13 @@ import { observer } from "mobx-react-lite";
 import { IStateLite } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
-// constants
-import { issueGroupFilter } from "@/constants/issue";
 
-export const IssueKanBanHeader = observer(({ state }: { state: IStateLite }) => {
-  // const { getCountOfIssuesByState } = useIssue();
-  const stateGroup = issueGroupFilter(state.group);
+type Props = {
+  state: IStateLite;
+};
 
-  if (stateGroup === null) return <></>;
+export const IssueKanBanHeader: React.FC<Props> = observer((props) => {
+  const { state } = props;
 
   return (
     <div className="flex items-center gap-2 px-2 pb-2">

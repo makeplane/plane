@@ -4,15 +4,15 @@ import { observer } from "mobx-react-lite";
 import { Briefcase } from "lucide-react";
 // components
 import { ProjectLogo } from "@/components/common";
-import { NavbarControls } from "@/components/issues/navbar/controls";
+import { NavbarControls } from "@/components/issues";
 // store
 import { PublishStore } from "@/store/publish/publish.store";
 
-type IssueNavbarProps = {
+type Props = {
   publishSettings: PublishStore;
 };
 
-const IssueNavbar: FC<IssueNavbarProps> = observer((props) => {
+export const IssuesNavbarRoot: FC<Props> = observer((props) => {
   const { publishSettings } = props;
   // hooks
   const { project_details } = publishSettings;
@@ -41,5 +41,3 @@ const IssueNavbar: FC<IssueNavbarProps> = observer((props) => {
     </div>
   );
 });
-
-export default IssueNavbar;

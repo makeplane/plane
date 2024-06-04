@@ -17,15 +17,15 @@ type Props = {
   };
 };
 
-const ProjectIssuesPage = (props: Props) => {
+const IssuesPage = (props: Props) => {
   const { params } = props;
   const { workspaceSlug, projectId } = params;
   // states
   const [error, setError] = useState(false);
   // params
   const searchParams = useSearchParams();
-  const board = searchParams.get("board") || undefined;
-  const peekId = searchParams.get("peekId") || undefined;
+  const board = searchParams.get("board");
+  const peekId = searchParams.get("peekId");
 
   useEffect(() => {
     if (!workspaceSlug || !projectId) return;
@@ -50,4 +50,4 @@ const ProjectIssuesPage = (props: Props) => {
   return <LogoSpinner />;
 };
 
-export default ProjectIssuesPage;
+export default IssuesPage;

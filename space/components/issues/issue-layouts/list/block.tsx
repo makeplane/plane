@@ -3,10 +3,7 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
-import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
-import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
-import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
-import { IssueBlockState } from "@/components/issues/board-views/block-state";
+import { IssueBlockDueDate, IssueBlockLabels, IssueBlockPriority, IssueBlockState } from "@/components/issues";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hook
@@ -20,7 +17,7 @@ type IssueListBlockProps = {
   issue: IIssue;
 };
 
-export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
+export const IssueListLayoutBlock: FC<IssueListBlockProps> = observer((props) => {
   const { anchor, issue } = props;
   const searchParams = useSearchParams();
   // query params

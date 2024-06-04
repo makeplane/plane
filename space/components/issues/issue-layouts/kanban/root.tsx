@@ -3,18 +3,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { IssueKanBanBlock } from "@/components/issues/board-views/kanban/block";
-import { IssueKanBanHeader } from "@/components/issues/board-views/kanban/header";
+import { IssueKanBanBlock, IssueKanBanHeader } from "@/components/issues";
 // ui
 import { Icon } from "@/components/ui";
 // mobx hook
 import { useIssue } from "@/hooks/store";
 
-type IssueKanbanViewProps = {
+type Props = {
   anchor: string;
 };
 
-export const IssueKanbanView: FC<IssueKanbanViewProps> = observer((props) => {
+export const IssueKanbanLayoutRoot: FC<Props> = observer((props) => {
   const { anchor } = props;
   // store hooks
   const { states, getFilteredIssuesByState } = useIssue();

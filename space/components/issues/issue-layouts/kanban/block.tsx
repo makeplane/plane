@@ -4,9 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
-import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
-import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
-import { IssueBlockState } from "@/components/issues/board-views/block-state";
+import { IssueBlockDueDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -14,13 +12,13 @@ import { useIssueDetails, usePublish } from "@/hooks/store";
 // interfaces
 import { IIssue } from "@/types/issue";
 
-type IssueKanBanBlockProps = {
+type Props = {
   anchor: string;
   issue: IIssue;
   params: any;
 };
 
-export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
+export const IssueKanBanBlock: FC<Props> = observer((props) => {
   const { anchor, issue } = props;
   // router
   const router = useRouter();

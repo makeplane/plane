@@ -1,15 +1,8 @@
-import { IStateLite, IWorkspaceLite, TIssuePriorities } from "@plane/types";
+import { IStateLite, IWorkspaceLite, TIssuePriorities, TStateGroups } from "@plane/types";
 
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 export type TIssueLayoutOptions = {
   [key in TIssueLayout]: boolean;
-};
-export type TIssueLayoutViews = {
-  [key in TIssueLayout]: {
-    title: string;
-    icon: string;
-    className: string;
-  };
 };
 
 export type TIssueFilterPriorityObject = {
@@ -19,14 +12,6 @@ export type TIssueFilterPriorityObject = {
   icon: string;
 };
 
-export type TIssueFilterState = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
-export type TIssueFilterStateObject = {
-  key: TIssueFilterState;
-  title: string;
-  color: string;
-  className: string;
-};
-
 export type TIssueFilterKeys = "priority" | "state" | "labels";
 
 export type TDisplayFilters = {
@@ -34,7 +19,7 @@ export type TDisplayFilters = {
 };
 
 export type TFilters = {
-  state: TIssueFilterState[];
+  state: TStateGroups[];
   priority: TIssuePriorities[];
   labels: string[];
 };

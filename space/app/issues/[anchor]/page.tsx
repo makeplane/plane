@@ -3,7 +3,7 @@
 import { observer } from "mobx-react-lite";
 import { useSearchParams } from "next/navigation";
 // components
-import { ProjectDetailsView } from "@/components/views";
+import { IssuesLayoutsRoot } from "@/components/issues";
 // hooks
 import { usePublish } from "@/hooks/store";
 
@@ -13,7 +13,7 @@ type Props = {
   };
 };
 
-const ProjectIssuesPage =observer ((props: Props) => {
+const IssuesPage = observer((props: Props) => {
   const { params } = props;
   const { anchor } = params;
   // params
@@ -24,7 +24,7 @@ const ProjectIssuesPage =observer ((props: Props) => {
 
   if (!publishSettings) return null;
 
-  return <ProjectDetailsView peekId={peekId} publishSettings={publishSettings} />;
+  return <IssuesLayoutsRoot peekId={peekId} publishSettings={publishSettings} />;
 });
 
-export default ProjectIssuesPage;
+export default IssuesPage;
