@@ -233,6 +233,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             hasError={Boolean(errors.name)}
             placeholder="Name"
             className="w-full"
+            autoFocus
           />
         )}
       />

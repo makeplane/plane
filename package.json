@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [

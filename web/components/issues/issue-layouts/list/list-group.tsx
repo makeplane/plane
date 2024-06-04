@@ -19,6 +19,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { DRAG_ALLOWED_GROUPS, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // components
 import { GroupDragOverlay } from "../group-drag-overlay";
 import {
@@ -58,6 +59,7 @@ type Props = {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
   isCompletedCycle?: boolean;
+  selectionHelpers: TSelectionHelper;
 };
 
 export const ListGroup = observer((props: Props) => {
@@ -81,6 +83,7 @@ export const ListGroup = observer((props: Props) => {
     enableIssueQuickAdd,
     isCompletedCycle,
     storeType,
+    selectionHelpers,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
@@ -190,15 +193,18 @@ export const ListGroup = observer((props: Props) => {
         "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
-      <div className="sticky top-0 z-[3] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 pl-5 py-1">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
         <HeaderGroupByCard
+          groupID={group.id}
           icon={group.icon}
           title={group.name || ""}
           count={issueCount}
           issuePayload={group.payload}
+          canEditProperties={canEditProperties}
           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
           storeType={storeType}
           addIssuesToView={addIssuesToView}
+          selectionHelpers={selectionHelpers}
         />
       </div>
 
@@ -224,6 +230,7 @@ export const ListGroup = observer((props: Props) => {
               containerRef={containerRef}
               isDragAllowed={isDragAllowed}
               canDropOverIssue={!canOverlayBeVisible}
+              selectionHelpers={selectionHelpers}
             />
           )}
 

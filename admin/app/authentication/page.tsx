@@ -7,12 +7,12 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { Mails, KeyRound } from "lucide-react";
 import { TInstanceConfigurationKeys } from "@plane/types";
-import { Loader, setPromiseToast } from "@plane/ui";
+import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
 // hooks
 // helpers
-import { resolveGeneralTheme } from "@/helpers/common.helper";
+import { cn, resolveGeneralTheme } from "@/helpers/common.helper";
 import { useInstance } from "@/hooks/store";
 // images
 import githubLightModeImage from "@/public/logos/github-black.png";
@@ -45,6 +45,8 @@ const InstanceAuthenticationPage = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // theme
   const { resolvedTheme } = useTheme();
+  // derived values
+  const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
 
   const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
     setIsSubmitting(true);
@@ -129,7 +131,34 @@ const InstanceAuthenticationPage = observer(() => {
         <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <div className="space-y-3">
-              <div className="text-lg font-medium">Authentication modes</div>
+              <div className="text-lg font-medium pb-1">Sign-up configuration</div>
+              <div className={cn("w-full flex items-center gap-14 rounded")}>
+                <div className="flex grow items-center gap-4">
+                  <div className="grow">
+                    <div className={cn("font-medium leading-5 text-custom-text-100 text-sm")}>
+                      Allow anyone to sign up without invite
+                    </div>
+                    <div className={cn("font-normal leading-5 text-custom-text-300 text-xs")}>
+                      Toggling this off will disable self sign ups.
+                    </div>
+                  </div>
+                </div>
+                <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+                  <div className="flex items-center gap-4">
+                    <ToggleSwitch
+                      value={Boolean(parseInt(enableSignUpConfig))}
+                      onChange={() => {
+                        Boolean(parseInt(enableSignUpConfig)) === true
+                          ? updateConfig("ENABLE_SIGNUP", "0")
+                          : updateConfig("ENABLE_SIGNUP", "1");
+                      }}
+                      size="sm"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="text-lg font-medium pt-6">Authentication modes</div>
               {authenticationMethodsCard.map((method) => (
                 <AuthenticationMethodCard
                   key={method.key}

@@ -210,11 +210,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {response !== "" && (
               <div className="page-block-section max-h-[8rem] text-sm">
                 Response:
-                <RichTextReadOnlyEditor
-                  initialValue={`<p>${response}</p>`}
-                  containerClassName={response ? "-mx-3 -my-3" : ""}
-                  ref={responseRef}
-                />
+                <RichTextReadOnlyEditor initialValue={`<p>${response}</p>`} ref={responseRef} />
               </div>
             )}
             {invalidResponse && (
