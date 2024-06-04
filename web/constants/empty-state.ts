@@ -293,8 +293,8 @@ const emptyStateDetails = {
           "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
       },
     },
-    accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    accessType: "project",
+    access: EUserProjectRoles.MEMBER,
   },
   [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
@@ -486,11 +486,6 @@ const emptyStateDetails = {
     path: "/empty-state/onboarding/pages",
     primaryButton: {
       text: "Create your first page",
-      comicBox: {
-        title: "A page can be a doc or a doc of docs.",
-        description:
-          "We wrote Nikhil and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
-      },
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,

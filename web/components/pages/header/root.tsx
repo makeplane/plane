@@ -25,7 +25,7 @@ type Props = {
 export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
   const { pageType, projectId, workspaceSlug } = props;
   // store hooks
-  const { filters, updateFilters, clearAllFilters } = useProjectPages(projectId);
+  const { filters, updateFilters, clearAllFilters } = useProjectPages();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
@@ -52,7 +52,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
         <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
         <div className="h-full flex items-center gap-2 self-end">
-          <PageSearchInput projectId={projectId} />
+          <PageSearchInput />
           <PageOrderByDropdown
             sortBy={filters.sortBy}
             sortKey={filters.sortKey}

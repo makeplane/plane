@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // types
 import { TPage } from "@plane/types";
@@ -15,28 +15,34 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   isModalOpen: boolean;
+  pageAccess?: EPageAccess;
   handleModalClose: () => void;
   redirectionEnabled?: boolean;
 };
 
 export const CreatePageModal: FC<Props> = (props) => {
-  const { workspaceSlug, projectId, isModalOpen, handleModalClose, redirectionEnabled = false } = props;
+  const { workspaceSlug, projectId, isModalOpen, pageAccess, handleModalClose, redirectionEnabled = false } = props;
   // states
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
     id: undefined,
     name: "",
-    access: EPageAccess.PUBLIC,
+    logo_props: undefined,
   });
   // router
   const router = useRouter();
   // store hooks
-  const { createPage } = useProjectPages(projectId);
+  const { createPage } = useProjectPages();
   const { capturePageEvent } = useEventTracker();
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));
 
+  // update page access in form data when page access from the store changes
+  useEffect(() => {
+    setPageFormData((prev) => ({ ...prev, access: pageAccess }));
+  }, [pageAccess]);
+
   const handleStateClear = () => {
-    setPageFormData({ id: undefined, name: "", access: EPageAccess.PUBLIC });
+    setPageFormData({ id: undefined, name: "", access: pageAccess });
     handleModalClose();
   };
 

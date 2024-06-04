@@ -4,9 +4,8 @@ import { useRouter } from "next/router";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { CyclesViewHeader } from "@/components/cycles";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
@@ -41,7 +40,7 @@ export const CyclesHeader: FC = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

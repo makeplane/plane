@@ -22,6 +22,8 @@ export interface IProjectPageStore {
   data: Record<string, IPageStore>; // pageId => PageStore
   error: TError | undefined;
   filters: TPageFilters;
+  // computed
+  isAnyPageAvailable: boolean;
   // helper actions
   getCurrentProjectPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectFilteredPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
@@ -74,6 +76,14 @@ export class ProjectPageStore implements IProjectPageStore {
         this.filters.searchQuery = "";
       }
     );
+  }
+
+  /**
+   * @description check if any page is available
+   */
+  get isAnyPageAvailable() {
+    if (this.loader) return true;
+    return Object.keys(this.data).length > 0;
   }
 
   /**

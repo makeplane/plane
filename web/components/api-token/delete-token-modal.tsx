@@ -69,7 +69,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDeletion}
-      isDeleting={deleteLoading}
+      isSubmitting={deleteLoading}
       isOpen={isOpen}
       title="Delete API token"
       content={

@@ -1,11 +1,11 @@
-// helpers
-import { TProjectLogoProps } from "@plane/types";
-import { cn } from "@/helpers/common.helper";
 // types
+import { TLogoProps } from "@plane/types";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   className?: string;
-  logo: TProjectLogoProps;
+  logo: TLogoProps;
 };
 
 export const ProjectLogo: React.FC<Props> = (props) => {

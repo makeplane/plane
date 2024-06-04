@@ -2,7 +2,7 @@ import * as React from "react";
 
 export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
-  onClick: () => void;
+  onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
   children: React.ReactNode;
   target?: string;
   disabled?: boolean;
@@ -17,7 +17,7 @@ export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((pr
     const clickCondition = (event.metaKey || event.ctrlKey) && event.button === LEFT_CLICK_EVENT_CODE;
     if (!clickCondition) {
       event.preventDefault();
-      onClick();
+      onClick(event);
     }
   };
 

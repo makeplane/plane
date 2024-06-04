@@ -73,7 +73,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={formSubmit}
-      isDeleting={loader}
+      isSubmitting={loader}
       isOpen={isOpen}
       title="Delete Cycle"
       content={
