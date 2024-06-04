@@ -44,11 +44,11 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className={`absolute -left-2 z-10 bg-custom-sidebar-background-100 ${
+              className={`absolute z-10 bg-custom-sidebar-background-100 ${
                 position === "top" ? "-top-12" : "-bottom-12"
               }`}
             >
-              <div className="rounded-md border border-custom-border-200 bg-custom-sidebar-background-100 p-1 shadow-custom-shadow-sm">
+              <div className="rounded-md border border-custom-border-200 bg-custom-sidebar-background-100 p-1">
                 <div className="flex gap-x-1">
                   {reactionEmojis.map((emoji) => (
                     <button
