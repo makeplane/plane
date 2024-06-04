@@ -381,9 +381,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         )
 
         open_estimate_sum = open_issues_queryset.aggregate(
-            sum=Sum("estimate_point")
+            sum=Sum("point")
         )["sum"]
-        total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))[
+        total_estimate_sum = base_issues.aggregate(sum=Sum("point"))[
             "sum"
         ]
 
