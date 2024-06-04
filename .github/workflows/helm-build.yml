@@ -33,6 +33,7 @@ jobs:
       
       - name: Merge Docs from target to code
         run: |
+          mkdir -p __target/docs
           rm -rf __target/docs/content
           rm -rf __target/docs/images
           rm -rf __target/docs/metadata
