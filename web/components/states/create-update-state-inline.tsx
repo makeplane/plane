@@ -8,7 +8,7 @@ import type { IState } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { STATE_CREATED, STATE_UPDATED } from "@/constants/event-tracker";
+import { E_STATES, STATE_CREATED, STATE_UPDATED } from "@/constants/event-tracker";
 import { GROUP_CHOICES } from "@/constants/project";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
@@ -43,7 +43,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   // form info
   const {
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     watch,
     reset,
     control,
@@ -91,7 +91,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           payload: {
             ...res,
             state: "SUCCESS",
-            element: "Project settings states page",
+            element: E_STATES,
           },
         });
       })
@@ -114,7 +114,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           payload: {
             ...formData,
             state: "FAILED",
-            element: "Project settings states page",
+            element: E_STATES,
           },
         });
       });
@@ -130,8 +130,9 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           eventName: STATE_UPDATED,
           payload: {
             ...res,
+            change_details: Object.keys(dirtyFields),
             state: "SUCCESS",
-            element: "Project settings states page",
+            element: E_STATES,
           },
         });
         setToast({
@@ -158,7 +159,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           payload: {
             ...formData,
             state: "FAILED",
-            element: "Project settings states page",
+            element: E_STATES,
           },
         });
       });
@@ -292,9 +293,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
         variant="primary"
         type="submit"
         loading={isSubmitting}
-        onClick={() => {
-          setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-        }}
+        onClick={() => setTrackElement(E_STATES)}
         size="sm"
       >
         {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}

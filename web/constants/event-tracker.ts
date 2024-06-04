@@ -138,6 +138,7 @@ export const getProjectStateEventPayload = (payload: any) => ({
   default: payload.default,
   state: payload.state,
   element: payload.element,
+  change_details: payload.change_details,
 });
 
 // Workspace crud Events
@@ -222,3 +223,6 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+// Elements
+export const E_STATES = "Project states page";
