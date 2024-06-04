@@ -1,11 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import useSWR from "swr";
 // components
 import { ProjectDetailsView } from "@/components/views";
 // hooks
-import { usePublish, usePublishList } from "@/hooks/store";
+import { usePublish } from "@/hooks/store";
 
 type Props = {
   params: {
@@ -19,11 +18,8 @@ const ProjectIssuesPage = (props: Props) => {
   // params
   const searchParams = useSearchParams();
   const peekId = searchParams.get("peekId") || undefined;
-  // store hooks
-  const { fetchPublishSettings } = usePublishList();
-  const publishSettings = usePublish(anchor);
 
-  useSWR(anchor ? `PUBLISH_SETTINGS_${anchor}` : null, anchor ? () => fetchPublishSettings(anchor) : null);
+  const publishSettings = usePublish(anchor);
 
   if (!publishSettings) return null;
 

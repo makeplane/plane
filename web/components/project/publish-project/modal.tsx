@@ -311,11 +311,9 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                       {project.is_deployed && (
                         <>
                           <div className="relative flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 px-3 py-2">
-                            <div className="flex-grow truncate text-sm">
-                              {`${SPACE_URL}/${workspaceSlug}/${project.id}`}
-                            </div>
+                            <div className="flex-grow truncate text-sm">{`${SPACE_URL}/issues/`}</div>
                             <div className="relative flex flex-shrink-0 items-center gap-1">
-                              <CopyLinkToClipboard copy_link={`${SPACE_URL}/${workspaceSlug}/${project.id}`} />
+                              <CopyLinkToClipboard copy_link={`${SPACE_URL}/issues`} />
                             </div>
                           </div>
                           <div className="mt-3 flex items-center gap-1 text-custom-primary-100">

@@ -38,7 +38,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const { getIssueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
   const { setPeekId } = useIssueDetails();
   // derived values
-  const { anchor, views, workspace_detail } = publishSettings;
+  const { anchor, view_props, workspace_detail } = publishSettings;
   const issueFilters = anchor ? getIssueFilters(anchor) : undefined;
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
@@ -49,11 +49,11 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
       const viewsAcceptable: string[] = [];
       let currentBoard: TIssueLayout | null = null;
 
-      if (views?.list) viewsAcceptable.push("list");
-      if (views?.kanban) viewsAcceptable.push("kanban");
-      if (views?.calendar) viewsAcceptable.push("calendar");
-      if (views?.gantt) viewsAcceptable.push("gantt");
-      if (views?.spreadsheet) viewsAcceptable.push("spreadsheet");
+      if (view_props?.list) viewsAcceptable.push("list");
+      if (view_props?.kanban) viewsAcceptable.push("kanban");
+      if (view_props?.calendar) viewsAcceptable.push("calendar");
+      if (view_props?.gantt) viewsAcceptable.push("gantt");
+      if (view_props?.spreadsheet) viewsAcceptable.push("spreadsheet");
 
       if (board) {
         if (viewsAcceptable.includes(board.toString())) currentBoard = board.toString() as TIssueLayout;
@@ -95,7 +95,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
     initIssueFilters,
     setPeekId,
     isIssueFiltersUpdated,
-    views,
+    view_props,
     workspace_detail,
   ]);
 

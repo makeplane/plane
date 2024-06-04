@@ -10,19 +10,14 @@ class PublishService extends APIService {
   }
 
   async fetchPublishSettings(anchor: string): Promise<TPublishSettings> {
-    return this.get(`/api/public/publish-settings/${anchor}/`)
+    return this.get(`/api/public/anchor/${anchor}/settings/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async fetchAnchorFromProjectDetails(
-    workspaceSlug: string,
-    projectID: string
-  ): Promise<{
-    anchor: string;
-  }> {
+  async fetchAnchorFromProjectDetails(workspaceSlug: string, projectID: string): Promise<TPublishSettings> {
     return this.get(`/api/public/workspaces/${workspaceSlug}/projects/${projectID}/anchor/`)
       .then((response) => response?.data)
       .catch((error) => {

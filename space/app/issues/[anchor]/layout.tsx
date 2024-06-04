@@ -1,23 +1,34 @@
+"use client";
+
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import useSWR from "swr";
 // components
+import { LogoSpinner } from "@/components/common";
 import IssueNavbar from "@/components/issues/navbar";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish, usePublishList } from "@/hooks/store";
 // assets
 import planeLogo from "@/public/plane-logo.svg";
 
-type Props = { children: React.ReactNode; params: { anchor: string } };
+type Props = {
+  children: React.ReactNode;
+  params: {
+    anchor: string;
+  };
+};
 
-const ProjectIssuesLayout = (props: Props) => {
+const ProjectIssuesLayout = observer((props: Props) => {
   const { children, params } = props;
   // params
   const { anchor } = params;
   // store hooks
+  const { fetchPublishSettings } = usePublishList();
   const publishSettings = usePublish(anchor);
-  const { id, workspace_detail, project } = publishSettings;
+  // fetch publish settings
+  useSWR(anchor ? `PUBLISH_SETTINGS_${anchor}` : null, anchor ? () => fetchPublishSettings(anchor) : null);
 
-  if (!workspace_detail || !project || !id) notFound();
+  if (!publishSettings) return <LogoSpinner />;
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
@@ -40,6 +51,6 @@ const ProjectIssuesLayout = (props: Props) => {
       </a>
     </div>
   );
-};
+});
 
 export default ProjectIssuesLayout;

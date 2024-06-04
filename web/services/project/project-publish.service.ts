@@ -9,8 +9,8 @@ export class ProjectPublishService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getProjectSettingsAsync(workspace_slug: string, project_slug: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`)
+  async getProjectSettingsAsync(workspaceSlug: string, projectID: string): Promise<IProjectPublishSettings> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -18,11 +18,11 @@ export class ProjectPublishService extends APIService {
   }
 
   async createProjectSettingsAsync(
-    workspace_slug: string,
-    project_slug: string,
+    workspaceSlug: string,
+    projectID: string,
     data: IProjectPublishSettings
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`, data)
+  ): Promise<IProjectPublishSettings> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -30,13 +30,13 @@ export class ProjectPublishService extends APIService {
   }
 
   async updateProjectSettingsAsync(
-    workspace_slug: string,
-    project_slug: string,
+    workspaceSlug: string,
+    projectID: string,
     project_publish_id: string,
     data: IProjectPublishSettings
   ): Promise<any> {
     return this.patch(
-      `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/${project_publish_id}/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`,
       data
     )
       .then((response) => response?.data)
@@ -45,13 +45,9 @@ export class ProjectPublishService extends APIService {
       });
   }
 
-  async deleteProjectSettingsAsync(
-    workspace_slug: string,
-    project_slug: string,
-    project_publish_id: string
-  ): Promise<any> {
+  async deleteProjectSettingsAsync(workspaceSlug: string, projectID: string, project_publish_id: string): Promise<any> {
     return this.delete(
-      `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/${project_publish_id}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

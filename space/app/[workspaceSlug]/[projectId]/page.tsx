@@ -32,12 +32,15 @@ const ProjectIssuesPage = (props: Props) => {
     publishService
       .fetchAnchorFromProjectDetails(workspaceSlug, projectId)
       .then((res) => {
-        let url = `/issues/${res.anchor}`;
-        const params = new URLSearchParams();
-        if (board) params.append("board", board);
-        if (peekId) params.append("peekId", peekId);
-        if (params.toString()) url += `?${params.toString()}`;
-        navigate(url);
+        let url = "";
+        if (res.entity_name === "project") {
+          url = `/issues/${res.anchor}`;
+          const params = new URLSearchParams();
+          if (board) params.append("board", board);
+          if (peekId) params.append("peekId", peekId);
+          if (params.toString()) url += `?${params.toString()}`;
+          navigate(url);
+        } else throw Error("Invalid entity name");
       })
       .catch(() => setError(true));
   }, [board, peekId, projectId, workspaceSlug]);

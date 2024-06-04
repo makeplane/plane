@@ -3,7 +3,7 @@ import { observable, makeObservable, computed } from "mobx";
 import { RootStore } from "@/store/root.store";
 // types
 import { TProjectDetails, TViewDetails, TWorkspaceDetails } from "@/types/project";
-import { TPublishSettings } from "@/types/publish";
+import { TPublishEntityType, TPublishSettings } from "@/types/publish";
 
 export interface IPublishStore extends TPublishSettings {
   // computed
@@ -19,6 +19,8 @@ export class PublishStore implements IPublishStore {
   comments: boolean;
   created_at: string | undefined;
   created_by: string | undefined;
+  entity_identifier: string | undefined;
+  entity_name: TPublishEntityType | undefined;
   id: string | undefined;
   inbox: unknown;
   project: string | undefined;
@@ -26,7 +28,7 @@ export class PublishStore implements IPublishStore {
   reactions: boolean;
   updated_at: string | undefined;
   updated_by: string | undefined;
-  views: TViewDetails | undefined;
+  view_props: TViewDetails | undefined;
   votes: boolean;
   workspace: string | undefined;
   workspace_detail: TWorkspaceDetails | undefined;
@@ -39,6 +41,8 @@ export class PublishStore implements IPublishStore {
     this.comments = publishSettings.comments;
     this.created_at = publishSettings.created_at;
     this.created_by = publishSettings.created_by;
+    this.entity_identifier = publishSettings.entity_identifier;
+    this.entity_name = publishSettings.entity_name;
     this.id = publishSettings.id;
     this.inbox = publishSettings.inbox;
     this.project = publishSettings.project;
@@ -46,7 +50,7 @@ export class PublishStore implements IPublishStore {
     this.reactions = publishSettings.reactions;
     this.updated_at = publishSettings.updated_at;
     this.updated_by = publishSettings.updated_by;
-    this.views = publishSettings.views;
+    this.view_props = publishSettings.view_props;
     this.votes = publishSettings.votes;
     this.workspace = publishSettings.workspace;
     this.workspace_detail = publishSettings.workspace_detail;
@@ -57,6 +61,8 @@ export class PublishStore implements IPublishStore {
       comments: observable.ref,
       created_at: observable.ref,
       created_by: observable.ref,
+      entity_identifier: observable.ref,
+      entity_name: observable.ref,
       id: observable.ref,
       inbox: observable,
       project: observable.ref,
@@ -64,7 +70,7 @@ export class PublishStore implements IPublishStore {
       reactions: observable.ref,
       updated_at: observable.ref,
       updated_by: observable.ref,
-      views: observable,
+      view_props: observable,
       votes: observable.ref,
       workspace: observable.ref,
       workspace_detail: observable,

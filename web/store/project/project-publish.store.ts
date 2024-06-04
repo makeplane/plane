@@ -28,7 +28,7 @@ export interface IProjectPublishStore {
   // observables
   projectPublishSettings: IProjectPublishSettings | "not-initialized";
   // project settings actions
-  getProjectSettingsAsync: (workspaceSlug: string, projectId: string) => Promise<void>;
+  getProjectSettingsAsync: (workspaceSlug: string, projectId: string) => Promise<IProjectPublishSettings>;
   updateProjectSettingsAsync: (
     workspaceSlug: string,
     projectId: string,
@@ -36,7 +36,11 @@ export interface IProjectPublishStore {
     data: IProjectPublishSettings
   ) => Promise<void>;
   // project publish actions
-  publishProject: (workspaceSlug: string, projectId: string, data: IProjectPublishSettings) => Promise<void>;
+  publishProject: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IProjectPublishSettings
+  ) => Promise<IProjectPublishSettings>;
   unPublishProject: (workspaceSlug: string, projectId: string, projectPublishId: string) => Promise<void>;
 }
 
@@ -85,24 +89,9 @@ export class ProjectPublishStore implements IProjectPublishStore {
         this.fetchSettingsLoader = true;
       });
       const response = await this.projectPublishService.getProjectSettingsAsync(workspaceSlug, projectId);
-      if (response && response.length > 0) {
-        const _projectPublishSettings: IProjectPublishSettings = {
-          id: response[0]?.id,
-          comments: response[0]?.comments,
-          reactions: response[0]?.reactions,
-          votes: response[0]?.votes,
-          views: {
-            list: response[0]?.views?.list || false,
-            kanban: response[0]?.views?.kanban || false,
-            calendar: response[0]?.views?.calendar || false,
-            gantt: response[0]?.views?.gantt || false,
-            spreadsheet: response[0]?.views?.spreadsheet || false,
-          },
-          inbox: response[0]?.inbox || null,
-          project: response[0]?.project || null,
-        };
+      if (response) {
         runInAction(() => {
-          this.projectPublishSettings = _projectPublishSettings;
+          this.projectPublishSettings = response;
           this.fetchSettingsLoader = false;
         });
       } else {
@@ -134,23 +123,13 @@ export class ProjectPublishStore implements IProjectPublishStore {
       });
       const response = await this.projectPublishService.createProjectSettingsAsync(workspaceSlug, projectId, data);
       if (response) {
-        const _projectPublishSettings: IProjectPublishSettings = {
-          id: response?.id || null,
-          comments: response?.comments || false,
-          reactions: response?.reactions || false,
-          votes: response?.votes || false,
-          views: { ...response?.views },
-          inbox: response?.inbox || null,
-          project: response?.project || null,
-        };
-
         runInAction(() => {
-          this.projectPublishSettings = _projectPublishSettings;
+          this.projectPublishSettings = response;
           set(this.projectRootStore.project.projectMap, [projectId, "is_deployed"], true);
           this.generalLoader = false;
         });
-        return response;
       }
+      return response;
     } catch (error) {
       runInAction(() => {
         this.generalLoader = false;
