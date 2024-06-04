@@ -5,10 +5,10 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.20.0
-    created: "2024-06-04T05:39:36.685117327Z"
+    created: "2024-06-04T05:49:06.569029348Z"
     description: Meet Plane. An open-source software development tool to manage issues,
       sprints, and product roadmaps with peace of mind.
-    digest: 229bd647b36e3c112678e27e2b53e5de53659498d77d2c17118354a2914f7dc8
+    digest: 8529447e8863c882bd28069d8c3ae446b634d02b3a18978229c618654452bd6f
     home: https://plane.so
     icon: https://plane.so/favicon/favicon-32x32.png
     name: plane-ce
@@ -22,7 +22,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.20.0
-    created: "2024-06-04T05:39:36.684503183Z"
+    created: "2024-06-04T05:49:06.568154609Z"
     description: Meet Plane. An open-source software development tool to manage issues,
       sprints, and product roadmaps with peace of mind.
     digest: c458b648400975f61eabdccb7d20ef7565f86ea3241b0616bf03204776627bfc
@@ -39,7 +39,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.19.0
-    created: "2024-06-04T05:39:36.683909888Z"
+    created: "2024-06-04T05:49:06.567489892Z"
     description: Meet Plane. An open-source software development tool to manage issues,
       sprints, and product roadmaps with peace of mind.
     digest: d1ef854b1c511ba54bd3ad27c463f482185a0d071be9185cad7d70a688c44114
@@ -56,7 +56,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.17.0
-    created: "2024-06-04T05:39:36.683318877Z"
+    created: "2024-06-04T05:49:06.566860911Z"
     description: Meet Plane. An open-source software development tool to manage issues,
       sprints, and product roadmaps with peace of mind.
     digest: f5852b4c35eb5c7147a33ab2ae130a18d160cb1be7c01c7639c48413213ddff2
@@ -73,7 +73,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.17.0
-    created: "2024-06-04T05:39:36.682751259Z"
+    created: "2024-06-04T05:49:06.566300778Z"
     description: Meet Plane. An open-source software development tool to manage issues,
       sprints, and product roadmaps with peace of mind.
     digest: 0417c80adb56ff91a8261f9434c7ffc4a76f110136c6ef4ab993d73e556b8f0a
@@ -90,7 +90,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.17.0
-    created: "2024-06-04T05:39:36.682179214Z"
+    created: "2024-06-04T05:49:06.565720477Z"
     description: Meet Plane. An open-source software development tool to manage issues,
       sprints, and product roadmaps with peace of mind.
     digest: 8b145bef3d69b1adbfc577354617d96afe6ea877d1f0f6f0b231032b92f11da3
@@ -107,7 +107,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.15.0
-    created: "2024-06-04T05:39:36.681573686Z"
+    created: "2024-06-04T05:49:06.564392214Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -130,7 +130,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.15.0
-    created: "2024-06-04T05:39:36.677605806Z"
+    created: "2024-06-04T05:49:06.561237489Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -153,7 +153,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.15.0
-    created: "2024-06-04T05:39:36.673824792Z"
+    created: "2024-06-04T05:49:06.557493868Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -176,7 +176,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.2
-    created: "2024-06-04T05:39:36.713091861Z"
+    created: "2024-06-04T05:49:06.597460119Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -199,7 +199,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.2
-    created: "2024-06-04T05:39:36.709920323Z"
+    created: "2024-06-04T05:49:06.593847622Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -222,7 +222,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.2
-    created: "2024-06-04T05:39:36.705900294Z"
+    created: "2024-06-04T05:49:06.590112277Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -245,7 +245,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.2
-    created: "2024-06-04T05:39:36.702803475Z"
+    created: "2024-06-04T05:49:06.587050756Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -268,7 +268,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.2
-    created: "2024-06-04T05:39:36.699017754Z"
+    created: "2024-06-04T05:49:06.583415867Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -291,7 +291,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.0
-    created: "2024-06-04T05:39:36.695901519Z"
+    created: "2024-06-04T05:49:06.580363123Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -314,7 +314,7 @@ entries:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
     appVersion: 0.14.0
-    created: "2024-06-04T05:39:36.691949635Z"
+    created: "2024-06-04T05:49:06.576621158Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -335,7 +335,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 0.14.0
-    created: "2024-06-04T05:39:36.688834783Z"
+    created: "2024-06-04T05:49:06.573181183Z"
     dependencies:
     - alias: cert-manager
       condition: cert-manager.enabled
@@ -354,4 +354,4 @@ entries:
     urls:
     - charts/plane-ce-1.0.4.tgz
     version: 1.0.4
-generated: "2024-06-04T05:39:36.667999939Z"
+generated: "2024-06-04T05:49:06.554086373Z"
