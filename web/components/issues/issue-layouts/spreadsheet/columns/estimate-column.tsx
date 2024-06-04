@@ -1,8 +1,8 @@
-// components
 import { observer } from "mobx-react-lite";
-import { TIssue } from "@plane/types";
-import { EstimateDropdown } from "@/components/dropdowns";
 // types
+import { TIssue } from "@plane/types";
+// components
+import { EstimateDropdown } from "@/components/dropdowns";
 
 type Props = {
   issue: TIssue;
@@ -25,7 +25,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props
         projectId={issue.project_id}
         disabled={disabled}
         buttonVariant="transparent-with-text"
-        buttonClassName="rounded-none text-left"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />
