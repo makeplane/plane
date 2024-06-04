@@ -3,8 +3,6 @@ name: Helm Build
 on:
   pull_request:
     types: ["opened", "synchronize"]
-    branches:
-      - master
     paths:
       - 'helm-chart/**'
 
