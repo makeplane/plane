@@ -2,6 +2,7 @@ import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
 //types
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 //components
 import { TRenderQuickActions } from "../list/list-view-types";
@@ -20,6 +21,7 @@ type Props = {
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
+  selectionHelpers: TSelectionHelper;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -35,6 +37,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     canEditProperties,
     containerRef,
     spreadsheetColumnsList,
+    selectionHelpers,
   } = props;
 
   // states
@@ -81,8 +84,10 @@ export const SpreadsheetTable = observer((props: Props) => {
         displayProperties={displayProperties}
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}
+        selectionHelpers={selectionHelpers}
       />
       <tbody>
         {issueIds.map((id) => (
@@ -100,6 +105,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             isScrolled={isScrolled}
             issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
+            selectionHelpers={selectionHelpers}
           />
         ))}
       </tbody>

@@ -1,12 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CalendarClock } from "lucide-react";
+// types
 import { TIssue } from "@plane/types";
 // components
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-// types
 
 type Props = {
   issue: TIssue;
@@ -38,7 +38,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
         placeholder="Start date"
         icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
-        buttonClassName="rounded-none text-left"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />

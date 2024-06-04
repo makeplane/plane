@@ -1,15 +1,18 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
-import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
-import { SPREADSHEET_PROPERTY_LIST } from "@/constants/spreadsheet";
+import { MultipleSelectGroup } from "@/components/core";
+import { IssueBulkOperationsRoot, SpreadsheetQuickAddIssueForm } from "@/components/issues";
+// constants
+import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
+// hooks
 import { useProject } from "@/hooks/store";
+// types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
-// types
-//hooks
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -73,28 +76,41 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   return (
     <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
-      <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
-        <SpreadsheetTable
-          displayProperties={displayProperties}
-          displayFilters={displayFilters}
-          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-          issueIds={issueIds}
-          isEstimateEnabled={isEstimateEnabled}
-          portalElement={portalRef}
-          quickActions={quickActions}
-          updateIssue={updateIssue}
-          canEditProperties={canEditProperties}
-          containerRef={containerRef}
-          spreadsheetColumnsList={spreadsheetColumnsList}
-        />
-      </div>
-      <div className="border-t border-custom-border-100">
-        <div className="z-5 sticky bottom-0 left-0 mb-3">
-          {enableQuickCreateIssue && !disableIssueCreation && (
-            <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
-          )}
-        </div>
-      </div>
+      <MultipleSelectGroup
+        containerRef={containerRef}
+        entities={{
+          [SPREADSHEET_SELECT_GROUP]: issueIds,
+        }}
+      >
+        {(helpers) => (
+          <>
+            <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
+              <SpreadsheetTable
+                displayProperties={displayProperties}
+                displayFilters={displayFilters}
+                handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                issueIds={issueIds}
+                isEstimateEnabled={isEstimateEnabled}
+                portalElement={portalRef}
+                quickActions={quickActions}
+                updateIssue={updateIssue}
+                canEditProperties={canEditProperties}
+                containerRef={containerRef}
+                spreadsheetColumnsList={spreadsheetColumnsList}
+                selectionHelpers={helpers}
+              />
+            </div>
+            <div className="border-t border-custom-border-100">
+              <div className="z-5 sticky bottom-0 left-0 mb-3">
+                {enableQuickCreateIssue && !disableIssueCreation && (
+                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
+                )}
+              </div>
+            </div>
+            <IssueBulkOperationsRoot />
+          </>
+        )}
+      </MultipleSelectGroup>
     </div>
   );
 });
