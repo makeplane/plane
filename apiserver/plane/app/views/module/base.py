@@ -299,6 +299,7 @@ class ModuleViewSet(BaseViewSet):
         return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
+        plot_type = request.GET.get("plot_type", "burndown")
         queryset = (
             self.get_queryset()
             .filter(archived_at__isnull=True)
@@ -421,6 +422,7 @@ class ModuleViewSet(BaseViewSet):
                 queryset=modules,
                 slug=slug,
                 project_id=project_id,
+                plot_type=plot_type,
                 module_id=pk,
             )
 
