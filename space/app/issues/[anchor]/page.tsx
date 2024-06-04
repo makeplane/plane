@@ -1,5 +1,6 @@
 "use client";
 
+import { observer } from "mobx-react-lite";
 import { useSearchParams } from "next/navigation";
 // components
 import { ProjectDetailsView } from "@/components/views";
@@ -12,7 +13,7 @@ type Props = {
   };
 };
 
-const ProjectIssuesPage = (props: Props) => {
+const ProjectIssuesPage =observer ((props: Props) => {
   const { params } = props;
   const { anchor } = params;
   // params
@@ -24,6 +25,6 @@ const ProjectIssuesPage = (props: Props) => {
   if (!publishSettings) return null;
 
   return <ProjectDetailsView peekId={peekId} publishSettings={publishSettings} />;
-};
+});
 
 export default ProjectIssuesPage;

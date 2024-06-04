@@ -77,14 +77,14 @@ class IssueCommentPublicViewSet(BaseViewSet):
     def get_queryset(self):
         try:
             project_deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
+                anchor=self.kwargs.get("anchor"),
+                entity_name="project",
             )
             if project_deploy_board.comments:
                 return self.filter_queryset(
                     super()
                     .get_queryset()
-                    .filter(workspace__slug=self.kwargs.get("slug"))
+                    .filter(workspace_id=project_deploy_board.workspace_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .filter(access="EXTERNAL")
                     .select_related("project")
@@ -93,8 +93,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     .annotate(
                         is_member=Exists(
                             ProjectMember.objects.filter(
-                                workspace__slug=self.kwargs.get("slug"),
-                                project_id=self.kwargs.get("project_id"),
+                                workspace_id=project_deploy_board.workspace_id,
+                                project_id=project_deploy_board.project_id,
                                 member_id=self.request.user.id,
                                 is_active=True,
                             )
@@ -435,13 +435,17 @@ class IssueVotePublicViewSet(BaseViewSet):
             return IssueVote.objects.none()
 
     def create(self, request, anchor, issue_id):
+        print("hite")
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
+        print("awer")
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
+            project_id=project_deploy_board.project_id,
             issue_id=issue_id,
         )
+        print("AWer")
         # Add the user for workspace tracking
         if not ProjectMember.objects.filter(
             project_id=project_deploy_board.project_id,
