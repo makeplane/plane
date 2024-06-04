@@ -7,7 +7,7 @@ import { Button } from "@plane/ui";
 import { CommentCard, AddComment } from "@/components/issues/peek-overview";
 import { Icon } from "@/components/ui";
 // hooks
-import { useIssueDetails, useProject, useUser } from "@/hooks/store";
+import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { IIssue } from "@/types/issue";
@@ -21,13 +21,13 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
   const { anchor } = props;
   // router
   const pathname = usePathname();
-  // store
-  const { canComment } = useProject();
+  // store hooks
   const { details, peekId } = useIssueDetails();
   const { data: currentUser } = useUser();
-  const isInIframe = useIsInIframe();
-
+  const { canComment } = usePublish(anchor);
+  // derived values
   const comments = details[peekId || ""]?.comments || [];
+  const isInIframe = useIsInIframe();
 
   return (
     <div className="pb-10">

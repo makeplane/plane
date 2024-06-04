@@ -8,6 +8,9 @@ import { TPublishSettings } from "@/types/publish";
 export interface IPublishStore extends TPublishSettings {
   // computed
   workspaceSlug: string | undefined;
+  canComment: boolean;
+  canReact: boolean;
+  canVote: boolean;
 }
 
 export class PublishStore implements IPublishStore {
@@ -67,10 +70,37 @@ export class PublishStore implements IPublishStore {
       workspace_detail: observable,
       // computed
       workspaceSlug: computed,
+      canComment: computed,
+      canReact: computed,
+      canVote: computed,
     });
   }
 
+  /**
+   * @description returns the workspace slug from the workspace details
+   */
   get workspaceSlug() {
     return this?.workspace_detail?.slug ?? undefined;
+  }
+
+  /**
+   * @description returns whether commenting is enabled or not
+   */
+  get canComment() {
+    return !!this.comments;
+  }
+
+  /**
+   * @description returns whether reacting is enabled or not
+   */
+  get canReact() {
+    return !!this.reactions;
+  }
+
+  /**
+   * @description returns whether voting is enabled or not
+   */
+  get canVote() {
+    return !!this.votes;
   }
 }

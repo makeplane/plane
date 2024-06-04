@@ -5,7 +5,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
 // hooks
-import { useIssue, useIssueFilter, usePublish } from "@/hooks/store";
+import { useIssue, useIssueFilter } from "@/hooks/store";
 // store
 import { TIssueQueryFilters } from "@/types/issue";
 // components
@@ -20,10 +20,10 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
   // router
   const router = useRouter();
   // store hooks
-  const { issueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
+  const { getIssueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
   const { states, labels } = useIssue();
-  const { project: projectID } = usePublish(anchor);
-
+  // derived values
+  const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
   const userFilters = issueFilters?.filters || {};
 
@@ -53,23 +53,19 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
 
   const handleFilters = useCallback(
     (key: keyof TIssueQueryFilters, value: string | null) => {
-      if (!projectID) return;
-
       let newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
 
       if (value === null) newValues = [];
       else if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
 
-      updateIssueFilters(projectID, "filters", key, newValues);
+      updateIssueFilters(anchor, "filters", key, newValues);
       updateRouteParams(key, newValues);
     },
-    [projectID, issueFilters, updateIssueFilters, updateRouteParams]
+    [anchor, issueFilters, updateIssueFilters, updateRouteParams]
   );
 
   const handleRemoveAllFilters = () => {
-    if (!projectID) return;
-
-    initIssueFilters(projectID, {
+    initIssueFilters(anchor, {
       display_filters: { layout: activeLayout || "list" },
       filters: {
         state: [],

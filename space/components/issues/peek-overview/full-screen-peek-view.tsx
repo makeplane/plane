@@ -29,7 +29,7 @@ export const FullScreenPeekView: React.FC<Props> = observer((props) => {
           <div className="h-full w-full overflow-y-auto px-6">
             {/* issue title and description */}
             <div className="w-full">
-              <PeekOverviewIssueDetails issueDetails={issueDetails} />
+              <PeekOverviewIssueDetails anchor={anchor} issueDetails={issueDetails} />
             </div>
             {/* divider */}
             <div className="my-5 h-[1] w-full border-t border-custom-border-200" />

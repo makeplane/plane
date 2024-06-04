@@ -33,11 +33,12 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
   // store hooks
-  const { issueFilters } = useIssueFilter();
+  const { getIssueFilters } = useIssueFilter();
   const { loader, issues, error, fetchPublicIssues } = useIssue();
   const issueDetailStore = useIssueDetails();
   // derived values
   const { anchor } = publishSettings;
+  const issueFilters = anchor ? getIssueFilters(anchor) : undefined;
 
   useSWR(
     anchor ? `PUBLIC_ISSUES_${anchor}` : null,

@@ -13,11 +13,12 @@ import { useIssueFilter } from "@/hooks/store";
 import { TIssueLayout } from "@/types/issue";
 
 type NavbarIssueBoardViewProps = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
 };
 
 export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((props) => {
+  const { anchor } = props;
+  // router
   const router = useRouter();
   const searchParams = useSearchParams();
   // query params
@@ -25,18 +26,16 @@ export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((pro
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const peekId = searchParams.get("peekId") || undefined;
-  // props
-  const { workspaceSlug, projectId } = props;
   // hooks
-  const { layoutOptions, issueFilters, updateIssueFilters } = useIssueFilter();
-
+  const { layoutOptions, getIssueFilters, updateIssueFilters } = useIssueFilter();
   // derived values
+  const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
-    updateIssueFilters(projectId, "display_filters", "layout", boardView);
+    updateIssueFilters(anchor, "display_filters", "layout", boardView);
     const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
-    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
+    router.push(`/issues/${anchor}?${queryParam}`);
   };
 
   return (
