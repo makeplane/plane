@@ -1,3 +1,5 @@
+"use client";
+
 type Props = {
   children: React.ReactNode;
   params: {
@@ -6,7 +8,7 @@ type Props = {
   };
 };
 
-const IssuesLayout = async (props: Props) => {
+const IssuesLayout = (props: Props) => {
   const { children } = props;
 
   return <>{children}</>;

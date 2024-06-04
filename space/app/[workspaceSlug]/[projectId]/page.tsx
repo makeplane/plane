@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useSearchParams, useRouter } from "next/navigation";
 // components
 import { LogoSpinner } from "@/components/common";
-// helpers
-import { navigate } from "@/helpers/actions";
 // services
 import PublishService from "@/services/publish.service";
 const publishService = new PublishService();
@@ -22,6 +20,8 @@ const IssuesPage = (props: Props) => {
   const { workspaceSlug, projectId } = params;
   // states
   const [error, setError] = useState(false);
+  // router
+  const router = useRouter();
   // params
   const searchParams = useSearchParams();
   const board = searchParams.get("board");
@@ -39,11 +39,12 @@ const IssuesPage = (props: Props) => {
           if (board) params.append("board", board);
           if (peekId) params.append("peekId", peekId);
           if (params.toString()) url += `?${params.toString()}`;
-          navigate(url);
+          router.push(url);
+          // navigate(url);
         } else throw Error("Invalid entity name");
       })
       .catch(() => setError(true));
-  }, [board, peekId, projectId, workspaceSlug]);
+  }, [board, peekId, projectId, router, workspaceSlug]);
 
   if (error) notFound();
 
