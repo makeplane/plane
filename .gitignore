@@ -85,4 +85,4 @@ deploy/selfhost/plane-app/
 ## Storybook
 *storybook.log
 output.css
-test-helm-chart.yaml
+test-*.yaml

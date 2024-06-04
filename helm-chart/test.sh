@@ -23,11 +23,11 @@ EOF
 
 
 
-helm template plane-ce-app-$(date +%s) helm-chart -n myns > test-helm-chart.yaml
+helm template plane-ce-app-$(date +%s) plane-ce -n myns > test-plane-ce.yaml
 if [ $? -eq 0 ]; then
     clear
     printSuccess
-    code test-helm-chart.yaml
+    code test-plane-ce.yaml
 else
     printFailed
 fi

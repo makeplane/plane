@@ -8,9 +8,13 @@ on:
     paths:
       - 'helm-chart/**'
 
+env:
+  SOURCE_BRANCH: github.event.pull_request.head.ref
+  TARGET_BRANCH: github.event.pull_request.base.ref
+
 jobs:
   build:
-    if: github.event.pull_request.head.ref == 'preview' && github.event_name == 'pull_request'
+    if: github.event.pull_request.head.ref != 'master' && github.event_name == 'pull_request'
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -19,8 +23,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: code
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ env.SOURCE_BRANCH }}
           fetch-depth: 2
+
+      - name: Checkout Source Target Branch
+        uses: actions/checkout@v4
+        with:
+          path: __target
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 2
+      
+      - name: Merge Docs from target to code
+        run: |
+          rm -rf __target/docs/content
+          rm -rf __target/docs/images
+          rm -rf __target/docs/metadata
+          rm -rf __target/docs/artifacthub-repo.yml
+          rm -rf __target/docs/README.md
+          rm -rf __target/docs/index.html
+
+          cp -r __target/docs code
 
       - name: Get changed files
         id: changed_files
@@ -28,42 +50,22 @@ jobs:
         with:
           path: code
           files_yaml: |
-            helm_chart:
-              - helm-chart/**
-
-      - name: Checkout Source Master
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
-        uses: actions/checkout@v4
-        with:
-          path: master
-          ref: master
-          fetch-depth: 2
-      
-      - name: Merge Docs from Master to code
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
-        run: |
-          rm -rf master/docs/content
-          rm -rf master/docs/images
-          rm -rf master/docs/metadata
-          rm -rf master/docs/artifacthub-repo.yml
-          rm -rf master/docs/README.md
-          rm -rf master/docs/index.html
-
-          cp -r master/docs code
+            plane_ce:
+              - helm-chart/plane-ce/**
 
       - name: Configure Git
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        if: (steps.changed_files.outputs.plane_ce_any_changed == 'true')
         working-directory: code
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Set up Helm
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        if: (steps.changed_files.outputs.plane_ce_any_changed == 'true')
         uses: azure/setup-helm@v4
 
       - name: Prepare GPG key #this step is for using exported keys and make your github runner
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        if: (steps.changed_files.outputs.plane_ce_any_changed == 'true')
         working-directory: code
         run: |
           gpg_dir=.cr-gpg
@@ -78,19 +80,20 @@ jobs:
           GPG_KEYRING_BASE64: "${{ secrets.GPG_KEYRING_BASE64 }}" #Referring secrets of github above
           GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
 
-      - id: package-helm-chart
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
-        name: Build Helm Chart
+      - id: build-plane-ce
+        if: (steps.changed_files.outputs.plane_ce_any_changed == 'true')
+        name: Build Plane-CE
         working-directory: code
         env:
           EXPORT_DIR: docs
-          CHART_REPO: helm-chart
+          CHART_DIR: helm-chart
+          CHART_REPO: plane-ce
         run: |
-          helm package --sign --key "Plane" --keyring $CR_KEYRING --passphrase-file "$CR_PASSPHRASE_FILE" $CHART_REPO -u -d ${{ env.EXPORT_DIR }}/charts
+          helm package --sign --key "Plane" --keyring $CR_KEYRING --passphrase-file "$CR_PASSPHRASE_FILE" ${{ env.CHART_DIR }}/${{ env.CHART_REPO }} -u -d ${{ env.EXPORT_DIR }}/charts
           helm repo index docs
 
       - name: Publish
-        if: steps.changed_files.outputs.helm_chart_any_changed == 'true'
+        if: (steps.changed_files.outputs.plane_ce_any_changed == 'true')
         working-directory: code
         run: |
           git add docs
@@ -98,4 +101,3 @@ jobs:
           git push origin ${{ github.event.pull_request.head.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

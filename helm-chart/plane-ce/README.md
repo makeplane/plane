@@ -63,6 +63,7 @@ Configuration Settings Available
 |---	|:---:	|:---:	|---	|
 | planeVersion 	| stable 	| Yes 	|  	|
 | **Ingress Setup** 	|  	|  	|  	|
+| ingress.enabled 	| true 	|  	| setting it false will not create ingress resource.  	|
 | ingress.appHost 	| 'plane.example.com' 	| Yes 	|  	|
 | ingress.minioHost 	| 'plane-minio.example.com' 	|  	| (Optional) Required to open minio console interface 	|
 | ingress.ingressClass 	| 'nginx' 	| Yes 	| can be any of the supported ingress controller class (eg. nginx, traefik, etc) 	|
