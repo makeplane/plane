@@ -9,3 +9,5 @@ export { proseMirrorJSONToBinaryString, applyUpdates, mergeUpdates } from "src/u
 export type { EditorRefApi, EditorReadOnlyRefApi, EditorMenuItem, EditorMenuItemNames } from "@plane/editor-core";
 
 export type { IMarking } from "src/types/editor-types";
+
+export type { TEmbedItem } from "src/ui/extensions/widgets/issue-embed/block/types";

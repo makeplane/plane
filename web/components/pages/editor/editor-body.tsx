@@ -12,11 +12,12 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { IssueEmbedCard, PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useIssueEmbed } from "@/hooks/use-issue-embed";
 import { usePageDescription } from "@/hooks/use-page-description";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // services
@@ -80,14 +81,24 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+
   // page filters
   const { isFullWidth } = usePageFilters();
+  // issue-embed
+  const { fetchIssues } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
   if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
+
+  const handleIssueSearch = async (searchQuery: string) => {
+    const response = await fetchIssues(searchQuery);
+    return response;
+  };
+
+  if (pageDescription === undefined) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -139,6 +150,24 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 highlights: mentionHighlights,
                 suggestions: mentionSuggestions,
               }}
+              embedHandler={{
+                issue: {
+                  searchCallback: async (query) =>
+                    new Promise((resolve) => {
+                      setTimeout(async () => {
+                        const response = await handleIssueSearch(query);
+                        resolve(response);
+                      }, 300);
+                    }),
+                  widgetCallback: (issueId) => (
+                    <IssueEmbedCard
+                      issueId={issueId}
+                      projectId={projectId?.toString() ?? ""}
+                      workspaceSlug={workspaceSlug?.toString() ?? ""}
+                    />
+                  ),
+                },
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -149,6 +178,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
+              }}
+              embedHandler={{
+                issue: {
+                  widgetCallback: (issueId) => (
+                    <IssueEmbedCard
+                      issueId={issueId}
+                      projectId={projectId?.toString() ?? ""}
+                      workspaceSlug={workspaceSlug?.toString() ?? ""}
+                    />
+                  ),
+                },
               }}
             />
           )}

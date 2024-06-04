@@ -73,6 +73,8 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
     "h1, h2, h3",
     ".table-wrapper",
     "[data-type=horizontalRule]",
+    ".issue-embed",
+    "img",
   ].join(", ");
 
   for (const elem of elements) {
@@ -154,6 +156,7 @@ function DragHandle(options: DragHandleOptions) {
     // Check if nodePos points to the top level node
     if (nodePos.node().type.name === "doc") differentNodeSelected = true;
     else {
+      // TODO FIX ERROR
       const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
       // Check if the node where the drag event started is part of the current selection
       differentNodeSelected = !(
@@ -166,6 +169,7 @@ function DragHandle(options: DragHandleOptions) {
       const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
       view.dispatch(view.state.tr.setSelection(multiNodeSelection));
     } else {
+      // TODO FIX ERROR
       const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
       view.dispatch(view.state.tr.setSelection(nodeSelection));
     }
@@ -183,6 +187,7 @@ function DragHandle(options: DragHandleOptions) {
       nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
 
       if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        // TODO FIX ERROR
         const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
         view.dispatch(view.state.tr.setSelection(nodeSelection));
       }
@@ -219,6 +224,7 @@ function DragHandle(options: DragHandleOptions) {
       nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
 
       if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        // TODO FIX ERROR
         const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
         view.dispatch(view.state.tr.setSelection(nodeSelection));
       }
@@ -232,6 +238,7 @@ function DragHandle(options: DragHandleOptions) {
     // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
     nodePos = calcNodePos(nodePos, view, node);
 
+    // TODO FIX ERROR
     // Use NodeSelection to select the node at the calculated position
     const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
 

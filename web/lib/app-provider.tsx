@@ -12,8 +12,8 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
-import { useInstance, useWorkspace, useUser } from "@/hooks/store";
-// wrappers
+import { useInstance, useUser, useWorkspace } from "@/hooks/store";
+// layouts
 import { InstanceWrapper } from "@/lib/wrappers";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });

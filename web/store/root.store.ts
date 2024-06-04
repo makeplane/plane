@@ -53,9 +53,9 @@ export class RootStore {
 
   constructor() {
     this.router = new RouterStore();
+    this.user = new UserStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.user = new UserStore(this);
     this.memberRoot = new MemberRootStore(this);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
