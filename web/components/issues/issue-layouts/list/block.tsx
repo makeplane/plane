@@ -143,8 +143,8 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       }}
     >
       <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-3 truncate">
-          <div className="flex items-center gap-0.5">
+        <div className="flex flex-grow items-center gap-1.5 truncate">
+          <div className="flex items-center gap-2" style={isSubIssue ? { marginLeft } : {}}>
             {/* select checkbox */}
             {projectId && canEditIssueProperties && (
               <Tooltip
@@ -173,8 +173,14 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </div>
               </Tooltip>
             )}
+            {displayProperties && displayProperties?.key && (
+              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+                {projectIdentifier}-{issue.sequence_id}
+              </div>
+            )}
+
             {/* sub-issues chevron */}
-            <div className="size-4 grid place-items-center flex-shrink-0" style={isSubIssue ? { marginLeft } : {}}>
+            <div className="size-4 grid place-items-center flex-shrink-0">
               {subIssuesCount > 0 && (
                 <button
                   type="button"
@@ -190,11 +196,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </button>
               )}
             </div>
-            {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-                {projectIdentifier}-{issue.sequence_id}
-              </div>
-            )}
 
             {issue?.tempId !== undefined && (
               <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
