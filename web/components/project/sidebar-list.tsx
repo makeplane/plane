@@ -5,22 +5,30 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// types
 import { IProject } from "@plane/types";
-// hooks
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
+// constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { orderJoinedProjects } from "@/helpers/project.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
-// ui
-// components
-// helpers
-// constants
 
 export const ProjectSidebarList: FC = observer(() => {
+  // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
+  const isFavProjectsListOpenInLocalStorage = localStorage.getItem("isFavoriteProjectsListOpen");
+  const isAllProjectsListOpenInLocalStorage = localStorage.getItem("isAllProjectsListOpen");
   // states
+  const [isFavoriteProjectsListOpen, setIsFavoriteProjectsListOpen] = useState(
+    isFavProjectsListOpenInLocalStorage === "true"
+  );
+  const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(isAllProjectsListOpenInLocalStorage === "true");
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
@@ -122,6 +130,16 @@ export const ProjectSidebarList: FC = observer(() => {
     );
   }, [containerRef]);
 
+  const toggleListDisclosure = (isOpen: boolean, type: "all" | "favorite") => {
+    if (type === "all") {
+      setIsAllProjectsListOpen(isOpen);
+      localStorage.setItem("isAllProjectsListOpen", isOpen.toString());
+    } else {
+      setIsFavoriteProjectsListOpen(isOpen);
+      localStorage.setItem("isFavoriteProjectsListOpen", isOpen.toString());
+    }
+  };
+
   return (
     <>
       {workspaceSlug && (
@@ -147,42 +165,48 @@ export const ProjectSidebarList: FC = observer(() => {
       >
         <div>
           {favoriteProjects && favoriteProjects.length > 0 && (
-            <Disclosure as="div" className="flex flex-col" defaultOpen>
-              {({ open }) => (
-                <>
-                  {!isCollapsed && (
-                    <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                      <Disclosure.Button
-                        as="button"
-                        type="button"
-                        className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
-                      >
-                        Favorites
-                        {open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                      </Disclosure.Button>
-                      {isAuthorizedUser && (
-                        <button
-                          className="opacity-0 group-hover:opacity-100"
-                          onClick={() => {
-                            setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
-                            setIsFavoriteProjectCreate(true);
-                            setIsProjectModalOpen(true);
-                          }}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
+            <Disclosure as="div" className="flex flex-col" defaultOpen={isFavoriteProjectCreate}>
+              <>
+                {!isCollapsed && (
+                  <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
+                      onClick={() => toggleListDisclosure(!isFavoriteProjectsListOpen, "favorite")}
+                    >
+                      Favorites
+                      {isFavoriteProjectsListOpen ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
                       )}
-                    </div>
-                  )}
-                  <Transition
-                    enter="transition duration-100 ease-out"
-                    enterFrom="transform scale-95 opacity-0"
-                    enterTo="transform scale-100 opacity-100"
-                    leave="transition duration-75 ease-out"
-                    leaveFrom="transform scale-100 opacity-100"
-                    leaveTo="transform scale-95 opacity-0"
-                  >
-                    <Disclosure.Panel as="div" className="space-y-2">
+                    </Disclosure.Button>
+                    {isAuthorizedUser && (
+                      <button
+                        className="opacity-0 group-hover:opacity-100"
+                        onClick={() => {
+                          setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
+                          setIsFavoriteProjectCreate(true);
+                          setIsProjectModalOpen(true);
+                        }}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                )}
+                <Transition
+                  show={isFavoriteProjectsListOpen}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  {isFavoriteProjectsListOpen && (
+                    <Disclosure.Panel as="div" className={`space-y-2`} static>
                       {favoriteProjects.map((projectId, index) => (
                         <ProjectSidebarListItem
                           key={projectId}
@@ -195,50 +219,56 @@ export const ProjectSidebarList: FC = observer(() => {
                         />
                       ))}
                     </Disclosure.Panel>
-                  </Transition>
-                </>
-              )}
+                  )}
+                </Transition>
+              </>
             </Disclosure>
           )}
         </div>
         <div>
           {joinedProjects && joinedProjects.length > 0 && (
-            <Disclosure as="div" className="flex flex-col" defaultOpen>
-              {({ open }) => (
-                <>
-                  {!isCollapsed && (
-                    <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                      <Disclosure.Button
-                        as="button"
-                        type="button"
-                        className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
-                      >
-                        Your projects
-                        {open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                      </Disclosure.Button>
-                      {isAuthorizedUser && (
-                        <button
-                          className="opacity-0 group-hover:opacity-100"
-                          onClick={() => {
-                            setTrackElement("Sidebar");
-                            setIsFavoriteProjectCreate(false);
-                            setIsProjectModalOpen(true);
-                          }}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
+            <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
+              <>
+                {!isCollapsed && (
+                  <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
+                      onClick={() => toggleListDisclosure(!isAllProjectsListOpen, "all")}
+                    >
+                      Your projects
+                      {isAllProjectsListOpen ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
                       )}
-                    </div>
-                  )}
-                  <Transition
-                    enter="transition duration-100 ease-out"
-                    enterFrom="transform scale-95 opacity-0"
-                    enterTo="transform scale-100 opacity-100"
-                    leave="transition duration-75 ease-out"
-                    leaveFrom="transform scale-100 opacity-100"
-                    leaveTo="transform scale-95 opacity-0"
-                  >
-                    <Disclosure.Panel as="div">
+                    </Disclosure.Button>
+                    {isAuthorizedUser && (
+                      <button
+                        className="opacity-0 group-hover:opacity-100"
+                        onClick={() => {
+                          setTrackElement("Sidebar");
+                          setIsFavoriteProjectCreate(false);
+                          setIsProjectModalOpen(true);
+                        }}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                )}
+                <Transition
+                  show={isAllProjectsListOpen}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  {isAllProjectsListOpen && (
+                    <Disclosure.Panel as="div" static>
                       {joinedProjects.map((projectId, index) => (
                         <ProjectSidebarListItem
                           key={projectId}
@@ -250,9 +280,9 @@ export const ProjectSidebarList: FC = observer(() => {
                         />
                       ))}
                     </Disclosure.Panel>
-                  </Transition>
-                </>
-              )}
+                  )}
+                </Transition>
+              </>
             </Disclosure>
           )}
         </div>
