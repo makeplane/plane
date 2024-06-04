@@ -66,9 +66,8 @@ export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) =>
       title={`Archive ${issueVariant}`}
       content={
         <>
-          Are you sure you want to archive {issueIds.length} {issueVariant}? Sub issues of selected {issueVariant} will
-          also be archived. Once archived {issueIds.length > 1 ? "they" : "it"} can be restored later via the archives
-          section.
+          Are you sure you want to archive {issueIds.length} {issueVariant}? Once archived{" "}
+          {issueIds.length > 1 ? "they" : "it"} can be restored later via the archives section.
         </>
       }
       primaryButtonText={{
