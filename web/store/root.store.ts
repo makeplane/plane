@@ -104,5 +104,6 @@ export class RootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.multipleSelect = new MultipleSelectStore();
+    this.projectEstimate = new ProjectEstimateStore(this);
   }
 }

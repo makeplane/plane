@@ -1,7 +1,9 @@
 import { FC } from "react";
 import { Crown, Info } from "lucide-react";
 import { TEstimateSystemKeys } from "@plane/types";
-import { RadioInput, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
+// components
+import { RadioInput } from "@/components/estimates";
 // constants
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 
@@ -45,6 +47,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
               disabled: !ESTIMATE_SYSTEMS[currentSystem]?.is_available || ESTIMATE_SYSTEMS[currentSystem]?.is_ee,
             };
           })}
+          name="estimate-radio-input"
           label="Choose an estimate system"
           labelClassName="text-sm font-medium text-custom-text-200 mb-1.5"
           wrapperClassName="relative flex flex-wrap gap-14"

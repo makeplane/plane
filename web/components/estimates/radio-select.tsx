@@ -1,9 +1,9 @@
 import React from "react";
-import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
-import { cn } from "../../helpers";
 // helpers
+import { cn } from "@/helpers/common.helper";
 
 type RadioInputProps = {
+  name?: string;
   label: string | React.ReactNode | undefined;
   wrapperClassName?: string;
   fieldClassName?: string;
@@ -18,6 +18,7 @@ type RadioInputProps = {
 };
 
 export const RadioInput = ({
+  name = "radio-input",
   label: inputLabel,
   labelClassName: inputLabelClassName = "",
   wrapperClassName: inputWrapperClassName = "",
@@ -43,29 +44,41 @@ export const RadioInput = ({
     aria = "radio-input";
   }
 
-  // return <h1>Hello</h1>;
-
   return (
-    <RadioGroup value={selected} onChange={setSelected} aria-label={aria} className={className}>
-      <Label className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</Label>
+    <div className={className}>
+      <div className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</div>
       <div className={cn(`${wrapperClass}`, inputWrapperClassName)}>
         {options.map(({ value, label, disabled }, index) => (
-          <Field key={index} className={cn("flex items-center gap-2", inputFieldClassName)}>
-            <Radio
-              value={value}
+          <div
+            key={index}
+            onClick={() => !disabled && setSelected(value)}
+            className={cn(
+              "flex items-center gap-2",
+              disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
+              inputFieldClassName
+            )}
+          >
+            <input
+              id={`${name}_${index}`}
+              name={name}
               className={cn(
-                "group flex size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 data-[checked]:bg-custom-primary-200 data-[checked]:border-custom-primary-100 cursor-pointer data-[disabled]:bg-custom-background-200 data-[disabled]:border-custom-border-200 data-[disabled]:cursor-not-allowed",
+                `group flex size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 cursor-pointer`,
+                selected === value ? `bg-custom-primary-200 border-custom-primary-100 ` : ``,
+                disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
                 inputButtonClassName
               )}
+              type="radio"
+              value={value}
               disabled={disabled}
-            >
-              <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
-            </Radio>
-            <Label className="text-base cursor-pointer">{label}</Label>
-          </Field>
+              checked={selected === value}
+            />
+            <label htmlFor={`${name}_${index}`} className="text-base cursor-pointer">
+              {label}
+            </label>
+          </div>
         ))}
       </div>
-    </RadioGroup>
+    </div>
   );
 };
 
