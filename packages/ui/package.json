@@ -20,12 +20,15 @@
     "postcss": "postcss styles/globals.css -o styles/output.css --watch"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.17",
     "@popperjs/core": "^2.11.8",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.379.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
