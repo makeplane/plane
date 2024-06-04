@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, DragHandle } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
@@ -53,7 +53,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef(null);
   // hooks
   const { workspaceSlug } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
@@ -74,14 +73,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
   useEffect(() => {
     const element = issueRef.current;
-    const dragHandleElement = dragHandleRef.current;
 
-    if (!element || !dragHandleElement) return;
+    if (!element) return;
 
     return combine(
       draggable({
         element,
-        dragHandle: dragHandleElement,
         canDrag: () => canDrag,
         getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
         onDragStart: () => {
@@ -92,7 +89,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         },
       })
     );
-  }, [issueRef?.current, canDrag, issueId, groupId, dragHandleRef?.current, setIsCurrentBlockDragging]);
+  }, [issueRef?.current, canDrag, issueId, groupId, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
@@ -127,28 +124,28 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           "bg-custom-background-80": isCurrentBlockDragging,
         }
       )}
+      onDragStart={() => {
+        if (!canDrag) {
+          setToast({
+            type: TOAST_TYPE.WARNING,
+            title: "Cannot move issue",
+            message: "Drag and drop is disabled for the current grouping",
+          });
+        }
+      }}
     >
       <div className="flex w-full truncate" style={nestingLevel !== 0 ? { paddingLeft } : {}}>
         <div className="flex flex-grow items-center gap-3 truncate">
           <div className="flex items-center gap-0.5">
-            <div className="flex items-center">
-              <DragHandle
-                ref={dragHandleRef}
-                disabled={!canDrag}
-                className={cn("opacity-0 group-hover:opacity-100", {
-                  "opacity-100": isCurrentBlockDragging,
-                })}
-              />
-              <div className="flex h-5 w-5 items-center justify-center">
-                {subIssuesCount > 0 && (
-                  <button
-                    className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
-                    onClick={handleToggleExpand}
-                  >
-                    <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
-                  </button>
-                )}
-              </div>
+            <div className="flex h-5 w-5 items-center justify-center">
+              {subIssuesCount > 0 && (
+                <button
+                  className="flex items-center justify-center h-5 w-5 cursor-pointer rounded-sm text-custom-text-400  hover:text-custom-text-300"
+                  onClick={handleToggleExpand}
+                >
+                  <ChevronRight className={`h-4 w-4 ${isExpanded ? "rotate-90" : ""}`} />
+                </button>
+              )}
             </div>
             {displayProperties && displayProperties?.key && (
               <div className="pl-1 flex-shrink-0 text-xs font-medium text-custom-text-300">
@@ -162,7 +159,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           </div>
 
           {issue?.is_draft ? (
-            <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
+            <Tooltip
+              tooltipContent={issue.name}
+              isMobile={isMobile}
+              position="top-left"
+              disabled={isCurrentBlockDragging}
+            >
               <p className="truncate">{issue.name}</p>
             </Tooltip>
           ) : (

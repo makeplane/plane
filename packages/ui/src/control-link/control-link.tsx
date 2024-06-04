@@ -33,7 +33,7 @@ export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((pr
   if (disabled) return <>{children}</>;
 
   return (
-    <a href={href} target={target} onClick={handleOnClick} {...rest} ref={ref} className={className}>
+    <a href={href} target={target} onClick={handleOnClick} {...rest} ref={ref} className={className} draggable={false}>
       {children}
     </a>
   );
