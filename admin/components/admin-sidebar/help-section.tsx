@@ -5,9 +5,11 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
+// ui
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
+// helpers
+import { WEB_BASE_URL, cn } from "@/helpers/common.helper";
 // hooks
-import { WEB_BASE_URL } from "@/helpers/common.helper";
 import { useTheme } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
@@ -42,9 +44,12 @@ export const HelpSection: FC = observer(() => {
 
   return (
     <div
-      className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
-        isSidebarCollapsed ? "flex-col" : ""
-      }`}
+      className={cn(
+        "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 h-28",
+        {
+          "flex-col h-auto py-1.5": isSidebarCollapsed,
+        }
+      )}
     >
       <div className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full"}`}>
         <Tooltip tooltipContent="Redirect to plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
