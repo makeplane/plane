@@ -107,7 +107,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 )}
               </div>
             </div>
-            <IssueBulkOperationsRoot />
+            <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}
       </MultipleSelectGroup>

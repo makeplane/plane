@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// edition-specific
-import { BulkArchiveConfirmationModal } from "@plane/bulk-operations";
 // ui
 import { ArchiveIcon, Tooltip } from "@plane/ui";
+// components
+import { BulkArchiveConfirmationModal } from "@/components/issues";
 // constants
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers

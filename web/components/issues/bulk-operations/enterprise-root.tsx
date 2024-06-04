@@ -1,8 +1,7 @@
-import { observer } from "mobx-react";
 // ui
 import { Checkbox } from "@plane/ui";
 // components
-import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@plane/bulk-operations";
+import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -14,14 +13,12 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
+export const BulkOperationsEnterpriseRoot: React.FC<Props> = (props) => {
   const { className, selectionHelpers } = props;
   // store hooks
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
   // derived values
   const { handleClearSelection } = selectionHelpers;
-
-  if (!isSelectionActive) return null;
 
   return (
     <div className={cn("sticky bottom-0 left-0 z-[2] h-14", className)}>
@@ -53,4 +50,4 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
       </div>
     </div>
   );
-});
+};
