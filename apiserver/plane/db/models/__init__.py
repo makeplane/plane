@@ -53,13 +53,13 @@ from .page import Page, PageFavorite, PageLabel, PageLog
 from .project import (
     Project,
     ProjectBaseModel,
-    ProjectDeployBoard,
     ProjectFavorite,
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
     ProjectPublicMember,
 )
+from .deploy_board import DeployBoard
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State

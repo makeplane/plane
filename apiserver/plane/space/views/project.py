@@ -11,10 +11,10 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
-from plane.app.serializers import ProjectDeployBoardSerializer
+from plane.app.serializers import DeployBoardSerializer
 from plane.db.models import (
     Project,
-    ProjectDeployBoard,
+    DeployBoard,
 )
 
 
@@ -24,10 +24,10 @@ class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
-        serializer = ProjectDeployBoardSerializer(project_deploy_board)
+        serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -41,7 +41,7 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
             Project.objects.filter(workspace__slug=slug)
             .annotate(
                 is_public=Exists(
-                    ProjectDeployBoard.objects.filter(
+                    DeployBoard.objects.filter(
                         workspace__slug=slug, project_id=OuterRef("pk")
                     )
                 )
