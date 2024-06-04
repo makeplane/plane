@@ -64,30 +64,6 @@ def issue_estimate_point(apps, schema_editor):
     )
 
 
-def issue_activity_estimate_point(apps, schema_editor):
-    Project = apps.get_model("db", "Project")
-    EstimatePoint = apps.get_model("db", "EstimatePoint")
-    Issue = apps.get_model("db", "Issue")
-    updated_estimate_point = []
-
-    # loop through all the projects
-    for project in Project.objects.filter(estimate__isnull=False):
-        estimate_points = EstimatePoint.objects.filter(
-            estimate=project.estimate, project=project
-        )
-        for issue in Issue.objects.filter(
-            point__isnull=False, project=project
-        ):
-            # get the estimate id for the corresponding estimate point in the issue
-            estimate = estimate_points.filter(key=issue.point).first()
-            issue.estimate_point = estimate
-            updated_estimate_point.append(issue)
-
-    Issue.objects.bulk_update(
-        updated_estimate_point, ["estimate_point"], batch_size=1000
-    )
-
-
 def last_used_estimate(apps, schema_editor):
     Project = apps.get_model("db", "Project")
     Estimate = apps.get_model("db", "Estimate")
