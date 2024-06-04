@@ -69,7 +69,6 @@ class WorkspaceProjectAnchorEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        print("did it come here")
         project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )

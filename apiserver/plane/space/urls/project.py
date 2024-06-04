@@ -9,12 +9,12 @@ from plane.space.views import (
 
 urlpatterns = [
     path(
-        "anchor/<uuid:anchor_id>/settings/",
+        "anchor/<str:anchor>/settings/",
         ProjectDeployBoardPublicSettingsEndpoint.as_view(),
         name="project-deploy-board-settings",
     ),
     path(
-        "anchor/<uuid:anchor_id>/issues/",
+        "anchor/<str:anchor>/issues/",
         ProjectIssuesPublicEndpoint.as_view(),
         name="project-deploy-board",
     ),
