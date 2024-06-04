@@ -8,7 +8,7 @@ import { Transition } from "@headlessui/react";
 // ui
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // helpers
-import { cn, WEB_BASE_URL } from "@/helpers/common.helper";
+import { WEB_BASE_URL, cn } from "@/helpers/common.helper";
 // hooks
 import { useTheme } from "@/hooks/store";
 // assets
