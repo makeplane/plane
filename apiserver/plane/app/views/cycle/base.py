@@ -245,6 +245,7 @@ class CycleViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
+        plot_type = request.GET.get("plot_type", "issues")
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Update the order by
@@ -379,6 +380,7 @@ class CycleViewSet(BaseViewSet):
                             queryset=queryset.first(),
                             slug=slug,
                             project_id=project_id,
+                            plot_type=plot_type,
                             cycle_id=data[0]["id"],
                         )
                     )
@@ -573,6 +575,7 @@ class CycleViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk):
+        plot_type = request.GET.get("plot_type", "issues")
         queryset = (
             self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
         )
@@ -728,6 +731,7 @@ class CycleViewSet(BaseViewSet):
                 queryset=queryset,
                 slug=slug,
                 project_id=project_id,
+                plot_type=plot_type,
                 cycle_id=pk,
             )
 
@@ -844,6 +848,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
+        plot_type = request.GET.get("plot_type", "issues")
 
         if not new_cycle_id:
             return Response(
@@ -925,6 +930,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             queryset=old_cycle.first(),
             slug=slug,
             project_id=project_id,
+            plot_type=plot_type,
             cycle_id=cycle_id,
         )
 
