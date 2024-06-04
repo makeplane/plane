@@ -40,32 +40,31 @@ export const NavbarIssueBoardView: FC<NavbarIssueBoardViewProps> = observer((pro
 
   return (
     <>
-      {issueLayoutViews &&
-        Object.keys(issueLayoutViews).map((key: string) => {
-          const layoutKey = key as TIssueLayout;
-          if (layoutOptions[layoutKey]) {
-            return (
-              <div
-                key={layoutKey}
-                className={`flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-sm ${
-                  layoutKey === activeLayout
-                    ? `bg-custom-background-80 text-custom-text-200`
-                    : `text-custom-text-300 hover:bg-custom-background-80`
+      {Object.keys(issueLayoutViews).map((key: string) => {
+        const layoutKey = key as TIssueLayout;
+        if (layoutOptions[layoutKey]) {
+          return (
+            <div
+              key={layoutKey}
+              className={`flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-sm ${
+                layoutKey === activeLayout
+                  ? `bg-custom-background-80 text-custom-text-200`
+                  : `text-custom-text-300 hover:bg-custom-background-80`
+              }`}
+              onClick={() => handleCurrentBoardView(layoutKey)}
+              title={layoutKey}
+            >
+              <span
+                className={`material-symbols-rounded text-[18px] ${
+                  issueLayoutViews[layoutKey]?.className ? issueLayoutViews[layoutKey]?.className : ``
                 }`}
-                onClick={() => handleCurrentBoardView(layoutKey)}
-                title={layoutKey}
               >
-                <span
-                  className={`material-symbols-rounded text-[18px] ${
-                    issueLayoutViews[layoutKey]?.className ? issueLayoutViews[layoutKey]?.className : ``
-                  }`}
-                >
-                  {issueLayoutViews[layoutKey]?.icon}
-                </span>
-              </div>
-            );
-          }
-        })}
+                {issueLayoutViews[layoutKey]?.icon}
+              </span>
+            </div>
+          );
+        }
+      })}
     </>
   );
 });
