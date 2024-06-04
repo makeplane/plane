@@ -97,20 +97,6 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
   );
 });
 
-const EstimatePoint = observer((props: { estimatePointId: string }) => {
-  const { estimatePointId } = props;
-  const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
-
-  const estimateValue = getEstimatePointValue(estimatePointId, null);
-
-  // TODO: confirm that estimatePoint default value
-  return (
-    <span className="font-medium text-custom-text-100 whitespace-nowrap">
-      {areEstimatesEnabledForCurrentProject ? estimateValue || "None" : `None`}
-    </span>
-  );
-});
-
 const inboxActivityMessage = {
   declined: {
     showIssue: "declined issue",
@@ -265,7 +251,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to <EstimatePoint estimatePointId={activity.new_value} />
+            set the estimate point to {activity.new_value}
             {showIssue && (
               <>
                 {" "}

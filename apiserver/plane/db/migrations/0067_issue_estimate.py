@@ -26,14 +26,23 @@ def issue_estimate_point(apps, schema_editor):
             field="estimate_point", project=project
         ):
             if issue_activity.new_value:
-                new_value = estimate_points.filter(
+                new_identifier = estimate_points.filter(
                     key=issue_activity.new_value
                 ).first().id
+                issue_activity.new_identifier = new_identifier
+                new_value = estimate_points.filter(
+                    key=issue_activity.new_value
+                ).first().value
                 issue_activity.new_value = new_value
+                
             if issue_activity.old_value:
-                old_value = estimate_points.filter(
+                old_identifier = estimate_points.filter(
                     key=issue_activity.old_value
                 ).first().id
+                issue_activity.old_identifier = old_identifier
+                old_value = estimate_points.filter(
+                    key=issue_activity.old_value
+                ).first().value
                 issue_activity.old_value = old_value
             updated_issue_activity.append(issue_activity)
 
@@ -49,7 +58,9 @@ def issue_estimate_point(apps, schema_editor):
         updated_estimate_point, ["estimate_point"], batch_size=1000
     )
     IssueActivity.objects.bulk_update(
-        updated_issue_activity, ["new_value", "old_value"], batch_size=1000
+        updated_issue_activity,
+        ["new_value", "old_value", "new_identifier", "old_identifier"],
+        batch_size=1000,
     )
 
 
