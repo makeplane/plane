@@ -83,7 +83,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2.5 py-1.5 pl-3.5">
+      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2.5 py-1.5">
         {canSelectIssues && (
           <div className="flex-shrink-0 flex items-center w-3.5">
             <MultipleSelectGroupAction
