@@ -97,18 +97,16 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
   );
 });
 
-const EstimatePoint = observer((props: { point: string }) => {
-  const { point } = props;
+const EstimatePoint = observer((props: { estimatePointId: string }) => {
+  const { estimatePointId } = props;
   const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
-  const currentPoint = Number(point) + 1;
 
-  const estimateValue = getEstimatePointValue(Number(point), null);
+  const estimateValue = getEstimatePointValue(estimatePointId, null);
 
+  // TODO: confirm that estimatePoint default value
   return (
     <span className="font-medium text-custom-text-100 whitespace-nowrap">
-      {areEstimatesEnabledForCurrentProject
-        ? estimateValue
-        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+      {areEstimatesEnabledForCurrentProject ? estimateValue || "None" : `None`}
     </span>
   );
 });
@@ -267,7 +265,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to <EstimatePoint point={activity.new_value} />
+            set the estimate point to <EstimatePoint estimatePointId={activity.new_value} />
             {showIssue && (
               <>
                 {" "}

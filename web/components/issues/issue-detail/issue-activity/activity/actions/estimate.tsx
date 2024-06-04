@@ -20,7 +20,7 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
 
   if (!activity) return <></>;
 
-  const estimateValue = getEstimatePointValue(Number(activity.new_value), null);
+  const estimateValue = getEstimatePointValue(activity.new_value || null, null);
   const currentPoint = Number(activity.new_value) + 1;
 
   return (
