@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // lib
@@ -29,7 +28,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
   const { workspaceSlug, projectId } = props;
   // store
   const issueDetailsStore = useIssueDetails();
-  const { data: user, fetchCurrentUser } = useUser();
+  const { data: user } = useUser();
 
   const issueId = issueDetailsStore.peekId;
   const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
@@ -52,11 +51,6 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
     if (userReaction) handleRemoveReaction(reactionHex);
     else handleAddReaction(reactionHex);
   };
-
-  useEffect(() => {
-    if (user) return;
-    fetchCurrentUser();
-  }, [user, fetchCurrentUser]);
 
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });

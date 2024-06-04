@@ -13,7 +13,7 @@ export interface IProjectStore {
   error: any | undefined;
   settings: TProjectSettings | undefined;
   workspace: TWorkspaceDetails | undefined;
-  project: TProjectDetails | undefined;
+  projectMap: Record<string, TProjectDetails>; // { [projectID]: TProjectDetails }
   canReact: boolean;
   canComment: boolean;
   canVote: boolean;
@@ -28,7 +28,7 @@ export class ProjectStore implements IProjectStore {
   error: any | undefined = undefined;
   settings: TProjectSettings | undefined = undefined;
   workspace: TWorkspaceDetails | undefined = undefined;
-  project: TProjectDetails | undefined = undefined;
+  projectMap: Record<string, TProjectDetails> = {};
   // service
   projectService;
 
@@ -39,7 +39,7 @@ export class ProjectStore implements IProjectStore {
       error: observable.ref,
       // observable
       workspace: observable,
-      project: observable,
+      projectMap: observable,
       settings: observable,
       // computed
       canReact: computed,

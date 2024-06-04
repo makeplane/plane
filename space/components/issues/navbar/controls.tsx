@@ -11,19 +11,20 @@ import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useProject, useIssueFilter, useIssueDetails } from "@/hooks/store";
+import { useIssueFilter, useIssueDetails } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
+// store
+import { PublishStore } from "@/store/publish/publish.store";
 // types
 import { TIssueLayout } from "@/types/issue";
 
 export type NavbarControlsProps = {
-  workspaceSlug: string;
-  projectId: string;
+  publishSettings: PublishStore;
 };
 
 export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   // props
-  const { workspaceSlug, projectId } = props;
+  const { publishSettings } = props;
   // router
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -35,23 +36,23 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const peekId = searchParams.get("peekId") || undefined;
   // hooks
   const { issueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
-  const { settings } = useProject();
   const { setPeekId } = useIssueDetails();
   // derived values
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
+  const { project, views, workspace_detail } = publishSettings;
 
   const isInIframe = useIsInIframe();
 
   useEffect(() => {
-    if (workspaceSlug && projectId && settings) {
+    if (project && workspace_detail) {
       const viewsAcceptable: string[] = [];
       let currentBoard: TIssueLayout | null = null;
 
-      if (settings?.views?.list) viewsAcceptable.push("list");
-      if (settings?.views?.kanban) viewsAcceptable.push("kanban");
-      if (settings?.views?.calendar) viewsAcceptable.push("calendar");
-      if (settings?.views?.gantt) viewsAcceptable.push("gantt");
-      if (settings?.views?.spreadsheet) viewsAcceptable.push("spreadsheet");
+      if (views?.list) viewsAcceptable.push("list");
+      if (views?.kanban) viewsAcceptable.push("kanban");
+      if (views?.calendar) viewsAcceptable.push("calendar");
+      if (views?.gantt) viewsAcceptable.push("gantt");
+      if (views?.spreadsheet) viewsAcceptable.push("spreadsheet");
 
       if (board) {
         if (viewsAcceptable.includes(board.toString())) currentBoard = board.toString() as TIssueLayout;
@@ -75,38 +76,40 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
           };
 
           if (!isIssueFiltersUpdated(params)) {
-            initIssueFilters(projectId, params);
-            router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
+            initIssueFilters(project, params);
+            router.push(`/${workspace_detail.slug}/${project}?${queryParam}`);
           }
         }
       }
     }
   }, [
-    workspaceSlug,
-    projectId,
     board,
     labels,
     state,
     priority,
     peekId,
-    settings,
     activeLayout,
     router,
     initIssueFilters,
     setPeekId,
     isIssueFiltersUpdated,
+    views,
+    project,
+    workspace_detail,
   ]);
+
+  if (!workspace_detail || !project) return;
 
   return (
     <>
       {/* issue views */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
-        <NavbarIssueBoardView workspaceSlug={workspaceSlug} projectId={projectId} />
+        <NavbarIssueBoardView workspaceSlug={workspace_detail.slug} projectId={project} />
       </div>
 
       {/* issue filters */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
-        <IssueFiltersDropdown workspaceSlug={workspaceSlug} projectId={projectId} />
+        <IssueFiltersDropdown workspaceSlug={workspace_detail.slug} projectId={project} />
       </div>
 
       {/* theming */}

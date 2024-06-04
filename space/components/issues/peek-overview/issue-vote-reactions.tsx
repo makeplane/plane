@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tooltip } from "@plane/ui";
@@ -32,7 +32,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const issueDetailsStore = useIssueDetails();
-  const { data: user, fetchCurrentUser } = useUser();
+  const { data: user } = useUser();
 
   const isInIframe = useIsInIframe();
 
@@ -62,12 +62,6 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
 
     setIsSubmitting(false);
   };
-
-  useEffect(() => {
-    if (user) return;
-
-    fetchCurrentUser();
-  }, [user, fetchCurrentUser]);
 
   const VOTES_LIMIT = 1000;
 
