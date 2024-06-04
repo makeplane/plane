@@ -63,7 +63,7 @@ export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerCl
   const enhancedData = useMemo(() => {
     const uuid = id ? id : Math.random().toString(36).substring(7);
     return data.map((item) => ({ ...item, __uuid__: uuid }));
-  }, [data]);
+  }, [data, id]);
 
   return (
     <>
