@@ -1,22 +1,26 @@
 import { MutableRefObject } from "react";
-// components
 // ui
 import { Loader } from "@plane/ui";
-// types
+// components
 import { IGanttBlock, IBlockUpdateData } from "@/components/gantt-chart/types";
+// hooks
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
+// types
 import { IssuesSidebarBlock } from "./block";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
+  enableSelection: boolean;
   showAllBlocks?: boolean;
+  selectionHelpers?: TSelectionHelper;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = (props) => {
-  const { blockUpdateHandler, blocks, enableReorder, showAllBlocks = false } = props;
+  const { blockUpdateHandler, blocks, enableReorder, enableSelection, showAllBlocks = false, selectionHelpers } = props;
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,
@@ -47,8 +51,10 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                 <IssuesSidebarBlock
                   block={block}
                   enableReorder={enableReorder}
+                  enableSelection={enableSelection}
                   isDragging={isDragging}
                   dragHandleRef={dragHandleRef}
+                  selectionHelpers={selectionHelpers}
                 />
               )}
             </GanttDnDHOC>

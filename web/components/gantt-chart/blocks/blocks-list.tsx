@@ -1,10 +1,12 @@
 import { FC } from "react";
-// components
-import { HEADER_HEIGHT } from "../constants";
-import { IBlockUpdateData, IGanttBlock } from "../types";
-import { GanttChartBlock } from "./block";
-// types
+// hooks
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
+import { HEADER_HEIGHT } from "../constants";
+// types
+import { IBlockUpdateData, IGanttBlock } from "../types";
+// components
+import { GanttChartBlock } from "./block";
 
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
@@ -17,6 +19,7 @@ export type GanttChartBlocksProps = {
   enableAddBlock: boolean;
   ganttContainerRef: React.RefObject<HTMLDivElement>;
   showAllBlocks: boolean;
+  selectionHelpers: TSelectionHelper;
 };
 
 export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
@@ -31,6 +34,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
     enableAddBlock,
     ganttContainerRef,
     showAllBlocks,
+    selectionHelpers,
   } = props;
 
   return (
@@ -56,6 +60,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
             enableBlockMove={enableBlockMove}
             enableAddBlock={enableAddBlock}
             ganttContainerRef={ganttContainerRef}
+            selectionHelpers={selectionHelpers}
           />
         );
       })}

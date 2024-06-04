@@ -32,6 +32,7 @@ type ChartViewRootProps = {
   enableBlockMove: boolean;
   enableReorder: boolean;
   enableAddBlock: boolean;
+  enableSelection: boolean;
   bottomSpacing: boolean;
   showAllBlocks: boolean;
   quickAdd?: React.JSX.Element | undefined;
@@ -51,6 +52,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     enableBlockMove,
     enableReorder,
     enableAddBlock,
+    enableSelection,
     bottomSpacing,
     showAllBlocks,
     quickAdd,
@@ -184,6 +186,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         enableBlockRightResize={enableBlockRightResize}
         enableReorder={enableReorder}
         enableAddBlock={enableAddBlock}
+        enableSelection={enableSelection}
         itemsContainerWidth={itemsContainerWidth}
         showAllBlocks={showAllBlocks}
         sidebarToRender={sidebarToRender}
