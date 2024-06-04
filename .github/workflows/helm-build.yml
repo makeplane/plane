@@ -7,8 +7,8 @@ on:
       - 'helm-chart/**'
 
 env:
-  SOURCE_BRANCH: github.event.pull_request.head.ref
-  TARGET_BRANCH: github.event.pull_request.base.ref
+  SOURCE_BRANCH: ${{ github.event.pull_request.head.ref }}
+  TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
 
 jobs:
   build:
