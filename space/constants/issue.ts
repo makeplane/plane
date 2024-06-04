@@ -1,13 +1,13 @@
-// interfaces
+// types
+import { TIssuePriorities } from "@plane/types";
 import {
   TIssueLayout,
   TIssueLayoutViews,
   TIssueFilterKeys,
-  TIssueFilterPriority,
   TIssueFilterPriorityObject,
   TIssueFilterState,
   TIssueFilterStateObject,
-} from "types/issue";
+} from "@/types/issue";
 
 // issue filters
 export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: { [key in TIssueLayout]: Record<"filters", TIssueFilterKeys[]> } = {
@@ -75,7 +75,7 @@ export const issuePriorityFilters: TIssueFilterPriorityObject[] = [
   },
 ];
 
-export const issuePriorityFilter = (priorityKey: TIssueFilterPriority): TIssueFilterPriorityObject | undefined => {
+export const issuePriorityFilter = (priorityKey: TIssuePriorities): TIssueFilterPriorityObject | undefined => {
   const currentIssuePriority: TIssueFilterPriorityObject | undefined =
     issuePriorityFilters && issuePriorityFilters.length > 0
       ? issuePriorityFilters.find((_priority) => _priority.key === priorityKey)

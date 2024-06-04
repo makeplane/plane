@@ -1,9 +1,11 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// types
+import { IStateLite } from "@plane/types";
 // services
 import IssueService from "@/services/issue.service";
 // types
-import { IIssue, IIssueState, IIssueLabel } from "@/types/issue";
+import { IIssue, IIssueLabel } from "@/types/issue";
 // store
 import { RootStore } from "./root.store";
 
@@ -12,7 +14,7 @@ export interface IIssueStore {
   error: any;
   // observables
   issues: IIssue[];
-  states: IIssueState[];
+  states: IStateLite[];
   labels: IIssueLabel[];
   // filter observables
   filteredStates: string[];
@@ -29,7 +31,7 @@ export class IssueStore implements IIssueStore {
   loader: boolean = false;
   error: any | null = null;
   // observables
-  states: IIssueState[] = [];
+  states: IStateLite[] = [];
   labels: IIssueLabel[] = [];
   issues: IIssue[] = [];
   // filter observables

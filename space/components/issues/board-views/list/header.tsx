@@ -1,15 +1,14 @@
 "use client";
+
 import { observer } from "mobx-react-lite";
+// types
+import { IStateLite } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // constants
 import { issueGroupFilter } from "@/constants/issue";
-// mobx hook
-// import { useIssue } from "@/hooks/store";
-// types
-import { IIssueState } from "@/types/issue";
 
-export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
+export const IssueListHeader = observer(({ state }: { state: IStateLite }) => {
   // const { getCountOfIssuesByState } = useIssue();
   const stateGroup = issueGroupFilter(state.group);
   // const count = getCountOfIssuesByState(state.id);

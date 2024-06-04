@@ -1,59 +1,32 @@
 "use client";
 
+import { CalendarCheck2 } from "lucide-react";
+// types
+import { TStateGroups } from "@plane/types";
 // helpers
-import { renderFullDate } from "@/helpers/date-time.helper";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 
-export const dueDateIconDetails = (
-  date: string,
-  stateGroup: string
-): {
-  iconName: string;
-  className: string;
-} => {
-  let iconName = "calendar_today";
-  let className = "";
-
-  if (!date || ["completed", "cancelled"].includes(stateGroup)) {
-    iconName = "calendar_today";
-    className = "";
-  } else {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
-
-    const timeDifference = targetDate.getTime() - today.getTime();
-
-    if (timeDifference < 0) {
-      iconName = "event_busy";
-      className = "text-red-500";
-    } else if (timeDifference === 0) {
-      iconName = "today";
-      className = "text-red-500";
-    } else if (timeDifference === 24 * 60 * 60 * 1000) {
-      iconName = "event";
-      className = "text-yellow-500";
-    } else {
-      iconName = "calendar_today";
-      className = "";
-    }
-  }
-
-  return {
-    iconName,
-    className,
-  };
+type Props = {
+  due_date: string;
+  group: TStateGroups;
 };
 
-export const IssueBlockDueDate = ({ due_date, group }: { due_date: string; group: string }) => {
-  const iconDetails = dueDateIconDetails(due_date, group);
+export const IssueBlockDueDate = (props: Props) => {
+  const { due_date, group } = props;
 
   return (
-    <div className="flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs text-custom-text-100">
-      <span className={`material-symbols-rounded -my-0.5 text-sm ${iconDetails.className}`}>
-        {iconDetails.iconName}
-      </span>
-      {renderFullDate(due_date)}
+    <div
+      className={cn(
+        "flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs text-custom-text-100",
+        {
+          "text-red-500": shouldHighlightIssueDueDate(due_date, group),
+        }
+      )}
+    >
+      <CalendarCheck2 className="size-3 flex-shrink-0" />
+      {renderFormattedDate(due_date)}
     </div>
   );
 };

@@ -80,7 +80,7 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="border-b border-custom-border-200 p-5 py-3">
+    <div className="border-b border-custom-border-200 bg-custom-background-100 p-4">
       <AppliedFiltersList
         appliedFilters={appliedFilters || {}}
         handleRemoveFilter={handleFilters as any}

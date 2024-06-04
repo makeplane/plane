@@ -1,16 +1,17 @@
+import { CalendarCheck2 } from "lucide-react";
 // ui
 import { StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
-// icons
+// components
 import { Icon } from "@/components/ui";
 // constants
 import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
 // helpers
-import { renderFullDate } from "@/helpers/date-time.helper";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // types
 import { IIssue, IPeekMode } from "@/types/issue";
-// components
-import { dueDateIconDetails } from "../board-views/block-due-date";
 
 type Props = {
   issueDetails: IIssue;
@@ -22,8 +23,6 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
   const stateGroup = issueGroupFilter(state.group);
 
   const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
-
-  const dueDateIcon = dueDateIconDetails(issueDetails.target_date, state.group);
 
   const handleCopyLink = () => {
     const urlToCopy = window.location.href;
@@ -104,11 +103,19 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           </div>
           <div>
             {issueDetails.target_date ? (
-              <div className="flex h-6 items-center gap-1 rounded border border-custom-border-100 bg-custom-background-80 px-2.5 py-1 text-xs text-custom-text-100">
-                <span className={`material-symbols-rounded -my-0.5 text-sm ${dueDateIcon.className}`}>
-                  {dueDateIcon.iconName}
-                </span>
-                {renderFullDate(issueDetails.target_date)}
+              <div
+                className={cn(
+                  "flex h-6 items-center gap-1 rounded border border-custom-border-100 bg-custom-background-80 px-2.5 py-1 text-xs text-custom-text-100",
+                  {
+                    "text-red-500": shouldHighlightIssueDueDate(
+                      issueDetails.target_date,
+                      issueDetails.state_detail.group
+                    ),
+                  }
+                )}
+              >
+                <CalendarCheck2 className="size-3" />
+                {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
               <span className="text-custom-text-200">Empty</span>

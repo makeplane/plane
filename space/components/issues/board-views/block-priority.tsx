@@ -1,11 +1,11 @@
 "use client";
 
 // types
-import { issuePriorityFilter } from "@/constants/issue";
-import { TIssueFilterPriority } from "@/types/issue";
+import { TIssuePriorities } from "@plane/types";
 // constants
+import { issuePriorityFilter } from "@/constants/issue";
 
-export const IssueBlockPriority = ({ priority }: { priority: TIssueFilterPriority | null }) => {
+export const IssueBlockPriority = ({ priority }: { priority: TIssuePriorities | null }) => {
   const priority_detail = priority != null ? issuePriorityFilter(priority) : null;
 
   if (priority_detail === null) return <></>;

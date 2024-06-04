@@ -1,4 +1,5 @@
-import { TProjectDetails, TViewDetails, TWorkspaceDetails } from "./project";
+import { IWorkspaceLite } from "@plane/types";
+import { TProjectDetails, TViewDetails } from "./project";
 
 export type TPublishEntityType = "project";
 
@@ -19,5 +20,5 @@ export type TPublishSettings = {
   view_props: TViewDetails | undefined;
   votes: boolean;
   workspace: string | undefined;
-  workspace_detail: TWorkspaceDetails | undefined;
+  workspace_detail: IWorkspaceLite | undefined;
 };
