@@ -34,7 +34,7 @@ export class ProjectPublishService extends APIService {
     projectID: string,
     project_publish_id: string,
     data: IProjectPublishSettings
-  ): Promise<any> {
+  ): Promise<IProjectPublishSettings> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`,
       data
