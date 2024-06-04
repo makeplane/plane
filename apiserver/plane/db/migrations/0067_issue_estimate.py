@@ -262,6 +262,11 @@ class Migration(migrations.Migration):
             name="type",
             field=models.CharField(default="categories", max_length=255),
         ),
+        migrations.AlterField(
+            model_name="estimatepoint",
+            name="value",
+            field=models.CharField(max_length=255),
+        ),
         migrations.RunPython(issue_estimate_point),
         migrations.RunPython(last_used_estimate),
         migrations.RunPython(populate_deploy_board),

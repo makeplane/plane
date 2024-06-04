@@ -36,7 +36,7 @@ class EstimatePoint(ProjectBaseModel):
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
     description = models.TextField(blank=True)
-    value = models.CharField(max_length=20)
+    value = models.CharField(max_length=255)
 
     def __str__(self):
         """Return name of the estimate"""
