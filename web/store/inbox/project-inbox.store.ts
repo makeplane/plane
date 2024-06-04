@@ -321,8 +321,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
           (this.inboxIssuePaginationInfo?.total_results &&
             this.inboxIssueIds.length < this.inboxIssuePaginationInfo?.total_results))
       ) {
-        this.loader = "pagination-loading";
-
         const queryParams = this.inboxIssueQueryParams(
           this.inboxFilters,
           this.inboxSorting,
@@ -332,7 +330,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
         const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 
         runInAction(() => {
-          this.loader = undefined;
           set(this, "inboxIssuePaginationInfo", paginationInfo);
           if (results && results.length > 0) {
             const issueIds = results.map((value) => value?.issue?.id);
@@ -343,7 +340,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
-      this.loader = undefined;
       this.error = {
         message: "Error fetching the paginated inbox issues please try again later.",
         status: "pagination-error",
