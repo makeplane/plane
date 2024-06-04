@@ -674,7 +674,8 @@ class DeployBoardViewSet(BaseViewSet):
         )
 
         project_deploy_board, _ = DeployBoard.objects.get_or_create(
-            anchor=f"{slug}/{project_id}",
+            entity_name="project",
+            entity_identifier=project_id,
             project_id=project_id,
         )
         project_deploy_board.comments = comments
