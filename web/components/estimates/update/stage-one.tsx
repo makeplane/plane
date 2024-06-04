@@ -8,7 +8,7 @@ import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/constants/estimates";
 import { cn } from "@/helpers/common.helper";
 
 type TEstimateUpdateStageOne = {
-  handleEstimateEditType: (stage: TEstimateUpdateStageKeys) => void;
+  handleEstimateEditType?: (stage: TEstimateUpdateStageKeys) => void;
 };
 
 export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
@@ -24,7 +24,7 @@ export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
               "border border-custom-border-300 cursor-pointer space-y-1 p-3 rounded transition-colors",
               stage?.is_ee ? `bg-custom-background-90` : `hover:bg-custom-background-90`
             )}
-            onClick={() => !stage?.is_ee && handleEstimateEditType(stage.key)}
+            onClick={() => !stage?.is_ee && handleEstimateEditType && handleEstimateEditType(stage.key)}
           >
             <h3 className="text-base font-medium relative flex items-center gap-2">
               {stage.title}

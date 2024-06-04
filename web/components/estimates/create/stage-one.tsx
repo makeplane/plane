@@ -29,7 +29,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
               label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
                 <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
                   {ESTIMATE_SYSTEMS[currentSystem]?.name}
-                  <Tooltip tooltipContent={"coming soon"}>
+                  <Tooltip tooltipContent={"Coming soon"}>
                     <Info size={12} />
                   </Tooltip>
                 </div>
