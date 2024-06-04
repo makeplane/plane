@@ -22,23 +22,28 @@ class Cursor:
         self.is_prev = bool(is_prev)
         self.has_results = has_results
 
+    # Return the cursor value in string format
     def __str__(self):
         return f"{self.value}:{self.offset}:{int(self.is_prev)}"
 
+    # Return the cursor value
     def __eq__(self, other):
         return all(
             getattr(self, attr) == getattr(other, attr)
             for attr in ("value", "offset", "is_prev", "has_results")
         )
 
+    # Return the representation of the cursor
     def __repr__(self):
         return f"{type(self).__name__,}: value={self.value} offset={self.offset}, is_prev={int(self.is_prev)}"
 
+    # Return if the cursor is true
     def __bool__(self):
         return bool(self.has_results)
 
     @classmethod
     def from_string(cls, value):
+        """Return the cursor value from string format"""
         try:
             bits = value.split(":")
             if len(bits) != 3:
@@ -61,15 +66,19 @@ class CursorResult(Sequence):
         self.max_hits = max_hits
 
     def __len__(self):
+        # Return the length of the results
         return len(self.results)
 
     def __iter__(self):
+        # Return the iterator of the results
         return iter(self.results)
 
     def __getitem__(self, key):
+        # Return the results based on the key
         return self.results[key]
 
     def __repr__(self):
+        # Return the representation of the results
         return f"<{type(self).__name__}: results={len(self.results)}>"
 
 
@@ -145,16 +154,25 @@ class OffsetPaginator:
         if cursor.value != limit:
             results = results[-(limit + 1) :]
 
+        # Adjust cursors based on the results for pagination
         next_cursor = Cursor(limit, page + 1, False, results.count() > limit)
+        # If the page is greater than 0, then set the previous cursor
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
 
+        # Process the results
         results = results[:limit]
+
+        # Process the results
         if self.on_results:
             results = self.on_results(results)
 
+        # Count the queryset
         count = queryset.count()
+
+        # Optionally, calculate the total count and max_hits if needed
         max_hits = math.ceil(count / limit)
 
+        # Return the cursor results
         return CursorResult(
             results=results,
             next=next_cursor,
@@ -228,13 +246,21 @@ class GroupedOffsetPaginator(OffsetPaginator):
                             nulls_last=True
                         )  # Order by asc if set
                     ),
-                    "-created_at",
+                    F("created_at").desc(),
                 ),
             )
         )
-
         # Filter the results by row number
-        results = queryset.filter(row_number__gt=offset, row_number__lt=stop)
+        results = queryset.filter(
+            row_number__gt=offset, row_number__lt=stop
+        ).order_by(
+            (
+                F(*self.key).desc(nulls_last=True)
+                if self.desc
+                else F(*self.key).asc(nulls_last=True)
+            ),
+            F("created_at").desc(),
+        )
 
         # Adjust cursors based on the grouped results for pagination
         next_cursor = Cursor(
@@ -367,6 +393,12 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Grouping for single values
         processed_results = self.__get_field_dict()
         for result in results:
+            (
+                print(result["created_at"].date(), result["priority"])
+                if str(result[self.group_by_field_name])
+                == "c88dfd3b-e97e-4948-851b-a5fe1e36ffd0"
+                else None
+            )
             group_value = str(result.get(self.group_by_field_name))
             if group_value in processed_results:
                 processed_results[str(group_value)]["results"].append(result)
@@ -453,7 +485,16 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         )
 
         # Filter the results
-        results = queryset.filter(row_number__gt=offset, row_number__lt=stop)
+        results = queryset.filter(
+            row_number__gt=offset, row_number__lt=stop
+        ).order_by(
+            (
+                F(*self.key).desc(nulls_last=True)
+                if self.desc
+                else F(*self.key).asc(nulls_last=True)
+            ),
+            F("created_at").desc(),
+        )
 
         # Adjust cursors based on the grouped results for pagination
         next_cursor = Cursor(
