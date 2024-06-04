@@ -131,13 +131,6 @@ class Issue(ProjectBaseModel):
         null=True,
         blank=True,
     )
-    estimate = models.ForeignKey(
-        "db.Estimate",
-        on_delete=models.SET_NULL,
-        related_name="issue_estimate",
-        null=True,
-        blank=True,
-    )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
