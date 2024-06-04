@@ -1,6 +1,8 @@
 import { observable, action, makeObservable, computed } from "mobx";
 // services
 import { EIssuesStoreType, TCreateModalStoreTypes } from "@/constants/issue";
+// types / constants
+import { DEFAULT_CREATE_PAGE_MODAL_DATA, EPageAccess, TCreatePageModal } from "@/constants/page";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -16,7 +18,7 @@ export interface ICommandPaletteStore {
   isCreateCycleModalOpen: boolean;
   isCreateModuleModalOpen: boolean;
   isCreateViewModalOpen: boolean;
-  isCreatePageModalOpen: boolean;
+  createPageModal: TCreatePageModal;
   isCreateIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
@@ -28,7 +30,7 @@ export interface ICommandPaletteStore {
   toggleCreateProjectModal: (value?: boolean) => void;
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
-  toggleCreatePageModal: (value?: boolean) => void;
+  toggleCreatePageModal: (value?: TCreatePageModal) => void;
   toggleCreateIssueModal: (value?: boolean, storeType?: TCreateModalStoreTypes) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
@@ -45,10 +47,10 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   isCreateCycleModalOpen: boolean = false;
   isCreateModuleModalOpen: boolean = false;
   isCreateViewModalOpen: boolean = false;
-  isCreatePageModalOpen: boolean = false;
   isCreateIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
   isBulkDeleteIssueModalOpen: boolean = false;
+  createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
 
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
 
@@ -61,10 +63,10 @@ export class CommandPaletteStore implements ICommandPaletteStore {
       isCreateCycleModalOpen: observable.ref,
       isCreateModuleModalOpen: observable.ref,
       isCreateViewModalOpen: observable.ref,
-      isCreatePageModalOpen: observable.ref,
       isCreateIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
       isBulkDeleteIssueModalOpen: observable.ref,
+      createPageModal: observable,
       // computed
       isAnyModalOpen: computed,
       // projectPages: computed,
@@ -90,13 +92,13 @@ export class CommandPaletteStore implements ICommandPaletteStore {
     return Boolean(
       this.isCreateIssueModalOpen ||
         this.isCreateCycleModalOpen ||
-        this.isCreatePageModalOpen ||
         this.isCreateProjectModalOpen ||
         this.isCreateModuleModalOpen ||
         this.isCreateViewModalOpen ||
         this.isShortcutModalOpen ||
         this.isBulkDeleteIssueModalOpen ||
-        this.isDeleteIssueModalOpen
+        this.isDeleteIssueModalOpen ||
+        this.createPageModal.isOpen
     );
   }
 
@@ -166,15 +168,21 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   /**
-   * Toggles the create page modal
+   * Toggles the create page modal along with the page access
    * @param value
    * @returns
    */
-  toggleCreatePageModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isCreatePageModalOpen = value;
+  toggleCreatePageModal = (value?: TCreatePageModal) => {
+    if (value) {
+      this.createPageModal = {
+        isOpen: value.isOpen,
+        pageAccess: value.pageAccess || EPageAccess.PUBLIC,
+      };
     } else {
-      this.isCreatePageModalOpen = !this.isCreatePageModalOpen;
+      this.createPageModal = {
+        isOpen: !this.createPageModal.isOpen,
+        pageAccess: EPageAccess.PUBLIC,
+      };
     }
   };
 

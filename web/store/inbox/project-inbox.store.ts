@@ -212,16 +212,15 @@ export class ProjectInboxStore implements IProjectInboxStore {
   createOrUpdateInboxIssue = (inboxIssues: TInboxIssue[], workspaceSlug: string, projectId: string) => {
     if (inboxIssues && inboxIssues.length > 0) {
       inboxIssues.forEach((inbox: TInboxIssue) => {
-        const inboxIssueDetail = this.getIssueInboxByIssueId(inbox?.issue?.id);
-        if (inboxIssueDetail)
-          update(this.inboxIssues, [inbox?.issue?.id], (existingInboxIssue) => ({
-            ...existingInboxIssue,
+        const existingInboxIssueDetail = this.getIssueInboxByIssueId(inbox?.issue?.id);
+        if (existingInboxIssueDetail)
+          Object.assign(existingInboxIssueDetail, {
             ...inbox,
             issue: {
-              ...existingInboxIssue?.issue,
-              ...inbox?.issue,
+              ...existingInboxIssueDetail.issue,
+              ...inbox.issue,
             },
-          }));
+          });
         else
           set(this.inboxIssues, [inbox?.issue?.id], new InboxIssueStore(workspaceSlug, projectId, inbox, this.store));
       });

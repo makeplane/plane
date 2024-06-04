@@ -53,7 +53,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       key: "SAML_ENTITY_ID",
       type: "text",
       label: "Entity ID",
-      description: "Unique identifier for your Identity Provider (IdP) entity.",
+      description: "A unique ID for this Plane app that you register on your IdP",
       placeholder: "70a44354520df8bd9bcd",
       error: Boolean(errors.SAML_ENTITY_ID),
       required: true,
@@ -62,7 +62,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       key: "SAML_SSO_URL",
       type: "text",
       label: "SSO URL",
-      description: "URL used for Single Sign-On (SSO) with your Identity Provider (IdP).",
+      description: "The URL that brings up your IdP's authentication screen when your users click `Sign in with <name of IdP>`",
       placeholder: "https://example.com/sso",
       error: Boolean(errors.SAML_SSO_URL),
       required: true,
@@ -71,7 +71,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       key: "SAML_LOGOUT_URL",
       type: "text",
       label: "Logout URL",
-      description: "Add your SAML logout URL here for seamless session management.",
+      description: "Optional field that tells your IdP your users have logged out of this Plane app",
       placeholder: "https://example.com/logout",
       error: Boolean(errors.SAML_LOGOUT_URL),
       required: false,
@@ -79,8 +79,8 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
     {
       key: "SAML_PROVIDER_NAME",
       type: "text",
-      label: "Identity provider name",
-      description: "This name will be shown on sign in and create account CTA buttons.",
+      label: "IdP's name",
+      description: "Optional field for the name that your users see on the `Sign in with` button",
       placeholder: "Okta",
       error: Boolean(errors.SAML_PROVIDER_NAME),
       required: false,
@@ -90,23 +90,23 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
   const SAML_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Metadata_Information",
-      label: "Entity ID / Audience / Metadata Information",
+      label: "Entity ID | Audience | Metadata information",
       url: `${originURL}/auth/saml/metadata/`,
       description:
-        "This contains the link to the metadata information. We will auto-generate this.",
+        "We will generate this bit of the metadata that identifies this Plane app as an authorized service on your IdP.",
     },
     {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/saml/callback/`,
       description:
-        "This url is a http-post request. Paste this in the single sign-on callback url section of your identity.",
+        "We will generate this `http-post request` URL that you should paste into your `ACS URL` or `Sign-in call back URL` field on your IdP.",
     },
     {
       key: "Logout_URI",
       label: "Logout URI",
       url: `${originURL}/auth/saml/logout/`,
-      description: "This url is a http-redirect request. Add this to your logout URI.",
+      description: "We will generate this `http-redirect request` URL that you should paste into your `SLS URL` or `Logout URL` field on your IdP.",
     },
   ];
 
@@ -117,8 +117,8 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       .then((response = []) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "SAML Configuration Settings updated successfully",
+          title: "Done!",
+          message: "Your SAML-based authentication is configured. You should test it now.",
         });
         reset({
           SAML_ENTITY_ID: response.find((item) => item.key === "SAML_ENTITY_ID")?.value,
@@ -148,7 +148,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
-            <div className="pt-2 text-xl font-medium">Configuration</div>
+            <div className="pt-2 text-xl font-medium">IdP-provided details for Plane</div>
             {SAML_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -163,7 +163,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
               />
             ))}
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">Certificate</h4>
+              <h4 className="text-sm">SAML certificate</h4>
               <Controller
                 control={control}
                 name="SAML_CERTIFICATE"
@@ -181,7 +181,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
                 )}
               />
               <p className="text-xs text-custom-text-400">
-                Certificate used by your IdP for digital signature verification in SAML transactions.
+                IdP-generated certificate for signing this Plane app as an authorized service provider for your IdP
               </p>
             </div>
             <div className="flex flex-col gap-1 pt-4">
