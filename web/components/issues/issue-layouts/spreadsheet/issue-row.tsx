@@ -1,8 +1,8 @@
 import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
+// types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
@@ -18,7 +18,6 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
@@ -101,7 +100,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues?.map((subIssueId) => (
+        subIssues?.map((subIssueId: string) => (
           <SpreadsheetIssueRow
             key={subIssueId}
             issueId={subIssueId}

@@ -2,7 +2,7 @@ import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
-// hooks
+//types
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 // components

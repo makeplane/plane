@@ -144,7 +144,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues?.map((subIssueId) => (
+        subIssues?.map((subIssueId: string) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueIds={issueIds}

@@ -2,7 +2,6 @@ import { FC, MutableRefObject } from "react";
 // components
 import { TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
-// hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { TRenderQuickActions } from "./list-view-types";
@@ -16,9 +15,9 @@ interface Props {
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
-  selectionHelpers: TSelectionHelper;
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {

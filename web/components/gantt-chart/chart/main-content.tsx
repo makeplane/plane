@@ -2,8 +2,6 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-// edition-specific
-import { IssueBulkOperationsRoot } from "@plane/bulk-operations";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
@@ -20,6 +18,7 @@ import {
   WeekChartView,
   YearChartView,
 } from "@/components/gantt-chart";
+import { IssueBulkOperationsRoot } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // constants
@@ -37,8 +36,8 @@ type Props = {
   enableBlockMove: boolean;
   enableBlockRightResize: boolean;
   enableReorder: boolean;
-  enableSelection: boolean;
   enableAddBlock: boolean;
+  enableSelection: boolean;
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -163,7 +162,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
               )}
             </div>
           </div>
-          <IssueBulkOperationsRoot selectionHelpers={helpers} />
+          <IssueBulkOperationsRoot />
         </>
       )}
     </MultipleSelectGroup>

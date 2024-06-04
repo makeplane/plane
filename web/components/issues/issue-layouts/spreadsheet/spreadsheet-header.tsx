@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-// types
+// ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { MultipleSelectGroupAction } from "@/components/core";

@@ -13,14 +13,14 @@ import { IssuesSidebarBlock } from "./block";
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  enableSelection: boolean;
   enableReorder: boolean;
+  enableSelection: boolean;
   showAllBlocks?: boolean;
   selectionHelpers?: TSelectionHelper;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = (props) => {
-  const { blockUpdateHandler, blocks, enableSelection, enableReorder, showAllBlocks = false, selectionHelpers } = props;
+  const { blockUpdateHandler, blocks, enableReorder, enableSelection, showAllBlocks = false, selectionHelpers } = props;
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,

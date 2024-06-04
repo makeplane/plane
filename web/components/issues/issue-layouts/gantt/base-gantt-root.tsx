@@ -73,6 +73,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableSelection={isAllowed}
           enableAddBlock={isAllowed}
+          enableSelection={isAllowed}
           quickAdd={
             enableIssueCreation && isAllowed ? (
               <GanttQuickAddIssueForm quickAddCallback={issues.quickAddIssue} viewId={viewId} />

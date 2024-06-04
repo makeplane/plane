@@ -111,8 +111,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="size-5 flex-shrink-0 cursor-pointer flex items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-                  <Plus className="size-3.5" strokeWidth={2} />
+                <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2} />
                 </span>
               }
             >
@@ -135,13 +135,13 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             </CustomMenu>
           ) : (
             <div
-              className="size-5 flex-shrink-0 cursor-pointer flex items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
               onClick={() => {
                 setTrackElement("List layout");
                 setIsOpen(true);
               }}
             >
-              <Plus className="size-3.5" strokeWidth={2} />
+              <Plus width={14} strokeWidth={2} />
             </div>
           ))}
 

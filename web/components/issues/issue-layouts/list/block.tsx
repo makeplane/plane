@@ -106,9 +106,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
   const isSubIssue = nestingLevel !== 0;
 
-  // if sub issues have been fetched for the issue, use that for count or use issue's sub_issues_count
-  // const subIssuesCount = subIssues ? subIssues.length : issue.sub_issues_count;
-
   const marginLeft = `${spacingLeft}px`;
 
   const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {

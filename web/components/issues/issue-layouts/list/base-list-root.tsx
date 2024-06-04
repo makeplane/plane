@@ -37,10 +37,9 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
   } = props;
-  // stores hooks
+  // store hooks
   const { issuesFilter, issues } = useIssues(storeType);
   const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } = useIssuesActions(storeType);
-  // mobx store
   const {
     membership: { currentProjectRole },
   } = useUser();

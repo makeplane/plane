@@ -74,8 +74,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
       </div>
 
       <div className="min-h-full h-max bg-custom-background-100 overflow-hidden">
-        {sidebarToRender &&
-          sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder, enableSelection, selectionHelpers })}
+        {sidebarToRender?.({ title, blockUpdateHandler, blocks, enableReorder, enableSelection, selectionHelpers })}
       </div>
       {quickAdd ? quickAdd : null}
     </div>
