@@ -5,24 +5,24 @@ import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
 // hooks
-import { useIssue, useIssueFilter } from "@/hooks/store";
+import { useIssue, useIssueFilter, usePublish } from "@/hooks/store";
 // store
 import { TIssueQueryFilters } from "@/types/issue";
 // components
 import { AppliedFiltersList } from "./filters-list";
 
 type TIssueAppliedFilters = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
 };
 
 export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) => {
+  const { anchor } = props;
+  // router
   const router = useRouter();
-  // props
-  const { workspaceSlug, projectId } = props;
-  // hooks
+  // store hooks
   const { issueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
   const { states, labels } = useIssue();
+  const { project: projectID } = usePublish(anchor);
 
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
   const userFilters = issueFilters?.filters || {};
@@ -46,30 +46,30 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
       if (labels.length > 0) params = { ...params, labels: labels.join(",") };
       params = new URLSearchParams(params).toString();
 
-      router.push(`/${workspaceSlug}/${projectId}?${params}`);
+      router.push(`/issues/${anchor}?${params}`);
     },
-    [workspaceSlug, projectId, activeLayout, issueFilters, router]
+    [activeLayout, anchor, issueFilters, router]
   );
 
   const handleFilters = useCallback(
     (key: keyof TIssueQueryFilters, value: string | null) => {
-      if (!projectId) return;
+      if (!projectID) return;
 
       let newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
 
       if (value === null) newValues = [];
       else if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
 
-      updateIssueFilters(projectId, "filters", key, newValues);
+      updateIssueFilters(projectID, "filters", key, newValues);
       updateRouteParams(key, newValues);
     },
-    [projectId, issueFilters, updateIssueFilters, updateRouteParams]
+    [projectID, issueFilters, updateIssueFilters, updateRouteParams]
   );
 
   const handleRemoveAllFilters = () => {
-    if (!projectId) return;
+    if (!projectID) return;
 
-    initIssueFilters(projectId, {
+    initIssueFilters(projectID, {
       display_filters: { layout: activeLayout || "list" },
       filters: {
         state: [],
@@ -78,7 +78,7 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
       },
     });
 
-    router.push(`/${workspaceSlug}/${projectId}?${`board=${activeLayout || "list"}`}`);
+    router.push(`/issues/${anchor}?${`board=${activeLayout || "list"}`}`);
   };
 
   if (Object.keys(appliedFilters).length === 0) return null;

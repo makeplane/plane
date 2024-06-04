@@ -12,14 +12,14 @@ const publishService = new PublishService();
 
 type Props = {
   params: {
-    workspace_slug: string;
-    project_id: string;
+    workspaceSlug: string;
+    projectId: string;
   };
 };
 
 const ProjectIssuesPage = (props: Props) => {
   const { params } = props;
-  const { workspace_slug, project_id } = params;
+  const { workspaceSlug, projectId } = params;
   // states
   const [error, setError] = useState(false);
   // params
@@ -28,9 +28,9 @@ const ProjectIssuesPage = (props: Props) => {
   const peekId = searchParams.get("peekId") || undefined;
 
   useEffect(() => {
-    if (!workspace_slug || !project_id) return;
+    if (!workspaceSlug || !projectId) return;
     publishService
-      .fetchAnchorFromOldDetails(workspace_slug, project_id)
+      .fetchAnchorFromOldDetails(workspaceSlug, projectId)
       .then((res) => {
         let url = `/${res.anchor}`;
         const params = new URLSearchParams();
@@ -40,7 +40,7 @@ const ProjectIssuesPage = (props: Props) => {
         navigate(url);
       })
       .catch(() => setError(true));
-  }, [board, peekId, project_id, workspace_slug]);
+  }, [board, peekId, projectId, workspaceSlug]);
 
   if (error) notFound();
 

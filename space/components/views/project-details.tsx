@@ -37,12 +37,11 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
   const { loader, issues, error, fetchPublicIssues } = useIssue();
   const issueDetailStore = useIssueDetails();
   // derived values
-  const { workspace_detail, project } = publishSettings;
-  const workspaceSlug = workspace_detail?.slug;
+  const { anchor } = publishSettings;
 
   useSWR(
-    workspaceSlug && project ? `WORKSPACE_PROJECT_PUBLIC_ISSUES_${workspaceSlug}_${project}` : null,
-    workspaceSlug && project ? () => fetchPublicIssues(workspaceSlug, project, { states, priority, labels }) : null
+    anchor ? `PUBLIC_ISSUES_${anchor}` : null,
+    anchor ? () => fetchPublicIssues(anchor, { states, priority, labels }) : null
   );
 
   useEffect(() => {
@@ -54,11 +53,11 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
   // derived values
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
-  if (!workspaceSlug || !project) return null;
+  if (!anchor) return null;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      {peekId && <IssuePeekOverview workspaceSlug={workspaceSlug} projectId={project} peekId={peekId} />}
+      {peekId && <IssuePeekOverview anchor={anchor} peekId={peekId} />}
 
       {loader && !issues ? (
         <div className="py-10 text-center text-sm text-custom-text-100">Loading...</div>
@@ -80,16 +79,16 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
             activeLayout && (
               <div className="relative flex h-full w-full flex-col overflow-hidden">
                 {/* applied filters */}
-                <IssueAppliedFilters workspaceSlug={workspaceSlug} projectId={project} />
+                <IssueAppliedFilters anchor={anchor} />
 
                 {activeLayout === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">
-                    <IssueListView workspaceSlug={workspaceSlug} projectId={project} />
+                    <IssueListView anchor={anchor} />
                   </div>
                 )}
                 {activeLayout === "kanban" && (
                   <div className="relative mx-auto h-full w-full p-5">
-                    <IssueKanbanView workspaceSlug={workspaceSlug} projectId={project} />
+                    <IssueKanbanView anchor={anchor} />
                   </div>
                 )}
                 {activeLayout === "calendar" && <IssueCalendarView />}

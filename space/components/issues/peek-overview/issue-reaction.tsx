@@ -9,7 +9,7 @@ import useIsInIframe from "@/hooks/use-is-in-iframe";
 // };
 
 export const IssueReactions: React.FC = () => {
-  const { workspace_slug: workspaceSlug, project_id: projectId } = useParams<any>();
+  const { workspaceSlug, projectId } = useParams<any>();
 
   const { canVote, canReact } = useProject();
   const isInIframe = useIsInIframe();

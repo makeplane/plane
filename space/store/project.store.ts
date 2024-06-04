@@ -18,7 +18,7 @@ export interface IProjectStore {
   canComment: boolean;
   canVote: boolean;
   // actions
-  fetchProjectSettings: (workspace_slug: string, project_slug: string) => Promise<void>;
+  fetchProjectSettings: (workspaceSlug: string, project_slug: string) => Promise<void>;
   hydrate: (projectSettings: any) => void;
 }
 
@@ -64,12 +64,12 @@ export class ProjectStore implements IProjectStore {
     return this.settings?.votes ?? false;
   }
 
-  fetchProjectSettings = async (workspace_slug: string, project_slug: string) => {
+  fetchProjectSettings = async (workspaceSlug: string, project_slug: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const response = await this.projectService.getProjectSettings(workspace_slug, project_slug);
+      const response = await this.projectService.getProjectSettings(workspaceSlug, project_slug);
 
       if (response) {
         this.store.issueFilter.updateLayoutOptions(response?.views);

@@ -1,4 +1,3 @@
-import { observer } from "mobx-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 // components

@@ -1,8 +1,8 @@
 type Props = {
   children: React.ReactNode;
   params: {
-    workspace_slug: string;
-    project_id: string;
+    workspaceSlug: string;
+    projectId: string;
   };
 };
 

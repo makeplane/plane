@@ -10,18 +10,19 @@ import { IssueBlockState } from "@/components/issues/board-views/block-state";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, useProject } from "@/hooks/store";
+import { useIssueDetails, usePublish } from "@/hooks/store";
 // interfaces
 import { IIssue } from "@/types/issue";
 
 type IssueKanBanBlockProps = {
+  anchor: string;
   issue: IIssue;
-  workspaceSlug: string;
-  projectId: string;
   params: any;
 };
 
 export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
+  const { anchor, issue } = props;
+  // router
   const router = useRouter();
   const searchParams = useSearchParams();
   // query params
@@ -29,23 +30,21 @@ export const IssueKanBanBlock: FC<IssueKanBanBlockProps> = observer((props) => {
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
-  // props
-  const { workspaceSlug, projectId, issue } = props;
-  // hooks
-  const { project } = useProject();
+  // store hooks
+  const { project_details } = usePublish(anchor);
   const { setPeekId } = useIssueDetails();
 
   const handleBlockClick = () => {
     setPeekId(issue.id);
     const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
-    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
+    router.push(`/issues/${anchor}?${queryParam}`);
   };
 
   return (
     <div className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs">
       {/* id */}
       <div className="break-words text-xs text-custom-text-300">
-        {project?.identifier}-{issue?.sequence_id}
+        {project_details?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}

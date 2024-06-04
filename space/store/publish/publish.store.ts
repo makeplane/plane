@@ -1,11 +1,14 @@
-import { observable, makeObservable } from "mobx";
+import { observable, makeObservable, computed } from "mobx";
 // store types
 import { RootStore } from "@/store/root.store";
 // types
 import { TProjectDetails, TViewDetails, TWorkspaceDetails } from "@/types/project";
 import { TPublishSettings } from "@/types/publish";
 
-export interface IPublishStore extends TPublishSettings {}
+export interface IPublishStore extends TPublishSettings {
+  // computed
+  workspaceSlug: string | undefined;
+}
 
 export class PublishStore implements IPublishStore {
   // observables
@@ -62,6 +65,12 @@ export class PublishStore implements IPublishStore {
       votes: observable.ref,
       workspace: observable.ref,
       workspace_detail: observable,
+      // computed
+      workspaceSlug: computed,
     });
+  }
+
+  get workspaceSlug() {
+    return this?.workspace_detail?.slug ?? undefined;
   }
 }

@@ -11,14 +11,13 @@ import {
 import { IIssue } from "@/types/issue";
 
 type Props = {
+  anchor: string;
   handleClose: () => void;
   issueDetails: IIssue | undefined;
-  workspaceSlug: string;
-  projectId: string;
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails, workspaceSlug, projectId } = props;
+  const { anchor, handleClose, issueDetails } = props;
 
   return (
     <div className="grid h-full w-full grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
@@ -36,11 +35,7 @@ export const FullScreenPeekView: React.FC<Props> = observer((props) => {
             <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
             {/* issue activity/comments */}
             <div className="w-full pb-5">
-              <PeekOverviewIssueActivity
-                issueDetails={issueDetails}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-              />
+              <PeekOverviewIssueActivity anchor={anchor} issueDetails={issueDetails} />
             </div>
           </div>
         ) : (

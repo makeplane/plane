@@ -10,28 +10,27 @@ import { IssueBlockState } from "@/components/issues/board-views/block-state";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hook
-import { useIssueDetails, useProject } from "@/hooks/store";
+import { useIssueDetails, usePublish } from "@/hooks/store";
 // interfaces
 import { IIssue } from "@/types/issue";
 // store
 
 type IssueListBlockProps = {
+  anchor: string;
   issue: IIssue;
-  workspaceSlug: string;
-  projectId: string;
 };
 
 export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
-  const { workspaceSlug, projectId, issue } = props;
+  const { anchor, issue } = props;
   const searchParams = useSearchParams();
   // query params
   const board = searchParams.get("board") || undefined;
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
-  // store
-  const { project } = useProject();
+  // store hooks
   const { setPeekId } = useIssueDetails();
+  const { project_details } = usePublish(anchor);
   // router
   const router = useRouter();
 
@@ -39,7 +38,7 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
     setPeekId(issue.id);
 
     const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
-    router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
+    router.push(`/issues/${anchor}?${queryParam}`);
   };
 
   return (
@@ -47,7 +46,7 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
       <div className="relative flex w-full flex-grow items-center gap-3 overflow-hidden">
         {/* id */}
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-          {project?.identifier}-{issue?.sequence_id}
+          {project_details?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
         <div onClick={handleBlockClick} className="flex-grow cursor-pointer truncate text-sm font-medium">

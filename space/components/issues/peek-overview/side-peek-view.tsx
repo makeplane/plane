@@ -7,22 +7,21 @@ import {
   PeekOverviewIssueDetails,
   PeekOverviewIssueProperties,
 } from "@/components/issues/peek-overview";
-// hooks
-import { useProject } from "@/hooks/store";
+// store hooks
+import { usePublish } from "@/hooks/store";
 // types
 import { IIssue } from "@/types/issue";
 
 type Props = {
+  anchor: string;
   handleClose: () => void;
   issueDetails: IIssue | undefined;
-  workspaceSlug: string;
-  projectId: string;
 };
 
 export const SidePeekView: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails, workspaceSlug, projectId } = props;
-
-  const { settings } = useProject();
+  const { anchor, handleClose, issueDetails } = props;
+  // store hooks
+  const { comments } = usePublish(anchor);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -42,13 +41,9 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
           {/* divider */}
           <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
           {/* issue activity/comments */}
-          {settings?.comments && (
+          {comments && (
             <div className="w-full pb-5">
-              <PeekOverviewIssueActivity
-                issueDetails={issueDetails}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-              />
+              <PeekOverviewIssueActivity anchor={anchor} issueDetails={issueDetails} />
             </div>
           )}
         </div>

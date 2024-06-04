@@ -16,7 +16,8 @@ const PageDetailsLayout = (props: Props) => {
   const { anchor } = params;
   // store hooks
   const { fetchPublishSettings } = usePublishList();
-  const { id, workspace_detail, project } = usePublish(anchor);
+  const publishSettings = usePublish(anchor);
+  const { id, workspace_detail, project } = publishSettings;
 
   useSWR(anchor ? `PUBLISH_SETTINGS_${anchor}` : null, anchor ? () => fetchPublishSettings(anchor) : null);
 
@@ -25,7 +26,7 @@ const PageDetailsLayout = (props: Props) => {
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
       <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
-        <IssueNavbar workspaceSlug={workspace_detail.slug} projectId={project} />
+        <IssueNavbar publishSettings={publishSettings} />
       </div>
       <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
       <a

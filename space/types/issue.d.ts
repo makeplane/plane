@@ -43,6 +43,12 @@ export type TIssueQueryFilters = Partial<TFilters>;
 
 export type TIssueQueryFiltersParams = Partial<Record<keyof TFilters, string>>;
 
+export type TIssuesResponse = {
+  states: IIssueState[];
+  labels: IIssueLabel[];
+  issues: IIssue[];
+};
+
 export interface IIssue {
   id: string;
   comments: Comment[];
@@ -79,6 +85,7 @@ export interface IIssueLabel {
   id: string;
   name: string;
   color: string;
+  parent: string | null;
 }
 
 export interface IVote {
