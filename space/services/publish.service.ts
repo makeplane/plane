@@ -17,16 +17,13 @@ class PublishService extends APIService {
       });
   }
 
-  async fetchAnchorFromOldDetails(
+  async fetchAnchorFromProjectDetails(
     workspaceSlug: string,
     projectID: string
   ): Promise<{
     anchor: string;
   }> {
-    return this.post(`/api/public/publish-anchor/`, {
-      workspaceSlug,
-      projectID,
-    })
+    return this.get(`/api/public/workspaces/${workspaceSlug}/projects/${projectID}/anchor/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

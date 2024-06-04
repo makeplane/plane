@@ -30,9 +30,9 @@ const ProjectIssuesPage = (props: Props) => {
   useEffect(() => {
     if (!workspaceSlug || !projectId) return;
     publishService
-      .fetchAnchorFromOldDetails(workspaceSlug, projectId)
+      .fetchAnchorFromProjectDetails(workspaceSlug, projectId)
       .then((res) => {
-        let url = `/${res.anchor}`;
+        let url = `/issues/${res.anchor}`;
         const params = new URLSearchParams();
         if (board) params.append("board", board);
         if (peekId) params.append("peekId", peekId);
