@@ -9,12 +9,12 @@ export type UseIntersectionObserverProps = {
 
 export const useIntersectionObserver = (
   containerRef: RefObject<HTMLDivElement>,
-  elementRef: RefObject<HTMLDivElement>,
+  elementRef: HTMLDivElement | null,
   callback: () => void,
   rootMargin?: string
 ) => {
   useEffect(() => {
-    if (elementRef.current) {
+    if (elementRef) {
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[entries.length - 1].isIntersecting) {
@@ -26,16 +26,16 @@ export const useIntersectionObserver = (
           rootMargin,
         }
       );
-      observer.observe(elementRef.current);
+      observer.observe(elementRef);
       return () => {
-        if (elementRef.current) {
+        if (elementRef) {
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          observer.unobserve(elementRef.current);
+          observer.unobserve(elementRef);
         }
       };
     }
     // while removing the current from the refs, the observer is not not working as expected
     // fix this eslint warning with caution
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rootMargin, callback, elementRef.current, containerRef.current]);
+  }, [rootMargin, callback, elementRef, containerRef.current]);
 };
