@@ -197,6 +197,8 @@ export const MEMBER_ACCEPTED = "Member accepted";
 export const PROJECT_MEMBER_ADDED = "Project member added";
 export const PROJECT_MEMBER_LEAVE = "Project member leave";
 export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
+export const PROJECT_MEMBER_REMOVED = "Project member removed";
+export const PM_ROLE_CHANGED = "Project member role changed";
 // Estimate Events
 export const ESTIMATE_CREATED = "Estimate created";
 export const ESTIMATE_UPDATED = "Estimate updated";
@@ -245,3 +247,5 @@ export const GROUP_WORKSPACE = "Workspace_metrics";
 // Elements
 export const E_STATES = "Project states page";
 export const E_Labels = "Project labels page";
+export const E_AUTOMATION = "Project automation page";
+export const E_MEMBERS = "Project settings members page";

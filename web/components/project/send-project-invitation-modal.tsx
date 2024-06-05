@@ -8,7 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { E_MEMBERS, PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 import { ROLE } from "@/constants/workspace";
 import { useEventTracker, useMember, useUser } from "@/hooks/store";
@@ -86,21 +86,17 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           message: "Members added successfully.",
         });
         captureEvent(PROJECT_MEMBER_ADDED, {
-          members: [
-            ...payload.members.map((member) => ({
-              member_id: member.member_id,
-              role: ROLE[member.role],
-            })),
-          ],
+          member_id: payload.members?.[0]?.member_id,
+          role: ROLE[payload.members?.[0]?.role],
           state: "SUCCESS",
-          element: "Project settings members page",
+          element: E_MEMBERS,
         });
       })
       .catch((error) => {
         console.error(error);
         captureEvent(PROJECT_MEMBER_ADDED, {
           state: "FAILED",
-          element: "Project settings members page",
+          element: E_MEMBERS,
         });
       })
       .finally(() => {
