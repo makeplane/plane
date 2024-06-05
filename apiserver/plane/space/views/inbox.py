@@ -18,7 +18,7 @@ from plane.db.models import (
     State,
     IssueLink,
     IssueAttachment,
-    ProjectDeployBoard,
+    DeployBoard,
 )
 from plane.app.serializers import (
     IssueSerializer,
@@ -39,7 +39,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
         )
@@ -59,7 +59,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         return InboxIssue.objects.none()
 
     def list(self, request, slug, project_id, inbox_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
         if project_deploy_board.inbox is None:
@@ -118,7 +118,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id, inbox_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
         if project_deploy_board.inbox is None:
@@ -189,7 +189,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, inbox_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
         if project_deploy_board.inbox is None:
@@ -256,7 +256,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         )
 
     def retrieve(self, request, slug, project_id, inbox_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
         if project_deploy_board.inbox is None:
@@ -280,7 +280,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=slug, project_id=project_id
         )
         if project_deploy_board.inbox is None:

@@ -318,7 +318,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <span>Estimate</span>
                 </div>
                 <EstimateDropdown
-                  value={issue?.estimate_point !== null ? issue.estimate_point : null}
+                  value={issue?.estimate_point != null ? issue.estimate_point : null}
                   onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
                   projectId={projectId}
                   disabled={!isEditable}
