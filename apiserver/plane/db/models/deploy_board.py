@@ -11,6 +11,7 @@ from .workspace import WorkspaceBaseModel
 def get_anchor():
     return uuid4().hex
 
+
 class DeployBoard(WorkspaceBaseModel):
     TYPE_CHOICES = (
         ("project", "Project"),
@@ -29,15 +30,15 @@ class DeployBoard(WorkspaceBaseModel):
     anchor = models.CharField(
         max_length=255, default=get_anchor, unique=True, db_index=True
     )
-    comments = models.BooleanField(default=False)
-    reactions = models.BooleanField(default=False)
+    is_comments_enabled = models.BooleanField(default=False)
+    is_reactions_enabled = models.BooleanField(default=False)
     inbox = models.ForeignKey(
         "db.Inbox",
         related_name="board_inbox",
         on_delete=models.SET_NULL,
         null=True,
     )
-    votes = models.BooleanField(default=False)
+    is_votes_enabled = models.BooleanField(default=False)
     view_props = models.JSONField(default=dict)
 
     def __str__(self):
