@@ -1,7 +1,7 @@
 import clone from "lodash/clone";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
-import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
+import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails, TIssueDescription } from "@plane/types";
 // helpers
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // services
@@ -24,6 +24,7 @@ export interface IInboxIssueStore {
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
   updateInboxIssueSnoozeTill: (date: Date) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
+  updateIssueDescription: (issue: TIssueDescription) => Promise<void>; // updating the issue
   updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   fetchIssueActivity: () => Promise<void>; // fetching the issue activity
 }
@@ -44,7 +45,12 @@ export class InboxIssueStore implements IInboxIssueStore {
   inboxIssueService;
   issueService;
 
-  constructor(workspaceSlug: string, projectId: string, data: TInboxIssue, private store: RootStore) {
+  constructor(
+    workspaceSlug: string,
+    projectId: string,
+    data: TInboxIssue,
+    private store: RootStore
+  ) {
     this.id = data.id;
     this.status = data.status;
     this.issue = data?.issue;
@@ -71,6 +77,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       updateInboxIssueDuplicateTo: action,
       updateInboxIssueSnoozeTill: action,
       updateIssue: action,
+      updateIssueDescription: action,
       updateProjectIssue: action,
       fetchIssueActivity: action,
     });
@@ -158,6 +165,25 @@ export class InboxIssueStore implements IInboxIssueStore {
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
         set(this.issue, issueKey, inboxIssue[issueKey]);
+      });
+    }
+  };
+
+  updateIssueDescription = async (issue: TIssueDescription) => {
+    const inboxIssue = clone(this.issue);
+    try {
+      if (!this.issue.id) return;
+      runInAction(() => {
+        this.issue.description_binary = issue.description_binary;
+        this.issue.description_html = issue.description_html;
+      });
+      await this.inboxIssueService.updateDescriptionBinary(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      // fetching activity
+      this.fetchIssueActivity();
+    } catch {
+      runInAction(() => {
+        this.issue.description_binary = inboxIssue.description_binary;
+        this.issue.description_html = inboxIssue.description_html;
       });
     }
   };

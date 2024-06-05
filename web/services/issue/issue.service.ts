@@ -1,5 +1,12 @@
 // types
-import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity } from "@plane/types";
+import type {
+  TIssue,
+  IIssueDisplayProperties,
+  TIssueLink,
+  TIssueSubIssues,
+  TIssueActivity,
+  TIssueDescription,
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -46,6 +53,32 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, {
       params: queries,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+      responseType: "arraybuffer",
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateDescriptionBinary(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

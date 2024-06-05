@@ -3,12 +3,16 @@ import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction } from "./issue_reaction";
 
+export type TIssueDescription = {
+  description_binary: string;
+  description_html: string;
+};
+
 // new issue structure types
-export type TIssue = {
+export type TIssue = TIssueDescription & {
   id: string;
   sequence_id: number;
   name: string;
-  description_html: string;
   sort_order: number;
 
   state_id: string;

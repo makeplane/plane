@@ -4,7 +4,7 @@ import { EditorRefApi } from "@plane/rich-text-editor";
 import { TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+import { RichTextEditor } from "@/components/editor";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks

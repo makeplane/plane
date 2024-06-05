@@ -17,6 +17,7 @@ export { EditorContentWrapper } from "src/ui/components/editor-content";
 
 // hooks
 export { useEditor } from "src/hooks/use-editor";
+export { useConflictFreeEditor } from "src/hooks/use-conflict-free-editor";
 export { useReadOnlyEditor } from "src/hooks/use-read-only-editor";
 
 // helper items

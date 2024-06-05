@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueDescription } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueContentProperties } from "@/components/inbox/content";
@@ -18,6 +18,7 @@ import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import { useIssueDescription } from "@/hooks/use-issue-description";
 
 type Props = {
   workspaceSlug: string;
@@ -36,6 +37,16 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
   const { loader } = useProjectInbox();
+
+  const { issueDescriptionYJS, handleDescriptionChange, isDescriptionReady } = useIssueDescription({
+    canUpdateDescription: isEditable,
+    isSubmitting,
+    issueId,
+    projectId,
+    setIsSubmitting,
+    updateIssueDescription: issueOperations.updateDescription,
+    workspaceSlug,
+  });
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -106,8 +117,37 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         }
       },
+      updateDescription: async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) => {
+        try {
+          await inboxIssue.updateIssueDescription(data);
+          captureIssueEvent({
+            eventName: "Inbox issue updated",
+            payload: { ...data, state: "SUCCESS", element: "Inbox" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToast({
+            title: "Issue update failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue update failed",
+          });
+          captureIssueEvent({
+            eventName: "Inbox issue updated",
+            payload: { state: "SUCCESS", element: "Inbox" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
+        }
+      },
     }),
-    [inboxIssue]
+    [captureIssueEvent, inboxIssue, router.asPath]
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
@@ -133,11 +173,10 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           </Loader>
         ) : (
           <IssueDescriptionInput
+            value={issueDescriptionYJS}
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
-            swrIssueDescription={issue.description_html ?? "<p></p>"}
-            initialValue={issue.description_html ?? "<p></p>"}
             disabled={!isEditable}
             issueOperations={issueOperations}
             setIsSubmitting={(value) => setIsSubmitting(value)}

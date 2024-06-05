@@ -7,9 +7,9 @@ import {
   getEditorClassNames,
   IMentionHighlight,
   IMentionSuggestion,
-  useEditor,
   EditorRefApi,
   TFileHandler,
+  useConflictFreeEditor,
 } from "@plane/editor-core";
 // extensions
 import { RichTextEditorExtensions } from "src/ui/extensions";
@@ -17,14 +17,13 @@ import { RichTextEditorExtensions } from "src/ui/extensions";
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 
 export type IRichTextEditor = {
-  initialValue: string;
-  value?: string | null;
+  value: Uint8Array;
   dragDropEnabled?: boolean;
   fileHandler: TFileHandler;
   id?: string;
   containerClassName?: string;
   editorClassName?: string;
-  onChange?: (json: object, html: string) => void;
+  onChange: (updates: Uint8Array) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   debouncedUpdatesEnabled?: boolean;
   mentionHandler: {
@@ -39,7 +38,6 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const {
     onChange,
     dragDropEnabled,
-    initialValue,
     value,
     fileHandler,
     containerClassName,
@@ -60,23 +58,21 @@ const RichTextEditor = (props: IRichTextEditor) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
-  const editor = useEditor({
+  const editor = useConflictFreeEditor({
     id,
     editorClassName,
     fileHandler,
-    onChange,
-    initialValue,
     value,
+    onChange,
     forwardedRef,
-    // rerenderOnPropsChange,
     extensions: RichTextEditorExtensions({
       uploadFile: fileHandler.upload,
       dragDropEnabled,
       setHideDragHandle: setHideDragHandleFunction,
     }),
-    tabIndex,
     mentionHandler,
     placeholder,
+    tabIndex,
   });
 
   const editorContainerClassName = getEditorClassNames({

@@ -4,7 +4,15 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
-import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import {
+  TIssue,
+  TGroupedIssues,
+  TSubGroupedIssues,
+  TLoader,
+  TUnGroupedIssues,
+  ViewFlags,
+  TIssueDescription,
+} from "@plane/types";
 // helpers
 import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // base class
@@ -26,6 +34,12 @@ export interface IProjectIssues {
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssueDescription: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
@@ -60,6 +74,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       fetchIssues: action,
       createIssue: action,
       updateIssue: action,
+      updateIssueDescription: action,
       removeIssue: action,
       archiveIssue: action,
       removeBulkIssues: action,
@@ -202,6 +217,20 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     }
   };
 
+  updateIssueDescription = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ) => {
+    try {
+      this.rootStore.issues.updateIssue(issueId, data);
+      await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, data);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
@@ -244,7 +273,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       const response = await this.createIssue(workspaceSlug, projectId, data);
 
       const quickAddIssueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === data.id);
-      
+
       if (quickAddIssueIndex >= 0) {
         runInAction(() => {
           this.issues[projectId].splice(quickAddIssueIndex, 1);
@@ -254,7 +283,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
       //TODO: error handling needs to be improved for rare cases
       if (data.cycle_id && data.cycle_id !== "") {
-        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
+        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id);
       }
 
       if (data.module_ids && data.module_ids.length > 0) {
@@ -264,7 +293,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
           response.id,
           data.module_ids,
           []
-        )
+        );
       }
       return response;
     } catch (error) {
