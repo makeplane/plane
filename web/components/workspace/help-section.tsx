@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// headless ui
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
 import { Transition } from "@headlessui/react";
-// icons
 // ui
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
@@ -59,9 +59,12 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-[6px] ${
-          isCollapsed ? "flex-col" : ""
-        }`}
+        className={cn(
+          "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 h-14 flex-shrink-0",
+          {
+            "flex-col h-auto py-1.5": isCollapsed,
+          }
+        )}
       >
         {!isCollapsed && (
           <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>

@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { TIssue } from "@plane/types";
 // components
 import { StateDropdown } from "@/components/dropdowns";
-// types
 
 type Props = {
   issue: TIssue;
@@ -23,7 +23,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
         onChange={(data) => onChange(issue, { state_id: data }, { changed_property: "state", change_details: data })}
         disabled={disabled}
         buttonVariant="transparent-with-text"
-        buttonClassName="rounded-none text-left"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />
