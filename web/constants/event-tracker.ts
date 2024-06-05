@@ -197,6 +197,12 @@ export const MEMBER_ACCEPTED = "Member accepted";
 export const PROJECT_MEMBER_ADDED = "Project member added";
 export const PROJECT_MEMBER_LEAVE = "Project member leave";
 export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
+// Estimate Events
+export const ESTIMATE_CREATED = "Estimate created";
+export const ESTIMATE_UPDATED = "Estimate updated";
+export const ESTIMATE_DELETED = "Estimate deleted";
+export const ESTIMATE_USED = "Estimate used";
+export const ESTIMATE_DISABLED = "Estimate disabled";
 // Sign-in & Sign-up Events
 export const NAVIGATE_TO_SIGNUP = "Navigate to sign-up page";
 export const NAVIGATE_TO_SIGNIN = "Navigate to sign-in page";

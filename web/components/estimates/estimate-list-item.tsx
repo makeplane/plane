@@ -5,8 +5,12 @@ import { useRouter } from "next/router";
 import { Pencil, Trash2 } from "lucide-react";
 import { IEstimate } from "@plane/types";
 import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { ESTIMATE_DISABLED } from "constants/event-tracker";
+// helpers
 import { orderArrayBy } from "@/helpers/array.helper";
-import { useProject } from "@/hooks/store";
+// hooks
+import { useProject, useEventTracker } from "@/hooks/store";
 // ui
 //icons
 // helpers
@@ -25,22 +29,29 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { currentProjectDetails, updateProject } = useProject();
+  const { captureEvent } = useEventTracker();
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
 
     await updateProject(workspaceSlug.toString(), projectId.toString(), {
       estimate: estimate.id,
-    }).catch((err) => {
-      const error = err?.error;
-      const errorString = Array.isArray(error) ? error[0] : error;
+    })
+      .then(() =>
+        captureEvent(ESTIMATE_DISABLED, {
+          current_estimate_id: currentProjectDetails?.estimate,
+        })
+      )
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: errorString ?? "Estimate points could not be used. Please try again.",
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: errorString ?? "Estimate points could not be used. Please try again.",
+        });
       });
-    });
   };
 
   return (

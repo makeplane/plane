@@ -7,8 +7,10 @@ import { IEstimate } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AlertModalCore } from "@/components/core";
+// constants
+import { ESTIMATE_DELETED } from "constants/event-tracker";
 // hooks
-import { useEstimate } from "@/hooks/store";
+import { useEstimate, useEventTracker } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -25,6 +27,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteEstimate } = useEstimate();
+  const { captureEvent } = useEventTracker();
 
   const handleEstimateDelete = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -37,6 +40,9 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
     await deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
       .then(() => {
         handleClose();
+        captureEvent(ESTIMATE_DELETED, {
+          estimate_id: estimateId,
+        });
       })
       .catch((err) => {
         const error = err?.error;
