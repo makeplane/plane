@@ -187,7 +187,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const issueDetail = issue.getIssueById(issueId);
 
-  const marginLeft = `${spacingLeft}px`;
+  const subIssueIndentation = `${spacingLeft}px`;
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -279,13 +279,10 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
             )}
 
             {/* sub issues indentation */}
-            <div style={nestingLevel !== 0 ? { width: marginLeft } : {}} />
+            <div style={nestingLevel !== 0 ? { width: subIssueIndentation } : {}} />
 
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
-              <div
-                className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100"
-                style={nestingLevel !== 0 ? { marginLeft } : {}}
-              >
+              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
                 <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
                   {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
                 </p>
