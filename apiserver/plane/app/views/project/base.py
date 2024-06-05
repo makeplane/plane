@@ -657,10 +657,10 @@ class DeployBoardViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
-        comments = request.data.get("comments", False)
-        reactions = request.data.get("reactions", False)
+        comments = request.data.get("is_comments_enabled", False)
+        reactions = request.data.get("is_reactions_enabled", False)
         inbox = request.data.get("inbox", None)
-        votes = request.data.get("votes", False)
+        votes = request.data.get("is_votes_enabled", False)
         views = request.data.get(
             "views",
             {
