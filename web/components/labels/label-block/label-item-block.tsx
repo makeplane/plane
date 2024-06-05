@@ -1,16 +1,16 @@
 import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
+// types
 import { IIssueLabel } from "@plane/types";
-//ui
+// ui
 import { CustomMenu, DragHandle } from "@plane/ui";
-//types
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-//hooks
-//components
+// components
 import { LabelName } from "./label-name";
 
-//types
 export interface ICustomMenuItem {
   CustomIcon: LucideIcon;
   onClick: (label: IIssueLabel) => void;
@@ -41,10 +41,10 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
     <div className="group flex items-center">
       <div className="flex items-center">
         <DragHandle
+          ref={dragHandleRef}
           className={cn("opacity-0 group-hover:opacity-100", {
             "opacity-100": isDragging,
           })}
-          ref={dragHandleRef}
         />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>

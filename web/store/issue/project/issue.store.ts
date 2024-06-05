@@ -1,10 +1,19 @@
 import concat from "lodash/concat";
 import pull from "lodash/pull";
 import set from "lodash/set";
+import union from "lodash/union";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
-import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import {
+  TIssue,
+  TGroupedIssues,
+  TSubGroupedIssues,
+  TLoader,
+  TUnGroupedIssues,
+  ViewFlags,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // helpers
 import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
 // base class
@@ -30,6 +39,9 @@ export interface IProjectIssues {
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  subscribeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
 export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
@@ -63,6 +75,9 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       removeIssue: action,
       archiveIssue: action,
       removeBulkIssues: action,
+      archiveBulkIssues: action,
+      subscribeBulkIssues: action,
+      bulkUpdateProperties: action,
       quickAddIssue: action,
     });
     // root store
@@ -295,6 +310,70 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
+      throw error;
+    }
+  };
+
+  archiveBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      const response = await this.issueService.bulkArchiveIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          this.rootStore.issues.updateIssue(issueId, {
+            archived_at: response.archived_at,
+          });
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  subscribeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      await this.issueService.bulkSubscribeIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * @description bulk update properties of selected issues
+   * @param {TBulkOperationsPayload} data
+   */
+  bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
+    const issueIds = data.issue_ids;
+    try {
+      // make request to update issue properties
+      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+      // update issues in the store
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
+          if (!issueDetails) throw new Error("Issue not found");
+          Object.keys(data.properties).forEach((key) => {
+            const property = key as keyof TBulkOperationsPayload["properties"];
+            const propertyValue = data.properties[property];
+            // update root issue map properties
+            if (Array.isArray(propertyValue)) {
+              // if property value is array, append it to the existing values
+              const existingValue = issueDetails[property];
+              // convert existing value to an array
+              const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: union(newExistingValue, propertyValue),
+              });
+            } else {
+              // if property value is not an array, simply update the value
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: propertyValue,
+              });
+            }
+          });
+        });
+      });
+    } catch (error) {
       throw error;
     }
   };

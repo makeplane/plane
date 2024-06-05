@@ -16,7 +16,6 @@ import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/ty
 // ui
 import { LayersIcon, DoubleCircleIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
-// components
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,

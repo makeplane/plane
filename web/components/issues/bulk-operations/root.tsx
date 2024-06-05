@@ -1,19 +1,21 @@
 import { observer } from "mobx-react";
 // components
-import { BulkOperationsUpgradeBanner } from "@/components/issues";
+import { BulkOperationsEnterpriseRoot } from "@/components/issues";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
+import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
+  selectionHelpers: TSelectionHelper;
 };
 
 export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
-  const { className } = props;
+  const { className, selectionHelpers } = props;
   // store hooks
   const { isSelectionActive } = useMultipleSelectStore();
 
   if (!isSelectionActive) return null;
 
-  return <BulkOperationsUpgradeBanner className={className} />;
+  return <BulkOperationsEnterpriseRoot className={className} selectionHelpers={selectionHelpers} />;
 });

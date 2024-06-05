@@ -1,9 +1,7 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-// headless ui
 import { Transition } from "@headlessui/react";
 // ui
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";

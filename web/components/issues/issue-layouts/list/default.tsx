@@ -10,15 +10,16 @@ import {
   IIssueDisplayProperties,
   TIssueMap,
   TUnGroupedIssues,
-  IGroupByColumn,
-  TIssueOrderByOptions,
   TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  IGroupByColumn,
 } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import { IssueBulkOperationsRoot } from "@/components/issues";
 // hooks
 import { EIssuesStoreType } from "@/constants/issue";
+// hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 // utils
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
@@ -170,7 +171,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     )
                 )}
               </div>
-              <IssueBulkOperationsRoot />
+              <IssueBulkOperationsRoot selectionHelpers={helpers} />
             </>
           )}
         </MultipleSelectGroup>
