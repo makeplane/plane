@@ -185,7 +185,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         enableBlockMove={enableBlockMove}
         enableBlockRightResize={enableBlockRightResize}
         enableReorder={enableReorder}
-        enableSelection={enableSelection}
         enableAddBlock={enableAddBlock}
         enableSelection={enableSelection}
         itemsContainerWidth={itemsContainerWidth}
