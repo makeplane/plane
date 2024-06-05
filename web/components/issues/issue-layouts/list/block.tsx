@@ -144,7 +144,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     >
       <div className="flex w-full truncate">
         <div className="flex flex-grow items-center gap-1.5 truncate">
-          <div className="flex items-center gap-2" style={isSubIssue ? { marginLeft } : {}}>
+          <div className="flex items-center gap-2">
             {/* select checkbox */}
             {projectId && canEditIssueProperties && (
               <Tooltip
@@ -174,7 +174,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </Tooltip>
             )}
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div
+                className="flex-shrink-0 text-xs font-medium text-custom-text-300"
+                style={isSubIssue ? { marginLeft } : {}}
+              >
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
