@@ -2,7 +2,8 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 // components
 import { IssueBlockDueDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
 // helpers
@@ -20,37 +21,35 @@ type Props = {
 
 export const IssueKanBanBlock: FC<Props> = observer((props) => {
   const { anchor, issue } = props;
-  // router
-  const router = useRouter();
   const searchParams = useSearchParams();
   // query params
-  const board = searchParams.get("board") || undefined;
-  const state = searchParams.get("state") || undefined;
-  const priority = searchParams.get("priority") || undefined;
-  const labels = searchParams.get("labels") || undefined;
+  const board = searchParams.get("board");
+  const state = searchParams.get("state");
+  const priority = searchParams.get("priority");
+  const labels = searchParams.get("labels");
   // store hooks
   const { project_details } = usePublish(anchor);
   const { setPeekId } = useIssueDetails();
 
+  const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+
   const handleBlockClick = () => {
     setPeekId(issue.id);
-    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
-    router.push(`/issues/${anchor}?${queryParam}`);
   };
 
   return (
-    <div className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs">
+    <Link
+      href={`/issues/${anchor}?${queryParam}`}
+      onClick={handleBlockClick}
+      className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs select-none"
+    >
       {/* id */}
       <div className="break-words text-xs text-custom-text-300">
         {project_details?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}
-      <h6
-        onClick={handleBlockClick}
-        role="button"
-        className="line-clamp-2 cursor-pointer break-words text-sm font-medium"
-      >
+      <h6 role="button" className="line-clamp-2 cursor-pointer break-words text-sm">
         {issue.name}
       </h6>
 
@@ -74,6 +73,6 @@ export const IssueKanBanBlock: FC<Props> = observer((props) => {
           </div>
         )}
       </div>
-    </div>
+    </Link>
   );
 });
