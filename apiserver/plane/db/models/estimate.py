@@ -11,7 +11,7 @@ class Estimate(ProjectBaseModel):
     description = models.TextField(
         verbose_name="Estimate Description", blank=True
     )
-    type = models.CharField(max_length=255, default="Categories")
+    type = models.CharField(max_length=255, default="categories")
     last_used = models.BooleanField(default=False)
 
     def __str__(self):
@@ -36,7 +36,7 @@ class EstimatePoint(ProjectBaseModel):
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
     description = models.TextField(blank=True)
-    value = models.CharField(max_length=20)
+    value = models.CharField(max_length=255)
 
     def __str__(self):
         """Return name of the estimate"""

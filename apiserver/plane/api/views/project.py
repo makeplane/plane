@@ -22,7 +22,7 @@ from plane.db.models import (
     IssueProperty,
     Module,
     Project,
-    ProjectDeployBoard,
+    DeployBoard,
     ProjectMember,
     State,
     Workspace,
@@ -99,7 +99,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 is_deployed=Exists(
-                    ProjectDeployBoard.objects.filter(
+                    DeployBoard.objects.filter(
                         project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
                     )

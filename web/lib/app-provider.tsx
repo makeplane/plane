@@ -54,11 +54,9 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               posthogAPIKey={config?.posthog_api_key || undefined}
               posthogHost={config?.posthog_host || undefined}
             >
-              <SWRConfig value={SWR_CONFIG}>
-                {/* TODO: Need to handle custom themes for toast */}
-                <Toast theme={resolveGeneralTheme(resolvedTheme)} />
-                {children}
-              </SWRConfig>
+              {/* TODO: Need to handle custom themes for toast */}
+              <Toast theme={resolveGeneralTheme(resolvedTheme)} />
+              <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
             </PostHogProvider>
           </CrispWrapper>
         </StoreWrapper>

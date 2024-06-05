@@ -28,7 +28,7 @@ from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
-    ProjectDeployBoardSerializer,
+    DeployBoardSerializer,
 )
 
 from plane.app.permissions import (
@@ -46,7 +46,7 @@ from plane.db.models import (
     Module,
     Cycle,
     Inbox,
-    ProjectDeployBoard,
+    DeployBoard,
     IssueProperty,
     Issue,
 )
@@ -138,7 +138,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 is_deployed=Exists(
-                    ProjectDeployBoard.objects.filter(
+                    DeployBoard.objects.filter(
                         project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
                     )
@@ -639,12 +639,12 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         return Response(files, status=status.HTTP_200_OK)
 
 
-class ProjectDeployBoardViewSet(BaseViewSet):
+class DeployBoardViewSet(BaseViewSet):
     permission_classes = [
         ProjectMemberPermission,
     ]
-    serializer_class = ProjectDeployBoardSerializer
-    model = ProjectDeployBoard
+    serializer_class = DeployBoardSerializer
+    model = DeployBoard
 
     def get_queryset(self):
         return (
@@ -673,17 +673,17 @@ class ProjectDeployBoardViewSet(BaseViewSet):
             },
         )
 
-        project_deploy_board, _ = ProjectDeployBoard.objects.get_or_create(
+        project_deploy_board, _ = DeployBoard.objects.get_or_create(
             anchor=f"{slug}/{project_id}",
             project_id=project_id,
         )
-        project_deploy_board.comments = comments
-        project_deploy_board.reactions = reactions
         project_deploy_board.inbox = inbox
-        project_deploy_board.votes = votes
-        project_deploy_board.views = views
+        project_deploy_board.view_props = views
+        project_deploy_board.is_votes_enabled = votes
+        project_deploy_board.is_comments_enabled = comments
+        project_deploy_board.is_reactions_enabled = reactions
 
         project_deploy_board.save()
 
-        serializer = ProjectDeployBoardSerializer(project_deploy_board)
+        serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
