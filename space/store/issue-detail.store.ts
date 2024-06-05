@@ -10,108 +10,102 @@ import { IIssue, IPeekMode, IVote } from "@/types/issue";
 export interface IIssueDetailStore {
   loader: boolean;
   error: any;
-  // peek info
+  // observables
   peekId: string | null;
   peekMode: IPeekMode;
   details: {
     [key: string]: IIssue;
   };
-  // peek actions
-  setPeekId: (issueId: string | null) => void;
+  // actions
+  setPeekId: (issueID: string | null) => void;
   setPeekMode: (mode: IPeekMode) => void;
-  // issue details
-  fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
-  // issue comments
-  addIssueComment: (workspaceId: string, projectId: string, issueId: string, data: any) => Promise<void>;
-  updateIssueComment: (
-    workspaceId: string,
-    projectId: string,
-    issueId: string,
-    comment_id: string,
-    data: any
-  ) => Promise<any>;
-  deleteIssueComment: (workspaceId: string, projectId: string, issueId: string, comment_id: string) => void;
-  addCommentReaction: (
-    workspaceId: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    reactionHex: string
-  ) => void;
-  removeCommentReaction: (
-    workspaceId: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    reactionHex: string
-  ) => void;
-  // issue reactions
-  addIssueReaction: (workspaceId: string, projectId: string, issueId: string, reactionHex: string) => void;
-  removeIssueReaction: (workspaceId: string, projectId: string, issueId: string, reactionHex: string) => void;
-  // issue votes
-  addIssueVote: (workspaceId: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => Promise<void>;
-  removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => Promise<void>;
+  // issue actions
+  fetchIssueDetails: (anchor: string, issueID: string) => void;
+  // comment actions
+  addIssueComment: (anchor: string, issueID: string, data: any) => Promise<void>;
+  updateIssueComment: (anchor: string, issueID: string, commentID: string, data: any) => Promise<any>;
+  deleteIssueComment: (anchor: string, issueID: string, commentID: string) => void;
+  addCommentReaction: (anchor: string, issueID: string, commentID: string, reactionHex: string) => void;
+  removeCommentReaction: (anchor: string, issueID: string, commentID: string, reactionHex: string) => void;
+  // reaction actions
+  addIssueReaction: (anchor: string, issueID: string, reactionHex: string) => void;
+  removeIssueReaction: (anchor: string, issueID: string, reactionHex: string) => void;
+  // vote actions
+  addIssueVote: (anchor: string, issueID: string, data: { vote: 1 | -1 }) => Promise<void>;
+  removeIssueVote: (anchor: string, issueID: string) => Promise<void>;
 }
 
 export class IssueDetailStore implements IIssueDetailStore {
   loader: boolean = false;
   error: any = null;
+  // observables
   peekId: string | null = null;
   peekMode: IPeekMode = "side";
   details: {
     [key: string]: IIssue;
   } = {};
-  issueService;
+  // root store
   rootStore: RootStore;
+  // services
+  issueService: IssueService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       loader: observable.ref,
       error: observable.ref,
-      // peek
+      // observables
       peekId: observable.ref,
       peekMode: observable.ref,
-      details: observable.ref,
+      details: observable,
       // actions
       setPeekId: action,
       setPeekMode: action,
+      // issue actions
       fetchIssueDetails: action,
+      // comment actions
       addIssueComment: action,
       updateIssueComment: action,
       deleteIssueComment: action,
       addCommentReaction: action,
       removeCommentReaction: action,
+      // reaction actions
       addIssueReaction: action,
       removeIssueReaction: action,
+      // vote actions
       addIssueVote: action,
       removeIssueVote: action,
     });
-    this.issueService = new IssueService();
     this.rootStore = _rootStore;
+    this.issueService = new IssueService();
   }
 
-  setPeekId = (issueId: string | null) => {
-    this.peekId = issueId;
+  setPeekId = (issueID: string | null) => {
+    this.peekId = issueID;
   };
 
   setPeekMode = (mode: IPeekMode) => {
     this.peekMode = mode;
   };
 
-  fetchIssueDetails = async (workspaceSlug: string, projectId: string, issueId: string) => {
+  /**
+   * @description fetc
+   * @param {string} anchor
+   * @param {string} issueID
+   */
+  fetchIssueDetails = async (anchor: string, issueID: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueId);
-      const commentsResponse = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+      const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueID);
+      const commentsResponse = await this.issueService.getIssueComments(anchor, issueID);
 
       if (issueDetails) {
         runInAction(() => {
           this.details = {
             ...this.details,
-            [issueId]: {
-              ...(this.details[issueId] ?? issueDetails),
+            [issueID]: {
+              ...(this.details[issueID] ?? issueDetails),
               comments: commentsResponse,
             },
           };
@@ -123,17 +117,17 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  addIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
+  addIssueComment = async (anchor: string, issueID: string, data: any) => {
     try {
-      const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueId);
-      const issueCommentResponse = await this.issueService.createIssueComment(workspaceSlug, projectId, issueId, data);
+      const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueID);
+      const issueCommentResponse = await this.issueService.createIssueComment(anchor, issueID, data);
       if (issueDetails) {
         runInAction(() => {
           this.details = {
             ...this.details,
-            [issueId]: {
+            [issueID]: {
               ...issueDetails,
-              comments: [...this.details[issueId].comments, issueCommentResponse],
+              comments: [...this.details[issueID].comments, issueCommentResponse],
             },
           };
         });
@@ -145,36 +139,30 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  updateIssueComment = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    data: any
-  ) => {
+  updateIssueComment = async (anchor: string, issueID: string, commentID: string, data: any) => {
     try {
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
-            comments: this.details[issueId].comments.map((c) => ({
+          [issueID]: {
+            ...this.details[issueID],
+            comments: this.details[issueID].comments.map((c) => ({
               ...c,
-              ...(c.id === commentId ? data : {}),
+              ...(c.id === commentID ? data : {}),
             })),
           },
         };
       });
 
-      await this.issueService.updateIssueComment(workspaceSlug, projectId, issueId, commentId, data);
+      await this.issueService.updateIssueComment(anchor, issueID, commentID, data);
     } catch (error) {
-      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+      const issueComments = await this.issueService.getIssueComments(anchor, issueID);
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             comments: issueComments,
           },
         };
@@ -182,15 +170,15 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  deleteIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, comment_id: string) => {
+  deleteIssueComment = async (anchor: string, issueID: string, commentID: string) => {
     try {
-      await this.issueService.deleteIssueComment(workspaceSlug, projectId, issueId, comment_id);
-      const remainingComments = this.details[issueId].comments.filter((c) => c.id != comment_id);
+      await this.issueService.deleteIssueComment(anchor, issueID, commentID);
+      const remainingComments = this.details[issueID].comments.filter((c) => c.id != commentID);
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             comments: remainingComments,
           },
         };
@@ -200,47 +188,41 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  addCommentReaction = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    reactionHex: string
-  ) => {
+  addCommentReaction = async (anchor: string, issueID: string, commentID: string, reactionHex: string) => {
     const newReaction = {
       id: uuidv4(),
-      comment: commentId,
+      comment: commentID,
       reaction: reactionHex,
       actor_detail: this.rootStore.user.currentActor,
     };
-    const newComments = this.details[issueId].comments.map((comment) => ({
+    const newComments = this.details[issueID].comments.map((comment) => ({
       ...comment,
       comment_reactions:
-        comment.id === commentId ? [...comment.comment_reactions, newReaction] : comment.comment_reactions,
+        comment.id === commentID ? [...comment.comment_reactions, newReaction] : comment.comment_reactions,
     }));
 
     try {
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             comments: [...newComments],
           },
         };
       });
 
-      await this.issueService.createCommentReaction(workspaceSlug, projectId, commentId, {
+      await this.issueService.createCommentReaction(anchor, commentID, {
         reaction: reactionHex,
       });
     } catch (error) {
-      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+      const issueComments = await this.issueService.getIssueComments(anchor, issueID);
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             comments: issueComments,
           },
         };
@@ -248,39 +230,33 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  removeCommentReaction = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    reactionHex: string
-  ) => {
+  removeCommentReaction = async (anchor: string, issueID: string, commentID: string, reactionHex: string) => {
     try {
-      const comment = this.details[issueId].comments.find((c) => c.id === commentId);
+      const comment = this.details[issueID].comments.find((c) => c.id === commentID);
       const newCommentReactions = comment?.comment_reactions.filter((r) => r.reaction !== reactionHex) ?? [];
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
-            comments: this.details[issueId].comments.map((c) => ({
+          [issueID]: {
+            ...this.details[issueID],
+            comments: this.details[issueID].comments.map((c) => ({
               ...c,
-              comment_reactions: c.id === commentId ? newCommentReactions : c.comment_reactions,
+              comment_reactions: c.id === commentID ? newCommentReactions : c.comment_reactions,
             })),
           },
         };
       });
 
-      await this.issueService.deleteCommentReaction(workspaceSlug, projectId, commentId, reactionHex);
+      await this.issueService.deleteCommentReaction(anchor, commentID, reactionHex);
     } catch (error) {
-      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+      const issueComments = await this.issueService.getIssueComments(anchor, issueID);
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             comments: issueComments,
           },
         };
@@ -288,18 +264,18 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  addIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, reactionHex: string) => {
+  addIssueReaction = async (anchor: string, issueID: string, reactionHex: string) => {
     try {
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             reactions: [
-              ...this.details[issueId].reactions,
+              ...this.details[issueID].reactions,
               {
                 id: uuidv4(),
-                issue: issueId,
+                issue: issueID,
                 reaction: reactionHex,
                 actor_detail: this.rootStore.user.currentActor,
               },
@@ -308,17 +284,17 @@ export class IssueDetailStore implements IIssueDetailStore {
         };
       });
 
-      await this.issueService.createIssueReaction(workspaceSlug, projectId, issueId, {
+      await this.issueService.createIssueReaction(anchor, issueID, {
         reaction: reactionHex,
       });
     } catch (error) {
       console.log("Failed to add issue vote");
-      const issueReactions = await this.issueService.getIssueReactions(workspaceSlug, projectId, issueId);
+      const issueReactions = await this.issueService.getIssueReactions(anchor, issueID);
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             reactions: issueReactions,
           },
         };
@@ -326,31 +302,31 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  removeIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, reactionHex: string) => {
+  removeIssueReaction = async (anchor: string, issueID: string, reactionHex: string) => {
     try {
-      const newReactions = this.details[issueId].reactions.filter(
+      const newReactions = this.details[issueID].reactions.filter(
         (_r) => !(_r.reaction === reactionHex && _r.actor_detail.id === this.rootStore.user.data?.id)
       );
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             reactions: newReactions,
           },
         };
       });
 
-      await this.issueService.deleteIssueReaction(workspaceSlug, projectId, issueId, reactionHex);
+      await this.issueService.deleteIssueReaction(anchor, issueID, reactionHex);
     } catch (error) {
       console.log("Failed to remove issue reaction");
-      const reactions = await this.issueService.getIssueReactions(workspaceSlug, projectId, issueId);
+      const reactions = await this.issueService.getIssueReactions(anchor, issueID);
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             reactions: reactions,
           },
         };
@@ -358,39 +334,44 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  addIssueVote = async (workspaceSlug: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => {
+  addIssueVote = async (anchor: string, issueID: string, data: { vote: 1 | -1 }) => {
+    const publishSettings = this.rootStore.publishList?.publishMap?.[anchor];
+    const projectID = publishSettings?.project;
+    const workspaceSlug = publishSettings?.workspace_detail?.slug;
+    if (!projectID || !workspaceSlug) throw new Error("Publish settings not found");
+
     const newVote: IVote = {
       actor: this.rootStore.user.data?.id ?? "",
       actor_detail: this.rootStore.user.currentActor,
-      issue: issueId,
-      project: projectId,
+      issue: issueID,
+      project: projectID,
       workspace: workspaceSlug,
       vote: data.vote,
     };
 
-    const filteredVotes = this.details[issueId].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
+    const filteredVotes = this.details[issueID].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
 
     try {
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             votes: [...filteredVotes, newVote],
           },
         };
       });
 
-      await this.issueService.createIssueVote(workspaceSlug, projectId, issueId, data);
+      await this.issueService.createIssueVote(anchor, issueID, data);
     } catch (error) {
       console.log("Failed to add issue vote");
-      const issueVotes = await this.issueService.getIssueVotes(workspaceSlug, projectId, issueId);
+      const issueVotes = await this.issueService.getIssueVotes(anchor, issueID);
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             votes: issueVotes,
           },
         };
@@ -398,30 +379,30 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  removeIssueVote = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const newVotes = this.details[issueId].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
+  removeIssueVote = async (anchor: string, issueID: string) => {
+    const newVotes = this.details[issueID].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
 
     try {
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             votes: newVotes,
           },
         };
       });
 
-      await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId);
+      await this.issueService.deleteIssueVote(anchor, issueID);
     } catch (error) {
       console.log("Failed to remove issue vote");
-      const issueVotes = await this.issueService.getIssueVotes(workspaceSlug, projectId, issueId);
+      const issueVotes = await this.issueService.getIssueVotes(anchor, issueID);
 
       runInAction(() => {
         this.details = {
           ...this.details,
-          [issueId]: {
-            ...this.details[issueId],
+          [issueID]: {
+            ...this.details[issueID],
             votes: issueVotes,
           },
         };

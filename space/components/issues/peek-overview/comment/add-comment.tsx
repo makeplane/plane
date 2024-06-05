@@ -8,7 +8,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
-import { useIssueDetails, useProject, useUser } from "@/hooks/store";
+import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 // types
 import { Comment } from "@/types/issue";
 
@@ -17,22 +17,18 @@ const defaultValues: Partial<Comment> = {
 };
 
 type Props = {
+  anchor: string;
   disabled?: boolean;
-  workspaceSlug: string;
-  projectId: string;
 };
 
 export const AddComment: React.FC<Props> = observer((props) => {
-  // const { disabled = false } = props;
-  const { workspaceSlug, projectId } = props;
+  const { anchor } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
-  const { workspace } = useProject();
   const { peekId: issueId, addIssueComment } = useIssueDetails();
   const { data: currentUser } = useUser();
-  // derived values
-  const workspaceId = workspace?.id;
+  const { workspaceSlug, workspace: workspaceID } = usePublish(anchor);
   // form info
   const {
     handleSubmit,
@@ -43,9 +39,9 @@ export const AddComment: React.FC<Props> = observer((props) => {
   } = useForm<Comment>({ defaultValues });
 
   const onSubmit = async (formData: Comment) => {
-    if (!workspaceSlug || !projectId || !issueId || isSubmitting || !formData.comment_html) return;
+    if (!anchor || !issueId || isSubmitting || !formData.comment_html) return;
 
-    await addIssueComment(workspaceSlug, projectId, issueId, formData)
+    await addIssueComment(anchor, issueId, formData)
       .then(() => {
         reset(defaultValues);
         editorRef.current?.clearEditor();
@@ -71,8 +67,8 @@ export const AddComment: React.FC<Props> = observer((props) => {
               onEnterKeyPress={(e) => {
                 if (currentUser) handleSubmit(onSubmit)(e);
               }}
-              workspaceId={workspaceId as string}
-              workspaceSlug={workspaceSlug}
+              workspaceId={workspaceID?.toString() ?? ""}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
               ref={editorRef}
               initialValue={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

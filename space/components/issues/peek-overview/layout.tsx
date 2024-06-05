@@ -10,13 +10,12 @@ import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overv
 import { useIssue, useIssueDetails } from "@/hooks/store";
 
 type TIssuePeekOverview = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
   peekId: string;
 };
 
 export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
-  const { workspaceSlug, projectId, peekId } = props;
+  const { anchor, peekId } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
   // query params
@@ -34,21 +33,23 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
 
   useEffect(() => {
-    if (workspaceSlug && projectId && peekId && issueStore.issues && issueStore.issues.length > 0) {
+    if (anchor && peekId && issueStore.issues && issueStore.issues.length > 0) {
       if (!issueDetails) {
-        issueDetailStore.fetchIssueDetails(workspaceSlug.toString(), projectId.toString(), peekId.toString());
+        issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
       }
     }
-  }, [workspaceSlug, projectId, issueDetailStore, issueDetails, peekId, issueStore.issues]);
+  }, [anchor, issueDetailStore, issueDetails, peekId, issueStore.issues]);
 
   const handleClose = () => {
     issueDetailStore.setPeekId(null);
-    let queryParams: any = { board: board };
+    let queryParams: any = {
+      board,
+    };
     if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
     if (state && state.length > 0) queryParams = { ...queryParams, state: state };
     if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
     queryParams = new URLSearchParams(queryParams).toString();
-    router.push(`/${workspaceSlug}/${projectId}?${queryParams}`);
+    router.push(`/issues/${anchor}?${queryParams}`);
   };
 
   useEffect(() => {
@@ -80,12 +81,7 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
             leaveTo="translate-x-full"
           >
             <Dialog.Panel className="fixed right-0 top-0 z-20 h-full w-1/2 bg-custom-background-100 shadow-custom-shadow-sm">
-              <SidePeekView
-                handleClose={handleClose}
-                issueDetails={issueDetails}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-              />
+              <SidePeekView anchor={anchor} handleClose={handleClose} issueDetails={issueDetails} />
             </Dialog.Panel>
           </Transition.Child>
         </Dialog>
@@ -119,20 +115,10 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
                 }`}
               >
                 {issueDetailStore.peekMode === "modal" && (
-                  <SidePeekView
-                    handleClose={handleClose}
-                    issueDetails={issueDetails}
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                  />
+                  <SidePeekView anchor={anchor} handleClose={handleClose} issueDetails={issueDetails} />
                 )}
                 {issueDetailStore.peekMode === "full" && (
-                  <FullScreenPeekView
-                    handleClose={handleClose}
-                    issueDetails={issueDetails}
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                  />
+                  <FullScreenPeekView anchor={anchor} handleClose={handleClose} issueDetails={issueDetails} />
                 )}
               </div>
             </Dialog.Panel>

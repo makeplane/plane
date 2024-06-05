@@ -2,6 +2,7 @@ from django.urls import path
 
 from plane.app.views import (
     ProjectViewSet,
+    DeployBoardViewSet,
     ProjectInvitationsViewset,
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
@@ -12,7 +13,6 @@ from plane.app.views import (
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
     ProjectPublicCoverImagesEndpoint,
-    DeployBoardViewSet,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
 )

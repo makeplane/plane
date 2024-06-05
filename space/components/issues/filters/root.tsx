@@ -17,17 +17,18 @@ import { useIssue, useIssueFilter } from "@/hooks/store";
 import { TIssueQueryFilters } from "@/types/issue";
 
 type IssueFiltersDropdownProps = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
 };
 
 export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((props) => {
+  const { anchor } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = props;
   // hooks
-  const { issueFilters, updateIssueFilters } = useIssueFilter();
+  const { getIssueFilters, updateIssueFilters } = useIssueFilter();
   const { states, labels } = useIssue();
-
+  // derived values
+  const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const updateRouteParams = useCallback(
@@ -37,24 +38,24 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
       const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
 
       const { queryParam } = queryParamGenerator({ board: activeLayout, priority, state, labels });
-      router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
+      router.push(`/issues/${anchor}?${queryParam}`);
     },
-    [workspaceSlug, projectId, activeLayout, issueFilters, router]
+    [anchor, activeLayout, issueFilters, router]
   );
 
   const handleFilters = useCallback(
     (key: keyof TIssueQueryFilters, value: string) => {
-      if (!projectId || !value) return;
+      if (!value) return;
 
       const newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
 
       if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
       else newValues.push(value);
 
-      updateIssueFilters(projectId, "filters", key, newValues);
+      updateIssueFilters(anchor, "filters", key, newValues);
       updateRouteParams(key, newValues);
     },
-    [projectId, issueFilters, updateIssueFilters, updateRouteParams]
+    [anchor, issueFilters, updateIssueFilters, updateRouteParams]
   );
 
   return (
