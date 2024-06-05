@@ -19,15 +19,15 @@ type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  onChange: (val: number | null) => void;
+  onChange: (val: string | null) => void;
   onClose?: () => void;
   projectId: string;
-  value: number | null;
+  value: string | null;
 };
 
 type DropdownOptions =
   | {
-      value: number | null;
+      value: string | null;
       query: string;
       content: JSX.Element;
     }[]
@@ -80,7 +80,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const activeEstimate = getProjectActiveEstimateDetails(projectId);
 
   const options: DropdownOptions = sortBy(activeEstimate?.points ?? [], "key")?.map((point) => ({
-    value: point.key,
+    value: point.id,
     query: `${point?.value}`,
     content: (
       <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     setQuery,
   });
 
-  const dropdownOnChange = (val: number | null) => {
+  const dropdownOnChange = (val: string | null) => {
     onChange(val);
     handleClose();
   };

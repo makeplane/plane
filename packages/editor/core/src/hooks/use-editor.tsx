@@ -112,7 +112,7 @@ export const useEditor = ({
     if (value === null || value === undefined) return;
     if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
       try {
-        editor.commands.setContent(value);
+        editor.commands.setContent(value, false, { preserveWhitespace: "full" });
         const currentSavedSelection = savedSelectionRef.current;
         if (currentSavedSelection) {
           const docLength = editor.state.doc.content.size;

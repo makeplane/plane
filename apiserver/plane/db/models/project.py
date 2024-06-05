@@ -260,6 +260,8 @@ def get_default_views():
     }
 
 
+# DEPRECATED TODO:
+# used to get the old anchors for the project deploy boards
 class ProjectDeployBoard(ProjectBaseModel):
     anchor = models.CharField(
         max_length=255, default=get_anchor, unique=True, db_index=True

@@ -4,10 +4,10 @@ import sortBy from "lodash/sortBy";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 // services
 import { IssueActivityService } from "@/services/issue";
 // types
-import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 import { IIssueDetail } from "./root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
@@ -117,10 +117,10 @@ export class IssueActivityStore implements IIssueActivityStore {
       this.loader = loaderType;
 
       let props = {};
-      const _activityIds = this.getActivitiesByIssueId(issueId);
-      if (_activityIds && _activityIds.length > 0) {
-        const _activity = this.getActivityById(_activityIds[_activityIds.length - 1]);
-        if (_activity) props = { created_at__gt: _activity.created_at };
+      const currentActivityIds = this.getActivitiesByIssueId(issueId);
+      if (currentActivityIds && currentActivityIds.length > 0) {
+        const currentActivity = this.getActivityById(currentActivityIds[currentActivityIds.length - 1]);
+        if (currentActivity) props = { created_at__gt: currentActivity.created_at };
       }
 
       const activities = await this.issueActivityService.getIssueActivities(workspaceSlug, projectId, issueId, props);
@@ -128,9 +128,9 @@ export class IssueActivityStore implements IIssueActivityStore {
       const activityIds = activities.map((activity) => activity.id);
 
       runInAction(() => {
-        update(this.activities, issueId, (_activityIds) => {
-          if (!_activityIds) return activityIds;
-          return uniq(concat(_activityIds, activityIds));
+        update(this.activities, issueId, (currentActivityIds) => {
+          if (!currentActivityIds) return activityIds;
+          return uniq(concat(currentActivityIds, activityIds));
         });
         activities.forEach((activity) => {
           set(this.activityMap, activity.id, activity);

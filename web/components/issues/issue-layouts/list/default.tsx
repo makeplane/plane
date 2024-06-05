@@ -170,7 +170,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     )
                 )}
               </div>
-              <IssueBulkOperationsRoot />
+              <IssueBulkOperationsRoot selectionHelpers={helpers} />
             </>
           )}
         </MultipleSelectGroup>

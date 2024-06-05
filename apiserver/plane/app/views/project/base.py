@@ -677,11 +677,11 @@ class DeployBoardViewSet(BaseViewSet):
             entity_identifier=project_id,
             project_id=project_id,
         )
-        project_deploy_board.comments = comments
-        project_deploy_board.reactions = reactions
         project_deploy_board.inbox = inbox
-        project_deploy_board.votes = votes
-        project_deploy_board.views = views
+        project_deploy_board.view_props = views
+        project_deploy_board.is_votes_enabled = votes
+        project_deploy_board.is_comments_enabled = comments
+        project_deploy_board.is_reactions_enabled = reactions
 
         project_deploy_board.save()
 
