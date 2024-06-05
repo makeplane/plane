@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // components
 import { BulkArchiveIssues, BulkDeleteIssues, BulkSubscribeIssues } from "@/components/issues";
 
@@ -6,7 +7,7 @@ type Props = {
   selectedEntityIds: string[];
 };
 
-export const BulkOperationsActionsRoot: React.FC<Props> = (props) => {
+export const BulkOperationsActionsRoot: React.FC<Props> = observer((props) => {
   const { handleClearSelection, selectedEntityIds } = props;
 
   return (
@@ -20,4 +21,4 @@ export const BulkOperationsActionsRoot: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+});
