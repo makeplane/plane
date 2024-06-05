@@ -8,7 +8,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AlertModalCore } from "@/components/core";
 // constants
-import { E_Labels, LABEL_DELETED, LABEL_GROUP_DELETED } from "constants/event-tracker";
+import { E_Labels, LABEL_DELETED, LABEL_GROUP_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useLabel, useEventTracker } from "@/hooks/store";
 

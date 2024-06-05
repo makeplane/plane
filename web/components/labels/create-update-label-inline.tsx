@@ -8,7 +8,7 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { E_Labels, LABEL_CREATED, LABEL_UPDATED } from "constants/event-tracker";
+import { E_Labels, LABEL_CREATED, LABEL_UPDATED } from "@/constants/event-tracker";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@/constants/label";
 // hooks
 import { useLabel, useEventTracker } from "@/hooks/store";

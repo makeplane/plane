@@ -9,7 +9,7 @@ import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // constants
-import { ESTIMATE_CREATED, ESTIMATE_UPDATED } from "constants/event-tracker";
+import { ESTIMATE_CREATED, ESTIMATE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { checkDuplicates } from "@/helpers/array.helper";
 // hooks

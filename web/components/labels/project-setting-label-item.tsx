@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { X, Pencil } from "lucide-react";
 // types
 import { IIssueLabel } from "@plane/types";
-// hooks
-import { useLabel, useEventTracker } from "@/hooks/store";
 // constants
 import { E_Labels, LABEL_REMOVED_G } from "@/constants/event-tracker";
+// hooks
+import { useLabel, useEventTracker } from "@/hooks/store";
 // components
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";

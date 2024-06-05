@@ -1,10 +1,6 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
-  ElementDragPayload,
-  draggable,
-  dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -67,7 +63,6 @@ export const LabelDndHOC = observer((props: Props) => {
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
 
   const captureLabelDropEvent = (source: TargetData, destination: TargetData) => {
-
     if (source?.parentId != destination.id) {
       source?.parentId &&
         captureEvent(LABEL_REMOVED_G, {

@@ -8,7 +8,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AlertModalCore } from "@/components/core";
 // constants
-import { ESTIMATE_DELETED } from "constants/event-tracker";
+import { ESTIMATE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEstimate, useEventTracker } from "@/hooks/store";
 

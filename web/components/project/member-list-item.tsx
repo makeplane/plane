@@ -9,7 +9,7 @@ import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { E_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEAVE, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
+import { E_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEAVE, PROJECT_MEMBER_REMOVED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 import { ROLE } from "@/constants/workspace";
 // helpers
@@ -157,7 +157,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               updateMember(workspaceSlug.toString(), projectId.toString(), userDetails.member?.id, {
                 role: value,
               })
-                .then(() => 
+                .then(() =>
                   captureEvent(PM_ROLE_CHANGED, {
                     member_id: userDetails.member.id,
                     changed_role: getUserRole(value as number),
