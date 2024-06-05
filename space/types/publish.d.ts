@@ -5,7 +5,7 @@ export type TPublishEntityType = "project";
 
 export type TPublishSettings = {
   anchor: string | undefined;
-  comments: boolean;
+  is_comments_enabled: boolean;
   created_at: string | undefined;
   created_by: string | undefined;
   entity_identifier: string | undefined;
@@ -14,11 +14,11 @@ export type TPublishSettings = {
   inbox: unknown;
   project: string | undefined;
   project_details: TProjectDetails | undefined;
-  reactions: boolean;
+  is_reactions_enabled: boolean;
   updated_at: string | undefined;
   updated_by: string | undefined;
   view_props: TViewDetails | undefined;
-  votes: boolean;
+  is_votes_enabled: boolean;
   workspace: string | undefined;
   workspace_detail: IWorkspaceLite | undefined;
 };
