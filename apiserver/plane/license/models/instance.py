@@ -21,15 +21,15 @@ class Instance(BaseModel):
     whitelist_emails = models.TextField(blank=True, null=True)
     instance_id = models.CharField(max_length=255, unique=True)
     license_key = models.CharField(max_length=256, null=True, blank=True)
-    current_version = models.CharField(max_length=10)
-    latest_version = models.CharField(max_length=10, null=True, blank=True)
+    current_version = models.CharField(max_length=255)
+    latest_version = models.CharField(max_length=255, null=True, blank=True)
     product = models.CharField(
-        max_length=50, default=ProductTypes.PLANE_CE.value
+        max_length=255, default=ProductTypes.PLANE_CE.value
     )
     domain = models.TextField(blank=True)
     # Instance specifics
     last_checked_at = models.DateTimeField()
-    namespace = models.CharField(max_length=50, blank=True, null=True)
+    namespace = models.CharField(max_length=255, blank=True, null=True)
     # telemetry and support
     is_telemetry_enabled = models.BooleanField(default=True)
     is_support_required = models.BooleanField(default=True)
@@ -86,9 +86,9 @@ class InstanceConfiguration(BaseModel):
 class ChangeLog(BaseModel):
     """Change Log model to store the release changelogs made in the application."""
 
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    version = models.CharField(max_length=100)
+    version = models.CharField(max_length=255)
     tags = models.JSONField(default=list)
     release_date = models.DateTimeField(null=True)
     is_release_candidate = models.BooleanField(default=False)
