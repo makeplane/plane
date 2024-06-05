@@ -1,13 +1,7 @@
-// interfaces
-import {
-  TIssueLayout,
-  TIssueLayoutViews,
-  TIssueFilterKeys,
-  TIssueFilterPriority,
-  TIssueFilterPriorityObject,
-  TIssueFilterState,
-  TIssueFilterStateObject,
-} from "types/issue";
+import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
+// types
+import { TIssuePriorities } from "@plane/types";
+import { TIssueLayout, TIssueFilterKeys, TIssueFilterPriorityObject } from "@/types/issue";
 
 // issue filters
 export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: { [key in TIssueLayout]: Record<"filters", TIssueFilterKeys[]> } = {
@@ -28,20 +22,18 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: { [key in TIssueLayout]: Record<"f
   },
 };
 
-export const issueLayoutViews: Partial<TIssueLayoutViews> = {
-  list: {
-    title: "List View",
-    icon: "format_list_bulleted",
-    className: "",
-  },
-  kanban: {
-    title: "Board View",
-    icon: "grid_view",
-    className: "",
-  },
-};
+export const ISSUE_LAYOUTS: {
+  key: TIssueLayout;
+  title: string;
+  icon: any;
+}[] = [
+  { key: "list", title: "List", icon: List },
+  { key: "kanban", title: "Kanban", icon: Kanban },
+  { key: "calendar", title: "Calendar", icon: Calendar },
+  { key: "spreadsheet", title: "Spreadsheet", icon: Sheet },
+  { key: "gantt", title: "Gantt chart", icon: GanttChartSquare },
+];
 
-// issue priority filters
 export const issuePriorityFilters: TIssueFilterPriorityObject[] = [
   {
     key: "urgent",
@@ -75,64 +67,12 @@ export const issuePriorityFilters: TIssueFilterPriorityObject[] = [
   },
 ];
 
-export const issuePriorityFilter = (priorityKey: TIssueFilterPriority): TIssueFilterPriorityObject | undefined => {
+export const issuePriorityFilter = (priorityKey: TIssuePriorities): TIssueFilterPriorityObject | undefined => {
   const currentIssuePriority: TIssueFilterPriorityObject | undefined =
     issuePriorityFilters && issuePriorityFilters.length > 0
       ? issuePriorityFilters.find((_priority) => _priority.key === priorityKey)
       : undefined;
 
   if (currentIssuePriority) return currentIssuePriority;
-  return undefined;
-};
-
-// issue group filters
-export const issueGroupColors: {
-  [key in TIssueFilterState]: string;
-} = {
-  backlog: "#d9d9d9",
-  unstarted: "#3f76ff",
-  started: "#f59e0b",
-  completed: "#16a34a",
-  cancelled: "#dc2626",
-};
-
-export const issueGroups: TIssueFilterStateObject[] = [
-  {
-    key: "backlog",
-    title: "Backlog",
-    color: "#d9d9d9",
-    className: `text-[#d9d9d9] bg-[#d9d9d9]/10`,
-  },
-  {
-    key: "unstarted",
-    title: "Unstarted",
-    color: "#3f76ff",
-    className: `text-[#3f76ff] bg-[#3f76ff]/10`,
-  },
-  {
-    key: "started",
-    title: "Started",
-    color: "#f59e0b",
-    className: `text-[#f59e0b] bg-[#f59e0b]/10`,
-  },
-  {
-    key: "completed",
-    title: "Completed",
-    color: "#16a34a",
-    className: `text-[#16a34a] bg-[#16a34a]/10`,
-  },
-  {
-    key: "cancelled",
-    title: "Cancelled",
-    color: "#dc2626",
-    className: `text-[#dc2626] bg-[#dc2626]/10`,
-  },
-];
-
-export const issueGroupFilter = (issueKey: TIssueFilterState): TIssueFilterStateObject | undefined => {
-  const currentIssueStateGroup: TIssueFilterStateObject | undefined =
-    issueGroups && issueGroups.length > 0 ? issueGroups.find((group) => group.key === issueKey) : undefined;
-
-  if (currentIssueStateGroup) return currentIssueStateGroup;
   return undefined;
 };

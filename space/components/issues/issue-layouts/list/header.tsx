@@ -1,20 +1,18 @@
 "use client";
+
+import React from "react";
 import { observer } from "mobx-react-lite";
+// types
+import { IStateLite } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
-// constants
-import { issueGroupFilter } from "@/constants/issue";
-// mobx hook
-// import { useIssue } from "@/hooks/store";
-// types
-import { IIssueState } from "@/types/issue";
 
-export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
-  // const { getCountOfIssuesByState } = useIssue();
-  const stateGroup = issueGroupFilter(state.group);
-  // const count = getCountOfIssuesByState(state.id);
+type Props = {
+  state: IStateLite;
+};
 
-  if (stateGroup === null) return <></>;
+export const IssueListLayoutHeader: React.FC<Props> = observer((props) => {
+  const { state } = props;
 
   return (
     <div className="flex items-center gap-2 p-3">

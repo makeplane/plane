@@ -6,11 +6,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { IssueCalendarView } from "@/components/issues/board-views/calendar";
-import { IssueGanttView } from "@/components/issues/board-views/gantt";
-import { IssueKanbanView } from "@/components/issues/board-views/kanban";
-import { IssueListView } from "@/components/issues/board-views/list";
-import { IssueSpreadsheetView } from "@/components/issues/board-views/spreadsheet";
+import { IssueKanbanLayoutRoot, IssuesListLayoutRoot } from "@/components/issues";
 import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
@@ -20,12 +16,12 @@ import { PublishStore } from "@/store/publish/publish.store";
 // assets
 import SomethingWentWrongImage from "public/something-went-wrong.svg";
 
-type ProjectDetailsViewProps = {
+type Props = {
   peekId: string | undefined;
   publishSettings: PublishStore;
 };
 
-export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) => {
+export const IssuesLayoutsRoot: FC<Props> = observer((props) => {
   const { peekId, publishSettings } = props;
   // query params
   const searchParams = useSearchParams();
@@ -84,17 +80,14 @@ export const ProjectDetailsView: FC<ProjectDetailsViewProps> = observer((props) 
 
                 {activeLayout === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">
-                    <IssueListView anchor={anchor} />
+                    <IssuesListLayoutRoot anchor={anchor} />
                   </div>
                 )}
                 {activeLayout === "kanban" && (
                   <div className="relative mx-auto h-full w-full p-5">
-                    <IssueKanbanView anchor={anchor} />
+                    <IssueKanbanLayoutRoot anchor={anchor} />
                   </div>
                 )}
-                {activeLayout === "calendar" && <IssueCalendarView />}
-                {activeLayout === "spreadsheet" && <IssueSpreadsheetView />}
-                {activeLayout === "gantt" && <IssueGanttView />}
               </div>
             )
           )}

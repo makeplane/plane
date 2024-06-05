@@ -1,3 +1,5 @@
+"use client";
+
 type Props = {
   children: React.ReactNode;
   params: {
@@ -6,10 +8,10 @@ type Props = {
   };
 };
 
-const ProjectIssuesLayout = async (props: Props) => {
+const IssuesLayout = (props: Props) => {
   const { children } = props;
 
   return <>{children}</>;
 };
 
-export default ProjectIssuesLayout;
+export default IssuesLayout;

@@ -1,29 +1,26 @@
 "use client";
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 // components
-import { IssueBlockDueDate } from "@/components/issues/board-views/block-due-date";
-import { IssueBlockLabels } from "@/components/issues/board-views/block-labels";
-import { IssueBlockPriority } from "@/components/issues/board-views/block-priority";
-import { IssueBlockState } from "@/components/issues/board-views/block-state";
+import { IssueBlockDueDate, IssueBlockLabels, IssueBlockPriority, IssueBlockState } from "@/components/issues";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hook
 import { useIssueDetails, usePublish } from "@/hooks/store";
-// interfaces
+// types
 import { IIssue } from "@/types/issue";
-// store
 
 type IssueListBlockProps = {
   anchor: string;
   issue: IIssue;
 };
 
-export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
+export const IssueListLayoutBlock: FC<IssueListBlockProps> = observer((props) => {
   const { anchor, issue } = props;
-  const searchParams = useSearchParams();
   // query params
+  const searchParams = useSearchParams();
   const board = searchParams.get("board") || undefined;
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
@@ -31,25 +28,25 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
   // store hooks
   const { setPeekId } = useIssueDetails();
   const { project_details } = usePublish(anchor);
-  // router
-  const router = useRouter();
 
+  const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
   const handleBlockClick = () => {
     setPeekId(issue.id);
-
-    const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
-    router.push(`/issues/${anchor}?${queryParam}`);
   };
 
   return (
-    <div className="relative flex items-center gap-10 bg-custom-background-100 p-3">
+    <Link
+      href={`/issues/${anchor}?${queryParam}`}
+      onClick={handleBlockClick}
+      className="relative flex items-center gap-10 bg-custom-background-100 p-3"
+    >
       <div className="relative flex w-full flex-grow items-center gap-3 overflow-hidden">
         {/* id */}
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
           {project_details?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <div onClick={handleBlockClick} className="flex-grow cursor-pointer truncate text-sm font-medium">
+        <div onClick={handleBlockClick} className="flex-grow cursor-pointer truncate text-sm">
           {issue.name}
         </div>
       </div>
@@ -83,6 +80,6 @@ export const IssueListBlock: FC<IssueListBlockProps> = observer((props) => {
           </div>
         )}
       </div>
-    </div>
+    </Link>
   );
 });

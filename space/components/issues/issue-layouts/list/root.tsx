@@ -2,16 +2,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { IssueListBlock } from "@/components/issues/board-views/list/block";
-import { IssueListHeader } from "@/components/issues/board-views/list/header";
+import { IssueListLayoutBlock, IssueListLayoutHeader } from "@/components/issues";
 // mobx hook
 import { useIssue } from "@/hooks/store";
 
-type IssueListViewProps = {
+type Props = {
   anchor: string;
 };
 
-export const IssueListView: FC<IssueListViewProps> = observer((props) => {
+export const IssuesListLayoutRoot: FC<Props> = observer((props) => {
   const { anchor } = props;
   // store hooks
   const { states, getFilteredIssuesByState } = useIssue();
@@ -23,11 +22,11 @@ export const IssueListView: FC<IssueListViewProps> = observer((props) => {
 
         return (
           <div key={state.id} className="relative w-full">
-            <IssueListHeader state={state} />
+            <IssueListLayoutHeader state={state} />
             {issues && issues.length > 0 ? (
               <div className="divide-y divide-custom-border-200">
                 {issues.map((issue) => (
-                  <IssueListBlock key={issue.id} anchor={anchor} issue={issue} />
+                  <IssueListLayoutBlock key={issue.id} anchor={anchor} issue={issue} />
                 ))}
               </div>
             ) : (

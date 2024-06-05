@@ -4,10 +4,8 @@ import { useEffect, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
+import { IssuesLayoutSelection, NavbarTheme, UserAvatar } from "@/components/issues";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
-import { NavbarIssueBoardView } from "@/components/issues/navbar/issue-board-view";
-import { NavbarTheme } from "@/components/issues/navbar/theme";
-import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -105,7 +103,7 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
     <>
       {/* issue views */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
-        <NavbarIssueBoardView anchor={anchor} />
+        <IssuesLayoutSelection anchor={anchor} />
       </div>
 
       {/* issue filters */}

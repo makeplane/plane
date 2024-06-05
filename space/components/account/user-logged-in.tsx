@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // components
-import { UserAvatar } from "@/components/issues/navbar/user-avatar";
+import { UserAvatar } from "@/components/issues";
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
@@ -25,7 +25,7 @@ export const UserLoggedIn = observer(() => {
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">
-        <div>
+        <div className="h-[30px] w-[133px]">
           <Image src={logo} alt="Plane logo" />
         </div>
         <UserAvatar />

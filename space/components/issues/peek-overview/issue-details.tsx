@@ -16,10 +16,10 @@ export const PeekOverviewIssueDetails: React.FC<Props> = (props) => {
 
   return (
     <div className="space-y-2">
-      <h6 className="font-medium text-custom-text-200">
-        {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
+      <h6 className="text-base font-medium text-custom-text-400">
+        {issueDetails.project_detail?.identifier}-{issueDetails?.sequence_id}
       </h6>
-      <h4 className="break-words text-2xl font-semibold">{issueDetails.name}</h4>
+      <h4 className="break-words text-2xl font-medium">{issueDetails.name}</h4>
       {description !== "" && description !== "<p></p>" && (
         <RichTextReadOnlyEditor
           initialValue={

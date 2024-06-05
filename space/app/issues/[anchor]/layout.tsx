@@ -5,7 +5,7 @@ import Image from "next/image";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
-import IssueNavbar from "@/components/issues/navbar";
+import { IssuesNavbarRoot } from "@/components/issues";
 // hooks
 import { usePublish, usePublishList } from "@/hooks/store";
 // assets
@@ -18,7 +18,7 @@ type Props = {
   };
 };
 
-const ProjectIssuesLayout = observer((props: Props) => {
+const IssuesLayout = observer((props: Props) => {
   const { children, params } = props;
   // params
   const { anchor } = params;
@@ -33,7 +33,7 @@ const ProjectIssuesLayout = observer((props: Props) => {
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
       <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
-        <IssueNavbar publishSettings={publishSettings} />
+        <IssuesNavbarRoot publishSettings={publishSettings} />
       </div>
       <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
       <a
@@ -53,4 +53,4 @@ const ProjectIssuesLayout = observer((props: Props) => {
   );
 });
 
-export default ProjectIssuesLayout;
+export default IssuesLayout;

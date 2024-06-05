@@ -38,13 +38,15 @@ export class PublishListStore implements IPublishListStore {
    */
   fetchPublishSettings = async (anchor: string) => {
     try {
-      const publishSettings = await this.publishService.fetchPublishSettings(anchor);
+      const response = await this.publishService.fetchPublishSettings(anchor);
       runInAction(() => {
-        if (publishSettings.anchor)
-          set(this.publishMap, [publishSettings.anchor], new PublishStore(this.store, publishSettings));
+        if (response.anchor && response.view_props) {
+          this.store.issueFilter.updateLayoutOptions(response?.view_props);
+          set(this.publishMap, [response.anchor], new PublishStore(this.store, response));
+        }
       });
 
-      return publishSettings;
+      return response;
     } catch (error) {
       throw error;
     }

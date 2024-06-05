@@ -25,6 +25,7 @@ type Props = {
 };
 
 type FormData = {
+  anchor: string;
   id: string | null;
   comments: boolean;
   reactions: boolean;
@@ -34,6 +35,7 @@ type FormData = {
 };
 
 const defaultValues: FormData = {
+  anchor: "",
   id: null,
   comments: false,
   reactions: false,
@@ -48,34 +50,27 @@ const viewOptions: {
 }[] = [
   { key: "list", label: "List" },
   { key: "kanban", label: "Kanban" },
-  // { key: "calendar", label: "Calendar" },
-  // { key: "gantt", label: "Gantt" },
-  // { key: "spreadsheet", label: "Spreadsheet" },
 ];
 
 export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const { isOpen, project, onClose } = props;
-  // hooks
-  // const { instance } = useInstance();
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
-
-  // const plane_deploy_url = instance?.config?.space_base_url || "";
-  const SPACE_URL = (SPACE_BASE_URL === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
-
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    projectPublishSettings,
-    getProjectSettingsAsync,
+    fetchPublishSettings,
+    getPublishSettingsByProjectID,
     publishProject,
-    updateProjectSettingsAsync,
+    updatePublishSettings,
     unPublishProject,
     fetchSettingsLoader,
   } = useProjectPublish();
+  // derived values
+  const projectPublishSettings = getPublishSettingsByProjectID(project.id);
   // form info
   const {
     control,
@@ -97,44 +92,44 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
   // prefill form with the saved settings if the project is already published
   useEffect(() => {
-    if (projectPublishSettings && projectPublishSettings !== "not-initialized") {
-      let userBoards: TProjectPublishViews[] = [];
+    if (!projectPublishSettings) return;
 
-      if (projectPublishSettings?.views) {
-        const savedViews = projectPublishSettings?.views;
+    let userBoards: TProjectPublishViews[] = [];
 
-        if (!savedViews) return;
+    if (projectPublishSettings?.view_props) {
+      const savedViews = projectPublishSettings?.view_props;
 
-        if (savedViews.list) userBoards.push("list");
-        if (savedViews.kanban) userBoards.push("kanban");
-        if (savedViews.calendar) userBoards.push("calendar");
-        if (savedViews.gantt) userBoards.push("gantt");
-        if (savedViews.spreadsheet) userBoards.push("spreadsheet");
+      if (!savedViews) return;
 
-        userBoards = userBoards && userBoards.length > 0 ? userBoards : ["list"];
-      }
+      if (savedViews.list) userBoards.push("list");
+      if (savedViews.kanban) userBoards.push("kanban");
+      if (savedViews.calendar) userBoards.push("calendar");
+      if (savedViews.gantt) userBoards.push("gantt");
+      if (savedViews.spreadsheet) userBoards.push("spreadsheet");
 
-      const updatedData = {
-        id: projectPublishSettings?.id || null,
-        comments: projectPublishSettings?.comments || false,
-        reactions: projectPublishSettings?.reactions || false,
-        votes: projectPublishSettings?.votes || false,
-        inbox: projectPublishSettings?.inbox || null,
-        views: userBoards,
-      };
-
-      reset({ ...updatedData });
+      userBoards = userBoards && userBoards.length > 0 ? userBoards : ["list"];
     }
+
+    const updatedData = {
+      id: projectPublishSettings?.id || null,
+      comments: projectPublishSettings?.comments || false,
+      reactions: projectPublishSettings?.reactions || false,
+      votes: projectPublishSettings?.votes || false,
+      inbox: projectPublishSettings?.inbox || null,
+      views: userBoards,
+    };
+
+    reset({ ...updatedData });
   }, [reset, projectPublishSettings, isOpen]);
 
   // fetch publish settings
   useEffect(() => {
     if (!workspaceSlug || !isOpen) return;
 
-    if (projectPublishSettings === "not-initialized") {
-      getProjectSettingsAsync(workspaceSlug.toString(), project.id);
+    if (!projectPublishSettings) {
+      fetchPublishSettings(workspaceSlug.toString(), project.id);
     }
-  }, [isOpen, workspaceSlug, project, projectPublishSettings, getProjectSettingsAsync]);
+  }, [fetchPublishSettings, isOpen, project, projectPublishSettings, workspaceSlug]);
 
   const handlePublishProject = async (payload: IProjectPublishSettings) => {
     if (!workspaceSlug) return;
@@ -145,7 +140,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const handleUpdatePublishSettings = async (payload: IProjectPublishSettings) => {
     if (!workspaceSlug) return;
 
-    await updateProjectSettingsAsync(workspaceSlug.toString(), project.id, payload.id ?? "", payload)
+    await updatePublishSettings(workspaceSlug.toString(), project.id, payload.id ?? "", payload)
       .then((res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -172,7 +167,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Something went wrong while un-publishing the project.",
+          message: "Something went wrong while unpublishing the project.",
         })
       )
       .finally(() => setIsUnPublishing(false));
@@ -214,7 +209,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       reactions: formData.reactions,
       votes: formData.votes,
       inbox: formData.inbox,
-      views: {
+      view_props: {
         list: formData.views.includes("list"),
         kanban: formData.views.includes("kanban"),
         calendar: formData.views.includes("calendar"),
@@ -223,13 +218,18 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       },
     };
 
-    if (project.is_deployed) await handleUpdatePublishSettings({ id: watch("id") ?? "", ...payload });
+    if (project.is_deployed)
+      await handleUpdatePublishSettings({
+        anchor: watch("anchor") ?? "",
+        id: watch("id") ?? "",
+        ...payload,
+      });
     else await handlePublishProject(payload);
   };
 
   // check if an update is required or not
   const checkIfUpdateIsRequired = () => {
-    if (!projectPublishSettings || projectPublishSettings === "not-initialized") return;
+    if (!projectPublishSettings || !projectPublishSettings) return;
 
     const currentSettings = projectPublishSettings;
     const newSettings = getValues();
@@ -245,7 +245,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     let viewCheckFlag = 0;
     viewOptions.forEach((option) => {
-      if (currentSettings.views[option.key] !== newSettings.views.includes(option.key)) viewCheckFlag++;
+      if (currentSettings.view_props?.[option.key] !== newSettings.views.includes(option.key)) viewCheckFlag++;
     });
 
     if (viewCheckFlag !== 0) {
@@ -255,6 +255,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     setIsUpdateRequired(false);
   };
+
+  const SPACE_URL = (SPACE_BASE_URL === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -293,7 +295,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                         onClick={() => handleUnPublishProject(watch("id") ?? "")}
                         loading={isUnPublishing}
                       >
-                        {isUnPublishing ? "Un-publishing..." : "Un-publish"}
+                        {isUnPublishing ? "Unpublishing" : "Unpublish"}
                       </Button>
                     )}
                   </div>
@@ -308,12 +310,12 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     </Loader>
                   ) : (
                     <div className="px-6">
-                      {project.is_deployed && (
+                      {project.is_deployed && projectPublishSettings && (
                         <>
                           <div className="relative flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 px-3 py-2">
-                            <div className="flex-grow truncate text-sm">{`${SPACE_URL}/issues/`}</div>
+                            <div className="flex-grow truncate text-sm">{`${SPACE_URL}/issues/${projectPublishSettings.anchor}`}</div>
                             <div className="relative flex flex-shrink-0 items-center gap-1">
-                              <CopyLinkToClipboard copy_link={`${SPACE_URL}/issues`} />
+                              <CopyLinkToClipboard copy_link={`${SPACE_URL}/issues/${projectPublishSettings.anchor}`} />
                             </div>
                           </div>
                           <div className="mt-3 flex items-center gap-1 text-custom-primary-100">
