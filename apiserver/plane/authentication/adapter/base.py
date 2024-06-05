@@ -4,6 +4,8 @@ import uuid
 
 # Django imports
 from django.utils import timezone
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 # Third party imports
 from zxcvbn import zxcvbn
@@ -48,9 +50,9 @@ class Adapter:
         raise NotImplementedError
 
     def complete_login_or_signup(self):
+        # Get email
+        email = self.user_data.get("email")
         try:
-            email = self.user_data.get("email")
-
             # Check if email is present
             if not email:
                 raise AuthenticationException(
@@ -60,7 +62,11 @@ class Adapter:
                 )
 
             # Sanitize email
-            email = email.lower().strip()
+            email = str(email).lower().strip()
+
+            # validate email
+            validate_email(email)
+
             # Check if the user is present
             user = User.objects.filter(email=email).first()
             # Check if sign up case or login
@@ -159,6 +165,15 @@ class Adapter:
 
             # Return user
             return user
+        except ValidationError as e:
+            # Log exception
+            log_exception(e)
+            # Raise exception
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
+                error_message="INVALID_EMAIL",
+                payload={"email": email},
+            )
         except Exception as e:
             # Log exception
             log_exception(e)
