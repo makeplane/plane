@@ -175,6 +175,13 @@ export const ISSUE_OPENED = "Issue opened";
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
 export const STATE_DELETED = "State deleted";
+// Label Events
+export const LABEL_CREATED = "Label created";
+export const LABEL_UPDATED = "Label updated";
+export const LABEL_DELETED = "Label deleted";
+export const LABEL_GROUP_DELETED = "Label group deleted";
+export const LABEL_ADDED_G = "Label added to group";
+export const LABEL_REMOVED_G = "Label removed from group";
 // Project Page Events
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";
@@ -226,3 +233,4 @@ export const GROUP_WORKSPACE = "Workspace_metrics";
 
 // Elements
 export const E_STATES = "Project states page";
+export const E_Labels = "Project labels page";

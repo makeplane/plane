@@ -1,6 +1,10 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  ElementDragPayload,
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -10,6 +14,10 @@ import { createRoot } from "react-dom/client";
 import { IIssueLabel, InstructionType } from "@plane/types";
 // ui
 import { DropIndicator } from "@plane/ui";
+// constants
+import { LABEL_ADDED_G, LABEL_REMOVED_G } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker } from "@/hooks/store";
 // components
 import { LabelName } from "./label-block/label-name";
 import { TargetData, getCanDrop, getInstructionFromPayload } from "./label-utils";
@@ -52,9 +60,27 @@ export const LabelDndHOC = observer((props: Props) => {
 
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
+  // hooks
+  const { captureEvent } = useEventTracker();
   // refs
   const labelRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
+
+  const captureLabelDropEvent = (source: TargetData, destination: TargetData) => {
+
+    if (source?.parentId != destination.id) {
+      source?.parentId &&
+        captureEvent(LABEL_REMOVED_G, {
+          group_id: source?.parentId,
+          child_id: source?.id,
+        });
+
+      captureEvent(LABEL_ADDED_G, {
+        group_id: destination.id,
+        child_id: source?.id,
+      });
+    }
+  };
 
   useEffect(() => {
     const element = labelRef.current;
@@ -144,6 +170,8 @@ export const LabelDndHOC = observer((props: Props) => {
 
           const sourceData = source.data as TargetData;
           if (sourceData.id) onDrop(sourceData.id as string, parentId, droppedLabelId, dropAtEndOfList);
+
+          captureLabelDropEvent(sourceData, dropTargetData);
         },
       })
     );

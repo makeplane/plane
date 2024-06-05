@@ -8,9 +8,10 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { E_Labels, LABEL_CREATED, LABEL_UPDATED } from "constants/event-tracker";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@/constants/label";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel, useEventTracker } from "@/hooks/store";
 // types
 
 type Props = {
@@ -34,12 +35,13 @@ export const CreateUpdateLabelInline = observer(
     const { workspaceSlug, projectId } = router.query;
     // store hooks
     const { createLabel, updateLabel } = useLabel();
+    const { captureEvent } = useEventTracker();
     // form info
     const {
       handleSubmit,
       control,
       reset,
-      formState: { errors, isSubmitting },
+      formState: { errors, isSubmitting, dirtyFields },
       watch,
       setValue,
       setFocus,
@@ -57,7 +59,14 @@ export const CreateUpdateLabelInline = observer(
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
       await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
-        .then(() => {
+        .then((res) => {
+          captureEvent(LABEL_CREATED, {
+            label_id: res.id,
+            color: res.color,
+            parent: res.parent,
+            element: E_Labels,
+            state: "SUCCESS",
+          });
           handleClose();
           reset(defaultValues);
         })
@@ -76,9 +85,17 @@ export const CreateUpdateLabelInline = observer(
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
       await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
-        .then(() => {
+        .then((res) => {
           reset(defaultValues);
           handleClose();
+          captureEvent(LABEL_UPDATED, {
+            label_id: res.id,
+            color: res.color,
+            parent: res.parent,
+            change_details: Object.keys(dirtyFields),
+            element: E_Labels,
+            state: "SUCCESS",
+          });
         })
         .catch((error) => {
           setToast({

@@ -6,13 +6,13 @@ import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 import type { IIssueLabel, IState } from "@plane/types";
-// hooks
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
-import { useLabel } from "@/hooks/store";
 // ui
-// types
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { E_STATES, LABEL_CREATED } from "constants/event-tracker";
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
+// hooks
+import { useLabel, useEventTracker } from "@/hooks/store";
 
 // types
 type Props = {
@@ -34,6 +34,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { createLabel } = useLabel();
+  const { captureEvent } = useEventTracker();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -70,6 +71,13 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         onClose();
         if (onSuccess) onSuccess(res);
+        captureEvent(LABEL_CREATED, {
+          label_id: res.id,
+          color: res.color,
+          parent: res.parent,
+          element: E_STATES,
+          state: "SUCCESS",
+        });
       })
       .catch((error) => {
         setToast({
@@ -78,6 +86,9 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
           message: error?.detail ?? "Something went wrong. Please try again later.",
         });
         reset(formData);
+        captureEvent(LABEL_CREATED, {
+          state: "FAILED",
+        });
       });
   };
 

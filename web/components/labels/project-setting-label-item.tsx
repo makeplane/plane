@@ -4,7 +4,9 @@ import { X, Pencil } from "lucide-react";
 // types
 import { IIssueLabel } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel, useEventTracker } from "@/hooks/store";
+// constants
+import { E_Labels, LABEL_REMOVED_G } from "@/constants/event-tracker";
 // components
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
@@ -34,12 +36,19 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { updateLabel } = useLabel();
+  const { captureEvent } = useEventTracker();
 
   const removeFromGroup = (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
 
     updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
       parent: null,
+    });
+
+    captureEvent(LABEL_REMOVED_G, {
+      group_id: label.id,
+      child_id: label.id,
+      element: E_Labels,
     });
   };
 
