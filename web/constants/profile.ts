@@ -1,6 +1,6 @@
 import React from "react";
 // icons
-import { Activity, CircleUser, KeyRound, LucideProps, Settings2 } from "lucide-react";
+import { Activity, Bell, CircleUser, KeyRound, LucideProps, Settings2 } from "lucide-react";
 
 export const PROFILE_ACTION_LINKS: {
   key: string;
@@ -17,10 +17,10 @@ export const PROFILE_ACTION_LINKS: {
     Icon: CircleUser,
   },
   {
-    key: "change-password",
-    label: "Change password",
-    href: `/profile/change-password`,
-    highlight: (pathname: string) => pathname === "/profile/change-password",
+    key: "security",
+    label: "Security",
+    href: `/profile/security`,
+    highlight: (pathname: string) => pathname === "/profile/security",
     Icon: KeyRound,
   },
   {
@@ -31,12 +31,19 @@ export const PROFILE_ACTION_LINKS: {
     Icon: Activity,
   },
   {
-    key: "preferences",
-    label: "Preferences",
-    href: `/profile/preferences/theme`,
-    highlight: (pathname: string) => pathname.includes("/profile/preferences"),
-    Icon: Settings2,
-  },
+      key: "appearance",
+      label: "Appearance",
+      href: `/profile/appearance`,
+      highlight: (pathname: string) => pathname.includes("/profile/appearance"),
+      Icon: Settings2,
+    },
+    {
+      key: "notifications",
+      label: "Notifications",
+      href: `/profile/notifications`,
+      highlight: (pathname: string) => pathname === "/profile/notifications",
+      Icon: Bell,
+    },
 ];
 
 export const PROFILE_VIEWER_TAB = [

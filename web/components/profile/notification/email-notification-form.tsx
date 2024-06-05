@@ -57,14 +57,6 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
 
   return (
     <>
-      <div className="flex gap-2 items-center pt-6 mb-2 pb-6 border-b border-custom-border-100">
-        <div className="grow">
-          <div className="pb-1 text-xl font-medium text-custom-text-100">Email notifications</div>
-          <div className="text-sm font-normal text-custom-text-300">
-            Stay in the loop on Issues you are subscribed to. Enable this to get notified.
-          </div>
-        </div>
-      </div>
       <div className="pt-2 text-lg font-medium text-custom-text-100">Notify me when:</div>
       {/* Notification Settings */}
       <div className="flex flex-col py-2">

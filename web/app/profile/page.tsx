@@ -22,7 +22,7 @@ import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // hooks
-import { useAppTheme, useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 // lib types
@@ -60,7 +60,6 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   } = useForm<IUser>({ defaultValues });
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
-  const { toggleSidebar } = useAppTheme();
 
   useEffect(() => {
     reset({ ...defaultValues, ...currentUser });
@@ -137,7 +136,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       <PageHead title="Profile - General Settings" />
       <div className="flex h-full flex-col">
         <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
-          <SidebarHamburgerToggle onClick={() => toggleSidebar()} />
+          <SidebarHamburgerToggle />
         </div>
         <div className="overflow-hidden">
           <Controller

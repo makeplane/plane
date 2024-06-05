@@ -1,7 +1,9 @@
+"use client";
+
 import { Command } from "cmdk";
 // hooks
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
 import { useUser } from "@/hooks/store";
@@ -14,7 +16,8 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
   const { closePalette } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   // mobx store
   const {
     membership: { currentWorkspaceRole },

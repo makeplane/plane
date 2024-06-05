@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
@@ -58,9 +58,8 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   });
   // refs
   const ref = useRef<HTMLDivElement>(null);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { config } = useInstance();
   const { currentWorkspace } = useWorkspace();

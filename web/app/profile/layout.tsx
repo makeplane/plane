@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 // components
 import { CommandPalette } from "@/components/command-palette";

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // ui
@@ -34,7 +34,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // states
   const [isSigningOut, setIsSigningOut] = useState(false);
   // router
-  const router = useRouter();
+  const pathname = usePathname();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
@@ -135,7 +135,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   >
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                        link.highlight(router.pathname)
+                        link.highlight(pathname)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
