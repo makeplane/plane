@@ -193,7 +193,7 @@ export const ListGroup = observer((props: Props) => {
         "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-2 pr-3 py-1">
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}
