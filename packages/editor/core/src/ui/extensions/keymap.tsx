@@ -16,8 +16,6 @@ declare module "@tiptap/core" {
 }
 
 function autoJoin(tr: Transaction, newTr: Transaction, nodeTypes: NodeType[]) {
-  if (!tr.isGeneric) return false;
-
   // Find all ranges where we might want to join.
   const ranges: Array<number> = [];
   for (let i = 0; i < tr.mapping.maps.length; i++) {
