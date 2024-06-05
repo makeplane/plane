@@ -162,7 +162,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
               )}
             </div>
           </div>
-          <IssueBulkOperationsRoot />
+          <IssueBulkOperationsRoot selectionHelpers={helpers} />
         </>
       )}
     </MultipleSelectGroup>

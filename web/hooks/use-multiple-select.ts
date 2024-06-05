@@ -33,6 +33,7 @@ export const useMultipleSelect = (props: Props) => {
   const router = useRouter();
   // store hooks
   const {
+    selectedEntityIds,
     updateSelectedEntityDetails,
     bulkUpdateSelectedEntityDetails,
     getActiveEntityDetails,
@@ -45,6 +46,7 @@ export const useMultipleSelect = (props: Props) => {
     clearSelection,
     getIsEntitySelected,
     getIsEntityActive,
+    getEntityDetailsFromEntityID,
   } = useMultipleSelectStore();
 
   const groups = useMemo(() => Object.keys(entities), [entities]);
@@ -248,10 +250,6 @@ export const useMultipleSelect = (props: Props) => {
     (groupID: string) => {
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
       const groupSelectionStatus = isGroupSelected(groupID);
-      // groupEntities.map((entity) => {
-      //   console.log("group click");
-      //   handleEntitySelection(entity, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
-      // });
       handleEntitySelection(groupEntities, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
     },
     [entitiesList, handleEntitySelection, isGroupSelected]
@@ -345,6 +343,19 @@ export const useMultipleSelect = (props: Props) => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [clearSelection, router.events]);
+
+  // when entities list change, remove entityIds from the selected entities array, which are not present in the new list
+  useEffect(() => {
+    selectedEntityIds.map((entityID) => {
+      const isEntityPresent = entitiesList.find((en) => en.entityID === entityID);
+      if (!isEntityPresent) {
+        const entityDetails = getEntityDetailsFromEntityID(entityID);
+        if (entityDetails) {
+          handleEntitySelection(entityDetails);
+        }
+      }
+    });
+  }, [entitiesList, getEntityDetailsFromEntityID, handleEntitySelection, selectedEntityIds]);
 
   /**
    * @description helper functions for selection
