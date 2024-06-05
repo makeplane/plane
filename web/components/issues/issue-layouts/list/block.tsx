@@ -93,7 +93,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         },
       })
     );
-  }, [issueRef?.current, canDrag, issueId, groupId, setIsCurrentBlockDragging]);
+  }, [canDrag, issueId, groupId, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
