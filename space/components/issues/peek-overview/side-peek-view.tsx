@@ -21,7 +21,7 @@ type Props = {
 export const SidePeekView: React.FC<Props> = observer((props) => {
   const { anchor, handleClose, issueDetails } = props;
   // store hooks
-  const { comments } = usePublish(anchor);
+  const { canComment } = usePublish(anchor);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -41,7 +41,7 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
           {/* divider */}
           <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
           {/* issue activity/comments */}
-          {comments && (
+          {canComment && (
             <div className="w-full pb-5">
               <PeekOverviewIssueActivity anchor={anchor} issueDetails={issueDetails} />
             </div>

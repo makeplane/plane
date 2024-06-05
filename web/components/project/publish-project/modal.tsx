@@ -27,9 +27,9 @@ type Props = {
 type FormData = {
   anchor: string;
   id: string | null;
-  comments: boolean;
-  reactions: boolean;
-  votes: boolean;
+  is_comments_enabled: boolean;
+  is_reactions_enabled: boolean;
+  is_votes_enabled: boolean;
   inbox: string | null;
   views: TProjectPublishViews[];
 };
@@ -37,14 +37,14 @@ type FormData = {
 const defaultValues: FormData = {
   anchor: "",
   id: null,
-  comments: false,
-  reactions: false,
-  votes: false,
+  is_comments_enabled: false,
+  is_reactions_enabled: false,
+  is_votes_enabled: false,
   inbox: null,
   views: ["list", "kanban"],
 };
 
-const viewOptions: {
+const VIEW_OPTIONS: {
   key: TProjectPublishViews;
   label: string;
 }[] = [
@@ -92,7 +92,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
   // prefill form with the saved settings if the project is already published
   useEffect(() => {
-    if (!projectPublishSettings) return;
+    if (!projectPublishSettings?.anchor) return;
 
     let userBoards: TProjectPublishViews[] = [];
 
@@ -112,9 +112,9 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     const updatedData = {
       id: projectPublishSettings?.id || null,
-      comments: projectPublishSettings?.comments || false,
-      reactions: projectPublishSettings?.reactions || false,
-      votes: projectPublishSettings?.votes || false,
+      is_comments_enabled: !!projectPublishSettings?.is_comments_enabled,
+      is_reactions_enabled: !!projectPublishSettings?.is_reactions_enabled,
+      is_votes_enabled: !!projectPublishSettings?.is_votes_enabled,
       inbox: projectPublishSettings?.inbox || null,
       views: userBoards,
     };
@@ -205,9 +205,9 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     }
 
     const payload = {
-      comments: formData.comments,
-      reactions: formData.reactions,
-      votes: formData.votes,
+      is_comments_enabled: formData.is_comments_enabled,
+      is_reactions_enabled: formData.is_reactions_enabled,
+      is_votes_enabled: formData.is_votes_enabled,
       inbox: formData.inbox,
       view_props: {
         list: formData.views.includes("list"),
@@ -235,16 +235,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     const newSettings = getValues();
 
     if (
-      currentSettings.comments !== newSettings.comments ||
-      currentSettings.reactions !== newSettings.reactions ||
-      currentSettings.votes !== newSettings.votes
+      currentSettings.is_comments_enabled !== newSettings.is_comments_enabled ||
+      currentSettings.is_reactions_enabled !== newSettings.is_reactions_enabled ||
+      currentSettings.is_votes_enabled !== newSettings.is_votes_enabled
     ) {
       setIsUpdateRequired(true);
       return;
     }
 
     let viewCheckFlag = 0;
-    viewOptions.forEach((option) => {
+    VIEW_OPTIONS.forEach((option) => {
       if (currentSettings.view_props?.[option.key] !== newSettings.views.includes(option.key)) viewCheckFlag++;
     });
 
@@ -337,8 +337,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                               <CustomPopover
                                 label={
                                   value.length > 0
-                                    ? viewOptions
-                                        .filter((v) => value.includes(v.key))
+                                    ? VIEW_OPTIONS.filter((v) => value.includes(v.key))
                                         .map((v) => v.label)
                                         .join(", ")
                                     : ``
@@ -346,7 +345,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                 placeholder="Select views"
                               >
                                 <>
-                                  {viewOptions.map((option) => (
+                                  {VIEW_OPTIONS.map((option) => (
                                     <div
                                       key={option.key}
                                       className={`relative m-1 flex cursor-pointer items-center justify-between gap-2 rounded-sm p-1 px-2 text-custom-text-200 ${
@@ -385,7 +384,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                           <div className="text-sm">Allow comments</div>
                           <Controller
                             control={control}
-                            name="comments"
+                            name="is_comments_enabled"
                             render={({ field: { onChange, value } }) => (
                               <ToggleSwitch
                                 value={value}
@@ -402,7 +401,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                           <div className="text-sm">Allow reactions</div>
                           <Controller
                             control={control}
-                            name="reactions"
+                            name="is_reactions_enabled"
                             render={({ field: { onChange, value } }) => (
                               <ToggleSwitch
                                 value={value}
@@ -419,7 +418,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                           <div className="text-sm">Allow voting</div>
                           <Controller
                             control={control}
-                            name="votes"
+                            name="is_votes_enabled"
                             render={({ field: { onChange, value } }) => (
                               <ToggleSwitch
                                 value={value}

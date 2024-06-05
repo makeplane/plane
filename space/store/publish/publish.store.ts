@@ -18,7 +18,7 @@ export interface IPublishStore extends TPublishSettings {
 export class PublishStore implements IPublishStore {
   // observables
   anchor: string | undefined;
-  comments: boolean;
+  is_comments_enabled: boolean;
   created_at: string | undefined;
   created_by: string | undefined;
   entity_identifier: string | undefined;
@@ -27,11 +27,11 @@ export class PublishStore implements IPublishStore {
   inbox: unknown;
   project: string | undefined;
   project_details: TProjectDetails | undefined;
-  reactions: boolean;
+  is_reactions_enabled: boolean;
   updated_at: string | undefined;
   updated_by: string | undefined;
   view_props: TViewDetails | undefined;
-  votes: boolean;
+  is_votes_enabled: boolean;
   workspace: string | undefined;
   workspace_detail: IWorkspaceLite | undefined;
 
@@ -40,7 +40,7 @@ export class PublishStore implements IPublishStore {
     publishSettings: TPublishSettings
   ) {
     this.anchor = publishSettings.anchor;
-    this.comments = publishSettings.comments;
+    this.is_comments_enabled = publishSettings.is_comments_enabled;
     this.created_at = publishSettings.created_at;
     this.created_by = publishSettings.created_by;
     this.entity_identifier = publishSettings.entity_identifier;
@@ -49,18 +49,18 @@ export class PublishStore implements IPublishStore {
     this.inbox = publishSettings.inbox;
     this.project = publishSettings.project;
     this.project_details = publishSettings.project_details;
-    this.reactions = publishSettings.reactions;
+    this.is_reactions_enabled = publishSettings.is_reactions_enabled;
     this.updated_at = publishSettings.updated_at;
     this.updated_by = publishSettings.updated_by;
     this.view_props = publishSettings.view_props;
-    this.votes = publishSettings.votes;
+    this.is_votes_enabled = publishSettings.is_votes_enabled;
     this.workspace = publishSettings.workspace;
     this.workspace_detail = publishSettings.workspace_detail;
 
     makeObservable(this, {
       // observables
       anchor: observable.ref,
-      comments: observable.ref,
+      is_comments_enabled: observable.ref,
       created_at: observable.ref,
       created_by: observable.ref,
       entity_identifier: observable.ref,
@@ -69,11 +69,11 @@ export class PublishStore implements IPublishStore {
       inbox: observable,
       project: observable.ref,
       project_details: observable,
-      reactions: observable.ref,
+      is_reactions_enabled: observable.ref,
       updated_at: observable.ref,
       updated_by: observable.ref,
       view_props: observable,
-      votes: observable.ref,
+      is_votes_enabled: observable.ref,
       workspace: observable.ref,
       workspace_detail: observable,
       // computed
@@ -95,20 +95,20 @@ export class PublishStore implements IPublishStore {
    * @description returns whether commenting is enabled or not
    */
   get canComment() {
-    return !!this.comments;
+    return !!this.is_comments_enabled;
   }
 
   /**
    * @description returns whether reacting is enabled or not
    */
   get canReact() {
-    return !!this.reactions;
+    return !!this.is_reactions_enabled;
   }
 
   /**
    * @description returns whether voting is enabled or not
    */
   get canVote() {
-    return !!this.votes;
+    return !!this.is_votes_enabled;
   }
 }

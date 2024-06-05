@@ -16,9 +16,9 @@ export interface IProjectPublishSettings {
   anchor?: string;
   id?: string;
   project?: string;
-  comments: boolean;
-  reactions: boolean;
-  votes: boolean;
+  is_comments_enabled: boolean;
+  is_reactions_enabled: boolean;
+  is_votes_enabled: boolean;
   view_props: TProjectPublishViewsSettings;
   inbox: string | null;
 }
