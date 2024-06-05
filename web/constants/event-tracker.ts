@@ -186,6 +186,11 @@ export const LABEL_REMOVED_G = "Label removed from group";
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";
 export const PAGE_DELETED = "Page deleted";
+// Project Automation events
+export const AUTO_ARCHIVE_TOGGLED = "Auto archive toggled";
+export const AUTO_ARCHIVE_UPDATED = "Auto archive updated";
+export const AUTO_CLOSE_Toggled = "Auto close toggled";
+export const AUTO_CLOSE_UPDATED = "Auto close updated";
 // Member Events
 export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";
