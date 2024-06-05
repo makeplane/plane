@@ -36,8 +36,8 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.api_logs_task.delete_api_logs",
         "schedule": crontab(hour=0, minute=0),
     },
-    "check-every-6-hr-instance-version": {
-        "task": "plane.bgtasks.version_check_task.version_check",
+    "check-every-12-hr-instance-version": {
+        "task": "plane.license.bgtasks.version_check_task.version_check",
         "schedule": crontab(hour="*/12", minute=0),
     },
 }

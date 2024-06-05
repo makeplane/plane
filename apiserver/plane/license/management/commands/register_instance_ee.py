@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
 # Module imports
-from plane.license.models import Instance
+from plane.license.models import Instance, ChangeLog
 from plane.db.models import User
 
 
@@ -37,11 +37,45 @@ class Command(BaseCommand):
         data = response.json()
         return data
 
+    def get_instance_release_notes(
+        self, machine_signature, license_key, prime_host
+    ):
+        response = requests.get(
+            f"{prime_host}/api/instance/release-notes/",
+            headers={
+                "Content-Type": "application/json",
+                "X-Machine-Signature": str(machine_signature),
+                "X-Api-Key": str(license_key),
+            },
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data
+
     def get_fallback_version(self):
         with open("package.json", "r") as file:
             # Load JSON content from the file
             data = json.load(file)
             return data.get("version", 0.1)
+
+    def update_change_log(self, release_notes):
+        ChangeLog.objects.all().delete()
+        ChangeLog.objects.bulk_create(
+            [
+                ChangeLog(
+                    title=note.get("title", ""),
+                    description=note.get("description", ""),
+                    tags=note.get("tags", []),
+                    version=note.get("version_detail", {}).get("name", ""),
+                    release_date=note.get("release_date", timezone.now()),
+                    is_release_candidate=note.get("version_detail", {}).get(
+                        "is_pre_release", False
+                    ),
+                )
+                for note in release_notes
+            ],
+            ignore_conflicts=True,
+        )
 
     def handle(self, *args, **options):
         # Check if the instance is registered
@@ -68,9 +102,13 @@ class Command(BaseCommand):
                 data = self.get_instance_from_prime(
                     machine_signature, license_key, prime_host
                 )
+                release_notes = self.get_instance_release_notes(
+                    machine_signature, license_key, prime_host
+                )
             else:
                 data = {}
                 license_version = self.get_fallback_version()
+                release_notes = []
 
             # Make a call to the Prime Server to get the instance
             instance = Instance.objects.create(
@@ -85,6 +123,8 @@ class Command(BaseCommand):
                 product=data.get("product", "Plane Enterprise Edition"),
             )
 
+            self.update_change_log(release_notes)
+
             self.stdout.write(self.style.SUCCESS("Instance registered"))
         else:
             data = {}
@@ -93,12 +133,18 @@ class Command(BaseCommand):
                 data = self.get_instance_from_prime(
                     machine_signature, license_key, prime_host
                 )
+                release_notes = self.get_instance_release_notes(
+                    machine_signature, license_key, prime_host
+                )
             else:
                 license_version = self.get_fallback_version()
+                release_notes = []
+
             # Update the instance
             instance.instance_id = data.get(
                 "instance_id", instance.instance_id
             )
+            instance.product = data.get("product", instance.product)
             instance.latest_version = data.get(
                 "latest_version", instance.latest_version
             )
@@ -115,8 +161,11 @@ class Command(BaseCommand):
                     "current_version",
                     "user_count",
                     "last_checked_at",
+                    "product",
                 ]
             )
+
+            self.update_change_log(release_notes)
 
             # Print the success message
             self.stdout.write(
