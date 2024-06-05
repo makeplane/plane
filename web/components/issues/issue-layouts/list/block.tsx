@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, DragHandle } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
@@ -57,7 +57,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef(null);
   // hooks
   const { workspaceSlug, projectId } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
@@ -78,14 +77,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
   useEffect(() => {
     const element = issueRef.current;
-    const dragHandleElement = dragHandleRef.current;
 
-    if (!element || !dragHandleElement) return;
+    if (!element) return;
 
     return combine(
       draggable({
         element,
-        dragHandle: dragHandleElement,
         canDrag: () => canDrag,
         getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
         onDragStart: () => {
@@ -96,7 +93,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         },
       })
     );
-  }, [issueRef?.current, canDrag, issueId, groupId, dragHandleRef?.current, setIsCurrentBlockDragging]);
+  }, [canDrag, issueId, groupId, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
@@ -135,20 +132,19 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           "bg-custom-background-80": isCurrentBlockDragging,
         }
       )}
+      onDragStart={() => {
+        if (!canDrag) {
+          setToast({
+            type: TOAST_TYPE.WARNING,
+            title: "Cannot move issue",
+            message: "Drag and drop is disabled for the current grouping",
+          });
+        }
+      }}
     >
       <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-3 truncate">
-          <div className="flex items-center gap-0.5">
-            {/* drag handle */}
-            <div className="size-4 flex items-center group/drag-handle">
-              <DragHandle
-                ref={dragHandleRef}
-                disabled={!canDrag}
-                className={cn("opacity-0 group-hover/drag-handle:opacity-100", {
-                  "opacity-100": isCurrentBlockDragging,
-                })}
-              />
-            </div>
+        <div className="flex flex-grow items-center gap-1.5 truncate">
+          <div className="flex items-center gap-2" style={isSubIssue ? { marginLeft } : {}}>
             {/* select checkbox */}
             {projectId && canEditIssueProperties && (
               <Tooltip
@@ -177,8 +173,14 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </div>
               </Tooltip>
             )}
+            {displayProperties && displayProperties?.key && (
+              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+                {projectIdentifier}-{issue.sequence_id}
+              </div>
+            )}
+
             {/* sub-issues chevron */}
-            <div className="size-4 grid place-items-center flex-shrink-0" style={isSubIssue ? { marginLeft } : {}}>
+            <div className="size-4 grid place-items-center flex-shrink-0">
               {subIssuesCount > 0 && (
                 <button
                   type="button"
@@ -194,11 +196,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </button>
               )}
             </div>
-            {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-                {projectIdentifier}-{issue.sequence_id}
-              </div>
-            )}
 
             {issue?.tempId !== undefined && (
               <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
@@ -206,7 +203,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           </div>
 
           {issue?.is_draft ? (
-            <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
+            <Tooltip
+              tooltipContent={issue.name}
+              isMobile={isMobile}
+              position="top-left"
+              disabled={isCurrentBlockDragging}
+            >
               <p className="truncate">{issue.name}</p>
             </Tooltip>
           ) : (
