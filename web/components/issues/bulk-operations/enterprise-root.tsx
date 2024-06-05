@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // ui
 import { Checkbox } from "@plane/ui";
 // components
@@ -13,7 +14,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const BulkOperationsEnterpriseRoot: React.FC<Props> = (props) => {
+export const BulkOperationsEnterpriseRoot: React.FC<Props> = observer((props) => {
   const { className, selectionHelpers } = props;
   // store hooks
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
@@ -50,4 +51,4 @@ export const BulkOperationsEnterpriseRoot: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+});

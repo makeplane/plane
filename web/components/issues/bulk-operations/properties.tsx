@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
@@ -34,7 +35,7 @@ const defaultValues: TBulkIssueProperties = {
   label_ids: [],
 };
 
-export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
+export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
   const { snapshot } = props;
   // states
   const [createLabelModal, setCreateLabelModal] = useState(false);
@@ -220,4 +221,4 @@ export const IssueBulkOperationsProperties: React.FC<Props> = (props) => {
       )}
     </form>
   );
-};
+});
