@@ -81,6 +81,7 @@ class Adapter:
                 error_message="INVALID_PASSWORD",
                 payload={"email": email},
             )
+        return
 
     def __check_signup(self, email):
         """Check if sign up is enabled or not and raise exception if not enabled"""
