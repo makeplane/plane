@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
 // components
@@ -25,7 +25,11 @@ const workspaceService = new WorkspaceService();
 const WorkspaceInvitationPage = observer(() => {
   // router
   const router = useRouter();
-  const { invitation_id, email, slug } = router.query;
+  // query params
+  const searchParams = useSearchParams();
+  const invitation_id = searchParams.get("invitation_id");
+  const email = searchParams.get("email");
+  const slug = searchParams.get("slug");
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -47,7 +51,7 @@ const WorkspaceInvitationPage = observer(() => {
         if (email === currentUser?.email) {
           router.push("/invitations");
         } else {
-          router.push({ pathname: "/", query: router.query });
+          router.push(`/?${searchParams.toString()}`);
         }
       })
       .catch((err) => console.error(err));

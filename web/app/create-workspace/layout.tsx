@@ -5,5 +5,5 @@ export const metadata: Metadata = {
 };
 
 export default function CreateWorkspaceLayout({ children }: { children: React.ReactNode }) {
-  return { children };
+  return children;
 }

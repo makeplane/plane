@@ -5,5 +5,5 @@ export const metadata: Metadata = {
 };
 
 export default function InvitationsLayout({ children }: { children: React.ReactNode }) {
-  return { children };
+  return children;
 }
