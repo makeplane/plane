@@ -59,6 +59,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
 
   const handleBulkOperations = async (data: TBulkIssueProperties) => {
     if (!workspaceSlug || !projectId) return;
+    if (Object.keys(dirtyFields).length === 0) return;
 
     const payload: Partial<TBulkIssueProperties> = {};
     Object.keys(dirtyFields).forEach((key) => {
