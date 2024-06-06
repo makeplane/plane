@@ -2,13 +2,7 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import (
-    Exists,
-    F,
-    Func,
-    OuterRef,
-    Q,
-)
+from django.db.models import Exists, F, Func, OuterRef, Q, Prefetch
 
 # Django imports
 from django.utils import timezone
@@ -28,10 +22,8 @@ from plane.app.serializers import (
 from plane.db.models import (
     Issue,
     IssueComment,
-    Label,
     IssueLink,
     IssueAttachment,
-    State,
     ProjectMember,
     IssueReaction,
     CommentReaction,
@@ -537,6 +529,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
+
+        project_id = project_deploy_board.entity_identifier
+        slug = project_deploy_board.workspace.slug
 
         filters = issue_filters(request.query_params, "GET")
 

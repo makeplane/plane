@@ -15,8 +15,6 @@ from django.db.models import (
     Q,
     Subquery,
 )
-from django.conf import settings
-from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -36,15 +34,8 @@ from plane.app.permissions import (
     ProjectBasePermission,
     ProjectMemberPermission,
 )
-from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
-    Project,
-    ProjectMember,
-    Workspace,
-    State,
     UserFavorite,
-    ProjectIdentifier,
-    Module,
     Cycle,
     Inbox,
     DeployBoard,
@@ -52,7 +43,6 @@ from plane.db.models import (
     Issue,
     Module,
     Project,
-    ProjectFavorite,
     ProjectIdentifier,
     ProjectMember,
     State,

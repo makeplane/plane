@@ -30,7 +30,6 @@ from plane.db.models import (
     IssueAttachment,
     IssueLink,
     IssueView,
-    IssueViewFavorite,
     Workspace,
 )
 from plane.utils.grouper import (
@@ -48,23 +47,9 @@ from plane.utils.paginator import (
 # Module imports
 from .. import BaseViewSet
 
-from plane.app.serializers import (
-    IssueViewSerializer,
-    IssueSerializer,
-)
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    ProjectEntityPermission,
-)
 from plane.db.models import (
-    Workspace,
-    IssueView,
-    Issue,
     UserFavorite,
-    IssueLink,
-    IssueAttachment,
 )
-from plane.utils.issue_filters import issue_filters
 from plane.utils.user_timezone_converter import user_timezone_converter
 
 class GlobalViewViewSet(BaseViewSet):

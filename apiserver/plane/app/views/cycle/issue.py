@@ -46,7 +46,6 @@ from plane.utils.paginator import (
 )
 
 # Module imports
-from .. import BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
 
 class CycleIssueViewSet(BaseViewSet):
