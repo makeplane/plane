@@ -11,6 +11,7 @@ from django.utils import timezone
 # Module imports
 from plane.license.models import Instance, ChangeLog
 from plane.db.models import User
+from plane.utils.exception_logger import log_exception
 
 
 class Command(BaseCommand):
@@ -25,32 +26,40 @@ class Command(BaseCommand):
     def get_instance_from_prime(
         self, machine_signature, license_key, prime_host
     ):
-        response = requests.get(
-            f"{prime_host}/api/instance/me/",
-            headers={
-                "Content-Type": "application/json",
-                "X-Machine-Signature": str(machine_signature),
-                "X-Api-Key": str(license_key),
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data
+        try:
+            response = requests.get(
+                f"{prime_host}/api/instance/me/",
+                headers={
+                    "Content-Type": "application/json",
+                    "X-Machine-Signature": str(machine_signature),
+                    "X-Api-Key": str(license_key),
+                },
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data
+        except Exception as e:
+            log_exception(e)
+            return {}
 
     def get_instance_release_notes(
         self, machine_signature, license_key, prime_host
     ):
-        response = requests.get(
-            f"{prime_host}/api/instance/release-notes/",
-            headers={
-                "Content-Type": "application/json",
-                "X-Machine-Signature": str(machine_signature),
-                "X-Api-Key": str(license_key),
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data
+        try:
+            response = requests.get(
+                f"{prime_host}/api/instance/release-notes/",
+                headers={
+                    "Content-Type": "application/json",
+                    "X-Machine-Signature": str(machine_signature),
+                    "X-Api-Key": str(license_key),
+                },
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data
+        except Exception as e:
+            log_exception(e)
+            return []
 
     def get_fallback_version(self):
         with open("package.json", "r") as file:
@@ -136,6 +145,7 @@ class Command(BaseCommand):
                 release_notes = self.get_instance_release_notes(
                     machine_signature, license_key, prime_host
                 )
+                data["user_version"] = license_version
             else:
                 license_version = self.get_fallback_version()
                 release_notes = []
