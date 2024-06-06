@@ -6,11 +6,9 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (
-    Exists,
     F,
     Func,
     OuterRef,
-    Prefetch,
     Q,
     UUIDField,
     Value,
@@ -28,7 +26,6 @@ from plane.app.permissions import (
     ProjectEntityPermission,
 )
 from plane.app.serializers import (
-    IssueDetailSerializer,
     IssueFlatSerializer,
     IssueSerializer,
 )
@@ -37,8 +34,6 @@ from plane.db.models import (
     Issue,
     IssueAttachment,
     IssueLink,
-    IssueReaction,
-    IssueSubscriber,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -55,7 +50,6 @@ from plane.utils.paginator import (
 # Module imports
 from .. import BaseViewSet, BaseAPIView
 
-from plane.utils.user_timezone_converter import user_timezone_converter
 
 
 class IssueArchiveViewSet(BaseViewSet):
