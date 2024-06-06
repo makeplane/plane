@@ -17,7 +17,7 @@ const moveItem = <T,>(
   destination: T & Record<symbol, string>,
   keyExtractor: (item: T, index: number) => string
 ) => {
-  const sourceIndex = data.indexOf(source);
+  const sourceIndex = data.findIndex((item, index) => keyExtractor(item, index) === keyExtractor(source, 0));
   if (sourceIndex === -1) return data;
 
   const destinationIndex = data.findIndex((item, index) => keyExtractor(item, index) === keyExtractor(destination, 0));
