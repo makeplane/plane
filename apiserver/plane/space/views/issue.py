@@ -83,7 +83,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 anchor=self.kwargs.get("anchor"),
                 entity_name="project",
             )
-            if project_deploy_board.comments:
+            if project_deploy_board.is_comments_enabled:
                 return self.filter_queryset(
                     super()
                     .get_queryset()
@@ -114,7 +114,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             anchor=anchor, entity_name="project"
         )
 
-        if not project_deploy_board.comments:
+        if not project_deploy_board.is_comments_enabled:
             return Response(
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -158,7 +158,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             anchor=anchor, entity_name="project"
         )
 
-        if not project_deploy_board.comments:
+        if not project_deploy_board.is_comments_enabled:
             return Response(
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -189,7 +189,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             anchor=anchor, entity_name="project"
         )
 
-        if not project_deploy_board.comments:
+        if not project_deploy_board.is_comments_enabled:
             return Response(
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -224,7 +224,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
-            if project_deploy_board.reactions:
+            if project_deploy_board.is_reactions_enabled:
                 return (
                     super()
                     .get_queryset()
@@ -243,7 +243,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             anchor=anchor, entity_name="project"
         )
 
-        if not project_deploy_board.reactions:
+        if not project_deploy_board.is_reactions_enabled:
             return Response(
                 {"error": "Reactions are not enabled for this project board"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -285,7 +285,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             anchor=anchor, entity_name="project"
         )
 
-        if not project_deploy_board.reactions:
+        if not project_deploy_board.is_reactions_enabled:
             return Response(
                 {"error": "Reactions are not enabled for this project board"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -323,7 +323,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
             project_deploy_board = DeployBoard.objects.get(
                 anchor=self.kwargs.get("anchor"), entity_name="project"
             )
-            if project_deploy_board.reactions:
+            if project_deploy_board.is_reactions_enabled:
                 return (
                     super()
                     .get_queryset()
@@ -342,7 +342,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
             anchor=anchor, entity_name="project"
         )
 
-        if not project_deploy_board.reactions:
+        if not project_deploy_board.is_reactions_enabled:
             return Response(
                 {"error": "Reactions are not enabled for this board"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -383,7 +383,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        if not project_deploy_board.reactions:
+        if not project_deploy_board.is_reactions_enabled:
             return Response(
                 {"error": "Reactions are not enabled for this board"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -425,7 +425,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("anchor"),
                 entity_name="project",
             )
-            if project_deploy_board.votes:
+            if project_deploy_board.is_votes_enabled:
                 return (
                     super()
                     .get_queryset()
