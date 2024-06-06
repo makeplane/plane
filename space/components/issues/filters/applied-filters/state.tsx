@@ -2,13 +2,14 @@
 
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-import { StateGroupIcon } from "@plane/ui";
 // types
-import { IIssueState } from "@/types/issue";
+import { IStateLite } from "@plane/types";
+// ui
+import { StateGroupIcon } from "@plane/ui";
 
 type Props = {
   handleRemove: (val: string) => void;
-  states: IIssueState[];
+  states: IStateLite[];
   values: string[];
 };
 

@@ -646,22 +646,21 @@ class DeployBoardViewSet(BaseViewSet):
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
-            )
-            .select_related("project")
-        )
+    def list(self, request, slug, project_id):
+        project_deploy_board = DeployBoard.objects.filter(
+            entity_name="project",
+            entity_identifier=project_id,
+            workspace__slug=slug,
+        ).first()
+
+        serializer = DeployBoardSerializer(project_deploy_board)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
-        comments = request.data.get("comments", False)
-        reactions = request.data.get("reactions", False)
+        comments = request.data.get("is_comments_enabled", False)
+        reactions = request.data.get("is_reactions_enabled", False)
         inbox = request.data.get("inbox", None)
-        votes = request.data.get("votes", False)
+        votes = request.data.get("is_votes_enabled", False)
         views = request.data.get(
             "views",
             {
@@ -674,7 +673,8 @@ class DeployBoardViewSet(BaseViewSet):
         )
 
         project_deploy_board, _ = DeployBoard.objects.get_or_create(
-            anchor=f"{slug}/{project_id}",
+            entity_name="project",
+            entity_identifier=project_id,
             project_id=project_id,
         )
         project_deploy_board.inbox = inbox

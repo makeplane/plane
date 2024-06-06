@@ -60,6 +60,7 @@ from .project import (
     ProjectMemberInvite,
     ProjectPublicMember,
 )
+from .deploy_board import DeployBoard
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State

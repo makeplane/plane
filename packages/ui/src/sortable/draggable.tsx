@@ -5,6 +5,7 @@ import { isEqual } from "lodash";
 import { cn } from "../../helpers";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "../drop-indicator";
+
 type Props = {
   children: React.ReactNode;
   data: any; //@todo make this generic
