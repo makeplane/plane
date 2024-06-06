@@ -346,7 +346,10 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
           // fetching other project modules
           this.rootIssueDetailStore.rootIssueStore.rootStore.module.fetchModules(workspaceSlug, projectId);
           // fetching other project estimates
-          this.rootIssueDetailStore.rootIssueStore.rootStore.estimate.fetchProjectEstimates(workspaceSlug, projectId);
+          this.rootIssueDetailStore.rootIssueStore.rootStore.projectEstimate.getProjectEstimates(
+            workspaceSlug,
+            projectId
+          );
         }
       }
     } catch (error) {

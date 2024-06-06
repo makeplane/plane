@@ -17,7 +17,7 @@ import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useEstimate } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store";
 
 type TInboxIssueProperties = {
   projectId: string;
@@ -29,7 +29,7 @@ type TInboxIssueProperties = {
 export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) => {
   const { projectId, data, handleData, isVisible = false } = props;
   // hooks
-  const { areEstimatesEnabledForProject } = useEstimate();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
   // states
   const [parentIssueModalOpen, setParentIssueModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | undefined>(undefined);
@@ -142,10 +142,10 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       )}
 
       {/* estimate */}
-      {isVisible && areEstimatesEnabledForProject(projectId) && (
+      {isVisible && projectId && areEstimateEnabledByProjectId(projectId) && (
         <div className="h-7">
           <EstimateDropdown
-            value={data?.estimate_point || null}
+            value={data?.estimate_point || undefined}
             onChange={(estimatePoint) => handleData("estimate_point", estimatePoint)}
             projectId={projectId}
             buttonVariant="border-with-text"

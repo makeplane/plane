@@ -69,17 +69,17 @@
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.202",
-    "@types/node": "18.0.6",
+    "@types/node": "18.16.1",
     "@types/nprogress": "^0.2.0",
-    "@types/react": "^18.2.42",
+    "@types/react": "^18.2.48",
     "@types/react-color": "^3.0.6",
-    "@types/react-dom": "^18.2.17",
+    "@types/react-dom": "^18.2.18",
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "eslint-config-custom": "*",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
-    "typescript": "4.7.4"
+    "typescript": "^5.4.2"
   }
 }
