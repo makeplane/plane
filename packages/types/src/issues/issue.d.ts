@@ -15,7 +15,7 @@ export type TBaseIssue = {
   priority: TIssuePriorities | null;
   label_ids: string[];
   assignee_ids: string[];
-  estimate_point: number | null;
+  estimate_point: string | null;
 
   sub_issues_count: number;
   attachment_count: number;

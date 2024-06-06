@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
@@ -11,7 +11,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // types
@@ -23,12 +23,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId, currentTab: navigationTab, inboxIssueId } = router.query;
   // hooks
   const { currentProjectDetails } = useProject();
-  const { currentTab, handleCurrentTab } = useProjectInbox();
-
-  useEffect(() => {
-    if (navigationTab && currentTab != navigationTab)
-      handleCurrentTab(navigationTab === "open" ? EInboxIssueCurrentTab.OPEN : EInboxIssueCurrentTab.CLOSED);
-  }, [currentTab, navigationTab, handleCurrentTab]);
 
   // No access to inbox
   if (currentProjectDetails?.inbox_view === false)
@@ -44,6 +38,12 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : "Plane - Inbox";
 
+  const currentNavigationTab = navigationTab
+    ? navigationTab === "open"
+      ? EInboxIssueCurrentTab.OPEN
+      : EInboxIssueCurrentTab.CLOSED
+    : undefined;
+
   if (!workspaceSlug || !projectId) return <></>;
 
   return (
@@ -55,6 +55,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
           projectId={projectId.toString()}
           inboxIssueId={inboxIssueId?.toString() || undefined}
           inboxAccessible={currentProjectDetails?.inbox_view || false}
+          navigationTab={currentNavigationTab}
         />
       </div>
     </div>

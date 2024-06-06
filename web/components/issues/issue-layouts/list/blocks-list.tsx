@@ -16,9 +16,9 @@ interface Props {
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   containerRef: MutableRefObject<HTMLDivElement | null>;
-  selectionHelpers: TSelectionHelper;
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
+  selectionHelpers: TSelectionHelper;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {

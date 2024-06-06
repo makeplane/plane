@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 // ui
 import { ArchiveIcon, Tooltip } from "@plane/ui";
 // components
-import { BulkArchiveConfirmationModal } from "@/components/issues";
 // constants
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter, useIssueDetail, useProjectState } from "@/hooks/store";
+import { BulkArchiveConfirmationModal } from "../bulk-archive-modal";
 
 type Props = {
   handleClearSelection: () => void;

@@ -1,4 +1,4 @@
-import { RefObject, useRef, MutableRefObject } from "react";
+import { RefObject, MutableRefObject, useState } from "react";
 import { observer } from "mobx-react";
 // components
 // ui
@@ -20,8 +20,8 @@ type Props = {
   loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
   blockIds: string[];
-  enableSelection: boolean;
   enableReorder: boolean;
+  enableSelection: boolean;
   showAllBlocks?: boolean;
   selectionHelpers?: TSelectionHelper;
 };
@@ -40,9 +40,9 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     selectionHelpers
   } = props;
 
-  const intersectionRef = useRef<HTMLDivElement | null>(null);
+  const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  useIntersectionObserver(ganttContainerRef, intersectionRef, loadMoreBlocks, "50% 0% 50% 0%");
+  useIntersectionObserver(ganttContainerRef, intersectionElement, loadMoreBlocks, "50% 0% 50% 0%");
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,
@@ -85,7 +85,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
             );
           })}
           {canLoadMoreBlocks && (
-            <div ref={intersectionRef} className="p-2">
+            <div ref={setIntersectionElement} className="p-2">
               <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
             </div>
           )}

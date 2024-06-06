@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
@@ -50,7 +50,7 @@ export const SpreadsheetTable = observer((props: Props) => {
 
   // states
   const isScrolled = useRef(false);
-  const intersectionRef = useRef<HTMLTableSectionElement | null>(null);
+  const [intersectionElement, setIntersectionElement] = useState<HTMLTableSectionElement | null>(null);
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -85,7 +85,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     };
   }, [handleScroll, containerRef]);
 
-  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
+  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
@@ -125,7 +125,7 @@ export const SpreadsheetTable = observer((props: Props) => {
         ))}
       </tbody>
       {canLoadMoreIssues && (
-        <tfoot ref={intersectionRef}>
+        <tfoot ref={setIntersectionElement}>
           <SpreadsheetIssueRowLoader columnCount={displayPropertiesCount} />
         </tfoot>
       )}

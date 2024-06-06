@@ -20,7 +20,6 @@ import { IssueBulkOperationsRoot } from "@/components/issues";
 import { ALL_ISSUES } from "@/constants/issue";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
-import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // utils
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
@@ -75,10 +74,7 @@ export const List: React.FC<IList> = observer((props) => {
   const cycle = useCycle();
   const projectModule = useModule();
 
-  const intersectionRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
 
   const groups = getGroupByColumns(
     group_by as GroupByColumnTypes,
@@ -133,7 +129,7 @@ export const List: React.FC<IList> = observer((props) => {
             <>
               <div
                 ref={containerRef}
-                className="vertical-scrollbar scrollbar-lg relative h-full w-full overflow-auto vertical-scrollbar-margin-top-md"
+                className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md"
               >
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup

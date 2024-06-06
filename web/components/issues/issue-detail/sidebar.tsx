@@ -48,7 +48,7 @@ import {
 } from "@/components/issues";
 // helpers
 // types
-import { STATE_GROUPS } from "@/constants/state";
+import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
@@ -117,8 +117,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const stateDetails = getStateById(issue.state_id);
   // auth
   const isArchivingAllowed = !is_archived && issueOperations.archive && isEditable;
-  const isInArchivableGroup =
-    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -204,7 +203,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>State</span>
               </div>
               <StateDropdown
-                value={issue?.state_id ?? undefined}
+                value={issue?.state_id}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
                 projectId={projectId?.toString() ?? ""}
                 disabled={!isEditable}
@@ -247,7 +246,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>Priority</span>
               </div>
               <PriorityDropdown
-                value={issue?.priority || undefined}
+                value={issue?.priority}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="border-with-text"
@@ -319,7 +318,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <span>Estimate</span>
                 </div>
                 <EstimateDropdown
-                  value={issue?.estimate_point !== null ? issue.estimate_point : null}
+                  value={issue?.estimate_point != null ? issue.estimate_point : null}
                   onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
                   projectId={projectId}
                   disabled={!isEditable}

@@ -3,10 +3,9 @@ import { observer } from "mobx-react";
 import { Trash2 } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
-// components
-import { BulkDeleteConfirmationModal } from "@/components/issues";
 // hooks
 import { useAppRouter } from "@/hooks/store";
+import { BulkDeleteConfirmationModal } from "../bulk-delete-modal";
 
 type Props = {
   handleClearSelection: () => void;

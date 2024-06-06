@@ -1,4 +1,5 @@
-import { BulkArchiveIssues, BulkDeleteIssues } from "@/components/issues";
+import { BulkArchiveIssues } from "./archive";
+import { BulkDeleteIssues } from "./delete";
 
 type Props = {
   handleClearSelection: () => void;

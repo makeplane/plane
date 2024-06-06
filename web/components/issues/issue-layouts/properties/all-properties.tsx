@@ -223,7 +223,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       );
   };
 
-  const handleEstimate = (value: number | null) => {
+  const handleEstimate = (value: string | null) => {
     updateIssue &&
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({

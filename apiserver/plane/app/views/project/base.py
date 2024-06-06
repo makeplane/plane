@@ -29,17 +29,12 @@ from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
-    ProjectDeployBoardSerializer,
+    DeployBoardSerializer,
 )
 
 from plane.app.permissions import (
     ProjectBasePermission,
     ProjectMemberPermission,
-)
-from plane.app.serializers import (
-    ProjectDeployBoardSerializer,
-    ProjectListSerializer,
-    ProjectSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
@@ -52,11 +47,11 @@ from plane.db.models import (
     Module,
     Cycle,
     Inbox,
-    Issue,
+    DeployBoard,
     IssueProperty,
+    Issue,
     Module,
     Project,
-    ProjectDeployBoard,
     ProjectFavorite,
     ProjectIdentifier,
     ProjectMember,
@@ -151,7 +146,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 is_deployed=Exists(
-                    ProjectDeployBoard.objects.filter(
+                    DeployBoard.objects.filter(
                         project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
                     )
@@ -653,29 +648,28 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         return Response(files, status=status.HTTP_200_OK)
 
 
-class ProjectDeployBoardViewSet(BaseViewSet):
+class DeployBoardViewSet(BaseViewSet):
     permission_classes = [
         ProjectMemberPermission,
     ]
-    serializer_class = ProjectDeployBoardSerializer
-    model = ProjectDeployBoard
+    serializer_class = DeployBoardSerializer
+    model = DeployBoard
 
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
-            )
-            .select_related("project")
-        )
+    def list(self, request, slug, project_id):
+        project_deploy_board = DeployBoard.objects.filter(
+            entity_name="project",
+            entity_identifier=project_id,
+            workspace__slug=slug,
+        ).first()
+
+        serializer = DeployBoardSerializer(project_deploy_board)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
-        comments = request.data.get("comments", False)
-        reactions = request.data.get("reactions", False)
+        comments = request.data.get("is_comments_enabled", False)
+        reactions = request.data.get("is_reactions_enabled", False)
         inbox = request.data.get("inbox", None)
-        votes = request.data.get("votes", False)
+        votes = request.data.get("is_votes_enabled", False)
         views = request.data.get(
             "views",
             {
@@ -687,17 +681,18 @@ class ProjectDeployBoardViewSet(BaseViewSet):
             },
         )
 
-        project_deploy_board, _ = ProjectDeployBoard.objects.get_or_create(
-            anchor=f"{slug}/{project_id}",
+        project_deploy_board, _ = DeployBoard.objects.get_or_create(
+            entity_name="project",
+            entity_identifier=project_id,
             project_id=project_id,
         )
-        project_deploy_board.comments = comments
-        project_deploy_board.reactions = reactions
         project_deploy_board.inbox = inbox
-        project_deploy_board.votes = votes
-        project_deploy_board.views = views
+        project_deploy_board.view_props = views
+        project_deploy_board.is_votes_enabled = votes
+        project_deploy_board.is_comments_enabled = comments
+        project_deploy_board.is_reactions_enabled = reactions
 
         project_deploy_board.save()
 
-        serializer = ProjectDeployBoardSerializer(project_deploy_board)
+        serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)

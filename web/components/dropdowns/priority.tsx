@@ -302,7 +302,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     placement,
     showTooltip = false,
     tabIndex,
-    value,
+    value = "none",
   } = props;
   // states
   const [query, setQuery] = useState("");

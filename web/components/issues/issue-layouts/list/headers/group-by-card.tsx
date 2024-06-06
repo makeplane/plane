@@ -84,7 +84,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2.5 py-1.5 pl-3.5">
+      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5">
         {canSelectIssues && (
           <div className="flex-shrink-0 flex items-center w-3.5">
             <MultipleSelectGroupAction
@@ -99,14 +99,12 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             />
           </div>
         )}
-        <div className="flex-shrink-0 grid place-items-center overflow-hidden pl-3">
+        <div className="flex-shrink-0 grid place-items-center overflow-hidden">
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
-        <div
-          className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
-          onClick={toggleListGroup}
-        >
+        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
+        onClick={toggleListGroup}>
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
         </div>
@@ -115,8 +113,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="size-5 flex-shrink-0 cursor-pointer flex items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-                  <Plus className="size-3.5" strokeWidth={2} />
+                <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2} />
                 </span>
               }
             >
@@ -139,13 +137,13 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             </CustomMenu>
           ) : (
             <div
-              className="size-5 flex-shrink-0 cursor-pointer flex items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
               onClick={() => {
                 setTrackElement("List layout");
                 setIsOpen(true);
               }}
             >
-              <Plus className="size-3.5" strokeWidth={2} />
+              <Plus width={14} strokeWidth={2} />
             </div>
           ))}
 

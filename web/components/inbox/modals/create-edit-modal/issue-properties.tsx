@@ -49,7 +49,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       {/* state */}
       <div className="h-7">
         <StateDropdown
-          value={data?.state_id || ""}
+          value={data?.state_id}
           onChange={(stateId) => handleData("state_id", stateId)}
           projectId={projectId}
           buttonVariant="border-with-text"
@@ -59,7 +59,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       {/* priority */}
       <div className="h-7">
         <PriorityDropdown
-          value={data?.priority || "none"}
+          value={data?.priority}
           onChange={(priority) => handleData("priority", priority)}
           buttonVariant="border-with-text"
         />

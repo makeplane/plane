@@ -19,7 +19,7 @@ export interface IEstimateStore {
   activeEstimateDetails: IEstimate | null;
   // computed actions
   areEstimatesEnabledForProject: (projectId: string) => boolean;
-  getEstimatePointValue: (estimateKey: number | null, projectId: string | null) => string;
+  getEstimatePointValue: (estimateKey: string | null, projectId: string | null) => string;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
   getProjectActiveEstimateDetails: (projectId: string | undefined | null) => IEstimate | null;
   // fetch actions
@@ -110,10 +110,10 @@ export class EstimateStore implements IEstimateStore {
   /**
    * @description returns the point value for the given estimate key to display in the UI
    */
-  getEstimatePointValue = computedFn((estimateKey: number | null, projectId: string | null) => {
+  getEstimatePointValue = computedFn((estimateKey: string | null, projectId: string | null) => {
     if (estimateKey === null) return "None";
     const activeEstimate = projectId ? this.getProjectActiveEstimateDetails(projectId) : this.activeEstimateDetails;
-    return activeEstimate?.points?.find((point) => point.key === estimateKey)?.value || "None";
+    return activeEstimate?.points?.find((point) => point.id === estimateKey)?.value || "None";
   });
 
   /**

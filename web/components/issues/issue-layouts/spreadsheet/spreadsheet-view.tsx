@@ -6,9 +6,11 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@pl
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
 import { IssueBulkOperationsRoot, SpreadsheetQuickAddIssueForm } from "@/components/issues";
+// constants
 import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // hooks
 import { useProject } from "@/hooks/store";
+// types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
 

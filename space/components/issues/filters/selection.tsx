@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // types
-import { IIssueState, IIssueLabel, IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
+import { IStateLite } from "@plane/types";
+import { IIssueLabel, IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
 // components
 import { FilterPriority, FilterState } from "./";
 
@@ -13,7 +14,7 @@ type Props = {
   handleFilters: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: TIssueFilterKeys[];
   labels?: IIssueLabel[] | undefined;
-  states?: IIssueState[] | undefined;
+  states?: IStateLite[] | undefined;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {

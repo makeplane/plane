@@ -95,9 +95,9 @@ export const ListGroup = observer((props: Props) => {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
   } = useIssuesStore();
 
-  const intersectionRef = useRef<HTMLDivElement | null>(null);
+  const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
+  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
 
   const groupIssueCount = getGroupIssueCount(group.id, undefined, false);
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
@@ -229,7 +229,7 @@ export const ListGroup = observer((props: Props) => {
         "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-2 pr-3 py-1">
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}
@@ -269,7 +269,7 @@ export const ListGroup = observer((props: Props) => {
             />
           )}
 
-          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={intersectionRef} />)}
+          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
 
           {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
             <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">

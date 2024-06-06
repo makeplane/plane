@@ -80,16 +80,16 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
   } = useIssuesStore();
 
-  const intersectionRef = useRef<HTMLSpanElement | null>(null);
+  const [intersectionElement, setIntersectionElement] = useState<HTMLSpanElement | null>(null);
   const columnRef = useRef<HTMLDivElement | null>(null);
 
-  const containerRef = sub_group_by ? scrollableContainerRef : columnRef;
+  const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
 
   const loadMoreIssuesInThisGroup = useCallback(() => {
     loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
   }, [loadMoreIssues, groupId, sub_group_id])
 
-  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssuesInThisGroup, `0% 100% 100% 100%`);
+  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssuesInThisGroup, `0% 100% 100% 100%`);
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
 
@@ -257,7 +257,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canDropOverIssue={!canOverlayBeVisible}
       />
 
-{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={intersectionRef} />)}
+{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">

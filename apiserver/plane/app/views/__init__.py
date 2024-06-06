@@ -4,7 +4,7 @@ from .project.base import (
     ProjectUserViewsEndpoint,
     ProjectFavoritesViewSet,
     ProjectPublicCoverImagesEndpoint,
-    ProjectDeployBoardViewSet,
+    DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
 )
 

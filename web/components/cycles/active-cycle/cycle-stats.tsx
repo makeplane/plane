@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback, useRef } from "react";
+import { FC, Fragment, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -37,7 +37,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
-  const issuesLoaderRef = useRef<HTMLDivElement | null>(null);
+  const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -72,9 +72,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
   const loadMoreIssues = useCallback(() => {
     fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);
-  }, [workspaceSlug, projectId, cycle.id, issuesLoaderRef?.current, cycleIssueDetails?.nextPageResults]);
+  }, [workspaceSlug, projectId, cycle.id, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
 
-  useIntersectionObserver(issuesContainerRef, issuesLoaderRef, loadMoreIssues, `0% 0% 100% 0%`);
+  useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
   return (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
@@ -183,7 +183,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                           </div>
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             <StateDropdown
-                              value={issue.state_id ?? undefined}
+                              value={issue.state_id}
                               onChange={() => {}}
                               projectId={projectId?.toString() ?? ""}
                               disabled
@@ -210,7 +210,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                     })}
                     {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
                       <div
-                        ref={issuesLoaderRef}
+                        ref={setIssueLoaderElement}
                         className={
                           "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
                         }

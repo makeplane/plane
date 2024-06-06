@@ -25,19 +25,21 @@ from plane.app.serializers import (
     IssueReactionSerializer,
     IssueVoteSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
-    CommentReaction,
     Issue,
-    IssueAttachment,
     IssueComment,
+    Label,
     IssueLink,
-    IssueReaction,
-    IssueVote,
-    ProjectDeployBoard,
+    IssueAttachment,
+    State,
     ProjectMember,
+    IssueReaction,
+    CommentReaction,
+    DeployBoard,
+    IssueVote,
     ProjectPublicMember,
 )
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -77,15 +79,15 @@ class IssueCommentPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
+            project_deploy_board = DeployBoard.objects.get(
+                anchor=self.kwargs.get("anchor"),
+                entity_name="project",
             )
             if project_deploy_board.comments:
                 return self.filter_queryset(
                     super()
                     .get_queryset()
-                    .filter(workspace__slug=self.kwargs.get("slug"))
+                    .filter(workspace_id=project_deploy_board.workspace_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .filter(access="EXTERNAL")
                     .select_related("project")
@@ -94,8 +96,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     .annotate(
                         is_member=Exists(
                             ProjectMember.objects.filter(
-                                workspace__slug=self.kwargs.get("slug"),
-                                project_id=self.kwargs.get("project_id"),
+                                workspace_id=project_deploy_board.workspace_id,
+                                project_id=project_deploy_board.project_id,
                                 member_id=self.request.user.id,
                                 is_active=True,
                             )
@@ -104,12 +106,12 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     .distinct()
                 ).order_by("created_at")
             return IssueComment.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return IssueComment.objects.none()
 
-    def create(self, request, slug, project_id, issue_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def create(self, request, anchor, issue_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
 
         if not project_deploy_board.comments:
@@ -121,7 +123,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                project_id=project_id,
+                project_id=project_deploy_board.project_id,
                 issue_id=issue_id,
                 actor=request.user,
                 access="EXTERNAL",
@@ -133,27 +135,27 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 ),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
-                project_id=str(project_id),
+                project_id=str(project_deploy_board.project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
             if not ProjectMember.objects.filter(
-                project_id=project_id,
+                project_id=project_deploy_board.project_id,
                 member=request.user,
                 is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_id,
+                    project_id=project_deploy_board.project_id,
                     member=request.user,
                 )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, slug, project_id, issue_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def partial_update(self, request, anchor, issue_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
 
         if not project_deploy_board.comments:
@@ -161,9 +163,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        comment = IssueComment.objects.get(
-            workspace__slug=slug, pk=pk, actor=request.user
-        )
+        comment = IssueComment.objects.get(pk=pk, actor=request.user)
         serializer = IssueCommentSerializer(
             comment, data=request.data, partial=True
         )
@@ -174,7 +174,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
-                project_id=str(project_id),
+                project_id=str(project_deploy_board.project_id),
                 current_instance=json.dumps(
                     IssueCommentSerializer(comment).data,
                     cls=DjangoJSONEncoder,
@@ -184,9 +184,9 @@ class IssueCommentPublicViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, slug, project_id, issue_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def destroy(self, request, anchor, issue_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
 
         if not project_deploy_board.comments:
@@ -195,9 +195,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         comment = IssueComment.objects.get(
-            workspace__slug=slug,
             pk=pk,
-            project_id=project_id,
             actor=request.user,
         )
         issue_activity.delay(
@@ -205,7 +203,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             requested_data=json.dumps({"comment_id": str(pk)}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
-            project_id=str(project_id),
+            project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
                 IssueCommentSerializer(comment).data,
                 cls=DjangoJSONEncoder,
@@ -222,7 +220,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
+            project_deploy_board = DeployBoard.objects.get(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
@@ -237,12 +235,12 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     .distinct()
                 )
             return IssueReaction.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return IssueReaction.objects.none()
 
-    def create(self, request, slug, project_id, issue_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def create(self, request, anchor, issue_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
 
         if not project_deploy_board.reactions:
@@ -254,16 +252,18 @@ class IssueReactionPublicViewSet(BaseViewSet):
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                project_id=project_id, issue_id=issue_id, actor=request.user
+                project_id=project_deploy_board.project_id,
+                issue_id=issue_id,
+                actor=request.user,
             )
             if not ProjectMember.objects.filter(
-                project_id=project_id,
+                project_id=project_deploy_board.project_id,
                 member=request.user,
                 is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_id,
+                    project_id=project_deploy_board.project_id,
                     member=request.user,
                 )
             issue_activity.delay(
@@ -273,16 +273,16 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 ),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
-                project_id=str(self.kwargs.get("project_id", None)),
+                project_id=str(project_deploy_board.project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, slug, project_id, issue_id, reaction_code):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def destroy(self, request, anchor, issue_id, reaction_code):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
 
         if not project_deploy_board.reactions:
@@ -291,7 +291,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_reaction = IssueReaction.objects.get(
-            workspace__slug=slug,
+            workspace_id=project_deploy_board.workspace_id,
             issue_id=issue_id,
             reaction=reaction_code,
             actor=request.user,
@@ -301,7 +301,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             requested_data=None,
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
+            project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
                 {
                     "reaction": str(reaction_code),
@@ -320,27 +320,26 @@ class CommentReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
+            project_deploy_board = DeployBoard.objects.get(
+                anchor=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.reactions:
                 return (
                     super()
                     .get_queryset()
-                    .filter(workspace__slug=self.kwargs.get("slug"))
-                    .filter(project_id=self.kwargs.get("project_id"))
+                    .filter(workspace_id=project_deploy_board.workspace_id)
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(comment_id=self.kwargs.get("comment_id"))
                     .order_by("-created_at")
                     .distinct()
                 )
             return CommentReaction.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return CommentReaction.objects.none()
 
-    def create(self, request, slug, project_id, comment_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def create(self, request, anchor, comment_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
 
         if not project_deploy_board.reactions:
@@ -352,18 +351,18 @@ class CommentReactionPublicViewSet(BaseViewSet):
         serializer = CommentReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                project_id=project_id,
+                project_id=project_deploy_board.project_id,
                 comment_id=comment_id,
                 actor=request.user,
             )
             if not ProjectMember.objects.filter(
-                project_id=project_id,
+                project_id=project_deploy_board.project_id,
                 member=request.user,
                 is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_id,
+                    project_id=project_deploy_board.project_id,
                     member=request.user,
                 )
             issue_activity.delay(
@@ -380,9 +379,9 @@ class CommentReactionPublicViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, slug, project_id, comment_id, reaction_code):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def destroy(self, request, anchor, comment_id, reaction_code):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
         if not project_deploy_board.reactions:
             return Response(
@@ -391,8 +390,8 @@ class CommentReactionPublicViewSet(BaseViewSet):
             )
 
         comment_reaction = CommentReaction.objects.get(
-            project_id=project_id,
-            workspace__slug=slug,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
             comment_id=comment_id,
             reaction=reaction_code,
             actor=request.user,
@@ -402,7 +401,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
             requested_data=None,
             actor_id=str(self.request.user.id),
             issue_id=None,
-            project_id=str(self.kwargs.get("project_id", None)),
+            project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
                 {
                     "reaction": str(reaction_code),
@@ -422,36 +421,42 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
+            project_deploy_board = DeployBoard.objects.get(
+                workspace__slug=self.kwargs.get("anchor"),
+                entity_name="project",
             )
             if project_deploy_board.votes:
                 return (
                     super()
                     .get_queryset()
                     .filter(issue_id=self.kwargs.get("issue_id"))
-                    .filter(workspace__slug=self.kwargs.get("slug"))
-                    .filter(project_id=self.kwargs.get("project_id"))
+                    .filter(workspace_id=project_deploy_board.workspace_id)
+                    .filter(project_id=project_deploy_board.project_id)
                 )
             return IssueVote.objects.none()
-        except ProjectDeployBoard.DoesNotExist:
+        except DeployBoard.DoesNotExist:
             return IssueVote.objects.none()
 
-    def create(self, request, slug, project_id, issue_id):
+    def create(self, request, anchor, issue_id):
+        print("hite")
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
+        )
+        print("awer")
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
-            project_id=project_id,
+            project_id=project_deploy_board.project_id,
             issue_id=issue_id,
         )
+        print("AWer")
         # Add the user for workspace tracking
         if not ProjectMember.objects.filter(
-            project_id=project_id,
+            project_id=project_deploy_board.project_id,
             member=request.user,
             is_active=True,
         ).exists():
             _ = ProjectPublicMember.objects.get_or_create(
-                project_id=project_id,
+                project_id=project_deploy_board.project_id,
                 member=request.user,
             )
         issue_vote.vote = request.data.get("vote", 1)
@@ -463,26 +468,29 @@ class IssueVotePublicViewSet(BaseViewSet):
             ),
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
+            project_id=str(project_deploy_board.project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
         serializer = IssueVoteSerializer(issue_vote)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def destroy(self, request, slug, project_id, issue_id):
+    def destroy(self, request, anchor, issue_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
+        )
         issue_vote = IssueVote.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
             issue_id=issue_id,
             actor_id=request.user.id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
         )
         issue_activity.delay(
             type="issue_vote.activity.deleted",
             requested_data=None,
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
+            project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
                 {
                     "vote": str(issue_vote.vote),
@@ -500,9 +508,14 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    def get(self, request, slug, project_id, issue_id):
+    def get(self, request, anchor, issue_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
+        )
         issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=issue_id
+            workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
+            pk=issue_id,
         )
         serializer = IssuePublicSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -513,25 +526,48 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    def get(self, request, slug, project_id):
-        if not ProjectDeployBoard.objects.filter(
-            workspace__slug=slug, project_id=project_id
+    def get(self, request, anchor):
+        if not DeployBoard.objects.filter(
+            anchor=anchor, entity_name="project"
         ).exists():
             return Response(
                 {"error": "Project is not published"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
+        )
 
         filters = issue_filters(request.query_params, "GET")
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
-            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(is_draft=True)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(project_id=project_deploy_board.project_id)
+            .filter(workspace_id=project_deploy_board.workspace_id)
+            .select_related("project", "workspace", "state", "parent")
+            .prefetch_related("assignees", "labels")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "votes",
+                    queryset=IssueVote.objects.select_related("actor"),
+                )
+            )
+            .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
