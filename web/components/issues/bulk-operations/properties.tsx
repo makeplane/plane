@@ -148,6 +148,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 onChange={onChange}
                 buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
                 buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
+                projectId={projectId?.toString() ?? ""}
                 placeholder="Assignees"
                 multiple
                 disabled={isUpdateDisabled}
