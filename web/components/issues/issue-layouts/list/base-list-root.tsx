@@ -1,16 +1,16 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-// types
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useIssues, useUser } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { List } from "./default";
+// types
 import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
-// constants
-// hooks
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -37,22 +37,19 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
   } = props;
-  // router
-  //stores
+  // store hooks
   const { issuesFilter, issues } = useIssues(storeType);
   const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } = useIssuesActions(storeType);
-  // mobx store
   const {
     membership: { currentProjectRole },
   } = useUser();
-
   const { issueMap } = useIssues();
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
+  // derived values
   const issueIds = issues?.groupedIssueIds || [];
-
+  // auth
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
@@ -90,7 +87,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   return (
-    <div className={`relative h-full w-full bg-custom-background-90`}>
+    <div className="relative size-full bg-custom-background-90">
       <List
         issuesMap={issueMap}
         displayProperties={displayProperties}
