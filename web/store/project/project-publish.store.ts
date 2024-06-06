@@ -111,7 +111,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       const response = await this.projectPublishService.publishProject(workspaceSlug, projectID, data);
       runInAction(() => {
         set(this.publishSettingsMap, [projectID], response);
-        set(this.projectRootStore.project.projectMap, [projectID, "is_deployed"], true);
+        set(this.projectRootStore.project.projectMap, [projectID, "anchor"], response.anchor);
         this.generalLoader = false;
       });
       return response;
@@ -175,7 +175,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       const response = await this.projectPublishService.unpublishProject(workspaceSlug, projectID, projectPublishId);
       runInAction(() => {
         unset(this.publishSettingsMap, [projectID]);
-        set(this.projectRootStore.project.projectMap, [projectID, "is_deployed"], false);
+        set(this.projectRootStore.project.projectMap, [projectID, "anchor"], null);
         this.generalLoader = false;
       });
       return response;

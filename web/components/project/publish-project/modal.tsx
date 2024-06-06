@@ -143,7 +143,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       view_props: formData.view_props,
     };
 
-    if (formData.id && project.is_deployed) await handleUpdatePublishSettings(payload);
+    if (formData.id && project.anchor) await handleUpdatePublishSettings(payload);
     else await handlePublishProject(payload);
   };
 
@@ -173,7 +173,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
           <h5 className="text-xl font-medium text-custom-text-200">Publish page</h5>
-          {project.is_deployed && (
+          {project.anchor && (
             <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
@@ -190,7 +190,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
           </Loader>
         ) : (
           <div className="px-5 space-y-4">
-            {project.is_deployed && projectPublishSettings && (
+            {project.anchor && projectPublishSettings && (
               <>
                 <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
@@ -309,7 +309,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
               <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                 Cancel
               </Button>
-              {project.is_deployed ? (
+              {project.anchor ? (
                 isDirty && (
                   <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
