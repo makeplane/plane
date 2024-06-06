@@ -1,11 +1,8 @@
 import { observable, makeObservable, computed } from "mobx";
 // types
-import { IWorkspaceLite } from "@plane/types";
+import { IWorkspaceLite, TProjectDetails, TPublishEntityType, TPublishSettings, TPublishViewProps } from "@plane/types";
 // store types
 import { RootStore } from "@/store/root.store";
-// types
-import { TProjectDetails, TViewDetails } from "@/types/project";
-import { TPublishEntityType, TPublishSettings } from "@/types/publish";
 
 export interface IPublishStore extends TPublishSettings {
   // computed
@@ -30,7 +27,7 @@ export class PublishStore implements IPublishStore {
   is_reactions_enabled: boolean;
   updated_at: string | undefined;
   updated_by: string | undefined;
-  view_props: TViewDetails | undefined;
+  view_props: TPublishViewProps | undefined;
   is_votes_enabled: boolean;
   workspace: string | undefined;
   workspace_detail: IWorkspaceLite | undefined;
