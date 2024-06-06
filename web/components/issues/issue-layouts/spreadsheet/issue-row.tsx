@@ -108,7 +108,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             quickActions={quickActions}
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties.key ? 12 : 28)}
+            spacingLeft={spacingLeft + 12}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}
             portalElement={portalElement}
@@ -187,7 +187,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const issueDetail = issue.getIssueById(issueId);
 
-  const marginLeft = `${spacingLeft}px`;
+  const subIssueIndentation = `${spacingLeft}px`;
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -222,6 +222,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
 
+  //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
+  const keyMinWidth = (getProjectIdentifierById(issueDetail.project_id)?.length + 5) * 7;
+
   return (
     <>
       <td
@@ -245,7 +248,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           )}
           disabled={!!issueDetail?.tempId}
         >
-          <div className="flex items-center gap-1 min-w-min py-2.5 pl-2">
+          <div className="flex items-center gap-0.5 min-w-min py-2.5 pl-2">
             {/* select checkbox */}
             {projectId && !disableUserActions && (
               <Tooltip
@@ -258,7 +261,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 }
                 disabled={issueDetail.project_id === projectId}
               >
-                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                <div className="flex-shrink-0 grid place-items-center w-3.5 mr-1">
                   <MultipleSelectEntityAction
                     className={cn(
                       "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
@@ -274,8 +277,20 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 </div>
               </Tooltip>
             )}
+
+            {/* sub issues indentation */}
+            <div style={nestingLevel !== 0 ? { width: subIssueIndentation } : {}} />
+
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
+              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
+                <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
+                  {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
+                </p>
+              </div>
+            </WithDisplayPropertiesHOC>
+
             {/* sub-issues chevron */}
-            <div className="grid place-items-center size-4" style={nestingLevel !== 0 ? { marginLeft } : {}}>
+            <div className="grid place-items-center size-4">
               {subIssuesCount > 0 && (
                 <button
                   type="button"
@@ -291,22 +306,14 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 </button>
               )}
             </div>
-
-            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
-              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
-                <p className={`flex items-center justify-center font-medium leading-7`}>
-                  {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
-                </p>
-              </div>
-            </WithDisplayPropertiesHOC>
           </div>
 
-          <div className="flex items-center gap-2 justify-between h-full w-full pr-4 truncate">
+          <div className="flex items-center gap-2 justify-between h-full w-full pr-4 pl-1 truncate">
             <div className="w-full line-clamp-1 text-sm text-custom-text-100">
               <div className="w-full overflow-hidden">
                 <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                   <div
-                    className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                    className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
                     tabIndex={-1}
                   >
                     {issueDetail.name}
