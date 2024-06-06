@@ -17,8 +17,11 @@ from django.db.models import (
     UUIDField,
     Value,
     When,
+    Subquery,
+    Sum,
+    IntegerField,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Cast
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -72,6 +75,33 @@ class CycleViewSet(BaseViewSet):
             entity_type="cycle",
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
+        )
+        completed_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="completed",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                completed_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("completed_estimate_points")[:1]
+        )
+        total_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                total_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("total_estimate_points")[:1]
         )
         return self.filter_queryset(
             super()
@@ -197,6 +227,18 @@ class CycleViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
+            .annotate(
+                completed_estimate_points=Coalesce(
+                    Subquery(completed_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                total_estimate_points=Coalesce(
+                    Subquery(total_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -233,6 +275,8 @@ class CycleViewSet(BaseViewSet):
                 "progress_snapshot",
                 "logo_props",
                 # meta fields
+                "completed_estimate_points",
+                "total_estimate_points",
                 "is_favorite",
                 "total_issues",
                 "cancelled_issues",
@@ -359,6 +403,8 @@ class CycleViewSet(BaseViewSet):
             "progress_snapshot",
             "logo_props",
             # meta fields
+            "completed_estimate_points",
+            "total_estimate_points",
             "is_favorite",
             "total_issues",
             "cancelled_issues",

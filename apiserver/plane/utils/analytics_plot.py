@@ -4,13 +4,23 @@ from itertools import groupby
 
 # Django import
 from django.db import models
-from django.db.models import Case, CharField, Count, F, Sum, Value, When
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    F,
+    Sum,
+    Value,
+    When,
+    IntegerField,
+)
 from django.db.models.functions import (
     Coalesce,
     Concat,
     ExtractMonth,
     ExtractYear,
     TruncDate,
+    Cast,
 )
 from django.utils import timezone
 
@@ -87,9 +97,9 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     # Estimate
     else:
-        queryset = queryset.annotate(estimate=Sum("estimate_point")).order_by(
-            x_axis
-        )
+        queryset = queryset.annotate(
+            estimate=Sum(Cast("estimate_point__value", IntegerField()))
+        ).order_by(x_axis)
         queryset = (
             queryset.annotate(segment=F(segment)) if segment else queryset
         )
