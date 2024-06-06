@@ -38,7 +38,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
   // auth
-  const canSelectIssues = canEditProperties(projectId?.toString());
+  const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
 
   return (
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
