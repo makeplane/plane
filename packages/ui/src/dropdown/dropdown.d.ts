@@ -28,7 +28,6 @@ export interface IDropdown {
   sortByKey: string;
   firstItem?: (optionValue: string) => boolean;
   renderItem?: ({ value, selected }: { value: string; selected: boolean }) => React.ReactNode;
-  separator?: React.ReactNode;
   loader?: React.ReactNode;
   disableSorting?: boolean;
 }
