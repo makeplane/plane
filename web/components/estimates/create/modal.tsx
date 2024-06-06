@@ -24,7 +24,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   // hooks
   const { createEstimate } = useProjectEstimates();
   // states
-  const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.CATEGORIES);
+  const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
   const [buttonLoader, setButtonLoader] = useState(false);
 
@@ -32,7 +32,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
 
   useEffect(() => {
     if (isOpen) {
-      setEstimateSystem(EEstimateSystem.CATEGORIES);
+      setEstimateSystem(EEstimateSystem.POINTS);
       setEstimatePoints(undefined);
     }
   }, [isOpen]);
@@ -80,7 +80,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             {estimatePoints && (
               <div
                 onClick={() => {
-                  setEstimateSystem(EEstimateSystem.CATEGORIES);
+                  setEstimateSystem(EEstimateSystem.POINTS);
                   handleUpdatePoints(undefined);
                 }}
                 className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
