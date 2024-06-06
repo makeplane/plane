@@ -15,7 +15,7 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
+import { SPACE_BASE_URL } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import {
@@ -100,7 +100,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const DEPLOY_URL = SPACE_BASE_URL + SPACE_BASE_PATH;
+  const publishedURL = `${SPACE_BASE_URL}/issues/${currentProjectDetails?.anchor}`;
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -159,9 +159,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Tooltip>
             ) : null}
           </div>
-          {currentProjectDetails?.is_deployed && DEPLOY_URL && (
+          {currentProjectDetails?.anchor && (
             <a
-              href={`${DEPLOY_URL}/${workspaceSlug}/${currentProjectDetails?.id}`}
+              href={publishedURL}
               className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
               target="_blank"
               rel="noopener noreferrer"

@@ -114,7 +114,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
-    is_deployed = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
 
     def get_members(self, obj):
@@ -148,7 +148,7 @@ class ProjectDetailSerializer(BaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
-    is_deployed = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
 
     class Meta:
         model = Project

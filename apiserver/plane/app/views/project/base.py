@@ -137,12 +137,11 @@ class ProjectViewSet(BaseViewSet):
                 ).values("role")
             )
             .annotate(
-                is_deployed=Exists(
-                    DeployBoard.objects.filter(
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                    )
-                )
+                anchor=DeployBoard.objects.filter(
+                    entity_name="project",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
             )
             .annotate(sort_order=Subquery(sort_order))
             .prefetch_related(

@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation";
+// types
+import { TPublishSettings } from "@plane/types";
 // services
 import PublishService from "@/services/publish.service";
-// types
-import { TPublishSettings } from "@/types/publish";
 
 const publishService = new PublishService();
 
@@ -29,8 +29,8 @@ export default async function IssuesPage(props: Props) {
   }
 
   let url = "";
-  if (response.entity_name === "project") {
-    url = `/issues/${response.anchor}`;
+  if (response?.entity_name === "project") {
+    url = `/issues/${response?.anchor}`;
     const params = new URLSearchParams();
     if (board) params.append("board", board);
     if (peekId) params.append("peekId", peekId);
