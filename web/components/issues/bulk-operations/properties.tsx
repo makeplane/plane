@@ -105,7 +105,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <form onSubmit={handleSubmit(handleBulkOperations)} className="size-full flex items-center justify-between gap-3">
+    <div className="size-full flex items-center justify-between gap-3">
       <div className="flex items-center gap-3">
         <div className="h-6">
           <Controller
@@ -217,10 +217,16 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
         )}
       </div>
       {isDirty && (
-        <Button type="submit" variant="primary" size="sm" className="py-1" loading={isSubmitting}>
+        <Button
+          variant="primary"
+          size="sm"
+          className="py-1"
+          onClick={handleSubmit(handleBulkOperations)}
+          loading={isSubmitting}
+        >
           {isSubmitting ? "Updating" : "Update"}
         </Button>
       )}
-    </form>
+    </div>
   );
 });
