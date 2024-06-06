@@ -223,7 +223,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = (getProjectIdentifierById(issueDetail.project_id)?.length + 5) * 7;
+  const keyMinWidth = (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7;
 
   return (
     <>
