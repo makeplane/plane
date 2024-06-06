@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TIssue, TUnGroupedIssues } from "@plane/types";
 // hooks
 import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
@@ -28,8 +28,7 @@ interface IBaseGanttRoot {
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
   const { viewId, storeType } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const { issues, issuesFilter } = useIssues(storeType);
   const { updateIssue } = useIssuesActions(storeType);

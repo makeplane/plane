@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
@@ -23,7 +23,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   } = useUser();
   const { currentWorkspace } = useWorkspace();
   // router
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -60,18 +60,18 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
     }
   }, [currentWorkspace?.id, user?.email]);
 
-  useEffect(() => {
+  useEffect(() =>
     // Track page views
-    const handleRouteChange = () => {
-      posthog?.capture("$pageview");
-    };
+    // const handleRouteChange = () => {
+    //   posthog?.capture("$pageview");
+    // };
     // router.events.on("routeChangeComplete", handleRouteChange);
 
-    return () => {
+    () => {
       // router.events.off("routeChangeComplete", handleRouteChange);
-    };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    , []);
 
   if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST)
     return <PHProvider client={posthog}>{children}</PHProvider>;

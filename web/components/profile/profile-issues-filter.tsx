@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // components
@@ -14,8 +14,7 @@ import { useIssues, useLabel } from "@/hooks/store";
 
 export const ProfileIssuesFilter = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
   // store hook
   const {
     issuesFilter: { issueFilters, updateFilters },

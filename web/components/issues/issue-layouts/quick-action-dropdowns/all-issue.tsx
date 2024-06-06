@@ -1,7 +1,7 @@
 import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
@@ -38,8 +38,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { getStateById } = useProjectState();

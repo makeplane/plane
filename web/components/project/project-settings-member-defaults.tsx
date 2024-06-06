@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
@@ -22,8 +22,7 @@ const defaultValues: Partial<IProject> = {
 
 export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     membership: { currentProjectRole },

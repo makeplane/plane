@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
@@ -14,8 +14,7 @@ import { useIssues, useLabel, useProjectState, useProjectView } from "@/hooks/st
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },

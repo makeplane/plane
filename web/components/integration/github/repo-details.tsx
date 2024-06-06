@@ -1,6 +1,6 @@
 import { FC, useEffect } from "react";
 
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 // react-hook-form
 import { UseFormSetValue } from "react-hook-form";
@@ -25,8 +25,7 @@ type Props = {
 const githubIntegrationService = new GithubIntegrationService();
 
 export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const { data: repoInfo } = useSWR(
     workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name) : null,

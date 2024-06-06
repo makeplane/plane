@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
 

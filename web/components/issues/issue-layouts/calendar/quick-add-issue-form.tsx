@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // types
@@ -67,8 +67,8 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, viewId, onOpen } = props;
 
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
+  const pathname = usePathname();
   // store hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -156,14 +156,14 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

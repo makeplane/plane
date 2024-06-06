@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
 // types
@@ -37,8 +37,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getModuleById } = useModule();
   // derived values
@@ -64,7 +63,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks

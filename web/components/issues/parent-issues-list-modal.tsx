@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // headless ui
 import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -44,8 +44,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const handleClose = () => {
     onClose();

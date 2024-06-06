@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
@@ -15,8 +15,7 @@ import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/h
 
 export const ArchivedIssuesHeader: FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { currentProjectDetails } = useProject();
   const {

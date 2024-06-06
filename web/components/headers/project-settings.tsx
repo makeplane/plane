@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
@@ -14,7 +14,7 @@ import { useProject, useUser } from "@/hooks/store";
 export const ProjectSettingHeader: FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     membership: { currentProjectRole },

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
@@ -13,8 +13,9 @@ import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks
 
 export const PagesHeader = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, type: pageType } = router.query;
+  const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  const pageType = searchParams.get("type");
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
   const {

@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { IGithubRepoCollaborator } from "@plane/types";
 // services
@@ -36,8 +36,7 @@ const importOptions = [
 const workspaceService = new WorkspaceService();
 
 export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, setUsers }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,

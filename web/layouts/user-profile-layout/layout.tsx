@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // components
 import { ProfileNavbar, ProfileSidebar } from "@/components/profile";
 // constants
@@ -18,14 +18,14 @@ const AUTHORIZED_ROLES = [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER,
 export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   const { children, className, showProfileIssuesFilter } = props;
   // router
-  const router = useRouter();
+  const pathname = usePathname();
   // store hooks
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
   // derived values
   const isAuthorized = currentWorkspaceRole && AUTHORIZED_ROLES.includes(currentWorkspaceRole);
-  const isAuthorizedPath = router.pathname.includes("assigned" || "created" || "subscribed");
+  const isAuthorizedPath = pathname.includes("assigned" || "created" || "subscribed");
 
   return (
     <div className="h-full w-full flex md:overflow-hidden">
@@ -39,7 +39,7 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
           </div>
         )}
       </div>
-        <ProfileSidebar />
+      <ProfileSidebar />
     </div>
   );
 });

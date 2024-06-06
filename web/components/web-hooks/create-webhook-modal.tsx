@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
@@ -33,8 +33,7 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
   // states
   const [generatedWebhook, setGeneratedKey] = useState<IWebhook | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const handleCreateWebhook = async (formData: IWebhook, webhookEventType: TWebhookEventTypes) => {
     if (!workspaceSlug) return;

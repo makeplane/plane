@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // swr
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
@@ -16,8 +16,7 @@ const PER_PAGE = 30;
 const userNotificationServices = new NotificationService();
 
 const useUserNotification = (): any => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const [snoozed, setSnoozed] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);

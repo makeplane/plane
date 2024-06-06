@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
@@ -30,8 +30,7 @@ import {
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },

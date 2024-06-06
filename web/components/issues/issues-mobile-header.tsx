@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import router from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // types
@@ -24,7 +24,7 @@ export const IssuesMobileHeader = observer(() => {
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
   const [analyticsModal, setAnalyticsModal] = useState(false);
-  const { workspaceSlug, projectId } = router.query as {
+  const { workspaceSlug, projectId } = useParams() as {
     workspaceSlug: string;
     projectId: string;
   };

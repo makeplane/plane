@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // ui
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // components
@@ -12,8 +12,7 @@ import { useCommandPalette, useProject, useUser } from "@/hooks/store";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const {

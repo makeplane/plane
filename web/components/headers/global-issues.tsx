@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -21,8 +21,7 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId } = useParams();
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },

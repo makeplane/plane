@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // services
 // ui
 import { Button } from "@plane/ui";
@@ -13,8 +13,7 @@ export const DownloadActivityButton = () => {
   // states
   const [isDownloading, setIsDownloading] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
 
   const handleDownload = async () => {
     const today = renderFormattedPayloadDate(new Date());

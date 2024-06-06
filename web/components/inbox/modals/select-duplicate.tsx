@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -30,8 +30,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const [query, setQuery] = useState("");
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = useParams();
 
   // hooks
   const { getProjectStates } = useProjectState();

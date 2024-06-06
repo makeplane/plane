@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
 // helpers
@@ -26,8 +26,7 @@ export const ModuleViewHeader: FC = observer(() => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // router
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
 
   // hooks
   const { isMobile } = usePlatformOS();

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -59,8 +59,8 @@ const defaultValues: Partial<TIssue> = {
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
   const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
   // store hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -123,14 +123,14 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

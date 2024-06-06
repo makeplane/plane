@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
@@ -18,8 +18,7 @@ type TUserProfileHeader = {
 export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { type = undefined } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const {

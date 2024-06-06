@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
@@ -14,8 +14,7 @@ export const ProjectInboxHeader: FC = observer(() => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { currentProjectDetails } = useProject();
   const { loader } = useProjectInbox();

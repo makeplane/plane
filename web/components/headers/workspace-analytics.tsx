@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { BarChart2, PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
@@ -10,8 +10,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 
 export const WorkspaceAnalyticsHeader = observer(() => {
-  const router = useRouter();
-  const { analytics_tab } = router.query;
+  const searchParams = useSearchParams();
+  const analytics_tab = searchParams.get("analytics_tab");
   // store hooks
   const { workspaceAnalyticsSidebarCollapsed, toggleWorkspaceAnalyticsSidebar } = useAppTheme();
 

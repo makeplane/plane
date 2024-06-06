@@ -1,6 +1,6 @@
 import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
 // types
@@ -18,8 +18,7 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ArchivedModulesHeader: FC = observer(() => {
   // router
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // hooks

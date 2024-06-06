@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
@@ -38,8 +38,7 @@ interface ICalendarHeader {
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore, updateFilters } = props;
 
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
 
   const issueCalendarView = useCalendarView();
   const [windowWidth] = useSize();

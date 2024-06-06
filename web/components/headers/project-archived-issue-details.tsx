@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // hooks
 import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
@@ -20,8 +20,7 @@ const issueArchiveService = new IssueArchiveService();
 
 export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, archivedIssueId } = router.query;
+  const { workspaceSlug, projectId, archivedIssueId } = useParams();
   // store hooks
   const { currentProjectDetails } = useProject();
 

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import router from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // types
@@ -25,7 +25,7 @@ export const CycleMobileHeader = () => {
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
 
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   // store hooks
   const { currentProjectDetails } = useProject();

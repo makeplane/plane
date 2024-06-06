@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 // components
 import { Button, LayersIcon } from "@plane/ui";
@@ -19,8 +19,7 @@ export interface IProjectSettingLayout {
 export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
   const { children } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     membership: { currentProjectRole },

@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import size from "lodash/size";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
@@ -25,8 +25,7 @@ import { useCycle, useIssues } from "@/hooks/store";
 // types
 
 export const CycleLayoutRoot: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();

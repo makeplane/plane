@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { AlertTriangleIcon } from "lucide-react";
@@ -35,7 +35,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const { project, isOpen, onClose } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
   const {

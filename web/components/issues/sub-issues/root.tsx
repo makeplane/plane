@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // icons
 import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
 // types
@@ -16,6 +16,7 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
 // local components
+import useURLHash from "@/hooks/use-url-hash";
 import { IssueList } from "./issues-list";
 
 export interface ISubIssuesRoot {
@@ -46,7 +47,8 @@ export type TSubIssueOperations = {
 export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   const { workspaceSlug, projectId, parentIssueId, disabled = false } = props;
   // router
-  const router = useRouter();
+  const pathname = usePathname();
+  const hashValue = useURLHash();
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId, subIssueHelpersByIssueId, setSubIssueHelpers },
@@ -94,7 +96,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   });
 
   const scrollToSubIssuesView = useCallback(() => {
-    if (router.asPath.split("#")[1] === "sub-issues") {
+    if (hashValue === "sub-issues") {
       setTimeout(() => {
         const subIssueDiv = document.getElementById(`sub-issues`);
         if (subIssueDiv)
@@ -104,13 +106,13 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
       }, 200);
     }
-  }, [router.asPath]);
+  }, [hashValue]);
 
   useEffect(() => {
-    if (router.asPath) {
+    if (hashValue) {
       scrollToSubIssuesView();
     }
-  }, [router.asPath, scrollToSubIssuesView]);
+  }, [hashValue, scrollToSubIssuesView]);
 
   const handleIssueCrudState = (
     key: "create" | "existing" | "update" | "delete",
@@ -185,7 +187,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: Object.keys(issueData).join(","),
               change_details: Object.values(issueData).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -201,7 +203,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: Object.keys(issueData).join(","),
               change_details: Object.values(issueData).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -226,7 +228,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: "parent_id",
               change_details: parentIssueId,
             },
-            path: router.asPath,
+            path: pathname,
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
@@ -237,7 +239,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               changed_property: "parent_id",
               change_details: parentIssueId,
             },
-            path: router.asPath,
+            path: pathname,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -253,14 +255,14 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           captureIssueEvent({
             eventName: "Sub-issue deleted",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            path: router.asPath,
+            path: pathname,
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
           captureIssueEvent({
             eventName: "Sub-issue removed",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            path: router.asPath,
+            path: pathname,
           });
           setToast({
             type: TOAST_TYPE.ERROR,

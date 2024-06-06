@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // ui
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
 // components
@@ -13,7 +13,7 @@ import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();

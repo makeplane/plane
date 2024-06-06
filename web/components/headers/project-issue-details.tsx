@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // hooks
 import { PanelRight } from "lucide-react";
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
@@ -16,7 +16,7 @@ import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 export const ProjectIssueDetailsHeader: FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = useParams();
   // store hooks
   const { currentProjectDetails } = useProject();
   const { issueDetailSidebarCollapsed, toggleIssueDetailSidebar } = useAppTheme();

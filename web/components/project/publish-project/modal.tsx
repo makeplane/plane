@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Check, CircleDot, Globe2 } from "lucide-react";
@@ -65,8 +65,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   const SPACE_URL = (SPACE_BASE_URL === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
 
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     projectPublishSettings,

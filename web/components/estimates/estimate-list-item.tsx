@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 import { Pencil, Trash2 } from "lucide-react";
 import { IEstimate } from "@plane/types";
@@ -21,8 +21,7 @@ type Props = {
 export const EstimateListItem: React.FC<Props> = observer((props) => {
   const { estimate, editEstimate, deleteEstimate } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { currentProjectDetails, updateProject } = useProject();
 

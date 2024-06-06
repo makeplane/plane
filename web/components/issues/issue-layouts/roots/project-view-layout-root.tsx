@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
@@ -22,8 +22,7 @@ import { useIssues } from "@/hooks/store";
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = useParams();
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 

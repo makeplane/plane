@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -64,7 +64,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   const { currentProjectDetails } = useProject();
   const { captureIssueEvent } = useEventTracker();
   // router
-  const router = useRouter();
+  const pathname = usePathname();
   // form info
   const {
     reset,
@@ -183,14 +183,14 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch((err) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
-            path: router.asPath,
+            path: pathname,
           });
           console.error(err);
         });

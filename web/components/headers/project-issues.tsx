@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // icons
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // types
@@ -35,7 +35,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const {
     project: { projectMemberIds },

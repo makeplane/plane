@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { EditorRefApi } from "@plane/rich-text-editor";
@@ -112,8 +112,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;

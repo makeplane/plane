@@ -1,6 +1,6 @@
 import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
@@ -163,8 +163,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const cellRef = useRef(null);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();

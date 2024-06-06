@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -41,8 +41,7 @@ const defaultValues: FormValues = {
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, onSuccess } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
   const {

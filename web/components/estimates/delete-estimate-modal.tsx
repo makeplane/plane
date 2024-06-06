@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IEstimate } from "@plane/types";
 // ui
@@ -21,8 +21,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { deleteEstimate } = useEstimate();
 

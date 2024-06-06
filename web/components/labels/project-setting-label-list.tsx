@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueLabel } from "@plane/types";
 // hooks
 import { Button, Loader } from "@plane/ui";
@@ -26,8 +26,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // refs
   const scrollToRef = useRef<HTMLFormElement>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
 

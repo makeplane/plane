@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { ChevronDown } from "lucide-react";
 // types
@@ -18,8 +18,7 @@ import { useIssues, useLabel } from "@/hooks/store";
 
 const ProfileIssuesMobileHeader = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
   // store hook
   const {
     issuesFilter: { issueFilters, updateFilters },

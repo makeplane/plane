@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import {
   AlertCircle,
@@ -76,7 +76,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, peekModule } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const searchParams = useSearchParams();
+  const peekModule = searchParams.get("peekModule");
   // store hooks
   const {
     membership: { currentProjectRole },

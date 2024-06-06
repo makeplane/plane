@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
 // types
@@ -36,8 +36,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getCycleById } = useCycle();
   // derived values
@@ -61,7 +60,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query as {
+  const { workspaceSlug, projectId, cycleId } = useParams() as {
     workspaceSlug: string;
     projectId: string;
     cycleId: string;

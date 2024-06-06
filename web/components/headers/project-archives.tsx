@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useRouter } from "next/navigation";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
 // components
@@ -15,8 +15,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 export const ProjectArchivesHeader: FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-  const activeTab = router.pathname.split("/").pop();
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+  const activeTab = pathname.split("/").pop();
   // store hooks
   const {
     issuesFilter: { issueFilters },

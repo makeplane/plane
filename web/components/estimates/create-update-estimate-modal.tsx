@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { IEstimate, IEstimateFormData } from "@plane/types";
@@ -35,8 +35,7 @@ type FormValues = typeof defaultValues;
 export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   const { handleClose, data, isOpen } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { createEstimate, updateEstimate } = useEstimate();
   // form info

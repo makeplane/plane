@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // hooks
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
 import { useUser } from "@/hooks/store";
@@ -9,8 +9,8 @@ import { useUser } from "@/hooks/store";
 
 export const WorkspaceSettingsSidebar = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // mobx store
   const {
     membership: { currentWorkspaceRole },
@@ -30,7 +30,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
                   <span>
                     <div
                       className={`rounded-md px-4 py-2 text-sm font-medium ${
-                        link.highlight(router.asPath, `/${workspaceSlug}`)
+                        link.highlight(pathname, `/${workspaceSlug}`)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                       }`}

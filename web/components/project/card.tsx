@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
 // types
 import type { IProject } from "@plane/types";
@@ -45,7 +45,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const projectCardRef = useRef(null);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   // hooks

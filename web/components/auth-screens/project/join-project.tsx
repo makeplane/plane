@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 import { ClipboardList } from "lucide-react";
 import { Button } from "@plane/ui";
@@ -19,8 +19,7 @@ export const JoinProject: React.FC = () => {
   } = useUser();
   const { fetchProjects } = useProject();
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   const handleJoin = () => {
     if (!workspaceSlug || !projectId) return;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
@@ -20,8 +20,7 @@ export interface IPagesHeaderProps {
 
 export const PageDetailsHeader = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, pageId } = router.query;
+  const { workspaceSlug, pageId } = useParams();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks

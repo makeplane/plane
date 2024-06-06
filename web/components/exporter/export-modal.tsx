@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 import { IUser, IImporterService } from "@plane/types";
 // hooks
@@ -30,7 +30,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();
 

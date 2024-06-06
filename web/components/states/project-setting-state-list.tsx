@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // hooks
 import { Plus } from "lucide-react";
@@ -18,8 +18,7 @@ import { useEventTracker, useProjectState } from "@/hooks/store";
 
 export const ProjectSettingStateList: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store
   const { setTrackElement } = useEventTracker();
   const { groupedProjectStates, projectStates, fetchProjectStates } = useProjectState();

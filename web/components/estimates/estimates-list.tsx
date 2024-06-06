@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IEstimate } from "@plane/types";
 // store hooks
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
@@ -21,8 +21,7 @@ export const EstimatesList: React.FC = observer(() => {
   const [estimateToDelete, setEstimateToDelete] = useState<string | null>(null);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();

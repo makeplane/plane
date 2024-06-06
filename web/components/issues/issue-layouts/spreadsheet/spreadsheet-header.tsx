@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
@@ -33,8 +33,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
     selectionHelpers,
   } = props;
   // router
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
   // auth

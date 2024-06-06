@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
@@ -30,8 +30,7 @@ const defaultValues: Partial<IState> = {
 export const CreateLabelModal: React.FC<Props> = observer((props) => {
   const { isOpen, projectId, handleClose, onSuccess } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { createLabel } = useLabel();
   // form info
