@@ -10,7 +10,7 @@ export const PlaneOneBilling: React.FC = () => (
     <div>
       <div className="flex  items-center border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium flex gap-4">
-          Billing & Plans{" "}
+          Billing and plans{" "}
           <a
             href="https://plane.so/pricing"
             className="px-4 py-1 text-center text-xs font-medium rounded-full bg-custom-primary-100/20 text-custom-primary-100 flex items-center justify-center"
@@ -41,8 +41,7 @@ export const PlaneOneBilling: React.FC = () => (
             </Button>
           </div>
         </div>
-        <p className="mt-4 text-lg">1x - Perpetual license</p>
-        <p className="mb-3 mt-2 text-md text-custom-text-200 flex items-center">Current Billing Cycle: None</p>
+        <p className="mt-4 text-lg">Perpetual license: 1</p>
       </div>
     </div>
   </section>
