@@ -2,7 +2,6 @@ export * from "./root";
 
 export * from "./empty-screen";
 export * from "./loader-screen";
-export * from "./ee-banner";
 export * from "./radio-select";
 
 export * from "./estimate-search";

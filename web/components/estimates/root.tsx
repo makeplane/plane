@@ -10,7 +10,6 @@ import {
   UpdateEstimateModal,
   DeleteEstimateModal,
   EstimateList,
-  EstimateEEBanner,
 } from "@/components/estimates";
 // hooks
 import { useProject, useProjectEstimates } from "@/hooks/store";
@@ -92,8 +91,6 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
           )}
         </div>
       )}
-
-      <EstimateEEBanner />
 
       {/* CRUD modals */}
       <CreateEstimateModal
