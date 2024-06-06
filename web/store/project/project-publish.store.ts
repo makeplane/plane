@@ -81,7 +81,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.fetchSettingsLoader = true;
       });
-      const response = await this.projectPublishService.getProjectSettingsAsync(workspaceSlug, projectID);
+      const response = await this.projectPublishService.fetchPublishSettings(workspaceSlug, projectID);
 
       runInAction(() => {
         set(this.publishSettingsMap, [projectID], response);
@@ -108,7 +108,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.generalLoader = true;
       });
-      const response = await this.projectPublishService.createProjectSettingsAsync(workspaceSlug, projectID, data);
+      const response = await this.projectPublishService.publishProject(workspaceSlug, projectID, data);
       runInAction(() => {
         set(this.publishSettingsMap, [projectID], response);
         set(this.projectRootStore.project.projectMap, [projectID, "is_deployed"], true);
@@ -141,7 +141,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.generalLoader = true;
       });
-      const response = await this.projectPublishService.updateProjectSettingsAsync(
+      const response = await this.projectPublishService.updatePublishSettings(
         workspaceSlug,
         projectID,
         projectPublishId,
@@ -172,11 +172,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.generalLoader = true;
       });
-      const response = await this.projectPublishService.deleteProjectSettingsAsync(
-        workspaceSlug,
-        projectID,
-        projectPublishId
-      );
+      const response = await this.projectPublishService.unpublishProject(workspaceSlug, projectID, projectPublishId);
       runInAction(() => {
         unset(this.publishSettingsMap, [projectID]);
         set(this.projectRootStore.project.projectMap, [projectID, "is_deployed"], false);

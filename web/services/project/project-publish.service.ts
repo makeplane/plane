@@ -10,7 +10,7 @@ export class ProjectPublishService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getProjectSettingsAsync(workspaceSlug: string, projectID: string): Promise<TPublishSettings> {
+  async fetchPublishSettings(workspaceSlug: string, projectID: string): Promise<TPublishSettings> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,7 +18,7 @@ export class ProjectPublishService extends APIService {
       });
   }
 
-  async createProjectSettingsAsync(
+  async publishProject(
     workspaceSlug: string,
     projectID: string,
     data: Partial<TPublishSettings>
@@ -30,7 +30,7 @@ export class ProjectPublishService extends APIService {
       });
   }
 
-  async updateProjectSettingsAsync(
+  async updatePublishSettings(
     workspaceSlug: string,
     projectID: string,
     project_publish_id: string,
@@ -46,7 +46,7 @@ export class ProjectPublishService extends APIService {
       });
   }
 
-  async deleteProjectSettingsAsync(workspaceSlug: string, projectID: string, project_publish_id: string): Promise<any> {
+  async unpublishProject(workspaceSlug: string, projectID: string, project_publish_id: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`
     )
