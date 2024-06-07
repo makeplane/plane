@@ -18,7 +18,7 @@ export interface IPagesHeaderProps {
   showButton?: boolean;
 }
 
-export const PageDetailsHeader = observer(() => {
+const PageDetailsHeader = observer(() => {
   // router
   const { workspaceSlug, pageId } = useParams();
   // state
@@ -166,3 +166,5 @@ export const PageDetailsHeader = observer(() => {
     </div>
   );
 });
+
+export default PageDetailsHeader;

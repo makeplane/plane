@@ -11,7 +11,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
-export const PagesHeader = observer(() => {
+const PagesHeader = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
@@ -75,3 +75,5 @@ export const PagesHeader = observer(() => {
     </div>
   );
 });
+
+export default PagesHeader;
