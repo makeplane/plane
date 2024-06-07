@@ -72,7 +72,7 @@ const getPrevListDepth = (typeOrName: string, state: EditorState) => {
   // Traverse up the document structure from the adjusted position
   for (let d = resolvedPos.depth; d > 0; d--) {
     const node = resolvedPos.node(d);
-    if (node.type.name === "bulletList" || node.type.name === "orderedList") {
+    if (node.type.name === "bulletList" || node.type.name === "orderedList" || node.type.name === "taskList") {
       // Increment depth for each list ancestor found
       depth++;
     }
@@ -146,6 +146,8 @@ export const handleBackspace = (editor: Editor, name: string, parentListTypes: s
   if (!isAtStartOfNode(editor.state)) {
     return false;
   }
+
+  // is the paragraph node inside of the current list item (maybe with a hard break)
   const isParaSibling = isCurrentParagraphASibling(editor.state);
   const isCurrentListItemSublist = prevListIsHigher(name, editor.state);
   const listItemPos = findListItemPos(name, editor.state);
@@ -306,7 +308,10 @@ const isCurrentParagraphASibling = (state: EditorState): boolean => {
   const currentParagraphNode = $from.parent; // Get the current node where the selection is.
 
   // Ensure we're in a paragraph and the parent is a list item.
-  if (currentParagraphNode.type.name === "paragraph" && listItemNode.type.name === "listItem") {
+  if (
+    currentParagraphNode.type.name === "paragraph" &&
+    (listItemNode.type.name === "listItem" || listItemNode.type.name === "taskItem")
+  ) {
     let paragraphNodesCount = 0;
     listItemNode.forEach((child) => {
       if (child.type.name === "paragraph") {
@@ -327,16 +332,19 @@ export function isCursorInSubList(editor: Editor) {
 
   // Check if the current node is a list item
   const listItem = editor.schema.nodes.listItem;
+  const taskItem = editor.schema.nodes.taskItem;
 
   // Traverse up the document tree from the current position
   for (let depth = $from.depth; depth > 0; depth--) {
     const node = $from.node(depth);
-    if (node.type === listItem) {
+    if (node.type === listItem || node.type === taskItem) {
       // If the parent of the list item is also a list, it's a sub-list
       const parent = $from.node(depth - 1);
       if (
         parent &&
-        (parent.type === editor.schema.nodes.bulletList || parent.type === editor.schema.nodes.orderedList)
+        (parent.type === editor.schema.nodes.bulletList ||
+          parent.type === editor.schema.nodes.orderedList ||
+          parent.type === editor.schema.nodes.taskList)
       ) {
         return true;
       }

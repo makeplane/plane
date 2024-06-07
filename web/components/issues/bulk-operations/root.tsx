@@ -11,11 +11,11 @@ type Props = {
 };
 
 export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
-  const { className } = props;
+  const { className, selectionHelpers } = props;
   // store hooks
   const { isSelectionActive } = useMultipleSelectStore();
 
-  if (!isSelectionActive) return null;
+  if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;
 
   return <BulkOperationsUpgradeBanner className={className} />;
 });

@@ -124,7 +124,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
               </span>
             </Link>
           )}
-          <div className="w-full truncate flex items-center justify-between">
+          <div className="w-full flex items-center justify-between">
             <div className="truncate">
               <Link href={`/${workspaceSlug}/profile/${memberDetails.member.id}`} className="truncate">
                 <div className="w-full truncate">
