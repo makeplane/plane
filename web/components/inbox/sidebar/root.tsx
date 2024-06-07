@@ -44,7 +44,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     currentTab,
     handleCurrentTab,
     loader,
-    inboxIssueIds,
+    filteredInboxIssueIds,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
     getAppliedFiltersCount,
@@ -106,13 +106,13 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
             ref={containerRef}
           >
-            {inboxIssueIds.length > 0 ? (
+              {filteredInboxIssueIds.length > 0 ? (
               <InboxIssueList
                 setIsMobileSidebar={setIsMobileSidebar}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssueIds={inboxIssueIds}
+                  inboxIssueIds={filteredInboxIssueIds}
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full">
