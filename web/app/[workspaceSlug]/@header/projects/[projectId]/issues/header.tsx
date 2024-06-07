@@ -30,7 +30,7 @@ import {
 import { useIssues } from "@/hooks/store/use-issues";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const ProjectIssuesHeader: React.FC = observer(() => {
+const ProjectIssuesHeader: React.FC = observer(() => {
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
@@ -232,3 +232,5 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     </>
   );
 });
+
+export default ProjectIssuesHeader;

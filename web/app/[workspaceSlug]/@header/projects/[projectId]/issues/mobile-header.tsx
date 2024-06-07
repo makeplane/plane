@@ -17,7 +17,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
-export const IssuesMobileHeader = observer(() => {
+const ProjectIssuesMobileHeader = observer(() => {
   const layouts = [
     { key: "list", title: "List", icon: List },
     { key: "kanban", title: "Kanban", icon: Kanban },
@@ -178,3 +178,5 @@ export const IssuesMobileHeader = observer(() => {
     </>
   );
 });
+
+export default ProjectIssuesMobileHeader;
