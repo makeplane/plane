@@ -16,7 +16,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
 
-export const CycleMobileHeader = () => {
+const CycleIssuesMobileHeader = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { getCycleById } = useCycle();
   const layouts = [
@@ -202,3 +202,5 @@ export const CycleMobileHeader = () => {
     </>
   );
 };
+
+export default CycleIssuesMobileHeader;

@@ -11,7 +11,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
-export const CyclesHeader: FC = observer(() => {
+const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = useParams();
@@ -72,3 +72,5 @@ export const CyclesHeader: FC = observer(() => {
     </div>
   );
 });
+
+export default CyclesHeader;
