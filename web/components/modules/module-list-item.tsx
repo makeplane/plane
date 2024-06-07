@@ -8,8 +8,10 @@ import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction } from "@/components/modules";
+// constants
+import { EEstimateSystem } from "@/constants/estimates";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useAppRouter, useModule, useProjectEstimates } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -26,14 +28,28 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
+  const { projectId } = useAppRouter();
+  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
 
   if (!moduleDetails) return null;
 
-  const completionPercentage =
-    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
+  /**
+   * NOTE: This completion percentage calculation is based on the total issues count.
+   * when estimates are available and estimate type is points, we should consider the estimate point count
+   * when estimates are available and estimate type is not points, then by default we consider the issue count
+   */
+  const isEstimateEnabled =
+    projectId &&
+    currentActiveEstimateId &&
+    areEstimateEnabledByProjectId(projectId) &&
+    estimateById(currentActiveEstimateId)?.type === EEstimateSystem.POINTS;
+
+  const completionPercentage = isEstimateEnabled
+    ? ((moduleDetails?.completed_estimate_points || 0) / (moduleDetails?.total_estimate_points || 0)) * 100
+    : ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
 
   const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
 

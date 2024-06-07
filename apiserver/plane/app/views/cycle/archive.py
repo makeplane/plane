@@ -177,6 +177,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, project_id, pk=None):
+        plot_type = request.GET.get("plot_type", "issues")
         if pk is None:
             queryset = (
                 self.get_queryset()
@@ -375,6 +376,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     queryset=queryset,
                     slug=slug,
                     project_id=project_id,
+                    plot_type=plot_type,
                     cycle_id=pk,
                 )
 

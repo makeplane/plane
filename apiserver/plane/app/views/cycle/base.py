@@ -17,8 +17,11 @@ from django.db.models import (
     UUIDField,
     Value,
     When,
+    Subquery,
+    Sum,
+    IntegerField,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Cast
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -72,6 +75,89 @@ class CycleViewSet(BaseViewSet):
             entity_type="cycle",
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
+        )
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                backlog_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("backlog_estimate_point")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                unstarted_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("unstarted_estimate_point")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                started_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("started_estimate_point")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                cancelled_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("cancelled_estimate_point")[:1]
+        )
+        completed_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="completed",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                completed_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("completed_estimate_points")[:1]
+        )
+        total_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                total_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("total_estimate_points")[:1]
         )
         return self.filter_queryset(
             super()
@@ -197,12 +283,49 @@ class CycleViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
+            .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                completed_estimate_points=Coalesce(
+                    Subquery(completed_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                total_estimate_points=Coalesce(
+                    Subquery(total_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
+        plot_type = request.GET.get("plot_type", "issues")
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Update the order by
@@ -233,6 +356,12 @@ class CycleViewSet(BaseViewSet):
                 "progress_snapshot",
                 "logo_props",
                 # meta fields
+                "backlog_estimate_points",
+                "unstarted_estimate_points",
+                "started_estimate_points",
+                "cancelled_estimate_points",
+                "completed_estimate_points",
+                "total_estimate_points",
                 "is_favorite",
                 "total_issues",
                 "cancelled_issues",
@@ -335,6 +464,7 @@ class CycleViewSet(BaseViewSet):
                             queryset=queryset.first(),
                             slug=slug,
                             project_id=project_id,
+                            plot_type=plot_type,
                             cycle_id=data[0]["id"],
                         )
                     )
@@ -359,6 +489,8 @@ class CycleViewSet(BaseViewSet):
             "progress_snapshot",
             "logo_props",
             # meta fields
+            "completed_estimate_points",
+            "total_estimate_points",
             "is_favorite",
             "total_issues",
             "cancelled_issues",
@@ -527,6 +659,7 @@ class CycleViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk):
+        plot_type = request.GET.get("plot_type", "issues")
         queryset = (
             self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
         )
@@ -682,6 +815,7 @@ class CycleViewSet(BaseViewSet):
                 queryset=queryset,
                 slug=slug,
                 project_id=project_id,
+                plot_type=plot_type,
                 cycle_id=pk,
             )
 
@@ -798,6 +932,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
+        plot_type = request.GET.get("plot_type", "issues")
 
         if not new_cycle_id:
             return Response(
@@ -879,6 +1014,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             queryset=old_cycle.first(),
             slug=slug,
             project_id=project_id,
+            plot_type=plot_type,
             cycle_id=cycle_id,
         )
 

@@ -177,6 +177,8 @@ class ModuleSerializer(DynamicBaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
+    total_estimate_points = serializers.IntegerField(read_only=True)
+    completed_estimate_points = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Module
@@ -201,6 +203,8 @@ class ModuleSerializer(DynamicBaseSerializer):
             "external_id",
             "logo_props",
             # computed fields
+            "total_estimate_points",
+            "completed_estimate_points",
             "is_favorite",
             "total_issues",
             "cancelled_issues",
