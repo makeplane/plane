@@ -10,7 +10,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useProject, useUser } from "@/hooks/store";
 
-export const ProjectViewsHeader: React.FC = observer(() => {
+const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -68,3 +68,5 @@ export const ProjectViewsHeader: React.FC = observer(() => {
     </>
   );
 });
+
+export default ProjectViewsHeader;

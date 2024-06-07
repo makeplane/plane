@@ -28,7 +28,7 @@ import {
   useUser,
 } from "@/hooks/store";
 
-export const ProjectViewIssuesHeader: React.FC = observer(() => {
+const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
@@ -255,3 +255,5 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     </div>
   );
 });
+
+export default ProjectViewIssuesHeader;
