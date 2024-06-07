@@ -1,22 +1,25 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// hooks
-// components
-import { Button, LayersIcon } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
 // ui
+import { Button, LayersIcon } from "@plane/ui";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useUser } from "@/hooks/store";
-import { ProjectSettingsSidebar } from "./sidebar";
+// local components
+import ProjectSettingsSidebar from "./sidebar";
 
 export interface IProjectSettingLayout {
   children: ReactNode;
 }
 
-export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
+const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
   const { children } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -50,3 +53,5 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
     </div>
   );
 });
+
+export default ProjectSettingLayout;

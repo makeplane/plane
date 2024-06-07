@@ -11,7 +11,7 @@ import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
 
-export const ProjectSettingHeader: FC = observer(() => {
+const ProjectSettingHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = useParams();
@@ -80,3 +80,5 @@ export const ProjectSettingHeader: FC = observer(() => {
     </div>
   );
 });
+
+export default ProjectSettingHeader;
