@@ -25,7 +25,7 @@ from django.db.models.functions import (
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import Issue, Estimate
+from plane.db.models import Issue, Project
 
 
 def annotate_with_monthly_dimension(queryset, field_name, attribute):
@@ -131,8 +131,11 @@ def burndown_plot(
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
     # check whether the estimate is a point or not
-    estimate_type = Estimate.objects.filter(
-        workspace__slug=slug, project_id=project_id, type="points"
+    estimate_type = Project.objects.filter(
+        workspace__slug=slug,
+        pk=project_id,
+        estimate__isnull=False,
+        estimate__type="points",
     ).exists()
     if estimate_type and plot_type == "points":
         issue_estimates = Issue.objects.filter(
@@ -159,20 +162,7 @@ def burndown_plot(
 
         chart_data = {str(date): 0 for date in date_range}
 
-        if plot_type == "issues":
-            completed_issues_distribution = (
-                Issue.issue_objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    issue_cycle__cycle_id=cycle_id,
-                )
-                .annotate(date=TruncDate("completed_at"))
-                .values("date")
-                .annotate(total_completed=Count("id"))
-                .values("date", "total_completed")
-                .order_by("date")
-            )
-        else:
+        if plot_type == "points":
             completed_issues_estimate_point_distribution = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
@@ -183,6 +173,19 @@ def burndown_plot(
                 .annotate(date=TruncDate("completed_at"))
                 .values("date")
                 .values("date", "estimate_point__value")
+                .order_by("date")
+            )
+        else:
+            completed_issues_distribution = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_cycle__cycle_id=cycle_id,
+                )
+                .annotate(date=TruncDate("completed_at"))
+                .values("date")
+                .annotate(total_completed=Count("id"))
+                .values("date", "total_completed")
                 .order_by("date")
             )
 
@@ -197,20 +200,7 @@ def burndown_plot(
 
         chart_data = {str(date): 0 for date in date_range}
 
-        if plot_type == "issues":
-            completed_issues_distribution = (
-                Issue.issue_objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    issue_module__module_id=module_id,
-                )
-                .annotate(date=TruncDate("completed_at"))
-                .values("date")
-                .annotate(total_completed=Count("id"))
-                .values("date", "total_completed")
-                .order_by("date")
-            )
-        else:
+        if plot_type == "points":
             completed_issues_estimate_point_distribution = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
@@ -223,14 +213,27 @@ def burndown_plot(
                 .values("date", "estimate_point__value")
                 .order_by("date")
             )
+        else:
+            completed_issues_distribution = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_module__module_id=module_id,
+                )
+                .annotate(date=TruncDate("completed_at"))
+                .values("date")
+                .annotate(total_completed=Count("id"))
+                .values("date", "total_completed")
+                .order_by("date")
+            )
 
     for date in date_range:
-        if plot_type == "issues":
-            cumulative_pending_issues = total_issues
+        if plot_type == "points":
+            cumulative_pending_issues = total_estimate_points
             total_completed = 0
-            total_completed = sum(
-                item["total_completed"]
-                for item in completed_issues_distribution
+            total_completed = Sum(
+                Cast(item["estimate_point__value"], IntegerField())
+                for item in completed_issues_estimate_point_distribution
                 if item["date"] is not None and item["date"] <= date
             )
             cumulative_pending_issues -= total_completed
@@ -239,11 +242,11 @@ def burndown_plot(
             else:
                 chart_data[str(date)] = cumulative_pending_issues
         else:
-            cumulative_pending_issues = total_estimate_points
+            cumulative_pending_issues = total_issues
             total_completed = 0
             total_completed = sum(
-                int(item["estimate_point__value"])
-                for item in completed_issues_estimate_point_distribution
+                item["total_completed"]
+                for item in completed_issues_distribution
                 if item["date"] is not None and item["date"] <= date
             )
             cumulative_pending_issues -= total_completed
