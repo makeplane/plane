@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { FC } from "react";
 import { observer } from "mobx-react";
@@ -15,7 +17,7 @@ type TUserProfileHeader = {
   type?: string | undefined;
 };
 
-export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
+const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { type = undefined } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -88,3 +90,5 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
     </div>
   );
 });
+
+export default UserProfileHeader;

@@ -50,7 +50,7 @@ export const PROFILE_VIEWER_TAB = [
   {
     route: "",
     label: "Summary",
-    selected: "/[workspaceSlug]/profile/[userId]",
+    selected: "",
   },
 ];
 
@@ -58,21 +58,21 @@ export const PROFILE_ADMINS_TAB = [
   {
     route: "assigned",
     label: "Assigned",
-    selected: "/[workspaceSlug]/profile/[userId]/assigned",
+    selected: "/assigned",
   },
   {
     route: "created",
     label: "Created",
-    selected: "/[workspaceSlug]/profile/[userId]/created",
+    selected: "/created",
   },
   {
     route: "subscribed",
     label: "Subscribed",
-    selected: "/[workspaceSlug]/profile/[userId]/subscribed",
+    selected: "/subscribed",
   },
   {
     route: "activity",
     label: "Activity",
-    selected: "/[workspaceSlug]/profile/[userId]/activity",
+    selected: "/activity",
   },
 ];

@@ -1,7 +1,9 @@
 "use client";
 
-import { WorkspaceActiveCycleHeader } from "@/components/headers";
+// components
+import AppHeaderWrapper from "../../app-header-wrapper";
+import WorkspaceActiveCycleHeader from "./header";
 
-const ActiveCyclesHeader = () => <WorkspaceActiveCycleHeader />
+const WorkspaceActiveCycleHeaderPage = () => <AppHeaderWrapper header={<WorkspaceActiveCycleHeader />} />;
 
-export default ActiveCyclesHeader;
+export default WorkspaceActiveCycleHeaderPage;
