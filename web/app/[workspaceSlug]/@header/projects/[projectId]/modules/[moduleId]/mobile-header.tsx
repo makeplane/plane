@@ -17,7 +17,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 
-export const ModuleMobileHeader = observer(() => {
+const ModuleIssuesMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { currentProjectDetails } = useProject();
   const { getModuleById } = useModule();
@@ -183,3 +183,5 @@ export const ModuleMobileHeader = observer(() => {
     </div>
   );
 });
+
+export default ModuleIssuesMobileHeader;

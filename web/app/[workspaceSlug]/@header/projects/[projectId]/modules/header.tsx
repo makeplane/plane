@@ -10,7 +10,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
-export const ModulesListHeader: React.FC = observer(() => {
+const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = useParams();
@@ -72,3 +72,5 @@ export const ModulesListHeader: React.FC = observer(() => {
     </div>
   );
 });
+
+export default ModulesListHeader;
