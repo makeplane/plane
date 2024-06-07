@@ -1,7 +1,6 @@
 import { uniq, update } from "lodash";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
-import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -42,11 +41,11 @@ export interface IProjectInboxStore {
   inboxIssueIds: string[];
   // computed
   getAppliedFiltersCount: number;
+  filteredInboxIssueIds: string[];
   // computed functions
   getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore;
   getIsIssueAvailable: (inboxIssueId: string) => boolean;
   // helper actions
-  inboxIssueSorting: (issues: IInboxIssueStore[]) => IInboxIssueStore[];
   inboxIssueQueryParams: (
     inboxFilters: Partial<TInboxIssueFilter>,
     inboxSorting: Partial<TInboxIssueSorting>,
@@ -103,6 +102,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxIssueIds: observable,
       // computed
       getAppliedFiltersCount: computed,
+      filteredInboxIssueIds: computed,
       // actions
       handleInboxIssueFilters: action,
       handleInboxIssueSorting: action,
@@ -127,34 +127,22 @@ export class ProjectInboxStore implements IProjectInboxStore {
     return count;
   }
 
+  get filteredInboxIssueIds() {
+    let appliedFilters =
+      this.currentTab === EInboxIssueCurrentTab.OPEN
+        ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
+        : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE];
+    appliedFilters = appliedFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
+
+    return this.inboxIssueIds.filter((id) => appliedFilters.includes(this.inboxIssues[id].status));
+  }
+
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId]);
 
   getIsIssueAvailable = computedFn((inboxIssueId: string) => {
     if (!this.inboxIssueIds) return true;
     return this.inboxIssueIds.includes(inboxIssueId);
   });
-
-  // helpers
-  inboxIssueSorting = (issues: IInboxIssueStore[]) => {
-    let inboxIssues: IInboxIssueStore[] = issues;
-    inboxIssues = orderBy(inboxIssues, "issue.sequence_id", "desc");
-    if (this.inboxSorting?.order_by && this.inboxSorting?.sort_by) {
-      switch (this.inboxSorting.order_by) {
-        case "issue__created_at":
-          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(inboxIssues, "issue.created_at", "desc");
-          else inboxIssues = orderBy(inboxIssues, "issue.created_at", "asc");
-        case "issue__updated_at":
-          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(inboxIssues, "issue.updated_at", "desc");
-          else inboxIssues = orderBy(inboxIssues, "issue.updated_at", "asc");
-        case "issue__sequence_id":
-          if (this.inboxSorting.sort_by === "desc") inboxIssues = orderBy(inboxIssues, "issue.sequence_id", "desc");
-          else inboxIssues = orderBy(inboxIssues, "issue.sequence_id", "asc");
-        default:
-          inboxIssues = inboxIssues;
-      }
-    }
-    return inboxIssues;
-  };
 
   inboxIssueQueryParams = (
     inboxFilters: Partial<TInboxIssueFilter>,

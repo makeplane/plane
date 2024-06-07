@@ -10,6 +10,7 @@ export type TEntityDetails = {
 
 type Props = {
   containerRef: React.MutableRefObject<HTMLElement | null>;
+  disabled: boolean;
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };
 
@@ -25,10 +26,11 @@ export type TSelectionHelper = {
   getIsEntityActive: (entityID: string) => boolean;
   handleGroupClick: (groupID: string) => void;
   isGroupSelected: (groupID: string) => "empty" | "partial" | "complete";
+  isSelectionDisabled: boolean;
 };
 
 export const useMultipleSelect = (props: Props) => {
-  const { containerRef, entities } = props;
+  const { containerRef, disabled, entities } = props;
   // router
   const router = useRouter();
   // store hooks
@@ -97,6 +99,8 @@ export const useMultipleSelect = (props: Props) => {
 
   const handleActiveEntityChange = useCallback(
     (entityDetails: TEntityDetails | null, shouldScroll: boolean = true) => {
+      if (disabled) return;
+
       if (!entityDetails) {
         updateActiveEntityDetails(null);
         updatePreviousActiveEntity(null);
@@ -134,6 +138,7 @@ export const useMultipleSelect = (props: Props) => {
     },
     [
       containerRef,
+      disabled,
       getPreviousAndNextEntities,
       updateActiveEntityDetails,
       updateNextActiveEntity,
@@ -147,6 +152,8 @@ export const useMultipleSelect = (props: Props) => {
       shouldScroll: boolean = true,
       forceAction: "force-add" | "force-remove" | null = null
     ) => {
+      if (disabled) return;
+
       if (Array.isArray(entityDetails)) {
         bulkUpdateSelectedEntityDetails(entityDetails, forceAction === "force-add" ? "add" : "remove");
         if (forceAction === "force-add" && entityDetails.length > 0) {
@@ -176,7 +183,13 @@ export const useMultipleSelect = (props: Props) => {
         handleActiveEntityChange(entityDetails, shouldScroll);
       }
     },
-    [bulkUpdateSelectedEntityDetails, getIsEntitySelected, handleActiveEntityChange, updateSelectedEntityDetails]
+    [
+      bulkUpdateSelectedEntityDetails,
+      disabled,
+      getIsEntitySelected,
+      handleActiveEntityChange,
+      updateSelectedEntityDetails,
+    ]
   );
 
   /**
@@ -187,6 +200,7 @@ export const useMultipleSelect = (props: Props) => {
    */
   const handleEntityClick = useCallback(
     (e: React.MouseEvent, entityID: string, groupID: string) => {
+      if (disabled) return;
       const lastSelectedEntityDetails = getLastSelectedEntityDetails();
       if (e.shiftKey && lastSelectedEntityDetails) {
         const currentEntityIndex = entitiesList.findIndex((entity) => entity?.entityID === entityID);
@@ -223,7 +237,7 @@ export const useMultipleSelect = (props: Props) => {
 
       handleEntitySelection({ entityID, groupID }, false);
     },
-    [entitiesList, handleEntitySelection, getLastSelectedEntityDetails]
+    [disabled, entitiesList, handleEntitySelection, getLastSelectedEntityDetails]
   );
 
   /**
@@ -248,15 +262,19 @@ export const useMultipleSelect = (props: Props) => {
    */
   const handleGroupClick = useCallback(
     (groupID: string) => {
+      if (disabled) return;
+
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
       const groupSelectionStatus = isGroupSelected(groupID);
       handleEntitySelection(groupEntities, false, groupSelectionStatus === "empty" ? "force-add" : "force-remove");
     },
-    [entitiesList, handleEntitySelection, isGroupSelected]
+    [disabled, entitiesList, handleEntitySelection, isGroupSelected]
   );
 
   // clear selection on escape key press
   useEffect(() => {
+    if (disabled) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") clearSelection();
     };
@@ -265,10 +283,12 @@ export const useMultipleSelect = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [clearSelection]);
+  }, [clearSelection, disabled]);
 
   // select entities on shift + arrow up/down key press
   useEffect(() => {
+    if (disabled) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
 
@@ -291,6 +311,7 @@ export const useMultipleSelect = (props: Props) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [
+    disabled,
     getActiveEntityDetails,
     handleEntitySelection,
     getLastSelectedEntityDetails,
@@ -299,6 +320,8 @@ export const useMultipleSelect = (props: Props) => {
   ]);
 
   useEffect(() => {
+    if (disabled) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey) return;
       const activeEntityDetails = getActiveEntityDetails();
@@ -331,7 +354,7 @@ export const useMultipleSelect = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [getActiveEntityDetails, entitiesList, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
+  }, [disabled, getActiveEntityDetails, entitiesList, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
 
   // clear selection on route change
   useEffect(() => {
@@ -346,6 +369,7 @@ export const useMultipleSelect = (props: Props) => {
 
   // when entities list change, remove entityIds from the selected entities array, which are not present in the new list
   useEffect(() => {
+    if (disabled) return;
     selectedEntityIds.map((entityID) => {
       const isEntityPresent = entitiesList.find((en) => en.entityID === entityID);
       if (!isEntityPresent) {
@@ -355,7 +379,7 @@ export const useMultipleSelect = (props: Props) => {
         }
       }
     });
-  }, [entitiesList, getEntityDetailsFromEntityID, handleEntitySelection, selectedEntityIds]);
+  }, [disabled, entitiesList, getEntityDetailsFromEntityID, handleEntitySelection, selectedEntityIds]);
 
   /**
    * @description helper functions for selection
@@ -368,8 +392,17 @@ export const useMultipleSelect = (props: Props) => {
       getIsEntityActive,
       handleGroupClick,
       isGroupSelected,
+      isSelectionDisabled: disabled,
     }),
-    [clearSelection, getIsEntityActive, getIsEntitySelected, handleEntityClick, handleGroupClick, isGroupSelected]
+    [
+      clearSelection,
+      disabled,
+      getIsEntityActive,
+      getIsEntitySelected,
+      handleEntityClick,
+      handleGroupClick,
+      isGroupSelected,
+    ]
   );
 
   return helpers;

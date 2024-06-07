@@ -69,7 +69,6 @@ const Command = Extension.create<SlashCommandOptions>({
 
           return true;
         },
-        allowSpaces: true,
       },
     };
   },
