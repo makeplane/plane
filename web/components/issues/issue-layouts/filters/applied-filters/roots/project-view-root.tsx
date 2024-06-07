@@ -1,5 +1,4 @@
 import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
@@ -8,6 +7,7 @@ import { Button } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useIssues, useLabel, useProjectState, useProjectView } from "@/hooks/store";
+import { getAreFiltersEqual } from "../../../utils";
 // components
 // ui
 // types
@@ -78,7 +78,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     );
   };
 
-  const areFiltersEqual = isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {});
+  const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
 
   // return if no filters are applied
   if (isEmpty(appliedFilters) && areFiltersEqual) return null;
@@ -89,6 +89,12 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
       filters: {
         ...(appliedFilters ?? {}),
+      },
+      display_filters: {
+        ...issueFilters?.displayFilters,
+      },
+      display_properties: {
+        ...issueFilters?.displayProperties,
       },
     });
   };
