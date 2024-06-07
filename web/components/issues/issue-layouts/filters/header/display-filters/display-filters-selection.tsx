@@ -7,7 +7,6 @@ import {
   FilterDisplayProperties,
   FilterExtraOptions,
   FilterGroupBy,
-  FilterIssueType,
   FilterOrderBy,
   FilterSubGroupBy,
 } from "@/components/issues";
@@ -107,20 +106,6 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
               })
             }
             orderByOptions={layoutDisplayFiltersOptions?.display_filters.order_by ?? []}
-          />
-        </div>
-      )}
-
-      {/* issue type */}
-      {isDisplayFilterEnabled("type") && (
-        <div className="py-2">
-          <FilterIssueType
-            selectedIssueType={displayFilters?.type}
-            handleUpdate={(val) =>
-              handleDisplayFiltersUpdate({
-                type: val,
-              })
-            }
           />
         </div>
       )}

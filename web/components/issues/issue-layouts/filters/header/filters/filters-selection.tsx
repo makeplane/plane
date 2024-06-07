@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
-import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // hooks
 import {
   FilterAssignees,
@@ -16,6 +16,7 @@ import {
   FilterTargetDate,
   FilterCycle,
   FilterModule,
+  FilterIssueType,
 } from "@/components/issues";
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 import { useAppRouter } from "@/hooks/store";
@@ -25,6 +26,8 @@ import { useAppRouter } from "@/hooks/store";
 
 type Props = {
   filters: IIssueFilterOptions;
+  displayFilters?: IIssueDisplayFilterOptions | undefined;
+  handleDisplayFiltersUpdate?: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
   labels?: IIssueLabel[] | undefined;
@@ -37,6 +40,8 @@ type Props = {
 export const FilterSelection: React.FC<Props> = observer((props) => {
   const {
     filters,
+    displayFilters,
+    handleDisplayFiltersUpdate,
     handleFiltersUpdate,
     layoutDisplayFiltersOptions,
     labels,
@@ -51,6 +56,9 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
+
+  const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
+    Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -187,7 +195,19 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             />
           </div>
         )}
-
+        {/* issue type */}
+        {isDisplayFilterEnabled("type") && displayFilters && handleDisplayFiltersUpdate && (
+          <div className="py-2">
+            <FilterIssueType
+              selectedIssueType={displayFilters.type}
+              handleUpdate={(val) =>
+                handleDisplayFiltersUpdate({
+                  type: val,
+                })
+              }
+            />
+          </div>
+        )}
         {/* start_date */}
         {isFilterEnabled("start_date") && (
           <div className="py-2">
