@@ -156,6 +156,8 @@ export const CycleMobileHeader = () => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}

@@ -118,6 +118,8 @@ const GlobalIssuesHeader: React.FC = observer(() => {
                 layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                 filters={issueFilters?.filters ?? {}}
                 handleFiltersUpdate={handleFiltersUpdate}
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
                 labels={workspaceLabels ?? undefined}
                 memberIds={workspaceMemberIds ?? undefined}
               />

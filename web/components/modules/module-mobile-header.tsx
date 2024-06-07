@@ -134,6 +134,8 @@ export const ModuleMobileHeader = observer(() => {
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
