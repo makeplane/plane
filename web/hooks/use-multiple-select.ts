@@ -271,20 +271,6 @@ export const useMultipleSelect = (props: Props) => {
     [disabled, entitiesList, handleEntitySelection, isGroupSelected]
   );
 
-  // clear selection on escape key press
-  useEffect(() => {
-    if (disabled) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") clearSelection();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [clearSelection, disabled]);
-
   // select entities on shift + arrow up/down key press
   useEffect(() => {
     if (disabled) return;
