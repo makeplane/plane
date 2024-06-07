@@ -1,19 +1,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-// hooks
 import { PanelRight } from "lucide-react";
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
-import { BreadcrumbLink, Logo } from "@/components/common";
-import { cn } from "@/helpers/common.helper";
-import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // ui
-// helpers
-// services
-// constants
+import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // components
+import { BreadcrumbLink, Logo } from "@/components/common";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 
-export const ProjectIssueDetailsHeader: FC = observer(() => {
+const ProjectIssueDetailsHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -83,3 +81,5 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
     </div>
   );
 });
+
+export default ProjectIssueDetailsHeader;

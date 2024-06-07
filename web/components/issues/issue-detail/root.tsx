@@ -1,8 +1,7 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 // types
-import { useRouter } from "next/router";
 import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
