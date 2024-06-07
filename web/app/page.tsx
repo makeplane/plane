@@ -17,8 +17,6 @@ import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 import { useEventTracker } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
-// types
-import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // assets
@@ -27,7 +25,7 @@ import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 
-const HomePage: NextPageWithLayout = observer(() => {
+const HomePage = observer(() => {
   const { resolvedTheme } = useTheme();
   // hooks
   const { captureEvent } = useEventTracker();

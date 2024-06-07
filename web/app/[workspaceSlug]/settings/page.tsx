@@ -3,21 +3,22 @@
 import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core";
-import { WorkspaceActiveCyclesUpgrade } from "@/components/workspace";
+import { WorkspaceDetails } from "@/components/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
-const WorkspaceActiveCyclesPage = observer(() => {
+const WorkspaceSettingsPage = observer(() => {
+  // store hooks
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Active Cycles` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - General Settings` : undefined;
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <WorkspaceActiveCyclesUpgrade />
+      <WorkspaceDetails />
     </>
   );
 });
 
-export default WorkspaceActiveCyclesPage;
+export default WorkspaceSettingsPage;

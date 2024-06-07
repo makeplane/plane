@@ -21,8 +21,6 @@ import {
 } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
-// lib
-import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -47,7 +45,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const ResetPasswordPage: NextPageWithLayout = () => {
+const ResetPasswordPage = () => {
   // search params
   const searchParams = useSearchParams();
   const uidb64 = searchParams.get("uidb64");

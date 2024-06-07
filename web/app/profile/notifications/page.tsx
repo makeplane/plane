@@ -8,14 +8,13 @@ import { EmailSettingsLoader } from "@/components/ui";
 // ui
 // components
 // services
-import { NextPageWithLayout } from "@/lib/types";
 import { UserService } from "@/services/user.service";
 // type
 
 // services
 const userService = new UserService();
 
-const ProfileNotificationPage: NextPageWithLayout = () => {
+const ProfileNotificationPage = () => {
   // fetching user email notification settings
   const { data, isLoading } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
     userService.currentUserEmailNotificationSettings()

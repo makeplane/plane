@@ -1,15 +1,20 @@
+"use client";
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
+// icons
 import { BarChart2, PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppTheme } from "@/hooks/store";
 
-export const WorkspaceAnalyticsHeader = observer(() => {
+const WorkspaceAnalyticsHeader = observer(() => {
   const searchParams = useSearchParams();
   const analytics_tab = searchParams.get("analytics_tab");
   // store hooks
@@ -66,3 +71,5 @@ export const WorkspaceAnalyticsHeader = observer(() => {
     </>
   );
 });
+
+export default WorkspaceAnalyticsHeader;

@@ -1,18 +1,21 @@
+"use client";
+
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Home, Zap } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
-// hooks
-// components
+// ui
 import { Breadcrumbs } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
 // constants
 import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "@/constants/event-tracker";
+// hooks
 import { useEventTracker } from "@/hooks/store";
 
-export const WorkspaceDashboardHeader = () => {
+const WorkspaceDashboardHeader = () => {
   // hooks
   const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
@@ -69,3 +72,5 @@ export const WorkspaceDashboardHeader = () => {
     </>
   );
 };
+
+export default WorkspaceDashboardHeader;

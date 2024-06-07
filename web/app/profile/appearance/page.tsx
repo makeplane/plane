@@ -12,10 +12,8 @@ import { CustomThemeSelector, ThemeSwitch, PageHead, SidebarHamburgerToggle } fr
 import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
 // hooks
 import { useUserProfile } from "@/hooks/store";
-// type
-import { NextPageWithLayout } from "@/lib/types";
 
-const ProfileAppearancePage: NextPageWithLayout = observer(() => {
+const ProfileAppearancePage = observer(() => {
   const { setTheme } = useTheme();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);

@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 // services
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+// import { API_BASE_URL } from "@/helpers/common.helper";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 //
@@ -22,7 +22,7 @@ type props = {
 };
 
 const CustomErrorComponent = ({ error }: props) => {
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     Sentry.captureException(error);

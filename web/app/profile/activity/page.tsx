@@ -8,12 +8,10 @@ import { Button } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 import { ProfileActivityListPage } from "@/components/profile";
-// type
-import { NextPageWithLayout } from "@/lib/types";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage: NextPageWithLayout = observer(() => {
+const ProfileActivityPage = observer(() => {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);

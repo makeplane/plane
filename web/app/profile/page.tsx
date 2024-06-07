@@ -25,8 +25,6 @@ import { USER_ROLES } from "@/constants/workspace";
 import { useUser } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
-// lib types
-import type { NextPageWithLayout } from "@/lib/types";
 import { FileService } from "@/services/file.service";
 // services
 // types
@@ -44,7 +42,7 @@ const defaultValues: Partial<IUser> = {
 
 const fileService = new FileService();
 
-const ProfileSettingsPage: NextPageWithLayout = observer(() => {
+const ProfileSettingsPage = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);

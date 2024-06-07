@@ -1,13 +1,16 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 // components
 import MobileWorkspaceSettingsTabs from "@/components/workspace/settings/mobile-workspace-settings-tabs";
+// local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
 export interface IWorkspaceSettingLayout {
   children: ReactNode;
 }
 
-export const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
+const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
   const { children } = props;
 
   return (
@@ -24,3 +27,5 @@ export const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
     </div>
   );
 };
+
+export default WorkspaceSettingLayout;

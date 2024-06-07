@@ -18,8 +18,6 @@ import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
-// lib
-import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -41,7 +39,7 @@ const defaultValues: TForgotPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const ForgotPasswordPage: NextPageWithLayout = () => {
+const ForgotPasswordPage = () => {
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");

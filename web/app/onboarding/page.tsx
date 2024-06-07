@@ -15,8 +15,6 @@ import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
-// lib types
-import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -30,7 +28,7 @@ export enum EOnboardingSteps {
 
 const workspaceService = new WorkspaceService();
 
-const OnboardingPage: NextPageWithLayout = observer(() => {
+const OnboardingPage = observer(() => {
   // states
   const [step, setStep] = useState<EOnboardingSteps | null>(null);
   const [totalSteps, setTotalSteps] = useState<number | null>(null);

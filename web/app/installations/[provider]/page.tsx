@@ -4,15 +4,13 @@ import React, { useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 // ui
 import { LogoSpinner } from "@/components/common";
-// types
-import { NextPageWithLayout } from "@/lib/types";
 // services
 import { AppInstallationService } from "@/services/app_installation.service";
 
 // services
 const appInstallationService = new AppInstallationService();
 
-const AppPostInstallation: NextPageWithLayout = () => {
+const AppPostInstallation = () => {
   // params
   const { provider } = useParams();
   // query params

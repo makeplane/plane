@@ -23,8 +23,6 @@ import { ROLE } from "@/constants/workspace";
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
 import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
-// types
-import { NextPageWithLayout } from "@/lib/types";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
 import { WorkspaceService } from "@/services/workspace.service";
@@ -35,7 +33,7 @@ import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-l
 
 const workspaceService = new WorkspaceService();
 
-const UserInvitationsPage: NextPageWithLayout = observer(() => {
+const UserInvitationsPage = observer(() => {
   // states
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);

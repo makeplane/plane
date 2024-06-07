@@ -2,7 +2,7 @@
 
 import { FC, ReactNode } from "react";
 import dynamic from "next/dynamic";
-import Router from "next/router";
+// import Router from "next/navigation";
 import { useTheme, ThemeProvider } from "next-themes";
 import NProgress from "nprogress";
 import { SWRConfig } from "swr";
@@ -22,9 +22,9 @@ const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: f
 const CrispWrapper = dynamic(() => import("@/lib/wrappers/crisp-wrapper"), { ssr: false });
 // nprogress
 NProgress.configure({ showSpinner: false });
-Router.events.on("routeChangeStart", NProgress.start);
-Router.events.on("routeChangeError", NProgress.done);
-Router.events.on("routeChangeComplete", NProgress.done);
+// Router.events.on("routeChangeStart", NProgress.start);
+// Router.events.on("routeChangeError", NProgress.done);
+// Router.events.on("routeChangeComplete", NProgress.done);
 
 export interface IAppProvider {
   children: ReactNode;

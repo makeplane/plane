@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
 
@@ -30,7 +30,7 @@ export type TSelectionHelper = {
 export const useMultipleSelect = (props: Props) => {
   const { containerRef, entities } = props;
   // router
-  const router = useRouter();
+  // const router = useRouter();
   // store hooks
   const {
     selectedEntityIds,
@@ -334,15 +334,15 @@ export const useMultipleSelect = (props: Props) => {
   }, [getActiveEntityDetails, entitiesList, groups, getPreviousAndNextEntities, handleActiveEntityChange]);
 
   // clear selection on route change
-  useEffect(() => {
-    const handleRouteChange = () => clearSelection();
+  // useEffect(() => {
+  //   const handleRouteChange = () => clearSelection();
 
-    router.events.on("routeChangeComplete", handleRouteChange);
+  //   router.events.on("routeChangeComplete", handleRouteChange);
 
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-  }, [clearSelection, router.events]);
+  //   return () => {
+  //     router.events.off("routeChangeComplete", handleRouteChange);
+  //   };
+  // }, [clearSelection, router.events]);
 
   // when entities list change, remove entityIds from the selected entities array, which are not present in the new list
   useEffect(() => {

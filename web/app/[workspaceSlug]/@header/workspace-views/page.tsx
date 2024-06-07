@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
@@ -17,7 +19,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
 
-export const GlobalIssuesHeader: React.FC = observer(() => {
+const GlobalIssuesHeader: React.FC = observer(() => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -140,3 +142,5 @@ export const GlobalIssuesHeader: React.FC = observer(() => {
     </>
   );
 });
+
+export default GlobalIssuesHeader;

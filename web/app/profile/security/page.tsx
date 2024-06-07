@@ -17,8 +17,6 @@ import { authErrorHandler } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
-// types
-import { NextPageWithLayout } from "@/lib/types";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -44,7 +42,7 @@ const defaultShowPassword = {
   confirmPassword: false,
 };
 
-const SecurityPage: NextPageWithLayout = observer(() => {
+const SecurityPage = observer(() => {
   // states
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(defaultShowPassword);

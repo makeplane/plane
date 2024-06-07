@@ -17,8 +17,6 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
-// lib
-import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -43,7 +41,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const SetPasswordPage: NextPageWithLayout = observer(() => {
+const SetPasswordPage = observer(() => {
   // router
   const router = useRouter();
   // search params
