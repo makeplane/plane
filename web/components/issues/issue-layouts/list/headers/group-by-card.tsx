@@ -57,7 +57,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
   // auth
-  const canSelectIssues = canEditProperties(projectId?.toString());
+  const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -83,7 +83,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5">
+      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5 pl-1">
         {canSelectIssues && (
           <div className="flex-shrink-0 flex items-center w-3.5">
             <MultipleSelectGroupAction
