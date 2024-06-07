@@ -78,7 +78,7 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                       Cancel
                     </Button>
                     <Button variant="primary" size="sm" onClick={handleDeletion} loading={isLoading}>
-                      {isLoading ? "Saving..." : "Save Draft"}
+                      {isLoading ? "Saving" : "Save draft"}
                     </Button>
                   </div>
                 </div>

@@ -1,75 +1,102 @@
 import { useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+// types
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // components
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+// hooks
+import { useIssues, useLabel } from "@/hooks/store";
 
 export const ProfileIssuesFilter = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query as {
-    workspaceSlug: string;
-  };
-
+  const { workspaceSlug, userId } = router.query;
+  // store hook
   const {
-    workspace: workspaceStore,
-    workspaceProfileIssuesFilter: { issueFilters, updateFilters },
-  }: RootStore = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROFILE);
 
+  const { workspaceLabels } = useLabel();
+  // derived values
   const states = undefined;
-  const labels = workspaceStore.workspaceLabels || undefined;
   const members = undefined;
-
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      if (!workspaceSlug || !userId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        userId.toString()
+      );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, userId]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !userId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        userId.toString()
+      );
     },
-    [workspaceSlug, issueFilters, updateFilters]
+    [workspaceSlug, issueFilters, updateFilters, userId]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      if (!workspaceSlug || !userId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        userId.toString()
+      );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, userId]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug) return;
-      updateFilters(workspaceSlug, EFilterType.DISPLAY_PROPERTIES, property);
+      if (!workspaceSlug || !userId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        userId.toString()
+      );
     },
-    [workspaceSlug, updateFilters]
+    [workspaceSlug, updateFilters, userId]
   );
+
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
     <div className="relative flex items-center justify-end gap-2">
@@ -79,16 +106,18 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end">
+      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
         <FilterSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
           }
           filters={issueFilters?.filters ?? {}}
           handleFiltersUpdate={handleFiltersUpdate}
+          displayFilters={issueFilters?.displayFilters ?? {}}
+          handleDisplayFiltersUpdate={handleDisplayFilters}
           states={states}
-          labels={labels}
-          members={members}
+          labels={workspaceLabels}
+          memberIds={members}
         />
       </FiltersDropdown>
 

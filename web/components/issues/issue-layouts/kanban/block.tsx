@@ -1,171 +1,242 @@
-import { memo } from "react";
-import { Draggable, DraggableStateSnapshot } from "@hello-pangea/dnd";
-import isEqual from "lodash/isEqual";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { observer } from "mobx-react-lite";
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+// hooks
+import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
+import { cn } from "@/helpers/common.helper";
+// hooks
+import { useAppRouter, useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
-import { KanBanProperties } from "./properties";
+import { TRenderQuickActions } from "../list/list-view-types";
+import { IssueProperties } from "../properties/all-properties";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { getIssueBlockId } from "../utils";
 // ui
-import { Tooltip } from "@plane/ui";
 // types
-import { IIssueDisplayProperties, IIssue } from "types";
-import { EIssueActions } from "../types";
-import { useRouter } from "next/router";
+// helper
 
 interface IssueBlockProps {
-  sub_group_id: string;
-  columnId: string;
-  index: number;
-  issue: IIssue;
+  issueId: string;
+  groupId: string;
+  subGroupId: string;
+  issuesMap: IIssueMap;
+  displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
-  showEmptyGroup: boolean;
-  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
+  draggableId: string;
+  canDropOverIssue: boolean;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 interface IssueDetailsBlockProps {
-  sub_group_id: string;
-  columnId: string;
-  issue: IIssue;
-  showEmptyGroup: boolean;
-  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties | null;
+  cardRef: React.RefObject<HTMLElement>;
+  issue: TIssue;
+  displayProperties: IIssueDisplayProperties | undefined;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: TRenderQuickActions;
   isReadOnly: boolean;
-  snapshot: DraggableStateSnapshot;
-  isDragDisabled: boolean;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
-  const {
-    sub_group_id,
-    columnId,
-    issue,
-    showEmptyGroup,
-    handleIssues,
-    quickActions,
-    displayProperties,
-    isReadOnly,
-    snapshot,
-    isDragDisabled,
-  } = props;
+const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { getProjectIdentifierById } = useProject();
 
-  const router = useRouter();
-
-  const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
-    if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
+  const handleEventPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
   };
-
-  const handleIssuePeekOverview = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const { query } = router;
-    if (event.ctrlKey || event.metaKey) {
-      const issueUrl = `/${issue.workspace_detail.slug}/projects/${issue.project_detail.id}/issues/${issue?.id}`;
-      window.open(issueUrl, "_blank"); // Open link in a new tab
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
-      });
-    }
-  };
-
-  return (
-    <div
-      className={`flex flex-col space-y-2 cursor-pointer rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all w-full ${
-        isDragDisabled ? "" : "hover:cursor-grab"
-      } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
-      onClick={handleIssuePeekOverview}
-    >
-      {displayProperties && displayProperties?.key && (
-        <div className="relative w-full ">
-          <div className="line-clamp-1 text-xs text-left text-custom-text-300">
-            {issue.project_detail.identifier}-{issue.sequence_id}
-          </div>
-          <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">
-            {quickActions(
-              !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-              !columnId && columnId === "null" ? null : columnId,
-              issue
-            )}
-          </div>
-        </div>
-      )}
-      <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-        <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
-      </Tooltip>
-      <div>
-        <KanBanProperties
-          sub_group_id={sub_group_id}
-          columnId={columnId}
-          issue={issue}
-          handleIssues={updateIssue}
-          displayProperties={displayProperties}
-          showEmptyGroup={showEmptyGroup}
-          isReadOnly={isReadOnly}
-        />
-      </div>
-    </div>
-  );
-};
-
-const validateMemo = (prevProps: IssueDetailsBlockProps, nextProps: IssueDetailsBlockProps) => {
-  if (prevProps.issue !== nextProps.issue) return false;
-  if (!isEqual(prevProps.displayProperties, nextProps.displayProperties)) {
-    return false;
-  }
-  return true;
-};
-
-const KanbanIssueMemoBlock = memo(KanbanIssueDetailsBlock, validateMemo);
-
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const {
-    sub_group_id,
-    columnId,
-    index,
-    issue,
-    isDragDisabled,
-    showEmptyGroup,
-    handleIssues,
-    quickActions,
-    displayProperties,
-    canEditProperties,
-  } = props;
-
-  let draggableId = issue.id;
-  if (columnId) draggableId = `${draggableId}__${columnId}`;
-  if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
-
-  const canEditIssueProperties = canEditProperties(issue.project);
 
   return (
     <>
-      <Draggable draggableId={draggableId} index={index} isDragDisabled={!canEditIssueProperties}>
-        {(provided, snapshot) => (
-          <div
-            className="group/kanban-block relative p-1.5"
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-          >
-            {issue.tempId !== undefined && (
-              <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-            )}
-            <KanbanIssueMemoBlock
-              sub_group_id={sub_group_id}
-              columnId={columnId}
-              issue={issue}
-              showEmptyGroup={showEmptyGroup}
-              handleIssues={handleIssues}
-              quickActions={quickActions}
-              displayProperties={displayProperties}
-              isReadOnly={!canEditIssueProperties}
-              snapshot={snapshot}
-              isDragDisabled={isDragDisabled}
-            />
+      <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
+        <div className="relative">
+          <div className="line-clamp-1 text-xs text-custom-text-300">
+            {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
-        )}
-      </Draggable>
+          <div
+            className={cn("absolute -top-1 right-0", {
+              "hidden group-hover/kanban-block:block": !isMobile,
+            })}
+            onClick={handleEventPropagation}
+          >
+            {quickActions({
+              issue,
+              parentRef: cardRef,
+            })}
+          </div>
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {issue?.is_draft ? (
+        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+          <span>{issue.name}</span>
+        </Tooltip>
+      ) : (
+        <div className="w-full line-clamp-1 text-sm text-custom-text-100 mb-1.5">
+          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+            <span>{issue.name}</span>
+          </Tooltip>
+        </div>
+      )}
+
+      <IssueProperties
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+        issue={issue}
+        displayProperties={displayProperties}
+        activeLayout="Kanban"
+        updateIssue={updateIssue}
+        isReadOnly={isReadOnly}
+      />
     </>
   );
-};
+});
+
+export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
+  const {
+    issueId,
+    groupId,
+    subGroupId,
+    issuesMap,
+    displayProperties,
+    isDragDisabled,
+    canDropOverIssue,
+    updateIssue,
+    quickActions,
+    canEditProperties,
+    scrollableContainerRef,
+  } = props;
+
+  const cardRef = useRef<HTMLAnchorElement | null>(null);
+  // hooks
+  const { workspaceSlug } = useAppRouter();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
+
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    !getIsIssuePeeked(issue.id) &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+
+  const issue = issuesMap[issueId];
+
+  const { setIsDragging: setIsKanbanDragging } = useKanbanView();
+
+  const [isDraggingOverBlock, setIsDraggingOverBlock] = useState(false);
+  const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
+
+  const canEditIssueProperties = canEditProperties(issue?.project_id);
+
+  const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
+
+  useOutsideClickDetector(cardRef, () => {
+    cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
+  });
+
+  // Make Issue block both as as Draggable and,
+  // as a DropTarget for other issues being dragged to get the location of drop
+  useEffect(() => {
+    const element = cardRef.current;
+
+    if (!element) return;
+
+    return combine(
+      draggable({
+        element,
+        dragHandle: element,
+        canDrag: () => isDragAllowed,
+        getInitialData: () => ({ id: issue?.id, type: "ISSUE" }),
+        onDragStart: () => {
+          setIsCurrentBlockDragging(true);
+          setIsKanbanDragging(true);
+        },
+        onDrop: () => {
+          setIsKanbanDragging(false);
+          setIsCurrentBlockDragging(false);
+        },
+      }),
+      dropTargetForElements({
+        element,
+        canDrop: ({ source }) => source?.data?.id !== issue?.id && canDropOverIssue,
+        getData: () => ({ id: issue?.id, type: "ISSUE" }),
+        onDragEnter: () => {
+          setIsDraggingOverBlock(true);
+        },
+        onDragLeave: () => {
+          setIsDraggingOverBlock(false);
+        },
+        onDrop: () => {
+          setIsDraggingOverBlock(false);
+        },
+      })
+    );
+  }, [cardRef?.current, issue?.id, isDragAllowed, canDropOverIssue, setIsCurrentBlockDragging, setIsDraggingOverBlock]);
+
+  if (!issue) return null;
+
+  return (
+    <>
+      <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
+      <div
+        // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
+        className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
+        onDragStart={() => {
+          if (isDragAllowed) setIsCurrentBlockDragging(true);
+          else
+            setToast({
+              type: TOAST_TYPE.WARNING,
+              title: "Cannot move issue",
+              message: "Drag and drop is disabled for the current grouping",
+            });
+        }}
+      >
+        <ControlLink
+          id={getIssueBlockId(issueId, groupId, subGroupId)}
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+            issue.id
+          }`}
+          ref={cardRef}
+          className={cn(
+            "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+            { "hover:cursor-pointer": isDragAllowed },
+            { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
+            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
+          )}
+          target="_blank"
+          onClick={() => handleIssuePeekOverview(issue)}
+          disabled={!!issue?.tempId || isMobile}
+        >
+          <RenderIfVisible
+            classNames="space-y-2 px-3 py-2"
+            root={scrollableContainerRef}
+            defaultHeight="100px"
+            horizontalOffset={50}
+          >
+            <KanbanIssueDetailsBlock
+              cardRef={cardRef}
+              issue={issue}
+              displayProperties={displayProperties}
+              updateIssue={updateIssue}
+              quickActions={quickActions}
+              isReadOnly={!canEditIssueProperties}
+            />
+          </RenderIfVisible>
+        </ControlLink>
+      </div>
+    </>
+  );
+});
+
+KanbanIssueBlock.displayName = "KanbanIssueBlock";

@@ -1,33 +1,43 @@
-import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
-
+import { useRouter } from "next/router";
 import useSWR from "swr";
-
-// headless ui
-import { Disclosure, Transition } from "@headlessui/react";
-// services
-import { UserService } from "services/user.service";
-// hooks
-import useUser from "hooks/use-user";
-// ui
-import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
-// helpers
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
-import { renderEmoji } from "helpers/emoji.helper";
+// headless ui
+import { Disclosure, Transition } from "@headlessui/react";
+// plane ui
+import { Loader, Tooltip } from "@plane/ui";
+// components
+import { Logo } from "@/components/common";
 // fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
+import { useAppTheme, useProject, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
+import { UserService } from "@/services/user.service";
+// components
+import { ProfileSidebarTime } from "./time";
 
 // services
 const userService = new UserService();
 
-export const ProfileSidebar = () => {
+export const ProfileSidebar = observer(() => {
+  // refs
+  const ref = useRef<HTMLDivElement>(null);
+  // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
-
-  const { user } = useUser();
-
+  // store hooks
+  const { data: currentUser } = useUser();
+  const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
+  const { getProjectById } = useProject();
+  const { isMobile } = usePlatformOS();
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
     workspaceSlug && userId
@@ -35,37 +45,49 @@ export const ProfileSidebar = () => {
       : null
   );
 
-  // Create a date object for the current time in the specified timezone
-  const currentTime = new Date();
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: userProjectsData?.user_data.user_timezone,
-    hour12: false, // Use 24-hour format
-    hour: "2-digit",
-    minute: "2-digit",
+  useOutsideClickDetector(ref, () => {
+    if (profileSidebarCollapsed === false) {
+      if (window.innerWidth < 768) {
+        toggleProfileSidebar();
+      }
+    }
   });
-  const timeString = formatter.format(currentTime);
 
   const userDetails = [
     {
       label: "Joined on",
-      value: renderLongDetailDateFormat(userProjectsData?.user_data.date_joined ?? ""),
+      value: renderFormattedDate(userProjectsData?.user_data.date_joined ?? ""),
     },
     {
       label: "Timezone",
-      value: (
-        <span>
-          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
-        </span>
-      ),
+      value: <ProfileSidebarTime timeZone={userProjectsData?.user_data.user_timezone} />,
     },
   ];
 
+  useEffect(() => {
+    const handleToggleProfileSidebar = () => {
+      if (window && window.innerWidth < 768) {
+        toggleProfileSidebar(true);
+      }
+      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
+        toggleProfileSidebar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleToggleProfileSidebar);
+    handleToggleProfileSidebar();
+    return () => window.removeEventListener("resize", handleToggleProfileSidebar);
+  }, []);
+
   return (
-    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80">
+    <div
+      className={`vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 shadow-custom-shadow-sm transition-all md:relative md:w-[300px]`}
+      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+    >
       {userProjectsData ? (
         <>
           <div className="relative h-32">
-            {user?.id === userId && (
+            {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
                   <span className="grid place-items-center text-black">
@@ -75,22 +97,20 @@ export const ProfileSidebar = () => {
               </div>
             )}
             <img
-              src={
-                userProjectsData.user_data.cover_image ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-              }
-              alt={userProjectsData.user_data.display_name}
+              src={userProjectsData.user_data?.cover_image ?? "/users/user-profile-cover-default-img.png"}
+              alt={userProjectsData.user_data?.display_name}
               className="h-32 w-full object-cover"
             />
             <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
-              {userProjectsData.user_data.avatar && userProjectsData.user_data.avatar !== "" ? (
+              {userProjectsData.user_data?.avatar && userProjectsData.user_data?.avatar !== "" ? (
                 <img
-                  src={userProjectsData.user_data.avatar}
-                  alt={userProjectsData.user_data.display_name}
+                  src={userProjectsData.user_data?.avatar}
+                  alt={userProjectsData.user_data?.display_name}
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100 capitalize">
-                  {userProjectsData.user_data.first_name?.[0]}
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 capitalize text-custom-text-100">
+                  {userProjectsData.user_data?.first_name?.[0]}
                 </div>
               )}
             </div>
@@ -98,9 +118,9 @@ export const ProfileSidebar = () => {
           <div className="px-5">
             <div className="mt-[38px]">
               <h4 className="text-lg font-semibold">
-                {userProjectsData.user_data.first_name} {userProjectsData.user_data.last_name}
+                {userProjectsData.user_data?.first_name} {userProjectsData.user_data?.last_name}
               </h4>
-              <h6 className="text-sm text-custom-text-200">({userProjectsData.user_data.display_name})</h6>
+              <h6 className="text-sm text-custom-text-200">({userProjectsData.user_data?.display_name})</h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
@@ -112,6 +132,8 @@ export const ProfileSidebar = () => {
             </div>
             <div className="mt-9 divide-y divide-custom-border-100">
               {userProjectsData.project_data.map((project, index) => {
+                const projectDetails = getProjectById(project.id);
+
                 const totalIssues =
                   project.created_issues + project.assigned_issues + project.pending_issues + project.completed_issues;
 
@@ -120,37 +142,29 @@ export const ProfileSidebar = () => {
                     ? 0
                     : Math.round((project.completed_issues / project.assigned_issues) * 100);
 
+                if (!projectDetails) return null;
+
                 return (
                   <Disclosure key={project.id} as="div" className={`${index === 0 ? "pb-3" : "py-3"}`}>
                     {({ open }) => (
                       <div className="w-full">
                         <Disclosure.Button className="flex w-full items-center justify-between gap-2">
                           <div className="flex w-3/4 items-center gap-2">
-                            {project.emoji ? (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                                {renderEmoji(project.emoji)}
-                              </div>
-                            ) : project.icon_prop ? (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                                {renderEmoji(project.icon_prop)}
-                              </div>
-                            ) : (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-custom-background-90 text-xs uppercase text-custom-text-100">
-                                {project?.name.charAt(0)}
-                              </div>
-                            )}
-                            <div className="truncate break-words text-sm font-medium">{project.name}</div>
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                              <Logo logo={projectDetails.logo_props} />
+                            </span>
+                            <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
-                              <Tooltip tooltipContent="Completion percentage" position="left">
+                              <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
                                 <div
                                   className={`rounded px-1 py-0.5 text-xs font-medium ${
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
-                                      ? "bg-yellow-500/10 text-yellow-500"
-                                      : "bg-green-500/10 text-green-500"
+                                        ? "bg-yellow-500/10 text-yellow-500"
+                                        : "bg-green-500/10 text-green-500"
                                   }`}
                                 >
                                   {completedIssuePercentage}%
@@ -256,4 +270,4 @@ export const ProfileSidebar = () => {
       )}
     </div>
   );
-};
+});

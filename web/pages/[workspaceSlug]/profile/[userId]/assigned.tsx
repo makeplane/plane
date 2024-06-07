@@ -1,18 +1,25 @@
 import React, { ReactElement } from "react";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
-import { UserProfileHeader } from "components/headers";
+import { PageHead } from "@/components/core";
+import { UserProfileHeader } from "@/components/headers";
+import { ProfileIssuesPage } from "@/components/profile/profile-issues";
+import ProfileIssuesMobileHeader from "@/components/profile/profile-issues-mobile-header";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
 // types
-import { NextPageWithLayout } from "types/app";
-import { ProfileIssuesPage } from "components/profile/profile-issues";
+import { NextPageWithLayout } from "@/lib/types";
 
-const ProfileAssignedIssuesPage: NextPageWithLayout = () => <ProfileIssuesPage type="assigned" />;
+const ProfileAssignedIssuesPage: NextPageWithLayout = () => (
+  <>
+    <PageHead title="Profile - Assigned" />
+    <ProfileIssuesPage type="assigned" />
+  </>
+);
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader />}>
+    <AppLayout header={<UserProfileHeader type="Assigned" />} mobileHeader={<ProfileIssuesMobileHeader />}>
       <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
     </AppLayout>
   );

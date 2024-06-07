@@ -1,17 +1,17 @@
 import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
-// date helper
-import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
-// hooks
-import useToast from "hooks/use-toast";
+import { Transition, Dialog } from "@headlessui/react";
+import type { IUserNotification } from "@plane/types";
+import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { DateDropdown } from "@/components/dropdowns";
+// constants
+import { allTimeIn30MinutesInterval12HoursFormat } from "@/constants/notification";
 // ui
-import { Button, CustomSelect } from "@plane/ui";
-import { CustomDatePicker } from "components/ui";
 // types
-import type { IUserNotification } from "types";
+// helpers
+import { getDate } from "helpers/date-time.helper";
 
 type SnoozeModalProps = {
   isOpen: boolean;
@@ -33,15 +33,13 @@ const defaultValues: FormValues = {
   period: "AM",
 };
 
-const timeStamps = getAllTimeIn30MinutesInterval();
+const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
 export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const {
     formState: { isSubmitting },
@@ -60,7 +58,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
     if (!formDataDate) return timeStamps;
 
-    const isToday = today.toDateString() === new Date(formDataDate).toDateString();
+    const isToday = today.toDateString() === getDate(formDataDate)?.toDateString();
 
     if (!isToday) return timeStamps;
 
@@ -93,23 +91,28 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     );
     const minutes = parseInt(time[1]);
 
-    const dateTime = new Date(formData.date);
-    dateTime.setHours(hours);
-    dateTime.setMinutes(minutes);
+    const dateTime: Date | undefined = getDate(formData?.date);
+    dateTime?.setHours(hours);
+    dateTime?.setMinutes(minutes);
 
     await handleSubmitSnooze(notification.id, dateTime).then(() => {
       handleClose();
       onSuccess();
-      setToastAlert({
-        title: "Notification snoozed",
+      setToast({
+        title: "Success!",
         message: "Notification snoozed successfully",
-        type: "success",
+        type: TOAST_TYPE.SUCCESS,
       });
     });
   };
 
   const handleClose = () => {
-    onClose();
+    // This is a workaround to fix the issue of the Notification popover modal close on closing this modal
+    const closeTimeout = setTimeout(() => {
+      onClose();
+      clearTimeout(closeTimeout);
+    }, 50);
+
     const timeout = setTimeout(() => {
       reset({ ...defaultValues });
       clearTimeout(timeout);
@@ -142,7 +145,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative w-full transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:!max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -156,25 +159,26 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex items-center gap-3">
-                    <div className="flex-1">
+                  <div className="mt-5 flex flex-col gap-3 md:!flex-row md:items-center">
+                    <div className="flex-1 pb-3 md:pb-0">
                       <h6 className="mb-2 block text-sm font-medium text-custom-text-400">Pick a date</h6>
                       <Controller
                         name="date"
                         control={control}
                         rules={{ required: "Please select a date" }}
                         render={({ field: { value, onChange } }) => (
-                          <CustomDatePicker
-                            placeholder="Select date"
+                          <DateDropdown
                             value={value}
+                            placeholder="Select date"
                             onChange={(val) => {
                               setValue("time", null);
                               onChange(val);
                             }}
-                            className="w-full rounded-md border border-custom-border-300 bg-custom-background-100 px-3 py-2 !text-sm text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none"
-                            wrapperClassName="w-full"
-                            noBorder
                             minDate={new Date()}
+                            buttonVariant="border-with-text"
+                            buttonContainerClassName="w-full text-left"
+                            buttonClassName="border-custom-border-300 px-3 py-2.5"
+                            hideIcon
                           />
                         )}
                       />
@@ -200,7 +204,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 )}
                               </div>
                             }
-                            width="w-full"
+                            optionsClassName="w-full"
                             input
                           >
                             <div className="mb-2 flex h-9 w-full overflow-hidden rounded">

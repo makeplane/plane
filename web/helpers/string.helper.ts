@@ -1,9 +1,10 @@
+import * as DOMPurify from "dompurify";
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   VIEW_ISSUES,
-} from "constants/fetch-keys";
+} from "@/constants/fetch-keys";
 
 export const addSpaceIfCamelCase = (str: string) => {
   if (str === undefined || str === null) return "";
@@ -33,7 +34,7 @@ export const createSimilarString = (str: string) => {
 };
 
 const fallbackCopyTextToClipboard = (text: string) => {
-  var textArea = document.createElement("textarea");
+  const textArea = document.createElement("textarea");
   textArea.value = text;
 
   // Avoid scrolling to bottom
@@ -48,7 +49,7 @@ const fallbackCopyTextToClipboard = (text: string) => {
   try {
     // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
-    var successful = document.execCommand("copy");
+    document.execCommand("copy");
   } catch (err) {}
 
   document.body.removeChild(textArea);
@@ -116,9 +117,9 @@ export const getFirstCharacters = (str: string) => {
  * console.log(text); // Some text
  */
 
-export const stripHTML = (html: string) => {
-  const strippedText = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ""); // Remove script tags
-  return strippedText.replace(/<[^>]*>/g, ""); // Remove all other HTML tags
+export const sanitizeHTML = (htmlString: string) => {
+  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
+  return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
 };
 
 /**
@@ -129,7 +130,7 @@ export const stripHTML = (html: string) => {
  * console.log(text); // Some text
  */
 
-export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(stripHTML(html), length);
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(sanitizeHTML(html), length);
 
 /**
  * @description: This function return number count in string if number is more than 100 then it will return 99+
@@ -150,6 +151,8 @@ export const getNumberCount = (number: number): string => {
 
 export const objToQueryParams = (obj: any) => {
   const params = new URLSearchParams();
+
+  if (!obj) return params.toString();
 
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined && value !== null) params.append(key, value as string);
@@ -223,4 +226,11 @@ export const checkEmailValidity = (email: string): boolean => {
     );
 
   return isEmailValid;
+};
+
+export const isEmptyHtmlString = (htmlString: string) => {
+  // Remove HTML tags using regex
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: ["img"] });
+  // Trim the string and check if it's empty
+  return cleanText.trim() === "";
 };

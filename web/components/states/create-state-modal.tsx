@@ -1,22 +1,19 @@
 import React from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
-import { Dialog, Popover, Transition } from "@headlessui/react";
-
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
-// icons
+import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
-// types
-import type { IState } from "types";
+import { Dialog, Popover, Transition } from "@headlessui/react";
+// icons
+import type { IState } from "@plane/types";
+// ui
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GROUP_CHOICES } from "constants/project";
+import { GROUP_CHOICES } from "@/constants/project";
+// hooks
+import { useProjectState } from "@/hooks/store";
+// types
 
 // types
 type Props = {
@@ -34,15 +31,12 @@ const defaultValues: Partial<IState> = {
 
 export const CreateStateModal: React.FC<Props> = observer((props) => {
   const { isOpen, projectId, handleClose } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  // store
-  const { projectState: projectStateStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const { createState } = useProjectState();
+  // form info
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -65,8 +59,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
       ...formData,
     };
 
-    await projectStateStore
-      .createState(workspaceSlug.toString(), projectId.toString(), payload)
+    await createState(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
         onClose();
       })
@@ -75,15 +68,15 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
 
         if (typeof error === "object") {
           Object.keys(error).forEach((key) => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: Array.isArray(error[key]) ? error[key].join(", ") : error[key],
             });
           });
         } else {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               error ?? err.status === 400
@@ -164,7 +157,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                               value={value}
                               label={GROUP_CHOICES[value as keyof typeof GROUP_CHOICES]}
                               onChange={onChange}
-                              width="w-full"
+                              optionsClassName="w-full"
                               input
                             >
                               {Object.keys(GROUP_CHOICES).map((key) => (

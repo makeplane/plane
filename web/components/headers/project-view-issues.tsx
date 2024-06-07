@@ -1,124 +1,161 @@
 import { useCallback } from "react";
+import { observer } from "mobx-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+// types
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
-// helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
-// types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+// components
+import { BreadcrumbLink, Logo } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { truncateText } from "@/helpers/string.helper";
+// hooks
+import {
+  useCommandPalette,
+  useEventTracker,
+  useIssues,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useProjectView,
+  useUser,
+} from "@/hooks/store";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    viewId: string;
-  };
-
+  const { workspaceSlug, projectId, viewId } = router.query;
+  // store hooks
   const {
-    project: { currentProjectDetails },
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    projectViews: projectViewsStore,
-    viewIssuesFilter: { issueFilters, updateFilters },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { setTrackElement } = useEventTracker();
+  const { toggleCreateIssueModal } = useCommandPalette();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectViewIds, getViewById } = useProjectView();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !viewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
         });
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, viewId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
-  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
+  const viewDetails = viewId ? getViewById(viewId.toString()) : null;
 
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            label={currentProjectDetails?.name ?? "Project"}
-            icon={
-              currentProjectDetails?.emoji ? (
-                <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                  {renderEmoji(currentProjectDetails.emoji)}
-                </span>
-              ) : currentProjectDetails?.icon_prop ? (
-                <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                  {renderEmoji(currentProjectDetails.icon_prop)}
-                </div>
-              ) : (
-                <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                  {currentProjectDetails?.name.charAt(0)}
-                </span>
-              )
+            link={
+              <BreadcrumbLink
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                label={currentProjectDetails?.name ?? "Project"}
+                icon={
+                  currentProjectDetails && (
+                    <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
+                      <Logo logo={currentProjectDetails?.logo_props} size={16} />
+                    </span>
+                  )
+                }
+              />
             }
-            link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
           />
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
-            label="Views"
-            link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
+            link={
+              <BreadcrumbLink
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
+                label="Views"
+                icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
+              />
+            }
           />
           <Breadcrumbs.BreadcrumbItem
             type="component"
@@ -126,24 +163,38 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               <CustomMenu
                 label={
                   <>
-                    <PhotoFilterIcon height={12} width={12} />
+                    {viewDetails?.logo_props?.in_use ? (
+                      <Logo logo={viewDetails.logo_props} size={12} type="lucide" />
+                    ) : (
+                      <PhotoFilterIcon height={12} width={12} />
+                    )}
                     {viewDetails?.name && truncateText(viewDetails.name, 40)}
                   </>
                 }
                 className="ml-1.5"
                 placement="bottom-start"
               >
-                {viewsList?.map((view) => (
-                  <CustomMenu.MenuItem
-                    key={view.id}
-                    onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <PhotoFilterIcon height={12} width={12} />
-                      {truncateText(view.name, 40)}
-                    </div>
-                  </CustomMenu.MenuItem>
-                ))}
+                {projectViewIds?.map((viewId) => {
+                  const view = getViewById(viewId);
+
+                  if (!view) return;
+
+                  return (
+                    <CustomMenu.MenuItem key={viewId}>
+                      <Link
+                        href={`/${workspaceSlug}/projects/${projectId}/views/${viewId}`}
+                        className="flex items-center gap-1.5"
+                      >
+                        {view?.logo_props?.in_use ? (
+                          <Logo logo={view.logo_props} size={12} type="lucide" />
+                        ) : (
+                          <PhotoFilterIcon height={12} width={12} />
+                        )}
+                        {truncateText(view.name, 40)}
+                      </Link>
+                    </CustomMenu.MenuItem>
+                  );
+                })}
               </CustomMenu>
             }
           />
@@ -156,16 +207,25 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           selectedLayout={activeLayout}
         />
 
-        <FiltersDropdown title="Filters" placement="bottom-end" disabled={!canUserCreateIssue}>
+        <FiltersDropdown
+          title="Filters"
+          placement="bottom-end"
+          disabled={!canUserCreateIssue}
+          isFiltersApplied={isFiltersApplied}
+        >
           <FilterSelection
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
+            displayFilters={issueFilters?.displayFilters ?? {}}
+            handleDisplayFiltersUpdate={handleDisplayFilters}
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
-            labels={projectLabels ?? undefined}
-            members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
+            labels={projectLabels}
+            memberIds={projectMemberIds ?? undefined}
+            states={projectStates}
+            cycleViewDisabled={!currentProjectDetails?.cycle_view}
+            moduleViewDisabled={!currentProjectDetails?.module_view}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
@@ -177,16 +237,17 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayFiltersUpdate={handleDisplayFilters}
             displayProperties={issueFilters?.displayProperties ?? {}}
             handleDisplayPropertiesUpdate={handleDisplayProperties}
+            cycleViewDisabled={!currentProjectDetails?.cycle_view}
+            moduleViewDisabled={!currentProjectDetails?.module_view}
           />
         </FiltersDropdown>
         {canUserCreateIssue && (
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"
-            prependIcon={<Plus />}
           >
             Add Issue
           </Button>

@@ -1,12 +1,10 @@
 import React from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
+import { observer } from "mobx-react";
 import { Ban } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
+// hooks
 import { Avatar, CustomSearchSelect } from "@plane/ui";
+import { useMember } from "@/hooks/store";
+// ui
 
 type Props = {
   value: any;
@@ -16,44 +14,49 @@ type Props = {
 
 export const MemberSelect: React.FC<Props> = observer((props) => {
   const { value, onChange, isDisabled = false } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-  // store
+  // store hooks
   const {
-    projectMember: { fetchProjectMembers, projectMembers },
-  } = useMobxStore();
+    project: { projectMemberIds, getProjectMemberDetails },
+  } = useMember();
 
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
-  );
+  const options = projectMemberIds
+    ?.map((userId) => {
+      const memberDetails = getProjectMemberDetails(userId);
 
-  const options = projectMembers?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+      if (!memberDetails?.member) return;
 
-  const selectedOption = projectMembers?.find((m) => m.member.id === value)?.member;
+      return {
+        value: `${memberDetails?.member.id}`,
+        query: `${memberDetails?.member.display_name}`,
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            {memberDetails?.member.display_name}
+          </div>
+        ),
+      };
+    })
+    .filter((option) => !!option) as
+    | {
+        value: string;
+        query: string;
+        content: React.JSX.Element;
+      }[]
+    | undefined;
+  const selectedOption = getProjectMemberDetails(value);
 
   return (
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2">
-          {selectedOption && <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />}
+        <div className="flex items-center gap-2 h-5">
+          {selectedOption && <Avatar name={selectedOption.member?.display_name} src={selectedOption.member?.avatar} />}
           {selectedOption ? (
-            selectedOption?.display_name
+            selectedOption.member?.display_name
           ) : (
             <div className="flex items-center gap-2">
               <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-              <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
+              <span className="text-sm text-custom-sidebar-text-400">None</span>
             </div>
           )}
         </div>
@@ -76,7 +79,6 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
         ]
       }
       maxHeight="md"
-      width="w-full"
       onChange={onChange}
       disabled={isDisabled}
     />

@@ -1,18 +1,24 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { EmptyState } from "components/common";
+import { EmptyState } from "@/components/common";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
-import { EProjectStore } from "store/command-palette.store";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
+  // store hooks
+  const { toggleCreateIssueModal } = useCommandPalette();
+  const { setTrackElement } = useEventTracker();
   const {
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  // auth
+  const isCreatingIssueAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <div className="grid h-full w-full place-items-center">
@@ -20,14 +26,18 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
         title="View issues will appear here"
         description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
         image={emptyIssue}
-        primaryButton={{
-          text: "New issue",
-          icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => {
-            setTrackElement("VIEW_EMPTY_STATE");
-            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
-          },
-        }}
+        primaryButton={
+          isCreatingIssueAllowed
+            ? {
+                text: "New issue",
+                icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
+                onClick: () => {
+                  setTrackElement("View issue empty state");
+                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
+                },
+              }
+            : undefined
+        }
       />
     </div>
   );

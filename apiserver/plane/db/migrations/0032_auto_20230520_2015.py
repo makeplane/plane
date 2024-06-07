@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0031_analyticview'),
+        ("db", "0031_analyticview"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='project',
-            old_name='icon',
-            new_name='emoji',
+            model_name="project",
+            old_name="icon",
+            new_name="emoji",
         ),
         migrations.AddField(
-            model_name='project',
-            name='icon_prop',
+            model_name="project",
+            name="icon_prop",
             field=models.JSONField(null=True),
         ),
     ]

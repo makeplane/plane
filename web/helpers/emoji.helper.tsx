@@ -30,7 +30,7 @@ export const renderEmoji = (
 
   if (typeof emoji === "object")
     return (
-      <span style={{ color: emoji.color }} className="material-symbols-rounded !text-sm">
+      <span style={{ fontSize: "16px", color: emoji.color }} className="material-symbols-rounded">
         {emoji.name}
       </span>
     );
@@ -53,4 +53,26 @@ export const groupReactions: (reactions: any[], key: string) => { [key: string]:
   );
 
   return groupedReactions;
+};
+
+export const convertHexEmojiToDecimal = (emojiUnified: string): string => {
+  if (!emojiUnified) return "";
+
+  return emojiUnified
+    .split("-")
+    .map((e) => parseInt(e, 16))
+    .join("-");
+};
+
+
+export const emojiCodeToUnicode = (emoji: string) => {
+  if (!emoji) return "";
+
+  // convert emoji code to unicode
+  const uniCodeEmoji = emoji
+    .split("-")
+    .map((emoji) => parseInt(emoji, 10).toString(16))
+    .join("-");
+
+  return uniCodeEmoji;
 };

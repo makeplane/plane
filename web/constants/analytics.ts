@@ -1,5 +1,5 @@
 // types
-import { TXAxisValues, TYAxisValues } from "types";
+import { TXAxisValues, TYAxisValues } from "@plane/types";
 
 export const ANALYTICS_TABS = [
   { key: "scope_and_demand", title: "Scope and Demand" },

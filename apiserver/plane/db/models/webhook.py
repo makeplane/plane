@@ -17,7 +17,9 @@ def generate_token():
 def validate_schema(value):
     parsed_url = urlparse(value)
     if parsed_url.scheme not in ["http", "https"]:
-        raise ValidationError("Invalid schema. Only HTTP and HTTPS are allowed.")
+        raise ValidationError(
+            "Invalid schema. Only HTTP and HTTPS are allowed."
+        )
 
 
 def validate_domain(value):
@@ -63,7 +65,9 @@ class WebhookLog(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs"
     )
     # Associated webhook
-    webhook = models.ForeignKey(Webhook, on_delete=models.CASCADE, related_name="logs")
+    webhook = models.ForeignKey(
+        Webhook, on_delete=models.CASCADE, related_name="logs"
+    )
 
     # Basic request details
     event_type = models.CharField(max_length=255, blank=True, null=True)

@@ -7,166 +7,228 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0011_auto_20221222_2357'),
+        ("db", "0011_auto_20221222_2357"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='issueactivity',
-            name='new_identifier',
+            model_name="issueactivity",
+            name="new_identifier",
             field=models.UUIDField(null=True),
         ),
         migrations.AddField(
-            model_name='issueactivity',
-            name='old_identifier',
+            model_name="issueactivity",
+            name="old_identifier",
             field=models.UUIDField(null=True),
         ),
         migrations.AlterField(
-            model_name='moduleissue',
-            name='issue',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='issue_module', to='db.issue'),
+            model_name="moduleissue",
+            name="issue",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="issue_module",
+                to="db.issue",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='moduleissue',
+            name="moduleissue",
             unique_together=set(),
         ),
         migrations.AlterModelTable(
-            name='cycle',
-            table='cycles',
+            name="cycle",
+            table="cycles",
         ),
         migrations.AlterModelTable(
-            name='cycleissue',
-            table='cycle_issues',
+            name="cycleissue",
+            table="cycle_issues",
         ),
         migrations.AlterModelTable(
-            name='fileasset',
-            table='file_assets',
+            name="fileasset",
+            table="file_assets",
         ),
         migrations.AlterModelTable(
-            name='issue',
-            table='issues',
+            name="issue",
+            table="issues",
         ),
         migrations.AlterModelTable(
-            name='issueactivity',
-            table='issue_activities',
+            name="issueactivity",
+            table="issue_activities",
         ),
         migrations.AlterModelTable(
-            name='issueassignee',
-            table='issue_assignees',
+            name="issueassignee",
+            table="issue_assignees",
         ),
         migrations.AlterModelTable(
-            name='issueblocker',
-            table='issue_blockers',
+            name="issueblocker",
+            table="issue_blockers",
         ),
         migrations.AlterModelTable(
-            name='issuecomment',
-            table='issue_comments',
+            name="issuecomment",
+            table="issue_comments",
         ),
         migrations.AlterModelTable(
-            name='issuelabel',
-            table='issue_labels',
+            name="issuelabel",
+            table="issue_labels",
         ),
         migrations.AlterModelTable(
-            name='issueproperty',
-            table='issue_properties',
+            name="issueproperty",
+            table="issue_properties",
         ),
         migrations.AlterModelTable(
-            name='issuesequence',
-            table='issue_sequences',
+            name="issuesequence",
+            table="issue_sequences",
         ),
         migrations.AlterModelTable(
-            name='label',
-            table='labels',
+            name="label",
+            table="labels",
         ),
         migrations.AlterModelTable(
-            name='module',
-            table='modules',
+            name="module",
+            table="modules",
         ),
         migrations.AlterModelTable(
-            name='modulemember',
-            table='module_members',
+            name="modulemember",
+            table="module_members",
         ),
         migrations.AlterModelTable(
-            name='project',
-            table='projects',
+            name="project",
+            table="projects",
         ),
         migrations.AlterModelTable(
-            name='projectidentifier',
-            table='project_identifiers',
+            name="projectidentifier",
+            table="project_identifiers",
         ),
         migrations.AlterModelTable(
-            name='projectmember',
-            table='project_members',
+            name="projectmember",
+            table="project_members",
         ),
         migrations.AlterModelTable(
-            name='projectmemberinvite',
-            table='project_member_invites',
+            name="projectmemberinvite",
+            table="project_member_invites",
         ),
         migrations.AlterModelTable(
-            name='shortcut',
-            table='shortcuts',
+            name="shortcut",
+            table="shortcuts",
         ),
         migrations.AlterModelTable(
-            name='socialloginconnection',
-            table='social_login_connections',
+            name="socialloginconnection",
+            table="social_login_connections",
         ),
         migrations.AlterModelTable(
-            name='state',
-            table='states',
+            name="state",
+            table="states",
         ),
         migrations.AlterModelTable(
-            name='team',
-            table='teams',
+            name="team",
+            table="teams",
         ),
         migrations.AlterModelTable(
-            name='teammember',
-            table='team_members',
+            name="teammember",
+            table="team_members",
         ),
         migrations.AlterModelTable(
-            name='timelineissue',
-            table='issue_timelines',
+            name="timelineissue",
+            table="issue_timelines",
         ),
         migrations.AlterModelTable(
-            name='user',
-            table='users',
+            name="user",
+            table="users",
         ),
         migrations.AlterModelTable(
-            name='view',
-            table='views',
+            name="view",
+            table="views",
         ),
         migrations.AlterModelTable(
-            name='workspace',
-            table='workspaces',
+            name="workspace",
+            table="workspaces",
         ),
         migrations.AlterModelTable(
-            name='workspacemember',
-            table='workspace_members',
+            name="workspacemember",
+            table="workspace_members",
         ),
         migrations.AlterModelTable(
-            name='workspacememberinvite',
-            table='workspace_member_invites',
+            name="workspacememberinvite",
+            table="workspace_member_invites",
         ),
         migrations.CreateModel(
-            name='ModuleLink',
+            name="ModuleLink",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('title', models.CharField(max_length=255, null=True)),
-                ('url', models.URLField()),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='modulelink_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('module', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='link_module', to='db.module')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_modulelink', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='modulelink_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_modulelink', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, null=True)),
+                ("url", models.URLField()),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="modulelink_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "module",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="link_module",
+                        to="db.module",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_modulelink",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="modulelink_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_modulelink",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Module Link',
-                'verbose_name_plural': 'Module Links',
-                'db_table': 'module_links',
-                'ordering': ('-created_at',),
+                "verbose_name": "Module Link",
+                "verbose_name_plural": "Module Links",
+                "db_table": "module_links",
+                "ordering": ("-created_at",),
             },
         ),
     ]

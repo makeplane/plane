@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-
-// hooks
-import useToast from "hooks/use-toast";
-// services
-import { IssueService } from "services/issue";
-// ui
-import { Button, LayersIcon } from "@plane/ui";
-// icons
 import { Search } from "lucide-react";
-// fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+// hooks
+// icons
+// components
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+// services
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
+import { useProject, useProjectState } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 
 type Props = {
   isOpen: boolean;
@@ -27,12 +29,13 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, onSubmit, value } = props;
 
   const [query, setQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<string>("");
-
-  const { setToastAlert } = useToast();
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  // hooks
+  const { getProjectStates } = useProjectState();
+  const { getProjectById } = useProject();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
@@ -44,22 +47,15 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       : null
   );
 
-  useEffect(() => {
-    if (!value) {
-      setSelectedItem("");
-      return;
-    } else setSelectedItem(value);
-  }, [value]);
-
   const handleClose = () => {
     onClose();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (selectedItem: string) => {
     if (!selectedItem || selectedItem.length === 0)
-      return setToastAlert({
+      return setToast({
         title: "Error",
-        type: "error",
+        type: TOAST_TYPE.ERROR,
       });
     onSubmit(selectedItem);
     handleClose();
@@ -95,12 +91,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                  <Combobox
-                    value={selectedItem}
-                    onChange={(value) => {
-                      setSelectedItem(value);
-                    }}
-                  >
+                  <Combobox value={value} onChange={handleSubmit}>
                     <div className="relative m-1">
                       <Search
                         className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
@@ -124,56 +115,53 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                             <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
-                            {filteredIssues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                as="div"
-                                value={issue.id}
-                                className={({ active, selected }) =>
-                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                    active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } `
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state_detail.color,
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                    {issues?.find((i) => i.id === issue.id)?.project_detail?.identifier}-
-                                    {issue.sequence_id}
-                                  </span>
-                                  <span className="text-custom-text-200">{issue.name}</span>
-                                </div>
-                              </Combobox.Option>
-                            ))}
+                            {filteredIssues.map((issue) => {
+                              const stateColor =
+                                getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)
+                                  ?.color || "";
+
+                              return (
+                                <Combobox.Option
+                                  key={issue.id}
+                                  as="div"
+                                  value={issue.id}
+                                  className={({ active, selected }) =>
+                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                      active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
+                                    } `
+                                  }
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: stateColor,
+                                      }}
+                                    />
+                                    <span className="flex-shrink-0 text-xs text-custom-text-200">
+                                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                                    </span>
+                                    <span className="text-custom-text-200">{issue.name}</span>
+                                  </div>
+                                </Combobox.Option>
+                              );
+                            })}
                           </ul>
                         </li>
                       ) : (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayersIcon height="56" width="56" />
-                          <h3 className="text-sm text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
-                          </h3>
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState
+                            type={
+                              query === ""
+                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
+                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+                            }
+                            layout="screen-simple"
+                          />
                         </div>
                       )}
                     </Combobox.Options>
                   </Combobox>
-
-                  {filteredIssues.length > 0 && (
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button variant="primary" size="sm" onClick={handleSubmit}>
-                        Mark as original
-                      </Button>
-                    </div>
-                  )}
                 </Dialog.Panel>
               </Transition.Child>
             </div>

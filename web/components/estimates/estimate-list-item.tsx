@@ -1,20 +1,16 @@
 import React from "react";
-
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomMenu } from "@plane/ui";
-//icons
 import { Pencil, Trash2 } from "lucide-react";
+import { IEstimate } from "@plane/types";
+import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { orderArrayBy } from "@/helpers/array.helper";
+import { useProject } from "@/hooks/store";
+// ui
+//icons
 // helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IEstimate } from "types";
 
 type Props = {
   estimate: IEstimate;
@@ -27,12 +23,8 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
-  const {
-    project: { currentProjectDetails, updateProject },
-  } = useMobxStore();
-  // hooks
-  const { setToastAlert } = useToast();
+  // store hooks
+  const { currentProjectDetails, updateProject } = useProject();
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -43,8 +35,8 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate points could not be used. Please try again.",
       });

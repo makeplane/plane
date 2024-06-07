@@ -1,38 +1,38 @@
 import { useState } from "react";
-
-import Link from "next/link";
+import { observer } from "mobx-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// hooks
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { IntegrationService } from "services/integrations";
-// components
-import { Exporter, SingleExport } from "components/exporter";
-// ui
-import { Button, Loader } from "@plane/ui";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
-// fetch-keys
-import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
+// ui
+import { Button } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
+import { Exporter, SingleExport } from "@/components/exporter";
+import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { EXPORTERS_LIST } from "constants/workspace";
-
+import { EmptyStateType } from "@/constants/empty-state";
+import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
+import { EXPORTERS_LIST } from "@/constants/workspace";
+// hooks
+import { useUser } from "@/hooks/store";
 // services
+import { IntegrationService } from "@/services/integrations";
+
 const integrationService = new IntegrationService();
 
-const IntegrationGuide = () => {
+const IntegrationGuide = observer(() => {
+  // states
   const [refreshing, setRefreshing] = useState(false);
   const per_page = 10;
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { user } = useUserAuth();
+  // store hooks
+  const { data: currentUser } = useUser();
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -135,15 +135,12 @@ const IntegrationGuide = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="px-4 py-6 text-sm text-custom-text-200">No previous export available.</p>
+                  <div className="flex h-full w-full items-center justify-center">
+                    <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_EXPORT} size="sm" />
+                  </div>
                 )
               ) : (
-                <Loader className="mt-6 grid grid-cols-1 gap-3">
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                </Loader>
+                <ImportExportSettingsLoader />
               )}
             </div>
           </div>
@@ -153,7 +150,7 @@ const IntegrationGuide = () => {
             isOpen
             handleClose={() => handleCsvClose()}
             data={null}
-            user={user}
+            user={currentUser || null}
             provider={provider}
             mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
           />
@@ -161,6 +158,6 @@ const IntegrationGuide = () => {
       </div>
     </>
   );
-};
+});
 
 export default IntegrationGuide;

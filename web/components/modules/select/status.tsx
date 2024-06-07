@@ -2,19 +2,20 @@ import React from "react";
 
 // react hook form
 import { Controller, FieldError, Control } from "react-hook-form";
+import type { IModule } from "@plane/types";
 // ui
 import { CustomSelect, DoubleCircleIcon, ModuleStatusIcon } from "@plane/ui";
 // types
-import type { IModule } from "types";
+import { MODULE_STATUS } from "@/constants/module";
 // constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   control: Control<IModule, any>;
   error?: FieldError;
+  tabIndex?: number;
 };
 
-export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
+export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }) => (
   <Controller
     control={control}
     rules={{ required: true }}
@@ -23,7 +24,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
       <CustomSelect
         value={value}
         label={
-          <div className={`flex items-center justify-center gap-2 text-xs ${error ? "text-red-500" : ""}`}>
+          <div className={`flex items-center justify-center gap-2 text-xs py-0.5 ${error ? "text-red-500" : ""}`}>
             {value ? (
               <ModuleStatusIcon status={value} />
             ) : (
@@ -35,6 +36,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
           </div>
         }
         onChange={onChange}
+        tabIndex={tabIndex}
         noChevron
       >
         {MODULE_STATUS.map((status) => (

@@ -1,17 +1,13 @@
+import { useEffect } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hook
-import useEstimateOption from "hooks/use-estimate-option";
+// store hooks
 // icons
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
   TagIcon,
   CopyPlus,
   Calendar,
   Link2Icon,
-  RocketIcon,
   Users2Icon,
   ArchiveIcon,
   PaperclipIcon,
@@ -21,36 +17,45 @@ import {
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
+  Inbox,
 } from "lucide-react";
+import { IIssueActivity } from "@plane/types";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
-import { capitalizeFirstLetter } from "helpers/string.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { capitalizeFirstLetter } from "@/helpers/string.helper";
+import { useEstimate, useLabel } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IIssueActivity } from "types";
-import { useEffect } from "react";
 
-const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
+export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
-      <a
-        aria-disabled={activity.issue === null}
-        href={`${
-          activity.issue_detail
-            ? `/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
-                activity.issue
-              }`
-            : "#"
-        }`}
-        target={activity.issue === null ? "_self" : "_blank"}
-        rel={activity.issue === null ? "" : "noopener noreferrer"}
-        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
-      >
-        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-        <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
-      </a>
+    <Tooltip
+      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}
+      isMobile={isMobile}
+    >
+      {activity?.issue_detail ? (
+        <a
+          aria-disabled={activity.issue === null}
+          href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
+            activity.issue
+          }`}`}
+          target={activity.issue === null ? "_self" : "_blank"}
+          rel={activity.issue === null ? "" : "noopener noreferrer"}
+          className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        >
+          <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
+          <span className="font-normal break-all">{activity.issue_detail?.name}</span>
+        </a>
+      ) : (
+        <span className="inline-flex items-center gap-1 font-medium text-custom-text-100 whitespace-nowrap">
+          {" an Issue"}{" "}
+        </span>
+      )}
     </Tooltip>
   );
 };
@@ -74,11 +79,8 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 };
 
 const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
-  const {
-    workspace: { labels, fetchWorkspaceLabels },
-  } = useMobxStore();
-
-  const workspaceLabels = labels[workspaceSlug];
+  // store hooks
+  const { workspaceLabels, fetchWorkspaceLabels } = useLabel();
 
   useEffect(() => {
     if (!workspaceLabels) fetchWorkspaceLabels(workspaceSlug);
@@ -95,15 +97,54 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
   );
 });
 
-const EstimatePoint = ({ point }: { point: string }) => {
-  const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
+const EstimatePoint = observer((props: { point: string }) => {
+  const { point } = props;
+  const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
   const currentPoint = Number(point) + 1;
 
+  const estimateValue = getEstimatePointValue(Number(point), null);
+
   return (
-    <span className="font-medium text-custom-text-100">
-      {isEstimateActive ? estimateValue : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+    <span className="font-medium text-custom-text-100 whitespace-nowrap">
+      {areEstimatesEnabledForCurrentProject
+        ? estimateValue
+        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
     </span>
   );
+});
+
+const inboxActivityMessage = {
+  declined: {
+    showIssue: "declined issue",
+    noIssue: "declined this issue from inbox.",
+  },
+  snoozed: {
+    showIssue: "snoozed issue",
+    noIssue: "snoozed this issue.",
+  },
+  accepted: {
+    showIssue: "accepted issue",
+    noIssue: "accepted this issue from inbox.",
+  },
+  markedDuplicate: {
+    showIssue: "declined issue",
+    noIssue: "declined this issue from inbox by marking a duplicate issue.",
+  },
+};
+
+const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolean) => {
+  switch (activity.verb) {
+    case "-1":
+      return showIssue ? inboxActivityMessage.declined.showIssue : inboxActivityMessage.declined.noIssue;
+    case "0":
+      return showIssue ? inboxActivityMessage.snoozed.showIssue : inboxActivityMessage.snoozed.noIssue;
+    case "1":
+      return showIssue ? inboxActivityMessage.accepted.showIssue : inboxActivityMessage.accepted.noIssue;
+    case "2":
+      return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
+    default:
+      return "updated inbox issue status.";
+  }
 };
 
 const activityDetails: {
@@ -124,7 +165,6 @@ const activityDetails: {
                 to <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -137,7 +177,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -145,8 +184,18 @@ const activityDetails: {
   },
   archived_at: {
     message: (activity) => {
-      if (activity.new_value === "restore") return "restored the issue.";
-      else return "archived the issue.";
+      if (activity.new_value === "restore")
+        return (
+          <>
+            restored <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            archived <IssueLink activity={activity} />
+          </>
+        );
     },
     icon: <ArchiveIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
@@ -163,7 +212,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               attachment
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -183,117 +231,10 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
     icon: <PaperclipIcon size={12} color="#6b7280" aria-hidden="true" />,
-  },
-  blocking: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue is blocking issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
-  },
-  blocked_by: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue is being blocked by{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed this issue being blocked by issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
-  },
-  cycles: {
-    message: (activity, showIssue, workspaceSlug) => {
-      if (activity.verb === "created")
-        return (
-          <>
-            <span className="flex-shrink-0">added this issue to the cycle </span>
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
-            >
-              <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
-            </a>
-          </>
-        );
-      else if (activity.verb === "updated")
-        return (
-          <>
-            <span className="flex-shrink-0">set the cycle to </span>
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
-            >
-              <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
-            </a>
-          </>
-        );
-      else
-        return (
-          <>
-            removed the issue from the cycle{" "}
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
-            >
-              <span className="truncate">{activity.old_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
-            </a>
-          </>
-        );
-    },
-    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
-  },
-  duplicate: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue as duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed this issue as a duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <CopyPlus size={12} color="#6b7280" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -305,7 +246,6 @@ const activityDetails: {
             of <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <MessageSquareIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -322,7 +262,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -335,7 +274,6 @@ const activityDetails: {
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -343,8 +281,18 @@ const activityDetails: {
   },
   issue: {
     message: (activity) => {
-      if (activity.verb === "created") return "created the issue.";
-      else return "deleted an issue.";
+      if (activity.verb === "created")
+        return (
+          <>
+            created <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            deleted <IssueLink activity={activity} />
+          </>
+        );
     },
     icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
@@ -352,27 +300,31 @@ const activityDetails: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.old_value === "")
         return (
-          <>
+          <span className="overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
+              <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
+                {activity.new_value}
+              </span>
             </span>
             {showIssue && (
-              <span>
+              <span className="">
                 {" "}
                 to <IssueLink activity={activity} />
               </span>
             )}
-          </>
+          </span>
         );
       else
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
+              <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
+                {activity.old_value}
+              </span>
             </span>
             {showIssue && (
               <span>
@@ -398,7 +350,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -406,7 +357,6 @@ const activityDetails: {
                 to <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else if (activity.verb === "updated")
@@ -420,7 +370,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -428,7 +377,6 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
@@ -442,7 +390,6 @@ const activityDetails: {
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
-              <RocketIcon size={12} color="#6b7280" />
             </a>
             {showIssue && (
               <>
@@ -450,26 +397,74 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
     icon: <Link2Icon size={12} color="#6b7280" aria-hidden="true" />,
+  },
+  cycles: {
+    message: (activity, showIssue, workspaceSlug) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            <span className="flex-shrink-0">
+              added {showIssue ? <IssueLink activity={activity} /> : "this issue"}{" "}
+              <span className="whitespace-nowrap">to the cycle</span>{" "}
+            </span>
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+            >
+              <span className="break-all">{activity.new_value}</span>
+            </a>
+          </>
+        );
+      else if (activity.verb === "updated")
+        return (
+          <>
+            <span className="flex-shrink-0 whitespace-nowrap">set the cycle to </span>
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+            >
+              <span className="break-all">{activity.new_value}</span>
+            </a>
+          </>
+        );
+      else
+        return (
+          <>
+            removed <IssueLink activity={activity} /> from the cycle{" "}
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+            >
+              <span className="break-all">{activity.old_value}</span>
+            </a>
+          </>
+        );
+    },
+    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.verb === "created")
         return (
           <>
-            added this issue to the module{" "}
+            added {showIssue ? <IssueLink activity={activity} /> : "this issue"} to the module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+              <span className="break-all">{activity.new_value}</span>
             </a>
           </>
         );
@@ -481,25 +476,23 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.new_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+              <span className="break-all">{activity.new_value}</span>
             </a>
           </>
         );
       else
         return (
           <>
-            removed the issue from the module{" "}
+            removed <IssueLink activity={activity} /> from the module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              <span className="truncate">{activity.old_value}</span>
-              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+              <span className="break-all">{activity.old_value}</span>
             </a>
           </>
         );
@@ -509,14 +502,13 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        <span className="truncate">set the name to {activity.new_value}</span>
+        set the title to <span className="break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
             of <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <MessageSquareIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -526,27 +518,27 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            removed the parent{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
         return (
           <>
-            set the parent to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the parent to{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
@@ -565,28 +557,99 @@ const activityDetails: {
             for <IssueLink activity={activity} />
           </>
         )}
-        .
       </>
     ),
     icon: <SignalMediumIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   relates_to: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
-            marked that this issue relates to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            marked that {showIssue ? <IssueLink activity={activity} /> : "this issue"} relates to{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the relation from{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
     icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
+  },
+  blocking: {
+    message: (activity, showIssue) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is blocking issue{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the blocking issue{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
+  },
+  blocked_by: {
+    message: (activity, showIssue) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is being blocked by{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} being blocked by issue{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+  },
+  duplicate: {
+    message: (activity, showIssue) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} as duplicate of{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} as a duplicate of{" "}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <CopyPlus size={12} color="#6b7280" />,
+  },
+  state: {
+    message: (activity, showIssue) => (
+      <>
+        set the state to <span className="font-medium text-custom-text-100 break-all">{activity.new_value}</span>
+        {showIssue && (
+          <>
+            {" "}
+            for <IssueLink activity={activity} />
+          </>
+        )}
+      </>
+    ),
+    icon: <LayoutGridIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   start_date: {
     message: (activity, showIssue) => {
@@ -600,15 +663,14 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
         return (
           <>
             set the start date to{" "}
-            <span className="font-medium text-custom-text-100">
-              {renderShortDateWithYearFormat(activity.new_value)}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">
+              {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
@@ -616,26 +678,10 @@ const activityDetails: {
                 for <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
     icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
-  },
-  state: {
-    message: (activity, showIssue) => (
-      <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
-        {showIssue && (
-          <>
-            {" "}
-            for <IssueLink activity={activity} />
-          </>
-        )}
-        .
-      </>
-    ),
-    icon: <LayoutGridIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -649,27 +695,39 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
       else
         return (
           <>
             set the due date to{" "}
-            <span className="font-medium text-custom-text-100">
-              {renderShortDateWithYearFormat(activity.new_value)}
+            <span className="font-medium text-custom-text-100 whitespace-nowrap">
+              {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
-                {" "}
-                for <IssueLink activity={activity} />
+                <IssueLink activity={activity} />
               </>
             )}
-            .
           </>
         );
     },
     icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
+  },
+  inbox: {
+    message: (activity, showIssue) => (
+      <>
+        {getInboxUserActivityMessage(activity, showIssue)}
+        {showIssue && (
+          <>
+            {" "}
+            <IssueLink activity={activity} />
+          </>
+        )}
+        {activity.verb === "2" && ` from inbox by marking a duplicate issue.`}
+      </>
+    ),
+    icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
   },
 };
 

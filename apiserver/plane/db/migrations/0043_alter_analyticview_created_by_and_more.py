@@ -24,7 +24,9 @@ def create_issue_relation(apps, schema_editor):
                     updated_by_id=blocked_issue.updated_by_id,
                 )
             )
-        IssueRelation.objects.bulk_create(updated_issue_relation, batch_size=100)
+        IssueRelation.objects.bulk_create(
+            updated_issue_relation, batch_size=100
+        )
     except Exception as e:
         print(e)
         capture_exception(e)
@@ -36,47 +38,137 @@ def update_issue_priority_choice(apps, schema_editor):
     for obj in IssueModel.objects.filter(priority=None):
         obj.priority = "none"
         updated_issues.append(obj)
-    IssueModel.objects.bulk_update(updated_issues, ["priority"], batch_size=100)
+    IssueModel.objects.bulk_update(
+        updated_issues, ["priority"], batch_size=100
+    )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0042_alter_analyticview_created_by_and_more'),
+        ("db", "0042_alter_analyticview_created_by_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='IssueRelation',
+            name="IssueRelation",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('relation_type', models.CharField(choices=[('duplicate', 'Duplicate'), ('relates_to', 'Relates To'), ('blocked_by', 'Blocked By')], default='blocked_by', max_length=20, verbose_name='Issue Relation Type')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_relation', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_%(class)s', to='db.project')),
-                ('related_issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_related', to='db.issue')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_%(class)s', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "relation_type",
+                    models.CharField(
+                        choices=[
+                            ("duplicate", "Duplicate"),
+                            ("relates_to", "Relates To"),
+                            ("blocked_by", "Blocked By"),
+                        ],
+                        default="blocked_by",
+                        max_length=20,
+                        verbose_name="Issue Relation Type",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_relation",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_%(class)s",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "related_issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_related",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_%(class)s",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Relation',
-                'verbose_name_plural': 'Issue Relations',
-                'db_table': 'issue_relations',
-                'ordering': ('-created_at',),
-                'unique_together': {('issue', 'related_issue')},
+                "verbose_name": "Issue Relation",
+                "verbose_name_plural": "Issue Relations",
+                "db_table": "issue_relations",
+                "ordering": ("-created_at",),
+                "unique_together": {("issue", "related_issue")},
             },
         ),
         migrations.AddField(
-            model_name='issue',
-            name='is_draft',
+            model_name="issue",
+            name="is_draft",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='priority',
-            field=models.CharField(choices=[('urgent', 'Urgent'), ('high', 'High'), ('medium', 'Medium'), ('low', 'Low'), ('none', 'None')], default='none', max_length=30, verbose_name='Issue Priority'),
+            model_name="issue",
+            name="priority",
+            field=models.CharField(
+                choices=[
+                    ("urgent", "Urgent"),
+                    ("high", "High"),
+                    ("medium", "Medium"),
+                    ("low", "Low"),
+                    ("none", "None"),
+                ],
+                default="none",
+                max_length=30,
+                verbose_name="Issue Priority",
+            ),
         ),
         migrations.RunPython(create_issue_relation),
         migrations.RunPython(update_issue_priority_choice),

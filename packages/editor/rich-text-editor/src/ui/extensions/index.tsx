@@ -1,27 +1,22 @@
-import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
-import Placeholder from "@tiptap/extension-placeholder";
 import { UploadImage } from "@plane/editor-core";
+import { DragAndDrop, SlashCommand } from "@plane/editor-extensions";
+import { EnterKeyExtension } from "./enter-key-extension";
 
-export const RichTextEditorExtensions = (
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  dragDropEnabled?: boolean
-) => [
-  SlashCommand(uploadFile, setIsSubmitting),
-  dragDropEnabled === true && DragAndDrop,
-  Placeholder.configure({
-    placeholder: ({ node }) => {
-      if (node.type.name === "heading") {
-        return `Heading ${node.attrs.level}`;
-      }
-      if (node.type.name === "image" || node.type.name === "table") {
-        return "";
-      }
-      if (node.type.name === "codeBlock") {
-        return "Type in your code here...";
-      }
-      return "Press '/' for commands...";
-    },
-    includeChildren: true,
-  }),
+type TArguments = {
+  uploadFile: UploadImage;
+  dragDropEnabled?: boolean;
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void;
+  onEnterKeyPress?: () => void;
+};
+
+export const RichTextEditorExtensions = ({
+  uploadFile,
+  dragDropEnabled,
+  setHideDragHandle,
+  onEnterKeyPress,
+}: TArguments) => [
+  SlashCommand(uploadFile),
+  dragDropEnabled === true && DragAndDrop(setHideDragHandle),
+  // TODO; add the extension conditionally for forms that don't require it
+  // EnterKeyExtension(onEnterKeyPress),
 ];

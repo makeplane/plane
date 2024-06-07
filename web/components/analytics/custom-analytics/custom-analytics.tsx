@@ -1,15 +1,17 @@
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
+import useSWR from "swr";
+import { IAnalyticsParams } from "@plane/types";
 // services
-import { AnalyticsService } from "services/analytics.service";
 // components
-import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "components/analytics";
+import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "@/components/analytics";
 // types
-import { IAnalyticsParams } from "types";
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
+import { ANALYTICS } from "@/constants/fetch-keys";
+import { cn } from "@/helpers/common.helper";
+import { useAppTheme } from "@/hooks/store";
+import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
   additionalParams?: Partial<IAnalyticsParams>;
@@ -46,11 +48,13 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
 
+  const { workspaceAnalyticsSidebarCollapsed } = useAppTheme();
+
   const isProjectLevel = projectId ? true : false;
 
   return (
-    <div className={`flex flex-col-reverse overflow-hidden ${fullScreen ? "md:grid md:h-full md:grid-cols-4" : ""}`}>
-      <div className="col-span-3 flex h-full flex-col overflow-hidden">
+    <div className={cn("relative flex h-full w-full overflow-hidden", isProjectLevel ? "flex-col-reverse" : "")}>
+      <div className="flex h-full w-full flex-col overflow-hidden">
         <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}
@@ -61,16 +65,22 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
         <CustomAnalyticsMainContent
           analytics={analytics}
           error={analyticsError}
-          fullScreen={fullScreen}
           params={params}
+          fullScreen={fullScreen}
         />
       </div>
-      <CustomAnalyticsSidebar
-        analytics={analytics}
-        params={params}
-        fullScreen={fullScreen}
-        isProjectLevel={isProjectLevel}
-      />
+
+      <div
+        className={cn(
+          "border-l border-custom-border-200 transition-all",
+          !isProjectLevel
+            ? "absolute bottom-0 right-0 top-0 h-full max-w-[250px] flex-shrink-0 sm:max-w-full md:relative"
+            : ""
+        )}
+        style={workspaceAnalyticsSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
+      >
+        <CustomAnalyticsSidebar analytics={analytics} params={params} isProjectLevel={isProjectLevel} />
+      </div>
     </div>
   );
 });

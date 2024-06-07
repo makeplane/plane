@@ -1,30 +1,28 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { CreateUpdateStateInline, DeleteStateModal, ProjectSettingListItem, StateGroup } from "components/states";
-// ui
-import { Loader } from "@plane/ui";
-// icons
+// hooks
 import { Plus } from "lucide-react";
+import { Loader } from "@plane/ui";
+import { CreateUpdateStateInline, DeleteStateModal, StateGroup, StatesListItem } from "@/components/states";
+import { STATES_LIST } from "@/constants/fetch-keys";
+import { sortByField } from "@/helpers/array.helper";
+import { orderStateGroups } from "@/helpers/state.helper";
+import { useEventTracker, useProjectState } from "@/hooks/store";
+// components
+// ui
+// icons
 // helpers
-import { orderStateGroups } from "helpers/state.helper";
-import { sortByField } from "helpers/array.helper";
 // fetch-keys
-import { STATES_LIST } from "constants/fetch-keys";
 
 export const ProjectSettingStateList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
-  const {
-    projectState: { groupedProjectStates, projectStates, fetchProjectStates },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+  const { setTrackElement } = useEventTracker();
+  const { groupedProjectStates, projectStates, fetchProjectStates } = useProjectState();
   // state
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
@@ -37,9 +35,6 @@ export const ProjectSettingStateList: React.FC = observer(() => {
 
   // derived values
   const orderedStateGroups = orderStateGroups(groupedProjectStates!);
-
-  console.log("groupedStates", groupedProjectStates);
-  console.log("orderedStateGroups", orderedStateGroups);
 
   return (
     <>
@@ -81,7 +76,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                   )}
                   {sortByField(orderedStateGroups[group], "sequence").map((state, index) =>
                     state.id !== selectedState ? (
-                      <ProjectSettingListItem
+                      <StatesListItem
                         key={state.id}
                         index={index}
                         state={state}
@@ -147,7 +142,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                     )}
                     {orderedStateGroups[key].map((state, index) =>
                       state.id !== selectedState ? (
-                        <ProjectSettingListItem
+                        <StatesListItem
                           key={state.id}
                           index={index}
                           state={state}

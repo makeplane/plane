@@ -1,22 +1,22 @@
 # Python imports
 import json
-from itertools import chain
+
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import IntegrityError
 from django.db.models import (
-    OuterRef,
-    Func,
-    Q,
-    F,
     Case,
-    When,
-    Value,
     CharField,
-    Max,
     Exists,
+    F,
+    Func,
+    Max,
+    OuterRef,
+    Q,
+    Value,
+    When,
 )
-from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 # Third party imports
@@ -24,33 +24,96 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView, WebhookMixin
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectMemberPermission,
-    ProjectLitePermission,
-)
-from plane.db.models import (
-    Issue,
-    IssueAttachment,
-    IssueLink,
-    Project,
-    Label,
-    ProjectMember,
-    IssueComment,
-    IssueActivity,
-)
-from plane.bgtasks.issue_activites_task import issue_activity
 from plane.api.serializers import (
+    IssueActivitySerializer,
+    IssueCommentSerializer,
+    IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
-    IssueLinkSerializer,
-    IssueCommentSerializer,
-    IssueActivitySerializer,
+)
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    ProjectLitePermission,
+    ProjectMemberPermission,
+)
+from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    Issue,
+    IssueActivity,
+    IssueAttachment,
+    IssueComment,
+    IssueLink,
+    Label,
+    Project,
+    ProjectMember,
 )
 
+from .base import BaseAPIView
 
-class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
+
+class WorkspaceIssueAPIEndpoint(BaseAPIView):
+    """
+    This viewset provides `retrieveByIssueId` on workspace level
+
+    """
+
+    model = Issue
+    webhook_event = "issue"
+    permission_classes = [ProjectEntityPermission]
+    serializer_class = IssueSerializer
+
+    @property
+    def project__identifier(self):
+        return self.kwargs.get("project__identifier", None)
+
+    def get_queryset(self):
+        return (
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__identifier=self.kwargs.get("project__identifier"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        ).distinct()
+
+    def get(
+        self, request, slug, project__identifier=None, issue__identifier=None
+    ):
+        if issue__identifier and project__identifier:
+            issue = Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            ).get(
+                workspace__slug=slug,
+                project__identifier=project__identifier,
+                sequence_id=issue__identifier,
+            )
+            return Response(
+                IssueSerializer(
+                    issue,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
+                status=status.HTTP_200_OK,
+            )
+
+
+class IssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue.
@@ -67,7 +130,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -86,7 +151,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         if pk:
             issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -102,14 +169,19 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        state_order = [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
             self.get_queryset()
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -117,7 +189,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -127,7 +201,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
-                priority_order if order_by_param == "priority" else priority_order[::-1]
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
             )
             issue_queryset = issue_queryset.annotate(
                 priority_order=Case(
@@ -175,7 +251,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                     else order_by_param
                 )
             ).order_by(
-                "-max_values" if order_by_param.startswith("-") else "max_values"
+                "-max_values"
+                if order_by_param.startswith("-")
+                else "max_values"
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
@@ -204,12 +282,38 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                issue = Issue.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    external_id=request.data.get("external_id"),
+                    external_source=request.data.get("external_source"),
+                ).first()
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists",
+                        "id": str(issue.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save()
 
             # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(
+                    self.request.data, cls=DjangoJSONEncoder
+                ),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
@@ -220,7 +324,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
@@ -236,6 +342,26 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and (issue.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get(
+                        "external_source", issue.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists",
+                        "id": str(issue.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",
@@ -250,7 +376,9 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
@@ -284,7 +412,11 @@ class LabelAPIEndpoint(BaseAPIView):
         return (
             Label.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -296,13 +428,49 @@ class LabelAPIEndpoint(BaseAPIView):
         try:
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Label.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    label = Label.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                    ).first()
+                    return Response(
+                        {
+                            "error": "Label with the same external id and external source already exists",
+                            "id": str(label.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
+
                 serializer.save(project_id=project_id)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError:
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
             return Response(
-                {"error": "Label with the same name already exists in the project"},
-                status=status.HTTP_400_BAD_REQUEST,
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
+            label = Label.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                name=request.data.get("name"),
+            ).first()
+            return Response(
+                {
+                    "error": "Label with the same name already exists in the project",
+                    "id": str(label.id),
+                },
+                status=status.HTTP_409_CONFLICT,
             )
 
     def get(self, request, slug, project_id, pk=None):
@@ -318,17 +486,39 @@ class LabelAPIEndpoint(BaseAPIView):
                 ).data,
             )
         label = self.get_queryset().get(pk=pk)
-        serializer = LabelSerializer(label, fields=self.fields, expand=self.expand,)
+        serializer = LabelSerializer(
+            label,
+            fields=self.fields,
+            expand=self.expand,
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (label.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get(
+                        "external_source", label.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Label with the same external id and external source already exists",
+                        "id": str(label.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     def delete(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
@@ -355,7 +545,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             IssueLink.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
@@ -395,7 +589,9 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             )
             issue_activity.delay(
                 type="link.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(
+                    serializer.data, cls=DjangoJSONEncoder
+                ),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
@@ -407,14 +603,19 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            pk=pk,
         )
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
             IssueLinkSerializer(issue_link).data,
             cls=DjangoJSONEncoder,
         )
-        serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
+        serializer = IssueLinkSerializer(
+            issue_link, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -431,7 +632,10 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            pk=pk,
         )
         current_instance = json.dumps(
             IssueLinkSerializer(issue_link).data,
@@ -450,7 +654,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
+class IssueCommentAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to comments of the particular issue.
@@ -466,14 +670,17 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def get_queryset(self):
         return (
-            IssueComment.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            IssueComment.objects.filter(
+                workspace__slug=self.kwargs.get("slug")
+            )
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .select_related("actor")
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
+            .select_related("workspace", "project", "issue", "actor")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -509,6 +716,31 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
     def post(self, request, slug, project_id, issue_id):
+        # Validation check if the issue already exists
+        if (
+            request.data.get("external_id")
+            and request.data.get("external_source")
+            and IssueComment.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+            ).exists()
+        ):
+            issue_comment = IssueComment.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                external_id=request.data.get("external_id"),
+                external_source=request.data.get("external_source"),
+            ).first()
+            return Response(
+                {
+                    "error": "Issue Comment with the same external id and external source already exists",
+                    "id": str(issue_comment.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -518,7 +750,9 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             )
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(
+                    serializer.data, cls=DjangoJSONEncoder
+                ),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
@@ -530,13 +764,41 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            pk=pk,
         )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
             IssueCommentSerializer(issue_comment).data,
             cls=DjangoJSONEncoder,
         )
+
+        # Validation check if the issue already exists
+        if (
+            request.data.get("external_id")
+            and (
+                issue_comment.external_id
+                != str(request.data.get("external_id"))
+            )
+            and IssueComment.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get(
+                    "external_source", issue_comment.external_source
+                ),
+                external_id=request.data.get("external_id"),
+            ).exists()
+        ):
+            return Response(
+                {
+                    "error": "Issue Comment with the same external id and external source already exists",
+                    "id": str(issue_comment.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
         serializer = IssueCommentSerializer(
             issue_comment, data=request.data, partial=True
         )
@@ -556,7 +818,10 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            pk=pk,
         )
         current_instance = json.dumps(
             IssueCommentSerializer(issue_comment).data,
@@ -588,10 +853,12 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by(request.GET.get("order_by", "created_at"))
- 
+
         if pk:
             issue_activities = issue_activities.get(pk=pk)
             serializer = IssueActivitySerializer(issue_activities)

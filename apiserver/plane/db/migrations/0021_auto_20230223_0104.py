@@ -7,179 +7,616 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0020_auto_20230214_0118'),
+        ("db", "0020_auto_20230214_0118"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GithubRepository',
+            name="GithubRepository",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=500)),
-                ('url', models.URLField(null=True)),
-                ('config', models.JSONField(default=dict)),
-                ('repository_id', models.BigIntegerField()),
-                ('owner', models.CharField(max_length=500)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubrepository_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_githubrepository', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubrepository_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_githubrepository', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=500)),
+                ("url", models.URLField(null=True)),
+                ("config", models.JSONField(default=dict)),
+                ("repository_id", models.BigIntegerField()),
+                ("owner", models.CharField(max_length=500)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubrepository_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_githubrepository",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubrepository_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_githubrepository",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Repository',
-                'verbose_name_plural': 'Repositories',
-                'db_table': 'github_repositories',
-                'ordering': ('-created_at',),
+                "verbose_name": "Repository",
+                "verbose_name_plural": "Repositories",
+                "db_table": "github_repositories",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='Integration',
+            name="Integration",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('title', models.CharField(max_length=400)),
-                ('provider', models.CharField(max_length=400, unique=True)),
-                ('network', models.PositiveIntegerField(choices=[(1, 'Private'), (2, 'Public')], default=1)),
-                ('description', models.JSONField(default=dict)),
-                ('author', models.CharField(blank=True, max_length=400)),
-                ('webhook_url', models.TextField(blank=True)),
-                ('webhook_secret', models.TextField(blank=True)),
-                ('redirect_url', models.TextField(blank=True)),
-                ('metadata', models.JSONField(default=dict)),
-                ('verified', models.BooleanField(default=False)),
-                ('avatar_url', models.URLField(blank=True, null=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='integration_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='integration_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("title", models.CharField(max_length=400)),
+                ("provider", models.CharField(max_length=400, unique=True)),
+                (
+                    "network",
+                    models.PositiveIntegerField(
+                        choices=[(1, "Private"), (2, "Public")], default=1
+                    ),
+                ),
+                ("description", models.JSONField(default=dict)),
+                ("author", models.CharField(blank=True, max_length=400)),
+                ("webhook_url", models.TextField(blank=True)),
+                ("webhook_secret", models.TextField(blank=True)),
+                ("redirect_url", models.TextField(blank=True)),
+                ("metadata", models.JSONField(default=dict)),
+                ("verified", models.BooleanField(default=False)),
+                ("avatar_url", models.URLField(blank=True, null=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="integration_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="integration_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Integration',
-                'verbose_name_plural': 'Integrations',
-                'db_table': 'integrations',
-                'ordering': ('-created_at',),
+                "verbose_name": "Integration",
+                "verbose_name_plural": "Integrations",
+                "db_table": "integrations",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AlterField(
-            model_name='issueactivity',
-            name='issue',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issue_activity', to='db.issue'),
+            model_name="issueactivity",
+            name="issue",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="issue_activity",
+                to="db.issue",
+            ),
         ),
         migrations.CreateModel(
-            name='WorkspaceIntegration',
+            name="WorkspaceIntegration",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('metadata', models.JSONField(default=dict)),
-                ('config', models.JSONField(default=dict)),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='integrations', to=settings.AUTH_USER_MODEL)),
-                ('api_token', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='integrations', to='db.apitoken')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspaceintegration_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('integration', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='integrated_workspaces', to='db.integration')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspaceintegration_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_integrations', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("metadata", models.JSONField(default=dict)),
+                ("config", models.JSONField(default=dict)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="integrations",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "api_token",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="integrations",
+                        to="db.apitoken",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspaceintegration_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "integration",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="integrated_workspaces",
+                        to="db.integration",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspaceintegration_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_integrations",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Workspace Integration',
-                'verbose_name_plural': 'Workspace Integrations',
-                'db_table': 'workspace_integrations',
-                'ordering': ('-created_at',),
-                'unique_together': {('workspace', 'integration')},
+                "verbose_name": "Workspace Integration",
+                "verbose_name_plural": "Workspace Integrations",
+                "db_table": "workspace_integrations",
+                "ordering": ("-created_at",),
+                "unique_together": {("workspace", "integration")},
             },
         ),
         migrations.CreateModel(
-            name='IssueLink',
+            name="IssueLink",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('title', models.CharField(max_length=255, null=True)),
-                ('url', models.URLField()),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuelink_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_link', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issuelink', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuelink_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issuelink', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, null=True)),
+                ("url", models.URLField()),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuelink_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_link",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issuelink",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuelink_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issuelink",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Link',
-                'verbose_name_plural': 'Issue Links',
-                'db_table': 'issue_links',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Link",
+                "verbose_name_plural": "Issue Links",
+                "db_table": "issue_links",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='GithubRepositorySync',
+            name="GithubRepositorySync",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('credentials', models.JSONField(default=dict)),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_syncs', to=settings.AUTH_USER_MODEL)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubrepositorysync_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('label', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='repo_syncs', to='db.label')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_githubrepositorysync', to='db.project')),
-                ('repository', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='syncs', to='db.githubrepository')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubrepositorysync_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_githubrepositorysync', to='db.workspace')),
-                ('workspace_integration', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='github_syncs', to='db.workspaceintegration')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("credentials", models.JSONField(default=dict)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_syncs",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubrepositorysync_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "label",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="repo_syncs",
+                        to="db.label",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_githubrepositorysync",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "repository",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="syncs",
+                        to="db.githubrepository",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubrepositorysync_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_githubrepositorysync",
+                        to="db.workspace",
+                    ),
+                ),
+                (
+                    "workspace_integration",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="github_syncs",
+                        to="db.workspaceintegration",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Github Repository Sync',
-                'verbose_name_plural': 'Github Repository Syncs',
-                'db_table': 'github_repository_syncs',
-                'ordering': ('-created_at',),
-                'unique_together': {('project', 'repository')},
+                "verbose_name": "Github Repository Sync",
+                "verbose_name_plural": "Github Repository Syncs",
+                "db_table": "github_repository_syncs",
+                "ordering": ("-created_at",),
+                "unique_together": {("project", "repository")},
             },
         ),
         migrations.CreateModel(
-            name='GithubIssueSync',
+            name="GithubIssueSync",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('repo_issue_id', models.BigIntegerField()),
-                ('github_issue_id', models.BigIntegerField()),
-                ('issue_url', models.URLField()),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubissuesync_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='github_syncs', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_githubissuesync', to='db.project')),
-                ('repository_sync', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_syncs', to='db.githubrepositorysync')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubissuesync_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_githubissuesync', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("repo_issue_id", models.BigIntegerField()),
+                ("github_issue_id", models.BigIntegerField()),
+                ("issue_url", models.URLField()),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubissuesync_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="github_syncs",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_githubissuesync",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "repository_sync",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_syncs",
+                        to="db.githubrepositorysync",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubissuesync_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_githubissuesync",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Github Issue Sync',
-                'verbose_name_plural': 'Github Issue Syncs',
-                'db_table': 'github_issue_syncs',
-                'ordering': ('-created_at',),
-                'unique_together': {('repository_sync', 'issue')},
+                "verbose_name": "Github Issue Sync",
+                "verbose_name_plural": "Github Issue Syncs",
+                "db_table": "github_issue_syncs",
+                "ordering": ("-created_at",),
+                "unique_together": {("repository_sync", "issue")},
             },
         ),
         migrations.CreateModel(
-            name='GithubCommentSync',
+            name="GithubCommentSync",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('repo_comment_id', models.BigIntegerField()),
-                ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_syncs', to='db.issuecomment')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubcommentsync_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue_sync', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_syncs', to='db.githubissuesync')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_githubcommentsync', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='githubcommentsync_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_githubcommentsync', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("repo_comment_id", models.BigIntegerField()),
+                (
+                    "comment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comment_syncs",
+                        to="db.issuecomment",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubcommentsync_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue_sync",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comment_syncs",
+                        to="db.githubissuesync",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_githubcommentsync",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="githubcommentsync_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_githubcommentsync",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Github Comment Sync',
-                'verbose_name_plural': 'Github Comment Syncs',
-                'db_table': 'github_comment_syncs',
-                'ordering': ('-created_at',),
-                'unique_together': {('issue_sync', 'comment')},
+                "verbose_name": "Github Comment Sync",
+                "verbose_name_plural": "Github Comment Syncs",
+                "db_table": "github_comment_syncs",
+                "ordering": ("-created_at",),
+                "unique_together": {("issue_sync", "comment")},
             },
         ),
     ]

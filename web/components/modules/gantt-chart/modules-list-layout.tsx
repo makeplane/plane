@@ -1,40 +1,45 @@
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+import { IModule } from "@plane/types";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
-import { ModuleGanttBlock } from "components/modules";
+import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "@/components/gantt-chart";
+import { ModuleGanttBlock } from "@/components/modules";
+import { getDate } from "@/helpers/date-time.helper";
+import { useModule, useModuleFilter, useProject } from "@/hooks/store";
 // types
-import { IModule } from "types";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store
-  const { project: projectStore, module: moduleStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
-  const modules = moduleStore.projectModules;
+  const { currentProjectDetails } = useProject();
+  const { getFilteredModuleIds, moduleMap, updateModuleDetails } = useModule();
+  const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
+  // derived values
+  const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
-  const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
-    if (!workspaceSlug) return;
+  const handleModuleUpdate = async (module: IModule, data: IBlockUpdateData) => {
+    if (!workspaceSlug || !module) return;
 
-    moduleStore.updateModuleGanttStructure(workspaceSlug.toString(), module.project, module, payload);
+    const payload: any = { ...data };
+    if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
+
+    await updateModuleDetails(workspaceSlug.toString(), module.project_id, module.id, payload);
   };
 
-  const blockFormat = (blocks: IModule[]) =>
-    blocks && blocks.length > 0
-      ? blocks
-          .filter((b) => b.start_date && b.target_date && new Date(b.start_date) <= new Date(b.target_date))
-          .map((block) => ({
-            data: block,
-            id: block.id,
-            sort_order: block.sort_order,
-            start_date: new Date(block.start_date ?? ""),
-            target_date: new Date(block.target_date ?? ""),
-          }))
-      : [];
+  const blockFormat = (blocks: string[]) =>
+    blocks?.map((blockId) => {
+      const block = moduleMap[blockId];
+      return {
+        data: block,
+        id: block.id,
+        sort_order: block.sort_order,
+        start_date: getDate(block.start_date),
+        target_date: getDate(block.target_date),
+      };
+    });
 
   const isAllowed = currentProjectDetails?.member_role === 20 || currentProjectDetails?.member_role === 15;
 
@@ -43,14 +48,16 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
       <GanttChartRoot
         title="Modules"
         loaderTitle="Modules"
-        blocks={modules ? blockFormat(modules) : null}
+        blocks={filteredModuleIds ? blockFormat(filteredModuleIds) : null}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        blockToRender={(data: IModule) => <ModuleGanttBlock data={data} />}
+        blockToRender={(data: IModule) => <ModuleGanttBlock moduleId={data.id} />}
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
-        enableReorder={isAllowed}
+        enableReorder={isAllowed && displayFilters?.order_by === "sort_order"}
+        enableAddBlock={isAllowed}
+        showAllBlocks
       />
     </div>
   );

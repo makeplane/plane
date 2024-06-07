@@ -1,21 +1,20 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
-import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
+import { TIssue } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
-// ui
-import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
-// types
-import { IIssue } from "types";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useCommandPalette, useIssues, useUser } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
-  issueDetails: IIssue | undefined;
+  issueDetails: TIssue | undefined;
   pages: string[];
   setPages: (pages: string[]) => void;
   setPlaceholder: (placeholder: string) => void;
@@ -24,19 +23,17 @@ type Props = {
 
 export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { closePalette, issueDetails, pages, setPages, setPlaceholder, setSearchTerm } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // hooks
   const {
-    commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
-    projectIssues: { updateIssue },
-    user: { currentUser },
-  } = useMobxStore();
+    issues: { updateIssue },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
+  const { data: currentUser } = useUser();
 
-  const { setToastAlert } = useToast();
-
-  const handleUpdateIssue = async (formData: Partial<IIssue>) => {
+  const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;
 
     const payload = { ...formData };
@@ -49,12 +46,12 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     if (!issueDetails || !assignee) return;
 
     closePalette();
-    const updatedAssignees = issueDetails.assignees ?? [];
+    const updatedAssignees = issueDetails.assignee_ids ?? [];
 
     if (updatedAssignees.includes(assignee)) updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
     else updatedAssignees.push(assignee);
 
-    handleUpdateIssue({ assignees: updatedAssignees });
+    handleUpdateIssue({ assignee_ids: updatedAssignees });
   };
 
   const deleteIssue = () => {
@@ -68,14 +65,14 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
@@ -118,7 +115,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          <UserGroupIcon className="h-3.5 w-3.5" />
+          <Users className="h-3.5 w-3.5" />
           Assign to...
         </div>
       </Command.Item>
@@ -130,7 +127,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          {issueDetails?.assignees.includes(currentUser?.id ?? "") ? (
+          {issueDetails?.assignee_ids.includes(currentUser?.id ?? "") ? (
             <>
               <UserMinus2 className="h-3.5 w-3.5" />
               Un-assign from me

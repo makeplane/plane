@@ -1,43 +1,17 @@
-import { mutate } from "swr";
+import { useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
-import { Activity, ChevronLeft, CircleUser, KeyRound, LogOut, MoveLeft, Plus, Settings2, UserPlus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// icons
+import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // ui
-import { Tooltip } from "@plane/ui";
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// constants
+import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // hooks
-import useToast from "hooks/use-toast";
-import { useState } from "react";
-
-const PROFILE_ACTION_LINKS = [
-  {
-    key: "profile",
-    label: "Profile",
-    href: `/profile`,
-    Icon: CircleUser,
-  },
-  {
-    key: "change-password",
-    label: "Change password",
-    href: `/profile/change-password`,
-    Icon: KeyRound,
-  },
-  {
-    key: "activity",
-    label: "Activity",
-    href: `/profile/activity`,
-    Icon: Activity,
-  },
-  {
-    key: "preferences",
-    label: "Preferences",
-    href: `/profile/preferences`,
-    Icon: Settings2,
-  },
-];
+import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -59,16 +33,14 @@ export const ProfileLayoutSidebar = observer(() => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   // router
   const router = useRouter();
-  // next themes
-  const { setTheme } = useTheme();
-  // toast
-  const { setToastAlert } = useToast();
+  // store hooks
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { data: currentUser, signOut } = useUser();
+  const { data: currentUserSettings } = useUserSettings();
+  const { workspaces } = useWorkspace();
+  const { isMobile } = usePlatformOS();
 
-  const {
-    theme: { sidebarCollapsed, toggleSidebar },
-    workspace: { workspaces },
-    user: { currentUser, currentUserSettings, signOut },
-  } = useMobxStore();
+  const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
   const redirectWorkspaceSlug =
@@ -76,18 +48,41 @@ export const ProfileLayoutSidebar = observer(() => {
     currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useOutsideClickDetector(ref, () => {
+    if (sidebarCollapsed === false) {
+      if (window.innerWidth < 768) {
+        toggleSidebar();
+      }
+    }
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        toggleSidebar(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [toggleSidebar]);
+
+  const handleItemClick = () => {
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
+
   const handleSignOut = async () => {
     setIsSigningOut(true);
-
     await signOut()
-      .then(() => {
-        mutate("CURRENT_USER_DETAILS", null);
-        setTheme("system");
-        router.push("/");
-      })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -97,12 +92,15 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative ${
-        sidebarCollapsed ? "" : "md:w-[280px]"
-      } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative 
+        ${sidebarCollapsed ? "-ml-[280px]" : ""}
+        sm:${sidebarCollapsed ? "-ml-[280px]" : ""}
+        md:ml-0 ${sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+        lg:ml-0 ${sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+      `}
     >
-      <div className="flex h-full w-full flex-col gap-y-4">
-        <Link href={`/${redirectWorkspaceSlug}`}>
+      <div ref={ref} className="flex h-full w-full flex-col gap-y-4">
+        <Link href={`/${redirectWorkspaceSlug}`} onClick={handleItemClick}>
           <div
             className={`flex flex-shrink-0 items-center gap-2 truncate px-4 pt-4 ${
               sidebarCollapsed ? "justify-center" : ""
@@ -120,16 +118,22 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
+          <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
               return (
-                <Link key={link.key} href={link.href} className="block w-full">
-                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
+                  <Tooltip
+                    tooltipContent={link.label}
+                    position="right"
+                    className="ml-2"
+                    disabled={!sidebarCollapsed}
+                    isMobile={isMobile}
+                  >
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                        router.pathname === link.href
+                        link.highlight(router.pathname)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
@@ -147,15 +151,16 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
-          {workspaces && workspaces.length > 0 && (
-            <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
-              {workspaces.map((workspace) => (
+          {workspacesList && workspacesList.length > 0 && (
+            <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
+              {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}
                   href={`/${workspace.slug}`}
                   className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${
                     sidebarCollapsed ? "justify-center" : `justify-between`
                   }`}
+                  onClick={handleItemClick}
                 >
                   <span
                     className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-custom-sidebar-background-80 ${
@@ -187,8 +192,14 @@ export const ProfileLayoutSidebar = observer(() => {
           )}
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
-              <Link className="block w-full" key={link.key} href={link.href}>
-                <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+              <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
+                <Tooltip
+                  tooltipContent={link.label}
+                  position="right"
+                  className="ml-2"
+                  disabled={!sidebarCollapsed}
+                  isMobile={isMobile}
+                >
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
                       sidebarCollapsed ? "justify-center" : ""

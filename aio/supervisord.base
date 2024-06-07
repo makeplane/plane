@@ -1,0 +1,37 @@
+[supervisord]
+user=root
+nodaemon=true
+stderr_logfile=/app/logs/error/supervisor.err.log
+stdout_logfile=/app/logs/access/supervisor.out.log
+
+[program:redis]
+directory=/app/data/redis
+command=redis-server
+autostart=true
+autorestart=true
+stderr_logfile=/app/logs/error/redis.err.log
+stdout_logfile=/app/logs/access/redis.out.log
+
+[program:postgresql]
+user=postgres
+command=/usr/lib/postgresql/15/bin/postgres --config-file=/etc/postgresql/15/main/postgresql.conf
+autostart=true
+autorestart=true
+stderr_logfile=/app/logs/error/postgresql.err.log
+stdout_logfile=/app/logs/access/postgresql.out.log
+
+[program:minio]
+directory=/app/data/minio
+command=minio server /app/data/minio
+autostart=true
+autorestart=true
+stderr_logfile=/app/logs/error/minio.err.log
+stdout_logfile=/app/logs/access/minio.out.log
+
+[program:nginx]
+directory=/app/data/nginx
+command=/usr/sbin/nginx -g 'daemon off;'
+autostart=true
+autorestart=true
+stderr_logfile=/app/logs/error/nginx.err.log
+stdout_logfile=/app/logs/access/nginx.out.log

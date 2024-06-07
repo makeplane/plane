@@ -1,6 +1,5 @@
 # Python imports
 import json
-import requests
 import secrets
 
 # Django imports
@@ -12,13 +11,15 @@ from django.conf import settings
 from plane.license.models import Instance
 from plane.db.models import User
 
+
 class Command(BaseCommand):
     help = "Check if instance in registered else register"
 
     def add_arguments(self, parser):
         # Positional argument
-        parser.add_argument('machine_signature', type=str, help='Machine signature')
-
+        parser.add_argument(
+            "machine_signature", type=str, help="Machine signature"
+        )
 
     def handle(self, *args, **options):
         # Check if the instance is registered
@@ -30,7 +31,9 @@ class Command(BaseCommand):
                 # Load JSON content from the file
                 data = json.load(file)
 
-            machine_signature = options.get("machine_signature", "machine-signature")
+            machine_signature = options.get(
+                "machine_signature", "machine-signature"
+            )
 
             if not machine_signature:
                 raise CommandError("Machine signature is required")
@@ -43,24 +46,18 @@ class Command(BaseCommand):
             }
 
             instance = Instance.objects.create(
-                instance_name="Plane Free",
+                instance_name="Plane Community Edition",
                 instance_id=secrets.token_hex(12),
                 license_key=None,
-                api_key=secrets.token_hex(8),
-                version=payload.get("version"),
+                current_version=payload.get("version"),
+                latest_version=payload.get("version"),
                 last_checked_at=timezone.now(),
                 user_count=payload.get("user_count", 0),
             )
 
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Instance registered"
-                )
-            )        
+            self.stdout.write(self.style.SUCCESS("Instance registered"))
         else:
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"Instance already registered"
-                )
+                self.style.SUCCESS("Instance already registered")
             )
             return

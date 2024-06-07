@@ -1,8 +1,8 @@
-// services
-import APIService from "services/api.service";
-// helpers
-import { API_BASE_URL } from "helpers/common.helper";
 import axios from "axios";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
 
 interface UnSplashImage {
   id: string;
@@ -43,7 +43,6 @@ class FileService extends APIService {
     this.cancelSource = axios.CancelToken.source();
     return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
       headers: {
-        ...this.getHeaders(),
         "Content-Type": "multipart/form-data",
       },
       cancelToken: this.cancelSource.token,
@@ -74,6 +73,39 @@ class FileService extends APIService {
     };
   }
 
+  getDeleteImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.deleteImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  getRestoreImageFunction(workspaceId: string) {
+    return async (src: string) => {
+      try {
+        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
+        const data = await this.restoreImage(assetUrlWithWorkspaceId);
+        return data;
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }
+
+  extractAssetIdFromUrl(src: string, workspaceId: string): string {
+    const indexWhereAssetIdStarts = src.indexOf(workspaceId) + workspaceId.length + 1;
+    if (indexWhereAssetIdStarts === -1) {
+      throw new Error("Workspace ID not found in source string");
+    }
+    const assetUrl = src.substring(indexWhereAssetIdStarts);
+    return assetUrl;
+  }
+
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
       .then((response) => response?.status)
@@ -84,7 +116,6 @@ class FileService extends APIService {
 
   async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
-      headers: this.getHeaders(),
       "Content-Type": "application/json",
     })
       .then((response) => response?.status)
@@ -103,8 +134,13 @@ class FileService extends APIService {
         throw error?.response?.data;
       });
   }
+
   async uploadUserFile(file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/users/file-assets/`, file)
+    return this.post(`/api/users/file-assets/`, file, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

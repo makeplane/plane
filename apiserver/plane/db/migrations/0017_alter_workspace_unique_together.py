@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0016_auto_20230107_1735'),
+        ("db", "0016_auto_20230107_1735"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='workspace',
+            name="workspace",
             unique_together=set(),
         ),
     ]

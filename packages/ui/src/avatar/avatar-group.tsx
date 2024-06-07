@@ -1,6 +1,8 @@
 import React from "react";
 // ui
 import { Tooltip } from "../tooltip";
+// helpers
+import { cn } from "../../helpers";
 // types
 import { TAvatarSize, getSizeInfo, isAValidNumber } from "./avatar";
 
@@ -55,7 +57,7 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   const sizeInfo = getSizeInfo(size);
 
   return (
-    <div className={`flex ${sizeInfo.spacing}`}>
+    <div className={cn("flex", sizeInfo.spacing)}>
       {avatarsWithUpdatedProps.map((avatar, index) => (
         <div key={index} className="rounded-full ring-1 ring-custom-background-100">
           {avatar}
@@ -64,9 +66,12 @@ export const AvatarGroup: React.FC<Props> = (props) => {
       {maxAvatarsToRender < totalAvatars && (
         <Tooltip tooltipContent={`${totalAvatars} total`} disabled={!showTooltip}>
           <div
-            className={`${
-              !isAValidNumber(size) ? sizeInfo.avatarSize : ""
-            } grid place-items-center rounded-full bg-custom-primary-10 text-[9px] text-custom-primary-100 ring-1 ring-custom-background-100`}
+            className={cn(
+              "grid place-items-center rounded-full bg-custom-primary-10 text-[9px] text-custom-primary-100 ring-1 ring-custom-background-100",
+              {
+                [sizeInfo.avatarSize]: !isAValidNumber(size),
+              }
+            )}
             style={
               isAValidNumber(size)
                 ? {

@@ -13,7 +13,7 @@ Let's get started!
   <p>Best way to start is to create EC2 maching on AWS. It must of minimum t3.medium/t3a/medium</p>
   <p>Run the below command to install docker engine.</p>
 
-`curl -fsSL https://get.docker.com -o install-docker.sh`
+`curl -fsSL https://get.docker.com | sh -`
 
 </details>
 
@@ -94,15 +94,16 @@ Lets get started by running the `./setup.sh` command.
 
 This will prompt you with the below options.
 
-```
+```bash
 Select a Action you want to perform:
-   1) Install
+   1) Install (x86_64)
    2) Start
    3) Stop
    4) Restart
    5) Upgrade
-   6) Exit
-
+   6) View Logs
+   7) Backup Data
+   8) Exit
 Action [2]: 1
 ```
 
@@ -111,9 +112,9 @@ For the 1st time setup, type "1" as action input.
 This will create a create a folder `plane-app` or `plane-app-preview` (in case of preview deployment) and will download 2 files inside that
 
 - `docker-compose.yaml`
-- `.env`
+- `plane.env`
 
-Again the `options [1-6]` will be popped up and this time hit `6` to exit.
+Again the `options [1-7]` will be popped up and this time hit `7` to exit.
 
 ---
 
@@ -136,14 +137,16 @@ There are many other settings you can play with, but we suggest you configure `E
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `2` to start the sevices
 
-```
+```bash
 Select a Action you want to perform:
-   1) Install
+   1) Install (x86_64)
    2) Start
    3) Stop
    4) Restart
    5) Upgrade
-   6) Exit
+   6) View Logs
+   7) Backup Data
+   8) Exit
 
 Action [2]: 2
 ```
@@ -167,14 +170,16 @@ In case you want to make changes to `.env` variables, we suggest you to stop the
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `3` to stop the sevices
 
-```
+```bash
 Select a Action you want to perform:
-   1) Install
+   1) Install (x86_64)
    2) Start
    3) Stop
    4) Restart
    5) Upgrade
-   6) Exit
+   6) View Logs
+   7) Backup Data
+   8) Exit
 
 Action [2]: 3
 ```
@@ -191,14 +196,16 @@ In case you want to make changes to `.env` variables, without stopping the serve
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `4` to restart the sevices
 
-```
+```bash
 Select a Action you want to perform:
-   1) Install
+   1) Install (x86_64)
    2) Start
    3) Stop
    4) Restart
    5) Upgrade
-   6) Exit
+   6) View Logs
+   7) Backup Data
+   8) Exit
 
 Action [2]: 4
 ```
@@ -215,14 +222,16 @@ It is always advised to keep Plane up to date with the latest release.
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `5` to upgrade the release.
 
-```
+```bash
 Select a Action you want to perform:
-   1) Install
+   1) Install (x86_64)
    2) Start
    3) Stop
    4) Restart
    5) Upgrade
-   6) Exit
+   6) View Logs
+   7) Backup Data
+   8) Exit
 
 Action [2]: 5
 ```
@@ -233,11 +242,136 @@ You must expect the below message
 
 ![Alt text](images/upgrade.png)
 
-Once done, choose `6` to exit from prompt.
+Once done, choose `8` to exit from prompt.
 
 > It is very important for you to compare the 2 files `variables-upgrade.env` and `.env`. Copy the newly added variable from downloaded file to `.env` and set the expected values.
 
-Once done with making changes in `.env` file, jump on to `Start Server`
+Once done with making changes in `plane.env` file, jump on to `Start Server`
+
+---
+
+### View Logs
+
+There would a time when you might want to check what is happening inside the API, Worker or any other container.  
+
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `6` to view logs.
+
+```bash
+Select a Action you want to perform:
+   1) Install (x86_64)
+   2) Start
+   3) Stop
+   4) Restart
+   5) Upgrade
+   6) View Logs
+   7) Backup Data
+   8) Exit
+
+Action [2]: 6
+```
+
+
+This will further open sub-menu with list of services
+```bash
+Select a Service you want to view the logs for:
+   1) Web
+   2) Space
+   3) API
+   4) Worker
+   5) Beat-Worker
+   6) Migrator
+   7) Proxy
+   8) Redis
+   9) Postgres
+   10) Minio
+   0) Back to Main Menu
+
+Service: 
+```
+
+Select any of the service to view the logs e.g. `3`. Expect something similar to this
+```bash
+api-1  | Waiting for database...
+api-1  | Database available!
+api-1  | Waiting for database migrations to complete...
+api-1  | Waiting for database migrations to complete...
+api-1  | Waiting for database migrations to complete...
+api-1  | Waiting for database migrations to complete...
+api-1  | Waiting for database migrations to complete...
+api-1  | Waiting for database migrations to complete...
+api-1  | Waiting for database migrations to complete...
+api-1  | No migrations Pending. Starting processes ...
+api-1  | Instance registered
+api-1  | ENABLE_SIGNUP loaded with value from environment variable.
+api-1  | ENABLE_EMAIL_PASSWORD loaded with value from environment variable.
+api-1  | ENABLE_MAGIC_LINK_LOGIN loaded with value from environment variable.
+api-1  | GOOGLE_CLIENT_ID loaded with value from environment variable.
+api-1  | GITHUB_CLIENT_ID loaded with value from environment variable.
+api-1  | GITHUB_CLIENT_SECRET loaded with value from environment variable.
+api-1  | EMAIL_HOST loaded with value from environment variable.
+api-1  | EMAIL_HOST_USER loaded with value from environment variable.
+api-1  | EMAIL_HOST_PASSWORD loaded with value from environment variable.
+api-1  | EMAIL_PORT loaded with value from environment variable.
+api-1  | EMAIL_FROM loaded with value from environment variable.
+api-1  | EMAIL_USE_TLS loaded with value from environment variable.
+api-1  | EMAIL_USE_SSL loaded with value from environment variable.
+api-1  | OPENAI_API_KEY loaded with value from environment variable.
+api-1  | GPT_ENGINE loaded with value from environment variable.
+api-1  | UNSPLASH_ACCESS_KEY loaded with value from environment variable.
+api-1  | Checking bucket...
+api-1  | Bucket 'uploads' does not exist. Creating bucket...
+api-1  | Bucket 'uploads' created successfully.
+api-1  | Public read access policy set for bucket 'uploads'.
+api-1  | Cache Cleared
+api-1  | [2024-05-02 03:56:01 +0000] [1] [INFO] Starting gunicorn 21.2.0
+api-1  | [2024-05-02 03:56:01 +0000] [1] [INFO] Listening at: http://0.0.0.0:8000 (1)
+api-1  | [2024-05-02 03:56:01 +0000] [1] [INFO] Using worker: uvicorn.workers.UvicornWorker
+api-1  | [2024-05-02 03:56:01 +0000] [25] [INFO] Booting worker with pid: 25
+api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] Started server process [25]
+api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] Waiting for application startup.
+api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] ASGI 'lifespan' protocol appears unsupported.
+api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] Application startup complete.
+
+```
+
+To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions. 
+
+Similarly, you can view the logs of other services. 
+
+---
+
+### Backup Data
+
+There would a time when you might want to backup your data from docker volumes to external storage like S3 or drives.
+
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `7` to Backup the data.
+
+```bash
+Select a Action you want to perform:
+   1) Install (x86_64)
+   2) Start
+   3) Stop
+   4) Restart
+   5) Upgrade
+   6) View Logs
+   7) Backup Data
+   8) Exit
+
+Action [2]: 7
+```
+
+In response, you can find the backup folder
+
+```bash
+Backing Up plane-app_pgdata
+Backing Up plane-app_redisdata
+Backing Up plane-app_uploads
+
+Backup completed successfully. Backup files are stored in /....../plane-app/backup/20240502-1120
+```
+
+---
+
 
 ## Upgrading from v0.13.2 to v0.14.x
 

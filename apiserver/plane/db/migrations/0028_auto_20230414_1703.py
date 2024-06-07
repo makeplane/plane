@@ -8,41 +8,99 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0027_auto_20230409_0312'),
+        ("db", "0027_auto_20230409_0312"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='theme',
+            model_name="user",
+            name="theme",
             field=models.JSONField(default=dict),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='estimate_point',
-            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(7)]),
+            model_name="issue",
+            name="estimate_point",
+            field=models.IntegerField(
+                blank=True,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(7),
+                ],
+            ),
         ),
         migrations.CreateModel(
-            name='WorkspaceTheme',
+            name="WorkspaceTheme",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=300)),
-                ('colors', models.JSONField(default=dict)),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='themes', to=settings.AUTH_USER_MODEL)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspacetheme_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspacetheme_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='themes', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=300)),
+                ("colors", models.JSONField(default=dict)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="themes",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspacetheme_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspacetheme_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="themes",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Workspace Theme',
-                'verbose_name_plural': 'Workspace Themes',
-                'db_table': 'workspace_themes',
-                'ordering': ('-created_at',),
-                'unique_together': {('workspace', 'name')},
+                "verbose_name": "Workspace Theme",
+                "verbose_name_plural": "Workspace Themes",
+                "db_table": "workspace_themes",
+                "ordering": ("-created_at",),
+                "unique_together": {("workspace", "name")},
             },
         ),
     ]

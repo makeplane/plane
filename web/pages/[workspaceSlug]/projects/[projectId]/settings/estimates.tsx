@@ -1,33 +1,41 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
+// hooks
+import { PageHead } from "@/components/core";
+import { EstimatesList } from "@/components/estimates";
+import { ProjectSettingHeader } from "@/components/headers";
+import { EUserProjectRoles } from "@/constants/project";
+import { useUser, useProject } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
 // components
-import { ProjectSettingHeader } from "components/headers";
-import { EstimatesList } from "components/estimates";
 // types
-import { NextPageWithLayout } from "types/app";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { observer } from "mobx-react-lite";
+import { NextPageWithLayout } from "@/lib/types";
+// constants
 
 const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
-
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  // derived values
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Estimates` : undefined;
 
   return (
-    <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
-      <EstimatesList />
-    </div>
+    <>
+      <PageHead title={pageTitle} />
+      <div className={`w-full overflow-y-auto py-8 pr-9  ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
+        <EstimatesList />
+      </div>
+    </>
   );
 });
 
 EstimatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectSettingHeader title="Estimates Settings" />} withProjectWrapper>
+    <AppLayout header={<ProjectSettingHeader />} withProjectWrapper>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

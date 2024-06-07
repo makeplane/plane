@@ -1,19 +1,21 @@
 import React from "react";
 
-import Link from "next/link";
+import type { NextPage } from "next";
 import Image from "next/image";
-
-// layouts
-import DefaultLayout from "layouts/default-layout";
-// ui
+import Link from "next/link";
+// components
 import { Button } from "@plane/ui";
+import { PageHead } from "@/components/core";
+// layouts
+import DefaultLayout from "@/layouts/default-layout";
+// ui
 // images
 import Image404 from "public/404.svg";
 // types
-import type { NextPage } from "next";
 
 const PageNotFound: NextPage = () => (
   <DefaultLayout>
+    <PageHead title="404 - Page Not Found" />
     <div className="grid h-full place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">

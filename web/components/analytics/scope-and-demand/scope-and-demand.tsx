@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import { AnalyticsService } from "services/analytics.service";
 // components
-import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
-// ui
 import { Button, Loader } from "@plane/ui";
+import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
+// ui
 // fetch-keys
-import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
+import { DEFAULT_ANALYTICS } from "@/constants/fetch-keys";
+import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
   fullScreen?: boolean;
@@ -43,14 +43,22 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
     workspaceSlug ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString(), params) : null
   );
 
+  // scope data
+  const pendingIssues = defaultAnalytics?.pending_issue_user ?? [];
+  const pendingUnAssignedIssuesUser = pendingIssues?.find((issue) => issue.assignees__id === null);
+  const pendingAssignedIssues = pendingIssues?.filter((issue) => issue.assignees__id !== null);
+
   return (
     <>
       {!defaultAnalyticsError ? (
         defaultAnalytics ? (
-          <div className="h-full overflow-y-auto p-5 text-sm">
+          <div className="h-full overflow-y-auto p-5 text-sm vertical-scrollbar scrollbar-lg">
             <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "md:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
-              <AnalyticsScope defaultAnalytics={defaultAnalytics} />
+              <AnalyticsScope
+                pendingUnAssignedIssuesUser={pendingUnAssignedIssuesUser}
+                pendingAssignedIssues={pendingAssignedIssues}
+              />
               <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
                   avatar: user?.created_by__avatar,

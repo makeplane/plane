@@ -1,31 +1,34 @@
-from lxml import html
-
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 # Django imports
 from django.utils import timezone
+from lxml import html
 
 #  Third party imports
 from rest_framework import serializers
 
 # Module imports
 from plane.db.models import (
-    User,
     Issue,
-    State,
+    IssueActivity,
     IssueAssignee,
-    Label,
+    IssueAttachment,
+    IssueComment,
     IssueLabel,
     IssueLink,
-    IssueComment,
-    IssueAttachment,
-    IssueActivity,
+    Label,
     ProjectMember,
+    State,
+    User,
 )
+
 from .base import BaseSerializer
-from .cycle import CycleSerializer, CycleLiteSerializer
-from .module import ModuleSerializer, ModuleLiteSerializer
-from .user import UserLiteSerializer
+from .cycle import CycleLiteSerializer, CycleSerializer
+from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
+from .user import UserLiteSerializer
+
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -66,16 +69,18 @@ class IssueSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed target date")
-        
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
+
         try:
-            if(data.get("description_html", None) is not None):
+            if data.get("description_html", None) is not None:
                 parsed = html.fromstring(data["description_html"])
-                parsed_str = html.tostring(parsed, encoding='unicode')
+                parsed_str = html.tostring(parsed, encoding="unicode")
                 data["description_html"] = parsed_str
-            
-        except Exception as e:
-            raise serializers.ValidationError(f"Invalid HTML: {str(e)}")
+
+        except Exception:
+            raise serializers.ValidationError("Invalid HTML passed")
 
         # Validate assignees are from project
         if data.get("assignees", []):
@@ -96,7 +101,8 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("state")
             and not State.objects.filter(
-                project_id=self.context.get("project_id"), pk=data.get("state").id
+                project_id=self.context.get("project_id"),
+                pk=data.get("state").id,
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -107,7 +113,8 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
+                workspace_id=self.context.get("workspace_id"),
+                pk=data.get("parent").id,
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -238,9 +245,13 @@ class IssueSerializer(BaseSerializer):
                 ]
         if "labels" in self.fields:
             if "labels" in self.expand:
-                data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
+                data["labels"] = LabelSerializer(
+                    instance.labels.all(), many=True
+                ).data
             else:
-                data["labels"] = [str(label.id) for label in instance.labels.all()]
+                data["labels"] = [
+                    str(label.id) for label in instance.labels.all()
+                ]
 
         return data
 
@@ -275,15 +286,41 @@ class IssueLinkSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def validate_url(self, value):
+        # Check URL format
+        validate_url = URLValidator()
+        try:
+            validate_url(value)
+        except ValidationError:
+            raise serializers.ValidationError("Invalid URL format.")
+
+        # Check URL scheme
+        if not value.startswith(("http://", "https://")):
+            raise serializers.ValidationError("Invalid URL scheme.")
+
+        return value
+
     # Validation if url already exists
     def create(self, validated_data):
         if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
+            url=validated_data.get("url"),
+            issue_id=validated_data.get("issue_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
         return IssueLink.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        if IssueLink.objects.filter(
+            url=validated_data.get("url"),
+            issue_id=instance.issue_id,
+        ).exclude(pk=instance.id).exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this Issue"}
+            )
+
+        return super().update(instance, validated_data)
 
 
 class IssueAttachmentSerializer(BaseSerializer):
@@ -324,13 +361,13 @@ class IssueCommentSerializer(BaseSerializer):
 
     def validate(self, data):
         try:
-            if(data.get("comment_html", None) is not None):
+            if data.get("comment_html", None) is not None:
                 parsed = html.fromstring(data["comment_html"])
-                parsed_str = html.tostring(parsed, encoding='unicode')
+                parsed_str = html.tostring(parsed, encoding="unicode")
                 data["comment_html"] = parsed_str
-            
-        except Exception as e:
-            raise serializers.ValidationError(f"Invalid HTML: {str(e)}")
+
+        except Exception:
+            raise serializers.ValidationError("Invalid HTML passed")
         return data
 
 
@@ -362,7 +399,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class LabelLiteSerializer(BaseSerializer):
-
     class Meta:
         model = Label
         fields = [

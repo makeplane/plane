@@ -1,5 +1,0 @@
-#!/bin/bash
-set -e
-
-python manage.py wait_for_db
-celery -A plane beat -l info

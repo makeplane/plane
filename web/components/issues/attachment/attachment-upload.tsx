@@ -1,90 +1,61 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { mutate } from "swr";
+import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { IssueAttachmentService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
-// types
-import { IIssueAttachment } from "types";
-// fetch-keys
-import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
+import { MAX_FILE_SIZE } from "@/constants/common";
+// helpers
+import { generateFileName } from "@/helpers/attachment.helper";
+// hooks
+import { useInstance } from "@/hooks/store";
+// types
+import { TAttachmentOperations } from "./root";
+
+type TAttachmentOperationsModal = Exclude<TAttachmentOperations, "remove">;
 
 type Props = {
+  workspaceSlug: string;
   disabled?: boolean;
+  handleAttachmentOperations: TAttachmentOperationsModal;
 };
 
-const issueAttachmentService = new IssueAttachmentService();
-
 export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
-  const { disabled = false } = props;
+  const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
+  // store hooks
+  const { config } = useInstance();
   // states
   const [isLoading, setIsLoading] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { setToastAlert } = useToast();
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const currentFile: File = acceptedFiles[0];
+      if (!currentFile || !workspaceSlug) return;
 
-  const {
-    appConfig: { envConfig },
-  } = useMobxStore();
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (!acceptedFiles[0] || !workspaceSlug) return;
-
-    const formData = new FormData();
-    formData.append("asset", acceptedFiles[0]);
-    formData.append(
-      "attributes",
-      JSON.stringify({
-        name: acceptedFiles[0].name,
-        size: acceptedFiles[0].size,
-      })
-    );
-    setIsLoading(true);
-
-    issueAttachmentService
-      .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
-      .then((res) => {
-        mutate<IIssueAttachment[]>(
-          ISSUE_ATTACHMENTS(issueId as string),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
-        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "File added successfully.",
-        });
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-        setToastAlert({
-          type: "error",
-          title: "error!",
-          message: "Something went wrong. please check file type & size (max 5 MB)",
-        });
+      const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
+        type: currentFile.type,
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      const formData = new FormData();
+      formData.append("asset", uploadedFile);
+      formData.append(
+        "attributes",
+        JSON.stringify({
+          name: uploadedFile.name,
+          size: uploadedFile.size,
+        })
+      );
+      setIsLoading(true);
+      handleAttachmentOperations.create(formData).finally(() => setIsLoading(false));
+    },
+    [handleAttachmentOperations, workspaceSlug]
+  );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     onDrop,
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
   });
 
-  const maxFileSize = envConfig?.file_size_limit ?? MAX_FILE_SIZE;
+  const maxFileSize = config?.file_size_limit ?? MAX_FILE_SIZE;
 
   const fileError =
     fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;

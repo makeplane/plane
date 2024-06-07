@@ -1,126 +1,103 @@
-import { IIssueUnGroupedStructure } from "store/issue";
-import { SpreadsheetView } from "./spreadsheet-view";
 import { FC, useCallback } from "react";
-import { IIssue, IIssueDisplayFilterOptions } from "types";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { useMobxStore } from "lib/mobx/store-provider";
-import {
-  ICycleIssuesFilterStore,
-  ICycleIssuesStore,
-  IModuleIssuesFilterStore,
-  IModuleIssuesStore,
-  IProjectIssuesFilterStore,
-  IProjectIssuesStore,
-  IViewIssuesFilterStore,
-  IViewIssuesStore,
-} from "store/issues";
-import { observer } from "mobx-react-lite";
-import { EFilterType, TUnGroupedIssues } from "store/issues/types";
-import { EIssueActions } from "../types";
-import { IQuickActionProps } from "../list/list-view-types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
+// hooks
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+// views
+// types
+// constants
+import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
+import { SpreadsheetView } from "./spreadsheet-view";
 
+export type SpreadsheetStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW;
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore:
-    | IViewIssuesFilterStore
-    | ICycleIssuesFilterStore
-    | IModuleIssuesFilterStore
-    | IProjectIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => void;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => void;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => void;
-  };
+  storeType: SpreadsheetStoreType;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  isCompletedCycle?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions, canEditPropertiesBasedOnProject } = props;
-
+  const { viewId, QuickActions, storeType, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  const { projectId } = router.query;
+  // store hooks
   const {
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    projectLabel: { projectLabels },
-    user: userStore,
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { issues, issuesFilter } = useIssues(storeType);
+  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
+  // derived values
+  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+  // user role validation
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
+  const canEditProperties = useCallback(
+    (projectId: string | undefined) => {
+      const isEditingAllowedBasedOnProject =
+        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
 
-  const { currentProjectRole } = userStore;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
-
-  const canEditProperties = (projectId: string | undefined) => {
-    const isEditingAllowedBasedOnProject =
-      canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
-
-    return enableInlineEditing && isEditingAllowedBasedOnProject;
-  };
-
-  const issuesResponse = issueStore.getIssues;
-  const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
-
-  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
-
-  const handleIssues = useCallback(
-    async (issue: IIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        issueActions[action]!(issue);
-      }
+      return enableInlineEditing && isEditingAllowedBasedOnProject;
     },
-    [issueActions]
+    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
+
+  const issueIds = (issues.groupedIssueIds ?? []) as TUnGroupedIssues;
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!projectId) return;
 
-      issueFiltersStore.updateFilters(
-        workspaceSlug,
-        projectId,
-        EFilterType.DISPLAY_FILTERS,
-        {
-          ...updatedDisplayFilter,
-        },
-        viewId
-      );
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+        ...updatedDisplayFilter,
+      });
     },
-    [issueFiltersStore, projectId, workspaceSlug, viewId]
+    [projectId, updateFilters]
+  );
+
+  const renderQuickActions: TRenderQuickActions = useCallback(
+    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
+      <QuickActions
+        parentRef={parentRef}
+        customActionButton={customActionButton}
+        issue={issue}
+        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+        handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+        handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+        portalElement={portalElement}
+        readOnly={!isEditingAllowed || isCompletedCycle}
+        placements={placement}
+      />
+    ),
+    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   return (
     <SpreadsheetView
-      displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
-      displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
+      displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
+      displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-      issues={issues as IIssueUnGroupedStructure}
-      quickActions={(issue, customActionButton) => (
-        <QuickActions
-          customActionButton={customActionButton}
-          issue={issue}
-          handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-          handleUpdate={
-            issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
-          }
-          handleRemoveFromView={
-            issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
-          }
-        />
-      )}
-      members={projectMembers?.map((m) => m.member)}
-      labels={projectLabels || undefined}
-      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
-      handleIssues={handleIssues}
+      issueIds={issueIds}
+      quickActions={renderQuickActions}
+      updateIssue={updateIssue}
       canEditProperties={canEditProperties}
-      quickAddCallback={issueStore.quickAddIssue}
+      quickAddCallback={issues.quickAddIssue}
       viewId={viewId}
       enableQuickCreateIssue={enableQuickAdd}
-      disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+      disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
     />
   );
 });

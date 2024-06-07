@@ -1,50 +1,68 @@
 import React from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { ActiveLoader } from "@/components/ui";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
+// components
+import { ProjectDraftEmptyState } from "../empty-states";
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
-import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
-import { Spinner } from "@plane/ui";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
+import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
+// ui
+// constants
 
 export const DraftIssueLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
-  const {
-    projectDraftIssuesFilter: { issueFilters, fetchFilters },
-    projectDraftIssues: { loader, getIssues, fetchIssues },
-  } = useMobxStore();
+  useSWR(
+    workspaceSlug && projectId ? `DRAFT_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
-  useSWR(workspaceSlug && projectId ? `DRAFT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
-    }
-  });
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
 
-  const activeLayout = issueFilters?.displayFilters?.layout || undefined;
+  if (!workspaceSlug || !projectId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <DraftIssueAppliedFiltersRoot />
 
-      {loader === "init-loader" ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectDraftEmptyState />
         </div>
       ) : (
-        <>
-          <div className="relative h-full w-full overflow-auto">
-            {activeLayout === "list" ? (
-              <DraftIssueListLayout />
-            ) : activeLayout === "kanban" ? (
-              <DraftKanBanLayout />
-            ) : null}
-          </div>
-        </>
+        <div className="relative h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <DraftIssueListLayout />
+          ) : activeLayout === "kanban" ? (
+            <DraftKanBanLayout />
+          ) : null}
+          {/* issue peek overview */}
+          <IssuePeekOverview is_draft />
+        </div>
       )}
     </div>
   );

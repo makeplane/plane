@@ -6,49 +6,66 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0001_initial'),
+        ("db", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='state',
-            options={'ordering': ('sequence',), 'verbose_name': 'State', 'verbose_name_plural': 'States'},
+            name="state",
+            options={
+                "ordering": ("sequence",),
+                "verbose_name": "State",
+                "verbose_name_plural": "States",
+            },
         ),
         migrations.RenameField(
-            model_name='project',
-            old_name='description_rt',
-            new_name='description_text',
+            model_name="project",
+            old_name="description_rt",
+            new_name="description_text",
         ),
         migrations.AddField(
-            model_name='issueactivity',
-            name='actor',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issue_activities', to=settings.AUTH_USER_MODEL),
+            model_name="issueactivity",
+            name="actor",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="issue_activities",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='issuecomment',
-            name='actor',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comments', to=settings.AUTH_USER_MODEL),
+            model_name="issuecomment",
+            name="actor",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='state',
-            name='sequence',
+            model_name="state",
+            name="sequence",
             field=models.PositiveIntegerField(default=65535),
         ),
         migrations.AddField(
-            model_name='workspace',
-            name='company_size',
+            model_name="workspace",
+            name="company_size",
             field=models.PositiveIntegerField(default=10),
         ),
         migrations.AddField(
-            model_name='workspacemember',
-            name='company_role',
+            model_name="workspacemember",
+            name="company_role",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='cycleissue',
-            name='issue',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='issue_cycle', to='db.issue'),
+            model_name="cycleissue",
+            name="issue",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="issue_cycle",
+                to="db.issue",
+            ),
         ),
     ]

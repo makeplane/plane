@@ -1,5 +1,5 @@
-import { objToQueryParams } from "helpers/string.helper";
-import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
+import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "@plane/types";
+import { objToQueryParams } from "@/helpers/string.helper";
 
 const paramsToKey = (params: any) => {
   const {
@@ -13,7 +13,6 @@ const paramsToKey = (params: any) => {
     start_date,
     target_date,
     sub_issue,
-    start_target_date,
     project,
     layout,
     subscriber,
@@ -28,7 +27,6 @@ const paramsToKey = (params: any) => {
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
   let subscriberKey = subscriber ? subscriber.split(",") : [];
-  const startTargetDate = start_target_date ? `${start_target_date}`.toUpperCase() : "FALSE";
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
@@ -47,7 +45,7 @@ const paramsToKey = (params: any) => {
   labelsKey = labelsKey.sort().join("_");
   subscriberKey = subscriberKey.sort().join("_");
 
-  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
 const myIssuesParamsToKey = (params: any) => {
@@ -61,9 +59,9 @@ const myIssuesParamsToKey = (params: any) => {
   let labelsKey = labels ? labels.split(",") : [];
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
-  const type = params.type ? params.type.toUpperCase() : "NULL";
-  const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
-  const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const type = params?.type ? params.type.toUpperCase() : "NULL";
+  const groupBy = params?.group_by ? params.group_by.toUpperCase() : "NULL";
+  const orderBy = params?.order_by ? params.order_by.toUpperCase() : "NULL";
 
   // sorting each keys in ascending order
   assigneesKey = assigneesKey.sort().join("_");
@@ -78,7 +76,7 @@ const myIssuesParamsToKey = (params: any) => {
 
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
-export const USER_WORKSPACES = "USER_WORKSPACES";
+export const USER_WORKSPACES_LIST = "USER_WORKSPACES_LIST";
 
 export const WORKSPACE_DETAILS = (workspaceSlug: string) => `WORKSPACE_DETAILS_${workspaceSlug.toUpperCase()}`;
 
@@ -166,7 +164,7 @@ export const USER_ISSUES = (workspaceSlug: string, params: any) => {
 
   return `USER_ISSUES_${workspaceSlug.toUpperCase()}_${paramsKey}`;
 };
-export const USER_ACTIVITY = "USER_ACTIVITY";
+export const USER_ACTIVITY = (params: { cursor?: string }) => `USER_ACTIVITY_${params?.cursor}`;
 export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
   `USER_WORKSPACE_DASHBOARD_${workspaceSlug.toUpperCase()}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId.toUpperCase()}`;
@@ -286,8 +284,13 @@ export const getPaginatedNotificationKey = (index: number, prevData: any, worksp
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
-export const USER_PROFILE_ACTIVITY = (workspaceSlug: string, userId: string) =>
-  `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
+export const USER_PROFILE_ACTIVITY = (
+  workspaceSlug: string,
+  userId: string,
+  params: {
+    cursor?: string;
+  }
+) => `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${params?.cursor}`;
 export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_PROJECT_SEGREGATION_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
 export const USER_PROFILE_ISSUES = (workspaceSlug: string, userId: string, params: any) => {

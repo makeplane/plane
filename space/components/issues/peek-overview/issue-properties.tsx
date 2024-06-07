@@ -1,18 +1,16 @@
-// hooks
-import useToast from "hooks/use-toast";
 // ui
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { Icon } from "components/ui";
-// helpers
-import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
-import { renderFullDate } from "helpers/date-time.helper";
-import { dueDateIconDetails } from "../board-views/block-due-date";
-// types
-import { IIssue } from "types/issue";
-import { IPeekMode } from "store/issue_details";
+import { Icon } from "@/components/ui";
 // constants
-import { issueGroupFilter, issuePriorityFilter } from "constants/data";
+import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
+// helpers
+import { renderFullDate } from "@/helpers/date-time.helper";
+import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
+// types
+import { IIssue, IPeekMode } from "@/types/issue";
+// components
+import { dueDateIconDetails } from "../board-views/block-due-date";
 
 type Props = {
   issueDetails: IIssue;
@@ -20,8 +18,6 @@ type Props = {
 };
 
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
-  const { setToastAlert } = useToast();
-
   const state = issueDetails.state_detail;
   const stateGroup = issueGroupFilter(state.group);
 
@@ -33,8 +29,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
     const urlToCopy = window.location.href;
 
     copyTextToClipboard(urlToCopy).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.INFO,
         title: "Link copied!",
         message: "Issue link copied to clipboard",
       });
@@ -94,7 +90,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             >
               {priority && (
                 <span className="-my-1 grid place-items-center">
-                  <Icon iconName={priority?.icon!} />
+                  <Icon iconName={priority?.icon} />
                 </span>
               )}
               <span>{priority?.title ?? "None"}</span>

@@ -1,22 +1,22 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { IWebhook } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { WorkspaceSettingHeader } from "components/headers";
-import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "components/web-hooks";
+import { LogoSpinner } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
+import { useUser, useWebhook, useWorkspace } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
 // ui
-import { Spinner } from "@plane/ui";
 // types
-import { NextPageWithLayout } from "types/app";
-import { IWebhook } from "types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -26,13 +26,18 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, webhookId } = router.query;
   // mobx store
   const {
-    webhook: { currentWebhook, fetchWebhookById, updateWebhook },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
-  // toast
-  const { setToastAlert } = useToast();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
+  const { currentWorkspace } = useWorkspace();
+
+  // TODO: fix this error
+  // useEffect(() => {
+  //   if (isCreated !== "true") clearSecretKey();
+  // }, [clearSecretKey, isCreated]);
 
   const isAdmin = currentWorkspaceRole === 20;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
   useSWR(
     workspaceSlug && webhookId && isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
@@ -54,15 +59,15 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
     };
     await updateWebhook(workspaceSlug.toString(), formData.id, payload)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Webhook updated successfully.",
         });
       })
       .catch((error) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
         });
@@ -71,23 +76,29 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-      </div>
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
     );
 
   if (!currentWebhook)
     return (
       <div className="grid h-full w-full place-items-center p-4">
-        <Spinner />
+        <LogoSpinner />
       </div>
     );
 
   return (
     <>
+      <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
-      <div className="w-full space-y-8 overflow-y-auto py-8 pr-9">
-        <WebhookForm onSubmit={async (data) => await handleUpdateWebhook(data)} data={currentWebhook} />
+      <div className="w-full space-y-8 overflow-y-auto md:py-8 py-4 md:pr-9 pr-4">
+        <div className="-m-5">
+          <WebhookForm onSubmit={async (data) => await handleUpdateWebhook(data)} data={currentWebhook} />
+        </div>
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
       </div>
     </>
@@ -96,7 +107,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
 
 WebhookDetailsPage.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Webhook settings" />}>
+    <AppLayout header={<WorkspaceSettingHeader />}>
       <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );

@@ -1,20 +1,17 @@
 import React, { forwardRef, useEffect } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
-// stores
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
+import { IIssueLabel } from "@plane/types";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@/constants/label";
+// hooks
+import { useLabel } from "@/hooks/store";
 // types
-import { IIssueLabel } from "types";
-// fetch-keys
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
-import useToast from "hooks/use-toast";
 
 type Props = {
   labelForm: boolean;
@@ -32,16 +29,12 @@ const defaultValues: Partial<IIssueLabel> = {
 export const CreateUpdateLabelInline = observer(
   forwardRef<HTMLFormElement, Props>(function CreateUpdateLabelInline(props, ref) {
     const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
-
     // router
     const router = useRouter();
     const { workspaceSlug, projectId } = router.query;
-
-    // store
-    const { projectLabel: projectLabelStore } = useMobxStore();
-
-    const { setToastAlert } = useToast();
-
+    // store hooks
+    const { createLabel, updateLabel } = useLabel();
+    // form info
     const {
       handleSubmit,
       control,
@@ -63,17 +56,16 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
-      await projectLabelStore
-        .createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+      await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
         .then(() => {
           handleClose();
           reset(defaultValues);
         })
         .catch((error) => {
-          setToastAlert({
-            title: "Oops!",
-            type: "error",
-            message: error?.error ?? "Error while adding the label",
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: error?.detail ?? "Something went wrong. Please try again later.",
           });
           reset(formData);
         });
@@ -82,16 +74,16 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
-      await projectLabelStore
-        .updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+      await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
         .then(() => {
           reset(defaultValues);
           handleClose();
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while updating the label",
           });
           reset(formData);

@@ -5,15 +5,16 @@ import plane.db.models.project
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0025_auto_20230331_0203'),
+        ("db", "0025_auto_20230331_0203"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='projectmember',
-            name='view_props',
-            field=models.JSONField(default=plane.db.models.project.get_default_props),
+            model_name="projectmember",
+            name="view_props",
+            field=models.JSONField(
+                default=plane.db.models.project.get_default_props
+            ),
         ),
     ]

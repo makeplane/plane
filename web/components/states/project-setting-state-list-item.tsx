@@ -1,16 +1,15 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
-import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
 import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
-// helpers
-import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IState } from "types";
+import { IState } from "@plane/types";
+// ui
+import { Tooltip, StateGroupIcon } from "@plane/ui";
+// hooks
+import { useEventTracker, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   index: number;
@@ -20,22 +19,17 @@ type Props = {
   handleDeleteState: () => void;
 };
 
-export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
+export const StatesListItem: React.FC<Props> = observer((props) => {
   const { index, state, statesList, handleEditState, handleDeleteState } = props;
-
+  // states
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    projectState: { markStateAsDefault, moveStatePosition },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-
-  // states
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  // store hooks
+  const { setTrackElement } = useEventTracker();
+  const { markStateAsDefault, moveStatePosition } = useProjectState();
+  const { isMobile } = usePlatformOS();
   // derived values
   const groupStates = statesList.filter((s) => s.group === state.group);
   const groupLength = groupStates.length;
@@ -58,7 +52,7 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
       <div className="flex items-center gap-3">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
-          <h6 className="text-sm font-medium">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="text-sm font-medium">{state.name}</h6>
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>
@@ -115,11 +109,11 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
             disabled={state.default || groupLength === 1}
           >
             {state.default ? (
-              <Tooltip tooltipContent="Cannot delete the default state.">
+              <Tooltip tooltipContent="Cannot delete the default state." isMobile={isMobile}>
                 <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : groupLength === 1 ? (
-              <Tooltip tooltipContent="Cannot have an empty group.">
+              <Tooltip tooltipContent="Cannot have an empty group." isMobile={isMobile}>
                 <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : (

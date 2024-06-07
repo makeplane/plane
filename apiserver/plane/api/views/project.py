@@ -1,31 +1,37 @@
+# Python imports
+import json
+
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q, F, Func, Subquery, Prefetch
+from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
+from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
+from plane.api.serializers import ProjectSerializer
+from plane.app.permissions import ProjectBasePermission
+
 # Module imports
 from plane.db.models import (
-    Workspace,
-    Project,
-    ProjectFavorite,
-    ProjectMember,
-    ProjectDeployBoard,
-    State,
     Cycle,
-    Module,
-    IssueProperty,
     Inbox,
+    IssueProperty,
+    Module,
+    Project,
+    ProjectDeployBoard,
+    ProjectMember,
+    State,
+    Workspace,
 )
-from plane.app.permissions import ProjectBasePermission
-from plane.api.serializers import ProjectSerializer
-from .base import BaseAPIView, WebhookMixin
+from plane.bgtasks.webhook_task import model_activity
+from .base import BaseAPIView
 
 
-class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
+class ProjectAPIEndpoint(BaseAPIView):
     """Project Endpoints to create, update, list, retrieve and delete endpoint"""
 
     serializer_class = ProjectSerializer
@@ -39,9 +45,18 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
     def get_queryset(self):
         return (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(Q(project_projectmember__member=self.request.user) | Q(network=2))
+            .filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
             .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
+                "workspace",
+                "workspace__owner",
+                "default_assignee",
+                "project_lead",
             )
             .annotate(
                 is_member=Exists(
@@ -94,8 +109,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id=None):
-        if project_id is None:
+    def get(self, request, slug, pk=None):
+        if pk is None:
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -120,11 +135,18 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectSerializer(
-                    projects, many=True, fields=self.fields, expand=self.expand,
+                    projects,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
                 ).data,
             )
-        project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
-        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
+        project = self.get_queryset().get(workspace__slug=slug, pk=pk)
+        serializer = ProjectSerializer(
+            project,
+            fields=self.fields,
+            expand=self.expand,
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug):
@@ -137,8 +159,10 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                project_member = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+                _ = ProjectMember.objects.create(
+                    project_id=serializer.data["id"],
+                    member=request.user,
+                    role=20,
                 )
                 # Also create the issue property for the user
                 _ = IssueProperty.objects.create(
@@ -211,9 +235,26 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     ]
                 )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
+                # Model activity
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectSerializer(project)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
@@ -224,20 +265,29 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Workspace.DoesNotExist as e:
+        except Workspace.DoesNotExist:
             return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
 
-    def patch(self, request, slug, project_id=None):
+    def patch(self, request, slug, pk):
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=project_id)
+            project = Project.objects.get(pk=pk)
+            current_instance = json.dumps(
+                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+            )
+            if project.archived_at:
+                return Response(
+                    {"error": "Archived project cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             serializer = ProjectSerializer(
                 project,
@@ -250,22 +300,42 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 serializer.save()
                 if serializer.data["inbox_view"]:
                     Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox", project=project, is_default=True
+                        name=f"{project.name} Inbox",
+                        project=project,
+                        is_default=True,
                     )
 
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(
                         name="Triage",
-                        group="backlog",
+                        group="triage",
                         description="Default state for managing all Inbox Issues",
-                        project_id=project_id,
+                        project_id=pk,
                         color="#ff7700",
+                        is_triage=True,
                     )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = (
+                    self.get_queryset()
+                    .filter(pk=serializer.data["id"])
+                    .first()
+                )
+
+                model_activity.delay(
+                    model_name="project",
+                    model_id=str(project.id),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -274,15 +344,35 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
 
+    def delete(self, request, slug, pk):
+        project = Project.objects.get(pk=pk, workspace__slug=slug)
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.archived_at = timezone.now()
+        project.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        project.delete()
+        project.archived_at = None
+        project.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

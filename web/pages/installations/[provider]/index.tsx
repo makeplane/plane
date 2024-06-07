@@ -1,11 +1,11 @@
 import React, { useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
-// services
-import { AppInstallationService } from "services/app_installation.service";
 // ui
-import { Spinner } from "@plane/ui";
+import { LogoSpinner } from "@/components/common";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "@/lib/types";
+// services
+import { AppInstallationService } from "@/services/app_installation.service";
 
 // services
 const appInstallationService = new AppInstallationService();
@@ -55,7 +55,7 @@ const AppPostInstallation: NextPageWithLayout = () => {
             window.close();
           })
           .catch((err) => {
-            throw err.response;
+            throw err?.response;
           });
       }
     }
@@ -64,7 +64,7 @@ const AppPostInstallation: NextPageWithLayout = () => {
   return (
     <div className="absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-custom-background-80">
       <h2 className="text-2xl text-custom-text-100">Installing. Please wait...</h2>
-      <Spinner />
+      <LogoSpinner />
     </div>
   );
 };

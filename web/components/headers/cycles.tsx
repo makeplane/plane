@@ -1,72 +1,71 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
-import { EUserWorkspaceRoles } from "constants/workspace";
+// components
+import { BreadcrumbLink, Logo } from "@/components/common";
+import { CyclesViewHeader } from "@/components/cycles";
+// constants
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
+  const { toggleCreateCycleModal } = useCommandPalette();
+  const { setTrackElement } = useEventTracker();
   const {
-    project: projectStore,
-    user: { currentProjectRole },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const canUserCreateCycle =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={router.back}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              label={currentProjectDetails?.name ?? "Project"}
-              icon={
-                currentProjectDetails?.emoji ? (
-                  renderEmoji(currentProjectDetails.emoji)
-                ) : currentProjectDetails?.icon_prop ? (
-                  renderEmoji(currentProjectDetails.icon_prop)
-                ) : (
-                  <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                    {currentProjectDetails?.name.charAt(0)}
-                  </span>
-                )
+              link={
+                <BreadcrumbLink
+                  label={currentProjectDetails?.name ?? "Project"}
+                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                  icon={
+                    currentProjectDetails && (
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
+                      </span>
+                    )
+                  }
+                />
               }
-              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Cycles"
+              link={<BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>
       </div>
-      {canUserCreateCycle && (
+      {canUserCreateCycle && currentProjectDetails && (
         <div className="flex items-center gap-3">
+          <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
             size="sm"
-            prependIcon={<Plus />}
             onClick={() => {
-              setTrackElement("CYCLES_PAGE_HEADER");
-              commandPaletteStore.toggleCreateCycleModal(true);
+              setTrackElement("Cycles page");
+              toggleCreateCycleModal(true);
             }}
           >
-            Add Cycle
+            <div className="hidden sm:block">Add</div> Cycle
           </Button>
         </div>
       )}

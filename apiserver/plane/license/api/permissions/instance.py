@@ -7,7 +7,6 @@ from plane.license.models import Instance, InstanceAdmin
 
 class InstanceAdminPermission(BasePermission):
     def has_permission(self, request, view):
-
         if request.user.is_anonymous:
             return False
 

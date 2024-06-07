@@ -1,25 +1,24 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import Router from "next/router";
+import { useTheme } from "next-themes";
 import NProgress from "nprogress";
-import { observer } from "mobx-react-lite";
-import { ThemeProvider } from "next-themes";
-// mobx store provider
-import { useMobxStore } from "lib/mobx/store-provider";
-// constants
-import { THEMES } from "constants/themes";
-// layouts
-import InstanceLayout from "layouts/instance-layout";
-// contexts
-import { ToastContextProvider } from "contexts/toast.context";
 import { SWRConfig } from "swr";
+// ui
+import { Toast } from "@plane/ui";
 // constants
-import { SWR_CONFIG } from "constants/swr-config";
+import { SWR_CONFIG } from "@/constants/swr-config";
+//helpers
+import { resolveGeneralTheme } from "@/helpers/theme.helper";
+// hooks
+import { useInstance, useWorkspace, useUser } from "@/hooks/store";
+// wrappers
+import { InstanceWrapper } from "@/lib/wrappers";
 // dynamic imports
-const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
-const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
-const CrispWrapper = dynamic(() => import("lib/wrappers/crisp-wrapper"), { ssr: false });
-
+const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
+const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
+const CrispWrapper = dynamic(() => import("@/lib/wrappers/crisp-wrapper"), { ssr: false });
 // nprogress
 NProgress.configure({ showSpinner: false });
 Router.events.on("routeChangeStart", NProgress.start);
@@ -32,31 +31,36 @@ export interface IAppProvider {
 
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
+  const { config } = useInstance();
   const {
-    user: { currentUser, currentWorkspaceRole, currentProjectRole },
-    appConfig: { envConfig },
-  } = useMobxStore();
+    data: currentUser,
+    membership: { currentProjectRole, currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  // themes
+  const { resolvedTheme } = useTheme();
 
   return (
-    <ThemeProvider themes={THEMES} defaultTheme="system">
-      <ToastContextProvider>
-        <InstanceLayout>
-          <StoreWrapper>
-            <CrispWrapper user={currentUser}>
-              <PosthogWrapper
-                user={currentUser}
-                workspaceRole={currentWorkspaceRole}
-                projectRole={currentProjectRole}
-                posthogAPIKey={envConfig?.posthog_api_key || null}
-                posthogHost={envConfig?.posthog_host || null}
-              >
-                <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PosthogWrapper>
-            </CrispWrapper>
-          </StoreWrapper>
-        </InstanceLayout>
-      </ToastContextProvider>
-    </ThemeProvider>
+    <>
+      <InstanceWrapper>
+        <StoreWrapper>
+          <CrispWrapper user={currentUser}>
+            <PostHogProvider
+              user={currentUser}
+              currentWorkspaceId={currentWorkspace?.id}
+              workspaceRole={currentWorkspaceRole}
+              projectRole={currentProjectRole}
+              posthogAPIKey={config?.posthog_api_key || undefined}
+              posthogHost={config?.posthog_host || undefined}
+            >
+              {/* TODO: Need to handle custom themes for toast */}
+              <Toast theme={resolveGeneralTheme(resolvedTheme)} />
+              <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+            </PostHogProvider>
+          </CrispWrapper>
+        </StoreWrapper>
+      </InstanceWrapper>
+    </>
   );
 });

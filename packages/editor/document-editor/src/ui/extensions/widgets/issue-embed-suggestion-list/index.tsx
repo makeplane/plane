@@ -24,7 +24,7 @@ export const IssueSuggestions = (suggestions: any[]) => {
       title: suggestion.name,
       priority: suggestion.priority.toString(),
       identifier: `${suggestion.project_detail.identifier}-${suggestion.sequence_id}`,
-      state: suggestion.state_detail.name,
+      state: suggestion.state_detail && suggestion.state_detail.name ? suggestion.state_detail.name : "Todo",
       command: ({ editor, range }) => {
         editor
           .chain()

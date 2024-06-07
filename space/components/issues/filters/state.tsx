@@ -1,10 +1,11 @@
+"use client";
+
 import React, { useState } from "react";
-// components
-import { FilterHeader, FilterOption } from "./helpers";
-// ui
 import { Loader, StateGroupIcon } from "@plane/ui";
+// components
+import { FilterHeader, FilterOption } from "@/components/issues/filters/helpers";
 // types
-import { IIssueState } from "types/issue";
+import { IIssueState } from "@/types/issue";
 
 type Props = {
   appliedFilters: string[] | null;

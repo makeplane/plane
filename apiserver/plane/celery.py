@@ -28,6 +28,14 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.file_asset_task.delete_file_asset",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-five-minutes-to-send-email-notifications": {
+        "task": "plane.bgtasks.email_notification_task.stack_email_notification",
+        "schedule": crontab(minute="*/5"),
+    },
+    "check-every-day-to-delete-api-logs": {
+        "task": "plane.bgtasks.api_logs_task.delete_api_logs",
+        "schedule": crontab(hour=0, minute=0),
+    },
 }
 
 # Load task modules from all registered Django app configs.

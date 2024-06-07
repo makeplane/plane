@@ -1,85 +1,65 @@
-import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import Image from "next/image";
 // components
-import { ProjectCard } from "components/project";
-import { Loader } from "@plane/ui";
-// images
-import emptyProject from "public/empty-state/empty_project.webp";
-// icons
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState } from "@/components/empty-state";
+import { ProjectCard } from "@/components/project";
+import { ProjectsLoader } from "@/components/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EmptyStateType } from "@/constants/empty-state";
+// hooks
+import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
+// assets
+import AllFiltersImage from "public/empty-state/project/all-filters.svg";
+import NameFilterImage from "public/empty-state/project/name-filter.svg";
 
-export interface IProjectCardList {
-  workspaceSlug: string;
-}
+export const ProjectCardList = observer(() => {
+  // store hooks
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { setTrackElement } = useEventTracker();
+  const { workspaceProjectIds, filteredProjectIds, getProjectById, loader } = useProject();
+  const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
 
-export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
-  const { workspaceSlug } = props;
-  // store
-  const {
-    project: projectStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+  if (!filteredProjectIds || !workspaceProjectIds || loader) return <ProjectsLoader />;
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-
-  if (!projects) {
+  if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
-      <Loader className="grid grid-cols-3 gap-4">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
+      <EmptyState
+        type={EmptyStateType.WORKSPACE_PROJECTS}
+        primaryButtonOnClick={() => {
+          setTrackElement("Project empty state");
+          toggleCreateProjectModal(true);
+        }}
+      />
     );
-  }
+
+  if (filteredProjectIds.length === 0)
+    return (
+      <div className="grid h-full w-full place-items-center">
+        <div className="text-center">
+          <Image
+            src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
+            alt="No matching projects"
+          />
+          <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
+          <p className="whitespace-pre-line text-base text-custom-text-400">
+            {searchQuery.trim() === ""
+              ? "Remove the filters to see all projects"
+              : "No projects detected with the matching\ncriteria. Create a new project instead"}
+          </p>
+        </div>
+      </div>
+    );
 
   return (
-    <>
-      {projects.length > 0 ? (
-        <div className="h-full w-full overflow-y-auto p-8">
-          {projectStore.searchedProjects.length == 0 ? (
-            <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
-          ) : (
-            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-              {projectStore.searchedProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <NewEmptyState
-          image={emptyProject}
-          title="Start a Project"
-          description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
-          comicBox={{
-            title: "Everything starts with a project in Plane",
-            direction: "right",
-            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
-          }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  text: "Start your first project",
-                  onClick: () => {
-                    setTrackElement("PROJECTS_EMPTY_STATE");
-                    commandPaletteStore.toggleCreateProjectModal(true);
-                  },
-                }
-              : null
-          }
-          disabled={!isEditingAllowed}
-        />
-      )}
-    </>
+    <div className="vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto p-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {filteredProjectIds.map((projectId) => {
+          const projectDetails = getProjectById(projectId);
+          if (!projectDetails) return;
+          return <ProjectCard key={projectDetails.id} project={projectDetails} />;
+        })}
+      </div>
+    </div>
   );
 });

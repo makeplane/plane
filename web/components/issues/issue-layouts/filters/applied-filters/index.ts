@@ -5,5 +5,7 @@ export * from "./label";
 export * from "./members";
 export * from "./priority";
 export * from "./project";
+export * from "./module";
+export * from "./cycle";
 export * from "./state";
 export * from "./state-group";

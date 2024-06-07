@@ -1,16 +1,16 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.utils import timezone
 
 # Module import
-from . import BaseModel
+from .base import BaseModel
 
 
 class SocialLoginConnection(BaseModel):
     medium = models.CharField(
         max_length=20,
-        choices=(("Google", "google"), ("Github", "github")),
+        choices=(("Google", "google"), ("Github", "github"), ("Jira", "jira")),
         default=None,
     )
     last_login_at = models.DateTimeField(default=timezone.now, null=True)

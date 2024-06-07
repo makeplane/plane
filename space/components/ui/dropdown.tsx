@@ -1,9 +1,9 @@
 import { Fragment, useState, useRef } from "react";
 import Link from "next/link";
+import { Check, ChevronLeft } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 import useOutSideClick from "hooks/use-outside-click";
-import { Check, ChevronLeft } from "lucide-react";
 
 type ItemOptionType = {
   display: React.ReactNode;
@@ -67,13 +67,13 @@ const DropdownList: React.FC<DropDownListProps> = (props) => {
 
 const DropdownItem: React.FC<DropdownItemProps> = (props) => {
   const { item } = props;
-  const { display, children, as: as_, href, onClick, isSelected } = item;
+  const { display, children, as: itemAs, href, onClick, isSelected } = item;
 
   const [open, setOpen] = useState(false);
 
   return (
     <div className="group relative flex w-full gap-x-6 rounded-lg p-1">
-      {(!as_ || as_ === "button" || as_ === "div") && (
+      {(!itemAs || itemAs === "button" || itemAs === "div") && (
         <button
           type="button"
           onClick={() => {
@@ -94,7 +94,7 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
         </button>
       )}
 
-      {as_ === "link" && <Link href={href || "#"}>{display}</Link>}
+      {itemAs === "link" && <Link href={href || "#"}>{display}</Link>}
 
       {children && <DropdownList open={open} handleClose={() => setOpen(false)} items={children} />}
     </div>

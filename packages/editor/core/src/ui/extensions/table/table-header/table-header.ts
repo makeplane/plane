@@ -33,7 +33,7 @@ export const TableHeader = Node.create<TableHeaderOptions>({
         },
       },
       background: {
-        default: "rgb(var(--color-primary-100))",
+        default: "none",
       },
     };
   },

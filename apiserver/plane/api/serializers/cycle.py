@@ -23,7 +23,9 @@ class CycleSerializer(BaseSerializer):
             and data.get("end_date", None) is not None
             and data.get("start_date", None) > data.get("end_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed end date")
+            raise serializers.ValidationError(
+                "Start date cannot exceed end date"
+            )
         return data
 
     class Meta:
@@ -55,7 +57,6 @@ class CycleIssueSerializer(BaseSerializer):
 
 
 class CycleLiteSerializer(BaseSerializer):
-
     class Meta:
         model = Cycle
         fields = "__all__"

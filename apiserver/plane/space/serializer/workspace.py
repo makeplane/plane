@@ -4,6 +4,7 @@ from plane.db.models import (
     Workspace,
 )
 
+
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace

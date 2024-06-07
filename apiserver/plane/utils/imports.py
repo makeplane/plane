@@ -8,13 +8,12 @@ def import_submodules(context, root_module, path):
     >>> import_submodules(locals(), __name__, __path__)
     """
     for loader, module_name, is_pkg in pkgutil.walk_packages(
-            path,
-            root_module +
-            '.'):
+        path, root_module + "."
+    ):
         # this causes a Runtime error with model conflicts
         # module = loader.find_module(module_name).load_module(module_name)
-        module = __import__(module_name, globals(), locals(), ['__name__'])
+        module = __import__(module_name, globals(), locals(), ["__name__"])
         for k, v in six.iteritems(vars(module)):
-            if not k.startswith('_'):
+            if not k.startswith("_"):
                 context[k] = v
         context[module_name] = module

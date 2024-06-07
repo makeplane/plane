@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import { Dialog, Transition } from "@headlessui/react";
-// services
-import { APITokenService } from "services/api_token.service";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { CreateApiTokenForm, GeneratedTokenDetails } from "components/api-token";
-// helpers
-import { csvDownload } from "helpers/download.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IApiToken } from "types/api_token";
+import { IApiToken } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
+import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // fetch-keys
-import { API_TOKENS_LIST } from "constants/fetch-keys";
+import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { csvDownload } from "@/helpers/download.helper";
+// services
+import { APITokenService } from "@/services/api_token.service";
 
 type Props = {
   isOpen: boolean;
@@ -32,8 +32,6 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -48,7 +46,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
     const csvData = {
       Title: data.label,
       Description: data.description,
-      Expiry: data.expired_at ? renderFormattedDate(data.expired_at) : "Never expires",
+      Expiry: data.expired_at ? renderFormattedDate(data.expired_at)?.replace(",", " ") ?? "" : "Never expires",
       "Secret key": data.token ?? "",
     };
 
@@ -76,10 +74,10 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
         );
       })
       .catch((err) => {
-        setToastAlert({
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
           message: err.message,
-          type: "error",
-          title: "Error",
         });
 
         throw err;
@@ -87,47 +85,17 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => {}}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="grid h-full w-full place-items-center p-4 text-center">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
-                {generatedToken ? (
-                  <GeneratedTokenDetails handleClose={handleClose} tokenDetails={generatedToken} />
-                ) : (
-                  <CreateApiTokenForm
-                    handleClose={handleClose}
-                    neverExpires={neverExpires}
-                    toggleNeverExpires={() => setNeverExpires((prevData) => !prevData)}
-                    onSubmit={handleCreateToken}
-                  />
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <ModalCore isOpen={isOpen} handleClose={() => {}} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+      {generatedToken ? (
+        <GeneratedTokenDetails handleClose={handleClose} tokenDetails={generatedToken} />
+      ) : (
+        <CreateApiTokenForm
+          handleClose={handleClose}
+          neverExpires={neverExpires}
+          toggleNeverExpires={() => setNeverExpires((prevData) => !prevData)}
+          onSubmit={handleCreateToken}
+        />
+      )}
+    </ModalCore>
   );
 };

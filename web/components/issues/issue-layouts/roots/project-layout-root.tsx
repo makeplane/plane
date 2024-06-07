@@ -1,10 +1,9 @@
-import React from "react";
+import { FC, Fragment } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
+import { Spinner } from "@plane/ui";
 import {
   ListLayout,
   CalendarLayout,
@@ -13,56 +12,75 @@ import {
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
   ProjectEmptyState,
-} from "components/issues";
-import { Spinner } from "@plane/ui";
+  IssuePeekOverview,
+} from "@/components/issues";
+import { ActiveLoader } from "@/components/ui";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+// hooks
+import { useIssues } from "@/hooks/store";
 
-export const ProjectLayoutRoot: React.FC = observer(() => {
+export const ProjectLayoutRoot: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  const {
-    projectIssues: { loader, getIssues, fetchIssues },
-    projectIssuesFilter: { issueFilters, fetchFilters },
-  } = useMobxStore();
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
-    }
-  });
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
-  const activeLayout = issueFilters?.displayFilters?.layout;
+  if (!workspaceSlug || !projectId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {loader === "init-loader" || !getIssues ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <ProjectEmptyState />
       ) : (
-        <>
-          {Object.keys(getIssues ?? {}).length == 0 ? (
-            <ProjectEmptyState />
-          ) : (
-            <div className="relative h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <ListLayout />
-              ) : activeLayout === "kanban" ? (
-                <KanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <CalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <GanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <ProjectSpreadsheetLayout />
-              ) : null}
-            </div>
-          )}
-        </>
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+            {/* mutation loader */}
+            {issues?.loader === "mutation" && (
+              <div className="fixed w-[40px] h-[40px] z-50 right-[16px] top-[64px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+                <Spinner className="w-4 h-4" />
+              </div>
+            )}
+            {activeLayout === "list" ? (
+              <ListLayout />
+            ) : activeLayout === "kanban" ? (
+              <KanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <CalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <GanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectSpreadsheetLayout />
+            ) : null}
+          </div>
+
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
       )}
     </div>
   );

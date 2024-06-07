@@ -1,34 +1,36 @@
 import { useEffect, useState, useRef } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
+import { TIssue } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject, useWorkspace } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
-import { createIssuePayload } from "helpers/issue.helper";
+// ui
 // types
-import { IIssue, IProject } from "types";
+// constants
 
 type Props = {
-  formKey: keyof IIssue;
+  formKey: keyof TIssue;
   groupId?: string;
   subGroupId?: string | null;
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -57,21 +59,20 @@ const Inputs = (props: any) => {
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
-
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { currentProjectDetails } = useProject();
+  const { captureIssueEvent } = useEventTracker();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  // store
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
+  // form info
   const {
     reset,
     handleSubmit,
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   // ref
   const ref = useRef<HTMLFormElement>(null);
@@ -84,12 +85,6 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // hooks
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  const { setToastAlert } = useToast();
-
-  // derived values
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
 
   useEffect(() => {
     setFocus("name");
@@ -103,17 +98,17 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: error?.message?.toString() || "Some error occurred. Please try again.",
       });
     });
-  }, [errors, setToastAlert]);
+  }, [errors]);
 
-  // const onSubmitHandler = async (formData: IIssue) => {
+  // const onSubmitHandler = async (formData: TIssue) => {
   //   if (isSubmitting || !workspaceSlug || !projectId) return;
 
   //   // resetting the form so that user can add another issue quickly
@@ -135,8 +130,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //       payload
   //     );
 
-  //     setToastAlert({
-  //       type: "success",
+  //     setToast({
+  //       type: TOAST_TYPE.SUCCESS,
   //       title: "Success!",
   //       message: "Issue created successfully.",
   //     });
@@ -145,8 +140,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //       const error = err?.[key];
   //       const errorTitle = error ? (Array.isArray(error) ? error.join(", ") : error) : null;
 
-  //       setToastAlert({
-  //         type: "error",
+  //       setToast({
+  //         type: TOAST_TYPE.ERROR,
   //         title: "Error!",
   //         message: errorTitle || "Some error occurred. Please try again.",
   //       });
@@ -154,30 +149,51 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //   }
   // };
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !workspaceDetail || !projectDetail) return;
+  const onSubmitHandler = async (formData: TIssue) => {
+    if (isSubmitting || !currentWorkspace || !currentProjectDetails) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(currentProjectDetails.id, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
-    try {
-      quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload } as IIssue, viewId));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(
+        currentWorkspace.slug,
+        currentProjectDetails.id,
+        { ...payload } as TIssue,
+        viewId
+      );
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
       });
-    } catch (err: any) {
-      console.error(err);
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+
+      await quickAddPromise
+        .then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
+            path: router.asPath,
+          });
+        })
+        .catch((err) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
+            path: router.asPath,
+          });
+          console.error(err);
+        });
     }
   };
 
@@ -190,7 +206,12 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
             onSubmit={handleSubmit(onSubmitHandler)}
             className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-4 shadow-custom-shadow-sm"
           >
-            <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
+            <Inputs
+              formKey={formKey}
+              register={register}
+              setFocus={setFocus}
+              projectDetails={currentProjectDetails ?? null}
+            />
           </form>
         </div>
       )}
@@ -205,11 +226,11 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         <div className="flex items-center">
           <button
             type="button"
-            className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-custom-primary-100"
+            className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-custom-text-350 hover:text-custom-text-300"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+            <span className="text-sm font-medium">New Issue</span>
           </button>
         </div>
       )}

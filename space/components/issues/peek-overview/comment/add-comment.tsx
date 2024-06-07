@@ -1,19 +1,16 @@
 import React, { useRef } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
+// editor
+import { EditorRefApi } from "@plane/lite-text-editor";
 // ui
-import { Button } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// editor components
+import { LiteTextEditor } from "@/components/editor/lite-text-editor";
+// hooks
+import { useIssueDetails, useProject, useUser } from "@/hooks/store";
 // types
-import { Comment } from "types/issue";
-// components
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
-// service
-import fileService from "services/file.service";
+import { Comment } from "@/types/issue";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -21,11 +18,22 @@ const defaultValues: Partial<Comment> = {
 
 type Props = {
   disabled?: boolean;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 export const AddComment: React.FC<Props> = observer((props) => {
-  const { disabled = false } = props;
-
+  // const { disabled = false } = props;
+  const { workspaceSlug, projectId } = props;
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  // store hooks
+  const { workspace } = useProject();
+  const { peekId: issueId, addIssueComment } = useIssueDetails();
+  const { data: currentUser } = useUser();
+  // derived values
+  const workspaceId = workspace?.id;
+  // form info
   const {
     handleSubmit,
     control,
@@ -34,35 +42,24 @@ export const AddComment: React.FC<Props> = observer((props) => {
     reset,
   } = useForm<Comment>({ defaultValues });
 
-  const router = useRouter();
-  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
-
-  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
-
-  const issueId = issueDetailStore.peekId;
-
-  const editorRef = useRef<any>(null);
-
-  const { setToastAlert } = useToast();
-
   const onSubmit = async (formData: Comment) => {
-    if (!workspace_slug || !project_slug || !issueId || isSubmitting || !formData.comment_html) return;
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting || !formData.comment_html) return;
 
-    await issueDetailStore
-      .addIssueComment(workspace_slug, project_slug, issueId, formData)
+    await addIssueComment(workspaceSlug, projectId, issueId, formData)
       .then(() => {
         reset(defaultValues);
         editorRef.current?.clearEditor();
       })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Comment could not be posted. Please try again.",
-        });
-      });
+        })
+      );
   };
 
+  // TODO: on click if he user is not logged in redirect to login page
   return (
     <div>
       <div className="issue-comments-section">
@@ -70,43 +67,20 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <LiteTextEditorWithRef
+            <LiteTextEditor
               onEnterKeyPress={(e) => {
-                userStore.requiredLogin(() => {
-                  handleSubmit(onSubmit)(e);
-                });
+                if (currentUser) handleSubmit(onSubmit)(e);
               }}
-              cancelUploadImage={fileService.cancelUpload}
-              uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
-              deleteFile={fileService.deleteImage}
-              restoreFile={fileService.restoreImage}
+              workspaceId={workspaceId as string}
+              workspaceSlug={workspaceSlug}
               ref={editorRef}
-              value={
+              initialValue={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                   ? watch("comment_html")
                   : value
               }
-              customClassName="p-2"
-              editorContentCustomClassNames="min-h-[35px]"
-              debouncedUpdatesEnabled={false}
-              onChange={(comment_json: Object, comment_html: string) => {
-                onChange(comment_html);
-              }}
-              submitButton={
-                <Button
-                  disabled={isSubmitting || disabled}
-                  variant="primary"
-                  type="submit"
-                  className="!px-2.5 !py-1.5 !text-xs"
-                  onClick={(e) => {
-                    userStore.requiredLogin(() => {
-                      handleSubmit(onSubmit)(e);
-                    });
-                  }}
-                >
-                  {isSubmitting ? "Adding..." : "Comment"}
-                </Button>
-              }
+              onChange={(comment_json, comment_html) => onChange(comment_html)}
+              isSubmitting={isSubmitting}
             />
           )}
         />

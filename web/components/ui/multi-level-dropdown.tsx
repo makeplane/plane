@@ -1,11 +1,11 @@
 import { Fragment, useState } from "react";
 
 // headless ui
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // ui
 import { Loader } from "@plane/ui";
 // icons
-import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 type MultiLevelDropdownProps = {
   label: string;
@@ -73,8 +73,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                       as="button"
                       onClick={(e: any) => {
                         if (option.hasChildren) {
-                          e.stopPropagation();
-                          e.preventDefault();
+                          e?.stopPropagation();
+                          e?.preventDefault();
 
                           if (option.onClick) option.onClick();
 

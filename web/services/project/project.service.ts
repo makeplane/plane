@@ -1,15 +1,14 @@
-import { API_BASE_URL } from "helpers/common.helper";
-// services
-import { APIService } from "services/api.service";
-// types
 import type {
   GithubRepositoriesResponse,
   IProject,
   ISearchIssueResponse,
-  ProjectPreferences,
-  IProjectViewProps,
   TProjectIssuesSearchParams,
-} from "types";
+} from "@plane/types";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
+// types
 
 export class ProjectService extends APIService {
   constructor() {
@@ -72,9 +71,6 @@ export class ProjectService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: {
-      view_props?: IProjectViewProps;
-      default_props?: IProjectViewProps;
-      preferences?: ProjectPreferences;
       sort_order?: number;
     }
   ): Promise<any> {
@@ -86,7 +82,10 @@ export class ProjectService extends APIService {
   }
 
   async getGithubRepositories(url: string): Promise<GithubRepositoriesResponse> {
-    return this.request(url)
+    return this.request({
+      method: "get",
+      url,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

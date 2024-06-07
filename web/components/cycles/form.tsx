@@ -1,30 +1,42 @@
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+// types
+import { ICycle } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-import { DateSelect } from "components/ui";
-import { IssueProjectSelect } from "components/issues/select";
-// types
-import { ICycle } from "types";
+// components
+import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
 
 type Props = {
-  handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
+  handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
   handleClose: () => void;
+  status: boolean;
   projectId: string;
   setActiveProject: (projectId: string) => void;
   data?: ICycle | null;
 };
 
+const defaultValues: Partial<ICycle> = {
+  name: "",
+  description: "",
+  start_date: null,
+  end_date: null,
+};
+
 export const CycleForm: React.FC<Props> = (props) => {
-  const { handleFormSubmit, handleClose, projectId, setActiveProject, data } = props;
+  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data } = props;
   // form data
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     handleSubmit,
     control,
-    watch,
+    reset,
   } = useForm<ICycle>({
     defaultValues: {
-      project: projectId,
+      project_id: projectId,
       name: data?.name || "",
       description: data?.description || "",
       start_date: data?.start_date || null,
@@ -32,115 +44,128 @@ export const CycleForm: React.FC<Props> = (props) => {
     },
   });
 
-  const startDate = watch("start_date");
-  const endDate = watch("end_date");
-
-  const minDate = startDate ? new Date(startDate) : new Date();
-  minDate.setDate(minDate.getDate() + 1);
-
-  const maxDate = endDate ? new Date(endDate) : null;
-  maxDate?.setDate(maxDate.getDate() - 1);
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...data,
+    });
+  }, [data, reset]);
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="space-y-5">
+    <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData, dirtyFields))}>
+      <div className="space-y-5 p-5">
         <div className="flex items-center gap-x-3">
-          <Controller
-            control={control}
-            name="project"
-            render={({ field: { value, onChange } }) => (
-              <IssueProjectSelect
-                value={value}
-                onChange={(val: string) => {
-                  onChange(val);
-                  setActiveProject(val);
-                }}
-              />
-            )}
-          />
-          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Cycle</h3>
+          {!status && (
+            <Controller
+              control={control}
+              name="project_id"
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectDropdown
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
+                    buttonVariant="border-with-text"
+                    renderCondition={(project) => shouldRenderProject(project)}
+                    tabIndex={7}
+                  />
+                </div>
+              )}
+            />
+          )}
+          <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} Cycle</h3>
         </div>
         <div className="space-y-3">
-          <div className="mt-2 space-y-3">
-            <div>
-              <Controller
-                name="name"
-                control={control}
-                rules={{
-                  required: "Name is required",
-                  maxLength: {
-                    value: 255,
-                    message: "Name should be less than 255 characters",
-                  },
-                }}
-                render={({ field: { value, onChange } }) => (
-                  <Input
-                    id="cycle_name"
-                    name="name"
-                    type="text"
-                    placeholder="Cycle Title"
-                    className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
-                    value={value}
-                    inputSize="md"
-                    onChange={onChange}
-                    hasError={Boolean(errors?.name)}
-                  />
-                )}
-              />
-            </div>
-            <div>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <TextArea
-                    id="cycle_description"
-                    name="description"
-                    placeholder="Description..."
-                    className="!h-24 w-full resize-none text-sm"
-                    hasError={Boolean(errors?.description)}
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <div>
-                <Controller
-                  control={control}
-                  name="start_date"
-                  render={({ field: { value, onChange } }) => (
-                    <DateSelect
-                      label="Start date"
-                      value={value}
-                      onChange={(val) => onChange(val)}
-                      minDate={new Date()}
-                      maxDate={maxDate ?? undefined}
-                    />
-                  )}
+          <div className="space-y-1">
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: "Title is required",
+                maxLength: {
+                  value: 255,
+                  message: "Title should be less than 255 characters",
+                },
+              }}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  name="name"
+                  type="text"
+                  placeholder="Title"
+                  className="w-full text-base"
+                  value={value}
+                  inputSize="md"
+                  onChange={onChange}
+                  hasError={Boolean(errors?.name)}
+                  tabIndex={1}
+                  autoFocus
                 />
-              </div>
-              <div>
+              )}
+            />
+            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          </div>
+          <div>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  name="description"
+                  placeholder="Description"
+                  className="w-full text-base resize-none min-h-24"
+                  hasError={Boolean(errors?.description)}
+                  value={value}
+                  onChange={onChange}
+                  tabIndex={2}
+                />
+              )}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Controller
+              control={control}
+              name="start_date"
+              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
                 <Controller
                   control={control}
                   name="end_date"
-                  render={({ field: { value, onChange } }) => (
-                    <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} minDate={minDate} />
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                    <DateRangeDropdown
+                      buttonVariant="border-with-text"
+                      className="h-7"
+                      minDate={new Date()}
+                      value={{
+                        from: getDate(startDateValue),
+                        to: getDate(endDateValue),
+                      }}
+                      onSelect={(val) => {
+                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                      }}
+                      placeholder={{
+                        from: "Start date",
+                        to: "End date",
+                      }}
+                      hideIcon={{
+                        to: true,
+                      }}
+                      tabIndex={3}
+                    />
                   )}
                 />
-              </div>
-            </div>
+              )}
+            />
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating" : "Update cycle") : isSubmitting ? "Creating" : "Create cycle"}
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
+          {data ? (isSubmitting ? "Updating" : "Update Cycle") : isSubmitting ? "Creating" : "Create Cycle"}
         </Button>
       </div>
     </form>

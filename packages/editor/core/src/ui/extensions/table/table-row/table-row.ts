@@ -13,6 +13,17 @@ export const TableRow = Node.create<TableRowOptions>({
     };
   },
 
+  addAttributes() {
+    return {
+      background: {
+        default: null,
+      },
+      textColor: {
+        default: null,
+      },
+    };
+  },
+
   content: "(tableCell | tableHeader)*",
 
   tableRole: "row",
@@ -22,6 +33,12 @@ export const TableRow = Node.create<TableRowOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["tr", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+    const style = HTMLAttributes.background
+      ? `background-color: ${HTMLAttributes.background}; color: ${HTMLAttributes.textColor}`
+      : "";
+
+    const attributes = mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { style });
+
+    return ["tr", attributes, 0];
   },
 });

@@ -1,54 +1,47 @@
 import React from "react";
-
-// components
-import { ViewStartDateSelect } from "components/issues";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { observer } from "mobx-react";
+import { CalendarClock } from "lucide-react";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
+// components
+import { DateDropdown } from "@/components/dropdowns";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, formData: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <>
-      <ViewStartDateSelect
-        issue={issue}
-        onChange={(val) => {
-          onChange(issue, { start_date: val });
-          if (issue.parent) {
-            mutateSubIssues(issue, { start_date: val });
-          }
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <DateDropdown
+        value={issue.start_date}
+        maxDate={getDate(issue.target_date)}
+        onChange={(data) => {
+          const startDate = data ? renderFormattedPayloadDate(data) : null;
+          onChange(
+            issue,
+            { start_date: startDate },
+            {
+              changed_property: "start_date",
+              change_details: startDate,
+            }
+          );
         }}
-        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-        noBorder
         disabled={disabled}
+        placeholder="Start date"
+        icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+        buttonVariant="transparent-with-text"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
+        buttonContainerClassName="w-full"
+        onClose={onClose}
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <div className={`h-11`}>
-            <SpreadsheetStartDateColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
-        ))}
-    </>
+    </div>
   );
-};
+});

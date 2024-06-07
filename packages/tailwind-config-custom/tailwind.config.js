@@ -1,4 +1,6 @@
 const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
+const convertToRGBA = (variableName, alpha) =>
+  `rgba(var(${variableName}), ${alpha})`;
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -10,9 +12,11 @@ module.exports = {
       "./constants/**/*.{js,ts,jsx,tsx}",
       "./layouts/**/*.tsx",
       "./pages/**/*.tsx",
+      "./app/**/*.tsx",
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
       "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
+      "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -27,6 +31,7 @@ module.exports = {
         "custom-shadow-xl": "var(--color-shadow-xl)",
         "custom-shadow-2xl": "var(--color-shadow-2xl)",
         "custom-shadow-3xl": "var(--color-shadow-3xl)",
+        "custom-shadow-4xl": "var(--color-shadow-4xl)",
         "custom-sidebar-shadow-2xs": "var(--color-sidebar-shadow-2xs)",
         "custom-sidebar-shadow-xs": "var(--color-sidebar-shadow-xs)",
         "custom-sidebar-shadow-sm": "var(--color-sidebar-shadow-sm)",
@@ -36,8 +41,8 @@ module.exports = {
         "custom-sidebar-shadow-xl": "var(--color-sidebar-shadow-xl)",
         "custom-sidebar-shadow-2xl": "var(--color-sidebar-shadow-2xl)",
         "custom-sidebar-shadow-3xl": "var(--color-sidebar-shadow-3xl)",
-        "onbording-shadow-sm": "var(--color-onboarding-shadow-sm)",
-
+        "custom-sidebar-shadow-4xl": "var(--color-sidebar-shadow-4xl)",
+        "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
       },
       colors: {
         custom: {
@@ -85,6 +90,9 @@ module.exports = {
             800: convertToRGB("--color-background-800"),
             900: convertToRGB("--color-background-900"),
             1000: "rgb(0, 0, 0)",
+            overlay: convertToRGBA("--color-background-80", 0.95),
+            primary: convertToRGB(" --color-background-primary"),
+            error: convertToRGB(" --color-background-error"),
             DEFAULT: convertToRGB("--color-background-100"),
           },
           text: {
@@ -101,6 +109,7 @@ module.exports = {
             100: convertToRGB("--color-text-100"),
             200: convertToRGB("--color-text-200"),
             300: convertToRGB("--color-text-300"),
+            350: convertToRGB("--color-text-350"),
             400: convertToRGB("--color-text-400"),
             500: convertToRGB("--color-text-500"),
             600: convertToRGB("--color-text-600"),
@@ -108,6 +117,8 @@ module.exports = {
             800: convertToRGB("--color-text-800"),
             900: convertToRGB("--color-text-900"),
             1000: "rgb(0, 0, 0)",
+            primary: convertToRGB("--color-text-primary"),
+            error: convertToRGB("--color-text-error"),
             DEFAULT: convertToRGB("--color-text-100"),
           },
           border: {
@@ -117,7 +128,17 @@ module.exports = {
             300: convertToRGB("--color-border-300"),
             400: convertToRGB("--color-border-400"),
             1000: "rgb(0, 0, 0)",
+            primary: convertToRGB("--color-border-primary"),
+            error: convertToRGB("--color-border-error"),
             DEFAULT: convertToRGB("--color-border-200"),
+          },
+          error: {
+            10: convertToRGB("--color-error-10"),
+            20: convertToRGB("--color-error-20"),
+            30: convertToRGB("--color-error-30"),
+            100: convertToRGB("--color-error-100"),
+            200: convertToRGB("--color-error-200"),
+            500: convertToRGB("--color-error-500"),
           },
           sidebar: {
             background: {
@@ -197,6 +218,31 @@ module.exports = {
             300: convertToRGB("--color-onboarding-border-300"),
           },
         },
+        toast: {
+          text: {
+            success: convertToRGB("--color-toast-success-text"),
+            error: convertToRGB("--color-toast-error-text"),
+            warning: convertToRGB("--color-toast-warning-text"),
+            info: convertToRGB("--color-toast-info-text"),
+            loading: convertToRGB("--color-toast-loading-text"),
+            secondary: convertToRGB("--color-toast-secondary-text"),
+            tertiary: convertToRGB("--color-toast-tertiary-text"),
+          },
+          background: {
+            success: convertToRGB("--color-toast-success-background"),
+            error: convertToRGB("--color-toast-error-background"),
+            warning: convertToRGB("--color-toast-warning-background"),
+            info: convertToRGB("--color-toast-info-background"),
+            loading: convertToRGB("--color-toast-loading-background"),
+          },
+          border: {
+            success: convertToRGB("--color-toast-success-border"),
+            error: convertToRGB("--color-toast-error-border"),
+            warning: convertToRGB("--color-toast-warning-border"),
+            info: convertToRGB("--color-toast-info-border"),
+            loading: convertToRGB("--color-toast-loading-border"),
+          },
+        },
       },
       keyframes: {
         leftToaster: {
@@ -212,7 +258,7 @@ module.exports = {
           to: { left: "100%" },
         },
       },
-      typography: ({ theme }) => ({
+      typography: () => ({
         brand: {
           css: {
             "--tw-prose-body": convertToRGB("--color-text-100"),
@@ -225,12 +271,12 @@ module.exports = {
             "--tw-prose-bullets": convertToRGB("--color-text-100"),
             "--tw-prose-hr": convertToRGB("--color-text-100"),
             "--tw-prose-quotes": convertToRGB("--color-text-100"),
-            "--tw-prose-quote-borders": convertToRGB("--color-border"),
+            "--tw-prose-quote-borders": convertToRGB("--color-border-200"),
             "--tw-prose-code": convertToRGB("--color-text-100"),
             "--tw-prose-pre-code": convertToRGB("--color-text-100"),
             "--tw-prose-pre-bg": convertToRGB("--color-background-100"),
-            "--tw-prose-th-borders": convertToRGB("--color-border"),
-            "--tw-prose-td-borders": convertToRGB("--color-border"),
+            "--tw-prose-th-borders": convertToRGB("--color-border-200"),
+            "--tw-prose-td-borders": convertToRGB("--color-border-200"),
           },
         },
       }),

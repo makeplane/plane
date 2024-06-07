@@ -5,6 +5,8 @@ import { ColorResult, SketchPicker } from "react-color";
 import { Input } from "./input";
 import { usePopper } from "react-popper";
 import { Button } from "../button";
+// helpers
+import { cn } from "../../helpers";
 
 export interface InputColorPickerProps {
   hasError: boolean;
@@ -45,7 +47,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
         onChange={handleInputChange}
         hasError={hasError}
         placeholder={placeholder}
-        className={`border-[0.5px] border-custom-border-200 ${className}`}
+        className={cn("border-[0.5px] border-custom-border-200", className)}
         style={style}
       />
 

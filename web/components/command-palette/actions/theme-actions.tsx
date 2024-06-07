@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
+import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
-import { observer } from "mobx-react-lite";
-// hooks
-import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { THEME_OPTIONS } from "constants/themes";
+import { THEME_OPTIONS } from "@/constants/themes";
+// hooks
+import { useUserProfile } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -15,23 +15,18 @@ type Props = {
 
 export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
   const { closePalette } = props;
+  const { setTheme } = useTheme();
+  // hooks
+  const { updateUserTheme } = useUserProfile();
   // states
   const [mounted, setMounted] = useState(false);
-  // store
-  const {
-    user: { updateCurrentUserTheme },
-  } = useMobxStore();
-  // hooks
-  const { setTheme } = useTheme();
-  const { setToastAlert } = useToast();
 
-  const updateUserTheme = async (newTheme: string) => {
+  const updateTheme = async (newTheme: string) => {
     setTheme(newTheme);
-
-    return updateCurrentUserTheme(newTheme).catch(() => {
-      setToastAlert({
+    return updateUserTheme({ theme: newTheme }).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Failed to save user theme settings!",
-        type: "error",
       });
     });
   };
@@ -49,7 +44,7 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
         <Command.Item
           key={theme.value}
           onSelect={() => {
-            updateUserTheme(theme.value);
+            updateTheme(theme.value);
             closePalette();
           }}
           className="focus:outline-none"

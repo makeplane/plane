@@ -1,18 +1,20 @@
 import { FC, useEffect, useState, useRef } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
+import { TIssue, IProject } from "@plane/types";
 // hooks
-import useToast from "hooks/use-toast";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-// constants
-import { IIssue, IProject } from "types";
+import { setPromiseToast } from "@plane/ui";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// ui
 // types
-import { createIssuePayload } from "helpers/issue.helper";
+// helper
+// constants
 
 interface IInputProps {
   formKey: string;
@@ -44,31 +46,30 @@ const Inputs: FC<IInputProps> = (props) => {
 };
 
 interface IListQuickAddIssueForm {
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
 }
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
 export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props) => {
   const { prePopulatedData, quickAddCallback, viewId } = props;
-
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
 
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
+  const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 
   const ref = useRef<HTMLFormElement>(null);
 
@@ -77,7 +78,6 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
 
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  const { setToastAlert } = useToast();
 
   const {
     reset,
@@ -85,35 +85,51 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     setFocus,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
   }, [isOpen, reset]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !workspaceDetail || !projectDetail) return;
+  const onSubmitHandler = async (formData: TIssue) => {
+    if (isSubmitting || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
-    try {
-      quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload }, viewId));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
       });
-    } catch (err: any) {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+
+      await quickAddPromise
+        .then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "List quick add" },
+            path: router.asPath,
+          });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "List quick add" },
+            path: router.asPath,
+          });
+        });
     }
   };
 
@@ -130,17 +146,17 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-3"
           >
-            <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail} />
+            <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail ?? null} />
           </form>
           <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
         </div>
       ) : (
         <div
-          className="flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100"
+          className="flex w-full cursor-pointer items-center gap-2 px-2 py-3 text-custom-text-350 hover:text-custom-text-300"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+          <span className="text-sm font-medium">New Issue</span>
         </div>
       )}
     </div>

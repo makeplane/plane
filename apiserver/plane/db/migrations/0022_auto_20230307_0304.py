@@ -7,95 +7,285 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0021_auto_20230223_0104'),
+        ("db", "0021_auto_20230223_0104"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cycle',
-            name='status',
+            model_name="cycle",
+            name="status",
         ),
         migrations.RemoveField(
-            model_name='project',
-            name='slug',
+            model_name="project",
+            name="slug",
         ),
         migrations.AddField(
-            model_name='issuelink',
-            name='metadata',
+            model_name="issuelink",
+            name="metadata",
             field=models.JSONField(default=dict),
         ),
         migrations.AddField(
-            model_name='modulelink',
-            name='metadata',
+            model_name="modulelink",
+            name="metadata",
             field=models.JSONField(default=dict),
         ),
         migrations.AddField(
-            model_name='project',
-            name='cover_image',
+            model_name="project",
+            name="cover_image",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.CreateModel(
-            name='ProjectFavorite',
+            name="ProjectFavorite",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectfavorite_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_projectfavorite', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectfavorite_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_favorites', to=settings.AUTH_USER_MODEL)),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_projectfavorite', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectfavorite_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_projectfavorite",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectfavorite_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_favorites",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_projectfavorite",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project Favorite',
-                'verbose_name_plural': 'Project Favorites',
-                'db_table': 'project_favorites',
-                'ordering': ('-created_at',),
-                'unique_together': {('project', 'user')},
+                "verbose_name": "Project Favorite",
+                "verbose_name_plural": "Project Favorites",
+                "db_table": "project_favorites",
+                "ordering": ("-created_at",),
+                "unique_together": {("project", "user")},
             },
         ),
         migrations.CreateModel(
-            name='ModuleFavorite',
+            name="ModuleFavorite",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='modulefavorite_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('module', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='module_favorites', to='db.module')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_modulefavorite', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='modulefavorite_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='module_favorites', to=settings.AUTH_USER_MODEL)),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_modulefavorite', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="modulefavorite_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "module",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="module_favorites",
+                        to="db.module",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_modulefavorite",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="modulefavorite_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="module_favorites",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_modulefavorite",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Module Favorite',
-                'verbose_name_plural': 'Module Favorites',
-                'db_table': 'module_favorites',
-                'ordering': ('-created_at',),
-                'unique_together': {('module', 'user')},
+                "verbose_name": "Module Favorite",
+                "verbose_name_plural": "Module Favorites",
+                "db_table": "module_favorites",
+                "ordering": ("-created_at",),
+                "unique_together": {("module", "user")},
             },
         ),
         migrations.CreateModel(
-            name='CycleFavorite',
+            name="CycleFavorite",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cyclefavorite_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('cycle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cycle_favorites', to='db.cycle')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_cyclefavorite', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cyclefavorite_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cycle_favorites', to=settings.AUTH_USER_MODEL)),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_cyclefavorite', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="cyclefavorite_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "cycle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cycle_favorites",
+                        to="db.cycle",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_cyclefavorite",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="cyclefavorite_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cycle_favorites",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_cyclefavorite",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Cycle Favorite',
-                'verbose_name_plural': 'Cycle Favorites',
-                'db_table': 'cycle_favorites',
-                'ordering': ('-created_at',),
-                'unique_together': {('cycle', 'user')},
+                "verbose_name": "Cycle Favorite",
+                "verbose_name_plural": "Cycle Favorites",
+                "db_table": "cycle_favorites",
+                "ordering": ("-created_at",),
+                "unique_together": {("cycle", "user")},
             },
         ),
     ]

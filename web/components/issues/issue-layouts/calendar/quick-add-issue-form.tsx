@@ -1,36 +1,42 @@
 import { useEffect, useRef, useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { createIssuePayload } from "helpers/issue.helper";
-// icons
 import { PlusIcon } from "lucide-react";
 // types
-import { IIssue, IProject } from "types";
+import { ISearchIssueResponse, TIssue } from "@plane/types";
+// ui
+import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
+// components
+import { ExistingIssuesListModal } from "@/components/core";
+// constants
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { createIssuePayload } from "@/helpers/issue.helper";
+// hooks
+import { useEventTracker, useIssueDetail, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type Props = {
-  formKey: keyof IIssue;
+  formKey: keyof TIssue;
   groupId?: string;
   subGroupId?: string | null;
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   onOpen?: () => void;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -43,7 +49,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-sm md:text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -51,33 +57,35 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-xs font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-sm md:text-xs font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
+  const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, viewId, onOpen } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
-  // ref
+  const { workspaceSlug, projectId, moduleId } = router.query;
+  // store hooks
+  const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
+  const { updateIssue } = useIssueDetail();
+  // refs
   const ref = useRef<HTMLDivElement>(null);
-
   // states
   const [isOpen, setIsOpen] = useState(false);
-
-  const { setToastAlert } = useToast();
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isExistingIssueModalOpen, setIsExistingIssueModalOpen] = useState(false);
   // derived values
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
+  const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
+  const ExistingIssuesListModalPayload = addIssuesToView
+    ? moduleId
+      ? { module: moduleId.toString(), target_date: "none" }
+      : { cycle: true, target_date: "none" }
+    : { target_date: "none" };
 
   const {
     reset,
@@ -85,7 +93,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     register,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   const handleClose = () => {
     setIsOpen(false);
@@ -102,58 +110,116 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: error?.message?.toString() || "Some error occurred. Please try again.",
       });
     });
-  }, [errors, setToastAlert]);
+  }, [errors]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+  const onSubmitHandler = async (formData: TIssue) => {
+    if (isSubmitting || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(
-          workspaceSlug,
-          projectId,
-          {
-            ...payload,
-          },
-          viewId
-        ));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        {
+          ...payload,
+        },
+        viewId
+      );
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
       });
-    } catch (err: any) {
-      console.error(err);
-      setToastAlert({
-        type: "error",
+
+      await quickAddPromise
+        .then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
+            path: router.asPath,
+          });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
+            path: router.asPath,
+          });
+        });
+    }
+  };
+
+  const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
+    if (!workspaceSlug || !projectId) return;
+
+    const issueIds = data.map((i) => i.id);
+
+    try {
+      // To handle all updates in parallel
+      await Promise.all(
+        data.map((issue) =>
+          updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, prePopulatedData ?? {})
+        )
+      );
+      await addIssuesToView?.(issueIds);
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
+        message: "Something went wrong. Please try again.",
       });
     }
   };
 
-  const handleOpen = () => {
+  const handleNewIssue = () => {
     setIsOpen(true);
     if (onOpen) onOpen();
+  };
+  const handleExistingIssue = () => {
+    setIsExistingIssueModalOpen(true);
   };
 
   return (
     <>
+      {workspaceSlug && projectId && (
+        <ExistingIssuesListModal
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          isOpen={isExistingIssueModalOpen}
+          handleClose={() => setIsExistingIssueModalOpen(false)}
+          searchParams={ExistingIssuesListModalPayload}
+          handleOnSubmit={handleAddIssuesToView}
+          shouldHideIssue={(issue) => {
+            if (issue.start_date && prePopulatedData?.target_date) {
+              const issueStartDate = new Date(issue.start_date);
+              const targetDate = new Date(prePopulatedData.target_date);
+              const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
+              if (diffInDays < 0) return true;
+            }
+            return false;
+          }}
+        />
+      )}
       {isOpen && (
         <div
           ref={ref}
@@ -163,7 +229,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="z-50 flex w-full items-center gap-x-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-2 shadow-custom-shadow-2xs transition-opacity"
+            className="z-50 flex w-full items-center gap-x-2 rounded md:border-[0.5px] border-custom-border-200 bg-custom-background-100 px-2 md:shadow-custom-shadow-2xs transition-opacity"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>
@@ -171,15 +237,27 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       )}
 
       {!isOpen && (
-        <div className="hidden rounded border-[0.5px] border-custom-border-200 group-hover:block">
-          <button
-            type="button"
-            className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
-            onClick={handleOpen}
+        <div
+          className={cn("md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100", {
+            block: isMenuOpen,
+          })}
+        >
+          <CustomMenu
+            placement="bottom-start"
+            menuButtonOnClick={() => setIsMenuOpen(true)}
+            onMenuClose={() => setIsMenuOpen(false)}
+            className="w-full"
+            customButtonClassName="w-full"
+            customButton={
+              <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
+                <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
+                <span className="text-sm font-medium flex-shrink-0">New Issue</span>
+              </div>
+            }
           >
-            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-          </button>
+            <CustomMenu.MenuItem onClick={handleNewIssue}>New Issue</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
       )}
     </>

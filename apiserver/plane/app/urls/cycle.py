@@ -7,6 +7,8 @@ from plane.app.views import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleUserPropertiesEndpoint,
+    CycleArchiveUnarchiveEndpoint,
 )
 
 
@@ -44,7 +46,7 @@ urlpatterns = [
         name="project-issue-cycle",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:issue_id>/",
         CycleIssueViewSet.as_view(
             {
                 "get": "retrieve",
@@ -83,5 +85,25 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
         TransferCycleIssueEndpoint.as_view(),
         name="transfer-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/user-properties/",
+        CycleUserPropertiesEndpoint.as_view(),
+        name="cycle-user-filters",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/archive/",
+        CycleArchiveUnarchiveEndpoint.as_view(),
+        name="cycle-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/",
+        CycleArchiveUnarchiveEndpoint.as_view(),
+        name="cycle-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/<uuid:pk>/",
+        CycleArchiveUnarchiveEndpoint.as_view(),
+        name="cycle-archive-unarchive",
     ),
 ]

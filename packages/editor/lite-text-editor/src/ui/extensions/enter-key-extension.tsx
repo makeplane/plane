@@ -4,13 +4,16 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
   Extension.create({
     name: "enterKey",
 
-    addKeyboardShortcuts() {
+    addKeyboardShortcuts(this) {
       return {
         Enter: () => {
-          if (onEnterKeyPress) {
-            onEnterKeyPress();
+          if (!this.editor.storage.mentionsOpen) {
+            if (onEnterKeyPress) {
+              onEnterKeyPress();
+            }
+            return true;
           }
-          return true;
+          return false;
         },
         "Shift-Enter": ({ editor }) =>
           editor.commands.first(({ commands }) => [

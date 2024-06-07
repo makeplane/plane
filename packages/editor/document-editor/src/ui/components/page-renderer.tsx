@@ -1,62 +1,150 @@
+import { useCallback, useRef, useState } from "react";
 import { EditorContainer, EditorContentWrapper } from "@plane/editor-core";
-import { Editor } from "@tiptap/react";
-import { useState } from "react";
-import { DocumentDetails } from "src/types/editor-types";
+import { Node } from "@tiptap/pm/model";
+import { EditorView } from "@tiptap/pm/view";
+import { Editor, ReactRenderer } from "@tiptap/react";
+import { LinkView, LinkViewProps } from "./links/link-view";
+import {
+  autoUpdate,
+  computePosition,
+  flip,
+  hide,
+  shift,
+  useDismiss,
+  useFloating,
+  useInteractions,
+} from "@floating-ui/react";
+import BlockMenu from "../menu//block-menu";
 
 type IPageRenderer = {
-  documentDetails: DocumentDetails;
-  updatePageTitle: (title: string) => Promise<void>;
   editor: Editor;
-  editorClassNames: string;
-  editorContentCustomClassNames?: string;
-  readonly: boolean;
-};
-
-const debounce = (func: (...args: any[]) => void, wait: number) => {
-  let timeout: NodeJS.Timeout | null = null;
-  return function executedFunction(...args: any[]) {
-    const later = () => {
-      if (timeout) clearTimeout(timeout);
-      func(...args);
-    };
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
+  editorContainerClassName: string;
+  hideDragHandle?: () => void;
+  tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { documentDetails, editor, editorClassNames, editorContentCustomClassNames, updatePageTitle, readonly } = props;
+  const { tabIndex, editor, hideDragHandle, editorContainerClassName } = props;
+  // states
+  const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState<{ x: number; y: number }>();
+  const [cleanup, setCleanup] = useState(() => () => {});
 
-  const [pageTitle, setPagetitle] = useState(documentDetails.title);
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [flip(), shift(), hide({ strategy: "referenceHidden" })],
+    whileElementsMounted: autoUpdate,
+  });
 
-  const debouncedUpdatePageTitle = debounce(updatePageTitle, 300);
+  const dismiss = useDismiss(context, {
+    ancestorScroll: true,
+  });
 
-  const handlePageTitleChange = (title: string) => {
-    setPagetitle(title);
-    debouncedUpdatePageTitle(title);
-  };
+  const { getFloatingProps } = useInteractions([dismiss]);
+
+  const floatingElementRef = useRef<HTMLElement | null>(null);
+
+  const closeLinkView = () => setIsOpen(false);
+
+  const handleLinkHover = useCallback(
+    (event: React.MouseEvent) => {
+      if (!editor) return;
+      const target = event.target as HTMLElement;
+      const view = editor.view as EditorView;
+
+      if (!target || !view) return;
+      const pos = view.posAtDOM(target, 0);
+      if (!pos || pos < 0) return;
+
+      if (target.nodeName !== "A") return;
+
+      const node = view.state.doc.nodeAt(pos) as Node;
+      if (!node || !node.isAtom) return;
+
+      // we need to check if any of the marks are links
+      const marks = node.marks;
+
+      if (!marks) return;
+
+      const linkMark = marks.find((mark) => mark.type.name === "link");
+
+      if (!linkMark) return;
+
+      if (floatingElementRef.current) {
+        floatingElementRef.current?.remove();
+      }
+
+      if (cleanup) cleanup();
+
+      const href = linkMark.attrs.href;
+      const componentLink = new ReactRenderer(LinkView, {
+        props: {
+          view: "LinkPreview",
+          url: href,
+          editor: editor,
+          from: pos,
+          to: pos + node.nodeSize,
+        },
+        editor,
+      });
+
+      const referenceElement = target as HTMLElement;
+      const floatingElement = componentLink.element as HTMLElement;
+
+      floatingElementRef.current = floatingElement;
+
+      const cleanupFunc = autoUpdate(referenceElement, floatingElement, () => {
+        computePosition(referenceElement, floatingElement, {
+          placement: "bottom",
+          middleware: [
+            flip(),
+            shift(),
+            hide({
+              strategy: "referenceHidden",
+            }),
+          ],
+        }).then(({ x, y }) => {
+          setCoordinates({ x: x - 300, y: y - 50 });
+          setIsOpen(true);
+          setLinkViewProps({
+            closeLinkView: closeLinkView,
+            view: "LinkPreview",
+            url: href,
+            editor: editor,
+            from: pos,
+            to: pos + node.nodeSize,
+          });
+        });
+      });
+
+      setCleanup(cleanupFunc);
+    },
+    [editor, cleanup]
+  );
 
   return (
-    <div className="w-full pb-64 pl-7 pt-5">
-      {!readonly ? (
-        <input
-          onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
-          value={pageTitle}
-        />
-      ) : (
-        <input
-          onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full overflow-x-clip break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
-          value={pageTitle}
-          disabled
-        />
-      )}
-      <div className="flex h-full w-full flex-col pr-5">
-        <EditorContainer editor={editor} editorClassNames={editorClassNames}>
-          <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+    <>
+      <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
+        <EditorContainer
+          editor={editor}
+          hideDragHandle={hideDragHandle}
+          editorContainerClassName={editorContainerClassName}
+        >
+          <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
+          {editor && editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>
-    </div>
+      {isOpen && linkViewProps && coordinates && (
+        <div
+          style={{ ...floatingStyles, left: `${coordinates.x}px`, top: `${coordinates.y}px` }}
+          className="absolute"
+          ref={refs.setFloating}
+        >
+          <LinkView {...linkViewProps} style={floatingStyles} {...getFloatingProps()} />
+        </div>
+      )}
+    </>
   );
 };

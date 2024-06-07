@@ -1,21 +1,19 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// store
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
 import { Controller, useForm } from "react-hook-form";
-
-import { MemberSelect } from "components/project";
+import useSWR from "swr";
+import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { MemberSelect } from "@/components/project";
+// constants
+import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { useProject, useUser } from "@/hooks/store";
 // types
-import { IProject, IUserLite, IWorkspace } from "types";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -26,21 +24,19 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
-  const { user: userStore, project: projectStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
-  const { currentProjectRole } = userStore;
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  // hooks
-  const { setToastAlert } = useToast();
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
+  // derived values
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
   useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   useEffect(() => {
@@ -48,7 +44,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
     reset({
       ...currentProjectDetails,
-      default_assignee: currentProjectDetails.default_assignee?.id ?? currentProjectDetails.default_assignee,
+      default_assignee:
+        (currentProjectDetails.default_assignee as IUserLite)?.id ?? currentProjectDetails.default_assignee,
       project_lead: (currentProjectDetails.project_lead as IUserLite)?.id ?? currentProjectDetails.project_lead,
       workspace: (currentProjectDetails.workspace as IWorkspace).id,
     });
@@ -59,26 +56,29 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
     reset({
       ...currentProjectDetails,
-      default_assignee: currentProjectDetails?.default_assignee?.id ?? currentProjectDetails?.default_assignee,
+      default_assignee:
+        (currentProjectDetails?.default_assignee as IUserLite)?.id ?? currentProjectDetails?.default_assignee,
       project_lead: (currentProjectDetails?.project_lead as IUserLite)?.id ?? currentProjectDetails?.project_lead,
       ...formData,
     });
 
-    await projectStore
-      .updateProject(workspaceSlug.toString(), projectId.toString(), {
-        default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
-        project_lead: formData.project_lead === "none" ? null : formData.project_lead,
-      })
+    await updateProject(workspaceSlug.toString(), projectId.toString(), {
+      default_assignee:
+        formData.default_assignee === "none"
+          ? null
+          : formData.default_assignee ?? currentProjectDetails?.default_assignee,
+      project_lead:
+        formData.project_lead === "none" ? null : formData.project_lead ?? currentProjectDetails?.project_lead,
+    })
       .then(() => {
-        projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
-        setToastAlert({
-          title: "Success",
-          type: "success",
+        setToast({
+          title: "Success!",
+          type: TOAST_TYPE.SUCCESS,
           message: "Project updated successfully",
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

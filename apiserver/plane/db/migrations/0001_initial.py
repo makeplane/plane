@@ -10,695 +10,2481 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('username', models.CharField(max_length=128, unique=True)),
-                ('mobile_number', models.CharField(blank=True, max_length=255, null=True)),
-                ('email', models.CharField(blank=True, max_length=255, null=True, unique=True)),
-                ('first_name', models.CharField(blank=True, max_length=255)),
-                ('last_name', models.CharField(blank=True, max_length=255)),
-                ('avatar', models.CharField(blank=True, max_length=255)),
-                ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('last_location', models.CharField(blank=True, max_length=255)),
-                ('created_location', models.CharField(blank=True, max_length=255)),
-                ('is_superuser', models.BooleanField(default=False)),
-                ('is_managed', models.BooleanField(default=False)),
-                ('is_password_expired', models.BooleanField(default=False)),
-                ('is_active', models.BooleanField(default=True)),
-                ('is_staff', models.BooleanField(default=False)),
-                ('is_email_verified', models.BooleanField(default=False)),
-                ('is_password_autoset', models.BooleanField(default=False)),
-                ('is_onboarded', models.BooleanField(default=False)),
-                ('token', models.CharField(blank=True, max_length=64)),
-                ('billing_address_country', models.CharField(default='INDIA', max_length=255)),
-                ('billing_address', models.JSONField(null=True)),
-                ('has_billing_address', models.BooleanField(default=False)),
-                ('user_timezone', models.CharField(default='Asia/Kolkata', max_length=255)),
-                ('last_active', models.DateTimeField(default=django.utils.timezone.now, null=True)),
-                ('last_login_time', models.DateTimeField(null=True)),
-                ('last_logout_time', models.DateTimeField(null=True)),
-                ('last_login_ip', models.CharField(blank=True, max_length=255)),
-                ('last_logout_ip', models.CharField(blank=True, max_length=255)),
-                ('last_login_medium', models.CharField(default='email', max_length=20)),
-                ('last_login_uagent', models.TextField(blank=True)),
-                ('token_updated_at', models.DateTimeField(null=True)),
-                ('last_workspace_id', models.UUIDField(null=True)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
+                (
+                    "password",
+                    models.CharField(max_length=128, verbose_name="password"),
+                ),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("username", models.CharField(max_length=128, unique=True)),
+                (
+                    "mobile_number",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                (
+                    "email",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, unique=True
+                    ),
+                ),
+                ("first_name", models.CharField(blank=True, max_length=255)),
+                ("last_name", models.CharField(blank=True, max_length=255)),
+                ("avatar", models.CharField(blank=True, max_length=255)),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "last_location",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                (
+                    "created_location",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                ("is_superuser", models.BooleanField(default=False)),
+                ("is_managed", models.BooleanField(default=False)),
+                ("is_password_expired", models.BooleanField(default=False)),
+                ("is_active", models.BooleanField(default=True)),
+                ("is_staff", models.BooleanField(default=False)),
+                ("is_email_verified", models.BooleanField(default=False)),
+                ("is_password_autoset", models.BooleanField(default=False)),
+                ("is_onboarded", models.BooleanField(default=False)),
+                ("token", models.CharField(blank=True, max_length=64)),
+                (
+                    "billing_address_country",
+                    models.CharField(default="INDIA", max_length=255),
+                ),
+                ("billing_address", models.JSONField(null=True)),
+                ("has_billing_address", models.BooleanField(default=False)),
+                (
+                    "user_timezone",
+                    models.CharField(default="Asia/Kolkata", max_length=255),
+                ),
+                (
+                    "last_active",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                ("last_login_time", models.DateTimeField(null=True)),
+                ("last_logout_time", models.DateTimeField(null=True)),
+                (
+                    "last_login_ip",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                (
+                    "last_logout_ip",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                (
+                    "last_login_medium",
+                    models.CharField(default="email", max_length=20),
+                ),
+                ("last_login_uagent", models.TextField(blank=True)),
+                ("token_updated_at", models.DateTimeField(null=True)),
+                ("last_workspace_id", models.UUIDField(null=True)),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'User',
-                'verbose_name_plural': 'Users',
-                'db_table': 'user',
-                'ordering': ('-created_at',),
+                "verbose_name": "User",
+                "verbose_name_plural": "Users",
+                "db_table": "user",
+                "ordering": ("-created_at",),
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Cycle',
+            name="Cycle",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Cycle Name')),
-                ('description', models.TextField(blank=True, verbose_name='Cycle Description')),
-                ('start_date', models.DateField(verbose_name='Start Date')),
-                ('end_date', models.DateField(verbose_name='End Date')),
-                ('status', models.CharField(choices=[('started', 'Started'), ('completed', 'Completed')], max_length=255, verbose_name='Cycle Status')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cycle_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('owned_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='owned_by_cycle', to=settings.AUTH_USER_MODEL)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, verbose_name="Cycle Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="Cycle Description"
+                    ),
+                ),
+                ("start_date", models.DateField(verbose_name="Start Date")),
+                ("end_date", models.DateField(verbose_name="End Date")),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("started", "Started"),
+                            ("completed", "Completed"),
+                        ],
+                        max_length=255,
+                        verbose_name="Cycle Status",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="cycle_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "owned_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="owned_by_cycle",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Cycle',
-                'verbose_name_plural': 'Cycles',
-                'db_table': 'cycle',
-                'ordering': ('-created_at',),
+                "verbose_name": "Cycle",
+                "verbose_name_plural": "Cycles",
+                "db_table": "cycle",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='Issue',
+            name="Issue",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Issue Name')),
-                ('description', models.JSONField(blank=True, verbose_name='Issue Description')),
-                ('priority', models.CharField(blank=True, choices=[('urgent', 'Urgent'), ('high', 'High'), ('medium', 'Medium'), ('low', 'Low')], max_length=30, null=True, verbose_name='Issue Priority')),
-                ('start_date', models.DateField(blank=True, null=True)),
-                ('target_date', models.DateField(blank=True, null=True)),
-                ('sequence_id', models.IntegerField(default=1, verbose_name='Issue Sequence ID')),
-                ('attachments', django.contrib.postgres.fields.ArrayField(base_field=models.URLField(), blank=True, default=list, size=10)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, verbose_name="Issue Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.JSONField(
+                        blank=True, verbose_name="Issue Description"
+                    ),
+                ),
+                (
+                    "priority",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("urgent", "Urgent"),
+                            ("high", "High"),
+                            ("medium", "Medium"),
+                            ("low", "Low"),
+                        ],
+                        max_length=30,
+                        null=True,
+                        verbose_name="Issue Priority",
+                    ),
+                ),
+                ("start_date", models.DateField(blank=True, null=True)),
+                ("target_date", models.DateField(blank=True, null=True)),
+                (
+                    "sequence_id",
+                    models.IntegerField(
+                        default=1, verbose_name="Issue Sequence ID"
+                    ),
+                ),
+                (
+                    "attachments",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.URLField(),
+                        blank=True,
+                        default=list,
+                        size=10,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue',
-                'verbose_name_plural': 'Issues',
-                'db_table': 'issue',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue",
+                "verbose_name_plural": "Issues",
+                "db_table": "issue",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Project Name')),
-                ('description', models.TextField(blank=True, verbose_name='Project Description')),
-                ('description_rt', models.JSONField(blank=True, null=True, verbose_name='Project Description RT')),
-                ('description_html', models.JSONField(blank=True, null=True, verbose_name='Project Description HTML')),
-                ('network', models.PositiveSmallIntegerField(choices=[(0, 'Secret'), (2, 'Public')], default=2)),
-                ('identifier', models.CharField(blank=True, max_length=5, null=True, verbose_name='Project Identifier')),
-                ('slug', models.SlugField(blank=True, max_length=100)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='project_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('default_assignee', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='default_assignee', to=settings.AUTH_USER_MODEL)),
-                ('project_lead', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='project_lead', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='project_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, verbose_name="Project Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="Project Description"
+                    ),
+                ),
+                (
+                    "description_rt",
+                    models.JSONField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Project Description RT",
+                    ),
+                ),
+                (
+                    "description_html",
+                    models.JSONField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Project Description HTML",
+                    ),
+                ),
+                (
+                    "network",
+                    models.PositiveSmallIntegerField(
+                        choices=[(0, "Secret"), (2, "Public")], default=2
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.CharField(
+                        blank=True,
+                        max_length=5,
+                        null=True,
+                        verbose_name="Project Identifier",
+                    ),
+                ),
+                ("slug", models.SlugField(blank=True, max_length=100)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="project_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "default_assignee",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="default_assignee",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "project_lead",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_lead",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="project_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project',
-                'verbose_name_plural': 'Projects',
-                'db_table': 'project',
-                'ordering': ('-created_at',),
+                "verbose_name": "Project",
+                "verbose_name_plural": "Projects",
+                "db_table": "project",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Team Name')),
-                ('description', models.TextField(blank=True, verbose_name='Team Description')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='team_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, verbose_name="Team Name"),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="Team Description"
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="team_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Team',
-                'verbose_name_plural': 'Teams',
-                'db_table': 'team',
-                'ordering': ('-created_at',),
+                "verbose_name": "Team",
+                "verbose_name_plural": "Teams",
+                "db_table": "team",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='Workspace',
+            name="Workspace",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Workspace Name')),
-                ('logo', models.URLField(blank=True, null=True, verbose_name='Logo')),
-                ('slug', models.SlugField(max_length=100, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspace_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='owner_workspace', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspace_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, verbose_name="Workspace Name"
+                    ),
+                ),
+                (
+                    "logo",
+                    models.URLField(
+                        blank=True, null=True, verbose_name="Logo"
+                    ),
+                ),
+                ("slug", models.SlugField(max_length=100, unique=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspace_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="owner_workspace",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspace_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Workspace',
-                'verbose_name_plural': 'Workspaces',
-                'db_table': 'workspace',
-                'ordering': ('-created_at',),
-                'unique_together': {('name', 'owner')},
+                "verbose_name": "Workspace",
+                "verbose_name_plural": "Workspaces",
+                "db_table": "workspace",
+                "ordering": ("-created_at",),
+                "unique_together": {("name", "owner")},
             },
         ),
         migrations.CreateModel(
-            name='WorkspaceMemberInvite',
+            name="WorkspaceMemberInvite",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('email', models.CharField(max_length=255)),
-                ('accepted', models.BooleanField(default=False)),
-                ('token', models.CharField(max_length=255)),
-                ('message', models.TextField(null=True)),
-                ('responded_at', models.DateTimeField(null=True)),
-                ('role', models.PositiveSmallIntegerField(choices=[(20, 'Owner'), (15, 'Admin'), (10, 'Member'), (5, 'Guest')], default=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspacememberinvite_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspacememberinvite_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_member_invite', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("email", models.CharField(max_length=255)),
+                ("accepted", models.BooleanField(default=False)),
+                ("token", models.CharField(max_length=255)),
+                ("message", models.TextField(null=True)),
+                ("responded_at", models.DateTimeField(null=True)),
+                (
+                    "role",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (20, "Owner"),
+                            (15, "Admin"),
+                            (10, "Member"),
+                            (5, "Guest"),
+                        ],
+                        default=10,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspacememberinvite_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspacememberinvite_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_member_invite",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Workspace Member Invite',
-                'verbose_name_plural': 'Workspace Member Invites',
-                'db_table': 'workspace_member_invite',
-                'ordering': ('-created_at',),
+                "verbose_name": "Workspace Member Invite",
+                "verbose_name_plural": "Workspace Member Invites",
+                "db_table": "workspace_member_invite",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='View',
+            name="View",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='View Name')),
-                ('description', models.TextField(blank=True, verbose_name='View Description')),
-                ('query', models.JSONField(verbose_name='View Query')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='view_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_view', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='view_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_view', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, verbose_name="View Name"),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="View Description"
+                    ),
+                ),
+                ("query", models.JSONField(verbose_name="View Query")),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="view_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_view",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="view_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_view",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'View',
-                'verbose_name_plural': 'Views',
-                'db_table': 'view',
-                'ordering': ('-created_at',),
+                "verbose_name": "View",
+                "verbose_name_plural": "Views",
+                "db_table": "view",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='TimelineIssue',
+            name="TimelineIssue",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('sequence_id', models.FloatField(default=1.0)),
-                ('links', models.JSONField(blank=True, default=dict)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='timelineissue_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_timeline', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_timelineissue', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='timelineissue_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_timelineissue', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("sequence_id", models.FloatField(default=1.0)),
+                ("links", models.JSONField(blank=True, default=dict)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="timelineissue_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_timeline",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_timelineissue",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="timelineissue_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_timelineissue",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Timeline Issue',
-                'verbose_name_plural': 'Timeline Issues',
-                'db_table': 'issue_timeline',
-                'ordering': ('-created_at',),
+                "verbose_name": "Timeline Issue",
+                "verbose_name_plural": "Timeline Issues",
+                "db_table": "issue_timeline",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='TeamMember',
+            name="TeamMember",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teammember_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='team_member', to=settings.AUTH_USER_MODEL)),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='team_member', to='db.team')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teammember_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='team_member', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="teammember_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "member",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="team_member",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="team_member",
+                        to="db.team",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="teammember_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="team_member",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Team Member',
-                'verbose_name_plural': 'Team Members',
-                'db_table': 'team_member',
-                'ordering': ('-created_at',),
-                'unique_together': {('team', 'member')},
+                "verbose_name": "Team Member",
+                "verbose_name_plural": "Team Members",
+                "db_table": "team_member",
+                "ordering": ("-created_at",),
+                "unique_together": {("team", "member")},
             },
         ),
         migrations.AddField(
-            model_name='team',
-            name='members',
-            field=models.ManyToManyField(blank=True, related_name='members', through='db.TeamMember', to=settings.AUTH_USER_MODEL),
+            model_name="team",
+            name="members",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="members",
+                through="db.TeamMember",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='team',
-            name='updated_by',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='team_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
+            model_name="team",
+            name="updated_by",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="team_updated_by",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Last Modified By",
+            ),
         ),
         migrations.AddField(
-            model_name='team',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_team', to='db.workspace'),
+            model_name="team",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_team",
+                to="db.workspace",
+            ),
         ),
         migrations.CreateModel(
-            name='State',
+            name="State",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='State Name')),
-                ('description', models.TextField(blank=True, verbose_name='State Description')),
-                ('color', models.CharField(max_length=255, verbose_name='State Color')),
-                ('slug', models.SlugField(blank=True, max_length=100)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='state_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_state', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='state_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_state', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, verbose_name="State Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="State Description"
+                    ),
+                ),
+                (
+                    "color",
+                    models.CharField(
+                        max_length=255, verbose_name="State Color"
+                    ),
+                ),
+                ("slug", models.SlugField(blank=True, max_length=100)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="state_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_state",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="state_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_state",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'State',
-                'verbose_name_plural': 'States',
-                'db_table': 'state',
-                'ordering': ('-created_at',),
-                'unique_together': {('name', 'project')},
+                "verbose_name": "State",
+                "verbose_name_plural": "States",
+                "db_table": "state",
+                "ordering": ("-created_at",),
+                "unique_together": {("name", "project")},
             },
         ),
         migrations.CreateModel(
-            name='SocialLoginConnection',
+            name="SocialLoginConnection",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('medium', models.CharField(choices=[('Google', 'google'), ('Github', 'github')], default=None, max_length=20)),
-                ('last_login_at', models.DateTimeField(default=django.utils.timezone.now, null=True)),
-                ('last_received_at', models.DateTimeField(default=django.utils.timezone.now, null=True)),
-                ('token_data', models.JSONField(null=True)),
-                ('extra_data', models.JSONField(null=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='socialloginconnection_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='socialloginconnection_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_login_connections', to=settings.AUTH_USER_MODEL)),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "medium",
+                    models.CharField(
+                        choices=[("Google", "google"), ("Github", "github")],
+                        default=None,
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "last_login_at",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                (
+                    "last_received_at",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                ("token_data", models.JSONField(null=True)),
+                ("extra_data", models.JSONField(null=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="socialloginconnection_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="socialloginconnection_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_login_connections",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Social Login Connection',
-                'verbose_name_plural': 'Social Login Connections',
-                'db_table': 'social_login_connection',
-                'ordering': ('-created_at',),
+                "verbose_name": "Social Login Connection",
+                "verbose_name_plural": "Social Login Connections",
+                "db_table": "social_login_connection",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='Shortcut',
+            name="Shortcut",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Cycle Name')),
-                ('description', models.TextField(blank=True, verbose_name='Cycle Description')),
-                ('type', models.CharField(choices=[('repo', 'Repo'), ('direct', 'Direct')], max_length=255, verbose_name='Shortcut Type')),
-                ('url', models.URLField(blank=True, null=True, verbose_name='URL')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='shortcut_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_shortcut', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='shortcut_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_shortcut', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, verbose_name="Cycle Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, verbose_name="Cycle Description"
+                    ),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("repo", "Repo"), ("direct", "Direct")],
+                        max_length=255,
+                        verbose_name="Shortcut Type",
+                    ),
+                ),
+                (
+                    "url",
+                    models.URLField(blank=True, null=True, verbose_name="URL"),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="shortcut_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_shortcut",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="shortcut_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_shortcut",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Shortcut',
-                'verbose_name_plural': 'Shortcuts',
-                'db_table': 'shortcut',
-                'ordering': ('-created_at',),
+                "verbose_name": "Shortcut",
+                "verbose_name_plural": "Shortcuts",
+                "db_table": "shortcut",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='ProjectMemberInvite',
+            name="ProjectMemberInvite",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('email', models.CharField(max_length=255)),
-                ('accepted', models.BooleanField(default=False)),
-                ('token', models.CharField(max_length=255)),
-                ('message', models.TextField(null=True)),
-                ('responded_at', models.DateTimeField(null=True)),
-                ('role', models.PositiveSmallIntegerField(choices=[(20, 'Admin'), (15, 'Member'), (10, 'Viewer'), (5, 'Guest')], default=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectmemberinvite_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_projectmemberinvite', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectmemberinvite_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_projectmemberinvite', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("email", models.CharField(max_length=255)),
+                ("accepted", models.BooleanField(default=False)),
+                ("token", models.CharField(max_length=255)),
+                ("message", models.TextField(null=True)),
+                ("responded_at", models.DateTimeField(null=True)),
+                (
+                    "role",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (20, "Admin"),
+                            (15, "Member"),
+                            (10, "Viewer"),
+                            (5, "Guest"),
+                        ],
+                        default=10,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectmemberinvite_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_projectmemberinvite",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectmemberinvite_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_projectmemberinvite",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project Member Invite',
-                'verbose_name_plural': 'Project Member Invites',
-                'db_table': 'project_member_invite',
-                'ordering': ('-created_at',),
+                "verbose_name": "Project Member Invite",
+                "verbose_name_plural": "Project Member Invites",
+                "db_table": "project_member_invite",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='ProjectIdentifier',
+            name="ProjectIdentifier",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('name', models.CharField(max_length=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectidentifier_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='project_identifier', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectidentifier_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                ("name", models.CharField(max_length=10)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectidentifier_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_identifier",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectidentifier_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project Identifier',
-                'verbose_name_plural': 'Project Identifiers',
-                'db_table': 'project_identifier',
-                'ordering': ('-created_at',),
+                "verbose_name": "Project Identifier",
+                "verbose_name_plural": "Project Identifiers",
+                "db_table": "project_identifier",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='project',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_project', to='db.workspace'),
+            model_name="project",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_project",
+                to="db.workspace",
+            ),
         ),
         migrations.CreateModel(
-            name='Label',
+            name="Label",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField(blank=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='label_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_label', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='label_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_label', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="label_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_label",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="label_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_label",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Label',
-                'verbose_name_plural': 'Labels',
-                'db_table': 'label',
-                'ordering': ('-created_at',),
+                "verbose_name": "Label",
+                "verbose_name_plural": "Labels",
+                "db_table": "label",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='IssueSequence',
+            name="IssueSequence",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('sequence', models.PositiveBigIntegerField(default=1)),
-                ('deleted', models.BooleanField(default=False)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuesequence_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issue_sequence', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issuesequence', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuesequence_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issuesequence', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("sequence", models.PositiveBigIntegerField(default=1)),
+                ("deleted", models.BooleanField(default=False)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuesequence_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issue_sequence",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issuesequence",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuesequence_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issuesequence",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Sequence',
-                'verbose_name_plural': 'Issue Sequences',
-                'db_table': 'issue_sequence',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Sequence",
+                "verbose_name_plural": "Issue Sequences",
+                "db_table": "issue_sequence",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='IssueProperty',
+            name="IssueProperty",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('properties', models.JSONField(default=dict)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueproperty_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issueproperty', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueproperty_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='issue_property_user', to=settings.AUTH_USER_MODEL)),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issueproperty', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("properties", models.JSONField(default=dict)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueproperty_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issueproperty",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueproperty_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_property_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issueproperty",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Property',
-                'verbose_name_plural': 'Issue Properties',
-                'db_table': 'issue_property',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Property",
+                "verbose_name_plural": "Issue Properties",
+                "db_table": "issue_property",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='IssueLabel',
+            name="IssueLabel",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuelabel_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='label_issue', to='db.issue')),
-                ('label', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='label_issue', to='db.label')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issuelabel', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuelabel_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issuelabel', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuelabel_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="label_issue",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "label",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="label_issue",
+                        to="db.label",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issuelabel",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuelabel_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issuelabel",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Label',
-                'verbose_name_plural': 'Issue Labels',
-                'db_table': 'issue_label',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Label",
+                "verbose_name_plural": "Issue Labels",
+                "db_table": "issue_label",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='IssueComment',
+            name="IssueComment",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('comment', models.TextField(blank=True, verbose_name='Comment')),
-                ('attachments', django.contrib.postgres.fields.ArrayField(base_field=models.URLField(), blank=True, default=list, size=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuecomment_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issuecomment', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issuecomment_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issuecomment', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "comment",
+                    models.TextField(blank=True, verbose_name="Comment"),
+                ),
+                (
+                    "attachments",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.URLField(),
+                        blank=True,
+                        default=list,
+                        size=10,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuecomment_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issuecomment",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issuecomment_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issuecomment",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Comment',
-                'verbose_name_plural': 'Issue Comments',
-                'db_table': 'issue_comment',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Comment",
+                "verbose_name_plural": "Issue Comments",
+                "db_table": "issue_comment",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='IssueBlocker',
+            name="IssueBlocker",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('block', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blocker_issues', to='db.issue')),
-                ('blocked_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blocked_issues', to='db.issue')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueblocker_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issueblocker', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueblocker_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issueblocker', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "block",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="blocker_issues",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "blocked_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="blocked_issues",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueblocker_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issueblocker",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueblocker_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issueblocker",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Blocker',
-                'verbose_name_plural': 'Issue Blockers',
-                'db_table': 'issue_blocker',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Blocker",
+                "verbose_name_plural": "Issue Blockers",
+                "db_table": "issue_blocker",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='IssueAssignee',
+            name="IssueAssignee",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('assignee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_assignee', to=settings.AUTH_USER_MODEL)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueassignee_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_assignee', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issueassignee', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueassignee_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issueassignee', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "assignee",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_assignee",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueassignee_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_assignee",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issueassignee",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueassignee_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issueassignee",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Assignee',
-                'verbose_name_plural': 'Issue Assignees',
-                'db_table': 'issue_assignee',
-                'ordering': ('-created_at',),
-                'unique_together': {('issue', 'assignee')},
+                "verbose_name": "Issue Assignee",
+                "verbose_name_plural": "Issue Assignees",
+                "db_table": "issue_assignee",
+                "ordering": ("-created_at",),
+                "unique_together": {("issue", "assignee")},
             },
         ),
         migrations.CreateModel(
-            name='IssueActivity',
+            name="IssueActivity",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('verb', models.CharField(default='created', max_length=255, verbose_name='Action')),
-                ('field', models.CharField(blank=True, max_length=255, null=True, verbose_name='Field Name')),
-                ('old_value', models.CharField(blank=True, max_length=255, null=True, verbose_name='Old Value')),
-                ('new_value', models.CharField(blank=True, max_length=255, null=True, verbose_name='New Value')),
-                ('comment', models.TextField(blank=True, verbose_name='Comment')),
-                ('attachments', django.contrib.postgres.fields.ArrayField(base_field=models.URLField(), blank=True, default=list, size=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueactivity_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_activity', to='db.issue')),
-                ('issue_comment', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issue_comment', to='db.issuecomment')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issueactivity', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issueactivity_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issueactivity', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "verb",
+                    models.CharField(
+                        default="created",
+                        max_length=255,
+                        verbose_name="Action",
+                    ),
+                ),
+                (
+                    "field",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Field Name",
+                    ),
+                ),
+                (
+                    "old_value",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="Old Value",
+                    ),
+                ),
+                (
+                    "new_value",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="New Value",
+                    ),
+                ),
+                (
+                    "comment",
+                    models.TextField(blank=True, verbose_name="Comment"),
+                ),
+                (
+                    "attachments",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.URLField(),
+                        blank=True,
+                        default=list,
+                        size=10,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueactivity_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_activity",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "issue_comment",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issue_comment",
+                        to="db.issuecomment",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_issueactivity",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="issueactivity_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_issueactivity",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Issue Activity',
-                'verbose_name_plural': 'Issue Activities',
-                'db_table': 'issue_activity',
-                'ordering': ('-created_at',),
+                "verbose_name": "Issue Activity",
+                "verbose_name_plural": "Issue Activities",
+                "db_table": "issue_activity",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='issue',
-            name='assignees',
-            field=models.ManyToManyField(blank=True, related_name='assignee', through='db.IssueAssignee', to=settings.AUTH_USER_MODEL),
+            model_name="issue",
+            name="assignees",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="assignee",
+                through="db.IssueAssignee",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='created_by',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issue_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By'),
+            model_name="issue",
+            name="created_by",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="issue_created_by",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Created By",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='labels',
-            field=models.ManyToManyField(blank=True, related_name='labels', through='db.IssueLabel', to='db.Label'),
+            model_name="issue",
+            name="labels",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="labels",
+                through="db.IssueLabel",
+                to="db.Label",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='parent_issue', to='db.issue'),
+            model_name="issue",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="parent_issue",
+                to="db.issue",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_issue', to='db.project'),
+            model_name="issue",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_issue",
+                to="db.project",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='state',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='state_issue', to='db.state'),
+            model_name="issue",
+            name="state",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="state_issue",
+                to="db.state",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='updated_by',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='issue_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
+            model_name="issue",
+            name="updated_by",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="issue_updated_by",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Last Modified By",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_issue', to='db.workspace'),
+            model_name="issue",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_issue",
+                to="db.workspace",
+            ),
         ),
         migrations.CreateModel(
-            name='FileAsset',
+            name="FileAsset",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('attributes', models.JSONField(default=dict)),
-                ('asset', models.FileField(upload_to='library-assets')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='fileasset_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='fileasset_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("attributes", models.JSONField(default=dict)),
+                ("asset", models.FileField(upload_to="library-assets")),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="fileasset_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="fileasset_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'File Asset',
-                'verbose_name_plural': 'File Assets',
-                'db_table': 'file_asset',
-                'ordering': ('-created_at',),
+                "verbose_name": "File Asset",
+                "verbose_name_plural": "File Assets",
+                "db_table": "file_asset",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.CreateModel(
-            name='CycleIssue',
+            name="CycleIssue",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cycleissue_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('cycle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_cycle', to='db.cycle')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_cycle', to='db.issue')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_cycleissue', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cycleissue_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_cycleissue', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="cycleissue_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "cycle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_cycle",
+                        to="db.cycle",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="issue_cycle",
+                        to="db.issue",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_cycleissue",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="cycleissue_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_cycleissue",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Cycle Issue',
-                'verbose_name_plural': 'Cycle Issues',
-                'db_table': 'cycle_issue',
-                'ordering': ('-created_at',),
+                "verbose_name": "Cycle Issue",
+                "verbose_name_plural": "Cycle Issues",
+                "db_table": "cycle_issue",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='cycle',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_cycle', to='db.project'),
+            model_name="cycle",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_cycle",
+                to="db.project",
+            ),
         ),
         migrations.AddField(
-            model_name='cycle',
-            name='updated_by',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cycle_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By'),
+            model_name="cycle",
+            name="updated_by",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="cycle_updated_by",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Last Modified By",
+            ),
         ),
         migrations.AddField(
-            model_name='cycle',
-            name='workspace',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_cycle', to='db.workspace'),
+            model_name="cycle",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_cycle",
+                to="db.workspace",
+            ),
         ),
         migrations.CreateModel(
-            name='WorkspaceMember',
+            name="WorkspaceMember",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('role', models.PositiveSmallIntegerField(choices=[(20, 'Owner'), (15, 'Admin'), (10, 'Member'), (5, 'Guest')], default=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspacemember_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='member_workspace', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='workspacemember_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_member', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "role",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (20, "Owner"),
+                            (15, "Admin"),
+                            (10, "Member"),
+                            (5, "Guest"),
+                        ],
+                        default=10,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspacemember_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "member",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="member_workspace",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="workspacemember_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_member",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Workspace Member',
-                'verbose_name_plural': 'Workspace Members',
-                'db_table': 'workspace_member',
-                'ordering': ('-created_at',),
-                'unique_together': {('workspace', 'member')},
+                "verbose_name": "Workspace Member",
+                "verbose_name_plural": "Workspace Members",
+                "db_table": "workspace_member",
+                "ordering": ("-created_at",),
+                "unique_together": {("workspace", "member")},
             },
         ),
         migrations.AlterUniqueTogether(
-            name='team',
-            unique_together={('name', 'workspace')},
+            name="team",
+            unique_together={("name", "workspace")},
         ),
         migrations.CreateModel(
-            name='ProjectMember',
+            name="ProjectMember",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
-                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('comment', models.TextField(blank=True, null=True)),
-                ('role', models.PositiveSmallIntegerField(choices=[(20, 'Admin'), (15, 'Member'), (10, 'Viewer'), (5, 'Guest')], default=10)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectmember_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
-                ('member', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='member_project', to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_projectmember', to='db.project')),
-                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectmember_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_projectmember', to='db.workspace')),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Last Modified At"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        db_index=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("comment", models.TextField(blank=True, null=True)),
+                (
+                    "role",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (20, "Admin"),
+                            (15, "Member"),
+                            (10, "Viewer"),
+                            (5, "Guest"),
+                        ],
+                        default=10,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectmember_created_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created By",
+                    ),
+                ),
+                (
+                    "member",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="member_project",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="project_projectmember",
+                        to="db.project",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="projectmember_updated_by",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Last Modified By",
+                    ),
+                ),
+                (
+                    "workspace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workspace_projectmember",
+                        to="db.workspace",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project Member',
-                'verbose_name_plural': 'Project Members',
-                'db_table': 'project_member',
-                'ordering': ('-created_at',),
-                'unique_together': {('project', 'member')},
+                "verbose_name": "Project Member",
+                "verbose_name_plural": "Project Members",
+                "db_table": "project_member",
+                "ordering": ("-created_at",),
+                "unique_together": {("project", "member")},
             },
         ),
         migrations.AlterUniqueTogether(
-            name='project',
-            unique_together={('name', 'workspace')},
+            name="project",
+            unique_together={("name", "workspace")},
         ),
     ]

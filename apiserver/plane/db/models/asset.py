@@ -1,16 +1,18 @@
 # Python imports
 from uuid import uuid4
 
+from django.conf import settings
+from django.core.exceptions import ValidationError
+
 # Django import
 from django.db import models
-from django.core.exceptions import ValidationError
-from django.conf import settings
 
 # Module import
-from . import BaseModel
+from .base import BaseModel
 
 
 def get_upload_path(instance, filename):
+    filename = filename[:50]
     if instance.workspace_id is not None:
         return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
     return f"user-{uuid4().hex}-{filename}"
@@ -34,7 +36,10 @@ class FileAsset(BaseModel):
         ],
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
     )
     is_deleted = models.BooleanField(default=False)
 

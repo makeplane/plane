@@ -1,54 +1,23 @@
-import React, { createContext, useState } from "react";
-// types
-import { ChartContextData, ChartContextActionPayload, ChartContextReducer } from "../types";
-// data
-import { allViewsWithData, currentViewDataWithView } from "../data";
+import React, { FC, createContext } from "react";
+// mobx store
+import { GanttStore } from "@/store/issue/issue_gantt_view.store";
 
-export const ChartContext = createContext<ChartContextReducer | undefined>(undefined);
+let ganttViewStore = new GanttStore();
 
-const chartReducer = (state: ChartContextData, action: ChartContextActionPayload): ChartContextData => {
-  switch (action.type) {
-    case "CURRENT_VIEW":
-      return { ...state, currentView: action.payload };
-    case "CURRENT_VIEW_DATA":
-      return { ...state, currentViewData: action.payload };
-    case "RENDER_VIEW":
-      return { ...state, currentViewData: action.payload };
-    case "PARTIAL_UPDATE":
-      return { ...state, ...action.payload };
-    default:
-      return state;
-  }
+export const GanttStoreContext = createContext<GanttStore>(ganttViewStore);
+
+const initializeStore = () => {
+  const newGanttViewStore = ganttViewStore ?? new GanttStore();
+  if (typeof window === "undefined") return newGanttViewStore;
+  if (!ganttViewStore) ganttViewStore = newGanttViewStore;
+  return newGanttViewStore;
 };
 
-const initialView = "month";
+type GanttStoreProviderProps = {
+  children: React.ReactNode;
+};
 
-export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useState<ChartContextData>({
-    currentView: initialView,
-    currentViewData: currentViewDataWithView(initialView),
-    renderView: [],
-    allViews: allViewsWithData,
-    activeBlock: null,
-  });
-
-  const [scrollLeft, setScrollLeft] = useState(0);
-
-  const handleDispatch = (action: ChartContextActionPayload): ChartContextData => {
-    const newState = chartReducer(state, action);
-
-    dispatch(() => newState);
-
-    return newState;
-  };
-
-  const updateScrollLeft = (scrollLeft: number) => {
-    setScrollLeft(scrollLeft);
-  };
-
-  return (
-    <ChartContext.Provider value={{ ...state, scrollLeft, updateScrollLeft, dispatch: handleDispatch }}>
-      {children}
-    </ChartContext.Provider>
-  );
+export const GanttStoreProvider: FC<GanttStoreProviderProps> = ({ children }) => {
+  const store = initializeStore();
+  return <GanttStoreContext.Provider value={store}>{children}</GanttStoreContext.Provider>;
 };

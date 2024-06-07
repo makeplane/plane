@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
+// hooks
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
+import { useCommandPalette, useEventTracker } from "@/hooks/store";
+// ui
 
 type Props = {
   closePalette: () => void;
@@ -11,11 +11,10 @@ type Props = {
 
 export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
   const { closePalette } = props;
-
-  const {
-    commandPalette: { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+  // store hooks
+  const { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal } =
+    useCommandPalette();
+  const { setTrackElement } = useEventTracker();
 
   return (
     <>
@@ -23,7 +22,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            setTrackElement("COMMAND_PALETTE");
+            setTrackElement("Command palette");
             toggleCreateCycleModal(true);
           }}
           className="focus:outline-none"
@@ -39,6 +38,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreateModuleModal(true);
           }}
           className="focus:outline-none"
@@ -54,6 +54,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreateViewModal(true);
           }}
           className="focus:outline-none"
@@ -69,7 +70,8 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            toggleCreatePageModal(true);
+            setTrackElement("Command palette");
+            toggleCreatePageModal({ isOpen: true });
           }}
           className="focus:outline-none"
         >

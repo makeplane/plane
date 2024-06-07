@@ -1,21 +1,19 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { Menu, Transition } from "@headlessui/react";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Menu, Transition } from "@headlessui/react";
 // components
-import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
-
-import { CommentReactions } from "components/issues/peek-overview";
+import { EditorRefApi } from "@plane/lite-text-editor";
+import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
+import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { timeAgo } from "@/helpers/date-time.helper";
+// hooks
+import { useIssueDetails, useProject, useUser } from "@/hooks/store";
+import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
-import { Comment } from "types/issue";
-// services
-import fileService from "services/file.service";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { Comment } from "@/types/issue";
 
 type Props = {
   workspaceSlug: string;
@@ -24,16 +22,20 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, workspaceSlug } = props;
-  // store
-  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
+  // store hooks
+  const { workspace } = useProject();
+  const { peekId, deleteIssueComment, updateIssueComment } = useIssueDetails();
+  const { data: currentUser } = useUser();
+  const isInIframe = useIsInIframe();
+  // derived values
+  const workspaceId = workspace?.id;
+
   // states
   const [isEditing, setIsEditing] = useState(false);
-
-  const mentionsConfig = useEditorSuggestions();
-
-  const editorRef = React.useRef<any>(null);
-
-  const showEditorRef = React.useRef<any>(null);
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  const showEditorRef = useRef<EditorRefApi>(null);
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -43,15 +45,14 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   });
 
   const handleDelete = () => {
-    if (!workspaceSlug || !issueDetailStore.peekId) return;
-    issueDetailStore.deleteIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id);
+    if (!workspaceSlug || !peekId) return;
+    deleteIssueComment(workspaceSlug, comment.project, peekId, comment.id);
   };
 
   const handleCommentUpdate = async (formData: Comment) => {
-    if (!workspaceSlug || !issueDetailStore.peekId) return;
-    issueDetailStore.updateIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id, formData);
+    if (!workspaceSlug || !peekId) return;
+    updateIssueComment(workspaceSlug, comment.project, peekId, comment.id, formData);
     setIsEditing(false);
-
     editorRef.current?.setEditorValue(formData.comment_html);
     showEditorRef.current?.setEditorValue(formData.comment_html);
   };
@@ -101,19 +102,16 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <LiteTextEditorWithRef
+                  <LiteTextEditor
+                    workspaceId={workspaceId as string}
+                    workspaceSlug={workspaceSlug}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
-                    cancelUploadImage={fileService.cancelUpload}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                    deleteFile={fileService.deleteImage}
-                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
-                    value={value}
-                    debouncedUpdatesEnabled={false}
-                    customClassName="min-h-[50px] p-3 shadow-sm"
-                    onChange={(comment_json: Object, comment_html: string) => {
-                      onChange(comment_html);
-                    }}
+                    initialValue={value}
+                    value={null}
+                    onChange={(comment_json, comment_html) => onChange(comment_html)}
+                    isSubmitting={isSubmitting}
+                    showSubmitButton={false}
                   />
                 )}
               />
@@ -136,18 +134,13 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteReadOnlyEditorWithRef
-              ref={showEditorRef}
-              value={comment.comment_html}
-              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={mentionsConfig.mentionHighlights}
-            />
-            <CommentReactions commentId={comment.id} projectId={comment.project} />
+            <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html} />
+            <CommentReactions commentId={comment.id} projectId={comment.project} workspaceSlug={workspaceSlug} />
           </div>
         </div>
       </div>
 
-      {userStore?.currentUser?.id === comment?.actor_detail?.id && (
+      {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"

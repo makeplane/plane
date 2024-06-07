@@ -25,6 +25,8 @@ import { tableControls } from "src/ui/extensions/table/table/table-controls";
 import { TableView } from "src/ui/extensions/table/table/table-view";
 import { createTable } from "src/ui/extensions/table/table/utilities/create-table";
 import { deleteTableWhenAllCellsSelected } from "src/ui/extensions/table/table/utilities/delete-table-when-all-cells-selected";
+import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
+import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 
 export interface TableOptions {
   HTMLAttributes: Record<string, any>;
@@ -107,10 +109,9 @@ export const Table = Node.create({
   addCommands() {
     return {
       insertTable:
-        ({ rows = 3, cols = 3, withHeaderRow = true } = {}) =>
+        ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
         ({ tr, dispatch, editor }) => {
           const node = createTable(editor.schema, rows, cols, withHeaderRow);
-
           if (dispatch) {
             const offset = tr.selection.anchor + 1;
 
@@ -217,21 +218,29 @@ export const Table = Node.create({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.commands.goToNextCell()) {
-          return true;
-        }
+        if (this.editor.isActive("table")) {
+          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
+            return false;
+          }
+          if (this.editor.commands.goToNextCell()) {
+            return true;
+          }
 
-        if (!this.editor.can().addRowAfter()) {
-          return false;
-        }
+          if (!this.editor.can().addRowAfter()) {
+            return false;
+          }
 
-        return this.editor.chain().addRowAfter().goToNextCell().run();
+          return this.editor.chain().addRowAfter().goToNextCell().run();
+        }
+        return false;
       },
       "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
       Backspace: deleteTableWhenAllCellsSelected,
       "Mod-Backspace": deleteTableWhenAllCellsSelected,
       Delete: deleteTableWhenAllCellsSelected,
       "Mod-Delete": deleteTableWhenAllCellsSelected,
+      ArrowDown: insertLineBelowTableAction,
+      ArrowUp: insertLineAboveTableAction,
     };
   },
 
