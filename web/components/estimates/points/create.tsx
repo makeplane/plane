@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, MouseEvent, FocusEvent, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
@@ -49,7 +49,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
     closeCallBack();
   };
 
-  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
+  const handleCreate = async (event: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLInputElement, Element>) => {
     event.preventDefault();
 
     if (!workspaceSlug || !projectId) return;
@@ -122,10 +122,10 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
   };
 
   return (
-    <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base">
+    <form className="relative flex items-center gap-2 text-base">
       <div
         className={cn(
-          "relative w-full border rounded flex items-center",
+          "relative w-full border rounded flex items-center my-1",
           error ? `border-red-500` : `border-custom-border-200`
         )}
       >
@@ -136,6 +136,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           placeholder="Enter estimate point"
           autoFocus
+          onBlur={(e) => !estimateId && handleCreate(e)}
         />
         {error && (
           <>
@@ -148,20 +149,25 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         )}
       </div>
 
-      <button
-        type="submit"
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
-        disabled={loader}
-      >
-        {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
-      </button>
-      <button
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
-        onClick={handleClose}
-        disabled={loader}
-      >
-        <X size={14} className="text-custom-text-200" />
-      </button>
+      {estimateId && (
+        <>
+          <button
+            type="submit"
+            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+            disabled={loader}
+            onClick={handleCreate}
+          >
+            {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
+          </button>
+          <button
+            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+            onClick={handleClose}
+            disabled={loader}
+          >
+            <X size={14} className="text-custom-text-200" />
+          </button>
+        </>
+      )}
     </form>
   );
 });
