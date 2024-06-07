@@ -10,7 +10,7 @@ import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 
-export const ProjectInboxHeader: FC = observer(() => {
+const ProjectInboxHeader: FC = observer(() => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router
@@ -76,3 +76,5 @@ export const ProjectInboxHeader: FC = observer(() => {
     </div>
   );
 });
+
+export default ProjectInboxHeader;

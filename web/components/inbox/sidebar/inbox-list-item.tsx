@@ -1,7 +1,7 @@
 import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -24,7 +24,8 @@ type InboxIssueListItemProps = {
 export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
-  const { inboxIssueId: selectedInboxIssueId } = useParams();
+  const searchParams = useSearchParams();
+  const selectedInboxIssueId = searchParams.get("inboxIssueId");
   // store
   const { currentTab, getIssueInboxByIssueId } = useProjectInbox();
   const { projectLabels } = useLabel();

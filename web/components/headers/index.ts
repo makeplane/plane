@@ -1,4 +1,3 @@
-export * from "./project-inbox";
 export * from "./profile-preferences";
 export * from "./profile-settings";
 export * from "./project-settings";
