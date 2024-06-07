@@ -212,16 +212,15 @@ export class ProjectInboxStore implements IProjectInboxStore {
   createOrUpdateInboxIssue = (inboxIssues: TInboxIssue[], workspaceSlug: string, projectId: string) => {
     if (inboxIssues && inboxIssues.length > 0) {
       inboxIssues.forEach((inbox: TInboxIssue) => {
-        const inboxIssueDetail = this.getIssueInboxByIssueId(inbox?.issue?.id);
-        if (inboxIssueDetail)
-          update(this.inboxIssues, [inbox?.issue?.id], (existingInboxIssue) => ({
-            ...existingInboxIssue,
+        const existingInboxIssueDetail = this.getIssueInboxByIssueId(inbox?.issue?.id);
+        if (existingInboxIssueDetail)
+          Object.assign(existingInboxIssueDetail, {
             ...inbox,
             issue: {
-              ...existingInboxIssue?.issue,
-              ...inbox?.issue,
+              ...existingInboxIssueDetail.issue,
+              ...inbox.issue,
             },
-          }));
+          });
         else
           set(this.inboxIssues, [inbox?.issue?.id], new InboxIssueStore(workspaceSlug, projectId, inbox, this.store));
       });
@@ -322,8 +321,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
           (this.inboxIssuePaginationInfo?.total_results &&
             this.inboxIssueIds.length < this.inboxIssuePaginationInfo?.total_results))
       ) {
-        this.loader = "pagination-loading";
-
         const queryParams = this.inboxIssueQueryParams(
           this.inboxFilters,
           this.inboxSorting,
@@ -333,7 +330,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
         const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
 
         runInAction(() => {
-          this.loader = undefined;
           set(this, "inboxIssuePaginationInfo", paginationInfo);
           if (results && results.length > 0) {
             const issueIds = results.map((value) => value?.issue?.id);
@@ -344,7 +340,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
     } catch (error) {
       console.error("Error fetching the inbox issues", error);
-      this.loader = undefined;
       this.error = {
         message: "Error fetching the paginated inbox issues please try again later.",
         status: "pagination-error",

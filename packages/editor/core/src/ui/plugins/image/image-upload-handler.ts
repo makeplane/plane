@@ -50,9 +50,25 @@ export async function startImageUpload(
   };
 
   try {
+    const fileNameTrimmed = trimFileName(file.name);
+    const fileWithTrimmedName = new File([file], fileNameTrimmed, { type: file.type });
+
+    const resolvedPos = view.state.doc.resolve(pos ?? 0);
+    const nodeBefore = resolvedPos.nodeBefore;
+
+    // if the image is at the start of the line i.e. when nodeBefore is null
+    if (nodeBefore === null) {
+      if (pos) {
+        // so that the image is not inserted at the next line, else incase the
+        // image is inserted at any line where there's some content, the
+        // position is kept as it is to be inserted at the next line
+        pos -= 1;
+      }
+    }
+
     view.focus();
 
-    const src = await uploadAndValidateImage(file, uploadFile);
+    const src = await uploadAndValidateImage(fileWithTrimmedName, uploadFile);
 
     if (src == null) {
       throw new Error("Resolved image URL is undefined.");
@@ -111,4 +127,15 @@ async function uploadAndValidateImage(file: File, uploadFile: UploadImage): Prom
     // throw error to remove the placeholder
     throw error;
   }
+}
+
+function trimFileName(fileName: string, maxLength = 100) {
+  if (fileName.length > maxLength) {
+    const extension = fileName.split(".").pop();
+    const nameWithoutExtension = fileName.slice(0, -(extension?.length ?? 0 + 1));
+    const allowedNameLength = maxLength - (extension?.length ?? 0) - 1; // -1 for the dot
+    return `${nameWithoutExtension.slice(0, allowedNameLength)}.${extension}`;
+  }
+
+  return fileName;
 }

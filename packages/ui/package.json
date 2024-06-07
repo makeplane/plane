@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.20.0",
+  "version": "0.21.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,6 +20,8 @@
     "postcss": "postcss styles/globals.css -o styles/output.css --watch"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.17",
