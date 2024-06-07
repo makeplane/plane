@@ -76,6 +76,62 @@ class CycleViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                backlog_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("backlog_estimate_point")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                unstarted_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("unstarted_estimate_point")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                started_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("started_estimate_point")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                cancelled_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("cancelled_estimate_point")[:1]
+        )
         completed_estimate_point = (
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
@@ -228,6 +284,30 @@ class CycleViewSet(BaseViewSet):
                 )
             )
             .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
                 completed_estimate_points=Coalesce(
                     Subquery(completed_estimate_point),
                     Value(0, output_field=IntegerField()),
@@ -276,6 +356,10 @@ class CycleViewSet(BaseViewSet):
                 "progress_snapshot",
                 "logo_props",
                 # meta fields
+                "backlog_estimate_points",
+                "unstarted_estimate_points",
+                "started_estimate_points",
+                "cancelled_estimate_points",
                 "completed_estimate_points",
                 "total_estimate_points",
                 "is_favorite",
