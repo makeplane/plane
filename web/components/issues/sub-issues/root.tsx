@@ -462,7 +462,9 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                 toggleCreateIssueModal(false);
               }}
               onSubmit={async (_issue: TIssue) => {
-                await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, [_issue.id]);
+                if (_issue.parent_id) {
+                  await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, [_issue.id]);
+                }
               }}
             />
           )}
