@@ -36,7 +36,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
     <AlertModalCore
       handleClose={handleClose}
       handleSubmit={handleDelete}
-      isDeleting={isDeleting}
+      isSubmitting={isDeleting}
       isOpen={isOpen}
       title="Delete Issue"
       content={

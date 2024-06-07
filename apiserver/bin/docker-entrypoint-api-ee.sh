@@ -25,7 +25,7 @@ export SKIP_ENV_VAR=1
 python manage.py license_check
 
 # Register instance
-python manage.py register_instance "$MACHINE_SIGNATURE"
+python manage.py register_instance_ee "$MACHINE_SIGNATURE"
 
 # Load the configuration variable
 python manage.py configure_instance

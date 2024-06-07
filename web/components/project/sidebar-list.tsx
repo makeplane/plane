@@ -1,25 +1,34 @@
 import { useState, FC, useRef, useEffect } from "react";
-import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// types
 import { IProject } from "@plane/types";
-// hooks
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
+// constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { orderJoinedProjects } from "@/helpers/project.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
-// ui
-// components
-// helpers
-// constants
 
 export const ProjectSidebarList: FC = observer(() => {
+  // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
+  const isFavProjectsListOpenInLocalStorage = localStorage.getItem("isFavoriteProjectsListOpen");
+  const isAllProjectsListOpenInLocalStorage = localStorage.getItem("isAllProjectsListOpen");
   // states
+  const [isFavoriteProjectsListOpen, setIsFavoriteProjectsListOpen] = useState(
+    isFavProjectsListOpenInLocalStorage === "true"
+  );
+  const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(isAllProjectsListOpenInLocalStorage === "true");
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
@@ -54,21 +63,28 @@ export const ProjectSidebarList: FC = observer(() => {
     });
   };
 
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
-    if (!destination || !workspaceSlug) return;
-    if (source.index === destination.index) return;
+  const handleOnProjectDrop = (
+    sourceId: string | undefined,
+    destinationId: string | undefined,
+    shouldDropAtEnd: boolean
+  ) => {
+    if (!sourceId || !destinationId || !workspaceSlug) return;
+    if (sourceId === destinationId) return;
 
     const joinedProjectsList: IProject[] = [];
     joinedProjects.map((projectId) => {
       const projectDetails = getProjectById(projectId);
       if (projectDetails) joinedProjectsList.push(projectDetails);
     });
+
+    const sourceIndex = joinedProjects.indexOf(sourceId);
+    const destinationIndex = shouldDropAtEnd ? joinedProjects.length : joinedProjects.indexOf(destinationId);
+
     if (joinedProjectsList.length <= 0) return;
 
-    const updatedSortOrder = orderJoinedProjects(source.index, destination.index, draggableId, joinedProjectsList);
+    const updatedSortOrder = orderJoinedProjects(sourceIndex, destinationIndex, sourceId, joinedProjectsList);
     if (updatedSortOrder != undefined)
-      updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
+      updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -98,7 +114,31 @@ export const ProjectSidebarList: FC = observer(() => {
         currentContainerRef.removeEventListener("scroll", handleScroll);
       }
     };
-  }, []);
+  }, [containerRef]);
+
+  useEffect(() => {
+    const element = containerRef.current;
+
+    if (!element) return;
+
+    return combine(
+      autoScrollForElements({
+        element,
+        canScroll: ({ source }) => source?.data?.dragInstanceId === "PROJECTS",
+        getAllowedAxis: () => "vertical",
+      })
+    );
+  }, [containerRef]);
+
+  const toggleListDisclosure = (isOpen: boolean, type: "all" | "favorite") => {
+    if (type === "all") {
+      setIsAllProjectsListOpen(isOpen);
+      localStorage.setItem("isAllProjectsListOpen", isOpen.toString());
+    } else {
+      setIsFavoriteProjectsListOpen(isOpen);
+      localStorage.setItem("isFavoriteProjectsListOpen", isOpen.toString());
+    }
+  };
 
   return (
     <>
@@ -123,156 +163,129 @@ export const ProjectSidebarList: FC = observer(() => {
           }
         )}
       >
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="favorite-projects">
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                {favoriteProjects && favoriteProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen>
-                    {({ open }) => (
-                      <>
-                        {!isCollapsed && (
-                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                            <Disclosure.Button
-                              as="button"
-                              type="button"
-                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
-                            >
-                              Favorites
-                              {open ? (
-                                <ChevronDown className="h-3.5 w-3.5" />
-                              ) : (
-                                <ChevronRight className="h-3.5 w-3.5" />
-                              )}
-                            </Disclosure.Button>
-                            {isAuthorizedUser && (
-                              <button
-                                className="opacity-0 group-hover:opacity-100"
-                                onClick={() => {
-                                  setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
-                                  setIsFavoriteProjectCreate(true);
-                                  setIsProjectModalOpen(true);
-                                }}
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
-                            )}
-                          </div>
-                        )}
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel as="div" className="space-y-2">
-                            {favoriteProjects.map((projectId, index) => (
-                              <Draggable
-                                key={projectId}
-                                draggableId={projectId}
-                                index={index}
-                                // FIXME refactor the Draggable to a different component
-                                //isDragDisabled={!project.is_member}
-                              >
-                                {(provided, snapshot) => (
-                                  <div ref={provided.innerRef} {...provided.draggableProps}>
-                                    <ProjectSidebarListItem
-                                      key={projectId}
-                                      projectId={projectId}
-                                      provided={provided}
-                                      snapshot={snapshot}
-                                      handleCopyText={() => handleCopyText(projectId)}
-                                      shortContextMenu
-                                      disableDrag
-                                    />
-                                  </div>
-                                )}
-                              </Draggable>
-                            ))}
-                          </Disclosure.Panel>
-                        </Transition>
-                        {provided.placeholder}
-                      </>
+        <div>
+          {favoriteProjects && favoriteProjects.length > 0 && (
+            <Disclosure as="div" className="flex flex-col" defaultOpen={isFavoriteProjectCreate}>
+              <>
+                {!isCollapsed && (
+                  <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
+                      onClick={() => toggleListDisclosure(!isFavoriteProjectsListOpen, "favorite")}
+                    >
+                      Favorites
+                      {isFavoriteProjectsListOpen ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                    </Disclosure.Button>
+                    {isAuthorizedUser && (
+                      <button
+                        className="opacity-0 group-hover:opacity-100"
+                        onClick={() => {
+                          setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
+                          setIsFavoriteProjectCreate(true);
+                          setIsProjectModalOpen(true);
+                        }}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
                     )}
-                  </Disclosure>
+                  </div>
                 )}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="joined-projects">
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                {joinedProjects && joinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen>
-                    {({ open }) => (
-                      <>
-                        {!isCollapsed && (
-                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                            <Disclosure.Button
-                              as="button"
-                              type="button"
-                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
-                            >
-                              Your projects
-                              {open ? (
-                                <ChevronDown className="h-3.5 w-3.5" />
-                              ) : (
-                                <ChevronRight className="h-3.5 w-3.5" />
-                              )}
-                            </Disclosure.Button>
-                            {isAuthorizedUser && (
-                              <button
-                                className="opacity-0 group-hover:opacity-100"
-                                onClick={() => {
-                                  setTrackElement("Sidebar");
-                                  setIsFavoriteProjectCreate(false);
-                                  setIsProjectModalOpen(true);
-                                }}
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
-                            )}
-                          </div>
-                        )}
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel as="div" className="space-y-2">
-                            {joinedProjects.map((projectId, index) => (
-                              <Draggable key={projectId} draggableId={projectId} index={index}>
-                                {(provided, snapshot) => (
-                                  <div ref={provided.innerRef} {...provided.draggableProps}>
-                                    <ProjectSidebarListItem
-                                      key={projectId}
-                                      projectId={projectId}
-                                      provided={provided}
-                                      snapshot={snapshot}
-                                      handleCopyText={() => handleCopyText(projectId)}
-                                    />
-                                  </div>
-                                )}
-                              </Draggable>
-                            ))}
-                          </Disclosure.Panel>
-                        </Transition>
-                        {provided.placeholder}
-                      </>
+                <Transition
+                  show={isFavoriteProjectsListOpen}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  {isFavoriteProjectsListOpen && (
+                    <Disclosure.Panel as="div" className={`space-y-2`} static>
+                      {favoriteProjects.map((projectId, index) => (
+                        <ProjectSidebarListItem
+                          key={projectId}
+                          projectId={projectId}
+                          handleCopyText={() => handleCopyText(projectId)}
+                          projectListType="FAVORITES"
+                          disableDrag
+                          disableDrop
+                          isLastChild={index === favoriteProjects.length - 1}
+                        />
+                      ))}
+                    </Disclosure.Panel>
+                  )}
+                </Transition>
+              </>
+            </Disclosure>
+          )}
+        </div>
+        <div>
+          {joinedProjects && joinedProjects.length > 0 && (
+            <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
+              <>
+                {!isCollapsed && (
+                  <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
+                      onClick={() => toggleListDisclosure(!isAllProjectsListOpen, "all")}
+                    >
+                      Your projects
+                      {isAllProjectsListOpen ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                    </Disclosure.Button>
+                    {isAuthorizedUser && (
+                      <button
+                        className="opacity-0 group-hover:opacity-100"
+                        onClick={() => {
+                          setTrackElement("Sidebar");
+                          setIsFavoriteProjectCreate(false);
+                          setIsProjectModalOpen(true);
+                        }}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
                     )}
-                  </Disclosure>
+                  </div>
                 )}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+                <Transition
+                  show={isAllProjectsListOpen}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  {isAllProjectsListOpen && (
+                    <Disclosure.Panel as="div" static>
+                      {joinedProjects.map((projectId, index) => (
+                        <ProjectSidebarListItem
+                          key={projectId}
+                          projectId={projectId}
+                          projectListType="JOINED"
+                          handleCopyText={() => handleCopyText(projectId)}
+                          isLastChild={index === joinedProjects.length - 1}
+                          handleOnProjectDrop={handleOnProjectDrop}
+                        />
+                      ))}
+                    </Disclosure.Panel>
+                  )}
+                </Transition>
+              </>
+            </Disclosure>
+          )}
+        </div>
 
         {isAuthorizedUser && joinedProjects && joinedProjects.length === 0 && (
           <button

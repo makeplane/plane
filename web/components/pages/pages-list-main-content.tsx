@@ -8,6 +8,7 @@ import { PageLoader } from "@/components/pages";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
+import { EPageAccess } from "@/constants/page";
 import { useCommandPalette, useProjectPages } from "@/hooks/store";
 // assets
 import AllFiltersImage from "public/empty-state/pages/all-filters.svg";
@@ -16,13 +17,13 @@ import NameFilterImage from "public/empty-state/pages/name-filter.svg";
 type Props = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
-  projectId: string;
 };
 
 export const PagesListMainContent: React.FC<Props> = observer((props) => {
-  const { children, pageType, projectId } = props;
+  const { children, pageType } = props;
   // store hooks
-  const { loader, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } = useProjectPages(projectId);
+  const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } =
+    useProjectPages();
   const { toggleCreatePageModal } = useCommandPalette();
   // derived values
   const pageIds = getCurrentProjectPageIds(pageType);
@@ -30,13 +31,23 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
 
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type
-  if (pageIds?.length === 0) {
+  if (!isAnyPageAvailable || pageIds?.length === 0) {
+    if (!isAnyPageAvailable) {
+      return (
+        <EmptyState
+          type={EmptyStateType.PROJECT_PAGE}
+          primaryButtonOnClick={() => {
+            toggleCreatePageModal({ isOpen: true });
+          }}
+        />
+      );
+    }
     if (pageType === "public")
       return (
         <EmptyState
           type={EmptyStateType.PROJECT_PAGE_PUBLIC}
           primaryButtonOnClick={() => {
-            toggleCreatePageModal(true);
+            toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
           }}
         />
       );
@@ -45,7 +56,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
         <EmptyState
           type={EmptyStateType.PROJECT_PAGE_PRIVATE}
           primaryButtonOnClick={() => {
-            toggleCreatePageModal(true);
+            toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
           }}
         />
       );

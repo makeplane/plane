@@ -226,6 +226,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # Storage Settings
+# Use Minio settings
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -244,7 +247,7 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_S3_ENDPOINT_URL = os.environ.get(
     "AWS_S3_ENDPOINT_URL", None
 ) or os.environ.get("MINIO_ENDPOINT_URL", None)
-if AWS_S3_ENDPOINT_URL:
+if AWS_S3_ENDPOINT_URL and USE_MINIO:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
@@ -269,6 +272,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
+    "plane.license.bgtasks.version_check_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
@@ -308,8 +312,6 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
-# Use Minio settings
-USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 # Posthog settings
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)

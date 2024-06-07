@@ -1,9 +1,9 @@
 import pull from "lodash/pull";
 import set from "lodash/set";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 // base class
 import { IssueService } from "@/services/issue/issue.service";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 // types
@@ -97,20 +97,20 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     const viewIssueIds = this.issues[viewId];
     if (!viewIssueIds) return;
 
-    const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds, "un-archived");
-    if (!_issues) return [];
+    const currentIssues = this.rootStore.issues.getIssuesByIds(viewIssueIds, "un-archived");
+    if (!currentIssues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
-      else issues = this.unGroupedIssues(orderBy, _issues);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, currentIssues);
+      else issues = this.unGroupedIssues(orderBy, currentIssues);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
-      else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, currentIssues);
+      else issues = this.groupedIssues(groupBy, orderBy, currentIssues);
+    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", currentIssues, true);
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", currentIssues);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", currentIssues);
 
     return issues;
   }
@@ -247,18 +247,25 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
         });
       }
 
-      if (data.cycle_id && data.cycle_id !== "") {
-        await this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id)
+      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
+      const currentModuleIds =
+        data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
+
+      const multipleIssuePromises = [];
+      if (currentCycleId) {
+        multipleIssuePromises.push(
+          this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id)
+        );
       }
 
-      if (data.module_ids && data.module_ids.length > 0) {
-        await this.rootStore.moduleIssues.changeModulesInIssue(
-          workspaceSlug,
-          projectId,
-          response.id,
-          data.module_ids,
-          []
-        )
+      if (currentModuleIds.length > 0) {
+        multipleIssuePromises.push(
+          this.rootStore.moduleIssues.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, [])
+        );
+      }
+
+      if (multipleIssuePromises && multipleIssuePromises.length > 0) {
+        await Promise.all(multipleIssuePromises);
       }
 
       return response;

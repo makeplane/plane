@@ -35,7 +35,7 @@ from plane.app.serializers import (
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
@@ -232,6 +232,7 @@ class CycleViewSet(BaseViewSet):
                 "external_source",
                 "external_id",
                 "progress_snapshot",
+                "logo_props",
                 # meta fields
                 "is_favorite",
                 "total_issues",
@@ -357,6 +358,7 @@ class CycleViewSet(BaseViewSet):
             "external_source",
             "external_id",
             "progress_snapshot",
+            "logo_props",
             # meta fields
             "is_favorite",
             "total_issues",
@@ -404,6 +406,7 @@ class CycleViewSet(BaseViewSet):
                         "external_source",
                         "external_id",
                         "progress_snapshot",
+                        "logo_props",
                         # meta fields
                         "is_favorite",
                         "cancelled_issues",
@@ -497,6 +500,7 @@ class CycleViewSet(BaseViewSet):
                 "external_source",
                 "external_id",
                 "progress_snapshot",
+                "logo_props",
                 # meta fields
                 "is_favorite",
                 "total_issues",
@@ -557,6 +561,7 @@ class CycleViewSet(BaseViewSet):
                 "external_id",
                 "progress_snapshot",
                 "sub_issues",
+                "logo_props",
                 # meta fields
                 "is_favorite",
                 "total_issues",

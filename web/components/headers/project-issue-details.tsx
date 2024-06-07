@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 // hooks
 import { PanelRight } from "lucide-react";
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // ui
@@ -42,7 +41,7 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }

@@ -1,3 +1,4 @@
+import { TLogoProps } from "./common";
 import { EPageAccess } from "./enums";
 import { TIssuePriorities } from "./issues";
 
@@ -18,6 +19,7 @@ export type TPage = {
   updated_at: Date | undefined;
   updated_by: string | undefined;
   workspace: string | undefined;
+  logo_props: TLogoProps | undefined;
 };
 
 // page filters

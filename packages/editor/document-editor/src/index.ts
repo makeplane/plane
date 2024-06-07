@@ -3,6 +3,8 @@ export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef } from "src/ui/re
 
 // hooks
 export { useEditorMarkings } from "src/hooks/use-editor-markings";
+// utils
+export { proseMirrorJSONToBinaryString, applyUpdates, mergeUpdates } from "src/utils/yjs";
 
 export type { EditorRefApi, EditorReadOnlyRefApi, EditorMenuItem, EditorMenuItemNames } from "@plane/editor-core";
 

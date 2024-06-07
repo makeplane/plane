@@ -20,7 +20,7 @@ export interface IPosthogWrapper {
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaceRole, currentWorkspaceId, projectRole, posthogAPIKey, posthogHost } = props;
+  const { children, user, workspaceRole, currentWorkspaceId, projectRole } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
@@ -42,15 +42,16 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
   }, [user, workspaceRole, projectRole]);
 
   useEffect(() => {
-    if (posthogAPIKey && (process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost)) {
-      posthog.init(posthogAPIKey, {
-        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || posthogHost || "https://app.posthog.com",
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+        api_host: "/ingest",
+        ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
         debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
     }
-  }, [posthogAPIKey, posthogHost]);
+  }, []);
 
   useEffect(() => {
     // Join workspace group on workspace change
@@ -74,7 +75,9 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (posthogAPIKey) return <PHProvider client={posthog}>{children}</PHProvider>;
+  if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST)
+    return <PHProvider client={posthog}>{children}</PHProvider>;
+
   return <>{children}</>;
 };
 

@@ -8,6 +8,8 @@ import {
   TInstanceEnterpriseAuthenticationKeys,
 } from "./";
 
+type TProductType = "plane-ce" | "plane-one";
+
 export interface IInstanceInfo {
   instance: IInstance;
   config: IInstanceConfig;
@@ -21,8 +23,10 @@ export interface IInstance {
   whitelist_emails: string | undefined;
   instance_id: string | undefined;
   license_key: string | undefined;
-  api_key: string | undefined;
-  version: string | undefined;
+  current_version: string | undefined;
+  latest_version: string | undefined;
+  product: TProductType;
+  domain: string | undefined;
   last_checked_at: string | undefined;
   namespace: string | undefined;
   is_telemetry_enabled: boolean;

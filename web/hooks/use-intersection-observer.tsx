@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect } from "react";
+import { RefObject, useEffect } from "react";
 
 export type UseIntersectionObserverProps = {
   containerRef: RefObject<HTMLDivElement>;
@@ -7,36 +7,35 @@ export type UseIntersectionObserverProps = {
   rootMargin?: string;
 };
 
-export const useIntersectionObserver = (props: UseIntersectionObserverProps) => {
-  const { containerRef, elementRef, callback, rootMargin = "0px" } = props;
-  const [isVisible, setVisibility] = useState(false);
-
+export const useIntersectionObserver = (
+  containerRef: RefObject<HTMLDivElement>,
+  elementRef: HTMLDivElement | null,
+  callback: () => void,
+  rootMargin?: string
+) => {
   useEffect(() => {
-    if (elementRef.current) {
+    if (elementRef) {
       const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
+        (entries) => {
+          if (entries[entries.length - 1].isIntersecting) {
             callback();
           }
-          setVisibility(entry.isIntersecting);
         },
         {
           root: containerRef.current,
           rootMargin,
         }
       );
-      observer.observe(elementRef.current);
+      observer.observe(elementRef);
       return () => {
-        if (elementRef.current) {
+        if (elementRef) {
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          observer.unobserve(elementRef.current);
+          observer.unobserve(elementRef);
         }
       };
     }
     // while removing the current from the refs, the observer is not not working as expected
     // fix this eslint warning with caution
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rootMargin, callback, elementRef.current, containerRef.current]);
-
-  return isVisible;
+  }, [rootMargin, callback, elementRef, containerRef.current]);
 };

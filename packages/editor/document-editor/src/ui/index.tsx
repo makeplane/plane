@@ -1,30 +1,27 @@
 import React, { useState } from "react";
+// editor-core
 import {
-  UploadImage,
-  DeleteImage,
-  RestoreImage,
   getEditorClassNames,
-  useEditor,
   EditorRefApi,
   IMentionHighlight,
   IMentionSuggestion,
+  TFileHandler,
 } from "@plane/editor-core";
+// components
 import { PageRenderer } from "src/ui/components/page-renderer";
-import { DocumentEditorExtensions, TEmbedConfig } from "src/ui/extensions";
+// hooks
+import { useDocumentEditor } from "src/hooks/use-document-editor";
+// extensions
+import { TEmbedConfig } from "src/ui/extensions";
 
 interface IDocumentEditor {
-  initialValue: string;
-  value?: string;
-  fileHandler: {
-    cancel: () => void;
-    delete: DeleteImage;
-    upload: UploadImage;
-    restore: RestoreImage;
-  };
+  id: string;
+  value: Uint8Array;
+  fileHandler: TFileHandler;
   handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
-  onChange: (json: object, html: string) => void;
+  onChange: (updates: Uint8Array) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -39,7 +36,7 @@ interface IDocumentEditor {
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
     onChange,
-    initialValue,
+    id,
     value,
     fileHandler,
     containerClassName,
@@ -53,30 +50,26 @@ const DocumentEditor = (props: IDocumentEditor) => {
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-
   // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
   // loads such that we can invoke it from react when the cursor leaves the container
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
-  // use editor
-  const editor = useEditor({
-    onChange(json, html) {
-      onChange(json, html);
-    },
+
+  // use document editor
+  const editor = useDocumentEditor({
+    id,
     editorClassName,
-    restoreFile: fileHandler.restore,
-    uploadFile: fileHandler.upload,
-    deleteFile: fileHandler.delete,
-    cancelUploadImage: fileHandler.cancel,
-    initialValue,
+    fileHandler,
     value,
+    onChange,
     handleEditorReady,
     forwardedRef,
     mentionHandler,
-    extensions: DocumentEditorExtensions(fileHandler.upload, setHideDragHandleFunction, embedHandler?.issue),
     placeholder,
+    setHideDragHandleFunction,
     tabIndex,
+    embedHandler,
   });
 
   const editorContainerClassNames = getEditorClassNames({

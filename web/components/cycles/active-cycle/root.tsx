@@ -62,13 +62,18 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                       cycleId={currentProjectActiveCycleId}
                       workspaceSlug={workspaceSlug}
                       projectId={projectId}
+                      className="!border-b-transparent"
                     />
                   )}
-                  <div className="bg-custom-background-90 py-6 px-8">
-                    <div className="grid grid-cols-1 bg-custom-background-90 gap-3 lg:grid-cols-2 xl:grid-cols-3">
-                      <ActiveCycleProgress cycle={activeCycle} />
-                      <ActiveCycleProductivity cycle={activeCycle} />
-                      <ActiveCycleStats cycle={activeCycle} workspaceSlug={workspaceSlug} projectId={projectId} />
+                  <div className="bg-custom-background-100 pt-3 pb-6 px-6">
+                    <div className="grid grid-cols-1 bg-custom-background-100 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+                      <ActiveCycleProgress workspaceSlug={workspaceSlug} projectId={projectId} cycle={activeCycle} />
+                      <ActiveCycleProductivity
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        cycle={activeCycle}
+                      />
+                      <ActiveCycleStats workspaceSlug={workspaceSlug} projectId={projectId} cycle={activeCycle} />
                     </div>
                   </div>
                 </div>

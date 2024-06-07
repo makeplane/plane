@@ -39,6 +39,7 @@ class PageSerializer(BaseSerializer):
             "created_by",
             "updated_by",
             "view_props",
+            "logo_props",
         ]
         read_only_fields = [
             "workspace",
@@ -106,7 +107,9 @@ class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField()
 
     class Meta(PageSerializer.Meta):
-        fields = PageSerializer.Meta.fields + ["description_html"]
+        fields = PageSerializer.Meta.fields + [
+            "description_html",
+        ]
 
 
 class SubPageSerializer(BaseSerializer):
