@@ -2,23 +2,20 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// hooks
-import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
-import { BreadcrumbLink, Logo } from "@/components/common";
-import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { useProject } from "@/hooks/store";
-// components
 // ui
-// types
-import { IssueArchiveService } from "@/services/issue";
-// constants
-// services
-// helpers
+import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
 // components
+import { BreadcrumbLink, Logo } from "@/components/common";
+// constants
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+// hooks
+import { useProject } from "@/hooks/store";
+// services
+import { IssueArchiveService } from "@/services/issue";
 
 const issueArchiveService = new IssueArchiveService();
 
-export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
+const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
   // store hooks
@@ -28,11 +25,11 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
-          issueArchiveService.retrieveArchivedIssue(
-            workspaceSlug as string,
-            projectId as string,
-            archivedIssueId as string
-          )
+        issueArchiveService.retrieveArchivedIssue(
+          workspaceSlug as string,
+          projectId as string,
+          archivedIssueId as string
+        )
       : null
   );
 
@@ -95,3 +92,5 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
     </div>
   );
 });
+
+export default ProjectArchivedIssueDetailsHeader;
