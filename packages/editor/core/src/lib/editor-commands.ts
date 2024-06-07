@@ -3,6 +3,7 @@ import { startImageUpload } from "src/ui/plugins/image/image-upload-handler";
 import { findTableAncestor } from "src/lib/utils";
 import { Selection } from "@tiptap/pm/state";
 import { UploadImage } from "src/types/upload-image";
+import { replaceCodeWithText } from "src/ui/extensions/code/utils/replace-code-block-with-text";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).clearNodes().run();
@@ -54,69 +55,11 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleUnderline().run();
 };
 
-const replaceCodeBlockWithContent = (editor: Editor) => {
-  try {
-    const { schema } = editor.state;
-    const { paragraph } = schema.nodes;
-    let replaced = false;
-
-    const replaceCodeBlock = (from: number, to: number, textContent: string) => {
-      const docSize = editor.state.doc.content.size;
-
-      if (from < 0 || to > docSize || from > to) {
-        console.error("Invalid range for replacement: ", from, to, "in a document of size", docSize);
-        return;
-      }
-
-      // split the textContent by new lines to handle each line as a separate paragraph
-      const lines = textContent.split(/\r?\n/);
-
-      const tr = editor.state.tr;
-
-      // Calculate the position for inserting the first paragraph
-      let insertPos = from;
-
-      // Remove the code block first
-      tr.delete(from, to);
-
-      // For each line, create a paragraph node and insert it
-      lines.forEach((line) => {
-        const paragraphNode = paragraph.create({}, schema.text(line));
-        tr.insert(insertPos, paragraphNode);
-        // Update insertPos for the next insertion
-        insertPos += paragraphNode.nodeSize;
-      });
-
-      // Dispatch the transaction
-      editor.view.dispatch(tr);
-      replaced = true;
-    };
-
-    editor.state.doc.nodesBetween(editor.state.selection.from, editor.state.selection.to, (node, pos) => {
-      if (node.type === schema.nodes.codeBlock) {
-        const startPos = pos;
-        const endPos = pos + node.nodeSize;
-        const textContent = node.textContent;
-        if (textContent.length === 0) {
-          editor.chain().focus().toggleCodeBlock().run();
-        }
-        replaceCodeBlock(startPos, endPos, textContent);
-        return false;
-      }
-    });
-
-    if (!replaced) {
-      console.log("No code block to replace.");
-    }
-  } catch (error) {
-    console.error("An error occurred while replacing code block content:", error);
-  }
-};
-
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
   try {
+    // if it's a code block, replace it with the code with paragraphs
     if (editor.isActive("codeBlock")) {
-      replaceCodeBlockWithContent(editor);
+      replaceCodeWithText(editor);
       return;
     }
 
@@ -124,11 +67,16 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
     const text = editor.state.doc.textBetween(from, to, "\n");
     const isMultiline = text.includes("\n");
 
+    // if the selection is not a range i.e. empty, then simply convert it into a code block
     if (editor.state.selection.empty) {
       editor.chain().focus().toggleCodeBlock().run();
     } else if (isMultiline) {
+      // if the selection is multiline, then also replace the text content with
+      // a code block
       editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, `\`\`\`\n${text}\n\`\`\``).run();
     } else {
+      // if the selection is single line, then simply convert it into inline
+      // code
       editor.chain().focus().toggleCode().run();
     }
   } catch (error) {

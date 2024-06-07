@@ -222,6 +222,8 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
 
+  const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
+
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
   const keyMinWidth = (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7;
 
@@ -250,7 +252,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <div className="flex items-center gap-0.5 min-w-min py-2.5 pl-2">
             {/* select checkbox */}
-            {projectId && !disableUserActions && (
+            {projectId && canSelectIssues && (
               <Tooltip
                 tooltipContent={
                   <>

@@ -5,7 +5,10 @@ import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+import { EmptyState } from "@/components/empty-state";
 import { ProfileActivityListPage } from "@/components/profile";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
 //hooks
 import { useAppTheme } from "@/hooks/store";
 // layouts
@@ -20,12 +23,15 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
+  const [isEmpty, setIsEmpty] = useState(false);
   // store hooks
   const { toggleSidebar } = useAppTheme();
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
   const updateResultsCount = (count: number) => setResultsCount(count);
+
+  const updateEmptyState = (isEmpty: boolean) => setIsEmpty(isEmpty);
 
   const handleLoadMore = () => setPageCount((prev) => prev + 1);
 
@@ -38,10 +44,15 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
         perPage={PER_PAGE}
         updateResultsCount={updateResultsCount}
         updateTotalPages={updateTotalPages}
+        updateEmptyState={updateEmptyState}
       />
     );
 
   const isLoadMoreVisible = pageCount < totalPages && resultsCount !== 0;
+
+  if (isEmpty) {
+    return <EmptyState type={EmptyStateType.PROFILE_ACTIVITY} layout="screen-detailed" />;
+  }
 
   return (
     <>

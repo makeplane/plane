@@ -102,6 +102,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
   const isSubIssue = nestingLevel !== 0;
+  const canSelectIssues = canEditIssueProperties && !selectionHelpers.isSelectionDisabled;
 
   const marginLeft = `${spacingLeft}px`;
 
@@ -149,7 +150,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         <div className="flex flex-grow items-center gap-0.5 truncate">
           <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
             {/* select checkbox */}
-            {projectId && canEditIssueProperties && (
+            {projectId && canSelectIssues && (
               <Tooltip
                 tooltipContent={
                   <>

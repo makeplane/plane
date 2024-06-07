@@ -135,7 +135,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
   return (
     <div className="relative size-full flex flex-col">
       {groups && (
-        <MultipleSelectGroup containerRef={containerRef} entities={entities}>
+        <MultipleSelectGroup containerRef={containerRef} entities={entities} disabled>
           {(helpers) => (
             <>
               <div

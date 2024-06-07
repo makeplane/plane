@@ -16,7 +16,7 @@ import { GOD_MODE_URL } from "@/helpers/common.helper";
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { WorkspaceLogo } from "./logo";
 // Static Data
-const userLinks = (workspaceSlug: string, userId: string) => [
+const userLinks = (workspaceSlug: string) => [
   {
     key: "workspace_invites",
     name: "Workspace invites",
@@ -24,14 +24,8 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Mails,
   },
   {
-    key: "my_activity",
-    name: "My activity",
-    href: `/${workspaceSlug}/profile/${userId}`,
-    icon: Activity,
-  },
-  {
     key: "settings",
-    name: "Settings",
+    name: "Workspace settings",
     href: `/${workspaceSlug}/settings`,
     icon: Settings,
   },
@@ -211,7 +205,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                    {userLinks(workspaceSlug?.toString() ?? "").map((link, index) => (
                       <Link
                         key={link.key}
                         href={link.href}

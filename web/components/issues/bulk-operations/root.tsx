@@ -15,7 +15,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const { isSelectionActive } = useMultipleSelectStore();
 
-  if (!isSelectionActive) return null;
+  if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;
 
   return <BulkOperationsEnterpriseRoot className={className} selectionHelpers={selectionHelpers} />;
 });
