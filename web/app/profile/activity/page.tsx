@@ -7,7 +7,19 @@ import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+import { EmptyState } from "@/components/empty-state";
 import { ProfileActivityListPage } from "@/components/profile";
+<<<<<<< HEAD:web/app/profile/activity/page.tsx
+=======
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+//hooks
+import { useAppTheme } from "@/hooks/store";
+// layouts
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
+// type
+import { NextPageWithLayout } from "@/lib/types";
+>>>>>>> 2331404d4 (chore: profile activity empty state added (#4732)):web/pages/profile/activity.tsx
 
 const PER_PAGE = 100;
 
@@ -16,10 +28,18 @@ const ProfileActivityPage = observer(() => {
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
+<<<<<<< HEAD:web/app/profile/activity/page.tsx
+=======
+  const [isEmpty, setIsEmpty] = useState(false);
+  // store hooks
+  const { toggleSidebar } = useAppTheme();
+>>>>>>> 2331404d4 (chore: profile activity empty state added (#4732)):web/pages/profile/activity.tsx
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
   const updateResultsCount = (count: number) => setResultsCount(count);
+
+  const updateEmptyState = (isEmpty: boolean) => setIsEmpty(isEmpty);
 
   const handleLoadMore = () => setPageCount((prev) => prev + 1);
 
@@ -32,10 +52,15 @@ const ProfileActivityPage = observer(() => {
         perPage={PER_PAGE}
         updateResultsCount={updateResultsCount}
         updateTotalPages={updateTotalPages}
+        updateEmptyState={updateEmptyState}
       />
     );
 
   const isLoadMoreVisible = pageCount < totalPages && resultsCount !== 0;
+
+  if (isEmpty) {
+    return <EmptyState type={EmptyStateType.PROFILE_ACTIVITY} layout="screen-detailed" />;
+  }
 
   return (
     <>
