@@ -231,8 +231,8 @@ def burndown_plot(
         if plot_type == "points":
             cumulative_pending_issues = total_estimate_points
             total_completed = 0
-            total_completed = Sum(
-                Cast(item["estimate_point__value"], IntegerField())
+            total_completed = sum(
+                int(item["estimate_point__value"])
                 for item in completed_issues_estimate_point_distribution
                 if item["date"] is not None and item["date"] <= date
             )
