@@ -77,7 +77,15 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
         states={projectStates}
       />
       {isEditingAllowed && (
-        <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
+        <SaveFilterView
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          filterParams={{
+            filters: appliedFilters,
+            display_filters: issueFilters?.displayFilters,
+            display_properties: issueFilters?.displayProperties,
+          }}
+        />
       )}
     </div>
   );

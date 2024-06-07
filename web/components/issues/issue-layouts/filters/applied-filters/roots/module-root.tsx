@@ -73,7 +73,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   };
 
   // return if no filters are applied
-  if (!workspaceSlug || !projectId || Object.keys(appliedFilters).length === 0) return null;
+  if (!workspaceSlug || !projectId || !moduleId || Object.keys(appliedFilters).length === 0) return null;
 
   return (
     <div className="flex justify-between p-4 gap-2.5">
@@ -88,7 +88,11 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
       <SaveFilterView
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
-        filterParams={appliedFilters}
+        filterParams={{
+          filters: { ...appliedFilters, module: [moduleId.toString()] },
+          display_filters: issueFilters?.displayFilters,
+          display_properties: issueFilters?.displayProperties,
+        }}
       />
     </div>
   );
