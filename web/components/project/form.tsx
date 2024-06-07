@@ -144,42 +144,40 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
-            <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
-              <Controller
-                control={control}
-                name="logo_props"
-                render={({ field: { value, onChange } }) => (
-                  <CustomEmojiIconPicker
-                    isOpen={isOpen}
-                    handleToggle={(val: boolean) => setIsOpen(val)}
-                    className="flex items-center justify-center"
-                    buttonClassName="flex items-center justify-center"
-                    label={<Logo logo={value} size={28} />}
-                    onChange={(val) => {
-                      let logoValue = {};
+            <Controller
+              control={control}
+              name="logo_props"
+              render={({ field: { value, onChange } }) => (
+                <CustomEmojiIconPicker
+                  isOpen={isOpen}
+                  handleToggle={(val: boolean) => setIsOpen(val)}
+                  className="flex items-center justify-center"
+                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90"
+                  label={<Logo logo={value} size={28} />}
+                  onChange={(val) => {
+                    let logoValue = {};
 
-                      if (val?.type === "emoji")
-                        logoValue = {
-                          value: convertHexEmojiToDecimal(val.value.unified),
-                          url: val.value.imageUrl,
-                        };
-                      else if (val?.type === "icon") logoValue = val.value;
+                    if (val?.type === "emoji")
+                      logoValue = {
+                        value: convertHexEmojiToDecimal(val.value.unified),
+                        url: val.value.imageUrl,
+                      };
+                    else if (val?.type === "icon") logoValue = val.value;
 
-                      onChange({
-                        in_use: val?.type,
-                        [val?.type]: logoValue,
-                      });
-                      setIsOpen(false);
-                    }}
-                    defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
-                    defaultOpen={
-                      value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-                    }
-                    disabled={!isAdmin}
-                  />
-                )}
-              />
-            </div>
+                    onChange({
+                      in_use: val?.type,
+                      [val?.type]: logoValue,
+                    });
+                    setIsOpen(false);
+                  }}
+                  defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
+                  defaultOpen={
+                    value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                  }
+                  disabled={!isAdmin}
+                />
+              )}
+            />
             <div className="flex flex-col gap-1 truncate text-white">
               <span className="truncate text-lg font-semibold">{watch("name")}</span>
               <span className="flex items-center gap-2 text-sm">
