@@ -108,7 +108,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
           className={cn(
             "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-2xl font-medium outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-3": title.length === 0,
+              "ring-1 ring-red-400 mx-3": title.length && title.length === 0,
             },
             className
           )}

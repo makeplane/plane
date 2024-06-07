@@ -17,6 +17,8 @@ export const MultipleSelectGroupAction: React.FC<Props> = (props) => {
   // derived values
   const groupSelectionStatus = selectionHelpers.isGroupSelected(groupID);
 
+  if (selectionHelpers.isSelectionDisabled) return null;
+
   return (
     <Checkbox
       className={cn("size-3.5 !outline-none", className)}

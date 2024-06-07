@@ -38,7 +38,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
   // auth
-  const canSelectIssues = canEditProperties(projectId?.toString());
+  const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
 
   return (
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
@@ -48,7 +48,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
           tabIndex={-1}
         >
           {canSelectIssues && (
-            <div className="flex-shrink-0 flex items-center w-3.5">
+            <div className="flex-shrink-0 flex items-center w-3.5 mr-1">
               <MultipleSelectGroupAction
                 className={cn(
                   "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
@@ -61,7 +61,6 @@ export const SpreadsheetHeader = observer((props: Props) => {
               />
             </div>
           )}
-          <div className="size-4" />
           <span className="flex h-full w-full flex-grow items-center py-2.5">Issues</span>
         </th>
 

@@ -118,6 +118,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       entities={{
         [GANTT_SELECT_GROUP]: chartBlocks?.map((block) => block.id) ?? [],
       }}
+      disabled
     >
       {(helpers) => (
         <>
@@ -162,7 +163,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
               )}
             </div>
           </div>
-          <IssueBulkOperationsRoot />
+          <IssueBulkOperationsRoot selectionHelpers={helpers} />
         </>
       )}
     </MultipleSelectGroup>
