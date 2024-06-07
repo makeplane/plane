@@ -40,6 +40,7 @@ export enum EmptyStateType {
   WORKSPACE_SETTINGS_WEBHOOKS = "workspace-settings-webhooks",
   WORKSPACE_SETTINGS_EXPORT = "workspace-settings-export",
   WORKSPACE_SETTINGS_IMPORT = "workspace-settings-import",
+  PROFILE_ACTIVITY = "profile-activity",
   PROFILE_ASSIGNED = "profile-assigned",
   PROFILE_CREATED = "profile-created",
   PROFILE_SUBSCRIBED = "profile-subscribed",
@@ -241,6 +242,13 @@ const emptyStateDetails = {
     path: "/empty-state/workspace-settings/imports",
   },
   // profile
+  [EmptyStateType.PROFILE_ACTIVITY]: {
+    key: EmptyStateType.PROFILE_ASSIGNED,
+    title: "No activities yet",
+    description:
+      "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity.",
+    path: "/empty-state/profile/activity",
+  },
   [EmptyStateType.PROFILE_ASSIGNED]: {
     key: EmptyStateType.PROFILE_ASSIGNED,
     title: "No issues are assigned to you",

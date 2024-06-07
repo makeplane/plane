@@ -24,10 +24,11 @@ type Props = {
   perPage: number;
   updateResultsCount: (count: number) => void;
   updateTotalPages: (count: number) => void;
+  updateEmptyState: (state: boolean) => void;
 };
 
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
-  const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
+  const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -45,9 +46,12 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (!userProfileActivity) return;
 
+    // if no results found then show empty state
+    if (userProfileActivity.total_results === 0) updateEmptyState(true);
+
     updateTotalPages(userProfileActivity.total_pages);
     updateResultsCount(userProfileActivity.results.length);
-  }, [updateResultsCount, updateTotalPages, userProfileActivity]);
+  }, [updateResultsCount, updateTotalPages, userProfileActivity, updateEmptyState]);
 
   // TODO: refactor this component
   return (

@@ -128,6 +128,7 @@ export interface IUserActivityResponse {
   prev_page_results: boolean;
   results: IIssueActivity[];
   total_pages: number;
+  total_results: number;
 }
 
 export type UserAuth = {
