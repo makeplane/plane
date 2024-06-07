@@ -16,7 +16,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const ProjectDraftIssueHeader: FC = observer(() => {
+const ProjectDraftIssueHeader: FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
@@ -167,3 +167,5 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
     </div>
   );
 });
+
+export default ProjectDraftIssueHeader;
