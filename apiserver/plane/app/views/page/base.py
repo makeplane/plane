@@ -6,7 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Subquery
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.http import StreamingHttpResponse
@@ -27,6 +27,7 @@ from plane.db.models import (
     PageLog,
     UserFavorite,
     ProjectMember,
+    ProjectPage,
 )
 
 # Module imports
@@ -54,9 +55,9 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
     model = Page
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    # permission_classes = [
+    #     ProjectEntityPermission,
+    # ]
     search_fields = [
         "name",
     ]
@@ -66,9 +67,11 @@ class PageViewSet(BaseViewSet):
             user=self.request.user,
             entity_type="page",
             entity_identifier=OuterRef("pk"),
-            project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        project_subquery = ProjectPage.objects.filter(
+            page_id=OuterRef("id"), project_id=self.kwargs.get("project_id")
+        ).values_list("project_id", flat=True)[:1]
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -88,6 +91,8 @@ class PageViewSet(BaseViewSet):
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
+            .annotate(project_id=Subquery(project_subquery))
+            .filter(project_id=self.kwargs.get("project_id"))
             .distinct()
         )
 

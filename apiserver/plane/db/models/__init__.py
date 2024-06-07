@@ -49,7 +49,7 @@ from .notification import (
     Notification,
     UserNotificationPreference,
 )
-from .page import Page, PageFavorite, PageLabel, PageLog
+from .page import Page, PageFavorite, PageLabel, PageLog, ProjectPage
 from .project import (
     Project,
     ProjectBaseModel,

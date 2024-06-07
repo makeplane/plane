@@ -8,6 +8,7 @@ from plane.db.models import (
     PageLog,
     PageLabel,
     Label,
+    ProjectPage,
 )
 
 
@@ -33,7 +34,6 @@ class PageSerializer(BaseSerializer):
             "is_locked",
             "archived_at",
             "workspace",
-            "project",
             "created_at",
             "updated_at",
             "created_by",
@@ -43,7 +43,6 @@ class PageSerializer(BaseSerializer):
         ]
         read_only_fields = [
             "workspace",
-            "project",
             "owned_by",
         ]
 
@@ -60,8 +59,15 @@ class PageSerializer(BaseSerializer):
         page = Page.objects.create(
             **validated_data,
             description_html=description_html,
-            project_id=project_id,
             owned_by_id=owned_by_id,
+        )
+
+        ProjectPage.objects.create(
+            workspace_id=page.workspace_id,
+            project_id=project_id,
+            page_id=page.id,
+            created_by_id=page.created_by_id,
+            updated_by_id=page.updated_by_id,
         )
 
         if labels is not None:
@@ -120,7 +126,6 @@ class SubPageSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project",
             "page",
         ]
 
@@ -141,6 +146,5 @@ class PageLogSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project",
             "page",
         ]
