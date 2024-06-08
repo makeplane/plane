@@ -32,9 +32,10 @@ import {
 } from "@plane/ui";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "@/components/core";
-import ProgressChart from "@/components/core/sidebar/progress-chart";
+
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ArchiveModuleModal, DeleteModuleModal } from "@/components/modules";
+import { ModuleIssuesBurnDownChart } from "@/components/modules/analytics-sidebar";
 // constant
 import {
   MODULE_LINK_CREATED,
@@ -315,6 +316,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const issueCount =
     moduleDetails.total_issues === 0 ? "0 Issue" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
+  const issueEstimatePointCount =
+    moduleDetails.total_estimate_points === 0
+      ? "0 Issue"
+      : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
+
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
@@ -555,6 +561,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
+
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <LayersIcon className="h-4 w-4" />
+              <span className="text-base">Points</span>
+            </div>
+            <div className="flex h-7 w-3/5 items-center">
+              <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col">
@@ -595,29 +611,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {moduleDetails.start_date && moduleDetails.target_date ? (
-                          <div className=" h-full w-full pt-4">
-                            <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
-                                </div>
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="relative h-40 w-full max-w-80">
-                              <ProgressChart
-                                distribution={moduleDetails.distribution?.completion_chart ?? {}}
-                                startDate={moduleDetails.start_date}
-                                endDate={moduleDetails.target_date}
-                                totalIssues={moduleDetails.total_issues}
-                              />
-                            </div>
-                          </div>
+                        {moduleDetails.start_date && moduleDetails.target_date && moduleDetails?.id ? (
+                          <ModuleIssuesBurnDownChart moduleId={moduleDetails.id} />
                         ) : (
                           ""
                         )}

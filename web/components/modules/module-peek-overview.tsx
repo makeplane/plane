@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // hooks
 import { useModule } from "@/hooks/store";
 // components
-import { ModuleDetailsSidebar } from "./sidebar";
+import { ModuleDetailsSidebar } from "./";
 
 type Props = {
   projectId: string;
