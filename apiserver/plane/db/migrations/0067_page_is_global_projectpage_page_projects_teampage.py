@@ -42,16 +42,6 @@ class Migration(migrations.Migration):
             name="is_global",
             field=models.BooleanField(default=False),
         ),
-        migrations.AlterField(
-            model_name="page",
-            name="project",
-            field=models.ForeignKey(
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="project_%(class)s",
-                to="db.project",
-            ),
-        ),
         migrations.CreateModel(
             name="ProjectPage",
             fields=[
@@ -131,13 +121,6 @@ class Migration(migrations.Migration):
                 "unique_together": {("project", "page")},
             },
         ),
-        migrations.AddField(
-            model_name="page",
-            name="projects",
-            field=models.ManyToManyField(
-                related_name="pages", through="db.ProjectPage", to="db.project"
-            ),
-        ),
         migrations.CreateModel(
             name="TeamPage",
             fields=[
@@ -216,6 +199,20 @@ class Migration(migrations.Migration):
                 "ordering": ("-created_at",),
                 "unique_together": {("team", "page")},
             },
+        ),
+        migrations.AddField(
+            model_name="page",
+            name="projects",
+            field=models.ManyToManyField(
+                related_name="pages", through="db.ProjectPage", to="db.project"
+            ),
+        ),
+        migrations.AddField(
+            model_name="page",
+            name="teams",
+            field=models.ManyToManyField(
+                related_name="pages", through="db.TeamPage", to="db.team"
+            ),
         ),
         migrations.RunPython(migrate_pages),
         migrations.RemoveField(

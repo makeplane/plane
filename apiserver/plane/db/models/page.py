@@ -10,7 +10,6 @@ from plane.utils.html_processor import strip_tags
 
 from .project import ProjectBaseModel
 from .base import BaseModel
-from .workspace import WorkspaceBaseModel
 
 
 def get_view_props():
@@ -52,6 +51,9 @@ class Page(BaseModel):
     is_global = models.BooleanField(default=False)
     projects = models.ManyToManyField(
         "db.Project", related_name="pages", through="db.ProjectPage"
+    )
+    teams = models.ManyToManyField(
+        "db.Team", related_name="pages", through="db.TeamPage"
     )
 
     class Meta:

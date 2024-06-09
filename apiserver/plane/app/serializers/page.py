@@ -9,6 +9,7 @@ from plane.db.models import (
     PageLabel,
     Label,
     ProjectPage,
+    Project,
 )
 
 
@@ -19,6 +20,7 @@ class PageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    project = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = Page
@@ -40,6 +42,7 @@ class PageSerializer(BaseSerializer):
             "updated_by",
             "view_props",
             "logo_props",
+            "project",
         ]
         read_only_fields = [
             "workspace",
@@ -56,10 +59,15 @@ class PageSerializer(BaseSerializer):
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
         description_html = self.context["description_html"]
+
+        # Get the workspace id from the project
+        project = Project.objects.get(pk=project_id)
+
         page = Page.objects.create(
             **validated_data,
             description_html=description_html,
             owned_by_id=owned_by_id,
+            workspace_id=project.workspace_id,
         )
 
         ProjectPage.objects.create(
