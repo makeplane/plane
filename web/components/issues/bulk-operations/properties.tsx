@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
+import { observer } from "mobx-react";
 // types
 import { TBulkIssueProperties } from "@plane/types";
 // ui
@@ -19,7 +19,6 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { useIssues } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
-import { BulkOperationsExtraProperties } from "./exrtra-properties";
 
 type Props = {
   selectionHelpers: TSelectionHelper;
@@ -41,8 +40,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   // states
   const [createLabelModal, setCreateLabelModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType();
   const {
@@ -193,7 +191,6 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
             )}
           />
         )}
-        <BulkOperationsExtraProperties />
       </div>
       {isDirty && (
         <Button type="submit" variant="primary" size="sm" className="py-1" loading={isSubmitting}>

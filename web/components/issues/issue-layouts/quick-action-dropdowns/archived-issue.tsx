@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // ui
@@ -32,8 +32,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     membership: { currentProjectRole },

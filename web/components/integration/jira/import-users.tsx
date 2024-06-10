@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import useSWR from "swr";
 import { IJiraImporterForm } from "@plane/types";
@@ -14,8 +14,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 const workspaceService = new WorkspaceService();
 
 export const JiraImportUsers: FC = () => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // form info
   const {
     control,

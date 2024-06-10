@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 import { mutate } from "swr";
 
@@ -31,8 +31,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const handleDeletion = () => {
     if (!workspaceSlug || !data) return;

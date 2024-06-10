@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 import { ALL_ISSUES, EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
@@ -33,8 +33,7 @@ interface IBaseSpreadsheetRoot {
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
   // router
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType() as SpreadsheetStoreType;
   const {

@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IAnalyticsParams, TXAxisValues } from "@plane/types";
 
 // ui
@@ -14,8 +14,7 @@ type Props = {
 export const SelectXAxis: React.FC<Props> = (props) => {
   const { value, onChange, params, analyticsOptions } = props;
 
-  const router = useRouter();
-  const { cycleId, moduleId } = router.query;
+  const { cycleId, moduleId } = useParams();
 
   return (
     <CustomSelect

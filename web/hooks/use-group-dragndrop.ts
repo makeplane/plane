@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { GroupDropLocation, handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
@@ -22,8 +22,7 @@ export const useGroupIssuesDragNDrop = (
   groupBy: TIssueGroupByOptions | undefined,
   subGroupBy?: TIssueGroupByOptions
 ) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const {
     issue: { getIssueById },

@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IProjectView, TLogoProps } from "@plane/types";
 // ui
@@ -26,8 +26,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
   // state
   const [isOpen, setIsOpen] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { isMobile } = usePlatformOS();
   const { updateView } = useProjectView();

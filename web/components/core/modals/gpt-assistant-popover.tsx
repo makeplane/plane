@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
 import { Placement } from "@popperjs/core";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 // ui
@@ -42,8 +42,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const editorRef = useRef<any>(null);
   const responseRef = useRef<any>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",

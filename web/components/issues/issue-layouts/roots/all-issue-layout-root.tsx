@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
@@ -30,8 +30,14 @@ import { TRenderQuickActions } from "../list/list-view-types";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, globalViewId, ...routeFilters } = router.query;
+  const { workspaceSlug, globalViewId } = useParams();
+  const searchParams = useSearchParams();
+  const routeFilters: {
+    [key: string]: string;
+  } = {};
+  searchParams.forEach((value: string, key: string) => {
+    routeFilters[key] = value;
+  });
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // store

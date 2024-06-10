@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import type { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -42,9 +42,10 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
+  // pathname
+  const pathname = usePathname();
   // store hooks
   const { captureIssueEvent } = useEventTracker();
 
@@ -98,7 +99,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         captureIssueEvent({
           eventName: "Draft issue created",
           payload: { ...res, state: "SUCCESS" },
-          path: router.asPath,
+          path: pathname,
         });
         onChange(null);
         setIssueDiscardModal(false);
@@ -113,7 +114,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         captureIssueEvent({
           eventName: "Draft issue created",
           payload: { ...payload, state: "FAILED" },
-          path: router.asPath,
+          path: pathname,
         });
       });
   };

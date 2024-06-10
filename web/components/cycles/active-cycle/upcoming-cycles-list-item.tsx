@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Users } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
@@ -24,8 +24,7 @@ export const UpcomingCycleListItem: React.FC<Props> = observer((props) => {
   // refs
   const parentRef = useRef(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
   const { addCycleToFavorites, getCycleById, removeCycleFromFavorites } = useCycle();

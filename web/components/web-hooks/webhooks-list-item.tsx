@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IWebhook } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
@@ -15,8 +15,7 @@ interface IWebhookListItem {
 export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
   const { webhook } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { updateWebhook } = useWebhook();
 

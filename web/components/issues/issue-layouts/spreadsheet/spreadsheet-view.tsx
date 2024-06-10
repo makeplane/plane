@@ -78,6 +78,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
+        disabled
       >
         {(helpers) => (
           <>

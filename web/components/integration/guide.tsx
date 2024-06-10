@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // icons
 import { RefreshCw } from "lucide-react";
@@ -32,8 +32,9 @@ const IntegrationGuide = observer(() => {
   const [deleteImportModal, setDeleteImportModal] = useState(false);
   const [importToDelete, setImportToDelete] = useState<IImporterService | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, provider } = router.query;
+  const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  const provider = searchParams.get("provider");
   // store hooks
   const { data: currentUser } = useUser();
 

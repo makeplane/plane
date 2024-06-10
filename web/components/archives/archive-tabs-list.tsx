@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // constants
 import { ARCHIVES_TAB_LIST } from "@/constants/archives";
 // hooks
@@ -9,9 +9,9 @@ import { useProject } from "@/hooks/store";
 
 export const ArchiveTabsList: FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-  const activeTab = router.pathname.split("/").pop();
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+  const activeTab = pathname.split("/").pop();
   // store hooks
   const { getProjectById } = useProject();
 

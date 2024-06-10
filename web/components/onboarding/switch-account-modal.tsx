@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";

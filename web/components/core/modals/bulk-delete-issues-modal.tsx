@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -36,9 +36,8 @@ const projectService = new ProjectService();
 
 export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  // router params
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { getProjectById } = useProject();
   const {

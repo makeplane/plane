@@ -44,6 +44,8 @@ export interface IModule {
   target_date: string | null;
   total_issues: number;
   unstarted_issues: number;
+  total_estimate_points?: number;
+  completed_estimate_points?: number;
   updated_at: string;
   updated_by?: string;
   archived_at: string | null;

@@ -1,11 +1,12 @@
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
+// types
+import { TPublishSettings } from "@plane/types";
 // services
 import PublishService from "@/services/publish.service";
 // store
 import { PublishStore } from "@/store/publish/publish.store";
 // store
-import { TPublishSettings } from "@/types/publish";
 import { RootStore } from "../root.store";
 
 export interface IPublishListStore {

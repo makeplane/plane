@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { IProject, TIssue } from "@plane/types";
@@ -60,8 +60,8 @@ const defaultValues: Partial<TIssue> = {
 export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observer((props) => {
   const { prePopulatedData, quickAddCallback } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
   // hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -123,14 +123,14 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

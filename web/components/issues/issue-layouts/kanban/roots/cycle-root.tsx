@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // components
 import { CycleIssueQuickActions } from "@/components/issues";
 // constants
@@ -14,8 +14,7 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 export interface ICycleKanBanLayout {}
 
 export const CycleKanBanLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
 
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);

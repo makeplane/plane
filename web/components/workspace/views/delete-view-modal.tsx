@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IWorkspaceView } from "@plane/types";
 // ui
@@ -23,8 +23,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { deleteGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();

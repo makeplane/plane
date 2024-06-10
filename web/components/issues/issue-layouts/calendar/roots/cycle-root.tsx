@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 //hooks
 import { CycleIssueQuickActions } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -12,8 +12,7 @@ import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
   const { currentProjectCompletedCycleIds } = useCycle();
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
 
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
 

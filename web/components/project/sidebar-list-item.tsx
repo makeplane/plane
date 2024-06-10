@@ -6,7 +6,7 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // icons
 import {
@@ -123,9 +123,10 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId: URLProjectId } = router.query;
+  // router params
+  const { workspaceSlug, projectId: URLProjectId } = useParams();
+  // pathname
+  const pathname = usePathname();
   // derived values
   const project = getProjectById(projectId);
   // auth
@@ -396,7 +397,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
-                        <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
+                        <div>{project.anchor ? "Publish settings" : "Publish"}</div>
                       </div>
                     </CustomMenu.MenuItem>
                   )}
@@ -477,7 +478,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         >
                           <div
                             className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
-                              router.asPath.includes(item.href)
+                              pathname.includes(item.href)
                                 ? "bg-custom-primary-100/10 text-custom-primary-100"
                                 : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${isCollapsed ? "justify-center" : ""}`}

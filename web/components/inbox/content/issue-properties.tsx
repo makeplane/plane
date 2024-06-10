@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { CalendarCheck2, CopyPlus, Signal, Tag, Users } from "lucide-react";
 import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink, DoubleCircleIcon, Tooltip } from "@plane/ui";

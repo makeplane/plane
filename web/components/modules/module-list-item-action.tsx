@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock, MoveRight, SquareUser } from "lucide-react";
 // types
@@ -29,8 +29,7 @@ type Props = {
 export const ModuleListItemAction: FC<Props> = observer((props) => {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   //   store hooks
   const {
     membership: { currentProjectRole },

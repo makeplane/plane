@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
@@ -11,8 +11,7 @@ import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const CycleSpreadsheetLayout: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { cycleId } = router.query;
+  const { cycleId } = useParams();
   // store hooks
   const { currentProjectCompletedCycleIds } = useCycle();
   const {

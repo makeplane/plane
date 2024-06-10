@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // types
 import { IApiToken } from "@plane/types";
@@ -30,8 +30,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   const [neverExpires, setNeverExpires] = useState<boolean>(false);
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null | undefined>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const handleClose = () => {
     onClose();

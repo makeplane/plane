@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // store hooks
 // icons
 import {
@@ -29,8 +29,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
 
   return (
@@ -61,8 +61,8 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
 };
 
 const UserLink = ({ activity }: { activity: IIssueActivity }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
 
   return (
     <a
@@ -725,8 +725,8 @@ type ActivityMessageProps = {
 };
 
 export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
 
   return (
     <>

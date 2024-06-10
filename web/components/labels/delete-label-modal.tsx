@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import type { IIssueLabel } from "@plane/types";
 // ui
@@ -19,8 +19,7 @@ type Props = {
 export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { deleteLabel } = useLabel();
   // states

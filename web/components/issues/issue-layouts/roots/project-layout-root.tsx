@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { Spinner } from "@plane/ui";
@@ -38,8 +38,7 @@ const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
 
 export const ProjectLayoutRoot: FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 

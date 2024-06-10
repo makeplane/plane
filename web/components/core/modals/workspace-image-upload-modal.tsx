@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
@@ -31,8 +31,8 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // store hooks
   const { config } = useInstance();
   const { currentWorkspace } = useWorkspace();
@@ -55,7 +55,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   };
 
   const handleSubmit = async () => {
-    if (!image || (!workspaceSlug && router.pathname !== "/onboarding")) return;
+    if (!image || (!workspaceSlug && pathname !== "/onboarding")) return;
 
     setIsImageUploading(true);
 

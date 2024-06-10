@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { EditorRefApi } from "@plane/rich-text-editor";
@@ -119,8 +119,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
@@ -420,9 +419,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               />
               <span className="text-xs text-red-500">{errors?.name?.message}</span>
             </div>
-            <div className="border-[0.5px] border-custom-border-200 rounded-lg">
+            <div className="border-[0.5px] border-custom-border-200 rounded-lg relative">
               {data?.description_html === undefined || !projectId ? (
-                <Loader className="min-h-[7rem] space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-2 py-2">
+                <Loader className="min-h-[150px] max-h-64 space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-3 py-2 pt-3">
                   <Loader.Item width="100%" height="26px" />
                   <div className="flex items-center gap-2">
                     <Loader.Item width="26px" height="26px" />
@@ -436,7 +435,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   <div className="flex items-center gap-2">
                     <Loader.Item width="50%" height="26px" />
                   </div>
-                  <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
+                  <div className="border-0.5 absolute bottom-2 right-3.5 z-10 flex items-center gap-2">
                     <Loader.Item width="100px" height="26px" />
                     <Loader.Item width="50px" height="26px" />
                   </div>

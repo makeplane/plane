@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
@@ -30,8 +30,7 @@ export const CreateUpdateLabelInline = observer(
   forwardRef<HTMLFormElement, Props>(function CreateUpdateLabelInline(props, ref) {
     const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
     // router
-    const router = useRouter();
-    const { workspaceSlug, projectId } = router.query;
+    const { workspaceSlug, projectId } = useParams();
     // store hooks
     const { createLabel, updateLabel } = useLabel();
     // form info

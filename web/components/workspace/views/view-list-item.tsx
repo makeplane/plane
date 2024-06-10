@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // ui
@@ -22,8 +22,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
   const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getViewDetailsById } = useGlobalView();
   const { setTrackElement } = useEventTracker();

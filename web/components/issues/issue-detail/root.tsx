@@ -1,6 +1,6 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -56,6 +56,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
   // router
   const router = useRouter();
+  const pathname = usePathname();
   // hooks
   const {
     issue: { getIssueById },
@@ -98,7 +99,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
@@ -108,7 +109,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
           setToast({
             title: "Error!",
@@ -129,7 +130,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -140,7 +141,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -150,13 +151,13 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -170,7 +171,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -185,7 +186,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -199,7 +200,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -214,7 +215,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -240,7 +241,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
@@ -250,7 +251,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -264,7 +265,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -279,7 +280,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -305,7 +306,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
@@ -315,7 +316,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -353,7 +354,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       removeIssueFromModule,
       removeModulesFromIssue,
       captureIssueEvent,
-      router.asPath,
+      pathname,
     ]
   );
 

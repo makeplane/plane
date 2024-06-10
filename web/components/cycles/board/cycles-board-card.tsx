@@ -1,7 +1,7 @@
 import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight } from "lucide-react";
 // types
 import type { TCycleGroups } from "@plane/types";
@@ -16,6 +16,7 @@ import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -32,6 +33,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const parentRef = useRef(null);
   // router
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   // store
   const { captureEvent } = useEventTracker();
   const {
@@ -130,21 +133,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {
-    const { query } = router;
     e.preventDefault();
     e.stopPropagation();
 
-    if (query.peekCycle) {
-      delete query.peekCycle;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
+    const query = generateQueryParams(searchParams, ['peekCycle']);
+    if (searchParams.has('peekCycle')) {
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekCycle: cycleId },
-      });
+      router.push(`${pathname}?${query}&peekCycle=${cycleId}`);
     }
   };
 

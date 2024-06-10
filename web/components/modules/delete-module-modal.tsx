@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // types
 import type { IModule } from "@plane/types";
 // ui
@@ -24,7 +24,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
+  const { workspaceSlug, projectId, moduleId, peekModule } = useParams();
   // store hooks
   const { captureModuleEvent } = useEventTracker();
   const { deleteModule } = useModule();

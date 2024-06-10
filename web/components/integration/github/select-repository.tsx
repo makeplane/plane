@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
 import { IWorkspaceIntegration } from "@plane/types";
 // services
@@ -23,8 +23,7 @@ const projectService = new ProjectService();
 export const SelectRepository: React.FC<Props> = (props) => {
   const { integration, value, label, onChange, characterLimit = 25 } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const getKey = (pageIndex: number) => {
     if (!workspaceSlug || !integration) return;

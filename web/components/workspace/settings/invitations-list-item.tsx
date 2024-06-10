@@ -1,6 +1,6 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { ChevronDown, XCircle } from "lucide-react";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
@@ -21,8 +21,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     membership: { currentWorkspaceMemberInfo, currentWorkspaceRole },

@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -21,7 +21,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   // store hooks
   const { removeWebhook } = useWebhook();
 
-  const { workspaceSlug, webhookId } = router.query;
+  const { workspaceSlug, webhookId } = useParams();
 
   const handleClose = () => {
     onClose();

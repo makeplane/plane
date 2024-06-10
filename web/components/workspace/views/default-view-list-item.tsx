@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 
@@ -9,8 +9,7 @@ type Props = { view: { key: string; label: string } };
 export const GlobalDefaultViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   return (
     <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">

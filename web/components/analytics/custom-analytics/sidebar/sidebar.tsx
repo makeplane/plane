@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // icons
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
@@ -31,8 +31,7 @@ const analyticsService = new AnalyticsService();
 export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { analytics, params, isProjectLevel = false } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { workspaceProjectIds, getProjectById } = useProject();

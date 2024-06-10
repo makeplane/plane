@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
@@ -30,7 +30,9 @@ const IntegrationGuide = observer(() => {
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
   // router
   const router = useRouter();
-  const { workspaceSlug, provider } = router.query;
+  const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  const provider = searchParams.get("provider");
   // store hooks
   const { data: currentUser } = useUser();
 

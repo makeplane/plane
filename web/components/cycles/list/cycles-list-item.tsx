@@ -1,6 +1,6 @@
 import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // icons
 import { Check, Info } from "lucide-react";
 // types
@@ -10,6 +10,8 @@ import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 import { CycleListItemAction } from "@/components/cycles/list";
+// helpers
+import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -31,6 +33,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const parentRef = useRef(null);
   // router
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks
@@ -59,21 +63,14 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
   // handlers
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-    const { query } = router;
     e.preventDefault();
     e.stopPropagation();
 
-    if (query.peekCycle) {
-      delete query.peekCycle;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
+    const query = generateQueryParams(searchParams, ["peekCycle"]);
+    if (searchParams.has("peekCycle")) {
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekCycle: cycleId },
-      });
+      router.push(`${pathname}?${query}&peekCycle=${cycleId}`);
     }
   };
 

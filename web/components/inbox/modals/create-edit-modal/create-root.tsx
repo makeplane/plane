@@ -1,6 +1,6 @@
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 // editor
 import { EditorRefApi } from "@plane/rich-text-editor";
 // types
@@ -41,6 +41,7 @@ export const defaultIssueData: Partial<TIssue> = {
 export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
   const { workspaceSlug, projectId, handleModalClose } = props;
   const router = useRouter();
+  const pathname = usePathname();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -117,7 +118,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             state: "SUCCESS",
             element: "Inbox page",
           },
-          path: router.pathname,
+          path: pathname,
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -134,7 +135,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             state: "FAILED",
             element: "Inbox page",
           },
-          path: router.pathname,
+          path: pathname,
         });
         setToast({
           type: TOAST_TYPE.ERROR,

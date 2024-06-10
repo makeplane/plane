@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -67,7 +69,8 @@ export const CommandModal: React.FC = observer(() => {
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  // router params
+  const { workspaceSlug, projectId, issueId } = useParams();
 
   const page = pages[pages.length - 1];
 

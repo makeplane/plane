@@ -34,7 +34,7 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
       </div>
       <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
       <div className="flex items-center justify-between gap-2 mt-4 px-4 pt-4 pb-2 border-t border-custom-border-100">
-        <div className="text-sm text-custom-text-300 font-medium">
+        <div className="flex gap-1 text-sm text-custom-text-300 font-medium">
           Congrats! Project <Logo logo={currentProjectDetails.logo_props} />{" "}
           <p className="break-all">{currentProjectDetails.name}</p> created.
         </div>
