@@ -2,18 +2,15 @@
 import json
 
 # Django imports
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (
     F,
     Func,
     OuterRef,
     Q,
-    UUIDField,
-    Value,
+    Prefetch,
+    Exists,
 )
-from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -28,12 +25,15 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     IssueFlatSerializer,
     IssueSerializer,
+    IssueDetailSerializer
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
     IssueLink,
+    IssueSubscriber,
+    IssueReaction,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -49,7 +49,6 @@ from plane.utils.paginator import (
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
-
 
 
 class IssueArchiveViewSet(BaseViewSet):
@@ -216,34 +215,45 @@ class IssueArchiveViewSet(BaseViewSet):
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+            .filter(pk=pk)
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related(
+                        "issue", "actor"
                     ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
+                )
             )
-        )
+            .prefetch_related(
+                Prefetch(
+                    "issue_attachment",
+                    queryset=IssueAttachment.objects.select_related("issue"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(

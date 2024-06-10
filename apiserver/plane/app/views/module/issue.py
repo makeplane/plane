@@ -45,7 +45,6 @@ from plane.utils.paginator import (
 
 # Module imports
 from .. import BaseViewSet
-from plane.utils.user_timezone_converter import user_timezone_converter
 
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
@@ -203,12 +202,6 @@ class ModuleIssueViewSet(BaseViewSet):
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
             )
-            datetime_fields = ["created_at", "updated_at"]
-            issues = user_timezone_converter(
-                issues, datetime_fields, request.user.user_timezone
-            )
-
-        return Response(issues, status=status.HTTP_200_OK)
 
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):
