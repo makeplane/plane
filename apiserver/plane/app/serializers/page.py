@@ -84,7 +84,6 @@ class PageSerializer(BaseSerializer):
                     PageLabel(
                         label=label,
                         page=page,
-                        project_id=project_id,
                         workspace_id=page.workspace_id,
                         created_by_id=page.created_by_id,
                         updated_by_id=page.updated_by_id,
@@ -104,7 +103,6 @@ class PageSerializer(BaseSerializer):
                     PageLabel(
                         label=label,
                         page=instance,
-                        project_id=instance.project_id,
                         workspace_id=instance.workspace_id,
                         created_by_id=instance.created_by_id,
                         updated_by_id=instance.updated_by_id,

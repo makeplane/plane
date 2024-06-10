@@ -389,7 +389,6 @@ class SubPagesEndpoint(BaseAPIView):
         pages = (
             PageLog.objects.filter(
                 page_id=page_id,
-                project_id=project_id,
                 workspace__slug=slug,
                 entity_name__in=["forward_link", "back_link"],
             )

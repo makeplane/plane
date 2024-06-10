@@ -33,7 +33,7 @@ def migrate_pages(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0066_account_id_token_cycle_logo_props_module_logo_props"),
+        ("db", "0067_issue_estimate"),
     ]
 
     operations = [
@@ -225,6 +225,32 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="pages",
+                to="db.workspace",
+            ),
+        ),
+        migrations.RemoveField(
+            model_name="pagelabel",
+            name="project",
+        ),
+        migrations.RemoveField(
+            model_name="pagelog",
+            name="project",
+        ),
+        migrations.AlterField(
+            model_name="pagelabel",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_page_label",
+                to="db.workspace",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="pagelog",
+            name="workspace",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="workspace_page_log",
                 to="db.workspace",
             ),
         ),

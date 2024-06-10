@@ -67,7 +67,7 @@ class Page(BaseModel):
         return f"{self.owned_by.email} <{self.name}>"
 
 
-class PageLog(ProjectBaseModel):
+class PageLog(BaseModel):
     TYPE_CHOICES = (
         ("to_do", "To Do"),
         ("issue", "issue"),
@@ -91,6 +91,9 @@ class PageLog(ProjectBaseModel):
         max_length=30,
         choices=TYPE_CHOICES,
         verbose_name="Transaction Type",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )
 
     class Meta:
@@ -182,12 +185,17 @@ class PageFavorite(ProjectBaseModel):
         return f"{self.user.email} <{self.page.name}>"
 
 
-class PageLabel(ProjectBaseModel):
+class PageLabel(BaseModel):
     label = models.ForeignKey(
         "db.Label", on_delete=models.CASCADE, related_name="page_labels"
     )
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, related_name="page_labels"
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_page_label",
     )
 
     class Meta:
