@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";

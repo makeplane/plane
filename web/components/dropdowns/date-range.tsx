@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { DateRange, DayPicker, Matcher } from "react-day-picker";

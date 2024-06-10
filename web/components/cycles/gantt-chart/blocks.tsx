@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

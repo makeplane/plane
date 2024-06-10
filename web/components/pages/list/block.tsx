@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";

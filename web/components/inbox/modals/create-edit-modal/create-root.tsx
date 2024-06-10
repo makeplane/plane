@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter } from "next/navigation";

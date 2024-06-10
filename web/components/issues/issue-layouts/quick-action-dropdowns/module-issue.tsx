@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";

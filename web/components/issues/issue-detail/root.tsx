@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter } from "next/navigation";

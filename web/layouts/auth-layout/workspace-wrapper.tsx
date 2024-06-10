@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";

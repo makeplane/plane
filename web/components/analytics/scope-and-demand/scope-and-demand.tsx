@@ -1,14 +1,13 @@
+"use client";
 import { useParams } from "next/navigation";
-
 import useSWR from "swr";
-
-// services
-// components
-import { Button, Loader } from "@plane/ui";
-import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
 // ui
+import { Button, Loader } from "@plane/ui";
+// components
+import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "@/constants/fetch-keys";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {

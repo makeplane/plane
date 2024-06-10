@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useMemo } from "react";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 // ui

@@ -1,8 +1,7 @@
 "use client";
-
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
 // components
+import { useParams, useSearchParams } from "next/navigation";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { InboxIssueRoot } from "@/components/inbox";
@@ -16,9 +15,12 @@ import { useProject } from "@/hooks/store";
 const ProjectInboxPage = observer(() => {
   /// router
   const { workspaceSlug, projectId } = useParams();
+
   const searchParams = useSearchParams();
+
   const navigationTab = searchParams.get("currentTab");
   const inboxIssueId = searchParams.get("inboxIssueId");
+
   // hooks
   const { currentProjectDetails } = useProject();
 

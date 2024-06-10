@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -106,13 +108,13 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
             ref={containerRef}
           >
-              {filteredInboxIssueIds.length > 0 ? (
+            {filteredInboxIssueIds.length > 0 ? (
               <InboxIssueList
                 setIsMobileSidebar={setIsMobileSidebar}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
-                  inboxIssueIds={filteredInboxIssueIds}
+                inboxIssueIds={filteredInboxIssueIds}
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full">
@@ -128,14 +130,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 />
               </div>
             )}
-              <div ref={setElementRef}>
-                {inboxIssuePaginationInfo?.next_page_results && (
+            <div ref={setElementRef}>
+              {inboxIssuePaginationInfo?.next_page_results && (
                 <Loader className="mx-auto w-full space-y-4 py-4 px-2">
                   <Loader.Item height="64px" width="w-100" />
                   <Loader.Item height="64px" width="w-100" />
                 </Loader>
-                )}
-              </div>
+              )}
+            </div>
           </div>
         )}
       </div>

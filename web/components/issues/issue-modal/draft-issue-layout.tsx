@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";

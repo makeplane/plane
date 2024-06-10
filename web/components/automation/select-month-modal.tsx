@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useParams } from "next/navigation";
 // react-hook-form

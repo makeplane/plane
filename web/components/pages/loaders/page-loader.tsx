@@ -1,3 +1,5 @@
+"use client";
+
 import { Loader } from "@plane/ui";
 
 export const PageLoader: React.FC = (props) => {

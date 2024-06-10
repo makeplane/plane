@@ -1,3 +1,5 @@
+"use client";
+
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";

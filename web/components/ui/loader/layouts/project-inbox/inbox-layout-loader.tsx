@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 // ui
 import { Loader } from "@plane/ui";

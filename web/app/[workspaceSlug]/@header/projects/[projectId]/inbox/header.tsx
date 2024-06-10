@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -43,9 +45,7 @@ const ProjectInboxHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={
-                <BreadcrumbLink label="Inbox" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              link={<BreadcrumbLink label="Inbox" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
 

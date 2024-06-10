@@ -1,16 +1,17 @@
+"use client";
+
 import { useParams } from "next/navigation";
 import { mutate } from "swr";
-import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
-
-// components
-import { Button, Loader } from "@plane/ui";
-import { AnalyticsGraph, AnalyticsTable } from "@/components/analytics";
-// ui
-// helpers
-import { ANALYTICS } from "@/constants/fetch-keys";
-import { convertResponseToBarGraphData } from "@/helpers/analytics.helper";
 // types
+import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
+// ui
+import { Button, Loader } from "@plane/ui";
+// components
+import { AnalyticsGraph, AnalyticsTable } from "@/components/analytics";
 // fetch-keys
+import { ANALYTICS } from "@/constants/fetch-keys";
+// helpers
+import { convertResponseToBarGraphData } from "@/helpers/analytics.helper";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;

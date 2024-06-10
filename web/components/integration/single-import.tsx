@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { Trash2 } from "lucide-react";
 import { IImporterService } from "@plane/types";

@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { StateGroupIcon } from "@plane/ui";
 

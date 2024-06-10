@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";

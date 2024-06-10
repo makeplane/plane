@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, Briefcase, X, ListFilter } from "lucide-react";

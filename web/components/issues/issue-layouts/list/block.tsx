@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";

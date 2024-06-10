@@ -1,3 +1,5 @@
+"use client";
+
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { IGithubRepoCollaborator } from "@plane/types";

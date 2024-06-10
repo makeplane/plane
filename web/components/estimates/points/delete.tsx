@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";

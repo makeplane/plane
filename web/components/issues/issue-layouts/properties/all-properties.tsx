@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useMemo } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
@@ -44,10 +46,6 @@ export interface IIssueProperties {
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = useParams();
-  const pathname = usePathname();
   const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -64,6 +62,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
 
   const currentLayout = `${activeLayout} layout`;
   // derived values

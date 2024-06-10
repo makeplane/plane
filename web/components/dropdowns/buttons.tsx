@@ -1,3 +1,5 @@
+"use client";
+
 // helpers
 import { Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";

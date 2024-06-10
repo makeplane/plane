@@ -1,3 +1,4 @@
+"use client";
 import { Fragment } from "react";
 
 import { DayPicker } from "react-day-picker";

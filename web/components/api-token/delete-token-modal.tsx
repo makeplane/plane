@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, FC } from "react";
 import { useParams } from "next/navigation";
 import { mutate } from "swr";

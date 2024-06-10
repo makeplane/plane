@@ -3,7 +3,6 @@ import Script from "next/script";
 // styles
 import "@/styles/globals.css";
 import "@/styles/command-pallette.css";
-import "@/styles/nprogress.css";
 import "@/styles/emoji.css";
 import "@/styles/react-day-picker.css";
 // local

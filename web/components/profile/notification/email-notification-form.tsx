@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { IUserEmailNotificationSettings } from "@plane/types";

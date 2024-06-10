@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 
 // react-hook-form

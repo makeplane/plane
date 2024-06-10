@@ -1,6 +1,7 @@
+"use client";
+
 import { useParams } from "next/navigation";
 import { IAnalyticsParams, TXAxisValues } from "@plane/types";
-
 // ui
 import { CustomSelect } from "@plane/ui";
 
