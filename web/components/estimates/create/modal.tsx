@@ -28,6 +28,8 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   // states
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
+  const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
+  const [estimatePointCreateError, setEstimatePointCreateError] = useState<number[]>([]);
   const [buttonLoader, setButtonLoader] = useState(false);
 
   const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
@@ -40,33 +42,39 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   }, [isOpen]);
 
   const handleCreateEstimate = async () => {
-    try {
-      if (!workspaceSlug || !projectId || !estimatePoints) return;
-      setButtonLoader(true);
-      const payload: IEstimateFormData = {
-        estimate: {
-          name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
-          type: estimateSystem,
-          last_used: true,
-        },
-        estimate_points: estimatePoints,
-      };
-      await createEstimate(workspaceSlug, projectId, payload);
+    setEstimatePointCreateError([]);
+    if (estimatePointCreate === undefined || estimatePointCreate?.length === 0) {
+      try {
+        if (!workspaceSlug || !projectId || !estimatePoints) return;
 
-      setButtonLoader(false);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Estimate created",
-        message: "A new estimate has been added in your project.",
-      });
-      handleClose();
-    } catch (error) {
-      setButtonLoader(false);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Estimate creation failed",
-        message: "We were unable to create the new estimate, please try again.",
-      });
+        setButtonLoader(true);
+        const payload: IEstimateFormData = {
+          estimate: {
+            name: ESTIMATE_SYSTEMS[estimateSystem]?.name,
+            type: estimateSystem,
+            last_used: true,
+          },
+          estimate_points: estimatePoints,
+        };
+        await createEstimate(workspaceSlug, projectId, payload);
+
+        setButtonLoader(false);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Estimate created",
+          message: "A new estimate has been added in your project.",
+        });
+        handleClose();
+      } catch (error) {
+        setButtonLoader(false);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Estimate creation failed",
+          message: "We were unable to create the new estimate, please try again.",
+        });
+      }
+    } else {
+      setEstimatePointCreateError(estimatePointCreate.map((point) => point.key));
     }
   };
 
@@ -74,7 +82,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <div className="relative space-y-6 py-5">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-2 px-5">
@@ -90,7 +98,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
                 <ChevronLeft className="w-4 h-4" />
               </div>
             )}
-            <div className="text-xl font-medium text-custom-text-100">New Estimate System</div>
+            <div className="text-xl font-medium text-custom-text-100">New estimate system</div>
           </div>
           <div className="text-xs text-gray-400">Step {renderEstimateStepsCount} of 2</div>
         </div>
@@ -107,16 +115,26 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             />
           )}
           {estimatePoints && (
-            <>
-              <EstimatePointCreateRoot
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                estimateId={undefined}
-                estimateType={estimateSystem}
-                estimatePoints={estimatePoints}
-                setEstimatePoints={setEstimatePoints}
-              />
-            </>
+            <EstimatePointCreateRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              estimateId={undefined}
+              estimateType={estimateSystem}
+              estimatePoints={estimatePoints}
+              setEstimatePoints={setEstimatePoints}
+              estimatePointCreate={estimatePointCreate}
+              setEstimatePointCreate={(value) => {
+                setEstimatePointCreateError([]);
+                setEstimatePointCreate(value);
+              }}
+              estimatePointCreateError={estimatePointCreateError}
+            />
+          )}
+          {estimatePointCreateError.length > 0 && (
+            <div className="pt-5 text-sm text-red-500">
+              Estimate points can&apos;t be empty. Enter a value in each field or remove those you don&apos;t have
+              values for.
+            </div>
           )}
         </div>
 

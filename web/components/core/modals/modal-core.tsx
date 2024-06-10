@@ -17,7 +17,7 @@ export enum EModalWidth {
 
 type Props = {
   children: React.ReactNode;
-  handleClose: () => void;
+  handleClose?: () => void;
   isOpen: boolean;
   position?: EModalPosition;
   width?: EModalWidth;
@@ -27,7 +27,7 @@ export const ModalCore: React.FC<Props> = (props) => {
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={() => handleClose && handleClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

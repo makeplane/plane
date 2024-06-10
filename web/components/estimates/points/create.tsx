@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, MouseEvent, FocusEvent, useState } from "react";
+import { FC, useState, FormEvent, useEffect } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
@@ -21,6 +21,8 @@ type TEstimatePointCreate = {
   estimatePoints: TEstimatePointsObject[];
   handleEstimatePointValue?: (estimateValue: string) => void;
   closeCallBack: () => void;
+  handleCreateCallback: () => void;
+  isError: boolean;
 };
 
 export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) => {
@@ -32,6 +34,8 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
     estimatePoints,
     handleEstimatePointValue,
     closeCallBack,
+    handleCreateCallback,
+    isError,
   } = props;
   // hooks
   const { creteEstimatePoint } = useEstimate(estimateId);
@@ -39,6 +43,13 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
   const [estimateInputValue, setEstimateInputValue] = useState("");
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (isError && error === undefined && estimateInputValue.length > 0) {
+      setError("Confirm this value first or discard it.");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
 
   const handleSuccess = (value: string) => {
     handleEstimatePointValue && handleEstimatePointValue(value);
@@ -51,7 +62,12 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
     closeCallBack();
   };
 
-  const handleCreate = async (event: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLInputElement, Element>) => {
+  const handleEstimateInputValue = (value: string) => {
+    setError(undefined);
+    setEstimateInputValue(value);
+  };
+
+  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!workspaceSlug || !projectId) return;
@@ -110,6 +126,9 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
             }
           } else {
             handleSuccess(estimateInputValue);
+            if (handleCreateCallback) {
+              handleCreateCallback();
+            }
           }
         } else {
           setLoader(false);
@@ -124,7 +143,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
   };
 
   return (
-    <form className="relative flex items-center gap-2 text-base">
+    <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base">
       <div
         className={cn(
           "relative w-full border rounded flex items-center my-1",
@@ -134,42 +153,37 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         <input
           type="text"
           value={estimateInputValue}
-          onChange={(e) => setEstimateInputValue(e.target.value)}
+          onChange={(e) => handleEstimateInputValue(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           placeholder="Enter estimate point"
           autoFocus
-          onBlur={(e) => !estimateId && handleCreate(e)}
         />
         {error && (
-          <>
-            <Tooltip tooltipContent={error} position="bottom">
-              <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
-                <Info size={14} />
-              </div>
-            </Tooltip>
-          </>
+          <Tooltip tooltipContent={error} position="bottom">
+            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+              <Info size={14} />
+            </div>
+          </Tooltip>
         )}
       </div>
 
-      {estimateId && (
-        <>
-          <button
-            type="submit"
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
-            disabled={loader}
-            onClick={handleCreate}
-          >
-            {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
-          </button>
-          <button
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
-            onClick={handleClose}
-            disabled={loader}
-          >
-            <X size={14} className="text-custom-text-200" />
-          </button>
-        </>
+      {estimateInputValue && estimateInputValue.length > 0 && (
+        <button
+          type="submit"
+          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+          disabled={loader}
+        >
+          {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
+        </button>
       )}
+      <button
+        type="button"
+        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        onClick={handleClose}
+        disabled={loader}
+      >
+        <X size={14} className="text-custom-text-200" />
+      </button>
     </form>
   );
 });
