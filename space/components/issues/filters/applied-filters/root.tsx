@@ -12,18 +12,18 @@ import { TIssueQueryFilters } from "@/types/issue";
 import { AppliedFiltersList } from "./filters-list";
 
 type TIssueAppliedFilters = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
 };
 
 export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) => {
+  const { anchor } = props;
+  // router
   const router = useRouter();
-  // props
-  const { workspaceSlug, projectId } = props;
-  // hooks
-  const { issueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
+  // store hooks
+  const { getIssueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
   const { states, labels } = useIssue();
-
+  // derived values
+  const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
   const userFilters = issueFilters?.filters || {};
 
@@ -46,30 +46,26 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
       if (labels.length > 0) params = { ...params, labels: labels.join(",") };
       params = new URLSearchParams(params).toString();
 
-      router.push(`/${workspaceSlug}/${projectId}?${params}`);
+      router.push(`/issues/${anchor}?${params}`);
     },
-    [workspaceSlug, projectId, activeLayout, issueFilters, router]
+    [activeLayout, anchor, issueFilters, router]
   );
 
   const handleFilters = useCallback(
     (key: keyof TIssueQueryFilters, value: string | null) => {
-      if (!projectId) return;
-
       let newValues = cloneDeep(issueFilters?.filters?.[key]) ?? [];
 
       if (value === null) newValues = [];
       else if (newValues.includes(value)) newValues.splice(newValues.indexOf(value), 1);
 
-      updateIssueFilters(projectId, "filters", key, newValues);
+      updateIssueFilters(anchor, "filters", key, newValues);
       updateRouteParams(key, newValues);
     },
-    [projectId, issueFilters, updateIssueFilters, updateRouteParams]
+    [anchor, issueFilters, updateIssueFilters, updateRouteParams]
   );
 
   const handleRemoveAllFilters = () => {
-    if (!projectId) return;
-
-    initIssueFilters(projectId, {
+    initIssueFilters(anchor, {
       display_filters: { layout: activeLayout || "list" },
       filters: {
         state: [],
@@ -78,13 +74,13 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
       },
     });
 
-    router.push(`/${workspaceSlug}/${projectId}?${`board=${activeLayout || "list"}`}`);
+    router.push(`/issues/${anchor}?${`board=${activeLayout || "list"}`}`);
   };
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="border-b border-custom-border-200 p-5 py-3">
+    <div className="border-b border-custom-border-200 bg-custom-background-100 p-4">
       <AppliedFiltersList
         appliedFilters={appliedFilters || {}}
         handleRemoveFilter={handleFilters as any}

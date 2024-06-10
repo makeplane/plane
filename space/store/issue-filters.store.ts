@@ -1,7 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import set from "lodash/set";
-import { action, makeObservable, observable, runInAction, computed } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
@@ -19,16 +19,17 @@ import {
 export interface IIssueFilterStore {
   // observables
   layoutOptions: TIssueLayoutOptions;
-  filters: { [projectId: string]: TIssueFilters } | undefined;
+  filters: { [anchor: string]: TIssueFilters } | undefined;
   // computed
-  issueFilters: TIssueFilters | undefined;
-  appliedFilters: TIssueQueryFiltersParams | undefined;
-  isIssueFiltersUpdated: (filters: TIssueFilters) => boolean;
+  isIssueFiltersUpdated: (anchor: string, filters: TIssueFilters) => boolean;
+  // helpers
+  getIssueFilters: (anchor: string) => TIssueFilters | undefined;
+  getAppliedFilters: (anchor: string) => TIssueQueryFiltersParams | undefined;
   // actions
   updateLayoutOptions: (layout: TIssueLayoutOptions) => void;
-  initIssueFilters: (projectId: string, filters: TIssueFilters) => void;
+  initIssueFilters: (anchor: string, filters: TIssueFilters) => void;
   updateIssueFilters: <K extends keyof TIssueFilters>(
-    projectId: string,
+    anchor: string,
     filterKind: K,
     filterKey: keyof TIssueFilters[K],
     filters: TIssueFilters[K][typeof filterKey]
@@ -44,16 +45,13 @@ export class IssueFilterStore implements IIssueFilterStore {
     gantt: false,
     spreadsheet: false,
   };
-  filters: { [projectId: string]: TIssueFilters } | undefined = undefined;
+  filters: { [anchor: string]: TIssueFilters } | undefined = undefined;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       layoutOptions: observable,
       filters: observable,
-      // computed
-      issueFilters: computed,
-      appliedFilters: computed,
       // actions
       updateLayoutOptions: action,
       initIssueFilters: action,
@@ -82,79 +80,70 @@ export class IssueFilterStore implements IIssueFilterStore {
   };
 
   // computed
-  get issueFilters() {
-    const projectId = this.store.project.project?.id;
-    if (!projectId) return undefined;
-
-    const currentFilters = this.filters?.[projectId];
-    if (!currentFilters) return undefined;
-
+  getIssueFilters = computedFn((anchor: string) => {
+    const currentFilters = this.filters?.[anchor];
     return currentFilters;
-  }
+  });
 
-  get appliedFilters() {
-    const currentIssueFilters = this.issueFilters;
-    if (!currentIssueFilters) return undefined;
+  getAppliedFilters = computedFn((anchor: string) => {
+    const issueFilters = this.getIssueFilters(anchor);
+    if (!issueFilters) return undefined;
 
-    const currentLayout = currentIssueFilters?.display_filters?.layout;
+    const currentLayout = issueFilters?.display_filters?.layout;
     if (!currentLayout) return undefined;
 
     const currentFilters: TIssueQueryFilters = {
-      priority: currentIssueFilters?.filters?.priority || undefined,
-      state: currentIssueFilters?.filters?.state || undefined,
-      labels: currentIssueFilters?.filters?.labels || undefined,
+      priority: issueFilters?.filters?.priority || undefined,
+      state: issueFilters?.filters?.state || undefined,
+      labels: issueFilters?.filters?.labels || undefined,
     };
     const filteredParams = ISSUE_DISPLAY_FILTERS_BY_LAYOUT?.[currentLayout]?.filters || [];
     const currentFilterQueryParams: TIssueQueryFiltersParams = this.computedFilter(currentFilters, filteredParams);
 
     return currentFilterQueryParams;
-  }
+  });
 
-  isIssueFiltersUpdated = computedFn((userFilters: TIssueFilters) => {
-    if (!this.issueFilters) return false;
+  isIssueFiltersUpdated = computedFn((anchor: string, userFilters: TIssueFilters) => {
+    const issueFilters = this.getIssueFilters(anchor);
+    if (!issueFilters) return false;
     const currentUserFilters = cloneDeep(userFilters?.filters || {});
-    const currentIssueFilters = cloneDeep(this.issueFilters?.filters || {});
+    const currentIssueFilters = cloneDeep(issueFilters?.filters || {});
     return isEqual(currentUserFilters, currentIssueFilters);
   });
 
   // actions
   updateLayoutOptions = (options: TIssueLayoutOptions) => set(this, ["layoutOptions"], options);
 
-  initIssueFilters = async (projectId: string, initFilters: TIssueFilters) => {
+  initIssueFilters = async (anchor: string, initFilters: TIssueFilters) => {
     try {
-      if (!projectId) return;
       if (this.filters === undefined) runInAction(() => (this.filters = {}));
-      if (this.filters && initFilters) set(this.filters, [projectId], initFilters);
+      if (this.filters && initFilters) set(this.filters, [anchor], initFilters);
 
-      const workspaceSlug = this.store.project.workspace?.slug;
-      const currentAppliedFilters = this.appliedFilters;
+      const appliedFilters = this.getAppliedFilters(anchor);
 
-      if (!workspaceSlug) return;
-      await this.store.issue.fetchPublicIssues(workspaceSlug, projectId, currentAppliedFilters);
+      await this.store.issue.fetchPublicIssues(anchor, appliedFilters);
     } catch (error) {
       throw error;
     }
   };
 
   updateIssueFilters = async <K extends keyof TIssueFilters>(
-    projectId: string,
+    anchor: string,
     filterKind: K,
     filterKey: keyof TIssueFilters[K],
     filterValue: TIssueFilters[K][typeof filterKey]
   ) => {
     try {
-      if (!projectId || !filterKind || !filterKey || !filterValue) return;
+      if (!filterKind || !filterKey || !filterValue) return;
       if (this.filters === undefined) runInAction(() => (this.filters = {}));
 
       runInAction(() => {
-        if (this.filters) set(this.filters, [projectId, filterKind, filterKey], filterValue);
+        if (this.filters) set(this.filters, [anchor, filterKind, filterKey], filterValue);
       });
 
-      const workspaceSlug = this.store.project.workspace?.slug;
-      const currentAppliedFilters = this.appliedFilters;
+      const appliedFilters = this.getAppliedFilters(anchor);
 
-      if (!workspaceSlug) return;
-      await this.store.issue.fetchPublicIssues(workspaceSlug, projectId, currentAppliedFilters);
+      await this.store.issue.fetchPublicIssues(anchor, appliedFilters);
     } catch (error) {
       throw error;
     }

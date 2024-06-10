@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, Fragment } from "react";
+import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
 import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
@@ -196,7 +196,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
         <Popover.Panel
           as="div"
           className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
-          ref={setPopperElement}
+          ref={setPopperElement as Ref<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
         >

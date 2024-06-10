@@ -165,6 +165,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, project_id, pk=None):
+        plot_type = request.GET.get("plot_type", "issues")
         if pk is None:
             queryset = self.get_queryset()
             modules = queryset.values(  # Required fields
@@ -323,6 +324,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     queryset=modules,
                     slug=slug,
                     project_id=project_id,
+                    plot_type=plot_type,
                     module_id=pk,
                 )
 

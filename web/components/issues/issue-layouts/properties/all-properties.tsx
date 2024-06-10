@@ -26,7 +26,7 @@ import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
-import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState, useProject } from "@/hooks/store";
+import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "../properties/labels";
@@ -42,6 +42,9 @@ export interface IIssueProperties {
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
   const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -53,13 +56,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
   } = useIssues(EIssuesStoreType.CYCLE);
-  const { areEstimatesEnabledForCurrentProject } = useEstimate();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
@@ -220,7 +220,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       );
   };
 
-  const handleEstimate = (value: number | null) => {
+  const handleEstimate = (value: string | undefined) => {
     updateIssue &&
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
@@ -394,11 +394,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       )}
 
       {/* estimates */}
-      {areEstimatesEnabledForCurrentProject && (
+      {projectId && areEstimateEnabledByProjectId(projectId?.toString()) && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
           <div className="h-5" onClick={handleEventPropagation}>
             <EstimateDropdown
-              value={issue.estimate_point}
+              value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
               projectId={issue.project_id}
               disabled={isReadOnly}

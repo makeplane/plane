@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, Ref, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -263,8 +263,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
           >
             <Menu.Items
               className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
-          divide-custom-sidebar-border-200 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
-              ref={setPopperElement}
+            divide-custom-sidebar-border-200 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+              ref={setPopperElement as Ref<HTMLDivElement>}
               style={styles.popper}
               {...attributes.popper}
             >

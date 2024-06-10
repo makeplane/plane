@@ -396,7 +396,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
-                        <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
+                        <div>{project.anchor ? "Publish settings" : "Publish"}</div>
                       </div>
                     </CustomMenu.MenuItem>
                   )}

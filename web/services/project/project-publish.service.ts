@@ -1,42 +1,43 @@
+// types
+import { TPublishSettings } from "@plane/types";
+// helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
-// types
-import { IProjectPublishSettings } from "@/store/project/project-publish.store";
 
 export class ProjectPublishService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getProjectSettingsAsync(workspace_slug: string, project_slug: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`)
+  async fetchPublishSettings(workspaceSlug: string, projectID: string): Promise<TPublishSettings> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async createProjectSettingsAsync(
-    workspace_slug: string,
-    project_slug: string,
-    data: IProjectPublishSettings
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`, data)
+  async publishProject(
+    workspaceSlug: string,
+    projectID: string,
+    data: Partial<TPublishSettings>
+  ): Promise<TPublishSettings> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateProjectSettingsAsync(
-    workspace_slug: string,
-    project_slug: string,
+  async updatePublishSettings(
+    workspaceSlug: string,
+    projectID: string,
     project_publish_id: string,
-    data: IProjectPublishSettings
-  ): Promise<any> {
+    data: Partial<TPublishSettings>
+  ): Promise<TPublishSettings> {
     return this.patch(
-      `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/${project_publish_id}/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`,
       data
     )
       .then((response) => response?.data)
@@ -45,13 +46,9 @@ export class ProjectPublishService extends APIService {
       });
   }
 
-  async deleteProjectSettingsAsync(
-    workspace_slug: string,
-    project_slug: string,
-    project_publish_id: string
-  ): Promise<any> {
+  async unpublishProject(workspaceSlug: string, projectID: string, project_publish_id: string): Promise<any> {
     return this.delete(
-      `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/${project_publish_id}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

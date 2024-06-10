@@ -141,7 +141,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
+                showAccessSpecifier={!!project.anchor}
                 disabled={disabled}
               />
               {!disabled && (
@@ -150,7 +150,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
                   activityOperations={activityOperations}
-                  showAccessSpecifier={project.is_deployed}
+                  showAccessSpecifier={!!project.anchor}
                 />
               )}
             </div>
@@ -161,7 +161,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 workspaceSlug={workspaceSlug}
                 issueId={issueId}
                 activityOperations={activityOperations}
-                showAccessSpecifier={project.is_deployed}
+                showAccessSpecifier={!!project.anchor}
                 disabled={disabled}
               />
               {!disabled && (
@@ -170,7 +170,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
                   activityOperations={activityOperations}
-                  showAccessSpecifier={project.is_deployed}
+                  showAccessSpecifier={!!project.anchor}
                 />
               )}
             </div>

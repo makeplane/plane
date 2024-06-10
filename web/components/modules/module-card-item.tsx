@@ -10,13 +10,14 @@ import { FavoriteStar } from "@/components/core";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
+import { EEstimateSystem } from "@/constants/estimates";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -37,6 +38,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
+  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
+
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -120,14 +123,30 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   if (!moduleDetails) return null;
 
-  const moduleTotalIssues =
-    moduleDetails.backlog_issues +
-    moduleDetails.unstarted_issues +
-    moduleDetails.started_issues +
-    moduleDetails.completed_issues +
-    moduleDetails.cancelled_issues;
+  /**
+   * NOTE: This completion percentage calculation is based on the total issues count.
+   * when estimates are available and estimate type is points, we should consider the estimate point count
+   * when estimates are available and estimate type is not points, then by default we consider the issue count
+   */
+  const isEstimateEnabled =
+    projectId &&
+    currentActiveEstimateId &&
+    areEstimateEnabledByProjectId(projectId.toString()) &&
+    estimateById(currentActiveEstimateId)?.type === EEstimateSystem.POINTS;
 
-  const completionPercentage = (moduleDetails.completed_issues / moduleTotalIssues) * 100;
+  const moduleTotalIssues = isEstimateEnabled
+    ? moduleDetails?.total_estimate_points || 0
+    : moduleDetails.backlog_issues +
+      moduleDetails.unstarted_issues +
+      moduleDetails.started_issues +
+      moduleDetails.completed_issues +
+      moduleDetails.cancelled_issues;
+
+  const moduleCompletedIssues = isEstimateEnabled
+    ? moduleDetails?.completed_estimate_points || 0
+    : moduleDetails.completed_issues;
+
+  const completionPercentage = (moduleCompletedIssues / moduleTotalIssues) * 100;
 
   const endDate = getDate(moduleDetails.target_date);
   const startDate = getDate(moduleDetails.start_date);
@@ -140,11 +159,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const issueCount = module
     ? !moduleTotalIssues || moduleTotalIssues === 0
-      ? "0 Issue"
-      : moduleTotalIssues === moduleDetails.completed_issues
-        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
-    : "0 Issue";
+      ? `0 ${isEstimateEnabled ? `Point` : `Issue`}`
+      : moduleTotalIssues === moduleCompletedIssues
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? `s` : ``}`
+        : `${moduleCompletedIssues}/${moduleTotalIssues} ${isEstimateEnabled ? `Points` : `Issues`}`
+    : `0 ${isEstimateEnabled ? `Point` : `Issue`}`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 

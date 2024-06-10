@@ -499,7 +499,7 @@ export const handleGroupDragDrop = async (
   // update updatedIssue values based on the source and destination groupIds
   if (source.groupId && destination.groupId && source.groupId !== destination.groupId) {
     const groupKey = ISSUE_FILTER_DEFAULT_DATA[groupBy];
-    let groupValue = clone(sourceIssue[groupKey]);
+    let groupValue: any = clone(sourceIssue[groupKey]);
 
     // If groupValues is an array, remove source groupId and add destination groupId
     if (Array.isArray(groupValue)) {
@@ -519,7 +519,7 @@ export const handleGroupDragDrop = async (
   // update updatedIssue values based on the source and destination subGroupIds
   if (subGroupBy && source.subGroupId && destination.subGroupId && source.subGroupId !== destination.subGroupId) {
     const subGroupKey = ISSUE_FILTER_DEFAULT_DATA[subGroupBy];
-    let subGroupValue = clone(sourceIssue[subGroupKey]);
+    let subGroupValue: any = clone(sourceIssue[subGroupKey]);
 
     // If subGroupValue is an array, remove source subGroupId and add destination subGroupId
     if (Array.isArray(subGroupValue)) {

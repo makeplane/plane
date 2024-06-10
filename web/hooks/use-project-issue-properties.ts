@@ -1,4 +1,4 @@
-import { useCycle, useEstimate, useLabel, useMember, useModule, useProjectState } from "./store";
+import { useCycle, useProjectEstimates, useLabel, useMember, useModule, useProjectState } from "./store";
 
 export const useProjectIssueProperties = () => {
   const { fetchProjectStates } = useProjectState();
@@ -8,7 +8,7 @@ export const useProjectIssueProperties = () => {
   const { fetchProjectLabels } = useLabel();
   const { fetchAllCycles: fetchProjectAllCycles } = useCycle();
   const { fetchModules: fetchProjectAllModules } = useModule();
-  const { fetchProjectEstimates } = useEstimate();
+  const { getProjectEstimates } = useProjectEstimates();
 
   // fetching project states
   const fetchStates = async (
@@ -62,7 +62,7 @@ export const useProjectIssueProperties = () => {
     projectId: string | string[] | undefined
   ) => {
     if (workspaceSlug && projectId) {
-      await fetchProjectEstimates(workspaceSlug.toString(), projectId.toString());
+      await getProjectEstimates(workspaceSlug.toString(), projectId.toString());
     }
   };
 

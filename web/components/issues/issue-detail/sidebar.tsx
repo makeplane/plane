@@ -54,7 +54,7 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
+import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
@@ -82,7 +82,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
-  const { areEstimatesEnabledForCurrentProject } = useEstimate();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -311,15 +311,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div>
 
-            {areEstimatesEnabledForCurrentProject && (
+            {projectId && areEstimateEnabledByProjectId(projectId) && (
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <Triangle className="h-4 w-4 flex-shrink-0" />
                   <span>Estimate</span>
                 </div>
                 <EstimateDropdown
-                  value={issue?.estimate_point !== null ? issue.estimate_point : null}
-                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
+                  value={issue?.estimate_point ?? undefined}
+                  onChange={(val: string | undefined) =>
+                    issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
+                  }
                   projectId={projectId}
                   disabled={!isEditable}
                   buttonVariant="transparent-with-text"
