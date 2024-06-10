@@ -39,7 +39,7 @@ const defaultValues: TForgotPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const ForgotPasswordPage = () => {
+export default function ForgotPasswordPage() {
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
@@ -185,6 +185,4 @@ const ForgotPasswordPage = () => {
       </div>
     </AuthenticationWrapper>
   );
-};
-
-export default ForgotPasswordPage;
+}
