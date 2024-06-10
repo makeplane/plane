@@ -7,6 +7,7 @@ import { Editor } from "@tiptap/core";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 
 import { icons } from "src/ui/extensions/table/table/icons";
+import { focusPostAction } from "src/lib/utils";
 
 type ToolboxItem = {
   label: string;
@@ -74,7 +75,7 @@ const defaultTippyOptions: Partial<Props> = {
   allowHTML: true,
   arrow: false,
   trigger: "click",
-  animation: "scale-subtle",
+  animation: "shift-away",
   theme: "light-border no-padding",
   interactive: true,
   hideOnClick: true,
@@ -82,14 +83,16 @@ const defaultTippyOptions: Partial<Props> = {
 };
 
 function setCellsBackgroundColor(editor: Editor, color: { backgroundColor: string; textColor: string }) {
-  return editor
-    .chain()
-    .focus()
-    .updateAttributes("tableCell", {
-      background: color.backgroundColor,
-      textColor: color.textColor,
-    })
-    .run();
+  return focusPostAction(editor, () =>
+    editor
+      .chain()
+      .focus()
+      .updateAttributes("tableCell", {
+        background: color.backgroundColor,
+        textColor: color.textColor,
+      })
+      .run()
+  );
 }
 
 function setTableRowBackgroundColor(editor: Editor, color: { backgroundColor: string; textColor: string }) {
@@ -124,6 +127,7 @@ function setTableRowBackgroundColor(editor: Editor, color: { backgroundColor: st
   });
 
   dispatch(tr);
+  editor.view.dom.focus();
   return true;
 }
 
@@ -131,17 +135,20 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Toggle column header",
     icon: icons.toggleColumnHeader,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().toggleHeaderColumn().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().toggleHeaderColumn().run()),
   },
   {
     label: "Add column before",
     icon: icons.insertLeftTableIcon,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addColumnBefore().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().addColumnBefore().run()),
   },
   {
     label: "Add column after",
     icon: icons.insertRightTableIcon,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addColumnAfter().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().addColumnAfter().run()),
   },
   {
     label: "Pick color",
@@ -151,7 +158,8 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Delete column",
     icon: icons.deleteColumn,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteColumn().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().deleteColumn().run()),
   },
 ];
 
@@ -159,17 +167,20 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Toggle row header",
     icon: icons.toggleRowHeader,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().toggleHeaderRow().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().toggleHeaderRow().run()),
   },
   {
     label: "Add row above",
     icon: icons.insertTopTableIcon,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addRowBefore().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().addRowBefore().run()),
   },
   {
     label: "Add row below",
     icon: icons.insertBottomTableIcon,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().addRowAfter().run(),
+    action: ({ editor }: { editor: Editor }) =>
+      focusPostAction(editor, () => editor.chain().focus().addRowAfter().run()),
   },
   {
     label: "Pick color",
@@ -179,7 +190,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Delete row",
     icon: icons.deleteRow,
-    action: ({ editor }: { editor: Editor }) => editor.chain().focus().deleteRow().run(),
+    action: ({ editor }: { editor: Editor }) => focusPostAction(editor, () => editor.chain().focus().deleteRow().run()),
   },
 ];
 
@@ -198,7 +209,7 @@ function createToolbox({
   onSelectColor: (color: { backgroundColor: string; textColor: string }) => void;
   colors: { [key: string]: { backgroundColor: string; textColor: string; icon?: string } };
 }): Instance<Props> {
-  // @ts-expect-error
+  // @ts-expect-error tippy types wrong
   const toolbox = tippy(triggerButton, {
     content: h(
       "div",
@@ -340,7 +351,10 @@ export class TableView implements NodeView {
         triggerButton: this.columnsControl.querySelector(".columns-control-div"),
         items: columnsToolboxItems,
         colors: columnColors,
-        onSelectColor: (color) => setCellsBackgroundColor(this.editor, color),
+        onSelectColor: (color) => {
+          setCellsBackgroundColor(this.editor, color);
+          this.columnsToolbox?.hide();
+        },
         tippyOptions: {
           ...defaultTippyOptions,
           appendTo: this.controls,
@@ -363,7 +377,10 @@ export class TableView implements NodeView {
           ...defaultTippyOptions,
           appendTo: this.controls,
         },
-        onSelectColor: (color) => setTableRowBackgroundColor(editor, color),
+        onSelectColor: (color) => {
+          setTableRowBackgroundColor(editor, color);
+          this.rowsToolbox?.hide();
+        },
         onClickItem: (item) => {
           item.action({
             editor: this.editor,

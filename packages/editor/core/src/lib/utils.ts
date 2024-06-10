@@ -1,4 +1,4 @@
-import { Extensions, generateJSON, getSchema } from "@tiptap/core";
+import { Editor, Extensions, generateJSON, getSchema } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
 import { clsx, type ClassValue } from "clsx";
 import { CoreEditorExtensionsWithoutProps } from "src/ui/extensions/core-without-props";
@@ -76,4 +76,11 @@ export const generateJSONfromHTML = (html: string) => {
     contentJSON,
     editorSchema,
   };
+};
+
+// Helper function to focus the editor after an action since most of the times
+// editor.chain().focus() doesn't focus the editor
+export const focusPostAction = (editor: Editor, fn: () => void) => {
+  fn();
+  editor.view.dom.focus();
 };
