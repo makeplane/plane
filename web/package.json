@@ -24,7 +24,6 @@
     "@nivo/line": "0.80.0",
     "@nivo/pie": "0.80.0",
     "@nivo/scatterplot": "0.80.0",
-    "@plane/constants": "*",
     "@plane/document-editor": "*",
     "@plane/lite-text-editor": "*",
     "@plane/rich-text-editor": "*",
