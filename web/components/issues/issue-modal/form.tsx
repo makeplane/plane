@@ -145,21 +145,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   useKeypress("Escape", handleKeyDown);
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (editorRef.current?.isEditorReadyToDiscard()) {
-      onClose();
-    } else {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is still processing changes. Please wait before proceeding.",
-      });
-      event.preventDefault(); // Prevent default action if editor is not ready to discard
-    }
-  };
-
-  useKeypress("Escape", handleKeyDown);
-
   const {
     issue: { getIssueById },
   } = useIssueDetail();
