@@ -1,9 +1,10 @@
-import { AppHeaderWrapper, AppPageWrapper } from "@/components/app";
+import { AppPageWrapper } from "@/components/app";
+import { AppHeader } from "@/components/core";
 import WorkspaceActiveCycleHeader from "./header";
 
 const WorkspaceActiveCycleLayout = ({ children }: { children: React.ReactNode }) => (
   <>
-    <AppHeaderWrapper header={<WorkspaceActiveCycleHeader />} />
+    <AppHeader header={<WorkspaceActiveCycleHeader />} />
     <AppPageWrapper>{children}</AppPageWrapper>
   </>
 );

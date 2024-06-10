@@ -2,9 +2,8 @@
 
 // components
 import AppHeaderWrapper from "@/app/[workspaceSlug]/app-header-wrapper";
-import ProjectsHeader from "./header";
-import ProjectsMobileHeader from "./mobile-header";
-
+import ProjectsHeader from "../../projects/header";
+import ProjectsMobileHeader from "../../projects/mobile-header";
 
 const ProjectsHeaderPage = () => (
   <AppHeaderWrapper header={<ProjectsHeader />} mobileHeader={<ProjectsMobileHeader />} />

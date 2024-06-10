@@ -2,22 +2,22 @@
 
 import { observer } from "mobx-react";
 // components
-import { AppHeaderWrapper, AppPageWrapper } from "@/components/app";
-import { PageHead } from "@/components/core";
+import { AppPageWrapper } from "@/components/app";
+import { PageHead, AppHeader } from "@/components/core";
 import { WorkspaceDashboardView } from "@/components/page-views";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // local components
 import WorkspaceDashboardHeader from "./header";
 
-const WorkspacePage = observer(() => {
+const WorkspaceDashboardPage = observer(() => {
   const { currentWorkspace } = useWorkspace();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Home` : undefined;
 
   return (
     <>
-      <AppHeaderWrapper header={<WorkspaceDashboardHeader />} />
+      <AppHeader header={<WorkspaceDashboardHeader />} />
       <AppPageWrapper>
         <PageHead title={pageTitle} />
         <WorkspaceDashboardView />
@@ -26,4 +26,4 @@ const WorkspacePage = observer(() => {
   );
 });
 
-export default WorkspacePage;
+export default WorkspaceDashboardPage;
