@@ -4,6 +4,7 @@ import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 // components
 import { EstimatePointUpdate, EstimatePointDelete } from "@/components/estimates/points";
+import { minEstimatesCount } from "@/constants/estimates";
 
 type TEstimatePointItemPreview = {
   workspaceSlug: string;
@@ -60,16 +61,18 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
           >
             <Pencil size={14} className="text-custom-text-200" />
           </div>
-          <div
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
-            onClick={() =>
-              estimateId && estimatePointId
-                ? setEstimatePointDeleteToggle(true)
-                : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
-            }
-          >
-            <Trash2 size={14} className="text-custom-text-200" />
-          </div>
+          {estimatePoints.length > minEstimatesCount && (
+            <div
+              className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+              onClick={() =>
+                estimateId && estimatePointId
+                  ? setEstimatePointDeleteToggle(true)
+                  : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
+              }
+            >
+              <Trash2 size={14} className="text-custom-text-200" />
+            </div>
+          )}
         </div>
       )}
 
