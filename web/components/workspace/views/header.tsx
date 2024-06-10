@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { Plus } from "lucide-react";
 // types
@@ -22,8 +22,7 @@ const ViewTab = observer((props: { viewId: string }) => {
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId } = useParams();
   // store hooks
   const { getViewDetailsById } = useGlobalView();
 
@@ -54,8 +53,7 @@ const DefaultViewTab = (props: {
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId } = useParams();
 
   if (!workspaceSlug || !globalViewId) return null;
   return (
@@ -75,8 +73,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const [createViewModal, setCreateViewModal] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   // router
-  const router = useRouter();
-  const { globalViewId } = router.query;
+  const { globalViewId } = useParams();
   // store hooks
   const { currentWorkspaceViews } = useGlobalView();
   const {

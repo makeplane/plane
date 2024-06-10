@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 // types
 import { ICycle } from "@plane/types";
 // ui
@@ -29,7 +31,9 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { deleteCycle } = useCycle();
   // router
   const router = useRouter();
-  const { cycleId, peekCycle } = router.query;
+  const { cycleId } = useParams();
+  const searchParams = useSearchParams();
+  const peekCycle = searchParams.get("peekCycle");
 
   const formSubmit = async () => {
     if (!cycle) return;

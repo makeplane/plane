@@ -1,14 +1,13 @@
-import { useRouter } from "next/router";
-
+"use client";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
-
-// services
-// components
-import { Button, Loader } from "@plane/ui";
-import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
 // ui
+import { Button, Loader } from "@plane/ui";
+// components
+import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "@/constants/fetch-keys";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
@@ -21,8 +20,7 @@ const analyticsService = new AnalyticsService();
 export const ScopeAndDemand: React.FC<Props> = (props) => {
   const { fullScreen = true } = props;
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
 
   const isProjectLevel = projectId ? true : false;
 

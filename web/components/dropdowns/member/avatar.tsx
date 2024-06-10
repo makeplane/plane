@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 // icons
 import { LucideIcon, Users } from "lucide-react";
@@ -36,9 +38,5 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
     }
   }
 
-  return Icon ? (
-    <Icon className="h-3 w-3 flex-shrink-0" />
-  ) : (
-    <Users className="h-3 w-3 flex-shrink-0" />
-  );
+  return Icon ? <Icon className="h-3 w-3 flex-shrink-0" /> : <Users className="h-3 w-3 flex-shrink-0" />;
 });

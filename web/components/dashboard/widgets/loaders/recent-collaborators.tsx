@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { Loader } from "@plane/ui";
 

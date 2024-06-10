@@ -1,6 +1,8 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -23,7 +25,8 @@ const isValidURL = (url: string): boolean => {
 
 export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props) => {
   const router = useRouter();
-  const { next_path } = router.query;
+  const searchParams = useSearchParams();
+  const next_path = searchParams.get("next_path");
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks

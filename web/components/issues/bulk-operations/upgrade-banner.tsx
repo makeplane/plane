@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { getButtonStyling } from "@plane/ui";
 // constants

@@ -1,6 +1,8 @@
+"use client";
+
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // hooks
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";

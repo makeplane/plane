@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks

@@ -28,7 +28,7 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     label: "Assignee",
   },
   {
-    value: "estimate_point",
+    value: "estimate_point__value",
     label: "Estimate point",
   },
   {

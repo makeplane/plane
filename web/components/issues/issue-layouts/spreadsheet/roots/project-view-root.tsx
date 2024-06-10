@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // mobx store
 import { EIssuesStoreType } from "@/constants/issue";
 // components
@@ -11,8 +11,7 @@ import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { viewId } = router.query;
+  const { viewId } = useParams();
 
   return (
     <BaseSpreadsheetRoot

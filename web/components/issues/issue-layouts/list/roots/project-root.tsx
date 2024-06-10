@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -10,8 +10,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { BaseListRoot } from "../base-list-root";
 
 export const ListLayout: FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   if (!workspaceSlug || !projectId) return null;
 

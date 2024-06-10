@@ -1,5 +1,4 @@
 import { Fragment, ReactNode, useRef, useState } from "react";
-import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
@@ -7,7 +6,12 @@ import { Combobox } from "@headlessui/react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useEstimate } from "@/hooks/store";
+import {
+  useAppRouter,
+  useEstimate,
+  useProjectEstimates,
+  //  useEstimate
+} from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -19,15 +23,15 @@ type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  onChange: (val: number | null) => void;
+  onChange: (val: string | undefined) => void;
   onClose?: () => void;
   projectId: string;
-  value: number | null;
+  value: string | undefined;
 };
 
 type DropdownOptions =
   | {
-      value: number | null;
+      value: string | null;
       query: string;
       content: JSX.Element;
     }[]
@@ -76,19 +80,29 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   });
   // store hooks
   const { workspaceSlug } = useAppRouter();
-  const { fetchProjectEstimates, getProjectActiveEstimateDetails, getEstimatePointValue } = useEstimate();
-  const activeEstimate = getProjectActiveEstimateDetails(projectId);
 
-  const options: DropdownOptions = sortBy(activeEstimate?.points ?? [], "key")?.map((point) => ({
-    value: point.key,
-    query: `${point?.value}`,
-    content: (
-      <div className="flex items-center gap-2">
-        <Triangle className="h-3 w-3 flex-shrink-0" />
-        <span className="flex-grow truncate">{point.value}</span>
-      </div>
-    ),
-  }));
+  const { currentActiveEstimateId, getProjectEstimates } = useProjectEstimates();
+  const { estimatePointIds, estimatePointById } = useEstimate(
+    currentActiveEstimateId ? currentActiveEstimateId : undefined
+  );
+
+  const options: DropdownOptions = (estimatePointIds ?? [])
+    ?.map((estimatePoint) => {
+      const currentEstimatePoint = estimatePointById(estimatePoint);
+      if (currentEstimatePoint)
+        return {
+          value: currentEstimatePoint.id,
+          query: `${currentEstimatePoint?.value}`,
+          content: (
+            <div className="flex items-center gap-2">
+              <Triangle className="h-3 w-3 flex-shrink-0" />
+              <span className="flex-grow truncate">{currentEstimatePoint.value}</span>
+            </div>
+          ),
+        };
+      else undefined;
+    })
+    .filter((estimatePointDropdownOption) => estimatePointDropdownOption != undefined) as DropdownOptions;
   options?.unshift({
     value: null,
     query: "No estimate",
@@ -103,10 +117,10 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const selectedEstimate = value !== null ? getEstimatePointValue(value, projectId) : null;
+  const selectedEstimate = value && estimatePointById ? estimatePointById(value) : undefined;
 
   const onOpen = async () => {
-    if (!activeEstimate && workspaceSlug) await fetchProjectEstimates(workspaceSlug, projectId);
+    if (!currentActiveEstimateId && workspaceSlug) await getProjectEstimates(workspaceSlug, projectId);
   };
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
@@ -120,7 +134,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     setQuery,
   });
 
-  const dropdownOnChange = (val: number | null) => {
+  const dropdownOnChange = (val: string | undefined) => {
     onChange(val);
     handleClose();
   };
@@ -164,13 +178,13 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
               className={buttonClassName}
               isActive={isOpen}
               tooltipHeading="Estimate"
-              tooltipContent={selectedEstimate !== null ? selectedEstimate : placeholder}
+              tooltipContent={selectedEstimate ? selectedEstimate?.value : placeholder}
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
               {!hideIcon && <Triangle className="h-3 w-3 flex-shrink-0" />}
               {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">{selectedEstimate !== null ? selectedEstimate : placeholder}</span>
+                <span className="flex-grow truncate">{selectedEstimate ? selectedEstimate?.value : placeholder}</span>
               )}
               {dropdownArrow && (
                 <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -204,20 +218,14 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
               {filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
-                    <Combobox.Option
-                      key={option.value}
-                      value={option.value}
-                      className={({ active, selected }) =>
-                        `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                      }
-                    >
-                      {({ selected }) => (
-                        <>
+                    <Combobox.Option key={option.value} value={option.value}>
+                      {({ active, selected }) => (
+                        <div
+                          className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${active ? `!hover:bg-custom-background-80` : ``} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`}
+                        >
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                        </>
+                        </div>
                       )}
                     </Combobox.Option>
                   ))

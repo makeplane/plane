@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // hooks

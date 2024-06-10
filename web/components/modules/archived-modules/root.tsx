@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
 import { TModuleFilters } from "@plane/types";
@@ -17,8 +17,7 @@ import { useModule, useModuleFilter } from "@/hooks/store";
 
 export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { fetchArchivedModules, projectArchivedModuleIds, loader } = useModule();
   // module filters hook

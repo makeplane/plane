@@ -1,3 +1,5 @@
+"use client";
+
 import { Control, Controller } from "react-hook-form";
 import { IWebhook } from "@plane/types";
 // ui

@@ -1,3 +1,5 @@
+"use client";
+
 // components
 // ui
 import { IUserPriorityDistribution } from "@plane/types";

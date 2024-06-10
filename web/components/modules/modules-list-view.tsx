@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams, useSearchParams } from "next/navigation";
 // components
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
@@ -15,8 +15,9 @@ import NameFilterImage from "public/empty-state/module/name-filter.svg";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, peekModule } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const searchParams = useSearchParams();
+  const peekModule = searchParams.get("peekModule");
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();

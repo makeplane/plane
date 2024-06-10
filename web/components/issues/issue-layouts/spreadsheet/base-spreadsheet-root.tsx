@@ -1,6 +1,6 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 // hooks
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
@@ -29,8 +29,7 @@ interface IBaseSpreadsheetRoot {
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { viewId, QuickActions, storeType, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
   // store hooks
   const {
     membership: { currentProjectRole },

@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
@@ -92,7 +94,9 @@ export const GithubImporterRoot: React.FC = () => {
   const [users, setUsers] = useState<IUserDetails[]>([]);
 
   const router = useRouter();
-  const { workspaceSlug, provider } = router.query;
+  const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  const provider = searchParams.get("provider");
 
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,

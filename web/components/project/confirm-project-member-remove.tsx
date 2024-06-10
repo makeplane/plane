@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -21,8 +23,7 @@ type Props = {
 export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
   const { data, onSubmit, isOpen, onClose } = props;
   // router
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId } = useParams();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // store hooks
@@ -113,8 +114,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                      ? "Removing..."
-                      : "Remove"}
+                        ? "Removing..."
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

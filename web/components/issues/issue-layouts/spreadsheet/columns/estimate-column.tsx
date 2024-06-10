@@ -17,7 +17,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <EstimateDropdown
-        value={issue.estimate_point}
+        value={issue.estimate_point || undefined}
         onChange={(data) =>
           onChange(issue, { estimate_point: data }, { changed_property: "estimate_point", change_details: data })
         }

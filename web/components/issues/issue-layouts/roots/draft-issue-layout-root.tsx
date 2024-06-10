@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // hooks
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -17,8 +17,7 @@ import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
 
 export const DraftIssueLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 

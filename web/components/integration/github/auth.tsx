@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react-lite";
 // types
 import { IWorkspaceIntegration } from "@plane/types";

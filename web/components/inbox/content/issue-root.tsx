@@ -1,6 +1,8 @@
+"use client";
+
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { TIssue } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -29,7 +31,7 @@ type Props = {
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const router = useRouter();
+  const pathname = usePathname();
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { data: currentUser } = useUser();
@@ -87,7 +89,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -102,7 +104,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },

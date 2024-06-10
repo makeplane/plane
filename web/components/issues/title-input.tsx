@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 // components

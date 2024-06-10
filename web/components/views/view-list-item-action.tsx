@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IProjectView } from "@plane/types";
 // components
@@ -25,8 +25,7 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store
   const {
     membership: { currentProjectRole },

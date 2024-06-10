@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
@@ -10,8 +10,7 @@ import { useIssues, useLabel, useProjectState } from "@/hooks/store";
 
 export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -73,7 +72,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   };
 
   // return if no filters are applied
-  if (!workspaceSlug || !projectId || Object.keys(appliedFilters).length === 0) return null;
+  if (!workspaceSlug || !projectId || !moduleId || Object.keys(appliedFilters).length === 0) return null;
 
   return (
     <div className="flex justify-between p-4 gap-2.5">
@@ -88,7 +87,11 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
       <SaveFilterView
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
-        filterParams={appliedFilters}
+        filterParams={{
+          filters: { ...appliedFilters, module: [moduleId.toString()] },
+          display_filters: issueFilters?.displayFilters,
+          display_properties: issueFilters?.displayProperties,
+        }}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // constants
@@ -22,7 +22,7 @@ type Props = {
 export const IssueColumn = observer((props: Props) => {
   const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
   // router
-  const router = useRouter();
+  const pathname = usePathname();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
   const { captureIssueEvent } = useEventTracker();
 
@@ -54,7 +54,7 @@ export const IssueColumn = observer((props: Props) => {
                   element: "Spreadsheet layout",
                 },
                 updates: updates,
-                path: router.asPath,
+                path: pathname,
               });
             })
           }

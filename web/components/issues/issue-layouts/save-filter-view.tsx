@@ -1,4 +1,7 @@
+"use client";
+
 import { FC, useState } from "react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal } from "@/components/views";
@@ -6,7 +9,11 @@ import { CreateUpdateProjectViewModal } from "@/components/views";
 interface ISaveFilterView {
   workspaceSlug: string;
   projectId: string;
-  filterParams: any;
+  filterParams: {
+    filters: IIssueFilterOptions;
+    display_filters?: IIssueDisplayFilterOptions;
+    display_properties?: IIssueDisplayProperties;
+  };
 }
 
 export const SaveFilterView: FC<ISaveFilterView> = (props) => {
@@ -19,7 +26,7 @@ export const SaveFilterView: FC<ISaveFilterView> = (props) => {
       <CreateUpdateProjectViewModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        preLoadedData={{ filters: { ...filterParams } }}
+        preLoadedData={{ ...filterParams }}
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
       />

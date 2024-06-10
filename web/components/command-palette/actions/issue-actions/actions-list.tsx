@@ -1,6 +1,8 @@
+"use client";
+
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
 import { TIssue } from "@plane/types";
 // hooks
@@ -24,8 +26,7 @@ type Props = {
 export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { closePalette, issueDetails, pages, setPages, setPlaceholder, setSearchTerm } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = useParams();
   // hooks
   const {
     issues: { updateIssue },
@@ -60,7 +61,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   };
 
   const copyIssueUrlToClipboard = () => {
-    if (!router.query.issueId) return;
+    if (!issueId) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)

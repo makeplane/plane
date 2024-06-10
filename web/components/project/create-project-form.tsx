@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, FC, ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";

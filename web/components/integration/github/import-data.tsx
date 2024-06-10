@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormWatch } from "react-hook-form";

@@ -1,6 +1,8 @@
+"use client";
+
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { EditorRefApi } from "@plane/rich-text-editor";
@@ -28,7 +30,14 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import {
+  useAppRouter,
+  useProjectEstimates,
+  useInstance,
+  useIssueDetail,
+  useProject,
+  useWorkspace,
+} from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
@@ -112,15 +121,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
   const { projectId: routeProjectId } = useAppRouter();
   const { config } = useInstance();
   const { getProjectById } = useProject();
-  const { areEstimatesEnabledForProject } = useEstimate();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (editorRef.current?.isEditorReadyToDiscard()) {
@@ -659,14 +667,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   )}
                 />
               )}
-              {areEstimatesEnabledForProject(projectId) && (
+              {projectId && areEstimateEnabledByProjectId(projectId) && (
                 <Controller
                   control={control}
                   name="estimate_point"
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <EstimateDropdown
-                        value={value}
+                        value={value || undefined}
                         onChange={(estimatePoint) => {
                           onChange(estimatePoint);
                           handleFormChange();
