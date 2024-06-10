@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 // ui
 import { UserCircle2 } from "lucide-react";
@@ -12,8 +12,7 @@ type Props = {
 };
 
 export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
 
   const overviewCards = [
     {

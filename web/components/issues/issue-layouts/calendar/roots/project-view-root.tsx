@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -10,8 +10,7 @@ import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const ProjectViewCalendarLayout: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { viewId } = router.query;
+  const { viewId } = useParams();
 
   return (
     <BaseCalendarRoot

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/empty-state";
@@ -21,8 +21,7 @@ interface IProfileIssuesPage {
 export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   const { type } = props;
 
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query as {
+  const { workspaceSlug, userId } = useParams() as {
     workspaceSlug: string;
     userId: string;
   };

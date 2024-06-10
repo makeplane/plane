@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -32,7 +34,10 @@ const issueService = new IssueService();
 export const CommandPalette: FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
+  // router params
+  const { workspaceSlug, projectId, issueId, cycleId, moduleId } = useParams();
+  // pathname
+  const pathname = usePathname();
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
@@ -260,7 +265,7 @@ export const CommandPalette: FC = observer(() => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
+  const isDraftIssue = pathname?.includes("draft-issues") || false;
 
   if (!currentUser) return null;
 

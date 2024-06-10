@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
@@ -31,8 +31,7 @@ export const ProfileSidebar = observer(() => {
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();

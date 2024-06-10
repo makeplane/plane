@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import size from "lodash/size";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { IIssueFilterOptions } from "@plane/types";
 // mobx store
@@ -24,8 +24,7 @@ import { useIssues } from "@/hooks/store";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 

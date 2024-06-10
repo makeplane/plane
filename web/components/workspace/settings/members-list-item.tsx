@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
@@ -25,7 +25,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     // currentUser,

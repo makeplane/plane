@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 // hooks
 //ui
@@ -22,8 +22,7 @@ type Props = {
 export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const { globalViewId } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },

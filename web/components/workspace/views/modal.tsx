@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 // types
 import { IWorkspaceView } from "@plane/types";
 // ui
@@ -24,7 +24,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   const { isOpen, onClose, data, preLoadedData } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
@@ -45,8 +45,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     fetchPublishSettings,

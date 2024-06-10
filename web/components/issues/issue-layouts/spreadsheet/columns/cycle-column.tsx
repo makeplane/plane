@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // components
@@ -19,8 +19,8 @@ type Props = {
 export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   const { issue, disabled, onClose } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
@@ -40,10 +40,10 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
           element: "Spreadsheet layout",
         },
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
-        path: router.asPath,
+        path: pathname,
       });
     },
-    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue, captureIssueEvent, router.asPath]
+    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue, captureIssueEvent, pathname]
   );
 
   return (

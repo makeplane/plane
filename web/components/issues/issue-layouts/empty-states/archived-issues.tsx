@@ -1,6 +1,6 @@
 import size from "lodash/size";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -13,8 +13,7 @@ import { useIssues } from "@/hooks/store";
 
 export const ProjectArchivedEmptyState: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // theme
   // store hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);

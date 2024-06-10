@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { Crown } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -25,9 +25,10 @@ export const WorkspaceSidebarMenu = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
+  // pathname
+  const pathname = usePathname();
   // computed
   const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
 
@@ -56,7 +57,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                 >
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                      link.highlight(router.asPath, `/${workspaceSlug}`)
+                      link.highlight(pathname, `/${workspaceSlug}`)
                         ? "bg-custom-primary-100/10 text-custom-primary-100"
                         : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                     } ${sidebarCollapsed ? "justify-center" : ""}`}

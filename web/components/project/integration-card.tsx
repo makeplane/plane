@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { IWorkspaceIntegration } from "@plane/types";
 // ui
@@ -34,8 +34,7 @@ const integrationDetails: { [key: string]: any } = {
 const projectService = new ProjectService();
 
 export const IntegrationCard: React.FC<Props> = ({ integration }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   const { data: syncedGithubRepository } = useSWR(
     projectId ? PROJECT_GITHUB_REPOSITORY(projectId as string) : null,

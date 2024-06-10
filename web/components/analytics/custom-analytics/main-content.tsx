@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { mutate } from "swr";
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 
@@ -22,8 +22,7 @@ type Props = {
 export const CustomAnalyticsMainContent: React.FC<Props> = (props) => {
   const { analytics, error, fullScreen, params } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
   const barGraphData = convertResponseToBarGraphData(analytics?.distribution, params);

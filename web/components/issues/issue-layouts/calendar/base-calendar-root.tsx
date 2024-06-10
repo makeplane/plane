@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -33,8 +33,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { QuickActions, storeType, addIssuesToView, viewId, isCompletedCycle = false } = props;
 
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   // hooks
   const {

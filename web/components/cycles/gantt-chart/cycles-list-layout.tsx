@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { ICycle } from "@plane/types";
 // hooks
 import { CycleGanttBlock } from "@/components/cycles";
@@ -19,8 +19,7 @@ type Props = {
 export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   const { cycleIds } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getCycleById, updateCycleDetails } = useCycle();
 

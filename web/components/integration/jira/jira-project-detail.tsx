@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 // next
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 // swr
 import { useFormContext, Controller } from "react-hook-form";
@@ -39,8 +39,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const params: IJiraMetadata = {
     api_token: watch("metadata.api_token"),

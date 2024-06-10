@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
@@ -47,12 +47,12 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
+  const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
+  const pathname = usePathname();
   // hooks
   const { setTrackElement } = useEventTracker();
   // derived values
-  const isDraftIssue = router.pathname.includes("draft-issue");
+  const isDraftIssue = pathname.includes("draft-issue");
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";

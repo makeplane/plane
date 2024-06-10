@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
@@ -43,8 +43,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { config } = useInstance();
   const {

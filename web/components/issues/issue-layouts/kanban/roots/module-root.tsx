@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hook
 import { ModuleIssueQuickActions } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -13,8 +13,7 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 export interface IModuleKanBanLayout {}
 
 export const ModuleKanBanLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
 
   // store
   const { issues } = useIssues(EIssuesStoreType.MODULE);

@@ -1,5 +1,5 @@
 import { useState, FC } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // types
 import { IApiToken } from "@plane/types";
@@ -24,9 +24,8 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   const { isOpen, onClose, tokenId } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
 
   const handleClose = () => {
     onClose();

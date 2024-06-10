@@ -1,6 +1,6 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { IWebhook } from "@plane/types";
@@ -27,8 +27,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [shouldShowKey, setShouldShowKey] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, webhookId } = router.query;
+  const { workspaceSlug, webhookId } = useParams();
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();

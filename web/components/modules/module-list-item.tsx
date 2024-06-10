@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 // icons
 import { Check, Info } from "lucide-react";
 // ui
@@ -10,6 +10,8 @@ import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction } from "@/components/modules";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
+// helpers
+import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useAppRouter, useModule, useProjectEstimates } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -24,7 +26,9 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const parentRef = useRef(null);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
@@ -59,19 +63,12 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    const { query } = router;
 
-    if (query.peekModule) {
-      delete query.peekModule;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
+    const query = generateQueryParams(searchParams, ["peekModule"]);
+    if (searchParams.has("peekModule")) {
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekModule: moduleId },
-      });
+      router.push(`${pathname}?${query}&peekModule=${moduleId}`);
     }
   };
 

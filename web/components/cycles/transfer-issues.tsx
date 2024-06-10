@@ -1,7 +1,7 @@
 import React from "react";
 
 import isEmpty from "lodash/isEmpty";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 import useSWR from "swr";
 
@@ -24,8 +24,7 @@ const cycleService = new CycleService();
 export const TransferIssues: React.FC<Props> = (props) => {
   const { handleClick, disabled = false } = props;
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
 
   const { data: cycleDetails } = useSWR(
     cycleId ? CYCLE_DETAILS(cycleId as string) : null,

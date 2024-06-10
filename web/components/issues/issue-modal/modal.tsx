@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // ui
@@ -63,8 +63,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
-  // router
-  const router = useRouter();
+  // pathname
+  const pathname = usePathname();
   // local storage
   const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
     Record<string, Partial<TIssue>>
@@ -168,7 +168,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_CREATED,
         payload: { ...response, state: "SUCCESS" },
-        path: router.asPath,
+        path: pathname,
       });
       !createMore && handleClose();
       if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
@@ -184,7 +184,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED" },
-        path: router.asPath,
+        path: pathname,
       });
     }
   };
@@ -205,7 +205,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
-        path: router.asPath,
+        path: pathname,
       });
       handleClose();
     } catch (error) {
@@ -217,7 +217,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
-        path: router.asPath,
+        path: pathname,
       });
     }
   };

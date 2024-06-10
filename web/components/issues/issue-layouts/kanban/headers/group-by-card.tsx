@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
@@ -51,10 +51,10 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   // hooks
   const { setTrackElement } = useEventTracker();
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
+  const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
+  const pathname = usePathname();
 
-  const isDraftIssue = router.pathname.includes("draft-issue");
+  const isDraftIssue = pathname.includes("draft-issue");
 
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };

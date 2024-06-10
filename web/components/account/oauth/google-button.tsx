@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
@@ -12,8 +12,8 @@ export type GoogleOAuthButtonProps = {
 };
 
 export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
-  const { query } = useRouter();
-  const { next_path } = query;
+  const searchParams = useSearchParams();
+  const next_path = searchParams.get("next_path");
   const { text } = props;
   // hooks
   const { resolvedTheme } = useTheme();

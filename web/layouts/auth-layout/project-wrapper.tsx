@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { JoinProject } from "@/components/auth-screens";
@@ -46,8 +46,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   // fetching project details
   useSWR(

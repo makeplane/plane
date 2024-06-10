@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance } from "axios";
-// store
-import { rootStore } from "@/lib/store-context";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -13,22 +11,6 @@ export abstract class APIService {
       baseURL,
       withCredentials: true,
     });
-
-    this.setupInterceptors();
-  }
-
-  private setupInterceptors() {
-    this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        const store = rootStore;
-        if (error.response && error.response.status === 401 && store.user.data) {
-          store.user.reset();
-          store.resetOnSignOut();
-        }
-        return Promise.reject(error);
-      }
-    );
   }
 
   get(url: string, params = {}, config = {}) {

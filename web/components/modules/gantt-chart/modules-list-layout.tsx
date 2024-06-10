@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IModule } from "@plane/types";
 // mobx store
 // components
@@ -11,8 +11,7 @@ import { useModule, useModuleFilter, useProject } from "@/hooks/store";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store
   const { currentProjectDetails } = useProject();
   const { getFilteredModuleIds, moduleMap, updateModuleDetails } = useModule();

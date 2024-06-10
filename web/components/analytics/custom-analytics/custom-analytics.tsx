@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { IAnalyticsParams } from "@plane/types";
@@ -30,8 +30,7 @@ const analyticsService = new AnalyticsService();
 export const CustomAnalytics: React.FC<Props> = observer((props) => {
   const { additionalParams, fullScreen } = props;
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   const { control, watch, setValue } = useForm({ defaultValues });
 

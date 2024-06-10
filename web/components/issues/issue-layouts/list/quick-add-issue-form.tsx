@@ -1,6 +1,6 @@
 import { FC, useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { TIssue, IProject } from "@plane/types";
@@ -63,8 +63,8 @@ const defaultValues: Partial<TIssue> = {
 export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props) => {
   const { prePopulatedData, quickAddCallback, viewId } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
   // hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -120,14 +120,14 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "List quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "List quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

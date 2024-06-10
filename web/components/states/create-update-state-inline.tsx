@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { useForm, Controller } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
@@ -34,8 +34,7 @@ const defaultValues: Partial<IState> = {
 export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const { data, onClose, selectedGroup, groupLength } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();

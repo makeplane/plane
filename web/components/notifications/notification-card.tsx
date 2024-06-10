@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import { Menu } from "@headlessui/react";
 // type
@@ -50,8 +50,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   // store hooks
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // states
   const [showSnoozeOptions, setShowSnoozeOptions] = React.useState(false);
   // refs

@@ -1,7 +1,7 @@
 import { Fragment, Ref, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
 import { Activity, Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
@@ -43,9 +43,8 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 export const WorkspaceSidebarDropdown = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();

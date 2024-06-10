@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
@@ -28,8 +28,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
     issues: { transferIssuesFromCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
 
   const transferIssue = async (payload: any) => {
     if (!workspaceSlug || !projectId || !cycleId) return;

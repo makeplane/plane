@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
 import { LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
@@ -16,6 +16,7 @@ import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -30,7 +31,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const parentRef = useRef(null);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -105,19 +108,12 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    const { query } = router;
 
-    if (query.peekModule) {
-      delete query.peekModule;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
+    const query = generateQueryParams(searchParams, ['peekModule']);
+    if (searchParams.has('peekModule')) {
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekModule: moduleId },
-      });
+      router.push(`${pathname}?${query}&peekModule=${moduleId}`);
     }
   };
 

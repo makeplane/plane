@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { ViewListLoader } from "@/components/ui";
@@ -14,8 +14,7 @@ type Props = {
 export const GlobalViewsList: React.FC<Props> = observer((props) => {
   const { searchQuery } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { fetchAllGlobalViews, currentWorkspaceViews, getSearchedViews } = useGlobalView();
 
