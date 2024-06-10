@@ -5,11 +5,11 @@ import { AppHeader, ContentWrapper } from "@/components/core";
 import { ModuleIssuesHeader } from "./header";
 import { ModuleIssuesMobileHeader } from "./mobile-header";
 
-const ProjectModuleIssuesLayout = ({ children }: { children: React.ReactNode }) => (
-  <>
-    <AppHeader header={<ModuleIssuesHeader />} mobileHeader={<ModuleIssuesMobileHeader />} />
-    <ContentWrapper>{children}</ContentWrapper>
-  </>
-);
-
-export default ProjectModuleIssuesLayout;
+export default function ProjectModuleIssuesLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <AppHeader header={<ModuleIssuesHeader />} mobileHeader={<ModuleIssuesMobileHeader />} />
+      <ContentWrapper>{children}</ContentWrapper>
+    </>
+  );
+}

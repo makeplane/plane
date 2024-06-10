@@ -22,7 +22,7 @@ import { UserService } from "@/services/user.service";
 // services
 const userService = new UserService();
 
-const ProfileOverviewPage = () => {
+export default function ProfileOverviewPage() {
   const { workspaceSlug, userId } = useParams();
 
   const { data: userProfile } = useSWR(
@@ -51,6 +51,4 @@ const ProfileOverviewPage = () => {
       </div>
     </>
   );
-};
-
-export default ProfileOverviewPage;
+}

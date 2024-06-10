@@ -2,13 +2,13 @@
 
 // components
 import { AppHeader, ContentWrapper } from "@/components/core";
-import ProjectArchivedIssueDetailsHeader from "./header";
+import { ProjectArchivedIssueDetailsHeader } from "./header";
 
-const ProjectArchivedIssueDetailLayout = ({ children }: { children: React.ReactNode }) => (
-  <>
-    <AppHeader header={<ProjectArchivedIssueDetailsHeader />} />
-    <ContentWrapper>{children}</ContentWrapper>
-  </>
-);
-
-export default ProjectArchivedIssueDetailLayout;
+export default function ProjectArchivedIssueDetailLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <AppHeader header={<ProjectArchivedIssueDetailsHeader />} />
+      <ContentWrapper>{children}</ContentWrapper>
+    </>
+  );
+}

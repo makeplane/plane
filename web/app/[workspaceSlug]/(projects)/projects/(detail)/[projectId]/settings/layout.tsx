@@ -15,7 +15,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { useUser } from "@/hooks/store";
 // local components
 import { ProjectSettingHeader } from "./header";
-import ProjectSettingsSidebar from "./sidebar";
+import { ProjectSettingsSidebar } from "./sidebar";
 
 export interface IProjectSettingLayout {
   children: ReactNode;

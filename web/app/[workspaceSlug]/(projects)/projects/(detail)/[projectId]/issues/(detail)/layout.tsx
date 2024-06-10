@@ -4,11 +4,11 @@
 import { AppHeader, ContentWrapper } from "@/components/core";
 import { ProjectIssueDetailsHeader } from "./header";
 
-const ProjectIssueDetailsLayout = ({ children }: { children: React.ReactNode }) => (
-  <>
-    <AppHeader header={<ProjectIssueDetailsHeader />} />
-    <ContentWrapper>{children}</ContentWrapper>
-  </>
-);
-
-export default ProjectIssueDetailsLayout;
+export default function ProjectIssueDetailsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <AppHeader header={<ProjectIssueDetailsHeader />} />
+      <ContentWrapper>{children}</ContentWrapper>
+    </>
+  );
+}

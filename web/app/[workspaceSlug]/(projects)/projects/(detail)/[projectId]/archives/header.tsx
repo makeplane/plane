@@ -14,7 +14,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { useIssues, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-const ProjectArchivesHeader: FC = observer(() => {
+export const ProjectArchivesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = useParams();
@@ -96,5 +96,3 @@ const ProjectArchivesHeader: FC = observer(() => {
     </div>
   );
 });
-
-export default ProjectArchivesHeader;

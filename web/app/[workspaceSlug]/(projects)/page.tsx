@@ -7,7 +7,7 @@ import { WorkspaceDashboardView } from "@/components/page-views";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // local components
-import WorkspaceDashboardHeader from "./header";
+import { WorkspaceDashboardHeader } from "./header";
 
 const WorkspaceDashboardPage = observer(() => {
   const { currentWorkspace } = useWorkspace();

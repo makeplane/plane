@@ -1,18 +1,18 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { ReactNode } from "react";
 // components
 import { AppHeader, ContentWrapper } from "@/components/core";
 // local components
-import WorkspaceSettingHeader from "./header";
-import MobileWorkspaceSettingsTabs from "./mobile-header-tabs";
+import { WorkspaceSettingHeader } from "./header";
+import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
 export interface IWorkspaceSettingLayout {
   children: ReactNode;
 }
 
-const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
+export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
   const { children } = props;
 
   return (
@@ -33,6 +33,4 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
       </ContentWrapper>
     </>
   );
-};
-
-export default WorkspaceSettingLayout;
+}

@@ -14,7 +14,7 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export interface IAppSidebar { }
 
-const AppSidebar: FC<IAppSidebar> = observer(() => {
+export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   // refs
@@ -48,5 +48,3 @@ const AppSidebar: FC<IAppSidebar> = observer(() => {
     </div>
   );
 });
-
-export default AppSidebar;

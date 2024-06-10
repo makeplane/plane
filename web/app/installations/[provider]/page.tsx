@@ -10,7 +10,7 @@ import { AppInstallationService } from "@/services/app_installation.service";
 // services
 const appInstallationService = new AppInstallationService();
 
-const AppPostInstallation = () => {
+export default function AppPostInstallation() {
   // params
   const { provider } = useParams();
   // query params
@@ -72,6 +72,4 @@ const AppPostInstallation = () => {
       <LogoSpinner />
     </div>
   );
-};
-
-export default AppPostInstallation;
+}

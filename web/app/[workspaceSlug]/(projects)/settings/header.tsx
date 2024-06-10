@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react";;
+import { observer } from "mobx-react";
 import { Settings } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
@@ -10,7 +10,7 @@ import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
-const WorkspaceSettingHeader: FC = observer(() => {
+export const WorkspaceSettingHeader: FC = observer(() => {
   const { currentWorkspace } = useWorkspace();
 
   return (
@@ -35,5 +35,3 @@ const WorkspaceSettingHeader: FC = observer(() => {
     </div>
   );
 });
-
-export default WorkspaceSettingHeader;
