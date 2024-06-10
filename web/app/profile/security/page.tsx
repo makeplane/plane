@@ -33,8 +33,8 @@ const defaultValues: FormValues = {
   confirm_password: "",
 };
 
-export const userService = new UserService();
-export const authService = new AuthService();
+const userService = new UserService();
+const authService = new AuthService();
 
 const defaultShowPassword = {
   oldPassword: false,
