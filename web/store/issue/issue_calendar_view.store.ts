@@ -5,6 +5,7 @@ import { ICalendarPayload, ICalendarWeek } from "@/components/issues";
 import { generateCalendarData } from "@/helpers/calendar.helper";
 // types
 import { getWeekNumberOfDate } from "@/helpers/date-time.helper";
+import { computedFn } from "mobx-utils";
 
 export interface ICalendarStore {
   calendarFilters: {
@@ -25,6 +26,7 @@ export interface ICalendarStore {
     | undefined;
   activeWeekNumber: number;
   allDaysOfActiveWeek: ICalendarWeek | undefined;
+  getStartAndEndDate: (layout: "week" | "month") => { startDate: string; endDate: string } | undefined;
 }
 
 export class CalendarStore implements ICalendarStore {
@@ -81,6 +83,22 @@ export class CalendarStore implements ICalendarStore {
       `w-${this.activeWeekNumber - 1}`
     ];
   }
+
+  getStartAndEndDate = computedFn((layout: "week" | "month") => {
+    switch (layout) {
+      case "week":
+        if (!this.allDaysOfActiveWeek) return;
+        const dates = Object.keys(this.allDaysOfActiveWeek);
+        return { startDate: dates[0], endDate: dates[dates.length - 1] };
+      case "month":
+        if (!this.allWeeksOfActiveMonth) return;
+        const weeks = Object.keys(this.allWeeksOfActiveMonth);
+        const firstWeekDates = Object.keys(this.allWeeksOfActiveMonth[weeks[0]]);
+        const lastWeekDates = Object.keys(this.allWeeksOfActiveMonth[weeks[weeks.length - 1]]);
+
+        return { startDate: firstWeekDates[0], endDate: lastWeekDates[lastWeekDates.length - 1] };
+    }
+  });
 
   updateCalendarFilters = (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => {
     this.updateCalendarPayload(filters.activeMonthDate || filters.activeWeekDate || new Date());

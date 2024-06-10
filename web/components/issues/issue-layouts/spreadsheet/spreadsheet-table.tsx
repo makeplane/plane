@@ -1,11 +1,15 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
-//types
+import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
+//hooks
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
-//components
+// components
 import { TRenderQuickActions } from "../list/list-view-types";
+import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 
@@ -16,10 +20,12 @@ type Props = {
   issueIds: string[];
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
+  canLoadMoreIssues: boolean;
+  loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
 };
@@ -35,13 +41,16 @@ export const SpreadsheetTable = observer((props: Props) => {
     quickActions,
     updateIssue,
     canEditProperties,
+    canLoadMoreIssues,
     containerRef,
+    loadMoreIssues,
     spreadsheetColumnsList,
     selectionHelpers,
   } = props;
 
   // states
   const isScrolled = useRef(false);
+  const [intersectionElement, setIntersectionElement] = useState<HTMLTableSectionElement | null>(null);
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -76,10 +85,16 @@ export const SpreadsheetTable = observer((props: Props) => {
     };
   }, [handleScroll, containerRef]);
 
+  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
+
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
+  const ignoreFieldsForCounting: (keyof IIssueDisplayProperties)[] = ["key"];
+  if (!isEstimateEnabled) ignoreFieldsForCounting.push("estimate");
+  const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
+
   return (
-    <table className="overflow-y-auto" onKeyDown={handleKeyBoardNavigation}>
+    <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}
@@ -109,6 +124,11 @@ export const SpreadsheetTable = observer((props: Props) => {
           />
         ))}
       </tbody>
+      {canLoadMoreIssues && (
+        <tfoot ref={setIntersectionElement}>
+          <SpreadsheetIssueRowLoader columnCount={displayPropertiesCount} />
+        </tfoot>
+      )}
     </table>
   );
 });

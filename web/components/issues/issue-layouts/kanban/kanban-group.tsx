@@ -1,6 +1,6 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -12,17 +12,18 @@ import {
   IIssueDisplayProperties,
   IIssueMap,
   TSubGroupedIssues,
-  TUnGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
+import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
-//components
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
@@ -31,7 +32,7 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -39,16 +40,11 @@ interface IKanbanGroup {
   isDragDisabled: boolean;
   isDropDisabled: boolean;
   dropErrorMessage: string | undefined;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
+  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
@@ -66,26 +62,38 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     sub_group_by,
     issuesMap,
     displayProperties,
-    issueIds,
-    isDragDisabled,
+    groupedIssueIds,
     isDropDisabled,
     dropErrorMessage,
     updateIssue,
     quickActions,
     canEditProperties,
+    loadMoreIssues,
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
-    viewId,
     scrollableContainerRef,
     handleOnDrop,
   } = props;
   // hooks
   const projectState = useProjectState();
 
+  const {
+    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
+  } = useIssuesStore();
+
+  const [intersectionElement, setIntersectionElement] = useState<HTMLSpanElement | null>(null);
+  const columnRef = useRef<HTMLDivElement | null>(null);
+
+  const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
+
+  const loadMoreIssuesInThisGroup = useCallback(() => {
+    loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
+  }, [loadMoreIssues, groupId, sub_group_id])
+
+  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssuesInThisGroup, `0% 100% 100% 100%`);
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
-  const columnRef = useRef<HTMLDivElement | null>(null);
 
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
@@ -198,7 +206,35 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     return preloadedData;
   };
 
-  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const isSubGroup = !!sub_group_id && sub_group_id !== "null";
+
+  const issueIds = isSubGroup
+    ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? []
+    : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
+
+  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false);
+
+  const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
+
+  const isPaginating = !!getIssueLoader(groupId, sub_group_id);
+
+  const loadMore = isPaginating ? (
+    <KanbanIssueBlockLoader />
+  ) : (
+    <div
+      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-text-350 hover:text-custom-text-300 hover:underline cursor-pointer"
+      onClick={loadMoreIssuesInThisGroup}
+    >
+      {" "}
+      Load More &darr;
+    </div>
+  );
+
+  const shouldLoadMore =
+    nextPageResults === undefined && groupIssueCount !== undefined
+      ? issueIds?.length < groupIssueCount
+      : !!nextPageResults;
+      const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
@@ -223,15 +259,16 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         sub_group_id={sub_group_id}
         groupId={groupId}
         issuesMap={issuesMap}
-        issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
+        issueIds={issueIds || []}
         displayProperties={displayProperties}
-        isDragDisabled={isDragDisabled}
         updateIssue={updateIssue}
         quickActions={quickActions}
         canEditProperties={canEditProperties}
-        scrollableContainerRef={sub_group_by ? scrollableContainerRef : columnRef}
+        scrollableContainerRef={scrollableContainerRef}
         canDropOverIssue={!canOverlayBeVisible}
       />
+
+{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
@@ -243,7 +280,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
               ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
             }}
             quickAddCallback={quickAddCallback}
-            viewId={viewId}
           />
         </div>
       )}

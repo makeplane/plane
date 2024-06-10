@@ -1,18 +1,19 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
 import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "@/components/issues";
-// hooks
-import { EIssuesStoreType } from "@/constants/issue";
+//constants
+import { EIssuesStoreType, EIssueGroupByToServerOptions } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
-import { useIssues, useUser } from "@/hooks/store";
+// hooks
+import { useIssues, useUser, useCalendarView } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-// ui
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
@@ -25,31 +26,62 @@ type CalendarStoreType =
 
 interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;
-  storeType: CalendarStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   isCompletedCycle?: boolean;
+  viewId?: string | undefined;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { QuickActions, storeType, addIssuesToView, viewId, isCompletedCycle = false } = props;
+  const { QuickActions, addIssuesToView, isCompletedCycle = false, viewId } = props;
 
   // router
   const { workspaceSlug, projectId } = useParams();
 
   // hooks
+  const storeType = useIssueStoreType() as CalendarStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
-  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
-    useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    quickAddIssue,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+    updateFilters,
+  } = useIssuesActions(storeType);
+
+  const issueCalendarView = useCalendarView();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const displayFilters = issuesFilter.issueFilters?.displayFilters;
 
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
+
+  const layout = displayFilters?.calendar?.layout ?? "month";
+  const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
+
+  useEffect(() => {
+    startDate &&
+      endDate &&
+      layout &&
+      fetchIssues(
+        "init-loader",
+        {
+          canGroup: true,
+          perPageCount: layout === "month" ? 4 : 30,
+          before: endDate,
+          after: startDate,
+          groupedBy: EIssueGroupByToServerOptions["target_date"],
+        },
+        viewId
+      );
+  }, [fetchIssues, storeType, startDate, endDate, layout, viewId]);
 
   const handleDragAndDrop = async (
     issueId: string | undefined,
@@ -74,6 +106,23 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     });
   };
 
+  const loadMoreIssues = useCallback(
+    (dateString: string) => {
+      fetchNextIssues(dateString);
+    },
+    [fetchNextIssues]
+  );
+
+  const getPaginationData = useCallback(
+    (groupId: string | undefined) => issues?.getPaginationData(groupId, undefined),
+    [issues?.getPaginationData]
+  );
+
+  const getGroupIssueCount = useCallback(
+    (groupId: string | undefined) => issues?.getGroupIssueCount(groupId, undefined, false),
+    [issues?.getGroupIssueCount]
+  );
+
   return (
     <>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
@@ -83,6 +132,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           groupedIssueIds={groupedIssueIds}
           layout={displayFilters?.calendar?.layout}
           showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+          issueCalendarView={issueCalendarView}
           quickActions={({ issue, parentRef, customActionButton, placement }) => (
             <QuickActions
               parentRef={parentRef}
@@ -97,14 +147,16 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               placements={placement}
             />
           )}
+          loadMoreIssues={loadMoreIssues}
+          getPaginationData={getPaginationData}
+          getGroupIssueCount={getGroupIssueCount}
           addIssuesToView={addIssuesToView}
-          quickAddCallback={issues.quickAddIssue}
-          viewId={viewId}
+          quickAddCallback={quickAddIssue}
           readOnly={!isEditingAllowed || isCompletedCycle}
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
         />
-      </div>
+    </div>
     </>
   );
 });

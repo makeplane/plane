@@ -25,7 +25,7 @@ interface IssueBlockProps {
   issueId: string;
   issuesMap: TIssueMap;
   groupId: string;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -99,7 +99,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
   if (!issue) return null;
 
-  const canEditIssueProperties = canEditProperties(issue.project_id);
+  const canEditIssueProperties = canEditProperties(issue.project_id ?? undefined);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
@@ -115,7 +115,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       handleIssuePeekOverview(issue);
     } else {
       setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issue)
+        if (!prevState && workspaceSlug && issue && issue.project_id)
           subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
         return !prevState;
       });

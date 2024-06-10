@@ -5,10 +5,9 @@ import { useParams, usePathname } from "next/navigation";
 import { TIssue } from "@plane/types";
 // components
 import { CycleDropdown } from "@/components/dropdowns";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useEventTracker, useIssues } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   issue: TIssue;
@@ -25,11 +24,11 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
-  } = useIssues(EIssuesStoreType.CYCLE);
+  } = useIssuesStore();
 
   const handleCycle = useCallback(
     async (cycleId: string | null) => {
-      if (!workspaceSlug || !issue || issue.cycle_id === cycleId) return;
+      if (!workspaceSlug || !issue || !issue.project_id || issue.cycle_id === cycleId) return;
       if (cycleId) await addCycleToIssue(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       else await removeCycleFromIssue(workspaceSlug.toString(), issue.project_id, issue.id);
       captureIssueEvent({
@@ -49,7 +48,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <CycleDropdown
-        projectId={issue.project_id}
+        projectId={issue.project_id ?? undefined}
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}

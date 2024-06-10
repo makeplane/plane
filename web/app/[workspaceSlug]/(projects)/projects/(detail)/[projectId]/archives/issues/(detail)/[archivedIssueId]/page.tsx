@@ -47,7 +47,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   // derived values
   const issue = archivedIssueId ? getIssueById(archivedIssueId.toString()) : undefined;
-  const project = issue ? getProjectById(issue?.project_id) : undefined;
+  const project = issue ? getProjectById(issue?.project_id ?? "") : undefined;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
   // auth
   const canRestoreIssue = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, MouseEvent, useEffect, FocusEvent, useState } from "react";
+import { FC, useEffect, useState, FormEvent } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
@@ -59,7 +59,12 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
     closeCallBack();
   };
 
-  const handleUpdate = async (event: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLInputElement, Element>) => {
+  const handleEstimateInputValue = (value: string) => {
+    setError(undefined);
+    setEstimateInputValue(() => value);
+  };
+
+  const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!workspaceSlug || !projectId) return;
@@ -71,7 +76,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
       let isEstimateValid = false;
 
       const currentEstimatePointValues = estimatePoints
-        .map((point) => (point?.id != estimatePoint?.id ? point?.value : undefined))
+        .map((point) => (point?.key != estimatePoint?.key ? point?.value : undefined))
         .filter((value) => value != undefined) as string[];
       const isRepeated =
         (estimateType && isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||
@@ -136,7 +141,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   };
 
   return (
-    <form className="relative flex items-center gap-2 text-base">
+    <form onSubmit={handleUpdate} className="relative flex items-center gap-2 text-base">
       <div
         className={cn(
           "relative w-full border rounded flex items-center my-1",
@@ -146,10 +151,9 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
         <input
           type="text"
           value={estimateInputValue}
-          onChange={(e) => setEstimateInputValue(e.target.value)}
+          onChange={(e) => handleEstimateInputValue(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           placeholder="Enter estimate point"
-          onBlur={(e) => !estimateId && handleUpdate(e)}
           autoFocus
         />
         {error && (
@@ -162,25 +166,24 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
           </>
         )}
       </div>
-      {estimateId && (
-        <>
-          <button
-            type="submit"
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
-            disabled={loader}
-            onClick={handleUpdate}
-          >
-            {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
-          </button>
-          <button
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
-            onClick={handleClose}
-            disabled={loader}
-          >
-            <X size={14} className="text-custom-text-200" />
-          </button>
-        </>
+
+      {estimateInputValue && estimateInputValue.length > 0 && (
+        <button
+          type="submit"
+          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+          disabled={loader}
+        >
+          {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
+        </button>
       )}
+      <button
+        type="button"
+        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        onClick={handleClose}
+        disabled={loader}
+      >
+        <X size={14} className="text-custom-text-200" />
+      </button>
     </form>
   );
 });

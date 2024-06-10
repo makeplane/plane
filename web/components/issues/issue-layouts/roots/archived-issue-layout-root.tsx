@@ -7,55 +7,39 @@ import useSWR from "swr";
 import {
   ArchivedIssueListLayout,
   ArchivedIssueAppliedFiltersRoot,
-  ProjectArchivedEmptyState,
   IssuePeekOverview,
 } from "@/components/issues";
-import { ListLayoutLoader } from "@/components/ui";
 import { EIssuesStoreType } from "@/constants/issue";
 // ui
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+  const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-        await issues?.fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issues?.groupedIssueIds ? "mutation" : "init-loader"
-        );
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return <ListLayoutLoader />;
-  }
-
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.ARCHIVED}>
       <ArchivedIssueAppliedFiltersRoot />
-      {issues?.groupedIssueIds?.length === 0 ? (
-        <div className="relative h-full w-full overflow-y-auto">
-          <ProjectArchivedEmptyState />
+      <Fragment>
+        <div className="relative h-full w-full overflow-auto">
+          <ArchivedIssueListLayout />
         </div>
-      ) : (
-        <Fragment>
-          <div className="relative h-full w-full overflow-auto">
-            <ArchivedIssueListLayout />
-          </div>
-          <IssuePeekOverview is_archived />
-        </Fragment>
-      )}
-    </>
+        <IssuePeekOverview is_archived />
+      </Fragment>
+    </IssuesStoreContext.Provider>
   );
 });

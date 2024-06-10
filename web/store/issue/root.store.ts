@@ -184,28 +184,28 @@ export class IssueRootStore implements IIssueRootStore {
     this.issueDetail = new IssueDetail(this);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
-    this.workspaceIssues = new WorkspaceIssues(this);
+    this.workspaceIssues = new WorkspaceIssues(this, this.workspaceIssuesFilter);
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
-    this.profileIssues = new ProfileIssues(this);
+    this.profileIssues = new ProfileIssues(this, this.profileIssuesFilter);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
-    this.projectIssues = new ProjectIssues(this);
+    this.projectIssues = new ProjectIssues(this, this.projectIssuesFilter);
 
     this.cycleIssuesFilter = new CycleIssuesFilter(this);
-    this.cycleIssues = new CycleIssues(this);
+    this.cycleIssues = new CycleIssues(this, this.cycleIssuesFilter);
 
     this.moduleIssuesFilter = new ModuleIssuesFilter(this);
-    this.moduleIssues = new ModuleIssues(this);
+    this.moduleIssues = new ModuleIssues(this, this.moduleIssuesFilter);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
-    this.projectViewIssues = new ProjectViewIssues(this);
+    this.projectViewIssues = new ProjectViewIssues(this, this.projectViewIssuesFilter);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
-    this.archivedIssues = new ArchivedIssues(this);
+    this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);
 
     this.draftIssuesFilter = new DraftIssuesFilter(this);
-    this.draftIssues = new DraftIssues(this);
+    this.draftIssues = new DraftIssues(this, this.draftIssuesFilter);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore();

@@ -205,7 +205,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>State</span>
               </div>
               <StateDropdown
-                value={issue?.state_id ?? undefined}
+                value={issue?.state_id}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
                 projectId={projectId?.toString() ?? ""}
                 disabled={!isEditable}
@@ -234,7 +234,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                  issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
@@ -248,7 +248,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>Priority</span>
               </div>
               <PriorityDropdown
-                value={issue?.priority || undefined}
+                value={issue?.priority}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="border-with-text"

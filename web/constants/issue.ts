@@ -6,11 +6,13 @@ import {
   IIssueDisplayProperties,
   TIssueExtraOptions,
   TIssueGroupByOptions,
-  TIssueLayouts,
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueTypeFilters,
 } from "@plane/types";
+
+
+export const ALL_ISSUES = "All Issues";
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
   "state",
@@ -31,6 +33,14 @@ export enum EIssuesStoreType {
   ARCHIVED = "ARCHIVED",
   DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
+}
+
+export enum EIssueLayoutTypes {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  GANTT = "gantt_chart",
+  SPREADSHEET = "spreadsheet",
 }
 
 export type TCreateModalStoreTypes =
@@ -88,7 +98,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
   { key: "-updated_at", title: "Last Updated" },
   { key: "start_date", title: "Start Date" },
   { key: "target_date", title: "Due Date" },
-  { key: "-priority", title: "Priority" },
+  { key: "priority", title: "Priority" },
 ];
 
 export const ISSUE_FILTER_OPTIONS: {
@@ -129,15 +139,15 @@ export const ISSUE_EXTRA_OPTIONS: {
 ];
 
 export const ISSUE_LAYOUTS: {
-  key: TIssueLayouts;
+  key: EIssueLayoutTypes;
   title: string;
   icon: any;
 }[] = [
-  { key: "list", title: "List Layout", icon: List },
-  { key: "kanban", title: "Kanban Layout", icon: Kanban },
-  { key: "calendar", title: "Calendar Layout", icon: Calendar },
-  { key: "spreadsheet", title: "Spreadsheet Layout", icon: Sheet },
-  { key: "gantt_chart", title: "Gantt Chart Layout", icon: GanttChartSquare },
+  { key: EIssueLayoutTypes.LIST, title: "List Layout", icon: List },
+  { key: EIssueLayoutTypes.KANBAN, title: "Kanban Layout", icon: Kanban },
+  { key: EIssueLayoutTypes.CALENDAR, title: "Calendar Layout", icon: Calendar },
+  { key: EIssueLayoutTypes.SPREADSHEET, title: "Spreadsheet Layout", icon: Sheet },
+  { key: EIssueLayoutTypes.GANTT, title: "Gantt Chart Layout", icon: GanttChartSquare },
 ];
 
 export interface ILayoutDisplayFiltersOptions {
@@ -164,7 +174,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -177,7 +187,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels"],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -212,7 +222,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
           "created_by",
           null,
         ],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -227,7 +237,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -240,7 +250,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels"],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -264,6 +274,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       ],
       display_properties: true,
       display_filters: {
+        order_by: [],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -310,7 +321,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_properties: true,
       display_filters: {
         group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -335,7 +346,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_filters: {
         group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
         sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -369,7 +380,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       ],
       display_properties: true,
       display_filters: {
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -392,7 +403,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       ],
       display_properties: false,
       display_filters: {
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -432,3 +443,28 @@ export const groupReactionEmojis = (reactions: any) => {
   return groupedEmojis;
 };
 
+export enum EIssueGroupByToServerOptions {
+  "state" = "state_id",
+  "priority" = "priority",
+  "labels" = "labels__id",
+  "state_detail.group" = "state__group",
+  "assignees" = "assignees__id",
+  "cycle" = "cycle_id",
+  "module" = "issue_module__module_id",
+  "target_date" = "target_date",
+  "project" = "project_id",
+  "created_by" = "created_by",
+}
+
+export enum EServerGroupByToFilterOptions {
+  "state_id" = "state",
+  "priority" = "priority",
+  "labels__id" = "labels",
+  "state__group" = "state_group",
+  "assignees__id" = "assignees",
+  "cycle_id" = "cycle",
+  "issue_module__module_id" = "module",
+  "target_date" = "target_date",
+  "project_id" = "project",
+  "created_by" = "created_by",
+}

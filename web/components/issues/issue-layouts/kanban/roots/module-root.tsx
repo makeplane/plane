@@ -20,14 +20,12 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
 
   return (
     <BaseKanBanRoot
-      showLoader
       QuickActions={ModuleIssueQuickActions}
-      viewId={moduleId?.toString()}
-      storeType={EIssuesStoreType.MODULE}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
       }}
+      viewId={moduleId?.toString()}
     />
   );
 });

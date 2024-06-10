@@ -1,13 +1,18 @@
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { ISearchIssueResponse } from "@plane/types";
 
-export const BulkDeleteIssuesModalItem: React.FC<any> = observer((props) => {
-  const { issue, delete_issue_ids, identifier } = props;
-  const { getStateById } = useProjectState();
+interface Props {
+  issue: ISearchIssueResponse;
+  canDeleteIssueIds: boolean;
+  identifier: string | undefined;
+}
 
-  const color = getStateById(issue.state_id)?.color;
+export const BulkDeleteIssuesModalItem: React.FC<Props> = observer((props: Props) => {
+  const { issue, canDeleteIssueIds, identifier } = props;
+
+  const color = issue.state__color;
 
   return (
     <Combobox.Option
@@ -21,7 +26,7 @@ export const BulkDeleteIssuesModalItem: React.FC<any> = observer((props) => {
       }
     >
       <div className="flex items-center gap-2">
-        <input type="checkbox" checked={delete_issue_ids} readOnly />
+        <input type="checkbox" checked={canDeleteIssueIds} readOnly />
         <span
           className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
           style={{

@@ -28,9 +28,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
   return (
     <BaseCalendarRoot
       QuickActions={ModuleIssueQuickActions}
-      storeType={EIssuesStoreType.MODULE}
       addIssuesToView={addIssuesToView}
-      viewId={moduleId.toString()}
+      viewId={moduleId?.toString()}
     />
   );
 });

@@ -6,11 +6,11 @@ import { VIEWS_LIST } from "@/components/gantt-chart/data";
 import { cn } from "@/helpers/common.helper";
 // types
 import { useGanttChart } from "../hooks/use-gantt-chart";
-import { IGanttBlock, TGanttViews } from "../types";
+import { TGanttViews } from "../types";
 // constants
 
 type Props = {
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
   fullScreenMode: boolean;
   handleChartView: (view: TGanttViews) => void;
   handleToday: () => void;
@@ -19,14 +19,16 @@ type Props = {
 };
 
 export const GanttChartHeader: React.FC<Props> = observer((props) => {
-  const { blocks, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode } = props;
+  const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode } = props;
   // chart hook
   const { currentView } = useGanttChart();
 
   return (
     <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
       <div className="ml-auto">
-        <div className="ml-auto text-sm font-medium">{blocks ? `${blocks.length} ${loaderTitle}` : "Loading..."}</div>
+        <div className="ml-auto text-sm font-medium">
+          {blockIds ? `${blockIds.length} ${loaderTitle}` : "Loading..."}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

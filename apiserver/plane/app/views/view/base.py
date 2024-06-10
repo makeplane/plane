@@ -1,47 +1,56 @@
 # Django imports
-from django.db.models import (
-    Q,
-    OuterRef,
-    Func,
-    F,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-)
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import UUIDField
+from django.db.models import (
+    Exists,
+    F,
+    Func,
+    OuterRef,
+    Q,
+    UUIDField,
+    Value,
+)
 from django.db.models.functions import Coalesce
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
+from rest_framework import status
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework import status
+
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    WorkspaceEntityPermission,
+)
+from plane.app.serializers import (
+    IssueViewSerializer,
+)
+from plane.db.models import (
+    Issue,
+    IssueAttachment,
+    IssueLink,
+    IssueView,
+    Workspace,
+)
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
+from plane.utils.issue_filters import issue_filters
+from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.paginator import (
+    GroupedOffsetPaginator,
+    SubGroupedOffsetPaginator,
+)
 
 # Module imports
 from .. import BaseViewSet
-from plane.app.serializers import (
-    IssueViewSerializer,
-    IssueSerializer,
-)
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    ProjectEntityPermission,
-)
+
 from plane.db.models import (
-    Workspace,
-    IssueView,
-    Issue,
     UserFavorite,
-    IssueLink,
-    IssueAttachment,
 )
-from plane.utils.issue_filters import issue_filters
-from plane.utils.user_timezone_converter import user_timezone_converter
+
 
 class GlobalViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
@@ -143,17 +152,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
-
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
@@ -162,103 +160,107 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
+        # Issue queryset
+        issue_queryset, order_by_param = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
 
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
 
-        if self.fields:
-            issues = IssueSerializer(
-                issue_queryset, many=True, fields=self.fields
-            ).data
+        # issue queryset
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset,
+            group_by=group_by,
+            sub_group_by=sub_group_by,
+        )
+
+        if group_by:
+            # Check group and sub group value paginate
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {
+                            "error": "Group by and sub group by cannot have same parameters"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    # group and sub group pagination
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            project_id=None,
+                            filters=filters,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            project_id=None,
+                            filters=filters,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_inbox__status=1)
+                            | Q(issue_inbox__status=-1)
+                            | Q(issue_inbox__status=2)
+                            | Q(issue_inbox__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            # Group Paginate
+            else:
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        project_id=None,
+                        filters=filters,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_inbox__status=1)
+                        | Q(issue_inbox__status=-1)
+                        | Q(issue_inbox__status=2)
+                        | Q(issue_inbox__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
         else:
-            issues = issue_queryset.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
+            # List Paginate
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                ),
             )
-            datetime_fields = ["created_at", "updated_at"]
-            issues = user_timezone_converter(
-                issues, datetime_fields, request.user.user_timezone
-            )
-        return Response(issues, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):

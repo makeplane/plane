@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core";
 import { AllIssueLayoutRoot } from "@/components/issues";
@@ -13,7 +12,8 @@ import { useGlobalView, useWorkspace } from "@/hooks/store";
 
 const GlobalViewIssuesPage = observer(() => {
   // router
-  const { globalViewId } = useParams();
+  //const { globalViewId } = useParams();
+  const globalViewId = "assigned";
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { getViewDetailsById } = useGlobalView();

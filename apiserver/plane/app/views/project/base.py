@@ -1,26 +1,25 @@
 # Python imports
 import boto3
+from django.conf import settings
+from django.utils import timezone
 import json
 
 # Django imports
 from django.db import IntegrityError
 from django.db.models import (
-    Prefetch,
-    Q,
     Exists,
-    OuterRef,
     F,
     Func,
+    OuterRef,
+    Prefetch,
+    Q,
     Subquery,
 )
-from django.conf import settings
-from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.permissions import AllowAny
 
 # Module imports
@@ -35,20 +34,19 @@ from plane.app.permissions import (
     ProjectBasePermission,
     ProjectMemberPermission,
 )
-
 from plane.db.models import (
-    Project,
-    ProjectMember,
-    Workspace,
-    State,
     UserFavorite,
-    ProjectIdentifier,
-    Module,
     Cycle,
     Inbox,
     DeployBoard,
     IssueProperty,
     Issue,
+    Module,
+    Project,
+    ProjectIdentifier,
+    ProjectMember,
+    State,
+    Workspace,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
@@ -168,6 +166,7 @@ class ProjectViewSet(BaseViewSet):
             "cursor", False
         ):
             return self.paginate(
+                order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectListSerializer(

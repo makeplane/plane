@@ -13,7 +13,8 @@ export enum EEstimateUpdateStages {
   SWITCH = "switch",
 }
 
-export const maxEstimatesCount = 11;
+export const minEstimatesCount = 2;
+export const maxEstimatesCount = 6;
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {
@@ -28,7 +29,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
           { id: undefined, key: 4, value: "5" },
           { id: undefined, key: 5, value: "8" },
           { id: undefined, key: 6, value: "13" },
-          { id: undefined, key: 7, value: "21" },
         ],
       },
       linear: {
@@ -40,10 +40,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
           { id: undefined, key: 4, value: "4" },
           { id: undefined, key: 5, value: "5" },
           { id: undefined, key: 6, value: "6" },
-          { id: undefined, key: 7, value: "7" },
-          { id: undefined, key: 8, value: "8" },
-          { id: undefined, key: 9, value: "9" },
-          { id: undefined, key: 10, value: "10" },
         ],
       },
       squares: {
@@ -116,10 +112,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
           { id: undefined, key: 4, value: "4" },
           { id: undefined, key: 5, value: "5" },
           { id: undefined, key: 6, value: "6" },
-          { id: undefined, key: 7, value: "7" },
-          { id: undefined, key: 8, value: "8" },
-          { id: undefined, key: 9, value: "9" },
-          { id: undefined, key: 10, value: "10" },
         ],
       },
     },

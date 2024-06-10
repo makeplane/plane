@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // components
 import { CalendarDayTile } from "@/components/issues";
 // helpers
@@ -17,22 +17,19 @@ type Props = {
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
-  quickActions: TRenderQuickActions;
+  quickActions: TRenderQuickActions
+  loadMoreIssues: (dateString: string) => void;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   handleDragAndDrop: (
     issueId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
@@ -45,12 +42,14 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     groupedIssueIds,
     handleDragAndDrop,
     week,
+    loadMoreIssues,
+    getPaginationData,
+    getGroupIssueCount,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
     addIssuesToView,
-    viewId,
     readOnly = false,
     selectedDate,
     setSelectedDate,
@@ -79,12 +78,14 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             date={date}
             issues={issues}
             groupedIssueIds={groupedIssueIds}
+            loadMoreIssues={loadMoreIssues}
+            getPaginationData={getPaginationData}
+            getGroupIssueCount={getGroupIssueCount}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
             disableIssueCreation={disableIssueCreation}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
-            viewId={viewId}
             readOnly={readOnly}
             handleDragAndDrop={handleDragAndDrop}
           />

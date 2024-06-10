@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
-import useSWR from "swr";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
-import { IUser, TIssue } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+//plane
+import { ISearchIssueResponse, IUser } from "@plane/types";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+//components
 import { EmptyState } from "@/components/empty-state";
+//constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
+//hooks
 import { useIssues, useProject } from "@/hooks/store";
-import { IssueService } from "@/services/issue";
+import useDebounce from "@/hooks/use-debounce";
+// services
+import { ProjectService } from "@/services/project";
 // ui
 // icons
-// types
-// store hooks
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
-// constants
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -34,7 +34,7 @@ type Props = {
   user: IUser | undefined;
 };
 
-const issueService = new IssueService();
+const projectService = new ProjectService();
 
 export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
@@ -47,13 +47,23 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   } = useIssues(EIssuesStoreType.PROJECT);
   // states
   const [query, setQuery] = useState("");
-  // fetching project issues.
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId && isOpen ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId && isOpen
-      ? () => issueService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const debouncedSearchTerm: string = useDebounce(query, 500);
+
+  useEffect(() => {
+    if (!isOpen || !workspaceSlug || !projectId) return;
+
+    setIsSearching(true);
+    projectService
+      .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
+        search: debouncedSearchTerm,
+        workspace_search: false,
+      })
+      .then((res: ISearchIssueResponse[]) => setIssues(res))
+      .finally(() => setIsSearching(false));
+  }, [debouncedSearchTerm, isOpen, projectId, workspaceSlug]);
 
   const {
     handleSubmit,
@@ -107,14 +117,33 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
 
   const projectDetails = getProjectById(projectId as string);
 
-  const filteredIssues: TIssue[] =
-    query === ""
-      ? Object.values(issues ?? {})
-      : Object.values(issues ?? {})?.filter(
-          (issue) =>
-            issue.name.toLowerCase().includes(query.toLowerCase()) ||
-            `${projectDetails?.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
-        ) ?? [];
+  const issueList =
+    issues.length > 0 ? (
+      <li className="p-2">
+        {query === "" && (
+          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issues to delete</h2>
+        )}
+        <ul className="text-sm text-custom-text-200">
+          {issues.map((issue) => (
+            <BulkDeleteIssuesModalItem
+              issue={issue}
+              identifier={projectDetails?.identifier}
+              canDeleteIssueIds={watch("delete_issue_ids").includes(issue.id)}
+              key={issue.id}
+            />
+          ))}
+        </ul>
+      </li>
+    ) : (
+      <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+        <EmptyState
+          type={
+            query === "" ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+          }
+          layout="screen-simple"
+        />
+      </div>
+    );
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
@@ -160,40 +189,20 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                       static
                       className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
                     >
-                      {filteredIssues.length > 0 ? (
-                        <li className="p-2">
-                          {query === "" && (
-                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">
-                              Select issues to delete
-                            </h2>
-                          )}
-                          <ul className="text-sm text-custom-text-200">
-                            {filteredIssues.map((issue) => (
-                              <BulkDeleteIssuesModalItem
-                                issue={issue}
-                                identifier={projectDetails?.identifier}
-                                delete_issue_ids={watch("delete_issue_ids").includes(issue.id)}
-                                key={issue.id}
-                              />
-                            ))}
-                          </ul>
-                        </li>
+                      {isSearching ? (
+                        <Loader className="space-y-3 p-3">
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                        </Loader>
                       ) : (
-                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState
-                            type={
-                              query === ""
-                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
-                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
-                            }
-                            layout="screen-simple"
-                          />
-                        </div>
+                        <>{issueList}</>
                       )}
                     </Combobox.Options>
                   </Combobox>
 
-                  {filteredIssues.length > 0 && (
+                  {issues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
                       <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel

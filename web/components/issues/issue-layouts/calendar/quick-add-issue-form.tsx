@@ -27,14 +27,8 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   onOpen?: () => void;
 };
 
@@ -66,7 +60,7 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, viewId, onOpen } = props;
+  const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, onOpen } = props;
 
   // router
   const { workspaceSlug, projectId, moduleId } = useParams();
@@ -133,14 +127,9 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          ...payload,
-        },
-        viewId
-      );
+      const quickAddPromise = quickAddCallback(projectId.toString(), {
+        ...payload,
+      });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {

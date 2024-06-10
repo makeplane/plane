@@ -25,9 +25,9 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
   onClose?: () => void;
-  projectId: string;
+  projectId: string | undefined;
   showDefaultState?: boolean;
-  value: string | undefined;
+  value: string | undefined | null;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -96,7 +96,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const selectedState = stateValue ? getStateById(stateValue) : undefined;
 
   const onOpen = async () => {
-    if (!statesList && workspaceSlug) {
+    if (!statesList && workspaceSlug && projectId) {
       setStateLoader(true);
       await fetchProjectStates(workspaceSlug, projectId);
       setStateLoader(false);

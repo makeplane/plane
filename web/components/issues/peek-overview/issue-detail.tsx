@@ -44,9 +44,9 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   const issue = issueId ? getIssueById(issueId) : undefined;
-  if (!issue) return <></>;
+  if (!issue || !issue.project_id) return <></>;
 
-  const projectDetails = getProjectById(issue?.project_id);
+  const projectDetails = getProjectById(issue.project_id);
 
   const issueDescription =
     issue.description_html !== undefined || issue.description_html !== null

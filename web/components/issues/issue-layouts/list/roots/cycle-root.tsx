@@ -42,11 +42,10 @@ export const CycleListLayout: React.FC = observer(() => {
   return (
     <BaseListRoot
       QuickActions={CycleIssueQuickActions}
-      viewId={cycleId?.toString()}
-      storeType={EIssuesStoreType.CYCLE}
       addIssuesToView={addIssuesToView}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
+      viewId={cycleId?.toString()}
     />
   );
 });

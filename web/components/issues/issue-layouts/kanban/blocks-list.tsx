@@ -1,4 +1,5 @@
-import { MutableRefObject, memo } from "react";
+import { MutableRefObject } from "react";
+import { observer } from "mobx-react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { KanbanIssueBlock } from "@/components/issues";
@@ -11,22 +12,20 @@ interface IssueBlocksListProps {
   issuesMap: IIssueMap;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
-  isDragDisabled: boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   canDropOverIssue: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
-const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
+export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
   const {
     sub_group_id,
     groupId,
     issuesMap,
     issueIds,
     displayProperties,
-    isDragDisabled,
     canDropOverIssue,
     updateIssue,
     quickActions,
@@ -56,7 +55,6 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 updateIssue={updateIssue}
                 quickActions={quickActions}
                 draggableId={draggableId}
-                isDragDisabled={isDragDisabled}
                 canDropOverIssue={canDropOverIssue}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
@@ -67,6 +65,4 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
       ) : null}
     </>
   );
-};
-
-export const KanbanIssueBlocksList = memo(KanbanIssueBlocksListMemo);
+});

@@ -1,7 +1,8 @@
+import { RefObject } from "react";
 import { observer } from "mobx-react";
 // components
 import { MultipleSelectGroupAction } from "@/components/core";
-import { IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -10,23 +11,31 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { GANTT_SELECT_GROUP, HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 
 type Props = {
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
+  canLoadMoreBlocks?: boolean;
+  loadMoreBlocks?: () => void;
+  ganttContainerRef: RefObject<HTMLDivElement>;
   enableReorder: boolean;
   enableSelection: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   quickAdd?: React.JSX.Element | undefined;
   selectionHelpers: TSelectionHelper;
 };
 
 export const GanttChartSidebar: React.FC<Props> = observer((props) => {
   const {
-    blocks,
+    blockIds,
     blockUpdateHandler,
     enableReorder,
     enableSelection,
     sidebarToRender,
+    getBlockById,
+    loadMoreBlocks,
+    canLoadMoreBlocks,
+    ganttContainerRef,
     title,
     quickAdd,
     selectionHelpers,
@@ -74,7 +83,19 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
       </div>
 
       <div className="min-h-full h-max bg-custom-background-100 overflow-hidden">
-        {sidebarToRender?.({ title, blockUpdateHandler, blocks, enableReorder, enableSelection, selectionHelpers })}
+        {sidebarToRender &&
+          sidebarToRender({
+            title,
+            blockUpdateHandler,
+            blockIds,
+            getBlockById,
+            enableReorder,
+            enableSelection,
+            canLoadMoreBlocks,
+            ganttContainerRef,
+            loadMoreBlocks,
+            selectionHelpers
+          })}
       </div>
       {quickAdd ? quickAdd : null}
     </div>

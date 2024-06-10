@@ -25,8 +25,8 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string | undefined) => void;
   onClose?: () => void;
-  projectId: string;
-  value: string | undefined;
+  projectId: string | undefined;
+  value: string | undefined | null;
 };
 
 type DropdownOptions =
@@ -120,7 +120,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const selectedEstimate = value && estimatePointById ? estimatePointById(value) : undefined;
 
   const onOpen = async () => {
-    if (!currentActiveEstimateId && workspaceSlug) await getProjectEstimates(workspaceSlug, projectId);
+    if (!currentActiveEstimateId && workspaceSlug && projectId) await getProjectEstimates(workspaceSlug, projectId);
   };
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({

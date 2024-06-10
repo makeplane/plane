@@ -29,10 +29,9 @@ interface IssueBlockProps {
   subGroupId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
-  isDragDisabled: boolean;
   draggableId: string;
   canDropOverIssue: boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -42,7 +41,7 @@ interface IssueDetailsBlockProps {
   cardRef: React.RefObject<HTMLElement>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   isReadOnly: boolean;
 }
@@ -110,7 +109,6 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     subGroupId,
     issuesMap,
     displayProperties,
-    isDragDisabled,
     canDropOverIssue,
     updateIssue,
     quickActions,
@@ -139,9 +137,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const [isDraggingOverBlock, setIsDraggingOverBlock] = useState(false);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
 
-  const canEditIssueProperties = canEditProperties(issue?.project_id);
+  const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
 
-  const isDragAllowed = !isDragDisabled && !issue?.tempId && canEditIssueProperties;
+  const isDragAllowed = !issue?.tempId && canEditIssueProperties;
 
   useOutsideClickDetector(cardRef, () => {
     cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);

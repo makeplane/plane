@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import { FC, Fragment, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -8,7 +8,7 @@ import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // types
-import { ICycle, TIssue } from "@plane/types";
+import { ICycle } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 // components
@@ -23,7 +23,8 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useProject } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
@@ -36,6 +37,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
+
+  const issuesContainerRef = useRef<HTMLDivElement | null>(null);
+  const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -50,17 +54,29 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     }
   };
   const {
-    issues: { fetchActiveCycleIssues },
+    issues: { getActiveCycleById, fetchActiveCycleIssues, fetchNextActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
 
   const { currentProjectDetails } = useProject();
 
-  const { data: activeCycleIssues } = useSWR(
+  useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, cycle.id) : null
+    workspaceSlug && projectId && cycle.id
+      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycle.id)
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const cycleIssues = activeCycleIssues ?? [];
+  const cycleIssueDetails = getActiveCycleById(cycle.id);
+
+  const loadMoreIssues = useCallback(() => {
+    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);
+  }, [workspaceSlug, projectId, cycle.id, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
+
+  useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
   return (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
@@ -134,53 +150,75 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            <div className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm">
-              {cycleIssues ? (
-                cycleIssues.length > 0 ? (
-                  cycleIssues.map((issue: TIssue) => (
-                    <Link
-                      key={issue.id}
-                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-                      className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
-                    >
-                      <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                        <PriorityIcon priority={issue.priority} withContainer size={12} />
+            <div
+              ref={issuesContainerRef}
+              className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
+            >
+              {cycleIssueDetails && cycleIssueDetails.issueIds ? (
+                cycleIssueDetails.issueCount > 0 ? (
+                  <>
+                    {cycleIssueDetails.issueIds.map((issueId: string) => {
+                      const issue = getIssueById(issueId);
 
-                        <Tooltip
-                          tooltipHeading="Issue ID"
-                          tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
+                      if (!issue) return null;
+
+                      return (
+                        <Link
+                          key={issue.id}
+                          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
                         >
-                          <span className="flex-shrink-0 text-xs text-custom-text-200">
-                            {currentProjectDetails?.identifier}-{issue.sequence_id}
-                          </span>
-                        </Tooltip>
-                        <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                          <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
-                        </Tooltip>
-                      </div>
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <StateDropdown
-                          value={issue.state_id ?? undefined}
-                          onChange={() => {}}
-                          projectId={projectId?.toString() ?? ""}
-                          disabled
-                          buttonVariant="background-with-text"
-                          buttonContainerClassName="cursor-pointer max-w-24"
-                          showTooltip
-                        />
-                        {issue.target_date && (
-                          <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
-                            <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
-                              <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                              <span className="text-xs truncate">
-                                {renderFormattedDateWithoutYear(issue.target_date)}
+                          <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
+                            <PriorityIcon priority={issue.priority} withContainer size={12} />
+
+                            <Tooltip
+                              tooltipHeading="Issue ID"
+                              tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
+                            >
+                              <span className="flex-shrink-0 text-xs text-custom-text-200">
+                                {currentProjectDetails?.identifier}-{issue.sequence_id}
                               </span>
-                            </div>
-                          </Tooltip>
-                        )}
-                      </div>
-                    </Link>
-                  ))
+                            </Tooltip>
+                            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                              <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                            </Tooltip>
+                          </div>
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <StateDropdown
+                              value={issue.state_id}
+                              onChange={() => {}}
+                              projectId={projectId?.toString() ?? ""}
+                              disabled
+                              buttonVariant="background-with-text"
+                              buttonContainerClassName="cursor-pointer max-w-24"
+                              showTooltip
+                            />
+                            {issue.target_date && (
+                              <Tooltip
+                                tooltipHeading="Target Date"
+                                tooltipContent={renderFormattedDate(issue.target_date)}
+                              >
+                                <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                                  <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                                  <span className="text-xs truncate">
+                                    {renderFormattedDateWithoutYear(issue.target_date)}
+                                  </span>
+                                </div>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    })}
+                    {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
+                      <div
+                        ref={setIssueLoaderElement}
+                        className={
+                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
+                        }
+                      />
+                    )}
+                  </>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full">
                     <EmptyState

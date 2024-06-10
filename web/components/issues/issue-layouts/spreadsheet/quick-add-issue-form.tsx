@@ -23,13 +23,7 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -60,7 +54,7 @@ const Inputs = (props: any) => {
 };
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback } = props;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails } = useProject();
@@ -162,12 +156,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(
-        currentWorkspace.slug,
-        currentProjectDetails.id,
-        { ...payload } as TIssue,
-        viewId
-      );
+      const quickAddPromise = quickAddCallback(currentProjectDetails.id, { ...payload } as TIssue);
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {

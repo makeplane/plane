@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, FC, SetStateAction, useCallback } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
@@ -17,13 +17,24 @@ type TEstimatePointCreateRoot = {
   estimateType: TEstimateSystemKeys;
   estimatePoints: TEstimatePointsObject[];
   setEstimatePoints: Dispatch<SetStateAction<TEstimatePointsObject[] | undefined>>;
+  estimatePointCreate: TEstimatePointsObject[] | undefined;
+  setEstimatePointCreate: Dispatch<SetStateAction<TEstimatePointsObject[] | undefined>>;
+  estimatePointCreateError: number[];
 };
 
 export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
   // props
-  const { workspaceSlug, projectId, estimateId, estimateType, estimatePoints, setEstimatePoints } = props;
-  // states
-  const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
+  const {
+    workspaceSlug,
+    projectId,
+    estimateId,
+    estimateType,
+    estimatePoints,
+    setEstimatePoints,
+    estimatePointCreate,
+    setEstimatePointCreate,
+    estimatePointCreateError,
+  } = props;
 
   const handleEstimatePoint = useCallback(
     (mode: "add" | "remove" | "update", value: TEstimatePointsObject) => {
@@ -77,9 +88,19 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
     setEstimatePoints(() => updatedEstimateKeysOrder);
   };
 
+  const handleCreate = () => {
+    if (estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount - 1) {
+      handleEstimatePointCreate("add", {
+        id: undefined,
+        key: estimatePoints.length + (estimatePointCreate?.length || 0) + 1,
+        value: "",
+      });
+    }
+  };
+
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <div className="space-y-3">
+    <div className="space-y-1">
       <div className="text-sm font-medium text-custom-text-200 capitalize">{estimateType}</div>
 
       <div>
@@ -118,21 +139,12 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
               handleEstimatePoint("add", { ...estimatePoint, value: estimatePointValue })
             }
             closeCallBack={() => handleEstimatePointCreate("remove", estimatePoint)}
+            handleCreateCallback={() => estimatePointCreate.length === 1 && handleCreate()}
+            isError={estimatePointCreateError.includes(estimatePoint.key) ? true : false}
           />
         ))}
-      {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount && (
-        <Button
-          variant="link-primary"
-          size="sm"
-          prependIcon={<Plus />}
-          onClick={() =>
-            handleEstimatePointCreate("add", {
-              id: undefined,
-              key: estimatePoints.length + (estimatePointCreate?.length || 0) + 1,
-              value: "",
-            })
-          }
-        >
+      {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount - 1 && (
+        <Button variant="link-primary" size="sm" prependIcon={<Plus />} onClick={handleCreate}>
           Add {estimateType}
         </Button>
       )}
