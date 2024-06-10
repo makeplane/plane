@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 // components
 import { ContentWrapper, AppHeader } from "@/components/core";
