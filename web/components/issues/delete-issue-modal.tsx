@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 // types
 import { TIssue } from "@plane/types";

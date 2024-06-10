@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useCallback } from "react";
 // editor
 import { EditorMenuItemNames, EditorRefApi } from "@plane/lite-text-editor";

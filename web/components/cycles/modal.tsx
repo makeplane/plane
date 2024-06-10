@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 // types
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";

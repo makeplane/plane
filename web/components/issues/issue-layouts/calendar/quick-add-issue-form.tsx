@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { TIssue } from "@plane/types";

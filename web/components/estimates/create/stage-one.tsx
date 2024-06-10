@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { Crown, Info } from "lucide-react";
 import { TEstimateSystemKeys } from "@plane/types";

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, MoveRight, Users } from "lucide-react";

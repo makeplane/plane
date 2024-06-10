@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";

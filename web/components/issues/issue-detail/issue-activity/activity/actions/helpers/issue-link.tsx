@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 // hooks
 import { Tooltip } from "@plane/ui";

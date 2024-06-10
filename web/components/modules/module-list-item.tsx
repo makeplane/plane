@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";

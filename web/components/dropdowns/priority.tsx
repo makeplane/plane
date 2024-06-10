@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, ReactNode, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";

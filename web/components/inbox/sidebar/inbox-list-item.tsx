@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // types

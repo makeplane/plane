@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { TIssueLink } from "@plane/types";

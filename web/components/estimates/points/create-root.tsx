@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";

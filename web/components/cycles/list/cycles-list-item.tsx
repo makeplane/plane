@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

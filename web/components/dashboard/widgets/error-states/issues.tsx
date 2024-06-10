@@ -1,3 +1,5 @@
+"use client";
+
 import { AlertTriangle, RefreshCcw } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";

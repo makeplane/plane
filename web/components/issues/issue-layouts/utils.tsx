@@ -1,3 +1,5 @@
+"use client";
+
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";

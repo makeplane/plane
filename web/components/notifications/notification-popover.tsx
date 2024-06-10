@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { Bell } from "lucide-react";
@@ -63,12 +65,12 @@ export const NotificationPopover = observer(() => {
   const currentTabEmptyState = snoozed
     ? EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE
     : archived
-    ? EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE
-    : selectedTab === "created"
-    ? EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE
-    : selectedTab === "watching"
-    ? EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE
-    : EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE;
+      ? EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE
+      : selectedTab === "created"
+        ? EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE
+        : selectedTab === "watching"
+          ? EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE
+          : EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE;
 
   return (
     <>

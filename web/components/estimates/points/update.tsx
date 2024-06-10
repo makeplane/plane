@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, MouseEvent, useEffect, FocusEvent, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
