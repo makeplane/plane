@@ -359,6 +359,4 @@ SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 # Cloud server base url
-PAYMENT_SERVER_BASE_URL = os.environ.get(
-    "PAYMENT_SERVER_BASE_URL", "http://localhost"
-)
+PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
