@@ -1,7 +1,7 @@
 "use client";
 
 import AppHeaderWrapper from "@/app/[workspaceSlug]/app-header-wrapper";
-import UserProfileHeader from "../header";
+import UserProfileHeader from "../../../../profile/[userId]/header";
 
 const ProfileActivityHeader = () => <AppHeaderWrapper header={<UserProfileHeader type="Activity" />} />;
 
