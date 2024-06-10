@@ -1,6 +1,7 @@
+"use client";
+
 import { RefObject, MutableRefObject, useState } from "react";
 import { observer } from "mobx-react";
-// components
 // ui
 import { Loader } from "@plane/ui";
 // components

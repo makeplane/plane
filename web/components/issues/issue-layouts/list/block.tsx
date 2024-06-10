@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -102,6 +104,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
   const isSubIssue = nestingLevel !== 0;
+  const canSelectIssues = canEditIssueProperties && !selectionHelpers.isSelectionDisabled;
 
   const marginLeft = `${spacingLeft}px`;
 
@@ -118,6 +121,9 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       });
     }
   };
+
+  //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
+  const keyMinWidth = ((projectIdentifier?.length ?? 0) + 5) * 7;
 
   return (
     <div
@@ -143,10 +149,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       }}
     >
       <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-1.5 truncate">
-          <div className="flex items-center gap-2" style={isSubIssue ? { marginLeft } : {}}>
+        <div className="flex flex-grow items-center gap-0.5 truncate">
+          <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
             {/* select checkbox */}
-            {projectId && canEditIssueProperties && (
+            {projectId && canSelectIssues && (
               <Tooltip
                 tooltipContent={
                   <>
@@ -174,7 +180,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </Tooltip>
             )}
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div
+                className="flex-shrink-0 text-xs font-medium text-custom-text-300 pl-2"
+                style={{ minWidth: `${keyMinWidth}px` }}
+              >
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}

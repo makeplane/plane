@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui

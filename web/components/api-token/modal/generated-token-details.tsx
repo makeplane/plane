@@ -1,3 +1,5 @@
+"use client";
+
 import { Copy } from "lucide-react";
 import { IApiToken } from "@plane/types";
 // ui

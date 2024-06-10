@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
 import { TModuleOrderByOptions } from "@plane/types";
 // ui

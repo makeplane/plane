@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // components
 import { CycleIssueQuickActions } from "@/components/issues";
 // constants
@@ -14,8 +14,7 @@ import { BaseListRoot } from "../base-list-root";
 export interface ICycleListLayout {}
 
 export const CycleListLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCompletedCycleIds } = useCycle(); // mobx store

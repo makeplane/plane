@@ -1,6 +1,6 @@
 import React from "react"
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
@@ -38,8 +38,7 @@ const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined;
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 

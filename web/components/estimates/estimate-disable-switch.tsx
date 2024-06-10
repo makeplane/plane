@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";

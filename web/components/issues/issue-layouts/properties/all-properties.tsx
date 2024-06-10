@@ -1,7 +1,9 @@
+"use client";
+
 import { useCallback, useMemo } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useRouter } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // types
@@ -44,9 +46,6 @@ export interface IIssueProperties {
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
   const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -63,6 +62,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
@@ -96,7 +101,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: router.asPath,
+          path: pathname,
           updates: {
             changed_property: "state",
             change_details: stateId,
@@ -111,7 +116,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: router.asPath,
+          path: pathname,
           updates: {
             changed_property: "priority",
             change_details: value,
@@ -126,7 +131,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: router.asPath,
+          path: pathname,
           updates: {
             changed_property: "labels",
             change_details: ids,
@@ -141,7 +146,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: router.asPath,
+          path: pathname,
           updates: {
             changed_property: "assignees",
             change_details: ids,
@@ -166,11 +171,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
+        path: pathname,
         updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
       });
     },
-    [issueOperations, captureIssueEvent, currentLayout, router, issue]
+    [issueOperations, captureIssueEvent, currentLayout, pathname, issue]
   );
 
   const handleCycle = useCallback(
@@ -182,11 +187,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
+        path: pathname,
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
       });
     },
-    [issue, issueOperations, captureIssueEvent, currentLayout, router.asPath]
+    [issue, issueOperations, captureIssueEvent, currentLayout, pathname]
   );
 
   const handleStartDate = (date: Date | null) => {
@@ -196,7 +201,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issue, state: "SUCCESS", element: currentLayout },
-            path: router.asPath,
+            path: pathname,
             updates: {
               changed_property: "start_date",
               change_details: date ? renderFormattedPayloadDate(date) : null,
@@ -213,7 +218,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issue, state: "SUCCESS", element: currentLayout },
-            path: router.asPath,
+            path: pathname,
             updates: {
               changed_property: "target_date",
               change_details: date ? renderFormattedPayloadDate(date) : null,
@@ -229,7 +234,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: router.asPath,
+          path: pathname,
           updates: {
             changed_property: "estimate_point",
             change_details: value,
@@ -239,12 +244,15 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-        issue.id
-      }`,
-      hash: "sub-issues",
-    });
+    router.push(
+      `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}#sub-issues`
+    );
+    // router.push({
+    //   pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+    //     issue.id
+    //   }`,
+    //   hash: "sub-issues",
+    // });
   };
 
   if (!displayProperties || !issue.project_id) return null;

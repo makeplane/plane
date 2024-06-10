@@ -1,7 +1,9 @@
+"use client";
+
 import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
@@ -34,8 +36,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     parentRef,
   } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -68,7 +70,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     );
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
 
-  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
+  const isDraftIssue = pathname?.includes("draft-issues") || false;
 
   const duplicateIssuePayload = omit(
     {

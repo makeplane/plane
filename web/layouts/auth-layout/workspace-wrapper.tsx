@@ -1,8 +1,10 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { LogOut } from "lucide-react";
@@ -22,9 +24,8 @@ export interface IWorkspaceAuthWrapper {
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks

@@ -1,3 +1,5 @@
+"use client";
+
 // components
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 import { Button } from "@plane/ui";

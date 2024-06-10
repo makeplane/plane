@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC } from "react";
 import { ChevronDown } from "lucide-react";
 // types

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";

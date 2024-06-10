@@ -1,16 +1,18 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// hooks
-// component
 import { ArchiveRestore } from "lucide-react";
+// types
 import { IProject } from "@plane/types";
+// ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
+// component
 import { SelectMonthModal } from "@/components/automation";
-// icon
 // constants
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+// hooks
 import { useProject, useUser } from "@/hooks/store";
-// types
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

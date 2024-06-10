@@ -1,6 +1,6 @@
 import size from "lodash/size";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // components
@@ -13,8 +13,7 @@ import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();

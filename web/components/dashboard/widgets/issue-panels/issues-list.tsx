@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
 // hooks

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -94,6 +96,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       description: formData.description,
       logo_props: formData.logo_props,
       filters: formData.filters,
+      display_filters: formData.display_filters,
+      display_properties: formData.display_properties,
     } as IProjectView);
 
     reset({

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";

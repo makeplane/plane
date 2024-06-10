@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, Fragment, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { Dialog, Transition } from "@headlessui/react";

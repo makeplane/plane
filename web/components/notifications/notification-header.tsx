@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
 import type { NotificationType, NotificationCount } from "@plane/types";
@@ -181,8 +183,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 {snoozed
                   ? "Snoozed Notifications"
                   : readNotification
-                  ? "Unread Notifications"
-                  : "Archived Notifications"}
+                    ? "Unread Notifications"
+                    : "Archived Notifications"}
               </span>
             </h4>
           </button>

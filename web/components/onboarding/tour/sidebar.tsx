@@ -1,3 +1,5 @@
+"use client";
+
 // icons
 import { FileText } from "lucide-react";
 import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";

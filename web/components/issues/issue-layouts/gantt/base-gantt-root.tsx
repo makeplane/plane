@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { TIssue } from "@plane/types";
-//components
+// hooks
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
 import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
@@ -30,8 +30,7 @@ type GanttStoreType =
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
   const { viewId } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const storeType = useIssueStoreType() as GanttStoreType;
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
@@ -97,8 +96,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
-          enableSelection={isAllowed}
           enableAddBlock={isAllowed}
+          enableSelection={false}
           quickAdd={
             enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
           }

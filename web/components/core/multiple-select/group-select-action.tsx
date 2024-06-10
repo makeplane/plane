@@ -1,3 +1,4 @@
+"use client";
 // ui
 import { Checkbox } from "@plane/ui";
 // helpers
@@ -16,6 +17,8 @@ export const MultipleSelectGroupAction: React.FC<Props> = (props) => {
   const { className, disabled = false, groupID, selectionHelpers } = props;
   // derived values
   const groupSelectionStatus = selectionHelpers.isGroupSelected(groupID);
+
+  if (selectionHelpers.isSelectionDisabled) return null;
 
   return (
     <Checkbox

@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
@@ -16,8 +16,7 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 

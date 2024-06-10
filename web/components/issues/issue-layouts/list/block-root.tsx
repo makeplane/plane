@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -155,7 +157,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             canEditProperties={canEditProperties}
             displayProperties={displayProperties}
             nestingLevel={nestingLevel + 1}
-            spacingLeft={spacingLeft + (displayProperties?.key ? 12 : 0)}
+            spacingLeft={spacingLeft + 12}
             containerRef={containerRef}
             selectionHelpers={selectionHelpers}
             groupId={groupId}

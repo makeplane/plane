@@ -1,3 +1,4 @@
+"use client";
 // ui
 import { Checkbox } from "@plane/ui";
 // helpers
@@ -17,6 +18,8 @@ export const MultipleSelectEntityAction: React.FC<Props> = (props) => {
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.getIsEntitySelected(id);
+
+  if (selectionHelpers.isSelectionDisabled) return null;
 
   return (
     <Checkbox

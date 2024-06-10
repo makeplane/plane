@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // mobx store
 import { ModuleIssueQuickActions } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -13,8 +13,7 @@ import { BaseListRoot } from "../base-list-root";
 export interface IModuleListLayout {}
 
 export const ModuleListLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
 
   const { issues } = useIssues(EIssuesStoreType.MODULE);
 

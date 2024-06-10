@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // components
 import { Logo } from "@/components/common";
 // constants
@@ -10,8 +10,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useCycle, useMember, useModule, useProject } from "@/hooks/store";
 
 export const CustomAnalyticsSidebarHeader = observer(() => {
-  const router = useRouter();
-  const { projectId, cycleId, moduleId } = router.query;
+  const { projectId, cycleId, moduleId } = useParams();
 
   const { getProjectById } = useProject();
   const { getCycleById } = useCycle();

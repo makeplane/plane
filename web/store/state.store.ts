@@ -97,7 +97,7 @@ export class StateStore implements IStateStore {
    * Returns the stateMap belongs to a specific project grouped by group
    */
   get groupedProjectStates() {
-    if (!this.router.query?.projectId) return;
+    if (!this.router.projectId) return;
     return groupBy(this.projectStates, "group") as Record<string, IState[]>;
   }
 

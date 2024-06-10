@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 // hooks
 import { useUser } from "@/hooks/store";
 // layouts
@@ -19,8 +19,8 @@ type Props = {
 export const NotAuthorizedView: React.FC<Props> = observer((props) => {
   const { actionButton, type } = props;
   // router
-  const { query } = useRouter();
-  const { next_path } = query;
+  const searchParams = useSearchParams();
+  const next_path = searchParams.get("next_path");
   // hooks
   const { data: currentUser } = useUser();
 

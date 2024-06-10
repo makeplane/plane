@@ -1,3 +1,5 @@
+"use client";
+
 import { X } from "lucide-react";
 // types
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";

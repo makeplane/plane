@@ -1,3 +1,5 @@
+"use client";
+
 // @ts-nocheck
 import { Button } from "@plane/ui";
 import { NodeViewWrapper } from "@tiptap/react";

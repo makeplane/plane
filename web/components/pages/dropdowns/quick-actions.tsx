@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, ExternalLink, Link, Lock, Trash2, UsersRound } from "lucide-react";

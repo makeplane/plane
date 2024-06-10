@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
@@ -10,9 +10,7 @@ import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 // assets
 
 export const GlobalViewEmptyState: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { globalViewId } = router.query;
+  const { globalViewId } = useParams();
   // store hooks
   const { workspaceProjectIds } = useProject();
   const { toggleCreateIssueModal, toggleCreateProjectModal } = useCommandPalette();

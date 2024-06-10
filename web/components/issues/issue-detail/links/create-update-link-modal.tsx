@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useEffect, Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";

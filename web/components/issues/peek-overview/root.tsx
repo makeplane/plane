@@ -1,6 +1,8 @@
+"use client";
+
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -45,7 +47,7 @@ export type TIssuePeekOperations = {
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { is_archived = false, is_draft = false } = props;
   // router
-  const router = useRouter();
+  const pathname = usePathname();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -95,14 +97,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
                 changed_property: Object.keys(data).join(","),
                 change_details: Object.values(data).join(","),
               },
-              path: router.asPath,
+              path: pathname,
             });
           })
           .catch(() => {
             captureIssueEvent({
               eventName: ISSUE_UPDATED,
               payload: { state: "FAILED", element: "Issue peek-overview" },
-              path: router.asPath,
+              path: pathname,
             });
             setToast({
               title: "Error!",
@@ -122,7 +124,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -133,7 +135,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -143,13 +145,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -164,7 +166,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -175,7 +177,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -190,7 +192,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -205,7 +207,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -219,7 +221,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -234,7 +236,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -260,7 +262,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
@@ -270,7 +272,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -284,7 +286,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -299,7 +301,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -325,7 +327,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
@@ -335,7 +337,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
@@ -374,7 +376,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeIssueFromModule,
       removeModulesFromIssue,
       captureIssueEvent,
-      router.asPath,
+      pathname,
     ]
   );
 

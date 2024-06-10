@@ -1,9 +1,10 @@
-import Link from "next/link";
+"use client";
 
-// layouts
-import { Button } from "@plane/ui";
-import DefaultLayout from "@/layouts/default-layout";
+import Link from "next/link";
 // ui
+import { Button } from "@plane/ui";
+// layouts
+import DefaultLayout from "@/layouts/default-layout";
 
 export const NotAWorkspaceMember = () => (
   <DefaultLayout>

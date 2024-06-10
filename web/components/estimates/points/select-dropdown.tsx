@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useRef, Fragment, useState } from "react";
 import { Info, Check, ChevronDown } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";

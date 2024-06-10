@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";

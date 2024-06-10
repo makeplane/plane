@@ -1,6 +1,7 @@
 import { useEffect, ReactNode, FC } from "react";
+import { observer } from "mobx-react";
 // hooks
-import { IUser } from "@plane/types";
+import { useUser } from "@/hooks/store";
 
 declare global {
   interface Window {
@@ -11,11 +12,11 @@ declare global {
 
 export interface ICrispWrapper {
   children: ReactNode;
-  user: IUser | undefined;
 }
 
-const CrispWrapper: FC<ICrispWrapper> = (props) => {
-  const { children, user } = props;
+const CrispWrapper: FC<ICrispWrapper> = observer((props) => {
+  const { children } = props;
+  const { data: user } = useUser();
 
   useEffect(() => {
     if (typeof window && user?.email && process.env.NEXT_PUBLIC_CRISP_ID) {
@@ -35,6 +36,6 @@ const CrispWrapper: FC<ICrispWrapper> = (props) => {
   }, [user?.email]);
 
   return <>{children}</>;
-};
+});
 
 export default CrispWrapper;

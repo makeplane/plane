@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import {
@@ -60,7 +62,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, peekCycle } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const searchParams = useSearchParams();
+  const peekCycle = searchParams.get("peekCycle");
   // store hooks
   const { setTrackElement, captureCycleEvent } = useEventTracker();
   const {

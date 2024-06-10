@@ -123,6 +123,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       entities={{
         [GANTT_SELECT_GROUP]: blockIds ?? [],
       }}
+      disabled
     >
       {(helpers) => (
         <>

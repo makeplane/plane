@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, X } from "lucide-react";

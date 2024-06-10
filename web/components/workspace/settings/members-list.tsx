@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { MembersSettingsLoader } from "@/components/ui";
@@ -11,8 +11,7 @@ import { useMember } from "@/hooks/store";
 export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props) => {
   const { searchQuery } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     workspace: {

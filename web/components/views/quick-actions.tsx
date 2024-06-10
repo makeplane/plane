@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";

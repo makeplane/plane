@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 import { EUserProjectRoles } from "@/constants/project";

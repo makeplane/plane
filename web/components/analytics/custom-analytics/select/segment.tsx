@@ -1,6 +1,7 @@
-import { useRouter } from "next/router";
-import { IAnalyticsParams, TXAxisValues } from "@plane/types";
+"use client";
 
+import { useParams } from "next/navigation";
+import { IAnalyticsParams, TXAxisValues } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
 
@@ -12,8 +13,7 @@ type Props = {
 };
 
 export const SelectSegment: React.FC<Props> = ({ value, onChange, params, analyticsOptions }) => {
-  const router = useRouter();
-  const { cycleId, moduleId } = router.query;
+  const { cycleId, moduleId } = useParams();
 
   return (
     <CustomSelect

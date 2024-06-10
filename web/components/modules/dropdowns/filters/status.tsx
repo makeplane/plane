@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { TModuleStatus } from "@plane/types";
@@ -20,8 +22,8 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const appliedFiltersCount = appliedFilters?.length ?? 0;
   const filteredOptions = MODULE_STATUS.filter((p) => p.value.includes(searchQuery.toLowerCase()));
+  const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   return (
     <>

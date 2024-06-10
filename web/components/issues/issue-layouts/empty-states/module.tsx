@@ -1,7 +1,9 @@
+"use client";
+
 import { useState } from "react";
 import size from "lodash/size";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 // ui
@@ -13,16 +15,15 @@ import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store"
+import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
 
 export const ModuleEmptyState: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // store hooks
-  const { issues,issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
 

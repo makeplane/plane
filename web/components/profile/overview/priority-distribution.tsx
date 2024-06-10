@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { IUserProfileData } from "@plane/types";
 import { Loader } from "@plane/ui";

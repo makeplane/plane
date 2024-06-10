@@ -1,7 +1,9 @@
+"use client";
+
 import { Fragment, Ref, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
 import { Activity, Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
@@ -16,7 +18,7 @@ import { GOD_MODE_URL } from "@/helpers/common.helper";
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { WorkspaceLogo } from "./logo";
 // Static Data
-const userLinks = (workspaceSlug: string, userId: string) => [
+const userLinks = (workspaceSlug: string) => [
   {
     key: "workspace_invites",
     name: "Workspace invites",
@@ -24,14 +26,8 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Mails,
   },
   {
-    key: "my_activity",
-    name: "My activity",
-    href: `/${workspaceSlug}/profile/${userId}`,
-    icon: Activity,
-  },
-  {
     key: "settings",
-    name: "Settings",
+    name: "Workspace settings",
     href: `/${workspaceSlug}/settings`,
     icon: Settings,
   },
@@ -49,9 +45,8 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 export const WorkspaceSidebarDropdown = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
@@ -211,7 +206,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                    {userLinks(workspaceSlug?.toString() ?? "").map((link, index) => (
                       <Link
                         key={link.key}
                         href={link.href}

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 // emoji-picker-react
 import { Emoji } from "emoji-picker-react";

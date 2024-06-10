@@ -1,10 +1,12 @@
+"use client";
+
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
@@ -43,8 +45,8 @@ export interface IBaseKanBanLayout {
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
   const {
@@ -198,7 +200,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       captureIssueEvent({
         eventName: ISSUE_DELETED,
         payload: { id: draggedIssueId, state: "FAILED", element: "Kanban layout drag & drop" },
-        path: router.asPath,
+        path: pathname,
       });
     });
   };
