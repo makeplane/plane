@@ -244,7 +244,10 @@ function createToolbox({
               className:
                 "flex items-center gap-2 px-1 py-1.5 bg-custom-background-100 hover:bg-custom-background-80 text-sm text-custom-text-200 rounded cursor-pointer",
               itemType: "div",
-              onClick: () => onClickItem(item),
+              onClick: (e) => {
+                e.stopPropagation();
+                onClickItem(item);
+              },
             },
             [
               h("span", {
