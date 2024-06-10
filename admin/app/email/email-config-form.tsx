@@ -1,3 +1,4 @@
+"use client";
 
 import React, { FC, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
