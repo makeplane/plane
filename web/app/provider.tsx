@@ -1,10 +1,8 @@
 "use client";
-
 import { FC, ReactNode } from "react";
 import dynamic from "next/dynamic";
-// import Router from "next/navigation";
+import { AppProgressBar } from "next-nprogress-bar";
 import { useTheme, ThemeProvider } from "next-themes";
-import NProgress from "nprogress";
 import { SWRConfig } from "swr";
 // ui
 import { Toast } from "@plane/ui";
@@ -20,11 +18,6 @@ import { InstanceWrapper } from "@/lib/wrappers";
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
 const CrispWrapper = dynamic(() => import("@/lib/wrappers/crisp-wrapper"), { ssr: false });
-// nprogress
-NProgress.configure({ showSpinner: false });
-// Router.events.on("routeChangeStart", NProgress.start);
-// Router.events.on("routeChangeError", NProgress.done);
-// Router.events.on("routeChangeComplete", NProgress.done);
 
 export interface IAppProvider {
   children: ReactNode;
@@ -36,6 +29,7 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { resolvedTheme } = useTheme();
   return (
     <>
+      <AppProgressBar height="4px" color="#fffd00" options={{ showSpinner: false }} shallowRouting />
       <Toast theme={resolveGeneralTheme(resolvedTheme)} />
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
