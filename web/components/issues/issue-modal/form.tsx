@@ -28,9 +28,6 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-<<<<<<< HEAD
-import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
-=======
 import {
   useAppRouter,
   useProjectEstimates,
@@ -39,7 +36,6 @@ import {
   useProject,
   useWorkspace,
 } from "@/hooks/store";
->>>>>>> 59fdd611e4b840993e93fc53c89a75a3787f248d
 import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
@@ -131,21 +127,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { config } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (editorRef.current?.isEditorReadyToDiscard()) {
-      onClose();
-    } else {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is still processing changes. Please wait before proceeding.",
-      });
-      event.preventDefault(); // Prevent default action if editor is not ready to discard
-    }
-  };
-
-  useKeypress("Escape", handleKeyDown);
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (editorRef.current?.isEditorReadyToDiscard()) {

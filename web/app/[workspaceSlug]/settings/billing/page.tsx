@@ -1,23 +1,4 @@
-<<<<<<< HEAD:web/app/[workspaceSlug]/settings/billing/page.tsx
 "use client";
-=======
-import { observer } from "mobx-react";
-// hooks
-import { Button } from "@plane/ui";
-import { PageHead } from "@/components/core";
-import { WorkspaceSettingHeader } from "@/components/headers";
-import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
-import { useUser, useWorkspace } from "@/hooks/store";
-// layouts
-import { AppLayout } from "@/layouts/app-layout";
-import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
-// component
-// ui
-// types
-import { NextPageWithLayout } from "@/lib/types";
-// constants
->>>>>>> 59fdd611e4b840993e93fc53c89a75a3787f248d:web/pages/[workspaceSlug]/settings/billing.tsx
 
 import { observer } from "mobx-react";
 // ui

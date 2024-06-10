@@ -44,7 +44,9 @@ export interface IIssueProperties {
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+
   const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -60,10 +62,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
