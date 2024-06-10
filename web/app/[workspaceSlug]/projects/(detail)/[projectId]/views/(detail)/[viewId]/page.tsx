@@ -31,24 +31,22 @@ const ProjectViewIssuesPage = observer(() => {
       : null
   );
 
+  if (error) {
+    <EmptyState
+      image={emptyView}
+      title="View does not exist"
+      description="The view you are looking for does not exist or has been deleted."
+      primaryButton={{
+        text: "View other views",
+        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+      }}
+    />;
+  }
+
   return (
     <>
-      {error ? (
-        <EmptyState
-          image={emptyView}
-          title="View does not exist"
-          description="The view you are looking for does not exist or has been deleted."
-          primaryButton={{
-            text: "View other views",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
-          }}
-        />
-      ) : (
-        <>
-          <PageHead title={pageTitle} />
-          <ProjectViewLayoutRoot />
-        </>
-      )}
+      <PageHead title={pageTitle} />
+      <ProjectViewLayoutRoot />
     </>
   );
 });

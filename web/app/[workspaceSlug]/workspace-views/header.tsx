@@ -19,7 +19,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
 
-const GlobalIssuesHeader: React.FC = observer(() => {
+export const GlobalIssuesHeader = observer(() => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -144,5 +144,3 @@ const GlobalIssuesHeader: React.FC = observer(() => {
     </>
   );
 });
-
-export default GlobalIssuesHeader;

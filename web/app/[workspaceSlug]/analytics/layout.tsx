@@ -1,3 +1,5 @@
+"use client";
+
 import { AppHeader, ContentWrapper } from "@/components/core";
 import WorkspaceAnalyticsHeader from "./header";
 

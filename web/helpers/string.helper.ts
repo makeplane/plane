@@ -1,4 +1,4 @@
-import * as DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,

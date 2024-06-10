@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/empty-state";
 import { ANALYTICS_TABS } from "@/constants/analytics";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useWorkspace } from "@/hooks/store";;
+import { useCommandPalette, useEventTracker, useProject, useWorkspace } from "@/hooks/store";
 
 const AnalyticsPage = observer(() => {
   const searchParams = useSearchParams();
@@ -36,8 +36,9 @@ const AnalyticsPage = observer(() => {
                 <Tab key={tab.key} as={Fragment}>
                   {({ selected }) => (
                     <button
-                      className={`text-sm group relative flex items-center gap-1 h-[50px] px-3 cursor-pointer transition-all font-medium outline-none  ${selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
-                        }`}
+                      className={`text-sm group relative flex items-center gap-1 h-[50px] px-3 cursor-pointer transition-all font-medium outline-none  ${
+                        selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
+                      }`}
                     >
                       {tab.title}
                       <div
