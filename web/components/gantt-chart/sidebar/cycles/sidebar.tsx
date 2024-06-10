@@ -37,14 +37,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
             isDragEnabled={enableReorder}
             onDrop={handleOnDrop}
           >
-            {(isDragging: boolean, dragHandleRef: MutableRefObject<HTMLButtonElement | null>) => (
-              <CyclesSidebarBlock
-                block={block}
-                enableReorder={enableReorder}
-                isDragging={isDragging}
-                dragHandleRef={dragHandleRef}
-              />
-            )}
+            {(isDragging: boolean) => <CyclesSidebarBlock block={block} isDragging={isDragging} />}
           </GanttDnDHOC>
         ))
       ) : (
