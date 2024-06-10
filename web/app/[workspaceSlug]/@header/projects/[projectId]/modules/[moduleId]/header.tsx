@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
 // components
@@ -15,7 +15,7 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssuesStoreType, EIssueFilterType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -71,7 +71,7 @@ const ModuleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters },
-    issues: { issuesCount },
+    issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.MODULE);
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
@@ -97,11 +97,11 @@ const ModuleIssuesHeader: React.FC = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
-    [projectId, moduleId, updateFilters]
+    [projectId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -122,7 +122,7 @@ const ModuleIssuesHeader: React.FC = observer(() => {
 
       updateFilters(projectId.toString(), EIssueFilterType.FILTERS, { [key]: newValues });
     },
-    [projectId, moduleId, issueFilters, updateFilters]
+    [projectId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
@@ -130,7 +130,7 @@ const ModuleIssuesHeader: React.FC = observer(() => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [projectId, moduleId, updateFilters]
+    [projectId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
@@ -138,7 +138,7 @@ const ModuleIssuesHeader: React.FC = observer(() => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
-    [projectId, moduleId, updateFilters]
+    [projectId, updateFilters]
   );
 
   // derived values
@@ -147,6 +147,7 @@ const ModuleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
     <>
@@ -231,7 +232,13 @@ const ModuleIssuesHeader: React.FC = observer(() => {
           <div className="flex items-center gap-2">
             <div className="hidden gap-2 md:flex">
               <LayoutSelection
-                layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+                layouts={[
+                  EIssueLayoutTypes.LIST,
+                  EIssueLayoutTypes.KANBAN,
+                  EIssueLayoutTypes.CALENDAR,
+                  EIssueLayoutTypes.SPREADSHEET,
+                  EIssueLayoutTypes.GANTT,
+                ]}
                 onChange={(layout) => handleLayoutChange(layout)}
                 selectedLayout={activeLayout}
               />

@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -15,7 +15,7 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -70,7 +70,7 @@ const CycleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
-    issues: { issuesCount },
+    issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
@@ -96,7 +96,7 @@ const CycleIssuesHeader: React.FC = observer(() => {
   };
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
@@ -147,6 +147,7 @@ const CycleIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
     <>
@@ -231,7 +232,13 @@ const CycleIssuesHeader: React.FC = observer(() => {
           </div>
           <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
-              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+              layouts={[
+                EIssueLayoutTypes.LIST,
+                EIssueLayoutTypes.KANBAN,
+                EIssueLayoutTypes.CALENDAR,
+                EIssueLayoutTypes.SPREADSHEET,
+                EIssueLayoutTypes.GANTT,
+              ]}
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />

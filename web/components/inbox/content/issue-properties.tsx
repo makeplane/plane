@@ -98,7 +98,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
                 <span>Priority</span>
               </div>
               <PriorityDropdown
-                value={issue?.priority || "none"}
+                value={issue?.priority}
                 onChange={(val) =>
                   issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
                 }

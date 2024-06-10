@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 // icons
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
 // components
@@ -14,7 +14,7 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { SPACE_BASE_URL } from "@/helpers/common.helper";
@@ -44,7 +44,7 @@ const ProjectIssuesHeader: React.FC = observer(() => {
   } = useMember();
   const {
     issuesFilter: { issueFilters, updateFilters },
-    issues: { issuesCount },
+    issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -79,7 +79,7 @@ const ProjectIssuesHeader: React.FC = observer(() => {
   );
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
@@ -108,6 +108,7 @@ const ProjectIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
     <>
@@ -176,7 +177,12 @@ const ProjectIssuesHeader: React.FC = observer(() => {
         </div>
         <div className="items-center gap-2 hidden md:flex">
           <LayoutSelection
-            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+            layouts={[EIssueLayoutTypes.LIST,
+              EIssueLayoutTypes.KANBAN,
+              EIssueLayoutTypes.CALENDAR,
+              EIssueLayoutTypes.SPREADSHEET,
+              EIssueLayoutTypes.GANTT,
+            ]}
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />

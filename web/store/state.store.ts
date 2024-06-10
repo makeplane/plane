@@ -21,8 +21,8 @@ export interface IStateStore {
   projectStates: IState[] | undefined;
   groupedProjectStates: Record<string, IState[]> | undefined;
   // computed actions
-  getStateById: (stateId: string) => IState | undefined;
-  getProjectStates: (projectId: string) => IState[] | undefined;
+  getStateById: (stateId: string | null | undefined) => IState | undefined;
+  getProjectStates: (projectId: string | null | undefined) => IState[] | undefined;
   // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   fetchWorkspaceStates: (workspaceSlug: string) => Promise<IState[]>;
@@ -97,7 +97,7 @@ export class StateStore implements IStateStore {
    * Returns the stateMap belongs to a specific project grouped by group
    */
   get groupedProjectStates() {
-    if (!this.router.query?.projectId) return;
+    if (!this.router.projectId) return;
     return groupBy(this.projectStates, "group") as Record<string, IState[]>;
   }
 
@@ -105,8 +105,8 @@ export class StateStore implements IStateStore {
    * @description returns state details using state id
    * @param stateId
    */
-  getStateById = computedFn((stateId: string) => {
-    if (!this.stateMap) return;
+  getStateById = computedFn((stateId: string | null | undefined) => {
+    if (!this.stateMap || !stateId) return;
     return this.stateMap[stateId] ?? undefined;
   });
 
@@ -115,7 +115,7 @@ export class StateStore implements IStateStore {
    * @param projectId
    * @returns IState[]
    */
-  getProjectStates = computedFn((projectId: string) => {
+  getProjectStates = computedFn((projectId: string | null | undefined) => {
     const workspaceSlug = this.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));

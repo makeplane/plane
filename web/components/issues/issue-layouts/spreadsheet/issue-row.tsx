@@ -30,7 +30,9 @@ interface Props {
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -130,7 +132,9 @@ interface IssueRowDetailsProps {
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -212,14 +216,14 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       handleIssuePeekOverview(issueDetail);
     } else {
       setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issueDetail)
+        if (!prevState && workspaceSlug && issueDetail && issueDetail.project_id)
           subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
         return !prevState;
       });
     }
   };
 
-  const disableUserActions = !canEditProperties(issueDetail.project_id);
+  const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
 

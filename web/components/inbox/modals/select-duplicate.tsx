@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// hooks
 // icons
 // components
+// types
+import { ISearchIssueResponse } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
-// services
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
-import { useProject, useProjectState } from "@/hooks/store";
-import { IssueService } from "@/services/issue";
+// hooks
+import { useProject } from "@/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
+// services
+import { ProjectService } from "@/services/project";
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +26,7 @@ type Props = {
   onSubmit: (issueId: string) => void;
 };
 
-const issueService = new IssueService();
+const projectService = new ProjectService();
 
 export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, onSubmit, value } = props;
@@ -35,18 +36,27 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, issueId } = useParams();
 
   // hooks
-  const { getProjectStates } = useProjectState();
   const { getProjectById } = useProject();
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          issueService
-            .getIssues(workspaceSlug as string, projectId as string)
-            .then((res) => Object.values(res ?? {}).filter((issue) => issue.id !== issueId))
-      : null
-  );
+  const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const debouncedSearchTerm: string = useDebounce(query, 500);
+
+  useEffect(() => {
+    if (!isOpen || !workspaceSlug || !projectId) return;
+
+    setIsSearching(true);
+    projectService
+      .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
+        search: debouncedSearchTerm,
+        workspace_search: false,
+      })
+      .then((res: ISearchIssueResponse[]) => setIssues(res))
+      .finally(() => setIsSearching(false));
+  }, [debouncedSearchTerm, isOpen, projectId, workspaceSlug]);
+
+  const filteredIssues = issues.filter((issue) => issue.id !== issueId);
 
   const handleClose = () => {
     onClose();
@@ -62,7 +72,52 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  const filteredIssues = (query === "" ? issues : issues?.filter((issue) => issue.name.includes(query))) ?? [];
+  const issueList =
+    filteredIssues.length > 0 ? (
+      <li className="p-2">
+        {query === "" && <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>}
+        <ul className="text-sm text-custom-text-100">
+          {filteredIssues.map((issue) => {
+            const stateColor = issue.state__color || "";
+
+            return (
+              <Combobox.Option
+                key={issue.id}
+                as="div"
+                value={issue.id}
+                className={({ active, selected }) =>
+                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                    active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
+                  } `
+                }
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: stateColor,
+                    }}
+                  />
+                  <span className="flex-shrink-0 text-xs text-custom-text-200">
+                    {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                  </span>
+                  <span className="text-custom-text-200">{issue.name}</span>
+                </div>
+              </Combobox.Option>
+            );
+          })}
+        </ul>
+      </li>
+    ) : (
+      <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+        <EmptyState
+          type={
+            query === "" ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+          }
+          layout="screen-simple"
+        />
+      </div>
+    );
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
@@ -110,56 +165,15 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       static
                       className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
                     >
-                      {filteredIssues.length > 0 ? (
-                        <li className="p-2">
-                          {query === "" && (
-                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
-                          )}
-                          <ul className="text-sm text-custom-text-100">
-                            {filteredIssues.map((issue) => {
-                              const stateColor =
-                                getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)
-                                  ?.color || "";
-
-                              return (
-                                <Combobox.Option
-                                  key={issue.id}
-                                  as="div"
-                                  value={issue.id}
-                                  className={({ active, selected }) =>
-                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                      active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
-                                    } `
-                                  }
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span
-                                      className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                      style={{
-                                        backgroundColor: stateColor,
-                                      }}
-                                    />
-                                    <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
-                                    </span>
-                                    <span className="text-custom-text-200">{issue.name}</span>
-                                  </div>
-                                </Combobox.Option>
-                              );
-                            })}
-                          </ul>
-                        </li>
+                      {isSearching ? (
+                        <Loader className="space-y-3 p-3">
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                        </Loader>
                       ) : (
-                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState
-                            type={
-                              query === ""
-                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
-                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
-                            }
-                            layout="screen-simple"
-                          />
-                        </div>
+                        <>{issueList}</>
                       )}
                     </Combobox.Options>
                   </Combobox>

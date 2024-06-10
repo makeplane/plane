@@ -5,7 +5,7 @@ import { TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { GroupDropLocation, handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
 import { EIssuesStoreType } from "@/constants/issue";
-import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
+import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { useIssueDetail, useIssues } from "./store";
 import { useIssuesActions } from "./use-issues-actions";
 
@@ -31,14 +31,8 @@ export const useGroupIssuesDragNDrop = (
   } = useIssueDetail();
   const { updateIssue } = useIssuesActions(storeType);
   const {
-    issues: { getIssueIds },
+    issues: { getIssueIds, addCycleToIssue, removeCycleFromIssue, changeModulesInIssue },
   } = useIssues(storeType);
-  const {
-    issues: { addCycleToIssue, removeCycleFromIssue },
-  } = useIssues(EIssuesStoreType.CYCLE);
-  const {
-    issues: { changeModulesInIssue },
-  } = useIssues(EIssuesStoreType.MODULE);
 
   /**
    * update Issue on Drop, checks if modules or cycles are changed and then calls appropriate functions

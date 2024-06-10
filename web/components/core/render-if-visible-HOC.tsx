@@ -9,9 +9,7 @@ type Props = {
   children: ReactNode;
   as?: keyof JSX.IntrinsicElements;
   classNames?: string;
-  alwaysRender?: boolean;
   placeholderChildren?: ReactNode;
-  pauseHeightUpdateWhileRendering?: boolean;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -23,15 +21,13 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     as = "div",
     children,
     classNames = "",
-    alwaysRender = false, //render the children even if it is not visible in root
     placeholderChildren = null, //placeholder children
-    pauseHeightUpdateWhileRendering = false, //while this is true the height of the blocks are maintained
   } = props;
-  const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender);
+  const [shouldVisible, setShouldVisible] = useState<boolean>();
   const placeholderHeight = useRef<string>(defaultHeight);
   const intersectionRef = useRef<HTMLElement | null>(null);
 
-  const isVisible = alwaysRender || shouldVisible;
+  const isVisible = shouldVisible;
 
   // Set visibility with intersection observer
   useEffect(() => {
@@ -68,11 +64,10 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     if (intersectionRef.current && isVisible) {
       placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
     }
-  }, [isVisible, intersectionRef, alwaysRender, pauseHeightUpdateWhileRendering]);
+  }, [isVisible, intersectionRef]);
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
-  const style =
-    isVisible && !pauseHeightUpdateWhileRendering ? {} : { height: placeholderHeight.current, width: "100%" };
+  const style = isVisible ? {} : { height: placeholderHeight.current, width: "100%" };
   const className = isVisible ? classNames : cn(classNames, "bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);

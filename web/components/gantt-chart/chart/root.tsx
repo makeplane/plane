@@ -13,17 +13,13 @@ import { currentViewDataWithView } from "../data";
 // constants
 import { useGanttChart } from "../hooks/use-gantt-chart";
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
-import {
-  generateMonthChart,
-  getNumberOfDaysBetweenTwoDatesInMonth,
-  getMonthChartItemPositionWidthInMonth,
-} from "../views";
+import { generateMonthChart, getNumberOfDaysBetweenTwoDatesInMonth } from "../views";
 
 type ChartViewRootProps = {
   border: boolean;
   title: string;
   loaderTitle: string;
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -35,6 +31,9 @@ type ChartViewRootProps = {
   enableSelection: boolean;
   bottomSpacing: boolean;
   showAllBlocks: boolean;
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  loadMoreBlocks?: () => void;
+  canLoadMoreBlocks?: boolean;
   quickAdd?: React.JSX.Element | undefined;
 };
 
@@ -42,11 +41,14 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
   const {
     border,
     title,
-    blocks = null,
+    blockIds,
+    getBlockById,
+    loadMoreBlocks,
     loaderTitle,
     blockUpdateHandler,
     sidebarToRender,
     blockToRender,
+    canLoadMoreBlocks,
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
@@ -60,24 +62,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
   const [fullScreenMode, setFullScreenMode] = useState(false);
-  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
   // hooks
   const { currentView, currentViewData, renderView, updateCurrentView, updateCurrentViewData, updateRenderView } =
     useGanttChart();
-
-  // rendering the block structure
-  const renderBlockStructure = (view: ChartDataType, blocks: IGanttBlock[] | null) =>
-    blocks
-      ? blocks.map((block: IGanttBlock) => ({
-          ...block,
-          position: getMonthChartItemPositionWidthInMonth(view, block),
-        }))
-      : [];
-
-  useEffect(() => {
-    if (!currentViewData || !blocks) return;
-    setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
-  }, [currentViewData, blocks]);
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews) => {
     const selectedCurrentView: TGanttViews = view;
@@ -168,7 +155,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
       })}
     >
       <GanttChartHeader
-        blocks={blocks}
+        blockIds={blockIds}
         fullScreenMode={fullScreenMode}
         toggleFullScreenMode={() => setFullScreenMode((prevData) => !prevData)}
         handleChartView={(key) => updateCurrentViewRenderPayload(null, key)}
@@ -176,17 +163,19 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         loaderTitle={loaderTitle}
       />
       <GanttChartMainContent
-        blocks={blocks}
+        blockIds={blockIds}
+        getBlockById={getBlockById}
+        loadMoreBlocks={loadMoreBlocks}
+        canLoadMoreBlocks={canLoadMoreBlocks}
         blockToRender={blockToRender}
         blockUpdateHandler={blockUpdateHandler}
         bottomSpacing={bottomSpacing}
-        chartBlocks={chartBlocks}
         enableBlockLeftResize={enableBlockLeftResize}
         enableBlockMove={enableBlockMove}
         enableBlockRightResize={enableBlockRightResize}
         enableReorder={enableReorder}
-        enableAddBlock={enableAddBlock}
         enableSelection={enableSelection}
+        enableAddBlock={enableAddBlock}
         itemsContainerWidth={itemsContainerWidth}
         showAllBlocks={showAllBlocks}
         sidebarToRender={sidebarToRender}

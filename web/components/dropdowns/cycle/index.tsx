@@ -23,7 +23,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;
   onClose?: () => void;
-  projectId: string;
+  projectId: string | undefined;
   value: string | null;
 };
 
@@ -127,7 +127,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           </button>
         )}
       </Combobox.Button>
-      {isOpen && (
+      {isOpen && projectId && (
         <CycleOptions isOpen={isOpen} projectId={projectId} placement={placement} referenceElement={referenceElement} />
       )}
     </Combobox>

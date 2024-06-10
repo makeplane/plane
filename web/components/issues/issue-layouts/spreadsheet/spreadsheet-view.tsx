@@ -20,16 +20,12 @@ type Props = {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issueIds: string[] | undefined;
   quickActions: TRenderQuickActions;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   openIssuesListModal?: (() => void) | null;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  canLoadMoreIssues: boolean;
+  loadMoreIssues: () => void;
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
@@ -44,10 +40,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     quickActions,
     updateIssue,
     quickAddCallback,
-    viewId,
     canEditProperties,
     enableQuickCreateIssue,
     disableIssueCreation,
+    canLoadMoreIssues,
+    loadMoreIssues,
     isWorkspaceLevel = false,
   } = props;
   // refs
@@ -97,6 +94,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 updateIssue={updateIssue}
                 canEditProperties={canEditProperties}
                 containerRef={containerRef}
+                canLoadMoreIssues={canLoadMoreIssues}
+          loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
               />
@@ -104,7 +103,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             <div className="border-t border-custom-border-100">
               <div className="z-5 sticky bottom-0 left-0 mb-3">
                 {enableQuickCreateIssue && !disableIssueCreation && (
-                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
+                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback}/>
                 )}
               </div>
             </div>

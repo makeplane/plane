@@ -7,9 +7,9 @@ import { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useEventTracker, useIssues } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   issue: TIssue;
@@ -26,11 +26,11 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
   const {
     issues: { changeModulesInIssue },
-  } = useIssues(EIssuesStoreType.MODULE);
+  } = useIssuesStore();
 
   const handleModule = useCallback(
     async (moduleIds: string[] | null) => {
-      if (!workspaceSlug || !issue || !issue.module_ids || !moduleIds) return;
+      if (!workspaceSlug || !issue || !issue.project_id || !issue.module_ids || !moduleIds) return;
 
       const updatedModuleIds = xor(issue.module_ids, moduleIds);
       const modulesToAdd: string[] = [];
@@ -58,7 +58,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <ModuleDropdown
-        projectId={issue?.project_id}
+        projectId={issue?.project_id ?? undefined}
         value={issue?.module_ids ?? []}
         onChange={handleModule}
         disabled={disabled}

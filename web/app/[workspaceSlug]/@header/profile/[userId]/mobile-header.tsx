@@ -12,7 +12,13 @@ import { CustomMenu } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_LAYOUTS,
+} from "@/constants/issue";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -42,7 +48,7 @@ const ProfileIssuesMobileHeader = observer(() => {
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
+        { layout: layout as EIssueLayoutTypes | undefined },
         userId.toString()
       );
     },

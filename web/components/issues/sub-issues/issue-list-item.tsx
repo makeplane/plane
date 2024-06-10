@@ -204,7 +204,8 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 <div
                   className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
                   onClick={() => {
-                    subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
+                    issue.project_id &&
+                      subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                   }}
                 >
                   <X width={14} strokeWidth={2} />
@@ -216,7 +217,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
       )}
 
       {/* should not expand the current issue if it is also the root issue*/}
-      {subIssueHelpers.issue_visibility.includes(issueId) && subIssueCount > 0 && !isCurrentIssueRoot && (
+      {subIssueHelpers.issue_visibility.includes(issueId) && issue.project_id && subIssueCount > 0 && !isCurrentIssueRoot && (
         <IssueList
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}

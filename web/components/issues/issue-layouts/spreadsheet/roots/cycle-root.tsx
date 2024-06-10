@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCycle, useUser } from "@/hooks/store";
@@ -32,11 +31,10 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
 
   return (
     <BaseSpreadsheetRoot
-      viewId={cycleId?.toString()}
       QuickActions={CycleIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
-      storeType={EIssuesStoreType.CYCLE}
+      viewId={cycleId.toString()}
     />
   );
 });

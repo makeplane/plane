@@ -17,7 +17,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
   const { isAuthorized, showProfileIssuesFilter } = props;
 
   const { workspaceSlug, userId } = useParams();
-  const pathname = usePathname();
+const pathname = usePathname();
 
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 

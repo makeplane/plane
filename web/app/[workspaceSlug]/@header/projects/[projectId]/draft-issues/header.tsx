@@ -4,14 +4,14 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -56,7 +56,7 @@ const ProjectDraftIssueHeader: FC = observer(() => {
   );
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
@@ -131,7 +131,7 @@ const ProjectDraftIssueHeader: FC = observer(() => {
 
         <div className="ml-auto flex items-center gap-2">
           <LayoutSelection
-            layouts={["list", "kanban"]}
+            layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]}
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />

@@ -4,13 +4,14 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
 import { HEADER_HEIGHT } from "../constants";
 // types
-import { IBlockUpdateData, IGanttBlock } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
 // components
 import { GanttChartBlock } from "./block";
 
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
@@ -25,9 +26,10 @@ export type GanttChartBlocksProps = {
 export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
   const {
     itemsContainerWidth,
-    blocks,
+    blockIds,
     blockToRender,
     blockUpdateHandler,
+    getBlockById,
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
@@ -45,25 +47,22 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
         transform: `translateY(${HEADER_HEIGHT}px)`,
       }}
     >
-      {blocks?.map((block) => {
-        // hide the block if it doesn't have start and target dates and showAllBlocks is false
-        if (!showAllBlocks && !(block.start_date && block.target_date)) return;
-
-        return (
-          <GanttChartBlock
-            key={block.id}
-            block={block}
-            blockToRender={blockToRender}
-            blockUpdateHandler={blockUpdateHandler}
-            enableBlockLeftResize={enableBlockLeftResize}
-            enableBlockRightResize={enableBlockRightResize}
-            enableBlockMove={enableBlockMove}
-            enableAddBlock={enableAddBlock}
-            ganttContainerRef={ganttContainerRef}
-            selectionHelpers={selectionHelpers}
-          />
-        );
-      })}
+      {blockIds?.map((blockId) => (
+        <GanttChartBlock
+          key={blockId}
+          blockId={blockId}
+          getBlockById={getBlockById}
+          showAllBlocks={showAllBlocks}
+          blockToRender={blockToRender}
+          blockUpdateHandler={blockUpdateHandler}
+          enableBlockLeftResize={enableBlockLeftResize}
+          enableBlockRightResize={enableBlockRightResize}
+          enableBlockMove={enableBlockMove}
+          enableAddBlock={enableAddBlock}
+          ganttContainerRef={ganttContainerRef}
+          selectionHelpers={selectionHelpers}
+        />
+      ))}
     </div>
   );
 };

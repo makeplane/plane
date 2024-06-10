@@ -14,21 +14,26 @@ import {
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
-export interface IProfileIssuesFilter {
+export interface IProfileIssuesFilter extends IBaseIssueFilterStore {
   // observables
   userId: string;
-  filters: Record<string, IIssueFilters>; // Record defines userId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+  //helper actions
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, userId: string) => Promise<void>;
   updateFilters: (
@@ -96,6 +101,20 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     return filteredRouteParams;
   }
 
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.appliedFilters;
+
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
+    }
+  );
+
   fetchFilters = async (workspaceSlug: string, userId: string) => {
     try {
       this.userId = userId;
@@ -150,12 +169,10 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.profileIssues.fetchIssues(
+          this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
-            undefined,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
             userId,
-            this.rootIssueStore.profileIssues.currentView
+            isEmpty(filteredFilters) ? "init-loader" : "mutation"
           );
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
@@ -195,14 +212,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.profileIssues.fetchIssues(
-              workspaceSlug,
-              undefined,
-              "mutation",
-              userId,
-              this.rootIssueStore.profileIssues.currentView
-            );
+          this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(workspaceSlug, userId, "mutation");
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
             display_filters: _filters.displayFilters,

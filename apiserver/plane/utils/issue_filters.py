@@ -1,6 +1,7 @@
 import re
 import uuid
 from datetime import timedelta
+
 from django.utils import timezone
 
 # The date from pattern
@@ -63,24 +64,27 @@ def date_filter(filter, date_term, queries):
     """
     for query in queries:
         date_query = query.split(";")
-        if len(date_query) >= 2:
-            match = pattern.match(date_query[0])
-            if match:
-                if len(date_query) == 3:
-                    digit, term = date_query[0].split("_")
-                    string_date_filter(
-                        filter=filter,
-                        duration=int(digit),
-                        subsequent=date_query[1],
-                        term=term,
-                        date_filter=date_term,
-                        offset=date_query[2],
-                    )
-            else:
-                if "after" in date_query:
-                    filter[f"{date_term}__gte"] = date_query[0]
+        if date_query:
+            if len(date_query) >= 2:
+                match = pattern.match(date_query[0])
+                if match:
+                    if len(date_query) == 3:
+                        digit, term = date_query[0].split("_")
+                        string_date_filter(
+                            filter=filter,
+                            duration=int(digit),
+                            subsequent=date_query[1],
+                            term=term,
+                            date_filter=date_term,
+                            offset=date_query[2],
+                        )
                 else:
-                    filter[f"{date_term}__lte"] = date_query[0]
+                    if "after" in date_query:
+                        filter[f"{date_term}__gte"] = date_query[0]
+                    else:
+                        filter[f"{date_term}__lte"] = date_query[0]
+            else:
+                filter[f"{date_term}__contains"] = date_query[0]
 
 
 def filter_state(params, filter, method, prefix=""):

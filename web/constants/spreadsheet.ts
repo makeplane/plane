@@ -17,7 +17,6 @@ import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/ty
 // ui
 import { LayersIcon, DoubleCircleIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
-// components
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
@@ -98,27 +97,27 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   modules: {
     title: "Modules",
-    ascendingOrderKey: "modules__name",
+    ascendingOrderKey: "issue_module__module__name",
     ascendingOrderTitle: "A",
-    descendingOrderKey: "-modules__name",
+    descendingOrderKey: "-issue_module__module__name",
     descendingOrderTitle: "Z",
     icon: DiceIcon,
     Column: SpreadsheetModuleColumn,
   },
   cycle: {
     title: "Cycle",
-    ascendingOrderKey: "cycle__name",
+    ascendingOrderKey: "issue_cycle__cycle__name",
     ascendingOrderTitle: "A",
-    descendingOrderKey: "-cycle__name",
+    descendingOrderKey: "-issue_cycle__cycle__name",
     descendingOrderTitle: "Z",
     icon: ContrastIcon,
     Column: SpreadsheetCycleColumn,
   },
   priority: {
     title: "Priority",
-    ascendingOrderKey: "priority",
+    ascendingOrderKey: "-priority",
     ascendingOrderTitle: "None",
-    descendingOrderKey: "-priority",
+    descendingOrderKey: "priority",
     descendingOrderTitle: "Urgent",
     icon: Signal,
     Column: SpreadsheetPriorityColumn,

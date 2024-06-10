@@ -49,13 +49,7 @@ const Inputs: FC<IInputProps> = (props) => {
 
 interface IListQuickAddIssueForm {
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 }
 
 const defaultValues: Partial<TIssue> = {
@@ -63,7 +57,7 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props) => {
-  const { prePopulatedData, quickAddCallback, viewId } = props;
+  const { prePopulatedData, quickAddCallback } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -104,7 +98,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {

@@ -1,16 +1,16 @@
 import { RefObject, useEffect } from "react";
 
 export type UseIntersectionObserverProps = {
-  containerRef: RefObject<HTMLDivElement>;
-  elementRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null> | undefined;
+  elementRef: HTMLElement | null;
   callback: () => void;
   rootMargin?: string;
 };
 
 export const useIntersectionObserver = (
-  containerRef: RefObject<HTMLDivElement>,
-  elementRef: HTMLDivElement | null,
-  callback: () => void,
+  containerRef: RefObject<HTMLDivElement | null>,
+  elementRef: HTMLElement | null,
+  callback: (() => void) | undefined,
   rootMargin?: string
 ) => {
   useEffect(() => {
@@ -18,11 +18,11 @@ export const useIntersectionObserver = (
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[entries.length - 1].isIntersecting) {
-            callback();
+            callback && callback();
           }
         },
         {
-          root: containerRef.current,
+          root: containerRef?.current,
           rootMargin,
         }
       );
@@ -34,8 +34,8 @@ export const useIntersectionObserver = (
         }
       };
     }
-    // while removing the current from the refs, the observer is not not working as expected
-    // fix this eslint warning with caution
+    // When i am passing callback as a dependency, it is causing infinite loop,
+    // Please make sure you fix this eslint lint disable error with caution
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootMargin, callback, elementRef, containerRef.current]);
 };
