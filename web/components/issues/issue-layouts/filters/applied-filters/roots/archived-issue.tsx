@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
-import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
+import { AppliedFiltersList } from "@/components/issues";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useIssues, useLabel, useProjectState } from "@/hooks/store";
 // components
@@ -76,8 +76,6 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
         labels={projectLabels ?? []}
         states={projectStates}
       />
-
-      <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
     </div>
   );
 });

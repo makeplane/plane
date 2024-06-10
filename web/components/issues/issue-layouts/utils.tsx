@@ -1,6 +1,7 @@
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
+import isEqual from "lodash/isEqual";
 import pull from "lodash/pull";
 import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
@@ -13,6 +14,9 @@ import {
   IPragmaticDropPayload,
   TIssue,
   TIssueGroupByOptions,
+  IIssueFilterOptions,
+  IIssueFilters,
+  IProjectView,
 } from "@plane/types";
 // ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
@@ -535,3 +539,19 @@ export const handleGroupDragDrop = async (
     return await updateIssueOnDrop(sourceIssue.project_id, sourceIssue.id, updatedIssue, issueUpdates);
   }
 };
+
+/**
+ * This Method compares filters and returns a boolean based on which and updateView button is shown
+ * @param appliedFilters
+ * @param issueFilters
+ * @param viewDetails
+ * @returns
+ */
+export const getAreFiltersEqual = (
+  appliedFilters: IIssueFilterOptions | undefined,
+  issueFilters: IIssueFilters | undefined,
+  viewDetails: IProjectView | null
+) =>
+  isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {}) &&
+  isEqual(issueFilters?.displayFilters ?? {}, viewDetails?.display_filters ?? {}) &&
+  isEqual(issueFilters?.displayProperties ?? {}, viewDetails?.display_properties ?? {});
