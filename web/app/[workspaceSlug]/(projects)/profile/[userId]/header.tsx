@@ -17,7 +17,7 @@ type TUserProfileHeader = {
   type?: string | undefined;
 };
 
-const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
+export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { type = undefined } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -90,5 +90,3 @@ const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
     </div>
   );
 });
-
-export default UserProfileHeader;

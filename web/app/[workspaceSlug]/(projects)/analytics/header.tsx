@@ -14,7 +14,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 
-const WorkspaceAnalyticsHeader = observer(() => {
+export const WorkspaceAnalyticsHeader = observer(() => {
   const searchParams = useSearchParams();
   const analytics_tab = searchParams.get("analytics_tab");
   // store hooks
@@ -71,5 +71,3 @@ const WorkspaceAnalyticsHeader = observer(() => {
     </>
   );
 });
-
-export default WorkspaceAnalyticsHeader;

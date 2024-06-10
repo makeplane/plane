@@ -3,7 +3,7 @@
 import { CommandPalette } from "@/components/command-palette";
 import { WorkspaceAuthWrapper } from "@/layouts/auth-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import AppSidebar from "./sidebar";
+import { AppSidebar } from "./sidebar";
 
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   return (

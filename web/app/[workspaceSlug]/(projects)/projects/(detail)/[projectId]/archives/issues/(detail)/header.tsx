@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -17,7 +16,7 @@ import { IssueArchiveService } from "@/services/issue";
 
 const issueArchiveService = new IssueArchiveService();
 
-const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
+export const ProjectArchivedIssueDetailsHeader = observer(() => {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
   // store hooks
@@ -94,5 +93,3 @@ const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
     </div>
   );
 });
-
-export default ProjectArchivedIssueDetailsHeader;

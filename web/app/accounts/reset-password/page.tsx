@@ -45,7 +45,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const ResetPasswordPage = () => {
+export default function ResetPasswordPage() {
   // search params
   const searchParams = useSearchParams();
   const uidb64 = searchParams.get("uidb64");
@@ -230,6 +230,4 @@ const ResetPasswordPage = () => {
       </div>
     </AuthenticationWrapper>
   );
-};
-
-export default ResetPasswordPage;
+}

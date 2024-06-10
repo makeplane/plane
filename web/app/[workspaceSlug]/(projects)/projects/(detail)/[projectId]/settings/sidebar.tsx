@@ -10,7 +10,7 @@ import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
 import { useUser } from "@/hooks/store";
 
-const ProjectSettingsSidebar = () => {
+export const ProjectSettingsSidebar = () => {
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // mobx store
@@ -61,5 +61,3 @@ const ProjectSettingsSidebar = () => {
     </div>
   );
 };
-
-export default ProjectSettingsSidebar;

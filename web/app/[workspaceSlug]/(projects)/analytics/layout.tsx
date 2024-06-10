@@ -1,13 +1,13 @@
 "use client";
 
 import { AppHeader, ContentWrapper } from "@/components/core";
-import WorkspaceAnalyticsHeader from "./header";
+import { WorkspaceAnalyticsHeader } from "./header";
 
-const WorkspaceAnalyticsLayout = ({ children }: { children: React.ReactNode }) => (
-  <>
-    <AppHeader header={<WorkspaceAnalyticsHeader />} />
-    <ContentWrapper>{children}</ContentWrapper>
-  </>
-);
-
-export default WorkspaceAnalyticsLayout;
+export default function WorkspaceAnalyticsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <AppHeader header={<WorkspaceAnalyticsHeader />} />
+      <ContentWrapper>{children}</ContentWrapper>
+    </>
+  );
+}

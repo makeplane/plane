@@ -6,11 +6,11 @@ import { observer } from "mobx-react-lite";
 import { PageHead } from "@/components/core";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
 
-const ProfileCreatedIssuesPage = () => (
+const ProfileCreatedIssuesPage = observer(() => (
   <>
     <PageHead title="Profile - Created" />
     <ProfileIssuesPage type="created" />
   </>
-);
+));
 
-export default observer(ProfileCreatedIssuesPage);
+export default ProfileCreatedIssuesPage;

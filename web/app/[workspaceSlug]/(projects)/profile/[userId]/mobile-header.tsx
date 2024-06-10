@@ -18,7 +18,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 
-const ProfileIssuesMobileHeader = observer(() => {
+export const ProfileIssuesMobileHeader = observer(() => {
   // router
   const { workspaceSlug, userId } = useParams();
   // store hook
@@ -181,5 +181,3 @@ const ProfileIssuesMobileHeader = observer(() => {
     </div>
   );
 });
-
-export default ProfileIssuesMobileHeader;

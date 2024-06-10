@@ -11,8 +11,8 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
 // local components
-import UserProfileHeader from "./header";
-import ProfileIssuesMobileHeader from "./mobile-header";
+import { UserProfileHeader } from "./header";
+import { ProfileIssuesMobileHeader } from "./mobile-header";
 import { ProfileNavbar } from "./navbar";
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
 
 const AUTHORIZED_ROLES = [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.VIEWER];
 
-const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
+const UseProfileLayout: React.FC<Props> = observer((props) => {
   const { children } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -66,4 +66,4 @@ const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   );
 });
 
-export default ProfileAuthWrapper;
+export default UseProfileLayout;

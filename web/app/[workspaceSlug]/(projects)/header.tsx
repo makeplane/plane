@@ -15,7 +15,7 @@ import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "@/constants/event-track
 // hooks
 import { useEventTracker } from "@/hooks/store";
 
-const WorkspaceDashboardHeader = () => {
+export const WorkspaceDashboardHeader = () => {
   // hooks
   const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
@@ -72,5 +72,3 @@ const WorkspaceDashboardHeader = () => {
     </>
   );
 };
-
-export default WorkspaceDashboardHeader;
