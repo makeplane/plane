@@ -117,8 +117,10 @@ export const List: React.FC<IList> = observer((props) => {
 
   if (is_list) {
     entities = Object.assign(orderedGroups, { [groupIds[0]]: groupedIssueIds[ALL_ISSUES] });
-  } else {
+  } else if(Array.isArray(groupedIssueIds[groupIds[0]])){
     entities = Object.assign(orderedGroups, { ...groupedIssueIds });
+  } else {
+    entities = orderedGroups;
   }
 
   return (
