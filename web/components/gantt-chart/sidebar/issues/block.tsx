@@ -1,6 +1,4 @@
-import React, { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-import { MoreVertical } from "lucide-react";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { useGanttChart } from "@/components/gantt-chart/hooks";

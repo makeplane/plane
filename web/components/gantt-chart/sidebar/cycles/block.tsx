@@ -1,6 +1,4 @@
-import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-import { MoreVertical } from "lucide-react";
 // hooks
 import { CycleGanttSidebarBlock } from "@/components/cycles";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";

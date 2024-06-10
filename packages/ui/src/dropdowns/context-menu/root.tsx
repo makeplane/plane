@@ -74,7 +74,7 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
 
       setPosition({ x: left, y: top });
       setIsOpen(true);
-    };
+    }
 
     const hideContextMenu = (e: KeyboardEvent) => {
       if (isOpen && e.key === "Escape") handleClose();
