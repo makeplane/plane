@@ -10,16 +10,16 @@ on:
         type: boolean
 
 env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.HELM_WEBSITE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.HELM_WEBSITE_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ vars.HELM_WEBSITE_AWS_REGION }}
+  AWS_BUCKET: ${{ vars.HELM_WEBSITE_BUCKET }}
+
   PREVIEW_BUILD_FOLDER: helm-preview
-  AWS_ACCESS_KEY_ID: ${{ secrets.HELM_PREVIEW_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.HELM_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: ${{ vars.HELM_PREVIEW_AWS_REGION }}
-  AWS_BUCKET: ${{ vars.HELM_PREVIEW_BUCKET }}
   HELM_SUB_FOLDER: ${{ github.run_id }}
   CHART_PREFIX: ${{ github.run_id }}
   BUILD_PLANE_CE: ${{ github.event.inputs.plane-ce }}
   CHART_DIR: helm-chart
-
 
 jobs:
   build:
@@ -93,9 +93,9 @@ jobs:
           echo $HTML_CONTENT >> ${{env.PREVIEW_BUILD_FOLDER}}/index.html
 
           pip install awscli
-          aws s3 cp ${{env.PREVIEW_BUILD_FOLDER}} s3://${{env.AWS_BUCKET}}/${{ env.HELM_SUB_FOLDER }} --recursive
+          aws s3 cp ${{env.PREVIEW_BUILD_FOLDER}} s3://${{env.AWS_BUCKET}}/preview/${{ env.HELM_SUB_FOLDER }} --recursive
 
           echo "************************************************"
-          echo "http://${{env.AWS_BUCKET}}.s3-website.${{env.AWS_REGION}}.amazonaws.com/${{env.HELM_SUB_FOLDER}}"
+          echo "http://${{env.AWS_BUCKET}}.s3-website.${{env.AWS_REGION}}.amazonaws.com/preview/${{env.HELM_SUB_FOLDER}}"
           echo "************************************************"
 

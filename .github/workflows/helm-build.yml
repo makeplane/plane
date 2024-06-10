@@ -13,6 +13,11 @@ on:
 env:
   SOURCE_BRANCH: ${{ github.event.pull_request.head.ref }}
   TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.HELM_WEBSITE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.HELM_WEBSITE_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ vars.HELM_WEBSITE_AWS_REGION }}
+  AWS_BUCKET: ${{ vars.HELM_WEBSITE_BUCKET }}
+  BUCKET_FOLDER_PLANE_CE: plane-ce
 
 jobs:
   build:
@@ -27,25 +32,14 @@ jobs:
           path: code
           ref: ${{ env.SOURCE_BRANCH }}
           fetch-depth: 2
-
-      - name: Checkout Source Target Branch
-        uses: actions/checkout@v4
-        with:
-          path: __target
-          ref: ${{ env.TARGET_BRANCH }}
-          fetch-depth: 2
-      
-      - name: Merge Docs from target to code
+     
+      - name: Download from S3 
         run: |
-          mkdir -p __target/docs
-          rm -rf __target/docs/content
-          rm -rf __target/docs/images
-          rm -rf __target/docs/metadata
-          rm -rf __target/docs/artifacthub-repo.yml
-          rm -rf __target/docs/README.md
-          rm -rf __target/docs/index.html
+          pip install awscli
 
-          cp -r __target/docs code
+          mkdir -p docs
+          
+          aws s3 cp s3://${{env.AWS_BUCKET}}/${{ env.BUCKET_FOLDER_PLANE_CE }}/index.yaml ./docs/index.yaml
 
       - name: Get changed files
         id: changed_files
@@ -92,15 +86,19 @@ jobs:
           CHART_DIR: helm-chart
           CHART_REPO: plane-ce
         run: |
-          helm package --sign --key "Plane" --keyring $CR_KEYRING --passphrase-file "$CR_PASSPHRASE_FILE" ${{ env.CHART_DIR }}/${{ env.CHART_REPO }} -u -d ${{ env.EXPORT_DIR }}/charts
-          helm repo index docs
+          if [ "${{ env.TARGET_BRANCH }}" != "master" ]; then
+            sed -i "s/name: ${{env.CHART_REPO}}/name: ${{env.CHART_REPO}}-${{ env.TARGET_BRANCH }}/" ${{ env.CHART_DIR }}/${{env.CHART_REPO}}/Chart.yaml
+          fi
 
-      - name: Publish
-        if: (steps.changed_files.outputs.plane_ce_any_changed == 'true')
-        working-directory: code
-        run: |
-          git add docs
-          git commit -m "Publishing Helm Charts"
-          git push origin ${{ github.event.pull_request.head.ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          helm package \
+            --sign --key "Plane" --keyring $CR_KEYRING --passphrase-file "$CR_PASSPHRASE_FILE" \
+            ${{ env.CHART_DIR }}/${{ env.CHART_REPO }} \
+            -u -d ${{ env.EXPORT_DIR }}/charts
+
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            helm repo index docs \
+              --merge docs/index.yaml \
+              --url http://${{ env.AWS_BUCKET }}.s3-website.${{ env.AWS_REGION }}.amazonaws.com/${{ env.BUCKET_FOLDER_PLANE_CE }}/
+          fi
+          
+          aws s3 cp ./docs s3://${{env.AWS_BUCKET}}/${{ env.BUCKET_FOLDER_PLANE_CE }} --recursive
