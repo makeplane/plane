@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";

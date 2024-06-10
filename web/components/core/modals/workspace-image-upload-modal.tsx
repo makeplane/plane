@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";

@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
 import { TProjectOrderByOptions } from "@plane/types";
 // ui

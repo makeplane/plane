@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";

@@ -1,3 +1,5 @@
+"use client";
+
 // nivo
 import { BarDatum } from "@nivo/bar";
 // components

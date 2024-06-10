@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -159,8 +161,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
               (cycleId
                 ? cycleDetails?.created_at
                 : moduleId
-                ? moduleDetails?.created_at
-                : projectDetails?.created_at) ?? ""
+                  ? moduleDetails?.created_at
+                  : projectDetails?.created_at) ?? ""
             )}
           </div>
         )}

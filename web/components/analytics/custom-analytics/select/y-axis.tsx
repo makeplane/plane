@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
 import { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";

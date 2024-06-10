@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -205,8 +207,9 @@ const CycleIssuesHeader: React.FC = observer(() => {
                           {issuesCount && issuesCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"
-                                } in this cycle`}
+                              tooltipContent={`There are ${issuesCount} ${
+                                issuesCount > 1 ? "issues" : "issue"
+                              } in this cycle`}
                               position="bottom"
                             >
                               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">

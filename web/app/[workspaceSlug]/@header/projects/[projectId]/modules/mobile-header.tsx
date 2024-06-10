@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import { CustomMenu } from "@plane/ui";
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";

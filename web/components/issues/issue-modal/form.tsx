@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
@@ -28,9 +30,6 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-<<<<<<< HEAD
-import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
-=======
 import {
   useAppRouter,
   useProjectEstimates,
@@ -39,7 +38,6 @@ import {
   useProject,
   useWorkspace,
 } from "@/hooks/store";
->>>>>>> 59fdd611e4b840993e93fc53c89a75a3787f248d
 import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services

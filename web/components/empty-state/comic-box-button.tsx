@@ -1,3 +1,5 @@
+"use client";
+
 import { Ref, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";

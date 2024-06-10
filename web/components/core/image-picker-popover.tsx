@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";

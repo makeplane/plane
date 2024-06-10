@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
@@ -102,8 +104,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving"
                         : "Leave"
                       : isRemoving
-                      ? "Removing"
-                      : "Remove"}
+                        ? "Removing"
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

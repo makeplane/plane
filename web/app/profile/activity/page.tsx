@@ -11,12 +11,6 @@ import { EmptyState } from "@/components/empty-state";
 import { ProfileActivityListPage } from "@/components/profile";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-//hooks
-import { useAppTheme } from "@/hooks/store";
-// layouts
-import { ProfileSettingsLayout } from "@/layouts/settings-layout";
-// type
-import { NextPageWithLayout } from "@/lib/types";
 
 const PER_PAGE = 100;
 
@@ -26,8 +20,6 @@ const ProfileActivityPage = observer(() => {
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
   const [isEmpty, setIsEmpty] = useState(false);
-  // store hooks
-  const { toggleSidebar } = useAppTheme();
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 

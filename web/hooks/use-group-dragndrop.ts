@@ -1,3 +1,5 @@
+"use client";
+
 import { useParams } from "next/navigation";
 import { TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";

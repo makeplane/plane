@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react-lite";
 import { useParams, useRouter } from "next/navigation";
 // ui

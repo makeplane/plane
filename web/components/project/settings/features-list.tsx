@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { FileText, Inbox } from "lucide-react";

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";

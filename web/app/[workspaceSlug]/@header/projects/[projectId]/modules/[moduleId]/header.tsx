@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
