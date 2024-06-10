@@ -20,7 +20,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
-export enum EOnboardingSteps {
+enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",
   WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
   INVITE_MEMBERS = "INVITE_MEMBERS",
