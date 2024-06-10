@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/rich-text-editor";

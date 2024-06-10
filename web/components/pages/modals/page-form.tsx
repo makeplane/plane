@@ -1,3 +1,5 @@
+"use client";
+
 import { FormEvent, useState } from "react";
 // types
 import { FileText } from "lucide-react";

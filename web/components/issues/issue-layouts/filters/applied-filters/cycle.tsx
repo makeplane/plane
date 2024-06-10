@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TCycleGroups } from "@plane/types";

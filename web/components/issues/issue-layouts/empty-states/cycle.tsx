@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
@@ -65,8 +67,8 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const emptyStateType = isCompletedAndEmpty
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
     : isEmptyFilters
-    ? EmptyStateType.PROJECT_EMPTY_FILTER
-    : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
+      ? EmptyStateType.PROJECT_EMPTY_FILTER
+      : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
   const additionalPath = isCompletedAndEmpty ? undefined : activeLayout ?? "list";
 
   return (

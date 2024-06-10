@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, FC } from "react";
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";

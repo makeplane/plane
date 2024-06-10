@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
 // types
 import { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";

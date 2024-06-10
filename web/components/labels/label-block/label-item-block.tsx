@@ -1,3 +1,5 @@
+"use client";
+
 import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 import { IIssueLabel } from "@plane/types";

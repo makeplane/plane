@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
@@ -112,8 +114,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                      ? "Removing..."
-                      : "Remove"}
+                        ? "Removing..."
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

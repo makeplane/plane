@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
@@ -109,8 +111,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
 
-    const query = generateQueryParams(searchParams, ['peekModule']);
-    if (searchParams.has('peekModule')) {
+    const query = generateQueryParams(searchParams, ["peekModule"]);
+    if (searchParams.has("peekModule")) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query}&peekModule=${moduleId}`);

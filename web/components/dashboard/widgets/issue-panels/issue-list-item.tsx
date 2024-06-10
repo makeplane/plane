@@ -1,3 +1,5 @@
+"use client";
+
 import isToday from "date-fns/isToday";
 import { observer } from "mobx-react-lite";
 import { TIssue, TWidgetIssue } from "@plane/types";

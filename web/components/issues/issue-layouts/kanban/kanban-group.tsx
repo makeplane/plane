@@ -1,3 +1,5 @@
+"use client";
+
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -133,7 +135,16 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         element,
       })
     );
-  }, [columnRef, groupId, sub_group_id, setIsDraggingOverColumn, orderBy, isDropDisabled, dropErrorMessage, handleOnDrop]);
+  }, [
+    columnRef,
+    groupId,
+    sub_group_id,
+    setIsDraggingOverColumn,
+    orderBy,
+    isDropDisabled,
+    dropErrorMessage,
+    handleOnDrop,
+  ]);
 
   const prePopulateQuickAddData = (
     groupByKey: string | undefined,
@@ -201,7 +212,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       ref={columnRef}
     >
       <GroupDragOverlay
-        dragColumnOrientation={sub_group_by ? "justify-start": "justify-center" }
+        dragColumnOrientation={sub_group_by ? "justify-start" : "justify-center"}
         canOverlayBeVisible={canOverlayBeVisible}
         isDropDisabled={isDropDisabled}
         dropErrorMessage={dropErrorMessage}

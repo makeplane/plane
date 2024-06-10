@@ -1,3 +1,5 @@
+"use client";
+
 import { CalendarCheck2, Signal } from "lucide-react";
 // ui
 import { DoubleCircleIcon, StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";

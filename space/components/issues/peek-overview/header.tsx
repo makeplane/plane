@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Link2, MoveRight } from "lucide-react";

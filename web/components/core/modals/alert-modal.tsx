@@ -1,3 +1,4 @@
+"use client";
 import { AlertTriangle, Info, LucideIcon } from "lucide-react";
 // ui
 import { Button, TButtonVariant } from "@plane/ui";

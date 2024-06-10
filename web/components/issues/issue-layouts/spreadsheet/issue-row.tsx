@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";

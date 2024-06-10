@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";

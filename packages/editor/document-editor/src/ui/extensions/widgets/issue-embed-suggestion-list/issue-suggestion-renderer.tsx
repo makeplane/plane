@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@plane/editor-core";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -136,8 +138,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const query = generateQueryParams(searchParams, ['peekCycle']);
-    if (searchParams.has('peekCycle')) {
+    const query = generateQueryParams(searchParams, ["peekCycle"]);
+    if (searchParams.has("peekCycle")) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query}&peekCycle=${cycleId}`);
