@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useParams } from "next/navigation";
-import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
@@ -13,7 +12,7 @@ const ProfilePageHeader = {
   subscribed: "Profile - Subscribed",
 };
 
-const ProfileIssuesTypePage = observer(() => {
+const ProfileIssuesTypePage = () => {
   const { profileViewId } = useParams() as { profileViewId: "assigned" | "subscribed" | "created" | undefined };
 
   if (!profileViewId) return null;
@@ -26,6 +25,6 @@ const ProfileIssuesTypePage = observer(() => {
       <ProfileIssuesPage type={profileViewId} />
     </>
   );
-});
+};
 
 export default ProfileIssuesTypePage;

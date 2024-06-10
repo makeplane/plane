@@ -12,7 +12,7 @@ import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect } from
 // components
 import { EModalWidth, ModalCore } from "@/components/core";
 // helpers
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
+import { SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProjectPublish } from "@/hooks/store";
@@ -168,8 +168,6 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         message: "Published page link copied successfully.",
       })
     );
-
-  const SPACE_URL = (SPACE_BASE_URL === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>

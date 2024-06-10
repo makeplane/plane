@@ -1,6 +1,5 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // mobx store
 // components
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
