@@ -4,6 +4,7 @@ export * from "./badge";
 export * from "./button";
 export * from "./emoji";
 export * from "./dropdowns";
+export * from "./dropdown";
 export * from "./form-fields";
 export * from "./icons";
 export * from "./progress";
