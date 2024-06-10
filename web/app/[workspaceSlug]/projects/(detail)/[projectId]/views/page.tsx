@@ -3,13 +3,15 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { PageHead } from "@/components/core";
+import { AppHeader, PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectViewsList } from "@/components/views";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
+// local components
+import { ProjectViewsHeader } from "./header";
 
 const ProjectViewsPage = observer(() => {
   // router
@@ -35,6 +37,7 @@ const ProjectViewsPage = observer(() => {
 
   return (
     <>
+      <AppHeader header={ProjectViewsHeader} />
       <PageHead title={pageTitle} />
       <ProjectViewsList />
     </>

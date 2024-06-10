@@ -2,8 +2,7 @@
 
 import { observer } from "mobx-react";
 // components
-import { AppPageWrapper } from "@/components/app";
-import { PageHead, AppHeader } from "@/components/core";
+import { PageHead, AppHeader, ContentWrapper } from "@/components/core";
 import { WorkspaceDashboardView } from "@/components/page-views";
 // hooks
 import { useWorkspace } from "@/hooks/store";
@@ -18,10 +17,10 @@ const WorkspaceDashboardPage = observer(() => {
   return (
     <>
       <AppHeader header={<WorkspaceDashboardHeader />} />
-      <AppPageWrapper>
+      <ContentWrapper>
         <PageHead title={pageTitle} />
         <WorkspaceDashboardView />
-      </AppPageWrapper>
+      </ContentWrapper>
     </>
   );
 });

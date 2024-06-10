@@ -57,7 +57,6 @@ const ProjectsPage = observer(() => {
 
   return (
     <>
-      <AppHeaderWrapper header={<ProjectsHeader />} mobileHeader={<ProjectsMobileHeader />} />
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||

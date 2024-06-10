@@ -12,7 +12,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useAppRouter, useMember, useProjectFilter } from "@/hooks/store";
 
-const ProjectsMobileHeader = observer(() => {
+export const ProjectsListMobileHeader = observer(() => {
   const {
     currentWorkspaceDisplayFilters: displayFilters,
     currentWorkspaceFilters: filters,
@@ -87,5 +87,3 @@ const ProjectsMobileHeader = observer(() => {
     </div>
   );
 });
-
-export default ProjectsMobileHeader;

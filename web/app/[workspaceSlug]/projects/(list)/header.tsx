@@ -20,7 +20,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useAppRouter, useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
-const ProjectsHeader = observer(() => {
+export const ProjectsListHeader = observer(() => {
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -183,5 +183,3 @@ const ProjectsHeader = observer(() => {
     </div>
   );
 });
-
-export default ProjectsHeader;
