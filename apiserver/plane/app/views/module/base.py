@@ -16,8 +16,9 @@ from django.db.models import (
     Subquery,
     UUIDField,
     Value,
+    Sum,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Cast
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
@@ -128,6 +129,34 @@ class ModuleViewSet(BaseViewSet):
             .annotate(cnt=Count("pk"))
             .values("cnt")
         )
+        completed_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="completed",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                completed_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("completed_estimate_points")[:1]
+        )
+
+        total_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                total_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("total_estimate_points")[:1]
+        )
         return (
             super()
             .get_queryset()
@@ -183,6 +212,18 @@ class ModuleViewSet(BaseViewSet):
                 )
             )
             .annotate(
+                completed_estimate_points=Coalesce(
+                    Subquery(completed_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                total_estimate_points=Coalesce(
+                    Subquery(total_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
                 member_ids=Coalesce(
                     ArrayAgg(
                         "members__id",
@@ -233,6 +274,8 @@ class ModuleViewSet(BaseViewSet):
                     "total_issues",
                     "started_issues",
                     "unstarted_issues",
+                    "completed_estimate_points",
+                    "total_estimate_points",
                     "backlog_issues",
                     "created_at",
                     "updated_at",
@@ -284,6 +327,8 @@ class ModuleViewSet(BaseViewSet):
                 "external_id",
                 "logo_props",
                 # computed fields
+                "completed_estimate_points",
+                "total_estimate_points",
                 "total_issues",
                 "is_favorite",
                 "cancelled_issues",
@@ -301,6 +346,7 @@ class ModuleViewSet(BaseViewSet):
         return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
+        plot_type = request.GET.get("plot_type", "burndown")
         queryset = (
             self.get_queryset()
             .filter(archived_at__isnull=True)
@@ -423,6 +469,7 @@ class ModuleViewSet(BaseViewSet):
                 queryset=modules,
                 slug=slug,
                 project_id=project_id,
+                plot_type=plot_type,
                 module_id=pk,
             )
 
@@ -469,6 +516,8 @@ class ModuleViewSet(BaseViewSet):
                 "external_id",
                 "logo_props",
                 # computed fields
+                "completed_estimate_points",
+                "total_estimate_points",
                 "is_favorite",
                 "cancelled_issues",
                 "completed_issues",

@@ -25,11 +25,11 @@ const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
-        issueArchiveService.retrieveArchivedIssue(
-          workspaceSlug as string,
-          projectId as string,
-          archivedIssueId as string
-        )
+          issueArchiveService.retrieveArchivedIssue(
+            workspaceSlug as string,
+            projectId as string,
+            archivedIssueId as string
+          )
       : null
   );
 

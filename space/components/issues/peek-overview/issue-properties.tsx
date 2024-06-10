@@ -1,16 +1,17 @@
+import { CalendarCheck2, Signal } from "lucide-react";
 // ui
-import { StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
-// icons
+import { DoubleCircleIcon, StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { Icon } from "@/components/ui";
 // constants
-import { issueGroupFilter, issuePriorityFilter } from "@/constants/issue";
+import { issuePriorityFilter } from "@/constants/issue";
 // helpers
-import { renderFullDate } from "@/helpers/date-time.helper";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // types
 import { IIssue, IPeekMode } from "@/types/issue";
-// components
-import { dueDateIconDetails } from "../board-views/block-due-date";
 
 type Props = {
   issueDetails: IIssue;
@@ -19,11 +20,8 @@ type Props = {
 
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
   const state = issueDetails.state_detail;
-  const stateGroup = issueGroupFilter(state.group);
 
   const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
-
-  const dueDateIcon = dueDateIconDetails(issueDetails.target_date, state.group);
 
   const handleCopyLink = () => {
     const urlToCopy = window.location.href;
@@ -51,28 +49,22 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           </div>
         </div>
       )}
-      <div className={`space-y-4 ${mode === "full" ? "pt-3" : ""}`}>
-        <div className="flex items-center gap-2 text-sm">
-          <div className="flex w-1/4 flex-shrink-0 items-center gap-2 font-medium">
-            <Icon iconName="radio_button_checked" className="flex-shrink-0 !text-base" />
-            <span className="flex-grow truncate">State</span>
+      <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
+        <div className="flex items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <DoubleCircleIcon className="size-4 flex-shrink-0" />
+            <span>State</span>
           </div>
-          <div className="w-3/4">
-            {stateGroup && (
-              <div className="inline-flex rounded bg-custom-background-80 px-2.5 py-0.5 text-sm">
-                <div className="flex items-center gap-1.5 text-left text-custom-text-100">
-                  <StateGroupIcon stateGroup={state.group} color={state.color} />
-                  {addSpaceIfCamelCase(state?.name ?? "")}
-                </div>
-              </div>
-            )}
+          <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-sm">
+            <StateGroupIcon stateGroup={state.group} color={state.color} />
+            {addSpaceIfCamelCase(state?.name ?? "")}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-sm">
-          <div className="flex w-1/4 flex-shrink-0 items-center gap-2 font-medium">
-            <Icon iconName="signal_cellular_alt" className="flex-shrink-0 !text-base" />
-            <span className="flex-grow truncate">Priority</span>
+        <div className="flex items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Signal className="size-4 flex-shrink-0" />
+            <span>Priority</span>
           </div>
           <div className="w-3/4">
             <div
@@ -97,18 +89,24 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <div className="flex w-1/4 flex-shrink-0 items-center gap-2 font-medium">
-            <Icon iconName="calendar_today" className="flex-shrink-0 !text-base" />
-            <span className="flex-grow truncate">Due date</span>
+
+        <div className="flex items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <CalendarCheck2 className="size-4 flex-shrink-0" />
+            <span>Due date</span>
           </div>
           <div>
             {issueDetails.target_date ? (
-              <div className="flex h-6 items-center gap-1 rounded border border-custom-border-100 bg-custom-background-80 px-2.5 py-1 text-xs text-custom-text-100">
-                <span className={`material-symbols-rounded -my-0.5 text-sm ${dueDateIcon.className}`}>
-                  {dueDateIcon.iconName}
-                </span>
-                {renderFullDate(issueDetails.target_date)}
+              <div
+                className={cn("flex items-center gap-1.5 rounded py-0.5 text-xs text-custom-text-100", {
+                  "text-red-500": shouldHighlightIssueDueDate(
+                    issueDetails.target_date,
+                    issueDetails.state_detail.group
+                  ),
+                })}
+              >
+                <CalendarCheck2 className="size-3" />
+                {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
               <span className="text-custom-text-200">Empty</span>

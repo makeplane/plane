@@ -1,25 +1,15 @@
+import { IStateLite, IWorkspaceLite, TIssuePriorities, TStateGroups } from "@plane/types";
+
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 export type TIssueLayoutOptions = {
   [key in TIssueLayout]: boolean;
 };
-export type TIssueLayoutViews = {
-  [key in TIssueLayout]: { title: string; icon: string; className: string };
-};
 
-export type TIssueFilterPriority = "urgent" | "high" | "medium" | "low" | "none";
 export type TIssueFilterPriorityObject = {
-  key: TIssueFilterPriority;
+  key: TIssuePriorities;
   title: string;
   className: string;
   icon: string;
-};
-
-export type TIssueFilterState = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
-export type TIssueFilterStateObject = {
-  key: TIssueFilterState;
-  title: string;
-  color: string;
-  className: string;
 };
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
@@ -29,8 +19,8 @@ export type TDisplayFilters = {
 };
 
 export type TFilters = {
-  state: TIssueFilterState[];
-  priority: TIssueFilterPriority[];
+  state: TStateGroups[];
+  priority: TIssuePriorities[];
   labels: string[];
 };
 
@@ -42,6 +32,12 @@ export type TIssueFilters = {
 export type TIssueQueryFilters = Partial<TFilters>;
 
 export type TIssueQueryFiltersParams = Partial<Record<keyof TFilters, string>>;
+
+export type TIssuesResponse = {
+  states: IStateLite[];
+  labels: IIssueLabel[];
+  issues: IIssue[];
+};
 
 export interface IIssue {
   id: string;
@@ -68,17 +64,11 @@ export interface IIssue {
 
 export type IPeekMode = "side" | "modal" | "full";
 
-export interface IIssueState {
-  id: string;
-  name: string;
-  group: TIssueGroupKey;
-  color: string;
-}
-
 export interface IIssueLabel {
   id: string;
   name: string;
   color: string;
+  parent: string | null;
 }
 
 export interface IVote {
@@ -114,7 +104,7 @@ export interface Comment {
   updated_at: Date;
   updated_by: string;
   workspace: string;
-  workspace_detail: WorkspaceDetail;
+  workspace_detail: IWorkspaceLite;
 }
 
 export interface IIssueReaction {
@@ -175,52 +165,8 @@ export interface ProjectDetail {
   description: string;
 }
 
-export interface WorkspaceDetail {
-  name: string;
-  slug: string;
-  id: string;
-}
-
-export interface IssueDetailType {
-  [issueId: string]: {
-    issue: IIssue;
-    comments: Comment[];
-    reactions: any[];
-    votes: any[];
-  };
-}
-
-export type TIssueGroupByOptions = "state" | "priority" | "labels" | null;
-
-export type TIssueParams = "priority" | "state" | "labels";
-
 export interface IIssueFilterOptions {
   state?: string[] | null;
   labels?: string[] | null;
   priority?: string[] | null;
-}
-
-// issues
-export interface IGroupedIssues {
-  [group_id: string]: string[];
-}
-
-export interface ISubGroupedIssues {
-  [sub_grouped_id: string]: {
-    [group_id: string]: string[];
-  };
-}
-
-export type TUnGroupedIssues = string[];
-
-export interface IIssueResponse {
-  [issue_id: string]: IIssue;
-}
-
-export type TLoader = "init-loader" | "mutation" | undefined;
-
-export interface ViewFlags {
-  enableQuickAdd: boolean;
-  enableIssueCreation: boolean;
-  enableInlineEditing: boolean;
 }

@@ -13,12 +13,12 @@ import { useIssueDetails, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type Props = {
+  anchor: string;
   commentId: string;
-  projectId: string;
-  workspaceSlug: string;
 };
 
 export const CommentReactions: React.FC<Props> = observer((props) => {
+  const { anchor, commentId } = props;
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -28,7 +28,6 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
 
-  const { commentId, projectId, workspaceSlug } = props;
   // hooks
   const { addCommentReaction, removeCommentReaction, details, peekId } = useIssueDetails();
   const { data: user } = useUser();
@@ -40,13 +39,13 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   const userReactions = commentReactions?.filter((r) => r?.actor_detail?.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
-    if (!workspaceSlug || !projectId || !peekId) return;
-    addCommentReaction(workspaceSlug, projectId, peekId, commentId, reactionHex);
+    if (!anchor || !peekId) return;
+    addCommentReaction(anchor, peekId, commentId, reactionHex);
   };
 
   const handleRemoveReaction = (reactionHex: string) => {
-    if (!workspaceSlug || !projectId || !peekId) return;
-    removeCommentReaction(workspaceSlug, projectId, peekId, commentId, reactionHex);
+    if (!anchor || !peekId) return;
+    removeCommentReaction(anchor, peekId, commentId, reactionHex);
   };
 
   const handleReactionClick = (reactionHex: string) => {

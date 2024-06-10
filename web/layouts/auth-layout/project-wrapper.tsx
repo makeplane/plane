@@ -9,7 +9,7 @@ import { EmptyState, LogoSpinner } from "@/components/common";
 import {
   useEventTracker,
   useCycle,
-  useEstimate,
+  useProjectEstimates,
   useLabel,
   useMember,
   useModule,
@@ -44,7 +44,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   } = useMember();
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
-  const { fetchProjectEstimates } = useEstimate();
+  const { getProjectEstimates } = useProjectEstimates();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -79,7 +79,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project estimates
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId ? () => getProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project cycles

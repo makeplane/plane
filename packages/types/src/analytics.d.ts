@@ -54,7 +54,7 @@ export type TXAxisValues =
   | "state__group"
   | "labels__id"
   | "assignees__id"
-  | "estimate_point"
+  | "estimate_point__value"
   | "issue_cycle__cycle_id"
   | "issue_module__module_id"
   | "priority"

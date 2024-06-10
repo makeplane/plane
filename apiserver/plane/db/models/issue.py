@@ -119,8 +119,15 @@ class Issue(ProjectBaseModel):
         blank=True,
         related_name="state_issue",
     )
-    estimate_point = models.IntegerField(
+    point = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(12)],
+        null=True,
+        blank=True,
+    )
+    estimate_point = models.ForeignKey(
+        "db.EstimatePoint",
+        on_delete=models.SET_NULL,
+        related_name="issue_estimates",
         null=True,
         blank=True,
     )

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // lib
@@ -11,11 +10,12 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueDetails, useUser } from "@/hooks/store";
 
 type IssueEmojiReactionsProps = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
 };
 
 export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
+  const { anchor } = props;
+  // router
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -25,11 +25,9 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
-
-  const { workspaceSlug, projectId } = props;
-  // store
+  // store hooks
   const issueDetailsStore = useIssueDetails();
-  const { data: user, fetchCurrentUser } = useUser();
+  const { data: user } = useUser();
 
   const issueId = issueDetailsStore.peekId;
   const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
@@ -38,13 +36,13 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
   const userReactions = reactions?.filter((r) => r.actor_detail.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    issueDetailsStore.addIssueReaction(workspaceSlug.toString(), projectId.toString(), issueId, reactionHex);
+    if (!issueId) return;
+    issueDetailsStore.addIssueReaction(anchor, issueId, reactionHex);
   };
 
   const handleRemoveReaction = (reactionHex: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    issueDetailsStore.removeIssueReaction(workspaceSlug.toString(), projectId.toString(), issueId, reactionHex);
+    if (!issueId) return;
+    issueDetailsStore.removeIssueReaction(anchor, issueId, reactionHex);
   };
 
   const handleReactionClick = (reactionHex: string) => {
@@ -52,11 +50,6 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
     if (userReaction) handleRemoveReaction(reactionHex);
     else handleAddReaction(reactionHex);
   };
-
-  useEffect(() => {
-    if (user) return;
-    fetchCurrentUser();
-  }, [user, fetchCurrentUser]);
 
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
