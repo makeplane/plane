@@ -1,10 +1,10 @@
-import { AppHeaderWrapper, AppPageWrapper } from "@/components/app";
+import { AppHeader, ContentWrapper } from "@/components/core";
 import GlobalIssuesHeader from "./header";
 
 const GlobalIssuesLayout = ({ children }: { children: React.ReactNode }) => (
   <>
-    <AppHeaderWrapper header={<GlobalIssuesHeader />} />
-    <AppPageWrapper>{children}</AppPageWrapper>
+    <AppHeader header={<GlobalIssuesHeader />} />
+    <ContentWrapper>{children}</ContentWrapper>
   </>
 );
 

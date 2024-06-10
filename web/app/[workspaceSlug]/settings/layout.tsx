@@ -2,7 +2,7 @@
 
 import { FC, ReactNode } from "react";
 // components
-import { AppHeaderWrapper, AppPageWrapper } from "@/components/app";
+import { AppHeader, ContentWrapper } from "@/components/core";
 // local components
 import WorkspaceSettingHeader from "./header";
 import MobileWorkspaceSettingsTabs from "./mobile-header-tabs";
@@ -17,8 +17,8 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
 
   return (
     <>
-      <AppHeaderWrapper header={<WorkspaceSettingHeader />} />
-      <AppPageWrapper>
+      <AppHeader header={<WorkspaceSettingHeader />} />
+      <ContentWrapper>
         <div className="inset-y-0 z-20 flex h-full w-full gap-2">
           <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
             <WorkspaceSettingsSidebar />
@@ -30,7 +30,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
             </div>
           </div>
         </div>
-      </AppPageWrapper>
+      </ContentWrapper>
     </>
   );
 };

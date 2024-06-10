@@ -1,10 +1,10 @@
-import { AppHeaderWrapper, AppPageWrapper } from "@/components/app";
+import { AppHeader, ContentWrapper } from "@/components/core";
 import WorkspaceAnalyticsHeader from "./header";
 
 const WorkspaceAnalyticsLayout = ({ children }: { children: React.ReactNode }) => (
   <>
-    <AppHeaderWrapper header={<WorkspaceAnalyticsHeader />} />
-    <AppPageWrapper>{children}</AppPageWrapper>
+    <AppHeader header={<WorkspaceAnalyticsHeader />} />
+    <ContentWrapper>{children}</ContentWrapper>
   </>
 );
 
