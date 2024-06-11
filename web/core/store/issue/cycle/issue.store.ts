@@ -7,7 +7,14 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 // types
-import { TIssue,  TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
+import {
+  TIssue,
+  TLoader,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  ViewFlags,
+  TBulkOperationsPayload,
+} from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { ICycleIssuesFilter } from "./filter.store";
@@ -391,9 +398,13 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
         this.rootIssueStore.issues.removeIssue(data.id);
       });
 
-      if (data.module_ids && data.module_ids.length > 0) {
-        await this.changeModulesInIssue(workspaceSlug, projectId, response.id, data.module_ids, []);
+      const currentModuleIds =
+        data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
+
+      if (currentModuleIds.length > 0) {
+        await this.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, []);
       }
+
       return response;
     } catch (error) {
       throw error;

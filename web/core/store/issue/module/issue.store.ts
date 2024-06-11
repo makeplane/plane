@@ -234,9 +234,12 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
         this.rootIssueStore.issues.removeIssue(data.id);
       });
 
-      if (data.cycle_id && data.cycle_id !== "") {
-        await this.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id);
+      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
+
+      if (currentCycleId) {
+        await this.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id);
       }
+
       return response;
     } catch (error) {
       throw error;
