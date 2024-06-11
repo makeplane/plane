@@ -112,7 +112,7 @@ class OffsetPaginator:
             else (order_by[1::] if order_by.startswith("-") else order_by,)
         )
         # Set desc to true when `-` exists in the order by
-        self.desc = True if order_by.startswith("-") else False
+        self.desc = True if order_by and order_by.startswith("-") else False
         self.queryset = queryset
         self.max_limit = max_limit
         self.max_offset = max_offset
