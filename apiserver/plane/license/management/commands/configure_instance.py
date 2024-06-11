@@ -8,9 +8,6 @@ from django.core.management.base import BaseCommand
 from plane.license.models import InstanceConfiguration
 
 
-from django.core.exceptions import ObjectDoesNotExist
-
-
 class Command(BaseCommand):
     help = "Configure instance variables"
 
