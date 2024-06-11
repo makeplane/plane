@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import Head from "next/head";
 
-/**
- * Custom hook to set the page title
- * @param title - The title to be set for the page
- */
-const usePageTitle = (title?: string) => {
+interface IUseHeadParams {
+  title?: string;
+}
+
+const useHead = ({ title }: IUseHeadParams) => {
   useEffect(() => {
     if (title) {
       document.title = title;
@@ -14,8 +14,9 @@ const usePageTitle = (title?: string) => {
 
   return (
     <Head>
-      <title>{title || "Default Title"}</title>
+      <title>{title || "Plane | Simple, extensible, open-source project management tool."}</title>
     </Head>
   );
 };
-export default usePageTitle;
+
+export default useHead;
