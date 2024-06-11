@@ -35,7 +35,7 @@ export const WorkspaceDashboardView = observer(() => {
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { captureEvent } = useEventTracker();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
-  const { joinedProjectIds } = useProject();
+  const { joinedProjectIds, loader } = useProject();
 
   const [windowWidth] = useSize();
 
@@ -59,6 +59,7 @@ export const WorkspaceDashboardView = observer(() => {
     fetchHomeDashboardWidgets(workspaceSlug);
   }, [fetchHomeDashboardWidgets, workspaceSlug]);
 
+  // TODO: refactor loader implementation
   return (
     <>
       {currentUserProfile && !currentUserProfile.is_tour_completed && (
@@ -68,7 +69,7 @@ export const WorkspaceDashboardView = observer(() => {
       )}
       {homeDashboardId && joinedProjectIds && (
         <>
-          {joinedProjectIds.length > 0 ? (
+          {joinedProjectIds.length > 0 || loader ? (
             <>
               <IssuePeekOverview />
               <div
