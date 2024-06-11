@@ -5,11 +5,15 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@pl
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
-import { IssueBulkOperationsRoot, SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
 // constants
 import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // hooks
 import { useProject } from "@/hooks/store";
+// plane web components
+import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
+// plane web constants
+import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
 // types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
@@ -78,7 +82,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
-        disabled
+        disabled={!ENABLE_BULK_OPERATIONS}
       >
         {(helpers) => (
           <>
