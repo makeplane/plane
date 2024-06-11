@@ -25,6 +25,7 @@ const AnalyticsPage = observer(() => {
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Analytics` : undefined;
 
+  // TODO: refactor loader implementation
   return (
     <>
       <PageHead title={pageTitle} />
