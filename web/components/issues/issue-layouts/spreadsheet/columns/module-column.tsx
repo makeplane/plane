@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useEventTracker, useIssues } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   issue: TIssue;
@@ -20,17 +20,17 @@ type Props = {
 export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   const { issue, disabled, onClose } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
     issues: { changeModulesInIssue },
-  } = useIssues(EIssuesStoreType.MODULE);
+  } = useIssuesStore();
 
   const handleModule = useCallback(
     async (moduleIds: string[] | null) => {
-      if (!workspaceSlug || !issue || !issue.module_ids || !moduleIds) return;
+      if (!workspaceSlug || !issue || !issue.project_id || !issue.module_ids || !moduleIds) return;
 
       const updatedModuleIds = xor(issue.module_ids, moduleIds);
       const modulesToAdd: string[] = [];
@@ -49,16 +49,16 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
           element: "Spreadsheet layout",
         },
         updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
-        path: router.asPath,
+        path: pathname,
       });
     },
-    [workspaceSlug, issue, changeModulesInIssue, captureIssueEvent, router.asPath]
+    [workspaceSlug, issue, changeModulesInIssue, captureIssueEvent, pathname]
   );
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <ModuleDropdown
-        projectId={issue?.project_id}
+        projectId={issue?.project_id ?? undefined}
         value={issue?.module_ids ?? []}
         onChange={handleModule}
         disabled={disabled}

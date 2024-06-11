@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -43,13 +45,7 @@ interface IKanBanQuickAddIssueForm {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 }
 
 const defaultValues: Partial<TIssue> = {
@@ -57,10 +53,10 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
   // store hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -98,14 +94,9 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          ...payload,
-        },
-        viewId
-      );
+      const quickAddPromise = quickAddCallback(projectId.toString(), {
+        ...payload,
+      });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {
@@ -123,14 +114,14 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

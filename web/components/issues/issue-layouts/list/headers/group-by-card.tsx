@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
@@ -10,11 +12,11 @@ import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 interface IHeaderGroupByCard {
@@ -24,8 +26,8 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  toggleListGroup: () => void;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
 }
@@ -39,20 +41,21 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     issuePayload,
     canEditProperties,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     selectionHelpers,
+    toggleListGroup,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
+  const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
+  const pathname = usePathname();
   // hooks
   const { setTrackElement } = useEventTracker();
+  const storeType = useIssueStoreType();
   // derived values
-  const isDraftIssue = router.pathname.includes("draft-issue");
+  const isDraftIssue = pathname.includes("draft-issue");
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
@@ -102,7 +105,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
-        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
+        onClick={toggleListGroup}>
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
         </div>

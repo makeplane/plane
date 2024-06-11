@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 // components
 import { Button } from "@plane/ui";

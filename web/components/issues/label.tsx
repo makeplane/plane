@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 // components
 import { Tooltip } from "@plane/ui";

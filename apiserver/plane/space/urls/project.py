@@ -4,17 +4,23 @@ from django.urls import path
 from plane.space.views import (
     ProjectDeployBoardPublicSettingsEndpoint,
     ProjectIssuesPublicEndpoint,
+    WorkspaceProjectAnchorEndpoint,
 )
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/project-boards/<uuid:project_id>/settings/",
+        "anchor/<str:anchor>/settings/",
         ProjectDeployBoardPublicSettingsEndpoint.as_view(),
         name="project-deploy-board-settings",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/",
+        "anchor/<str:anchor>/issues/",
         ProjectIssuesPublicEndpoint.as_view(),
+        name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/anchor/",
+        WorkspaceProjectAnchorEndpoint.as_view(),
         name="project-deploy-board",
     ),
 ]

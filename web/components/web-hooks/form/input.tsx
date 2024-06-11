@@ -1,3 +1,5 @@
+"use client";
+
 import { Input } from "@plane/ui";
 
 type Props = {

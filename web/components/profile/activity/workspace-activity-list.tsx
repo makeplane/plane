@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // services
 import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
@@ -21,8 +21,7 @@ type Props = {
 export const WorkspaceActivityListPage: React.FC<Props> = (props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId

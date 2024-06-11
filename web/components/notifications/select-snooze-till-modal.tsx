@@ -1,5 +1,7 @@
+"use client";
+
 import { Fragment, FC } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
@@ -38,8 +40,7 @@ const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const {
     formState: { isSubmitting },

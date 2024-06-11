@@ -14,20 +14,24 @@ import {
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
-export interface ICycleIssuesFilter {
-  // observables
-  filters: Record<string, IIssueFilters>; // Record defines cycleId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+export interface ICycleIssuesFilter extends IBaseIssueFilterStore {
+  //helper actions
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   updateFilters: (
@@ -95,6 +99,20 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     return filteredRouteParams;
   }
 
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.appliedFilters;
+
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
+    }
+  );
+
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
       const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
@@ -161,7 +179,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
 
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.cycleIssues.fetchIssues(
+          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation",
@@ -204,8 +222,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.cycleIssues.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
+            workspaceSlug,
+            projectId,
+            "mutation",
+            cycleId
+          );
 
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             display_filters: _filters.displayFilters,

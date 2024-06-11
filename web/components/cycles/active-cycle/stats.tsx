@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Fragment } from "react";
 import { Tab } from "@headlessui/react";
 import { ICycle } from "@plane/types";

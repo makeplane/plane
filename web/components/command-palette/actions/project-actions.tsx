@@ -1,3 +1,5 @@
+"use client";
+
 import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
 // hooks

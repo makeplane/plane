@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { X, Pencil } from "lucide-react";
 // types
 import { IIssueLabel } from "@plane/types";
@@ -30,8 +30,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { updateLabel } = useLabel();
 

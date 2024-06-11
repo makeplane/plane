@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 // ui
 import { IIssueLabel } from "@plane/types";

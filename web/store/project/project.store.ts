@@ -27,8 +27,8 @@ export interface IProjectStore {
   favoriteProjectIds: string[];
   currentProjectDetails: IProject | undefined;
   // actions
-  getProjectById: (projectId: string) => IProject | null;
-  getProjectIdentifierById: (projectId: string) => string | undefined;
+  getProjectById: (projectId: string | undefined | null) => IProject | undefined;
+  getProjectIdentifierById: (projectId: string | undefined | null) => string;
   // fetch actions
   fetchProjects: (workspaceSlug: string) => Promise<IProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<IProject>;
@@ -251,8 +251,8 @@ export class ProjectStore implements IProjectStore {
    * @param projectId
    * @returns IProject | null
    */
-  getProjectById = computedFn((projectId: string) => {
-    const projectInfo = this.projectMap[projectId] || null;
+  getProjectById = computedFn((projectId: string | undefined | null) => {
+    const projectInfo = this.projectMap[projectId ?? ""] || undefined;
     return projectInfo;
   });
 
@@ -261,8 +261,8 @@ export class ProjectStore implements IProjectStore {
    * @param projectId
    * @returns string
    */
-  getProjectIdentifierById = computedFn((projectId: string): string | undefined => {
-    const projectInfo = this.projectMap?.[projectId];
+  getProjectIdentifierById = computedFn((projectId: string | undefined | null) => {
+    const projectInfo = this.projectMap?.[projectId ?? ""];
     return projectInfo?.identifier;
   });
 

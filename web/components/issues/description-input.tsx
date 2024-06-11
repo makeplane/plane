@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";

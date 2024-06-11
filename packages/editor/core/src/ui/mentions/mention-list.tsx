@@ -1,3 +1,5 @@
+"use client";
+
 import { Editor } from "@tiptap/react";
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "src/lib/utils";

@@ -4,7 +4,7 @@ import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.sto
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
-import { EstimateStore, IEstimateStore } from "./estimate.store";
+import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IProjectInboxStore, ProjectInboxStore } from "./inbox/project-inbox.store";
@@ -39,7 +39,6 @@ export class RootStore {
   issue: IIssueRootStore;
   state: IStateStore;
   label: ILabelStore;
-  estimate: IEstimateStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
@@ -49,6 +48,7 @@ export class RootStore {
   instance: IInstanceStore;
   user: IUserStore;
   projectInbox: IProjectInboxStore;
+  projectEstimate: IProjectEstimateStore;
   multipleSelect: IMultipleSelectStore;
 
   constructor() {
@@ -66,7 +66,6 @@ export class RootStore {
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
-    this.estimate = new EstimateStore(this);
     this.dashboard = new DashboardStore(this);
     this.commandPalette = new CommandPaletteStore();
     this.theme = new ThemeStore(this);
@@ -77,6 +76,7 @@ export class RootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.theme = new ThemeStore(this);
+    this.projectEstimate = new ProjectEstimateStore(this);
   }
 
   resetOnSignOut() {
@@ -95,7 +95,6 @@ export class RootStore {
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
-    this.estimate = new EstimateStore(this);
     this.dashboard = new DashboardStore(this);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
@@ -105,5 +104,6 @@ export class RootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.multipleSelect = new MultipleSelectStore();
+    this.projectEstimate = new ProjectEstimateStore(this);
   }
 }

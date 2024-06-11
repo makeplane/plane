@@ -1,3 +1,5 @@
+"use client";
+
 // components
 // ui
 import { IWebhook } from "@plane/types";

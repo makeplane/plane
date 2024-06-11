@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Tooltip } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // hooks
+import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 // components
 import { CycleDetailsSidebar } from "./sidebar";
@@ -15,18 +16,17 @@ type Props = {
 export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
   // router
   const router = useRouter();
-  const { peekCycle } = router.query;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const peekCycle = searchParams.get("peekCycle");
   // refs
   const ref = React.useRef(null);
   // store hooks
   const { fetchCycleDetails, fetchArchivedCycleDetails } = useCycle();
 
   const handleClose = () => {
-    delete router.query.peekCycle;
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query },
-    });
+    const query = generateQueryParams(searchParams, ['peekCycle']);
+    router.push(`${pathname}?${query}`);
   };
 
   useEffect(() => {

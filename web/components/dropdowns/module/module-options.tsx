@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";

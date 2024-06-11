@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tooltip } from "@plane/ui";
@@ -12,11 +12,14 @@ import { useIssueDetails, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type TIssueVotes = {
-  workspaceSlug: string;
-  projectId: string;
+  anchor: string;
 };
 
 export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
+  const { anchor } = props;
+  // states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // router
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -26,13 +29,9 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
-
-  const { workspaceSlug, projectId } = props;
-  // states
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  // store hooks
   const issueDetailsStore = useIssueDetails();
-  const { data: user, fetchCurrentUser } = useUser();
+  const { data: user } = useUser();
 
   const isInIframe = useIsInIframe();
 
@@ -47,27 +46,21 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
   const isDownVotedByUser = allDownVotes?.some((vote) => vote.actor === user?.id);
 
   const handleVote = async (e: any, voteValue: 1 | -1) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+    if (!issueId) return;
 
     setIsSubmitting(true);
 
     const actionPerformed = votes?.find((vote) => vote.actor === user?.id && vote.vote === voteValue);
 
-    if (actionPerformed)
-      await issueDetailsStore.removeIssueVote(workspaceSlug.toString(), projectId.toString(), issueId);
-    else
-      await issueDetailsStore.addIssueVote(workspaceSlug.toString(), projectId.toString(), issueId, {
+    if (actionPerformed) await issueDetailsStore.removeIssueVote(anchor, issueId);
+    else {
+      await issueDetailsStore.addIssueVote(anchor, issueId, {
         vote: voteValue,
       });
+    }
 
     setIsSubmitting(false);
   };
-
-  useEffect(() => {
-    if (user) return;
-
-    fetchCurrentUser();
-  }, [user, fetchCurrentUser]);
 
   const VOTES_LIMIT = 1000;
 

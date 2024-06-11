@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";

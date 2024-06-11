@@ -1,7 +1,7 @@
 import React from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
-
 // components
 import {
   FilterDisplayProperties,
@@ -96,7 +96,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
         )}
 
       {/* order by */}
-      {isDisplayFilterEnabled("order_by") && (
+      {isDisplayFilterEnabled("order_by") && !isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by) && (
         <div className="py-2">
           <FilterOrderBy
             selectedOrderBy={displayFilters?.order_by}

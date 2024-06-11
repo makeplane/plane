@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, X } from "lucide-react";
@@ -22,7 +24,7 @@ type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  projectId: string;
+  projectId: string | undefined;
   showCount?: boolean;
   onClose?: () => void;
 } & (
@@ -270,7 +272,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           </button>
         )}
       </Combobox.Button>
-      {isOpen && (
+      {isOpen && projectId && (
         <ModuleOptions
           isOpen={isOpen}
           projectId={projectId}

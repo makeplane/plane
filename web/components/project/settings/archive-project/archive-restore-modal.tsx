@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, Fragment } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
@@ -8,6 +10,7 @@ import { useProject } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
+
   projectId: string;
   isOpen: boolean;
   onClose: () => void;

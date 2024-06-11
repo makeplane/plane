@@ -1,69 +1,82 @@
+import { action, observable, makeObservable, runInAction } from "mobx";
+// base class
+// types
 import concat from "lodash/concat";
-import pull from "lodash/pull";
+import get from "lodash/get";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // types
-import { TIssue, TSubGroupedIssues, TGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
-// helpers
-import { issueCountBasedOnFilters } from "@/helpers/issue.helper";
-// services
-import { CycleService } from "@/services/cycle.service";
-import { IssueService } from "@/services/issue";
-// types
-import { IssueHelperStore } from "../helpers/issue-helper.store";
+import { TIssue,  TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { ICycleIssuesFilter } from "./filter.store";
+import { computedFn } from "mobx-utils";
+import { ALL_ISSUES } from "@/constants/issue";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
-export interface ICycleIssues {
-  // observable
-  loader: TLoader;
-  issues: { [cycle_id: string]: string[] };
+export interface ActiveCycleIssueDetails {
+  issueIds: string[];
+  issueCount: number;
+  nextCursor: string;
+  nextPageResults: boolean;
+  perPageCount: number;
+}
+
+export interface ICycleIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
-  // computed
-  issuesCount: number;
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
+  activeCycleIds: Record<string, ActiveCycleIssueDetails>;
+  //action helpers
+  getActiveCycleById: (cycleId: string) => ActiveCycleIssueDetails | undefined;
   // actions
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
+    options: IssuePaginationOptions,
     cycleId: string
-  ) => Promise<TIssue[] | undefined>;
-  createIssue: (
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<TIssue>,
+    loadType: TLoader,
     cycleId: string
-  ) => Promise<TIssue | undefined>;
-  updateIssue: (
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
+    cycleId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
+
+  fetchActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    perPageCount: number,
     cycleId: string
-  ) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => Promise<void>;
-  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => Promise<void>;
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchNextActiveCycleIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ) => Promise<TIssuesResponse | undefined>;
+
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
     data: TIssue,
-    cycleId?: string | undefined
-  ) => Promise<TIssue>;
-  addIssueToCycle: (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    issueIds: string[],
-    fetchAddedIssues?: boolean
-  ) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+    cycleId: string
+  ) => Promise<TIssue | undefined>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
+
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -72,375 +85,179 @@ export interface ICycleIssues {
       new_cycle_id: string;
     }
   ) => Promise<TIssue>;
-  fetchActiveCycleIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TIssue[] | undefined>;
 }
 
-export class CycleIssues extends IssueHelperStore implements ICycleIssues {
-  loader: TLoader = "init-loader";
-  issues: { [cycle_id: string]: string[] } = {};
+export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
+  activeCycleIds: Record<string, ActiveCycleIssueDetails> = {};
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
-  // root store
-  rootIssueStore: IIssueRootStore;
-  // service
-  cycleService;
-  issueService;
+  // filter store
+  issueFilterStore;
 
-  constructor(_rootStore: IIssueRootStore) {
-    super(_rootStore);
+  constructor(_rootStore: IIssueRootStore, issueFilterStore: ICycleIssuesFilter) {
+    super(_rootStore, issueFilterStore);
     makeObservable(this, {
       // observable
-      loader: observable.ref,
-      issues: observable,
-      // computed
-      issuesCount: computed,
-      groupedIssueIds: computed,
+      activeCycleIds: observable,
       // action
       fetchIssues: action,
-      createIssue: action,
-      updateIssue: action,
-      removeIssue: action,
-      archiveIssue: action,
-      quickAddIssue: action,
-      addIssueToCycle: action,
-      removeIssueFromCycle: action,
-      addCycleToIssue: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
+
       transferIssuesFromCycle: action,
       fetchActiveCycleIssues: action,
+
+      quickAddIssue: action,
     });
-
-    this.rootIssueStore = _rootStore;
-    this.issueService = new IssueService();
-    this.cycleService = new CycleService();
+    // filter store
+    this.issueFilterStore = issueFilterStore;
   }
 
-  get issuesCount() {
-    let issuesCount = 0;
+  getActiveCycleById = computedFn((cycleId: string) => this.activeCycleIds[cycleId]);
 
-    const displayFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
-    const groupedIssueIds = this.groupedIssueIds;
-    if (!displayFilters || !groupedIssueIds) return issuesCount;
-
-    const layout = displayFilters?.layout || undefined;
-    const groupBy = displayFilters?.group_by || undefined;
-    const subGroupBy = displayFilters?.sub_group_by || undefined;
-
-    if (!layout) return issuesCount;
-    issuesCount = issueCountBasedOnFilters(groupedIssueIds, layout, groupBy, subGroupBy);
-    return issuesCount;
-  }
-
-  get groupedIssueIds() {
-    const cycleId = this.rootIssueStore?.cycleId;
-    if (!cycleId) return undefined;
-
-    const displayFilters = this.rootIssueStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-    const orderBy = displayFilters?.order_by;
-    const layout = displayFilters?.layout;
-
-    const cycleIssueIds = this.issues[cycleId];
-    if (!cycleIssueIds) return;
-
-    const currentIssues = this.rootIssueStore.issues.getIssuesByIds(cycleIssueIds, "un-archived");
-    if (!currentIssues) return [];
-
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
-
-    if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, currentIssues);
-      else issues = this.unGroupedIssues(orderBy, currentIssues);
-    } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, currentIssues);
-      else issues = this.groupedIssues(groupBy, orderBy, currentIssues);
-    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", currentIssues, true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", currentIssues);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", currentIssues);
-
-    return issues;
-  }
-
-  getIssueIds = (groupId?: string, subGroupId?: string) => {
-    const groupedIssueIds = this.groupedIssueIds;
-
-    const displayFilters = this.rootIssueStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters || !groupedIssueIds) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-
-    if (!groupBy && !subGroupBy) {
-      return groupedIssueIds as string[];
-    }
-
-    if (groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
-    }
-
-    if (groupBy && groupId) {
-      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
-    }
-
-    return undefined;
+  /**
+   * Fetches the cycle details
+   * @param workspaceSlug
+   * @param projectId
+   * @param id is the cycle Id
+   */
+  fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
+    const cycleId = id ?? this.cycleId;
+    projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
   };
 
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param options
+   * @param cycleId
+   * @returns
+   */
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
-    loadType: TLoader = "init-loader",
+    loadType: TLoader,
+    options: IssuePaginationOptions,
     cycleId: string
   ) => {
     try {
-      this.loader = loadType;
-
-      const params = this.rootIssueStore?.cycleIssuesFilter?.appliedFilters;
-      const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-
+      // set loader and clear store
       runInAction(() => {
-        set(
-          this.issues,
-          [cycleId],
-          response.map((issue) => issue.id)
-        );
-        this.loader = undefined;
+        this.setLoader(loadType);
       });
+      this.clear();
 
-      this.rootIssueStore.issues.addIssue(response);
+      // get params from pagination options
+      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      // call the fetch issues API with the params
+      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
+      // after fetching issues, call the base method to process the response further
+      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      // set loader to undefined once errored out
+      this.setLoader(undefined);
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => {
-    try {
-      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id], false);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  updateIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    cycleId: string
-  ) => {
-    try {
-      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-    } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
-      throw error;
-    }
-  };
-
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => {
-    try {
-      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-
-      const issueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[cycleId].splice(issueIndex, 1);
-        });
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => {
-    try {
-      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-
-      runInAction(() => {
-        pull(this.issues[cycleId], issueId);
-      });
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  quickAddIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    cycleId: string | undefined = undefined
-  ) => {
-    try {
-      if (!cycleId) throw new Error("Cycle Id is required");
-
-      runInAction(() => {
-        this.issues[cycleId].push(data.id);
-        this.rootIssueStore.issues.addIssue([data]);
-      });
-
-      const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
-
-      const quickAddIssueIndex = this.issues[cycleId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0) {
-        runInAction(() => {
-          this.issues[cycleId].splice(quickAddIssueIndex, 1);
-          this.rootIssueStore.issues.removeIssue(data.id);
-        });
-      }
-
-      const currentModuleIds =
-        data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
-
-      if (currentModuleIds.length > 0) {
-        await this.rootStore.moduleIssues.changeModulesInIssue(
-          workspaceSlug,
-          projectId,
-          response.id,
-          currentModuleIds,
-          []
-        );
-      }
-
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-
-      return response;
-    } catch (error) {
-      if (cycleId) this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
-      throw error;
-    }
-  };
-
-  addIssueToCycle = async (
+  /**
+   * This method is called subsequent pages of pagination
+   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * else all the groups' next page is fetched
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @param groupId
+   * @param subGroupId
+   * @returns
+   */
+  fetchNextIssues = async (
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    issueIds: string[],
-    fetchAddedIssues = true
+    groupId?: string,
+    subGroupId?: string
   ) => {
+    const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
-        issues: issueIds,
-      });
+      // set Loader
+      this.setLoader("pagination", groupId, subGroupId);
 
-      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+      // get params from stored pagination options
+      const params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
+      // call the fetch issues API with the params for next page in issues
+      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
-      // add the new issue ids to the cycle issues map
-      runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, issueIds)));
-      });
-      issueIds.forEach((issueId) => {
-        const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
-        // remove issue from previous cycle if it exists
-        if (issueCycleId && issueCycleId !== cycleId) {
-          runInAction(() => {
-            pull(this.issues[issueCycleId], issueId);
-          });
-        }
-        // update the root issue map with the new cycle id
-        this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
-      });
+      // after the next page of issues are fetched, call the base method to process the response
+      this.onfetchNexIssues(response, groupId, subGroupId);
+      return response;
+    } catch (error) {
+      // set Loader as undefined if errored out
+      this.setLoader(undefined, groupId, subGroupId);
+      throw error;
+    }
+  };
 
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+  /**
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param cycleId
+   * @returns
+   */
+  fetchIssuesWithExistingPagination = async (
+    workspaceSlug: string,
+    projectId: string,
+    loadType: TLoader,
+    cycleId: string
+  ) => {
+    if (!this.paginationOptions) return;
+    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, cycleId);
+  };
+
+  /**
+   * Override inherited create issue, to also add issue to cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @param cycleId
+   * @returns
+   */
+  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => {
+    try {
+      const response = await super.createIssue(workspaceSlug, projectId, data, cycleId, false);
+      await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id], false);
+
+      return response;
     } catch (error) {
       throw error;
     }
   };
 
   /**
-   * Remove a cycle from issue
+   * This method is used to transfer issues from completed cycles to a new cycle
    * @param workspaceSlug
    * @param projectId
-   * @param issueId
+   * @param cycleId
+   * @param payload contains new cycle Id
    * @returns
    */
-  removeCycleFromIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
-    if (!issueCycleId) return;
-    try {
-      // perform optimistic update, update store
-      runInAction(() => {
-        pull(this.issues[issueCycleId], issueId);
-      });
-      this.rootStore.issues.updateIssue(issueId, { cycle_id: null });
-
-      // make API call
-      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, issueCycleId, issueId);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, issueCycleId);
-    } catch (error) {
-      // revert back changes if fails
-      runInAction(() => {
-        update(this.issues, issueCycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
-      });
-      this.rootStore.issues.updateIssue(issueId, { cycle_id: issueCycleId });
-      throw error;
-    }
-  };
-
-  removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
-    try {
-      runInAction(() => {
-        pull(this.issues[cycleId], issueId);
-      });
-
-      this.rootStore.issues.updateIssue(issueId, { cycle_id: null });
-
-      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
-    const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
-    try {
-      // add the new issue ids to the cycle issues map
-      runInAction(() => {
-        update(this.issues, cycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
-      });
-      // remove issue from previous cycle if it exists
-      if (issueCycleId && issueCycleId !== cycleId) {
-        runInAction(() => {
-          pull(this.issues[issueCycleId], issueId);
-        });
-      }
-      // update the root issue map with the new cycle id
-      this.rootStore.issues.updateIssue(issueId, { cycle_id: cycleId });
-
-      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
-        issues: [issueId],
-      });
-
-      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-    } catch (error) {
-      // remove the new issue ids from the cycle issues map
-      runInAction(() => {
-        pull(this.issues[cycleId], issueId);
-      });
-      // add issue back to the previous cycle if it exists
-      if (issueCycleId)
-        runInAction(() => {
-          update(this.issues, issueCycleId, (cycleIssueIds = []) => uniq(concat(cycleIssueIds, [issueId])));
-        });
-      // update the root issue map with the original cycle id
-      this.rootStore.issues.updateIssue(issueId, { cycle_id: issueCycleId ?? null });
-      throw error;
-    }
-  };
-
   transferIssuesFromCycle = async (
     workspaceSlug: string,
     projectId: string,
@@ -450,13 +267,16 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     }
   ) => {
     try {
+      // call API call to transfer issues
       const response = await this.cycleService.transferIssues(
         workspaceSlug as string,
         projectId as string,
         cycleId as string,
         payload
       );
-      await this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      // call fetch issues
+      this.paginationOptions &&
+        (await this.fetchIssues(workspaceSlug, projectId, "mutation", this.paginationOptions, cycleId));
 
       return response;
     } catch (error) {
@@ -464,22 +284,121 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     }
   };
 
-  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+  /**
+   * This is Pagination for active cycle issues
+   * This method is called to fetch the first page of issues pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param perPageCount
+   * @param cycleId
+   * @returns
+   */
+  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, perPageCount: number, cycleId: string) => {
     try {
-      const params = { priority: `urgent,high` };
-      const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
+      // set loader
+      set(this.activeCycleIds, [cycleId], undefined);
 
-      runInAction(() => {
-        set(this.issues, [ACTIVE_CYCLE_ISSUES], Object.keys(response));
-        this.loader = undefined;
+      // set params for urgent and high
+      const params = { priority: `urgent,high`, cursor: `${perPageCount}:0:0`, per_page: perPageCount };
+      // call the fetch issues API
+      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
+
+      // Process issue response
+      const { issueList, groupedIssues } = this.processIssueResponse(response);
+
+      // add issues to the main Issue Map
+      this.rootIssueStore.issues.addIssue(issueList);
+      const activeIssueIds = groupedIssues[ALL_ISSUES] as string[];
+
+      // store the processed data in the current store
+      set(this.activeCycleIds, [cycleId], {
+        issueIds: activeIssueIds,
+        issueCount: response.total_count,
+        nextCursor: response.next_cursor,
+        nextPageResults: response.next_page_results,
+        perPageCount: perPageCount,
       });
 
-      this.rootIssueStore.issues.addIssue(Object.values(response));
-
       return response;
     } catch (error) {
-      this.loader = undefined;
       throw error;
     }
   };
+
+  /**
+   * This is Pagination for active cycle issues
+   * This method is called subsequent pages of pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  fetchNextActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      //get the previous pagination data for the cycle id
+      const activeCycle = get(this.activeCycleIds, [cycleId]);
+
+      // if there is no active cycle and the next pages does not exist return
+      if (!activeCycle || !activeCycle.nextPageResults) return;
+
+      // create params
+      const params = { priority: `urgent,high`, cursor: activeCycle.nextCursor, per_page: activeCycle.perPageCount };
+      // fetch API response
+      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
+
+      // Process the response
+      const { issueList, groupedIssues } = this.processIssueResponse(response);
+
+      // add issues to main issue Map
+      this.rootIssueStore.issues.addIssue(issueList);
+
+      const activeIssueIds = groupedIssues[ALL_ISSUES] as string[];
+
+      // store the processed data for subsequent pages
+      set(this.activeCycleIds, [cycleId, "issueCount"], response.total_count);
+      set(this.activeCycleIds, [cycleId, "nextCursor"], response.next_cursor);
+      set(this.activeCycleIds, [cycleId, "nextPageResults"], response.next_page_results);
+      set(this.activeCycleIds, [cycleId, "issueCount"], response.total_count);
+      update(this.activeCycleIds, [cycleId, "issueIds"], (issueIds: string[] = []) => {
+        return this.issuesSortWithOrderBy(uniq(concat(issueIds, activeIssueIds)), this.orderBy);
+      });
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * This Method overrides the base quickAdd issue
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @param cycleId
+   * @returns
+   */
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue, cycleId: string) => {
+    try {
+      // add temporary issue to store list
+      this.addIssue(data);
+
+      // call overridden create issue
+      const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
+
+      // remove temp Issue from store list
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+
+      if (data.module_ids && data.module_ids.length > 0) {
+        await this.changeModulesInIssue(workspaceSlug, projectId, response.id, data.module_ids, []);
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  archiveBulkIssues = this.bulkArchiveIssues;
 }

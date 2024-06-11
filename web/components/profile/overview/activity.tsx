@@ -1,5 +1,7 @@
+"use client";
+
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Loader } from "@plane/ui";
@@ -20,8 +22,7 @@ import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 const userService = new UserService();
 
 export const ProfileActivity = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query;
+  const { workspaceSlug, userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
 

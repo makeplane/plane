@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { observer } from "mobx-react";
 import {
@@ -79,7 +81,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <span>State</span>
           </div>
           <StateDropdown
-            value={issue?.state_id ?? undefined}
+            value={issue?.state_id}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
             projectId={projectId}
             disabled={disabled}
@@ -197,14 +199,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <span>Estimate</span>
             </div>
             <EstimateDropdown
-              value={issue?.estimate_point !== null ? issue.estimate_point : null}
+              value={issue.estimate_point ?? undefined}
               onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
               projectId={projectId}
               disabled={disabled}
               buttonVariant="transparent-with-text"
               className="w-3/4 flex-grow group"
               buttonContainerClassName="w-full text-left"
-              buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
+              buttonClassName={`text-sm ${issue?.estimate_point !== undefined ? "" : "text-custom-text-400"}`}
               placeholder="None"
               hideIcon
               dropdownArrow

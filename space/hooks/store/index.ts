@@ -1,5 +1,5 @@
+export * from "./publish";
 export * from "./use-instance";
-export * from "./use-project";
 export * from "./use-issue";
 export * from "./use-user";
 export * from "./use-user-profile";

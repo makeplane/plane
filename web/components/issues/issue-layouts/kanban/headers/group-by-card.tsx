@@ -1,6 +1,8 @@
+"use client";
+
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
@@ -12,8 +14,8 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // hooks
 import { useEventTracker } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
-import { KanbanStoreType } from "../base-kanban-root";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -26,7 +28,6 @@ interface IHeaderGroupByCard {
   handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
@@ -41,7 +42,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     handleKanbanFilters,
     issuePayload,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
   } = props;
   const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);
@@ -49,12 +49,13 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
+  const storeType = useIssueStoreType();
   const { setTrackElement } = useEventTracker();
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
+  const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
+  const pathname = usePathname();
 
-  const isDraftIssue = router.pathname.includes("draft-issue");
+  const isDraftIssue = pathname.includes("draft-issue");
 
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };

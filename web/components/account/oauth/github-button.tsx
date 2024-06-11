@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
@@ -13,8 +13,8 @@ export type GithubOAuthButtonProps = {
 };
 
 export const GithubOAuthButton: FC<GithubOAuthButtonProps> = (props) => {
-  const { query } = useRouter();
-  const { next_path } = query;
+  const searchParams = useSearchParams();
+  const next_path = searchParams.get("next_path");
   const { text } = props;
   // hooks
   const { resolvedTheme } = useTheme();

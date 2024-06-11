@@ -1,14 +1,13 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // components
 import { CycleDropdown } from "@/components/dropdowns";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useEventTracker, useIssues } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   issue: TIssue;
@@ -19,17 +18,17 @@ type Props = {
 export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   const { issue, disabled, onClose } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
-  } = useIssues(EIssuesStoreType.CYCLE);
+  } = useIssuesStore();
 
   const handleCycle = useCallback(
     async (cycleId: string | null) => {
-      if (!workspaceSlug || !issue || issue.cycle_id === cycleId) return;
+      if (!workspaceSlug || !issue || !issue.project_id || issue.cycle_id === cycleId) return;
       if (cycleId) await addCycleToIssue(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       else await removeCycleFromIssue(workspaceSlug.toString(), issue.project_id, issue.id);
       captureIssueEvent({
@@ -40,16 +39,16 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
           element: "Spreadsheet layout",
         },
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
-        path: router.asPath,
+        path: pathname,
       });
     },
-    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue, captureIssueEvent, router.asPath]
+    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue, captureIssueEvent, pathname]
   );
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <CycleDropdown
-        projectId={issue.project_id}
+        projectId={issue.project_id ?? undefined}
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}

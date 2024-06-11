@@ -4,7 +4,7 @@ import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
 import { WorkspaceService } from "@/services/workspace.service";
 import {
@@ -15,21 +15,19 @@ import {
   IIssueFilters,
   TIssueParams,
   TStaticViewTypes,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
 type TWorkspaceFilters = "all-issues" | "assigned" | "created" | "subscribed" | string;
-export interface IWorkspaceIssuesFilter {
-  // observables
-  filters: Record<TWorkspaceFilters, IIssueFilters>; // Record defines viewId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+
+export interface IWorkspaceIssuesFilter extends IBaseIssueFilterStore {
   // fetch action
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
   updateFilters: (
@@ -42,6 +40,13 @@ export interface IWorkspaceIssuesFilter {
   //helper action
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
   getAppliedFilters: (viewId: string) => Partial<Record<TIssueParams, string | boolean>> | undefined;
+  getFilterParams: (
+    viewId: string,
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
+  ) => Partial<Record<TIssueParams, string | boolean>>;
 }
 
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
@@ -63,9 +68,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       // fetch actions
       fetchFilters: action,
       updateFilters: action,
-      // helper actions
-      getIssueFilters: action,
-      getAppliedFilters: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -102,6 +104,21 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     return filteredRouteParams;
   };
 
+  getFilterParams = computedFn(
+    (
+      viewId: string,
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.getAppliedFilters(viewId);
+
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
+    }
+  );
+
   get issueFilters() {
     const viewId = this.rootIssueStore.globalViewId;
     return this.getIssueFilters(viewId);
@@ -123,7 +140,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters, { layout: "spreadsheet" });
+      displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+        layout: EIssueLayoutTypes.SPREADSHEET,
+      });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       kanbanFilters = {
         group_by: _filters?.kanban_filters?.group_by || [],
@@ -182,7 +201,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           });
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.workspaceIssues.fetchIssues(
+          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             viewId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
@@ -221,8 +240,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {

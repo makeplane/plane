@@ -1,5 +1,6 @@
-import { BarDatum } from "@nivo/bar";
+"use client";
 
+import { BarDatum } from "@nivo/bar";
 // icons
 import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";

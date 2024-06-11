@@ -1,7 +1,9 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // types
@@ -25,14 +27,8 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   onOpen?: () => void;
 };
 
@@ -64,11 +60,11 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, viewId, onOpen } = props;
+  const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, onOpen } = props;
 
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
+  const pathname = usePathname();
   // store hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -131,14 +127,9 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          ...payload,
-        },
-        viewId
-      );
+      const quickAddPromise = quickAddCallback(projectId.toString(), {
+        ...payload,
+      });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {
@@ -156,14 +147,14 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

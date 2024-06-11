@@ -4,26 +4,25 @@ import { useEffect, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
+import { IssuesLayoutSelection, NavbarTheme, UserAvatar } from "@/components/issues";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
-import { NavbarIssueBoardView } from "@/components/issues/navbar/issue-board-view";
-import { NavbarTheme } from "@/components/issues/navbar/theme";
-import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useProject, useIssueFilter, useIssueDetails } from "@/hooks/store";
+import { useIssueFilter, useIssueDetails } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
+// store
+import { PublishStore } from "@/store/publish/publish.store";
 // types
 import { TIssueLayout } from "@/types/issue";
 
 export type NavbarControlsProps = {
-  workspaceSlug: string;
-  projectId: string;
+  publishSettings: PublishStore;
 };
 
 export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   // props
-  const { workspaceSlug, projectId } = props;
+  const { publishSettings } = props;
   // router
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,24 +33,25 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   const priority = searchParams.get("priority") || undefined;
   const peekId = searchParams.get("peekId") || undefined;
   // hooks
-  const { issueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
-  const { settings } = useProject();
+  const { getIssueFilters, isIssueFiltersUpdated, initIssueFilters } = useIssueFilter();
   const { setPeekId } = useIssueDetails();
   // derived values
+  const { anchor, view_props, workspace_detail } = publishSettings;
+  const issueFilters = anchor ? getIssueFilters(anchor) : undefined;
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const isInIframe = useIsInIframe();
 
   useEffect(() => {
-    if (workspaceSlug && projectId && settings) {
+    if (anchor && workspace_detail) {
       const viewsAcceptable: string[] = [];
       let currentBoard: TIssueLayout | null = null;
 
-      if (settings?.views?.list) viewsAcceptable.push("list");
-      if (settings?.views?.kanban) viewsAcceptable.push("kanban");
-      if (settings?.views?.calendar) viewsAcceptable.push("calendar");
-      if (settings?.views?.gantt) viewsAcceptable.push("gantt");
-      if (settings?.views?.spreadsheet) viewsAcceptable.push("spreadsheet");
+      if (view_props?.list) viewsAcceptable.push("list");
+      if (view_props?.kanban) viewsAcceptable.push("kanban");
+      if (view_props?.calendar) viewsAcceptable.push("calendar");
+      if (view_props?.gantt) viewsAcceptable.push("gantt");
+      if (view_props?.spreadsheet) viewsAcceptable.push("spreadsheet");
 
       if (board) {
         if (viewsAcceptable.includes(board.toString())) currentBoard = board.toString() as TIssueLayout;
@@ -74,39 +74,41 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
             },
           };
 
-          if (!isIssueFiltersUpdated(params)) {
-            initIssueFilters(projectId, params);
-            router.push(`/${workspaceSlug}/${projectId}?${queryParam}`);
+          if (!isIssueFiltersUpdated(anchor, params)) {
+            initIssueFilters(anchor, params);
+            router.push(`/issues/${anchor}?${queryParam}`);
           }
         }
       }
     }
   }, [
-    workspaceSlug,
-    projectId,
+    anchor,
     board,
     labels,
     state,
     priority,
     peekId,
-    settings,
     activeLayout,
     router,
     initIssueFilters,
     setPeekId,
     isIssueFiltersUpdated,
+    view_props,
+    workspace_detail,
   ]);
+
+  if (!anchor) return null;
 
   return (
     <>
       {/* issue views */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
-        <NavbarIssueBoardView workspaceSlug={workspaceSlug} projectId={projectId} />
+        <IssuesLayoutSelection anchor={anchor} />
       </div>
 
       {/* issue filters */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
-        <IssueFiltersDropdown workspaceSlug={workspaceSlug} projectId={projectId} />
+        <IssueFiltersDropdown anchor={anchor} />
       </div>
 
       {/* theming */}

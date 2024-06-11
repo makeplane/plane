@@ -1,3 +1,4 @@
+"use client";
 import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // ui

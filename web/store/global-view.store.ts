@@ -182,7 +182,7 @@ export class GlobalViewStore implements IGlobalViewStore {
             viewId
           );
         }
-        this.rootStore.issue.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+        this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
       }
       return currentView;
     } catch {

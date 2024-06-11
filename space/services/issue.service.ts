@@ -1,14 +1,16 @@
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
+// types
+import { TIssuesResponse } from "@/types/issue";
 
 class IssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getPublicIssues(workspace_slug: string, project_slug: string, params: any): Promise<any> {
-    return this.get(`/api/public/workspaces/${workspace_slug}/project-boards/${project_slug}/issues/`, {
+  async fetchPublicIssues(anchor: string, params: any): Promise<TIssuesResponse> {
+    return this.get(`/api/public/anchor/${anchor}/issues/`, {
       params,
     })
       .then((response) => response?.data)
@@ -17,115 +19,88 @@ class IssueService extends APIService {
       });
   }
 
-  async getIssueById(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/`)
+  async getIssueById(anchor: string, issueID: string): Promise<any> {
+    return this.get(`/api/public/anchor/${anchor}/issues/${issueID}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async getIssueVotes(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/votes/`)
+  async getIssueVotes(anchor: string, issueID: string): Promise<any> {
+    return this.get(`/api/public/anchor/${anchor}/issues/${issueID}/votes/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async createIssueVote(workspaceSlug: string, projectId: string, issueId: string, data: any): Promise<any> {
-    return this.post(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/votes/`,
-      data
-    )
+  async createIssueVote(anchor: string, issueID: string, data: any): Promise<any> {
+    return this.post(`/api/public/anchor/${anchor}/issues/${issueID}/votes/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteIssueVote(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.delete(`/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/votes/`)
+  async deleteIssueVote(anchor: string, issueID: string): Promise<any> {
+    return this.delete(`/api/public/anchor/${anchor}/issues/${issueID}/votes/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async getIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/reactions/`)
+  async getIssueReactions(anchor: string, issueID: string): Promise<any> {
+    return this.get(`/api/public/anchor/${anchor}/issues/${issueID}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async createIssueReaction(workspaceSlug: string, projectId: string, issueId: string, data: any): Promise<any> {
-    return this.post(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/reactions/`,
-      data
-    )
+  async createIssueReaction(anchor: string, issueID: string, data: any): Promise<any> {
+    return this.post(`/api/public/anchor/${anchor}/issues/${issueID}/reactions/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteIssueReaction(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    reactionId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/reactions/${reactionId}/`
-    )
+  async deleteIssueReaction(anchor: string, issueID: string, reactionId: string): Promise<any> {
+    return this.delete(`/api/public/anchor/${anchor}/issues/${issueID}/reactions/${reactionId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/comments/`)
+  async getIssueComments(anchor: string, issueID: string): Promise<any> {
+    return this.get(`/api/public/anchor/${anchor}/issues/${issueID}/comments/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async createIssueComment(workspaceSlug: string, projectId: string, issueId: string, data: any): Promise<any> {
-    return this.post(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/comments/`,
-      data
-    )
+  async createIssueComment(anchor: string, issueID: string, data: any): Promise<any> {
+    return this.post(`/api/public/anchor/${anchor}/issues/${issueID}/comments/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    data: any
-  ): Promise<any> {
-    return this.patch(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/comments/${commentId}/`,
-      data
-    )
+  async updateIssueComment(anchor: string, issueID: string, commentId: string, data: any): Promise<any> {
+    return this.patch(`/api/public/anchor/${anchor}/issues/${issueID}/comments/${commentId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteIssueComment(workspaceSlug: string, projectId: string, issueId: string, commentId: string): Promise<any> {
-    return this.delete(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/comments/${commentId}/`
-    )
+  async deleteIssueComment(anchor: string, issueID: string, commentId: string): Promise<any> {
+    return this.delete(`/api/public/anchor/${anchor}/issues/${issueID}/comments/${commentId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -133,32 +108,21 @@ class IssueService extends APIService {
   }
 
   async createCommentReaction(
-    workspaceSlug: string,
-    projectId: string,
+    anchor: string,
     commentId: string,
     data: {
       reaction: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/comments/${commentId}/reactions/`,
-      data
-    )
+    return this.post(`/api/public/anchor/${anchor}/comments/${commentId}/reactions/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteCommentReaction(
-    workspaceSlug: string,
-    projectId: string,
-    commentId: string,
-    reactionHex: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/comments/${commentId}/reactions/${reactionHex}/`
-    )
+  async deleteCommentReaction(anchor: string, commentId: string, reactionHex: string): Promise<any> {
+    return this.delete(`/api/public/anchor/${anchor}/comments/${commentId}/reactions/${reactionHex}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

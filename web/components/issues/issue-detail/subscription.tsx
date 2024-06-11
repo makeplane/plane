@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import isNil from "lodash/isNil";
 import { observer } from "mobx-react";

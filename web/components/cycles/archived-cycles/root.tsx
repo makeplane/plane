@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
 import { TCycleFilters } from "@plane/types";
@@ -17,8 +17,7 @@ import { useCycle, useCycleFilter } from "@/hooks/store";
 
 export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // hooks
   const { fetchArchivedCycles, currentProjectArchivedCycleIds, loader } = useCycle();
   // cycle filters hook

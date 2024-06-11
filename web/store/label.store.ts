@@ -21,7 +21,7 @@ export interface ILabelStore {
   projectLabelsTree: IIssueLabelTree[] | undefined;
   workspaceLabels: IIssueLabel[] | undefined;
   //computed actions
-  getProjectLabels: (projectId: string | null) => IIssueLabel[] | undefined;
+  getProjectLabels: (projectId: string | undefined | null) => IIssueLabel[] | undefined;
   getLabelById: (labelId: string) => IIssueLabel | null;
   // fetch actions
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<IIssueLabel[]>;
@@ -110,7 +110,7 @@ export class LabelStore implements ILabelStore {
     return buildTree(this.projectLabels);
   }
 
-  getProjectLabels = computedFn((projectId: string | null) => {
+  getProjectLabels = computedFn((projectId: string | undefined | null) => {
     const workspaceSlug = this.rootStore.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortBy(

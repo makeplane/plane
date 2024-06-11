@@ -1,19 +1,26 @@
 import isEmpty from "lodash/isEmpty";
 // types
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-// lib
-import { storage } from "@/lib/local-storage";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
   IIssueFilters,
   IIssueFiltersResponse,
+  IssuePaginationOptions,
   TIssueKanbanFilters,
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
+// constants
+import {
+  EIssueFilterType,
+  EIssuesStoreType,
+  EIssueGroupByToServerOptions,
+  EServerGroupByToFilterOptions,
+  EIssueLayoutTypes,
+} from "@/constants/issue";
+// lib
+import { storage } from "@/lib/local-storage";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -21,6 +28,14 @@ interface ILocalStoreIssueFilters {
   viewId: string | undefined; // It can be projectId, moduleId, cycleId, projectViewId
   userId: string | undefined;
   filters: IIssueFilters;
+}
+
+export interface IBaseIssueFilterStore {
+  // observables
+  filters: Record<string, IIssueFilters>;
+  //computed
+  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+  issueFilters: IIssueFilters | undefined;
 }
 
 export interface IIssueFilterHelperStore {
@@ -78,9 +93,14 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       module: filters?.module || undefined,
       start_date: filters?.start_date || undefined,
       target_date: filters?.target_date || undefined,
-      project: filters.project || undefined,
-      subscriber: filters.subscriber || undefined,
+      project: filters?.project || undefined,
+      subscriber: filters?.subscriber || undefined,
       // display filters
+      group_by: displayFilters?.group_by ? EIssueGroupByToServerOptions[displayFilters.group_by] : undefined,
+      sub_group_by: displayFilters?.sub_group_by
+        ? EIssueGroupByToServerOptions[displayFilters.sub_group_by]
+        : undefined,
+      order_by: displayFilters?.order_by || undefined,
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
     };
@@ -89,8 +109,11 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     Object.keys(computedFilters).forEach((key) => {
       const _key = key as TIssueParams;
       const _value: string | boolean | string[] | undefined = computedFilters[_key];
-      if (_value != undefined && acceptableParamsByLayout.includes(_key))
-        issueFiltersParams[_key] = Array.isArray(_value) ? _value.join(",") : _value;
+      const nonEmptyArrayValue = Array.isArray(_value) && _value.length === 0 ? undefined : _value;
+      if (nonEmptyArrayValue != undefined && acceptableParamsByLayout.includes(_key))
+        issueFiltersParams[_key] = Array.isArray(nonEmptyArrayValue)
+          ? nonEmptyArrayValue.join(",")
+          : nonEmptyArrayValue;
     });
 
     return issueFiltersParams;
@@ -166,7 +189,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
         show_weekends: filters?.calendar?.show_weekends || false,
         layout: filters?.calendar?.layout || "month",
       },
-      layout: filters?.layout || "list",
+      layout: filters?.layout || EIssueLayoutTypes.LIST,
       order_by: filters?.order_by || "sort_order",
       group_by: filters?.group_by || null,
       sub_group_by: filters?.sub_group_by || null,
@@ -198,20 +221,6 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     modules: displayProperties?.modules ?? true,
     cycle: displayProperties?.cycle ?? true,
   });
-
-  /**
-   * This Method returns true if the display properties changed requires a server side update
-   * @param displayFilters
-   * @returns
-   */
-  requiresServerUpdate = (displayFilters: IIssueDisplayFilterOptions) => {
-    const SERVER_DISPLAY_FILTERS = ["sub_issue", "type"];
-    const displayFilterKeys = Object.keys(displayFilters);
-
-    return SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>
-      displayFilterKeys.includes(serverDisplayfilter)
-    );
-  };
 
   handleIssuesLocalFilters = {
     fetchFiltersFromStorage: () => {
@@ -275,4 +284,79 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       storage.set("issue_local_filters", JSON.stringify(storageFilters));
     },
   };
+
+  /**
+   * This Method returns true if the display properties changed requires a server side update
+   * @param displayFilters
+   * @returns
+   */
+  requiresServerUpdate = (displayFilters: IIssueDisplayFilterOptions) => {
+    const NON_SERVER_DISPLAY_FILTERS = ["order_by", "sub_issue", "type"];
+    const displayFilterKeys = Object.keys(displayFilters);
+
+    return NON_SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>
+      displayFilterKeys.includes(serverDisplayfilter)
+    );
+  };
+
+  /**
+   * This Method is used to construct the url params along with paginated values
+   * @param filterParams params generated from filters
+   * @param options pagination options
+   * @param cursor cursor if exists
+   * @param groupId groupId if to fetch By group
+   * @param subGroupId groupId if to fetch By sub group
+   * @returns
+   */
+  getPaginationParams(
+    filterParams: Partial<Record<TIssueParams, string | boolean>> | undefined,
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId?: string,
+    subGroupId?: string
+  ) {
+    // if cursor exists, use the cursor. If it doesn't exist construct the cursor based on per page count
+    const pageCursor = cursor ? cursor : groupId ? `${options.perPageCount}:1:0` : `${options.perPageCount}:0:0`;
+
+    // pagination params
+    const paginationParams: Partial<Record<TIssueParams, string | boolean>> = {
+      ...filterParams,
+      cursor: pageCursor,
+      per_page: options.perPageCount.toString(),
+    };
+
+    // If group by is specifically sent through options, like that for calendar layout, use that to group
+    if (options.groupedBy) {
+      paginationParams.group_by = options.groupedBy;
+    }
+
+    // If before and after dates are sent from option to filter by then, add them to filter the options
+    if (options.after && options.before) {
+      paginationParams["target_date"] = `${options.after};after,${options.before};before`;
+    }
+
+    // If groupId is passed down, add a filter param for that group Id
+    if (groupId) {
+      const groupBy = paginationParams["group_by"] as EIssueGroupByToServerOptions | undefined;
+      delete paginationParams["group_by"];
+
+      if (groupBy) {
+        const groupByFilterOption = EServerGroupByToFilterOptions[groupBy];
+        paginationParams[groupByFilterOption] = groupId;
+      }
+    }
+
+    // If subGroupId is passed down, add a filter param for that subGroup Id
+    if (subGroupId) {
+      const subGroupBy = paginationParams["sub_group_by"] as EIssueGroupByToServerOptions | undefined;
+      delete paginationParams["sub_group_by"];
+
+      if (subGroupBy) {
+        const subGroupByFilterOption = EServerGroupByToFilterOptions[subGroupBy];
+        paginationParams[subGroupByFilterOption] = subGroupId;
+      }
+    }
+
+    return paginationParams;
+  }
 }

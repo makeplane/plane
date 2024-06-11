@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 // components
 import { ModuleIssueQuickActions } from "@/components/issues";
@@ -11,8 +11,7 @@ import { useIssues } from "@/hooks/store";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = useParams();
 
   const { issues } = useIssues(EIssuesStoreType.MODULE);
 
@@ -29,9 +28,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
   return (
     <BaseCalendarRoot
       QuickActions={ModuleIssueQuickActions}
-      storeType={EIssuesStoreType.MODULE}
       addIssuesToView={addIssuesToView}
-      viewId={moduleId.toString()}
+      viewId={moduleId?.toString()}
     />
   );
 });

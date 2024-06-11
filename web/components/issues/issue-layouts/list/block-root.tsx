@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -21,7 +23,7 @@ type Props = {
   issueIds: string[];
   issueId: string;
   issuesMap: TIssueMap;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -144,7 +146,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       </RenderIfVisible>
 
       {isExpanded &&
-        subIssues?.map((subIssueId: string) => (
+        subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueIds={issueIds}

@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // store hooks
 // icons
 import {
@@ -24,13 +26,13 @@ import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } 
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
-import { useEstimate, useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
 
   return (
@@ -61,8 +63,8 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
 };
 
 const UserLink = ({ activity }: { activity: IIssueActivity }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
 
   return (
     <a
@@ -94,22 +96,6 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
       }}
       aria-hidden="true"
     />
-  );
-});
-
-const EstimatePoint = observer((props: { point: string }) => {
-  const { point } = props;
-  const { areEstimatesEnabledForCurrentProject, getEstimatePointValue } = useEstimate();
-  const currentPoint = Number(point) + 1;
-
-  const estimateValue = getEstimatePointValue(Number(point), null);
-
-  return (
-    <span className="font-medium text-custom-text-100 whitespace-nowrap">
-      {areEstimatesEnabledForCurrentProject
-        ? estimateValue
-        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
-    </span>
   );
 });
 
@@ -267,7 +253,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to <EstimatePoint point={activity.new_value} />
+            set the estimate point to {activity.new_value}
             {showIssue && (
               <>
                 {" "}
@@ -741,8 +727,8 @@ type ActivityMessageProps = {
 };
 
 export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // router params
+  const { workspaceSlug } = useParams();
 
   return (
     <>

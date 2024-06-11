@@ -1,3 +1,5 @@
+import { EIssueLayoutTypes } from "constants/issue";
+
 export type TIssueLayouts =
   | "list"
   | "kanban"
@@ -13,9 +15,9 @@ export type TIssueGroupByOptions =
   | "state_detail.group"
   | "project"
   | "assignees"
-  | "mentions"
   | "cycle"
   | "module"
+  | "target_date"
   | null;
 
 export type TIssueOrderByOptions =
@@ -32,10 +34,10 @@ export type TIssueOrderByOptions =
   | "-assignees__first_name"
   | "labels__name"
   | "-labels__name"
-  | "modules__name"
-  | "-modules__name"
-  | "cycle__name"
-  | "-cycle__name"
+  | "issue_module__module__name"
+  | "-issue_module__module__name"
+  | "issue_cycle__cycle__name"
+  | "-issue_cycle__cycle__name"
   | "target_date"
   | "-target_date"
   | "estimate_point"
@@ -72,7 +74,9 @@ export type TIssueParams =
   | "order_by"
   | "type"
   | "sub_issue"
-  | "show_empty_groups";
+  | "show_empty_groups"
+  | "cursor"
+  | "per_page";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -82,9 +86,9 @@ export interface IIssueFilterOptions {
   created_by?: string[] | null;
   labels?: string[] | null;
   priority?: string[] | null;
-  project?: string[] | null;
   cycle?: string[] | null;
   module?: string[] | null;
+  project?: string[] | null;
   start_date?: string[] | null;
   state?: string[] | null;
   state_group?: string[] | null;
@@ -99,7 +103,7 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: TIssueLayouts;
+  layout?: EIssueLayoutTypes;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
@@ -190,4 +194,12 @@ export interface IWorkspaceGlobalViewProps {
   filters: IWorkspaceIssueFilterOptions;
   display_filters: IWorkspaceIssueDisplayFilterOptions | undefined;
   display_properties: IIssueDisplayProperties;
+}
+
+export interface IssuePaginationOptions {
+  canGroup: boolean;
+  perPageCount: number;
+  before?: string;
+  after?: string;
+  groupedBy?: TIssueGroupByOptions;
 }

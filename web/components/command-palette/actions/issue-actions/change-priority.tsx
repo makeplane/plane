@@ -1,6 +1,8 @@
+"use client"; ``
+
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
@@ -18,10 +20,8 @@ type Props = {
 
 export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  // router params
+  const { workspaceSlug, projectId } = useParams();
   const {
     issues: { updateIssue },
   } = useIssues(EIssuesStoreType.PROJECT);

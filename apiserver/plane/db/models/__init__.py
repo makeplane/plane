@@ -4,6 +4,7 @@ from .asset import FileAsset
 from .base import BaseModel
 from .cycle import Cycle, CycleFavorite, CycleIssue, CycleUserProperties
 from .dashboard import Dashboard, DashboardWidget, Widget
+from .deploy_board import DeployBoard
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
@@ -53,13 +54,13 @@ from .page import Page, PageFavorite, PageLabel, PageLog
 from .project import (
     Project,
     ProjectBaseModel,
-    ProjectDeployBoard,
     ProjectFavorite,
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
     ProjectPublicMember,
 )
+from .deploy_board import DeployBoard
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State

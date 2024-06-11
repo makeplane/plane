@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
