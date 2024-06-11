@@ -12,7 +12,7 @@ import { ModuleDetailsSidebar } from "@/components/modules";
 import { useModule, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
-import emptyModule from "public/empty-state/module.svg";
+import emptyModule from "@/public/empty-state/module.svg";
 
 const ModuleIssuesPage = observer(() => {
   // router

@@ -51,6 +51,12 @@ export interface IProject {
   updated_by: string;
   workspace: IWorkspace | string;
   workspace_detail: IWorkspaceLite;
+  emoji: string | null;
+  icon_prop: {
+    name: string;
+    color: string;
+  } | null;
+  logo_props: TProjectLogoProps;
 }
 
 export interface IProjectLite {

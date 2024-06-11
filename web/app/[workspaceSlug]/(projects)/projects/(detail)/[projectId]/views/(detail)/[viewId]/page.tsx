@@ -10,7 +10,7 @@ import { ProjectViewLayoutRoot } from "@/components/issues";
 // hooks
 import { useProject, useProjectView } from "@/hooks/store";
 // assets
-import emptyView from "public/empty-state/view.svg";
+import emptyView from "@/public/empty-state/view.svg";
 
 const ProjectViewIssuesPage = observer(() => {
   // router

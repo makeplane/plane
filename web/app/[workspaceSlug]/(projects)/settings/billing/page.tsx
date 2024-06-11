@@ -3,11 +3,12 @@
 import { observer } from "mobx-react";
 // component
 import { PageHead } from "@/components/core";
-import { PlaneCloudBilling, PlaneOneBilling } from "@/components/license";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useInstance, useUser, useWorkspace } from "@/hooks/store";
+// plane web components
+import { PlaneCloudBilling, PlaneOneBilling } from "@/plane-web/components/license";
 
 const BillingSettingsPage = observer(() => {
   // store hooks
