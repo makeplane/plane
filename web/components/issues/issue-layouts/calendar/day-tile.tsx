@@ -6,7 +6,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react-lite";
 // types
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -29,22 +29,19 @@ type Props = {
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  quickActions: TRenderQuickActions;
+  loadMoreIssues: (dateString: string) => void;
+  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
+  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
+  quickActions: TRenderQuickActions;
   handleDragAndDrop: (
     issueId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  viewId?: string;
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
@@ -56,12 +53,14 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     date,
     issues,
     groupedIssueIds,
+    loadMoreIssues,
+    getPaginationData,
+    getGroupIssueCount,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
     addIssuesToView,
-    viewId,
     readOnly = false,
     selectedDate,
     handleDragAndDrop,
@@ -69,7 +68,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [showAllIssues, setShowAllIssues] = useState(false);
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
@@ -114,7 +112,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           }
 
           handleDragAndDrop(sourceData?.id, sourceData?.date, destinationData?.date);
-          setShowAllIssues(true);
           highlightIssueOnDrop(source?.element?.id, false);
         },
       })
@@ -122,9 +119,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   }, [dayTileRef?.current, formattedDatePayload]);
 
   if (!formattedDatePayload) return null;
-  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
-
-  const totalIssues = issueIdList?.length ?? 0;
+  const issueIds = groupedIssueIds?.[formattedDatePayload];
 
   const isToday = date.date.toDateString() === new Date().toDateString();
   const isSelectedDate = date.date.toDateString() == selectedDate.toDateString();
@@ -171,18 +166,17 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             <CalendarIssueBlocks
               date={date.date}
               issues={issues}
-              issueIdList={issueIdList}
-              showAllIssues={showAllIssues}
-              setShowAllIssues={setShowAllIssues}
+              issueIdList={issueIds}
               quickActions={quickActions}
+              loadMoreIssues={loadMoreIssues}
+              getPaginationData={getPaginationData}
+              getGroupIssueCount={getGroupIssueCount}
               isDragDisabled={readOnly}
               addIssuesToView={addIssuesToView}
               disableIssueCreation={disableIssueCreation}
               enableQuickIssueCreate={enableQuickIssueCreate}
               quickAddCallback={quickAddCallback}
-              viewId={viewId}
               readOnly={readOnly}
-              isMonthLayout={isMonthLayout}
             />
           </div>
         </div>
@@ -205,8 +199,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           >
             {date.date.getDate()}
           </div>
-
-          {totalIssues > 0 && <div className="mt-1 size-1.5 flex flex-shrink-0 rounded bg-custom-primary-100" />}
         </div>
       </div>
     </>

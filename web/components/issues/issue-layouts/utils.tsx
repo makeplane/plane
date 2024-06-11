@@ -13,6 +13,7 @@ import {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
+  IIssueDisplayProperties,
   IPragmaticDropPayload,
   TIssue,
   TIssueGroupByOptions,
@@ -29,7 +30,7 @@ import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // stores
 import { ICycleStore } from "@/store/cycle.store";
-import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
+import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { ILabelStore } from "@/store/label.store";
 import { IMemberRootStore } from "@/store/member";
 import { IModuleStore } from "@/store/module.store";
@@ -88,7 +89,7 @@ export const getGroupByColumns = (
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
-      if (includeNone) return [{ id: `null`, name: `All Issues`, payload: {}, icon: undefined }];
+      if (includeNone) return [{ id: `All Issues`, name: `All Issues`, payload: {}, icon: undefined }];
   }
 };
 
@@ -282,6 +283,21 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
   });
 };
 
+export const getDisplayPropertiesCount = (
+  displayProperties: IIssueDisplayProperties,
+  ignoreFields?: (keyof IIssueDisplayProperties)[]
+) => {
+  const propertyKeys = Object.keys(displayProperties) as (keyof IIssueDisplayProperties)[];
+
+  let count = 0;
+
+  for (const propertyKey of propertyKeys) {
+    if (ignoreFields && ignoreFields.includes(propertyKey)) continue;
+    if (displayProperties[propertyKey]) count++;
+  }
+
+  return count;
+}
 /**
  * This Method finds the DOM element with elementId, scrolls to it and highlights the issue block
  * @param elementId
@@ -537,8 +553,8 @@ export const handleGroupDragDrop = async (
     updatedIssue = { ...updatedIssue, [subGroupKey]: subGroupValue };
   }
 
-  if (updatedIssue) {
-    return await updateIssueOnDrop(sourceIssue.project_id, sourceIssue.id, updatedIssue, issueUpdates);
+  if (updatedIssue && sourceIssue?.project_id) {
+    return await updateIssueOnDrop(sourceIssue?.project_id, sourceIssue.id, updatedIssue, issueUpdates);
   }
 };
 

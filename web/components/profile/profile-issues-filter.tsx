@@ -2,11 +2,11 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, EIssueLayoutTypes } from "@/constants/issue";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -27,7 +27,7 @@ export const ProfileIssuesFilter = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !userId) return;
       updateFilters(
         workspaceSlug.toString(),
@@ -100,7 +100,7 @@ export const ProfileIssuesFilter = observer(() => {
   return (
     <div className="relative flex items-center justify-end gap-2">
       <LayoutSelection
-        layouts={["list", "kanban"]}
+        layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]}
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />

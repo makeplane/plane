@@ -1,6 +1,7 @@
 import { ParsedUrlQuery } from "node:querystring";
 import { action, makeObservable, observable, computed, runInAction } from "mobx";
 
+import { TProfileViews } from "@plane/types";
 export interface IRouterStore {
   // observables
   query: ParsedUrlQuery;
@@ -13,6 +14,7 @@ export interface IRouterStore {
   moduleId: string | undefined;
   viewId: string | undefined;
   globalViewId: string | undefined;
+  profileViewId: TProfileViews | undefined;
   userId: string | undefined;
   peekId: string | undefined;
   issueId: string | undefined;
@@ -37,6 +39,7 @@ export class RouterStore implements IRouterStore {
       moduleId: computed,
       viewId: computed,
       globalViewId: computed,
+      profileViewId: computed,
       userId: computed,
       peekId: computed,
       issueId: computed,
@@ -101,6 +104,14 @@ export class RouterStore implements IRouterStore {
    */
   get globalViewId() {
     return this.query?.globalViewId?.toString();
+  }
+
+  /**
+   * Returns the profile view id from the query
+   * @returns string|undefined
+   */
+  get profileViewId() {
+    return this.query?.profileViewId?.toString() as TProfileViews;
   }
 
   /**

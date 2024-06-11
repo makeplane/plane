@@ -27,7 +27,7 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
   // derived values
   const issueDetails = getIssueById(issueId) as TWidgetIssue | undefined;
 
-  if (!issueDetails) return null;
+  if (!issueDetails || !issueDetails.project_id) return null;
 
   const projectDetails = getProjectById(issueDetails.project_id);
 
@@ -75,7 +75,7 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
   // derived values
   const issueDetails = getIssueById(issueId) as TWidgetIssue | undefined;
 
-  if (!issueDetails) return null;
+  if (!issueDetails || !issueDetails.project_id) return null;
 
   const projectDetails = getProjectById(issueDetails.project_id);
   const blockedByIssues = issueDetails.issue_relation?.filter((issue) => issue.relation_type === "blocked_by") ?? [];
@@ -122,7 +122,7 @@ export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = obse
   // derived values
   const issueDetails = getIssueById(issueId);
 
-  if (!issueDetails) return null;
+  if (!issueDetails || !issueDetails.project_id) return null;
 
   const projectDetails = getProjectById(issueDetails.project_id);
 
@@ -154,7 +154,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
   // derived values
   const issue = getIssueById(issueId);
 
-  if (!issue) return null;
+  if (!issue || !issue.project_id) return null;
 
   const projectDetails = getProjectById(issue.project_id);
   const targetDate = getDate(issue.target_date);
@@ -205,7 +205,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
   // derived values
   const issue = getIssueById(issueId);
 
-  if (!issue) return null;
+  if (!issue || !issue.project_id) return null;
 
   const projectDetails = getProjectById(issue.project_id);
 
@@ -257,7 +257,7 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
   // derived values
   const issue = getIssueById(issueId);
 
-  if (!issue) return null;
+  if (!issue || !issue.project_id) return null;
 
   const projectDetails = getProjectById(issue.project_id);
 

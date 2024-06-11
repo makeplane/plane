@@ -1,147 +1,75 @@
-import pull from "lodash/pull";
-import set from "lodash/set";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
 import { UserService } from "@/services/user.service";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
-import { IssueHelperStore } from "../helpers/issue-helper.store";
+import { TIssue, TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
+
 // services
 // types
 import { IIssueRootStore } from "../root.store";
+import { IProfileIssuesFilter } from "./filter.store";
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 
-interface IProfileIssueTabTypes {
-  [key: string]: string[];
-}
-
-export interface IProfileIssues {
+export interface IProfileIssues extends IBaseIssuesStore {
   // observable
-  loader: TLoader;
   currentView: "assigned" | "created" | "subscribed";
-  issues: { [userId: string]: IProfileIssueTabTypes };
-  // computed
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   viewFlags: ViewFlags;
   // actions
   setViewId: (viewId: "assigned" | "created" | "subscribed") => void;
-  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
+  // action
   fetchIssues: (
     workspaceSlug: string,
-    projectId: string | undefined,
-    loadType: TLoader,
     userId: string,
-    view?: "assigned" | "created" | "subscribed"
-  ) => Promise<TIssue[]>;
-  createIssue: (
+    loadType: TLoader,
+    option: IssuePaginationOptions,
+    view: "assigned" | "created" | "subscribed"
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    userId: string
-  ) => Promise<TIssue | undefined>;
-  updateIssue: (
+    userId: string,
+    loadType: TLoader
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
     workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    userId: string
-  ) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, userId: string) => Promise<void>;
-  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, userId: string) => Promise<void>;
+    userId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
+
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
+
   quickAddIssue: undefined;
 }
 
-export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
-  loader: TLoader = "init-loader";
+export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
   currentView: "assigned" | "created" | "subscribed" = "assigned";
-  issues: { [userId: string]: IProfileIssueTabTypes } = {};
-  quickAddIssue = undefined;
-  // root store
-  rootIssueStore: IIssueRootStore;
+  // filter store
+  issueFilterStore: IProfileIssuesFilter;
   // services
   userService;
 
-  constructor(_rootStore: IIssueRootStore) {
-    super(_rootStore);
+  constructor(_rootStore: IIssueRootStore, issueFilterStore: IProfileIssuesFilter) {
+    super(_rootStore, issueFilterStore);
     makeObservable(this, {
       // observable
-      loader: observable.ref,
       currentView: observable.ref,
-      issues: observable,
       // computed
-      groupedIssueIds: computed,
       viewFlags: computed,
       // action
       setViewId: action.bound,
       fetchIssues: action,
-      createIssue: action,
-      updateIssue: action,
-      removeIssue: action,
-      archiveIssue: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
     });
-    // root store
-    this.rootIssueStore = _rootStore;
+    // filter store
+    this.issueFilterStore = issueFilterStore;
     // services
     this.userService = new UserService();
   }
-
-  get groupedIssueIds() {
-    const userId = this.rootIssueStore.userId;
-    const workspaceSlug = this.rootIssueStore.workspaceSlug;
-    const currentView = this.currentView;
-    if (!userId || !currentView || !workspaceSlug) return undefined;
-
-    const uniqueViewId = `${workspaceSlug}_${currentView}`;
-
-    const displayFilters = this.rootIssueStore?.profileIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-    const orderBy = displayFilters?.order_by;
-    const layout = displayFilters?.layout;
-
-    const userIssueIds = this.issues[userId]?.[uniqueViewId];
-
-    if (!userIssueIds) return;
-
-    const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds, "un-archived");
-    if (!_issues) return [];
-
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
-
-    if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
-      else issues = this.unGroupedIssues(orderBy, _issues);
-    } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
-      else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    }
-
-    return issues;
-  }
-
-  getIssueIds = (groupId?: string, subGroupId?: string) => {
-    const groupedIssueIds = this.groupedIssueIds;
-
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters || !groupedIssueIds) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-
-    if (!groupBy && !subGroupBy) {
-      return groupedIssueIds as string[];
-    }
-
-    if (groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
-    }
-
-    if (groupBy && groupId) {
-      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
-    }
-
-    return undefined;
-  };
 
   get viewFlags() {
     if (this.currentView === "subscribed")
@@ -161,22 +89,85 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     this.currentView = viewId;
   }
 
+  fetchParentStats = () => {};
+
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param userId
+   * @param loadType
+   * @param options
+   * @param view
+   * @returns
+   */
   fetchIssues = async (
     workspaceSlug: string,
-    projectId: string | undefined,
-    loadType: TLoader = "init-loader",
     userId: string,
-    view?: "assigned" | "created" | "subscribed"
+    loadType: TLoader,
+    options: IssuePaginationOptions,
+    view: "assigned" | "created" | "subscribed"
   ) => {
     try {
-      this.loader = loadType;
-      if (view) this.currentView = view;
+      // set loader and clear store
+      runInAction(() => {
+        this.setLoader(loadType);
+      });
+      this.clear();
 
-      if (!this.currentView) throw new Error("current tab view is required");
+      // set ViewId
+      this.setViewId(view);
 
-      const uniqueViewId = `${workspaceSlug}_${view}`;
+      // get params from pagination options
+      let params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      params = {
+        ...params,
+        assignees: undefined,
+        created_by: undefined,
+        subscriber: undefined,
+      };
+      // modify params based on view
+      if (this.currentView === "assigned") params = { ...params, assignees: userId };
+      else if (this.currentView === "created") params = { ...params, created_by: userId };
+      else if (this.currentView === "subscribed") params = { ...params, subscriber: userId };
 
-      let params: any = this.rootIssueStore?.profileIssuesFilter?.appliedFilters;
+      // call the fetch issues API with the params
+      const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
+
+      // after fetching issues, call the base method to process the response further
+      this.onfetchIssues(response, options, workspaceSlug);
+      return response;
+    } catch (error) {
+      // set loader to undefined if errored out
+      this.setLoader(undefined);
+      throw error;
+    }
+  };
+
+  /**
+   * This method is called subsequent pages of pagination
+   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * else all the groups' next page is fetched
+   * @param workspaceSlug
+   * @param userId
+   * @param groupId
+   * @param subGroupId
+   * @returns
+   */
+  fetchNextIssues = async (workspaceSlug: string, userId: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
+    try {
+      // set Loader
+      this.setLoader("pagination", groupId, subGroupId);
+
+      // get params from stored pagination options
+      let params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
       params = {
         ...params,
         assignees: undefined,
@@ -187,93 +178,32 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       else if (this.currentView === "created") params = { ...params, created_by: userId };
       else if (this.currentView === "subscribed") params = { ...params, subscriber: userId };
 
+      // call the fetch issues API with the params for next page in issues
       const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
-      runInAction(() => {
-        set(
-          this.issues,
-          [userId, uniqueViewId],
-          response.map((issue) => issue.id)
-        );
-        this.loader = undefined;
-      });
-
-      this.rootIssueStore.issues.addIssue(response);
-
+      // after the next page of issues are fetched, call the base method to process the response
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.loader = undefined;
+      // set Loader as undefined if errored out
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, userId: string) => {
-    try {
-      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-
-      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
-
-      runInAction(() => {
-        this.issues[userId][uniqueViewId].push(response.id);
-      });
-
-      this.rootStore.issues.addIssue([response]);
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
+  /**
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param userId
+   * @param loadType
+   * @returns
+   */
+  fetchIssuesWithExistingPagination = async (workspaceSlug: string, userId: string, loadType: TLoader) => {
+    if (!this.paginationOptions || !this.currentView) return;
+    return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView);
   };
 
-  updateIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    userId: string
-  ) => {
-    try {
-      this.rootStore.issues.updateIssue(issueId, data);
-      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, data.id as keyof TIssue, data);
-    } catch (error) {
-      if (this.currentView) this.fetchIssues(workspaceSlug, undefined, "mutation", userId, this.currentView);
-      throw error;
-    }
-  };
-
-  removeIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    userId: string | undefined = undefined
-  ) => {
-    if (!userId) return;
-    try {
-      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
-
-      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
-
-      const issueIndex = this.issues[userId][uniqueViewId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[userId][uniqueViewId].splice(issueIndex, 1);
-        });
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, userId: string) => {
-    try {
-      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
-
-      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
-
-      runInAction(() => {
-        pull(this.issues[userId][uniqueViewId], issueId);
-      });
-    } catch (error) {
-      throw error;
-    }
-  };
+  archiveBulkIssues = this.bulkArchiveIssues;
+  quickAddIssue = undefined;
 }

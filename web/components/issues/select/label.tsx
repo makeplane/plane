@@ -17,7 +17,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: string[];
   onChange: (value: string[]) => void;
-  projectId: string;
+  projectId: string | undefined;
   label?: JSX.Element;
   disabled?: boolean;
   tabIndex?: number;

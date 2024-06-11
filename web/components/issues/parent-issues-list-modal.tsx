@@ -23,7 +23,7 @@ type Props = {
   handleClose: () => void;
   value?: any;
   onChange: (issue: ISearchIssueResponse) => void;
-  projectId: string;
+  projectId: string | undefined;
   issueId?: string;
 };
 

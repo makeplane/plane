@@ -1,33 +1,47 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
-import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
 import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
-  CycleEmptyState,
-  CycleGanttLayout,
+  BaseGanttRoot,
   CycleKanBanLayout,
   CycleListLayout,
   CycleSpreadsheetLayout,
   IssuePeekOverview,
 } from "@/components/issues";
-import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+// hooks
 import { useCycle, useIssues } from "@/hooks/store";
-// types
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+
+const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; cycleId: string }) => {
+  switch (props.activeLayout) {
+    case EIssueLayoutTypes.LIST:
+      return <CycleListLayout />;
+    case EIssueLayoutTypes.KANBAN:
+      return <CycleKanBanLayout />;
+    case EIssueLayoutTypes.CALENDAR:
+      return <CycleCalendarLayout />;
+    case EIssueLayoutTypes.GANTT:
+      return <BaseGanttRoot viewId={props.cycleId} />;
+    case EIssueLayoutTypes.SPREADSHEET:
+      return <CycleSpreadsheetLayout />;
+    default:
+      return null;
+  }
+};
 
 export const CycleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
@@ -39,12 +53,6 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
-        await issues?.fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issues?.groupedIssueIds ? "mutation" : "init-loader",
-          cycleId.toString()
-        );
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -55,39 +63,10 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
 
-  const userFilters = issuesFilter?.issueFilters?.filters;
-
-  const issueFilterCount = size(
-    Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
-    )
-  );
-
-  const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-    const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = [];
-    });
-    issuesFilter.updateFilters(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      EIssueFilterType.FILTERS,
-      {
-        ...newFilters,
-      },
-      cycleId.toString()
-    );
-  };
-
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
-  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
-  }
-
   return (
-    <>
+    <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && (
@@ -98,37 +77,12 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         )}
         <CycleAppliedFiltersRoot />
 
-        {issues?.groupedIssueIds?.length === 0 ? (
-          <div className="relative h-full w-full overflow-y-auto">
-            <CycleEmptyState
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              cycleId={cycleId.toString()}
-              activeLayout={activeLayout}
-              handleClearAllFilters={handleClearAllFilters}
-              isEmptyFilters={issueFilterCount > 0}
-            />
-          </div>
-        ) : (
-          <Fragment>
-            <div className="h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <CycleListLayout />
-              ) : activeLayout === "kanban" ? (
-                <CycleKanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <CycleCalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <CycleGanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <CycleSpreadsheetLayout />
-              ) : null}
-            </div>
-            {/* peek overview */}
-            <IssuePeekOverview />
-          </Fragment>
-        )}
+        <div className="h-full w-full overflow-auto">
+          <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId?.toString()} />
+        </div>
+        {/* peek overview */}
+        <IssuePeekOverview />
       </div>
-    </>
+    </IssuesStoreContext.Provider>
   );
 });

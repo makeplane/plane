@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { ProjectIssueQuickActions } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 // components
 // types
 // constants
@@ -14,5 +13,5 @@ export const ListLayout: FC = observer(() => {
 
   if (!workspaceSlug || !projectId) return null;
 
-  return <BaseListRoot QuickActions={ProjectIssueQuickActions} storeType={EIssuesStoreType.PROJECT} />;
+  return <BaseListRoot QuickActions={ProjectIssueQuickActions} />;
 });

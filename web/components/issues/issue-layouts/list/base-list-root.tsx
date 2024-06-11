@@ -1,13 +1,18 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react-lite";
+// types
+import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser } from "@/hooks/store";
+// hooks
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
@@ -22,32 +27,54 @@ type ListStoreType =
   | EIssuesStoreType.ARCHIVED;
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
-  viewId?: string;
-  storeType: ListStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  viewId?: string | undefined;
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
   const {
     QuickActions,
     viewId,
-    storeType,
     addIssuesToView,
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
   } = props;
-  // store hooks
+  // router
+  const storeType = useIssueStoreType() as ListStoreType;
+  //stores
   const { issuesFilter, issues } = useIssues(storeType);
-  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } = useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    quickAddIssue,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+  } = useIssuesActions(storeType);
+  // mobx store
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { issueMap } = useIssues();
-  // derived values
-  const issueIds = issues?.groupedIssueIds || [];
-  // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+
+  const displayFilters = issuesFilter?.issueFilters?.displayFilters;
+  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
+  const orderBy = displayFilters?.order_by || undefined;
+
+  const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
+  const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
+  }, [fetchIssues, storeType, group_by, viewId]);
+
+
+  const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
+// auth
+const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
@@ -59,13 +86,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     },
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
-
-  const displayFilters = issuesFilter?.issueFilters?.displayFilters;
-  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
-
-  const group_by = displayFilters?.group_by || null;
-  const orderBy = displayFilters?.order_by || undefined;
-  const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by);
 
@@ -86,8 +106,16 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
+  const loadMoreIssues = useCallback(
+    (groupId?: string) => {
+      fetchNextIssues(groupId);
+    },
+    [fetchNextIssues]
+  );
+
   return (
-    <div className="relative size-full bg-custom-background-90">
+    <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
+      <div className={`relative size-full bg-custom-background-90`}>
       <List
         issuesMap={issueMap}
         displayProperties={displayProperties}
@@ -95,18 +123,18 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         orderBy={orderBy}
         updateIssue={updateIssue}
         quickActions={renderQuickActions}
-        issueIds={issueIds}
+        groupedIssueIds={groupedIssueIds ?? {}}
+        loadMoreIssues={loadMoreIssues}
         showEmptyGroup={showEmptyGroup}
-        viewId={viewId}
-        quickAddCallback={issues?.quickAddIssue}
+        quickAddCallback={quickAddIssue}
         enableIssueQuickAdd={!!enableQuickAdd}
         canEditProperties={canEditProperties}
         disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-        storeType={storeType}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}
         handleOnDrop={handleOnDrop}
       />
-    </div>
+      </div>
+    </IssueLayoutHOC>
   );
 });

@@ -186,6 +186,8 @@ export interface IUserEmailNotificationSettings {
   issue_completed: boolean;
 }
 
+export type TProfileViews = "assigned" | "created" | "subscribed";
+
 // export interface ICurrentUser {
 //   id: readonly string;
 //   avatar: string;

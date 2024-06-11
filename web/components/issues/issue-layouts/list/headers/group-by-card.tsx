@@ -12,11 +12,11 @@ import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 interface IHeaderGroupByCard {
@@ -26,8 +26,8 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  toggleListGroup: () => void;
   disableIssueCreation?: boolean;
-  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
 }
@@ -41,9 +41,9 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     issuePayload,
     canEditProperties,
     disableIssueCreation,
-    storeType,
     addIssuesToView,
     selectionHelpers,
+    toggleListGroup,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +53,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const pathname = usePathname();
   // hooks
   const { setTrackElement } = useEventTracker();
+  const storeType = useIssueStoreType();
   // derived values
   const isDraftIssue = pathname.includes("draft-issue");
   const renderExistingIssueModal = moduleId || cycleId;
@@ -104,7 +105,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
-        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
+        onClick={toggleListGroup}>
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
         </div>

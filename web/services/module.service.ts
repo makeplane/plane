@@ -1,5 +1,5 @@
 // types
-import type { IModule, TIssue, ILinkDetails, ModuleLink } from "@plane/types";
+import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/types";
 // services
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
@@ -70,7 +70,12 @@ export class ModuleService extends APIService {
       });
   }
 
-  async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string, queries?: any): Promise<TIssue[]> {
+  async getModuleIssues(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    queries?: any
+  ): Promise<TIssuesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/issues/`, {
       params: queries,
     })
@@ -111,14 +116,14 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     issueIds: string[]
-  ): Promise<any> {
+  ): Promise<void> {
     const promiseDataUrls: any = [];
     issueIds.forEach((issueId) => {
       promiseDataUrls.push(
         this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/issues/${issueId}/`)
       );
     });
-    return await Promise.all(promiseDataUrls)
+    await Promise.all(promiseDataUrls)
       .then((response) => response)
       .catch((error) => {
         throw error?.response?.data;
@@ -130,14 +135,14 @@ export class ModuleService extends APIService {
     projectId: string,
     issueId: string,
     moduleIds: string[]
-  ): Promise<any> {
+  ): Promise<void> {
     const promiseDataUrls: any = [];
     moduleIds.forEach((moduleId) => {
       promiseDataUrls.push(
         this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/issues/${issueId}/`)
       );
     });
-    return await Promise.all(promiseDataUrls)
+    await Promise.all(promiseDataUrls)
       .then((response) => response)
       .catch((error) => {
         throw error?.response?.data;

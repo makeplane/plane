@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -8,35 +8,45 @@ import {
   IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
-  ProjectViewEmptyState,
-  ProjectViewGanttLayout,
+  BaseGanttRoot,
   ProjectViewKanBanLayout,
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "@/components/issues";
-import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // types
+
+const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+  switch (props.activeLayout) {
+    case EIssueLayoutTypes.LIST:
+      return <ProjectViewListLayout />;
+    case EIssueLayoutTypes.KANBAN:
+      return <ProjectViewKanBanLayout />;
+    case EIssueLayoutTypes.CALENDAR:
+      return <ProjectViewCalendarLayout />;
+    case EIssueLayoutTypes.GANTT:
+      return <BaseGanttRoot />;
+    case EIssueLayoutTypes.SPREADSHEET:
+      return <ProjectViewSpreadsheetLayout />;
+    default:
+      return null;
+  }
+};
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
   // hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
-        await issues?.fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issues?.groupedIssueIds ? "mutation" : "init-loader",
-          viewId.toString()
-        );
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -46,38 +56,17 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
 
-  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
-  }
-
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <ProjectViewAppliedFiltersRoot />
-
-      {issues?.groupedIssueIds?.length === 0 ? (
-        <div className="relative h-full w-full overflow-y-auto">
-          <ProjectViewEmptyState />
+    <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <ProjectViewAppliedFiltersRoot />
+        <div className="relative h-full w-full overflow-auto">
+          <ProjectViewIssueLayout activeLayout={activeLayout} />
         </div>
-      ) : (
-        <Fragment>
-          <div className="relative h-full w-full overflow-auto">
-            {activeLayout === "list" ? (
-              <ProjectViewListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProjectViewKanBanLayout />
-            ) : activeLayout === "calendar" ? (
-              <ProjectViewCalendarLayout />
-            ) : activeLayout === "gantt_chart" ? (
-              <ProjectViewGanttLayout />
-            ) : activeLayout === "spreadsheet" ? (
-              <ProjectViewSpreadsheetLayout />
-            ) : null}
-          </div>
 
-          {/* peek overview */}
-          <IssuePeekOverview />
-        </Fragment>
-      )}
-    </div>
+        {/* peek overview */}
+        <IssuePeekOverview />
+      </div>
+    </IssuesStoreContext.Provider>
   );
 });

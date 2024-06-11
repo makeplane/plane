@@ -1,277 +1,159 @@
-import pull from "lodash/pull";
-import set from "lodash/set";
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { IssueService } from "@/services/issue/issue.service";
-import { IssueHelperStore } from "../helpers/issue-helper.store";
+import {
+  TIssue,
+  TLoader,
+  ViewFlags,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // services
 // types
 import { IIssueRootStore } from "../root.store";
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { IProjectViewIssuesFilter } from "./filter.store";
 
-export interface IProjectViewIssues {
-  // observable
-  loader: TLoader;
-  issues: { [view_id: string]: string[] };
+export interface IProjectViewIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
-  // computed
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
-    viewId: string
-  ) => Promise<TIssue[] | undefined>;
-  createIssue: (
+    options: IssuePaginationOptions
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<TIssue>,
-    viewId: string
-  ) => Promise<TIssue | undefined>;
-  updateIssue: (
+    loadType: TLoader
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    viewId: string
-  ) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => Promise<void>;
-  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => Promise<void>;
-  quickAddIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+    groupId?: string,
+    subGroupId?: string
+  ) => Promise<TIssuesResponse | undefined>;
+
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
-export class ProjectViewIssues extends IssueHelperStore implements IProjectViewIssues {
-  loader: TLoader = "init-loader";
-  issues: { [view_id: string]: string[] } = {};
+export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIssues {
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
-  // root store
-  rootIssueStore: IIssueRootStore;
-  // services
-  issueService;
+  //filter store
+  issueFilterStore: IProjectViewIssuesFilter;
 
-  constructor(_rootStore: IIssueRootStore) {
-    super(_rootStore);
+  constructor(_rootStore: IIssueRootStore, issueFilterStore: IProjectViewIssuesFilter) {
+    super(_rootStore, issueFilterStore);
     makeObservable(this, {
-      // observable
-      loader: observable.ref,
-      issues: observable,
-      // computed
-      groupedIssueIds: computed,
       // action
       fetchIssues: action,
-      createIssue: action,
-      updateIssue: action,
-      removeIssue: action,
-      archiveIssue: action,
-      quickAddIssue: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
     });
-    // root store
-    this.rootIssueStore = _rootStore;
-    // services
-    this.issueService = new IssueService();
+    //filter store
+    this.issueFilterStore = issueFilterStore;
   }
 
-  get groupedIssueIds() {
-    const viewId = this.rootStore?.viewId;
-    if (!viewId) return undefined;
+  fetchParentStats = async () => {};
 
-    const displayFilters = this.rootIssueStore?.projectViewIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-    const orderBy = displayFilters?.order_by;
-    const layout = displayFilters?.layout;
-
-    const viewIssueIds = this.issues[viewId];
-    if (!viewIssueIds) return;
-
-    const currentIssues = this.rootStore.issues.getIssuesByIds(viewIssueIds, "un-archived");
-    if (!currentIssues) return [];
-
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
-
-    if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, currentIssues);
-      else issues = this.unGroupedIssues(orderBy, currentIssues);
-    } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, currentIssues);
-      else issues = this.groupedIssues(groupBy, orderBy, currentIssues);
-    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", currentIssues, true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", currentIssues);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", currentIssues);
-
-    return issues;
-  }
-
-  getIssueIds = (groupId?: string, subGroupId?: string) => {
-    const groupedIssueIds = this.groupedIssueIds;
-
-    const displayFilters = this.rootIssueStore?.projectViewIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters || !groupedIssueIds) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-
-    if (!groupBy && !subGroupBy) {
-      return groupedIssueIds as string[];
-    }
-
-    if (groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
-    }
-
-    if (groupBy && groupId) {
-      return (groupedIssueIds as TGroupedIssues)?.[groupId] as string[];
-    }
-
-    return undefined;
-  };
-
-  fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader", viewId: string) => {
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param options
+   * @returns
+   */
+  fetchIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    loadType: TLoader,
+    options: IssuePaginationOptions
+  ) => {
     try {
-      this.loader = loadType;
+      // set loader and clear store
+      runInAction(() => {
+        this.setLoader(loadType);
+      });
+      this.clear();
 
-      const params = this.rootIssueStore?.projectViewIssuesFilter?.appliedFilters;
+      // get params from pagination options
+      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      // call the fetch issues API with the params
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
-      runInAction(() => {
-        set(
-          this.issues,
-          [viewId],
-          response.map((issue) => issue.id)
-        );
-        this.loader = undefined;
-      });
-
-      this.rootIssueStore.issues.addIssue(response);
-
+      // after fetching issues, call the base method to process the response further
+      this.onfetchIssues(response, options, workspaceSlug, projectId);
       return response;
     } catch (error) {
-      console.error(error);
-      this.loader = undefined;
+      // set loader to undefined if errored out
+      this.setLoader(undefined);
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, viewId: string) => {
+  /**
+   * This method is called subsequent pages of pagination
+   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * else all the groups' next page is fetched
+   * @param workspaceSlug
+   * @param projectId
+   * @param groupId
+   * @param subGroupId
+   * @returns
+   */
+  fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
-      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+      // set Loader
+      this.setLoader("pagination", groupId, subGroupId);
 
-      runInAction(() => {
-        this.issues[viewId].push(response.id);
-      });
+      // get params from stored pagination options
+      let params = this.issueFilterStore?.getFilterParams(
+        this.paginationOptions,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
+      // call the fetch issues API with the params for next page in issues
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
+      // after the next page of issues are fetched, call the base method to process the response
+      this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
+      // set Loader as undefined if errored out
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
 
-  updateIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    viewId: string
-  ) => {
-    try {
-      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-    } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
-      throw error;
-    }
+  /**
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @returns
+   */
+  fetchIssuesWithExistingPagination = async (workspaceSlug: string, projectId: string, loadType: TLoader) => {
+    if (!this.paginationOptions) return;
+    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions);
   };
 
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => {
-    try {
-      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
-
-      const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[viewId].splice(issueIndex, 1);
-        });
-    } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
-      throw error;
-    }
-  };
-
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => {
-    try {
-      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
-
-      runInAction(() => {
-        pull(this.issues[viewId], issueId);
-      });
-    } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
-      throw error;
-    }
-  };
-
-  quickAddIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId: string | undefined = undefined
-  ) => {
-    try {
-      if (!viewId) throw new Error("View Id is required");
-
-      runInAction(() => {
-        this.issues[viewId].push(data.id);
-        this.rootIssueStore.issues.addIssue([data]);
-      });
-
-      const response = await this.createIssue(workspaceSlug, projectId, data, viewId);
-
-      const quickAddIssueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0) {
-        runInAction(() => {
-          this.issues[viewId].splice(quickAddIssueIndex, 1);
-          this.rootIssueStore.issues.removeIssue(data.id);
-        });
-      }
-
-      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
-      const currentModuleIds =
-        data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
-
-      const multipleIssuePromises = [];
-      if (currentCycleId) {
-        multipleIssuePromises.push(
-          this.rootStore.cycleIssues.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id)
-        );
-      }
-
-      if (currentModuleIds.length > 0) {
-        multipleIssuePromises.push(
-          this.rootStore.moduleIssues.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, [])
-        );
-      }
-
-      if (multipleIssuePromises && multipleIssuePromises.length > 0) {
-        await Promise.all(multipleIssuePromises);
-      }
-
-      return response;
-    } catch (error) {
-      if (viewId) this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
-      throw error;
-    }
-  };
+  archiveBulkIssues = this.bulkArchiveIssues;
+  quickAddIssue = this.issueQuickAdd;
 }

@@ -81,7 +81,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <span>State</span>
           </div>
           <StateDropdown
-            value={issue?.state_id ?? undefined}
+            value={issue?.state_id}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
             projectId={projectId}
             disabled={disabled}

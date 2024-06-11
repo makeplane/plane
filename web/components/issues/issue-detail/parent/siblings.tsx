@@ -27,7 +27,7 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) =>
       ? `ISSUE_PARENT_CHILD_ISSUES_${workspaceSlug}_${parentIssue.project_id}_${parentIssue.id}`
       : null,
     parentIssue && parentIssue.project_id
-      ? () => fetchSubIssues(workspaceSlug, parentIssue.project_id, parentIssue.id)
+      ? () => fetchSubIssues(workspaceSlug, parentIssue.project_id!, parentIssue.id)
       : null
   );
 

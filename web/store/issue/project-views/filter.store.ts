@@ -14,20 +14,24 @@ import {
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
-export interface IProjectViewIssuesFilter {
-  // observables
-  filters: Record<string, IIssueFilters>; // Record defines viewId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+export interface IProjectViewIssuesFilter extends IBaseIssueFilterStore {
+  //helper actions
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
   updateFilters: (
@@ -92,6 +96,20 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
     return filteredRouteParams;
   }
+
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.appliedFilters;
+
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
+    }
+  );
 
   fetchFilters = async (workspaceSlug: string, projectId: string, viewId: string) => {
     try {
@@ -159,11 +177,10 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.projectViewIssues.fetchIssues(
+          this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
-            viewId
+            isEmpty(filteredFilters) ? "init-loader" : "mutation"
           );
           break;
         case EIssueFilterType.DISPLAY_FILTERS:
@@ -199,8 +216,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.projectViewIssues.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
+          this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
             display_filters: _filters.displayFilters,

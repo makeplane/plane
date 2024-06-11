@@ -22,7 +22,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props
           onChange(issue, { estimate_point: data }, { changed_property: "estimate_point", change_details: data })
         }
         placeholder="Estimate"
-        projectId={issue.project_id}
+        projectId={issue.project_id ?? undefined}
         disabled={disabled}
         buttonVariant="transparent-with-text"
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"

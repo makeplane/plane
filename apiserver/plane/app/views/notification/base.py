@@ -1,26 +1,27 @@
 # Django imports
-from django.db.models import Q, OuterRef, Exists
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from plane.utils.paginator import BasePaginator
 
-# Module imports
-from ..base import BaseViewSet, BaseAPIView
-from plane.db.models import (
-    Notification,
-    IssueAssignee,
-    IssueSubscriber,
-    Issue,
-    WorkspaceMember,
-    UserNotificationPreference,
-)
 from plane.app.serializers import (
     NotificationSerializer,
     UserNotificationPreferenceSerializer,
 )
+from plane.db.models import (
+    Issue,
+    IssueAssignee,
+    IssueSubscriber,
+    Notification,
+    UserNotificationPreference,
+    WorkspaceMember,
+)
+from plane.utils.paginator import BasePaginator
+
+# Module imports
+from ..base import BaseAPIView, BaseViewSet
 
 
 class NotificationViewSet(BaseViewSet, BasePaginator):
@@ -131,6 +132,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             "cursor", False
         ):
             return self.paginate(
+                order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=(notifications),
                 on_results=lambda notifications: NotificationSerializer(

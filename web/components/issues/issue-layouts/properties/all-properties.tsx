@@ -22,13 +22,13 @@ import {
 } from "@/components/dropdowns";
 // constants
 import { ISSUE_UPDATED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "../properties/labels";
@@ -36,7 +36,9 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 
 export interface IIssueProperties {
   issue: TIssue;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
@@ -49,20 +51,23 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
+  const storeType = useIssueStoreType();
   const {
     issues: { changeModulesInIssue },
-  } = useIssues(EIssuesStoreType.MODULE);
+  } = useIssues(storeType);
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
-  } = useIssues(EIssuesStoreType.CYCLE);
+  } = useIssues(storeType);
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
+
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
+
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
@@ -250,7 +255,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     // });
   };
 
-  if (!displayProperties) return null;
+  if (!displayProperties || !issue.project_id) return null;
 
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
@@ -287,7 +292,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
         <div className="h-5" onClick={handleEventPropagation}>
           <PriorityDropdown
-            value={issue?.priority || null}
+            value={issue?.priority}
             onChange={handlePriority}
             disabled={isReadOnly}
             buttonVariant="border-without-text"

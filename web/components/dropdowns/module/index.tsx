@@ -24,7 +24,7 @@ type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  projectId: string;
+  projectId: string | undefined;
   showCount?: boolean;
   onClose?: () => void;
 } & (
@@ -272,7 +272,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           </button>
         )}
       </Combobox.Button>
-      {isOpen && (
+      {isOpen && projectId && (
         <ModuleOptions
           isOpen={isOpen}
           projectId={projectId}

@@ -250,6 +250,7 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
         ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
             on_results=lambda issue_activities: IssueActivitySerializer(

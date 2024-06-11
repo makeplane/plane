@@ -14,20 +14,24 @@ import {
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
-export interface IDraftIssuesFilter {
-  // observables
-  filters: Record<string, IIssueFilters>; // Record defines projectId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+export interface IDraftIssuesFilter extends IBaseIssueFilterStore {
+  //helper actions
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (
@@ -92,6 +96,20 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
     return filteredRouteParams;
   }
 
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.appliedFilters;
+
+      const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+      return paginationParams;
+    }
+  );
+
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     try {
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.DRAFT, workspaceSlug, projectId, undefined);
@@ -145,7 +163,7 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
           });
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.draftIssues.fetchIssues(
+          this.rootIssueStore.draftIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
@@ -187,8 +205,7 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.draftIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.draftIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.DRAFT, type, workspaceSlug, projectId, undefined, {
             display_filters: _filters.displayFilters,

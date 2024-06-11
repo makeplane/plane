@@ -45,13 +45,7 @@ interface IKanBanQuickAddIssueForm {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 }
 
 const defaultValues: Partial<TIssue> = {
@@ -59,7 +53,7 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -100,14 +94,9 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          ...payload,
-        },
-        viewId
-      );
+      const quickAddPromise = quickAddCallback(projectId.toString(), {
+        ...payload,
+      });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {

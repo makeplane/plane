@@ -3,24 +3,27 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { isNil } from "lodash";
 import { observer } from "mobx-react";
 import { cn } from "@plane/editor-core";
-// plane
+// plane packages
 import {
   IGroupByColumn,
-  IIssueDisplayProperties,
-  TGroupedIssues,
-  TIssue,
-  TIssueGroupByOptions,
   TIssueMap,
+  TIssueGroupByOptions,
   TIssueOrderByOptions,
-  TUnGroupedIssues,
+  TIssue,
+  IIssueDisplayProperties,
 } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+// components
+import { ListLoaderItemRow } from "@/components/ui";
 // constants
-import { DRAG_ALLOWED_GROUPS, EIssuesStoreType } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // components
 import { GroupDragOverlay } from "../group-drag-overlay";
@@ -36,63 +39,98 @@ import { HeaderGroupByCard } from "./headers/group-by-card";
 import { TRenderQuickActions } from "./list-view-types";
 import { ListQuickAddIssueForm } from "./quick-add-issue-form";
 
-type Props = {
-  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+interface Props {
+  groupIssueIds: string[] | undefined;
   group: IGroupByColumn;
   issuesMap: TIssueMap;
   group_by: TIssueGroupByOptions | null;
   orderBy: TIssueOrderByOptions | undefined;
   getGroupIndex: (groupId: string | undefined) => number;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  storeType: EIssuesStoreType;
   containerRef: MutableRefObject<HTMLDivElement | null>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
+  quickAddCallback?: ((projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>) | undefined;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  viewId?: string;
   isCompletedCycle?: boolean;
+  showEmptyGroup?: boolean;
+  loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
 };
 
 export const ListGroup = observer((props: Props) => {
   const {
+    groupIssueIds,
     group,
-    issueIds,
+    issuesMap,
     group_by,
     orderBy,
-    issuesMap,
     getGroupIndex,
-    disableIssueCreation,
-    addIssuesToView,
     updateIssue,
     quickActions,
     displayProperties,
-    canEditProperties,
-    quickAddCallback,
-    containerRef,
-    viewId,
-    handleOnDrop,
     enableIssueQuickAdd,
+    canEditProperties,
+    containerRef,
+    quickAddCallback,
+    handleOnDrop,
+    disableIssueCreation,
+    addIssuesToView,
     isCompletedCycle,
-    storeType,
+    showEmptyGroup,
+    loadMoreIssues,
     selectionHelpers,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
+  const [isExpanded, setIsExpanded] = useState(true);
   const groupRef = useRef<HTMLDivElement | null>(null);
 
   const projectState = useProjectState();
+
+  const {
+    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
+  } = useIssuesStore();
+
+  const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
+
+  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
+
+  const groupIssueCount = getGroupIssueCount(group.id, undefined, false);
+  const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
+  const isPaginating = !!getIssueLoader(group.id);
+
+  const shouldLoadMore =
+    nextPageResults === undefined && groupIssueCount !== undefined && groupIssueIds
+      ? groupIssueIds.length < groupIssueCount
+      : !!nextPageResults;
+
+  const loadMore = isPaginating ? (
+    <ListLoaderItemRow />
+  ) : (
+    <div
+      className={
+        "h-11 relative flex items-center gap-3 bg-custom-background-100 border-t border-b-custom-border-200 pl-8 p-3 text-sm font-medium text-custom-text-350 hover:text-custom-text-300 hover:underline cursor-pointer"
+      }
+      onClick={() => loadMoreIssues(group.id)}
+    >
+      Load More &darr;
+    </div>
+  );
+
+  const validateEmptyIssueGroups = (issueCount: number = 0) => {
+    if (!showEmptyGroup && issueCount <= 0) return false;
+    return true;
+  };
+
+  const toggleListGroup = () => {
+    setIsExpanded((prevState) => !prevState);
+  };
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
@@ -179,15 +217,13 @@ export const ListGroup = observer((props: Props) => {
     );
   }, [groupRef?.current, group, orderBy, getGroupIndex, setDragColumnOrientation, setIsDraggingOverColumn]);
 
-  const is_list = group_by === null ? true : false;
   const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
   const canOverlayBeVisible = orderBy !== "sort_order" || !!group.isDropDisabled;
 
-  const issueCount: number = is_list ? issueIds?.length ?? 0 : issueIds?.[group.id]?.length ?? 0;
-
   const isGroupByCreatedBy = group_by === "created_by";
+  const shouldExpand = (!!groupIssueCount && isExpanded) || !group_by;
 
-  return (
+  return groupIssueIds && !isNil(groupIssueCount) && validateEmptyIssueGroups(groupIssueCount) ? (
     <div
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
@@ -200,17 +236,16 @@ export const ListGroup = observer((props: Props) => {
           groupID={group.id}
           icon={group.icon}
           title={group.name || ""}
-          count={issueCount}
+          count={groupIssueCount}
           issuePayload={group.payload}
           canEditProperties={canEditProperties}
           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
-          storeType={storeType}
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
+          toggleListGroup={toggleListGroup}
         />
       </div>
-
-      {!!issueCount && (
+      {shouldExpand && (
         <div className="relative">
           <GroupDragOverlay
             dragColumnOrientation={dragColumnOrientation}
@@ -220,9 +255,9 @@ export const ListGroup = observer((props: Props) => {
             orderBy={orderBy}
             isDraggingOverColumn={isDraggingOverColumn}
           />
-          {issueIds && (
+          {groupIssueIds && (
             <IssueBlocksList
-              issueIds={is_list ? issueIds : issueIds?.[group.id]}
+              issueIds={groupIssueIds}
               groupId={group.id}
               issuesMap={issuesMap}
               updateIssue={updateIssue}
@@ -236,17 +271,18 @@ export const ListGroup = observer((props: Props) => {
             />
           )}
 
+          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
+
           {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
             <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
               <ListQuickAddIssueForm
                 prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
                 quickAddCallback={quickAddCallback}
-                viewId={viewId}
               />
             </div>
           )}
         </div>
       )}
     </div>
-  );
+  ) : null;
 });

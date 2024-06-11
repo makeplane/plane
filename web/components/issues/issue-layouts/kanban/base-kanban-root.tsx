@@ -4,20 +4,23 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import debounce from "lodash/debounce";
 import { observer } from "mobx-react-lite";
 import { useParams, usePathname } from "next/navigation";
-import { Spinner } from "@plane/ui";
 import { DeleteIssueModal } from "@/components/issues";
+//constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
-// hooks
+//hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 // ui
 // types
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "../utils";
@@ -33,28 +36,19 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROFILE;
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
-  showLoader?: boolean;
-  viewId?: string;
-  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
+  viewId?: string | undefined;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const {
-    QuickActions,
-    showLoader,
-    viewId,
-    storeType,
-    addIssuesToView,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-  } = props;
+  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // store hooks
+  const storeType = useIssueStoreType() as KanbanStoreType;
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -63,15 +57,22 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
-    useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    quickAddIssue,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+    updateFilters,
+  } = useIssuesActions(storeType);
 
   const deleteAreaRef = useRef<HTMLDivElement | null>(null);
   const [isDragOverDelete, setIsDragOverDelete] = useState(false);
 
   const { isDragging } = useKanbanView();
-
-  const issueIds = issues?.groupedIssueIds || [];
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
@@ -80,6 +81,27 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const group_by = displayFilters?.group_by;
 
   const orderBy = displayFilters?.order_by;
+
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);
+  }, [fetchIssues, storeType, group_by, sub_group_by, viewId]);
+
+  const fetchMoreIssues = useCallback(
+    (groupId?: string, subgroupId?: string) => {
+      if (issues?.getIssueLoader(groupId, subgroupId) !== "pagination") {
+        fetchNextIssues(groupId, subgroupId);
+      }
+    },
+    [fetchNextIssues]
+  );
+
+  const debouncedFetchMoreIssues = debounce(
+    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
+    300,
+    { leading: true, trailing: false }
+  );
+
+  const groupedIssueIds = issues?.groupedIssueIds;
 
   const userDisplayFilters = displayFilters || null;
 
@@ -200,19 +222,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDeleteIssue}
       />
-
-      {showLoader && issues?.loader === "init-loader" && (
-        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center rounded bg-custom-background-80 shadow-custom-shadow-sm">
-          <Spinner className="h-5 w-5" />
-        </div>
-      )}
 
       <div
         className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
@@ -240,7 +256,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           <div className="h-full w-max">
             <KanBanView
               issuesMap={issueMap}
-              issueIds={issueIds}
+              groupedIssueIds={groupedIssueIds ?? {}}
+              getGroupIssueCount={issues.getGroupIssueCount}
               displayProperties={displayProperties}
               sub_group_by={sub_group_by}
               group_by={group_by}
@@ -251,18 +268,17 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               kanbanFilters={kanbanFilters}
               enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-              quickAddCallback={issues?.quickAddIssue}
-              viewId={viewId}
+              quickAddCallback={quickAddIssue}
               disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
               canEditProperties={canEditProperties}
-              storeType={storeType}
               addIssuesToView={addIssuesToView}
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
+              loadMoreIssues={debouncedFetchMoreIssues}
             />
           </div>
         </div>
       </div>
-    </>
+    </IssueLayoutHOC>
   );
 });
