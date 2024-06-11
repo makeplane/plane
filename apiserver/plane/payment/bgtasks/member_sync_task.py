@@ -9,13 +9,18 @@ from django.db.models import F
 from celery import shared_task
 
 # Module imports
-from plane.db.models import WorkspaceMember
+from plane.db.models import WorkspaceMember, Workspace
 
 
 @shared_task
-def member_sync_task(workspace_id):
-
+def member_sync_task(slug):
+    # Do not run this task if payment server base url is not set
     if settings.PAYMENT_SERVER_BASE_URL:
+        # workspace from slug
+        workspace = Workspace.objects.filter(slug=slug).first()
+        workspace_id = str(workspace.id)
+
+        # Get all active workspace members
         workspace_members = (
             WorkspaceMember.objects.filter(
                 workspace_id=workspace_id, is_active=True, member__is_bot=False
@@ -24,9 +29,11 @@ def member_sync_task(workspace_id):
             .values("user_email", "user_id")
         )
 
+        # Convert user_id to string
         for member in workspace_members:
             member["user_id"] = str(member["user_id"])
 
+        # Send request to payment server to sync workspace members
         response = requests.patch(
             f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{workspace_id}/subscriptions/",
             json={
@@ -36,6 +43,7 @@ def member_sync_task(workspace_id):
             headers={"content-type": "application/json"},
         )
 
+        # Check if response is successful
         if response.status_code == 200:
             return response.json()
         elif response.status_code == 404:
