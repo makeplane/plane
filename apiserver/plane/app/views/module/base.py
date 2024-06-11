@@ -450,10 +450,12 @@ class ModuleViewSet(BaseViewSet):
         ).exists()
 
         data = ModuleDetailSerializer(queryset.first()).data
-        data["estimate_distribution"] = None
+        modules = queryset.first()
+
+        data["estimate_distribution"] = {}
 
         if estimate_type:
-            data["estimate_distribution"]["assignee_distribution"] = (
+            label_distribution = (
                 Issue.objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
@@ -497,7 +499,7 @@ class ModuleViewSet(BaseViewSet):
                 .order_by("first_name", "last_name")
             )
 
-            data["estimate_distribution"]["label_distribution"] = (
+            assignee_distribution = (
                 Issue.objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
@@ -532,14 +534,17 @@ class ModuleViewSet(BaseViewSet):
                 )
                 .order_by("label_name")
             )
-            modules = queryset.first()
-            data["estimate_distribution"]["completion_chart"] = burndown_plot(
-                queryset=modules,
-                slug=slug,
-                project_id=project_id,
-                plot_type="points",
-                module_id=pk,
-            )
+            data["estimate_distribution"]["assignee"] = assignee_distribution
+            data["estimate_distribution"]["label"] = label_distribution
+
+            if modules and modules.start_date and modules.target_date:
+                data["estimate_distribution"]["completion_chart"] = burndown_plot(
+                    queryset=modules,
+                    slug=slug,
+                    project_id=project_id,
+                    plot_type="points",
+                    module_id=pk,
+                )
 
         assignee_distribution = (
             Issue.objects.filter(
@@ -633,15 +638,11 @@ class ModuleViewSet(BaseViewSet):
             .order_by("label_name")
         )
 
-        data = ModuleDetailSerializer(queryset.first()).data
         data["distribution"] = {
             "assignees": assignee_distribution,
             "labels": label_distribution,
             "completion_chart": {},
         }
-
-        # Fetch the modules
-        modules = queryset.first()
         if modules and modules.start_date and modules.target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
                 queryset=modules,
