@@ -3,17 +3,18 @@ import { observer } from "mobx-react";
 import { Trash2 } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
+// components
+import { BulkDeleteConfirmationModal } from "@/components/issues";
 // hooks
 import { useAppRouter } from "@/hooks/store";
-import { BulkDeleteConfirmationModal } from "../bulk-delete-modal";
 
 type Props = {
   handleClearSelection: () => void;
-  selectedEntityIds: string[];
+  selectedIssueIds: string[];
 };
 
 export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
-  const { handleClearSelection, selectedEntityIds } = props;
+  const { handleClearSelection, selectedIssueIds } = props;
   // states
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   // store hooks
@@ -25,7 +26,7 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
         <BulkDeleteConfirmationModal
           isOpen={isBulkDeleteModalOpen}
           handleClose={() => setIsBulkDeleteModalOpen(false)}
-          issueIds={selectedEntityIds}
+          issueIds={selectedIssueIds}
           onSubmit={handleClearSelection}
           projectId={projectId.toString()}
           workspaceSlug={workspaceSlug.toString()}

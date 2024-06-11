@@ -43,10 +43,10 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
     <div className="group flex items-center">
       <div className="flex items-center">
         <DragHandle
+          ref={dragHandleRef}
           className={cn("opacity-0 group-hover:opacity-100", {
             "opacity-100": isDragging,
           })}
-          ref={dragHandleRef}
         />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>

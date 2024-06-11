@@ -20,7 +20,8 @@ from plane.db.models import (
     IssueLabel,
     IssueAssignee,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.bulk_issue_activities_task import bulk_issue_activity
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
@@ -52,6 +53,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         workspace_id = project.workspace_id
 
         # Initialize arrays
+        issue_activities = []
         bulk_update_issues = []
         bulk_issue_activities = []
         bulk_update_issue_labels = []
@@ -59,10 +61,16 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
         properties = request.data.get("properties", {})
 
-        if properties.get("start_date", False) and properties.get("target_date", False):
+        if properties.get("start_date", False) and properties.get(
+            "target_date", False
+        ):
             if (
-                datetime.strptime(properties.get("start_date"), "%Y-%m-%d").date()
-                > datetime.strptime(properties.get("target_date"), "%Y-%m-%d").date()
+                datetime.strptime(
+                    properties.get("start_date"), "%Y-%m-%d"
+                ).date()
+                > datetime.strptime(
+                    properties.get("target_date"), "%Y-%m-%d"
+                ).date()
             ):
                 return Response(
                     {
@@ -76,7 +84,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Priority
             if properties.get("priority", False):
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -95,7 +103,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # State
             if properties.get("state_id", False):
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -129,7 +137,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -163,7 +171,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -280,8 +288,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             batch_size=100,
         )
         # update the issue activity
+        [issue_activity.delay(**activity) for activity in issue_activities]
         [
-            issue_activity.delay(**activity)
+            bulk_issue_activity.delay(**activity)
             for activity in bulk_issue_activities
         ]
 

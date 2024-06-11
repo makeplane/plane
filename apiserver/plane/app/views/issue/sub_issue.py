@@ -30,7 +30,7 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.user_timezone_converter import user_timezone_converter
 from collections import defaultdict
 
