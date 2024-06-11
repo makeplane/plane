@@ -8,6 +8,9 @@ from django.core.management.base import BaseCommand
 from plane.license.models import InstanceConfiguration
 
 
+from django.core.exceptions import ObjectDoesNotExist
+
+
 class Command(BaseCommand):
     help = "Configure instance variables"
 
@@ -24,16 +27,16 @@ class Command(BaseCommand):
             }
         ]
 
-        for item in config_keys:
+        for item in mandatory_keys:
             try:
                 InstanceConfiguration.objects.get(key=item.get("key"))
             except ObjectDoesNotExist:
                 self.stdout.write(
                     self.style.ERROR(
-                        f"Either the {obj.key} or entry doesn't exist."
+                        f"Either the {item.get('key')} or entry doesn't exist."
                     )
                 )
-                return
+                exit(1)
 
         config_keys = [
             # Authentication Settings
