@@ -15,12 +15,15 @@ import {
 } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core";
-import { IssueBulkOperationsRoot } from "@/components/issues";
 // constants
 import { ALL_ISSUES } from "@/constants/issue";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+// plane web components
+import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
+// plane web constants
+import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
 // utils
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
 import { ListGroup } from "./list-group";
@@ -126,7 +129,7 @@ export const List: React.FC<IList> = observer((props) => {
   return (
     <div className="relative size-full flex flex-col">
       {groups && (
-        <MultipleSelectGroup containerRef={containerRef} entities={entities} disabled>
+        <MultipleSelectGroup containerRef={containerRef} entities={entities} disabled={!ENABLE_BULK_OPERATIONS}>
           {(helpers) => (
             <>
               <div

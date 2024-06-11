@@ -14,6 +14,8 @@ import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 import { useIssues, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+// plane web constants
+import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 
@@ -97,7 +99,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
-          enableSelection={false}
+          enableSelection={ENABLE_BULK_OPERATIONS && isAllowed}
           quickAdd={
             enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
           }
