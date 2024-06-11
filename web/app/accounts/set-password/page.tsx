@@ -20,12 +20,12 @@ import { useUser } from "@/hooks/store";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
-import { AuthService } from "@/services/auth.service";
 // images
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
+import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
+import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
+import { AuthService } from "@/services/auth.service";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -78,8 +78,8 @@ const SetPasswordPage = observer(() => {
   const isButtonDisabled = useMemo(
     () =>
       !!passwordFormData.password &&
-        getPasswordStrength(passwordFormData.password) >= 3 &&
-        passwordFormData.password === passwordFormData.confirm_password
+      getPasswordStrength(passwordFormData.password) >= 3 &&
+      passwordFormData.password === passwordFormData.confirm_password
         ? false
         : true,
     [passwordFormData]

@@ -24,12 +24,12 @@ import { getPasswordStrength } from "@/helpers/password.helper";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
-import { AuthService } from "@/services/auth.service";
 // images
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
+import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
+import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
+import { AuthService } from "@/services/auth.service";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -83,8 +83,8 @@ export default function ResetPasswordPage() {
   const isButtonDisabled = useMemo(
     () =>
       !!resetFormData.password &&
-        getPasswordStrength(resetFormData.password) >= 3 &&
-        resetFormData.password === resetFormData.confirm_password
+      getPasswordStrength(resetFormData.password) >= 3 &&
+      resetFormData.password === resetFormData.confirm_password
         ? false
         : true,
     [resetFormData]
