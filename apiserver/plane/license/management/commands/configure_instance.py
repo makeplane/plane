@@ -19,7 +19,7 @@ class Command(BaseCommand):
         from plane.license.utils.instance_value import get_configuration_value
 
         mandatory_keys = [
-            {                           
+            {
                 "key": "SECRET_KEY",
                 "value": os.environ.get("SECRET_KEY", "1"),
                 "category": "CONFIGURATION",
