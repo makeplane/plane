@@ -7,7 +7,7 @@ import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // services
-import { PageService } from "@/services/page.service";
+import { ProjectPageService } from "@/services/page";
 // store
 import { IPageStore, PageStore } from "@/store/pages/page.store";
 import { RootStore } from "../root.store";
@@ -48,7 +48,7 @@ export class ProjectPageStore implements IProjectPageStore {
     sortBy: "desc",
   };
   // service
-  service: PageService;
+  projectPageService: ProjectPageService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -67,7 +67,7 @@ export class ProjectPageStore implements IProjectPageStore {
       removePage: action,
     });
     // service
-    this.service = new PageService();
+    this.projectPageService = new ProjectPageService();
     // initialize display filters of the current project
     reaction(
       () => this.store.router.projectId,
@@ -159,7 +159,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const pages = await this.service.fetchAll(workspaceSlug, projectId);
+      const pages = await this.projectPageService.fetchAll(workspaceSlug, projectId);
       runInAction(() => {
         for (const page of pages) if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
@@ -193,7 +193,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
+      const page = await this.projectPageService.fetchById(workspaceSlug, projectId, pageId);
       runInAction(() => {
         if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
@@ -226,7 +226,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const page = await this.service.create(workspaceSlug, projectId, pageData);
+      const page = await this.projectPageService.create(workspaceSlug, projectId, pageData);
       runInAction(() => {
         if (page?.id) set(this.data, [page.id], new PageStore(this.store, page));
         this.loader = undefined;
@@ -254,7 +254,7 @@ export class ProjectPageStore implements IProjectPageStore {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
-      await this.service.remove(workspaceSlug, projectId, pageId);
+      await this.projectPageService.remove(workspaceSlug, projectId, pageId);
       runInAction(() => unset(this.data, [pageId]));
     } catch (error) {
       runInAction(() => {

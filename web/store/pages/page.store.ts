@@ -6,7 +6,7 @@ import { TLogoProps, TPage } from "@plane/types";
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
 // services
-import { PageService } from "@/services/page.service";
+import { ProjectPageService } from "@/services/page";
 import { RootStore } from "../root.store";
 
 export type TLoader = "submitting" | "submitted" | "saved";
@@ -69,7 +69,7 @@ export class PageStore implements IPageStore {
   // reactions
   disposers: Array<() => void> = [];
   // services
-  pageService: PageService;
+  projectPageService: ProjectPageService;
 
   constructor(
     private store: RootStore,
@@ -144,7 +144,7 @@ export class PageStore implements IPageStore {
       removeFromFavorites: action,
     });
 
-    this.pageService = new PageService();
+    this.projectPageService = new ProjectPageService();
 
     const titleDisposer = reaction(
       () => this.name,
@@ -152,7 +152,7 @@ export class PageStore implements IPageStore {
         const { workspaceSlug, projectId } = this.store.router;
         if (!workspaceSlug || !projectId || !this.id) return;
         this.isSubmitting = "submitting";
-        this.pageService
+        this.projectPageService
           .update(workspaceSlug, projectId, this.id, {
             name,
           })
@@ -299,7 +299,7 @@ export class PageStore implements IPageStore {
         });
       });
 
-      await this.pageService.update(workspaceSlug, projectId, this.id, currentPage);
+      await this.projectPageService.update(workspaceSlug, projectId, this.id, currentPage);
     } catch (error) {
       runInAction(() => {
         Object.keys(pageData).forEach((key) => {
@@ -335,7 +335,7 @@ export class PageStore implements IPageStore {
     });
 
     try {
-      await this.pageService.updateDescriptionYJS(workspaceSlug, projectId, this.id, {
+      await this.projectPageService.updateDescriptionYJS(workspaceSlug, projectId, this.id, {
         description_binary: binaryString,
         description_html: descriptionHTML,
       });
@@ -358,7 +358,7 @@ export class PageStore implements IPageStore {
     runInAction(() => (this.access = EPageAccess.PUBLIC));
 
     try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
+      await this.projectPageService.update(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PUBLIC,
       });
     } catch (error) {
@@ -380,7 +380,7 @@ export class PageStore implements IPageStore {
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
     try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
+      await this.projectPageService.update(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PRIVATE,
       });
     } catch (error) {
@@ -401,7 +401,7 @@ export class PageStore implements IPageStore {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = true));
 
-    await this.pageService.lock(workspaceSlug, projectId, this.id).catch((error) => {
+    await this.projectPageService.lock(workspaceSlug, projectId, this.id).catch((error) => {
       runInAction(() => {
         this.is_locked = pageIsLocked;
       });
@@ -419,7 +419,7 @@ export class PageStore implements IPageStore {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = false));
 
-    await this.pageService.unlock(workspaceSlug, projectId, this.id).catch((error) => {
+    await this.projectPageService.unlock(workspaceSlug, projectId, this.id).catch((error) => {
       runInAction(() => {
         this.is_locked = pageIsLocked;
       });
@@ -435,7 +435,7 @@ export class PageStore implements IPageStore {
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
-      const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
+      const response = await this.projectPageService.archive(workspaceSlug, projectId, this.id);
       runInAction(() => {
         this.archived_at = response.archived_at;
       });
@@ -452,7 +452,7 @@ export class PageStore implements IPageStore {
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
-      await this.pageService.restore(workspaceSlug, projectId, this.id);
+      await this.projectPageService.restore(workspaceSlug, projectId, this.id);
       runInAction(() => {
         this.archived_at = null;
       });
@@ -466,7 +466,7 @@ export class PageStore implements IPageStore {
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
+      await this.projectPageService.update(workspaceSlug, projectId, this.id, {
         logo_props,
       });
       runInAction(() => {
@@ -489,7 +489,7 @@ export class PageStore implements IPageStore {
       this.is_favorite = true;
     });
 
-    await this.pageService.addToFavorites(workspaceSlug, projectId, this.id).catch((error) => {
+    await this.projectPageService.addToFavorites(workspaceSlug, projectId, this.id).catch((error) => {
       runInAction(() => {
         this.is_favorite = pageIsFavorite;
       });
@@ -509,7 +509,7 @@ export class PageStore implements IPageStore {
       this.is_favorite = false;
     });
 
-    await this.pageService.removeFromFavorites(workspaceSlug, projectId, this.id).catch((error) => {
+    await this.projectPageService.removeFromFavorites(workspaceSlug, projectId, this.id).catch((error) => {
       runInAction(() => {
         this.is_favorite = pageIsFavorite;
       });

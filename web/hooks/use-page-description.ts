@@ -6,9 +6,9 @@ import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
-import { PageService } from "@/services/page.service";
+import { ProjectPageService } from "@/services/page";
 import { IPageStore } from "@/store/pages/page.store";
-const pageService = new PageService();
+const projectPageService = new ProjectPageService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -32,7 +32,7 @@ export const usePageDescription = (props: Props) => {
   const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
+      ? () => projectPageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
       : null,
     {
       revalidateOnFocus: false,
