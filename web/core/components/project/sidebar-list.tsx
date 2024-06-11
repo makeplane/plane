@@ -207,7 +207,7 @@ export const ProjectSidebarList: FC = observer(() => {
                   leaveTo="transform scale-95 opacity-0"
                 >
                   {isFavoriteProjectsListOpen && (
-                    <Disclosure.Panel as="div" className={`space-y-2`} static>
+                    <Disclosure.Panel as="div" className={`space-y-2 pl-2`} static>
                       {favoriteProjects.map((projectId, index) => (
                         <ProjectSidebarListItem
                           key={projectId}
@@ -269,7 +269,7 @@ export const ProjectSidebarList: FC = observer(() => {
                   leaveTo="transform scale-95 opacity-0"
                 >
                   {isAllProjectsListOpen && (
-                    <Disclosure.Panel as="div" static>
+                    <Disclosure.Panel as="div" className="pl-2" static>
                       {joinedProjects.map((projectId, index) => (
                         <ProjectSidebarListItem
                           key={projectId}

@@ -27,11 +27,10 @@ interface ILabelItemBlock {
   customMenuItems: ICustomMenuItem[];
   handleLabelDelete: (label: IIssueLabel) => void;
   isLabelGroup?: boolean;
-  dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
 }
 
 export const LabelItemBlock = (props: ILabelItemBlock) => {
-  const { label, isDragging, customMenuItems, handleLabelDelete, isLabelGroup, dragHandleRef } = props;
+  const { label, customMenuItems, handleLabelDelete, isLabelGroup } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
@@ -42,12 +41,6 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        <DragHandle
-          className={cn("opacity-0 group-hover:opacity-100", {
-            "opacity-100": isDragging,
-          })}
-          ref={dragHandleRef}
-        />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
 

@@ -55,13 +55,13 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
 
   return (
     <LabelDndHOC label={label} isGroup isChild={false} isLastChild={isLastChild} onDrop={onDrop}>
-      {(isDragging, isDroppingInLabel, dragHandleRef) => (
+      {(isDragging, isDroppingInLabel) => (
         <div
           className={`rounded ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
         >
           <Disclosure
             as="div"
-            className={`rounded  text-custom-text-100 ${
+            className={`rounded  text-custom-text-100 cursor-grab ${
               !isDroppingInLabel ? "border-[0.5px] border-custom-border-200" : ""
             } ${isDragging ? "bg-custom-background-80" : "bg-custom-background-100"}`}
             defaultOpen
@@ -89,7 +89,6 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                           customMenuItems={customMenuItems}
                           handleLabelDelete={handleLabelDelete}
                           isLabelGroup
-                          dragHandleRef={dragHandleRef}
                         />
                       )}
 
