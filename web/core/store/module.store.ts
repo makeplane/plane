@@ -19,6 +19,7 @@ export interface IModuleStore {
   //Loaders
   loader: boolean;
   fetchedMap: Record<string, boolean>;
+  plotType: TModulePlotType;
   // observables
   moduleMap: Record<string, IModule>;
   // computed
@@ -31,17 +32,12 @@ export interface IModuleStore {
   getModuleNameById: (moduleId: string) => string;
   getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
+  setPlotType: (plotType: TModulePlotType) => void;
   // fetch
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
-  fetchAnalyticsModuleDetails: (
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    plotType: TModulePlotType
-  ) => Promise<IModule | undefined>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
@@ -78,6 +74,7 @@ export class ModulesStore implements IModuleStore {
   // observables
   loader: boolean = false;
   moduleMap: Record<string, IModule> = {};
+  plotType: TModulePlotType = "burndown";
   //loaders
   fetchedMap: Record<string, boolean> = {};
   // root store
@@ -92,17 +89,18 @@ export class ModulesStore implements IModuleStore {
       // observables
       loader: observable.ref,
       moduleMap: observable,
+      plotType: observable.ref,
       fetchedMap: observable,
       // computed
       projectModuleIds: computed,
       projectArchivedModuleIds: computed,
       // actions
+      setPlotType: action,
       fetchWorkspaceModules: action,
       fetchModules: action,
       fetchArchivedModules: action,
       fetchArchivedModuleDetails: action,
       fetchModuleDetails: action,
-      fetchAnalyticsModuleDetails: action,
       createModule: action,
       updateModuleDetails: action,
       deleteModule: action,
@@ -221,6 +219,12 @@ export class ModulesStore implements IModuleStore {
   });
 
   /**
+   * @description updates the plot type for the module store
+   * @param {TModulePlotType} plotType
+   */
+  setPlotType = (plotType: TModulePlotType) => (this.plotType = plotType);
+
+  /**
    * @description fetch all modules
    * @param workspaceSlug
    * @returns IModule[]
@@ -308,35 +312,16 @@ export class ModulesStore implements IModuleStore {
    * @returns IModule
    */
   fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
-    await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
-      runInAction(() => {
-        set(this.moduleMap, [moduleId], response);
-      });
-      return response;
-    });
-
-  fetchAnalyticsModuleDetails = async (
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    plotType: TModulePlotType
-  ) => {
-    try {
-      const moduleDetails = await this.moduleService.getAnalyticsModuleDetails(workspaceSlug, projectId, moduleId, {
-        plot_type: plotType,
-      });
-
-      if (moduleDetails) {
+    await this.moduleService
+      .getModuleDetails(workspaceSlug, projectId, moduleId, {
+        plot_type: this.plotType,
+      })
+      .then((response) => {
         runInAction(() => {
-          set(this.moduleMap, [moduleId], moduleDetails);
+          set(this.moduleMap, [moduleId], response);
         });
-      }
-
-      return moduleDetails;
-    } catch (error) {
-      throw error;
-    }
-  };
+        return response;
+      });
 
   /**
    * @description creates a new module

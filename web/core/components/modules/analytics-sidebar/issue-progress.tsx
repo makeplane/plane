@@ -2,11 +2,12 @@
 
 import { FC, Fragment, useCallback, useState } from "react";
 import isEqual from "lodash/isEqual";
+import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IIssueFilterOptions, TModulePlotType } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect, Spinner } from "@plane/ui";
 // components
 import { SidebarProgressStats } from "@/components/core";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
@@ -29,7 +30,7 @@ const moduleBurnDownChartOptions = [
   { value: "points", label: "Points" },
 ];
 
-export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => {
+export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((props) => {
   // props
   const { workspaceSlug, projectId, moduleId } = props;
   // router
@@ -37,12 +38,12 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => 
   const peekModule = searchParams.get("peekModule") || undefined;
   // hooks
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const { getModuleById, fetchAnalyticsModuleDetails } = useModule();
+  const { plotType, setPlotType, getModuleById, fetchModuleDetails } = useModule();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.MODULE);
   // state
-  const [progressPlotType, setProgressPlotType] = useState<TModulePlotType>("burndown");
+  const [loader, setLoader] = useState(false);
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
@@ -64,13 +65,17 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => 
 
   // handlers
   const onChange = async (value: TModulePlotType) => {
-    setProgressPlotType(value);
+    setPlotType(value);
 
     if (!workspaceSlug || !projectId || !moduleId) return;
+    const currentPlotType = plotType;
     try {
-      await fetchAnalyticsModuleDetails(workspaceSlug, projectId, moduleId, value);
+      setLoader(true);
+      await fetchModuleDetails(workspaceSlug, projectId, moduleId);
+      setLoader(false);
     } catch (error) {
-      console.log("error", error);
+      setLoader(false);
+      setPlotType(currentPlotType);
     }
   };
 
@@ -127,24 +132,27 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => 
                     )}
                   </div>
                 </Disclosure.Button>
-                <div>
-                  <CustomSelect
-                    value={progressPlotType}
-                    label={
-                      <span>
-                        {moduleBurnDownChartOptions.find((v) => v.value === progressPlotType)?.label ?? "None"}
-                      </span>
-                    }
-                    onChange={onChange}
-                    maxHeight="lg"
-                  >
-                    {moduleBurnDownChartOptions.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                </div>
+                {isCurrentEstimateTypeIsPoints && (
+                  <>
+                    <div>
+                      <CustomSelect
+                        value={plotType}
+                        label={
+                          <span>{moduleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>
+                        }
+                        onChange={onChange}
+                        maxHeight="lg"
+                      >
+                        {moduleBurnDownChartOptions.map((item) => (
+                          <CustomSelect.Option key={item.value} value={item.value}>
+                            {item.label}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    </div>
+                    {loader && <Spinner className="h-3 w-3" />}
+                  </>
+                )}
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
@@ -178,7 +186,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => 
                     moduleDetails.target_date &&
                     moduleDetails.distribution?.completion_chart && (
                       <Fragment>
-                        {isCurrentEstimateTypeIsPoints && moduleDetails.total_estimate_points ? (
+                        {plotType === "points" && moduleDetails.total_estimate_points ? (
                           <ProgressChart
                             distribution={moduleDetails.distribution?.completion_chart ?? {}}
                             startDate={moduleDetails.start_date}
@@ -204,26 +212,29 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => 
                       <SidebarProgressStats
                         distribution={moduleDetails.distribution}
                         groupedIssues={{
-                          backlog: isCurrentEstimateTypeIsPoints
-                            ? moduleDetails.backlog_estimate_issues
-                            : moduleDetails.backlog_issues,
-                          unstarted: isCurrentEstimateTypeIsPoints
-                            ? moduleDetails.unstarted_estimate_issues
-                            : moduleDetails.unstarted_issues,
-                          started: isCurrentEstimateTypeIsPoints
-                            ? moduleDetails.started_estimate_issues
-                            : moduleDetails.started_issues,
-                          completed: isCurrentEstimateTypeIsPoints
-                            ? moduleDetails.completed_estimate_points || 0
-                            : moduleDetails.completed_issues,
-                          cancelled: isCurrentEstimateTypeIsPoints
-                            ? moduleDetails.cancelled_estimate_issues
-                            : moduleDetails.cancelled_issues,
+                          backlog:
+                            plotType === "points"
+                              ? moduleDetails.backlog_estimate_issues
+                              : moduleDetails.backlog_issues,
+                          unstarted:
+                            plotType === "points"
+                              ? moduleDetails.unstarted_estimate_issues
+                              : moduleDetails.unstarted_issues,
+                          started:
+                            plotType === "points"
+                              ? moduleDetails.started_estimate_issues
+                              : moduleDetails.started_issues,
+                          completed:
+                            plotType === "points"
+                              ? moduleDetails.completed_estimate_points || 0
+                              : moduleDetails.completed_issues,
+                          cancelled:
+                            plotType === "points"
+                              ? moduleDetails.cancelled_estimate_issues
+                              : moduleDetails.cancelled_issues,
                         }}
                         totalIssues={
-                          isCurrentEstimateTypeIsPoints
-                            ? moduleDetails.total_estimate_points || 0
-                            : moduleDetails.total_issues
+                          plotType === "points" ? moduleDetails.total_estimate_points || 0 : moduleDetails.total_issues
                         }
                         module={moduleDetails}
                         isPeekView={Boolean(peekModule)}
@@ -240,4 +251,4 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = (props) => 
       </Disclosure>
     </div>
   );
-};
+});
