@@ -77,7 +77,7 @@ const ProjectIntegrationsPage: NextPageWithLayout = observer(() => {
 
 ProjectIntegrationsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Integrations Settings" />}>
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader />}>
       <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );

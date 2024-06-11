@@ -12,8 +12,8 @@ import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // images
-import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "public/workspace/workspace-not-available.png";
 
 export interface IWorkspaceAuthWrapper {

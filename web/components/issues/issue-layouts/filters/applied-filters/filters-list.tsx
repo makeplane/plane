@@ -19,7 +19,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // hooks
-import { useAppRouter, useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -36,7 +36,6 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
   // store hooks
-  const { moduleId, cycleId } = useAppRouter();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -108,14 +107,14 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                   values={value}
                 />
               )}
-              {filterKey === "cycle" && !cycleId && (
+              {filterKey === "cycle" && (
                 <AppliedCycleFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("cycle", val)}
                   values={value}
                 />
               )}
-              {filterKey === "module" && !moduleId && (
+              {filterKey === "module" && (
                 <AppliedModuleFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("module", val)}

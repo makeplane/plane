@@ -1,5 +1,6 @@
 export * from "./filters";
 export * from "./modals";
+export * from "./multiple-select";
 export * from "./sidebar";
 export * from "./activity";
 export * from "./favorite-star";

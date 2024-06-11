@@ -1,7 +1,21 @@
 import { FC } from "react";
+// icons
+import {
+  CalendarDays,
+  Link2,
+  Signal,
+  Tag,
+  Triangle,
+  Paperclip,
+  CalendarCheck2,
+  CalendarClock,
+  Users,
+} from "lucide-react";
+// types
+import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
+// ui
+import { LayersIcon, DoubleCircleIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
-import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarCheck2, CalendarClock } from "lucide-react";
-import { LayersIcon, DoubleCircleIcon, UserGroupIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
@@ -18,7 +32,6 @@ import {
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
 } from "@/components/issues/issue-layouts/spreadsheet";
-import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
   [key: string]: {
@@ -42,7 +55,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-assignees__first_name",
     descendingOrderTitle: "Z",
-    icon: UserGroupIcon,
+    icon: Users,
     Column: SpreadsheetAssigneeColumn,
   },
   created_on: {
@@ -180,3 +193,5 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "attachment_count",
   "sub_issue_count",
 ];
+
+export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";

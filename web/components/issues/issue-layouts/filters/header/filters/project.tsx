@@ -1,15 +1,13 @@
 import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
-// components
+// ui
 import { Loader } from "@plane/ui";
+// components
+import { Logo } from "@/components/common";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
-import { ProjectLogo } from "@/components/project";
 import { useProject } from "@/hooks/store";
-// components
-// ui
-// helpers
 
 type Props = {
   appliedFilters: string[] | null;
@@ -65,7 +63,7 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
                     onClick={() => handleUpdate(project.id)}
                     icon={
                       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <ProjectLogo logo={project.logo_props} className="text-sm" />
+                        <Logo logo={project.logo_props} size={12} />
                       </span>
                     }
                     title={project.name}

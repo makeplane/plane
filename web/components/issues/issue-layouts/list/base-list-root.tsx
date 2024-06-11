@@ -1,25 +1,25 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-// types
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useIssues, useUser } from "@/hooks/store";
-
+import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { List } from "./default";
+// types
 import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
-// constants
-// hooks
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.ARCHIVED
   | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE;
+  | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.ARCHIVED;
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   viewId?: string;
@@ -37,21 +37,19 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
   } = props;
-
+  // store hooks
   const { issuesFilter, issues } = useIssues(storeType);
   const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } = useIssuesActions(storeType);
-  // mobx store
   const {
     membership: { currentProjectRole },
   } = useUser();
-
   const { issueMap } = useIssues();
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
+  // derived values
   const issueIds = issues?.groupedIssueIds || [];
-
+  // auth
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
@@ -66,7 +64,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
 
   const group_by = displayFilters?.group_by || null;
+  const orderBy = displayFilters?.order_by || undefined;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+
+  const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by);
 
   const renderQuickActions: TRenderQuickActions = useCallback(
     ({ issue, parentRef }) => (
@@ -86,11 +87,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   return (
-    <div className={`relative h-full w-full bg-custom-background-90`}>
+    <div className="relative size-full bg-custom-background-90">
       <List
         issuesMap={issueMap}
         displayProperties={displayProperties}
         group_by={group_by}
+        orderBy={orderBy}
         updateIssue={updateIssue}
         quickActions={renderQuickActions}
         issueIds={issueIds}
@@ -103,6 +105,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         storeType={storeType}
         addIssuesToView={addIssuesToView}
         isCompletedCycle={isCompletedCycle}
+        handleOnDrop={handleOnDrop}
       />
     </div>
   );

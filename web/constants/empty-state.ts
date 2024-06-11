@@ -40,6 +40,7 @@ export enum EmptyStateType {
   WORKSPACE_SETTINGS_WEBHOOKS = "workspace-settings-webhooks",
   WORKSPACE_SETTINGS_EXPORT = "workspace-settings-export",
   WORKSPACE_SETTINGS_IMPORT = "workspace-settings-import",
+  PROFILE_ACTIVITY = "profile-activity",
   PROFILE_ASSIGNED = "profile-assigned",
   PROFILE_CREATED = "profile-created",
   PROFILE_SUBSCRIBED = "profile-subscribed",
@@ -242,6 +243,13 @@ const emptyStateDetails = {
     path: "/empty-state/workspace-settings/imports",
   },
   // profile
+  [EmptyStateType.PROFILE_ACTIVITY]: {
+    key: EmptyStateType.PROFILE_ASSIGNED,
+    title: "No activities yet",
+    description:
+      "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity.",
+    path: "/empty-state/profile/activity",
+  },
   [EmptyStateType.PROFILE_ASSIGNED]: {
     key: EmptyStateType.PROFILE_ASSIGNED,
     title: "No issues are assigned to you",
@@ -294,8 +302,8 @@ const emptyStateDetails = {
           "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
       },
     },
-    accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    accessType: "project",
+    access: EUserProjectRoles.MEMBER,
   },
   [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
@@ -487,11 +495,6 @@ const emptyStateDetails = {
     path: "/empty-state/onboarding/pages",
     primaryButton: {
       text: "Create your first page",
-      comicBox: {
-        title: "A page can be a doc or a doc of docs.",
-        description:
-          "We wrote Nikhil and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
-      },
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,

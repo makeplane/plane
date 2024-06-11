@@ -110,6 +110,11 @@ ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
   }
 }
 
+/* the p tag just after the ul tag */
+ul[data-type="taskList"] + p {
+  margin-top: 0.4rem !important;
+}
+
 ul[data-type="taskList"] li > label input[type="checkbox"] {
   position: relative;
   -webkit-appearance: none;
@@ -150,6 +155,10 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   &:checked::before {
     transform: scale(1) translate(-50%, -50%);
   }
+}
+
+ul[data-type="taskList"] li > div > p {
+  margin-top: 10px;
 }
 
 ul[data-type="taskList"] li[data-checked="true"] > div > p {

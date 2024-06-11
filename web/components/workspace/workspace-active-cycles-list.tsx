@@ -12,7 +12,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // state
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [resultsCount, setResultsCount] = useState(0); // workspaceActiveCycles.results.length
+  const [resultsCount, setResultsCount] = useState<number | null>(null); // workspaceActiveCycles.results.length
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

@@ -15,9 +15,7 @@ declare module "@tiptap/core" {
   }
 }
 
-function autoJoin(tr: Transaction, newTr: Transaction, nodeType: NodeType) {
-  if (!tr.isGeneric) return false;
-
+function autoJoin(tr: Transaction, newTr: Transaction, nodeTypes: NodeType[]) {
   // Find all ranges where we might want to join.
   const ranges: Array<number> = [];
   for (let i = 0; i < tr.mapping.maps.length; i++) {
@@ -28,7 +26,7 @@ function autoJoin(tr: Transaction, newTr: Transaction, nodeType: NodeType) {
 
   // Figure out which joinable points exist inside those ranges,
   // by checking all node boundaries in their parent nodes.
-  const joinable = [];
+  const joinable: number[] = [];
   for (let i = 0; i < ranges.length; i += 2) {
     const from = ranges[i],
       to = ranges[i + 1];
@@ -40,7 +38,7 @@ function autoJoin(tr: Transaction, newTr: Transaction, nodeType: NodeType) {
       if (!after) break;
       if (index && joinable.indexOf(pos) == -1) {
         const before = parent.child(index - 1);
-        if (before.type == after.type && before.type === nodeType) joinable.push(pos);
+        if (before.type == after.type && nodeTypes.includes(before.type)) joinable.push(pos);
       }
       pos += after.nodeSize;
     }
@@ -88,25 +86,15 @@ export const CustomKeymap = Extension.create({
           // Create a new transaction.
           const newTr = newState.tr;
 
-          let joined = false;
-          for (const transaction of transactions) {
-            const anotherJoin = autoJoin(transaction, newTr, newState.schema.nodes["orderedList"]);
-            joined = anotherJoin || joined;
-          }
-          if (joined) {
-            return newTr;
-          }
-        },
-      }),
-      new Plugin({
-        key: new PluginKey("unordered-list-merging"),
-        appendTransaction(transactions, oldState, newState) {
-          // Create a new transaction.
-          const newTr = newState.tr;
+          const joinableNodes = [
+            newState.schema.nodes["orderedList"],
+            newState.schema.nodes["taskList"],
+            newState.schema.nodes["bulletList"],
+          ];
 
           let joined = false;
           for (const transaction of transactions) {
-            const anotherJoin = autoJoin(transaction, newTr, newState.schema.nodes["bulletList"]);
+            const anotherJoin = autoJoin(transaction, newTr, joinableNodes);
             joined = anotherJoin || joined;
           }
           if (joined) {

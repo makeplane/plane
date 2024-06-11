@@ -1,9 +1,12 @@
+import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
+import isEqual from "lodash/isEqual";
 import pull from "lodash/pull";
 import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
+// types
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -11,13 +14,18 @@ import {
   IPragmaticDropPayload,
   TIssue,
   TIssueGroupByOptions,
+  IIssueFilterOptions,
+  IIssueFilters,
+  IProjectView,
 } from "@plane/types";
+// ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
-import { ProjectLogo } from "@/components/project";
-// stores
+import { Logo } from "@/components/common";
+// constants
 import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
+// stores
 import { ICycleStore } from "@/store/cycle.store";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/issue-helper.store";
 import { ILabelStore } from "@/store/label.store";
@@ -25,9 +33,6 @@ import { IMemberRootStore } from "@/store/member";
 import { IModuleStore } from "@/store/module.store";
 import { IProjectStore } from "@/store/project/project.store";
 import { IStateStore } from "@/store/state.store";
-// helpers
-// constants
-// types
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
@@ -37,6 +42,7 @@ export type GroupDropLocation = {
   groupId: string;
   subGroupId?: string;
   id: string | undefined;
+  canAddIssueBelow?: boolean;
 };
 
 export type IssueUpdates = {
@@ -99,7 +105,7 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
         name: project.name,
         icon: (
           <div className="w-6 h-6 grid place-items-center flex-shrink-0">
-            <ProjectLogo logo={project.logo_props} />
+            <Logo logo={project.logo_props} />
           </div>
         ),
         payload: { project_id: project.id },
@@ -353,11 +359,15 @@ export const getDestinationFromDropPayload = (payload: IPragmaticDropPayload): G
 
   if (!destinationColumnData?.groupId) return;
 
+  // extract instruction from destination issue
+  const extractedInstruction = destinationIssueData ? extractInstruction(destinationIssueData)?.type : "";
+
   return {
     groupId: destinationColumnData.groupId as string,
     subGroupId: destinationColumnData.subGroupId as string,
     columnId: destinationColumnData.columnId as string,
     id: destinationIssueData?.id as string | undefined,
+    canAddIssueBelow: extractedInstruction === "reorder-below",
   };
 };
 
@@ -372,16 +382,24 @@ const handleSortOrder = (
   destinationIssues: string[],
   destinationIssueId: string | undefined,
   getIssueById: (issueId: string) => TIssue | undefined,
-  shouldAddIssueAtTop = false
+  shouldAddIssueAtTop = false,
+  canAddIssueBelow = false
 ) => {
   const sortOrderDefaultValue = 65535;
   let currentIssueState = {};
 
-  const destinationIndex = destinationIssueId
+  let destinationIndex = destinationIssueId
     ? destinationIssues.indexOf(destinationIssueId)
     : shouldAddIssueAtTop
       ? 0
       : destinationIssues.length;
+
+  const isDestinationLastChild = destinationIndex === destinationIssues.length - 1;
+
+  // if issue can be added below and if the destination issue is the last child, then add to the end of the list
+  if (canAddIssueBelow && isDestinationLastChild) {
+    destinationIndex = destinationIssues.length;
+  }
 
   if (destinationIssues && destinationIssues.length > 0) {
     if (destinationIndex === 0) {
@@ -428,7 +446,7 @@ const handleSortOrder = (
 export const getIssueBlockId = (
   issueId: string | undefined,
   groupId: string | undefined,
-  subGroupId: string | undefined
+  subGroupId?: string | undefined
 ) => `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
@@ -469,7 +487,13 @@ export const handleGroupDragDrop = async (
   // for both horizontal and vertical dnd
   updatedIssue = {
     ...updatedIssue,
-    ...handleSortOrder(destinationIssues, destination.id, getIssueById, shouldAddIssueAtTop),
+    ...handleSortOrder(
+      destinationIssues,
+      destination.id,
+      getIssueById,
+      shouldAddIssueAtTop,
+      !!destination.canAddIssueBelow
+    ),
   };
 
   // update updatedIssue values based on the source and destination groupIds
@@ -515,3 +539,19 @@ export const handleGroupDragDrop = async (
     return await updateIssueOnDrop(sourceIssue.project_id, sourceIssue.id, updatedIssue, issueUpdates);
   }
 };
+
+/**
+ * This Method compares filters and returns a boolean based on which and updateView button is shown
+ * @param appliedFilters
+ * @param issueFilters
+ * @param viewDetails
+ * @returns
+ */
+export const getAreFiltersEqual = (
+  appliedFilters: IIssueFilterOptions | undefined,
+  issueFilters: IIssueFilters | undefined,
+  viewDetails: IProjectView | null
+) =>
+  isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {}) &&
+  isEqual(issueFilters?.displayFilters ?? {}, viewDetails?.display_filters ?? {}) &&
+  isEqual(issueFilters?.displayProperties ?? {}, viewDetails?.display_properties ?? {});

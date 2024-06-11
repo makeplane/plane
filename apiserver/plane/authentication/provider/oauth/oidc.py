@@ -4,12 +4,14 @@ from datetime import datetime
 from urllib.parse import urlencode
 import pytz
 
-# Django imports
-from django.core.exceptions import ImproperlyConfigured
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
+from plane.db.models import Account
 
 
 class OIDCOAuthProvider(OauthAdapter):
@@ -56,8 +58,9 @@ class OIDCOAuthProvider(OauthAdapter):
             and OIDC_USERINFO_URL
             and OIDC_AUTHORIZE_URL
         ):
-            raise ImproperlyConfigured(
-                "OIDC is not configured. Please contact the support team."
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["OIDC_NOT_CONFIGURED"],
+                error_message="OIDC_NOT_CONFIGURED",
             )
 
         redirect_uri = (
@@ -116,6 +119,7 @@ class OIDCOAuthProvider(OauthAdapter):
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),
+                "id_token": token_response.get("id_token", ""),
             }
         )
 
@@ -133,7 +137,7 @@ class OIDCOAuthProvider(OauthAdapter):
         }
         super().set_user_data(user_data)
 
-    def logout(self):
+    def logout(self, logout_url=None):
         (OIDC_LOGOUT_URL,) = get_configuration_value(
             [
                 {
@@ -142,7 +146,13 @@ class OIDCOAuthProvider(OauthAdapter):
                 },
             ]
         )
-        if OIDC_LOGOUT_URL:
-            return OIDC_LOGOUT_URL
+
+        account = Account.objects.filter(
+            user=self.request.user, provider=self.provider
+        ).first()
+
+        id_token = account.id_token if account and account.id_token else None
+        if OIDC_LOGOUT_URL and id_token and logout_url:
+            return f"{OIDC_LOGOUT_URL}?id_token_hint={id_token}&post_logout_redirect_uri={logout_url}"
         else:
             return False

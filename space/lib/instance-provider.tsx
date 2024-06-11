@@ -3,17 +3,21 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
 import { InstanceFailureView } from "@/components/instance";
+// helpers
+import { SPACE_BASE_PATH } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useUser } from "@/hooks/store";
 // assets
 import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
   const { fetchInstanceInfo, instance, error } = useInstance();
@@ -27,7 +31,11 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
     revalidateIfStale: false,
     errorRetryCount: 0,
   });
-  useSWR("CURRENT_USER", () => fetchCurrentUser());
+  useSWR("CURRENT_USER", () => fetchCurrentUser(), {
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
 
   if (!instance && !error)
     return (
@@ -36,14 +44,16 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
       </div>
     );
 
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
   if (error) {
     return (
       <div className="relative">
         <div className="h-screen w-full overflow-hidden overflow-y-auto flex flex-col">
           <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
             <div className="flex items-center gap-x-2 py-10">
-              <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" />
-              <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
+              <Link href={`${SPACE_BASE_PATH}/`} className="h-[30px] w-[133px]">
+                <Image src={logo} alt="Plane logo" />
+              </Link>
             </div>
           </div>
           <div className="absolute inset-0 z-0">

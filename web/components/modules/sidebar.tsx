@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -11,8 +12,9 @@ import {
   Info,
   LinkIcon,
   Plus,
+  SquareUser,
   Trash2,
-  UserCircle2,
+  Users,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -23,7 +25,6 @@ import {
   LayersIcon,
   CustomSelect,
   ModuleStatusIcon,
-  UserGroupIcon,
   TOAST_TYPE,
   setToast,
   ArchiveIcon,
@@ -252,14 +253,18 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
+      let newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
+        if (key === "state") {
+          if (isEqual(newValues, value)) newValues = [];
+          else newValues = value;
+        } else {
+          value.forEach((val) => {
+            if (!newValues.includes(val)) newValues.push(val);
+            else newValues.splice(newValues.indexOf(val), 1);
+          });
+        }
       } else {
         if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
@@ -466,7 +471,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                       <DateRangeDropdown
                         buttonContainerClassName="w-full"
                         buttonVariant="background-with-text"
-                        minDate={new Date()}
                         value={{
                           from: startDate,
                           to: endDate,
@@ -493,7 +497,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <UserCircle2 className="h-4 w-4" />
+              <SquareUser className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
             <Controller
@@ -511,6 +515,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     buttonVariant="background-with-text"
                     placeholder="Lead"
                     disabled={!isEditingAllowed || isArchived}
+                    icon={SquareUser}
                   />
                 </div>
               )}
@@ -518,7 +523,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <UserGroupIcon className="h-4 w-4" />
+              <Users className="h-4 w-4" />
               <span className="text-base">Members</span>
             </div>
             <Controller

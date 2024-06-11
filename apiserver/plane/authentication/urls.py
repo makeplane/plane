@@ -2,13 +2,12 @@ from django.urls import path
 
 from .views import (
     CSRFTokenEndpoint,
-    EmailCheckSignInEndpoint,
-    EmailCheckSignUpEndpoint,
     ForgotPasswordEndpoint,
     SetUserPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
     # App
+    EmailCheckEndpoint,
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
     GoogleCallbackEndpoint,
@@ -21,8 +20,17 @@ from .views import (
     SignUpAuthEndpoint,
     ForgotPasswordSpaceEndpoint,
     ResetPasswordSpaceEndpoint,
+    # OIDC
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
+    # SAML
+    SAMLAuthInitiateEndpoint,
+    SAMLCallbackEndpoint,
+    SAMLMetadataEndpoint,
+    SAMLLogoutEndpoint,
     # Space
-    EmailCheckEndpoint,
+    EmailCheckSpaceEndpoint,
     GitHubCallbackSpaceEndpoint,
     GitHubOauthInitiateSpaceEndpoint,
     GoogleCallbackSpaceEndpoint,
@@ -154,18 +162,13 @@ urlpatterns = [
     ),
     # Email Check
     path(
-        "sign-up/email-check/",
-        EmailCheckSignUpEndpoint.as_view(),
-        name="email-check-sign-up",
-    ),
-    path(
-        "sign-in/email-check/",
-        EmailCheckSignInEndpoint.as_view(),
-        name="email-check-sign-in",
+        "email-check/",
+        EmailCheckEndpoint.as_view(),
+        name="email-check",
     ),
     path(
         "spaces/email-check/",
-        EmailCheckEndpoint.as_view(),
+        EmailCheckSpaceEndpoint.as_view(),
         name="email-check",
     ),
     # Password
@@ -198,5 +201,42 @@ urlpatterns = [
         "set-password/",
         SetUserPasswordEndpoint.as_view(),
         name="set-password",
+    ),
+    # OIDC
+    path(
+        "oidc/",
+        OIDCAuthInitiateEndpoint.as_view(),
+        name="oidc",
+    ),
+    path(
+        "oidc/callback/",
+        OIDCallbackEndpoint.as_view(),
+        name="oidc",
+    ),
+    path(
+        "oidc/logout/",
+        OIDCLogoutEndpoint.as_view(),
+        name="oidc",
+    ),
+    # SAML
+    path(
+        "saml/",
+        SAMLAuthInitiateEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/callback/",
+        SAMLCallbackEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/metadata/",
+        SAMLMetadataEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/logout/",
+        SAMLLogoutEndpoint.as_view(),
+        name="saml",
     ),
 ]

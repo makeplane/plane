@@ -33,6 +33,7 @@ class UserSerializer(BaseSerializer):
             "is_bot",
             "is_password_autoset",
             "is_email_verified",
+            "is_active",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 

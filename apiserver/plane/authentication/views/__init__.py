@@ -4,7 +4,7 @@ from .common import (
     SetUserPasswordEndpoint,
 )
 
-from .app.check import EmailCheckSignInEndpoint, EmailCheckSignUpEndpoint
+from .app.check import EmailCheckEndpoint
 
 from .app.email import (
     SignInAuthEndpoint,
@@ -22,6 +22,19 @@ from .app.magic import (
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
     MagicSignUpEndpoint,
+)
+
+from .app.oidc import (
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
+)
+
+from .app.saml import (
+    SAMLAuthInitiateEndpoint,
+    SAMLCallbackEndpoint,
+    SAMLMetadataEndpoint,
+    SAMLLogoutEndpoint,
 )
 
 from .app.signout import SignOutAuthEndpoint
@@ -47,7 +60,7 @@ from .space.magic import (
 
 from .space.signout import SignOutAuthSpaceEndpoint
 
-from .space.check import EmailCheckEndpoint
+from .space.check import EmailCheckSpaceEndpoint
 
 from .space.password_management import (
     ForgotPasswordSpaceEndpoint,

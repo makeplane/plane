@@ -1,21 +1,20 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { FileText } from "lucide-react";
-// hooks
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
-import { BreadcrumbLink } from "@/components/common";
-import { ProjectLogo } from "@/components/project";
-import { EUserProjectRoles } from "@/constants/project";
+import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
-// components
+import { EPageAccess } from "@/constants/page";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
 export const PagesHeader = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, type: pageType } = router.query;
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
   const {
@@ -41,7 +40,7 @@ export const PagesHeader = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }
@@ -62,7 +61,10 @@ export const PagesHeader = observer(() => {
             size="sm"
             onClick={() => {
               setTrackElement("Project pages page");
-              toggleCreatePageModal(true);
+              toggleCreatePageModal({
+                isOpen: true,
+                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+              });
             }}
           >
             Add Page

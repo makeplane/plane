@@ -162,6 +162,12 @@ class Command(BaseCommand):
                 "category": "AUTHENTICATION",
                 "is_encrypted": False,
             },
+            {
+                "key": "OIDC_PROVIDER_NAME",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
             ## SAML
             {
                 "key": "SAML_ENTITY_ID",
@@ -190,6 +196,12 @@ class Command(BaseCommand):
             {
                 "key": "IS_SAML_ENABLED",
                 "value": "0",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "SAML_PROVIDER_NAME",
+                "value": "",
                 "category": "AUTHENTICATION",
                 "is_encrypted": False,
             },

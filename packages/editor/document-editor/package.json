@@ -1,6 +1,6 @@
 {
   "name": "@plane/document-editor",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Package that powers Plane's Pages Editor",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -34,12 +34,17 @@
     "@plane/ui": "*",
     "@tippyjs/react": "^4.2.6",
     "@tiptap/core": "^2.1.13",
+    "@tiptap/extension-collaboration": "^2.3.2",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/suggestion": "^2.1.13",
     "lucide-react": "^0.378.0",
     "react-popper": "^2.3.0",
     "tippy.js": "^6.3.7",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "y-indexeddb": "^9.0.12",
+    "y-prosemirror": "^1.2.5",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.15"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

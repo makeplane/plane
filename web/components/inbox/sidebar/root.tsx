@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { TInboxIssueCurrentTab } from "@plane/types";
@@ -37,14 +37,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const { workspaceSlug, projectId, setIsMobileSidebar } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
+  const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
   // store
   const { currentProjectDetails } = useProject();
   const {
     currentTab,
     handleCurrentTab,
     loader,
-    inboxIssuesArray,
+    filteredInboxIssueIds,
     inboxIssuePaginationInfo,
     fetchInboxPaginationIssues,
     getAppliedFiltersCount,
@@ -56,13 +56,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
   }, [workspaceSlug, projectId, fetchInboxPaginationIssues]);
+
   // page observer
-  useIntersectionObserver({
-    containerRef,
-    elementRef,
-    callback: fetchNextPages,
-    rootMargin: "20%",
-  });
+  useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
 
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
@@ -76,8 +72,10 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
               )}
               onClick={() => {
-                if (currentTab != option?.key) handleCurrentTab(option?.key);
-                router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                if (currentTab != option?.key) {
+                  handleCurrentTab(option?.key);
+                  router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                }
               }}
             >
               <div>{option?.label}</div>
@@ -108,13 +106,13 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
             ref={containerRef}
           >
-            {inboxIssuesArray.length > 0 ? (
+              {filteredInboxIssueIds.length > 0 ? (
               <InboxIssueList
                 setIsMobileSidebar={setIsMobileSidebar}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={inboxIssuesArray}
+                  inboxIssueIds={filteredInboxIssueIds}
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full">
@@ -130,15 +128,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 />
               </div>
             )}
-
-            <div ref={elementRef}>
-              {inboxIssuePaginationInfo?.next_page_results && (
+              <div ref={setElementRef}>
+                {inboxIssuePaginationInfo?.next_page_results && (
                 <Loader className="mx-auto w-full space-y-4 py-4 px-2">
                   <Loader.Item height="64px" width="w-100" />
                   <Loader.Item height="64px" width="w-100" />
                 </Loader>
-              )}
-            </div>
+                )}
+              </div>
           </div>
         )}
       </div>

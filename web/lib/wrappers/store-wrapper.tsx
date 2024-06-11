@@ -14,7 +14,7 @@ type TStoreWrapper = {
 const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   const { children } = props;
   // theme
-  const { setTheme } = useTheme();
+  const {resolvedTheme, setTheme } = useTheme();
   // router
   const router = useRouter();
   // store hooks
@@ -22,7 +22,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: userProfile } = useUserProfile();
   // states
-  const [dom, setDom] = useState<undefined | HTMLElement>();
+  const [dom, setDom] = useState<HTMLElement | null>(null);
 
   /**
    * Sidebar collapsed fetching from local storage
@@ -38,19 +38,40 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
    * Setting up the theme of the user by fetching it from local storage
    */
   useEffect(() => {
+    setTheme(userProfile?.theme?.theme || resolvedTheme || "system");
     if (!userProfile?.theme?.theme) return;
-    if (window) setDom(() => window.document?.querySelector<HTMLElement>("[data-theme='custom']") || undefined);
 
-    setTheme(userProfile?.theme?.theme || "system");
-    if (userProfile?.theme?.theme === "custom" && userProfile?.theme?.palette && dom)
+    if (userProfile?.theme?.theme === "custom" && userProfile?.theme?.palette) {
       applyTheme(
         userProfile?.theme?.palette !== ",,,,"
           ? userProfile?.theme?.palette
           : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-        false
+        false,
+        dom
       );
-    else unsetCustomCssVariables();
-  }, [userProfile, userProfile?.theme?.theme, userProfile?.theme?.palette, setTheme, dom]);
+    } else unsetCustomCssVariables();
+  }, [userProfile, userProfile?.theme, userProfile?.theme?.palette, setTheme, dom]);
+
+  useEffect(() => {
+    if (dom) return;
+
+    const observer = new MutationObserver((mutationsList, observer) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === "childList") {
+          const customThemeElement = window.document?.querySelector<HTMLElement>("[data-theme='custom']");
+          if (customThemeElement) {
+            setDom(customThemeElement);
+            observer.disconnect();
+            break;
+          }
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [dom]);
 
   useEffect(() => {
     if (!router.query) return;

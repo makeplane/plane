@@ -18,7 +18,7 @@ type TPagesListRoot = {
 export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
   const { pageType, projectId, workspaceSlug } = props;
   // store hooks
-  const { getCurrentProjectFilteredPageIds } = useProjectPages(projectId);
+  const { getCurrentProjectFilteredPageIds } = useProjectPages();
   // derived values
   const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
 

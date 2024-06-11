@@ -7,17 +7,19 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { Mails, KeyRound } from "lucide-react";
 import { TInstanceConfigurationKeys } from "@plane/types";
-import { Loader, setPromiseToast } from "@plane/ui";
+import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
-// hooks
 // helpers
-import { resolveGeneralTheme } from "@/helpers/common.helper";
+import { cn, resolveGeneralTheme } from "@/helpers/common.helper";
 import { useInstance } from "@/hooks/store";
 // images
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
 import GoogleLogo from "@/public/logos/google-logo.svg";
+// images - enterprise
+import OIDCLogo from "@/public/logos/oidc-logo.png";
+import SAMLLogo from "@/public/logos/saml-logo.svg";
 // local components
 import {
   AuthenticationMethodCard,
@@ -25,6 +27,9 @@ import {
   PasswordLoginConfiguration,
   GithubConfiguration,
   GoogleConfiguration,
+  // enterprise
+  OIDCConfiguration,
+  SAMLConfiguration,
 } from "./components";
 
 type TInstanceAuthenticationMethodCard = {
@@ -45,6 +50,8 @@ const InstanceAuthenticationPage = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // theme
   const { resolvedTheme } = useTheme();
+  // derived values
+  const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
 
   const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
     setIsSubmitting(true);
@@ -116,20 +123,65 @@ const InstanceAuthenticationPage = observer(() => {
     },
   ];
 
+  // Enterprise authentication methods
+  authenticationMethodsCard.push(
+    {
+      key: "oidc",
+      name: "OIDC",
+      description: "Authenticate your users via the OpenID connect protocol.",
+      icon: <Image src={OIDCLogo} height={20} width={20} alt="OIDC Logo" />,
+      config: <OIDCConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
+    },
+    {
+      key: "saml",
+      name: "SAML",
+      description: "Authenticate your users via Security Assertion Markup Language protocol.",
+      icon: <Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pb-0.5 pl-0.5" />,
+      config: <SAMLConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
+    }
+  );
+
   return (
     <>
       <PageHeader title="Authentication - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">Manage authentication for your instance</div>
           <div className="text-sm font-normal text-custom-text-300">
             Configure authentication modes for your team and restrict sign ups to be invite only.
           </div>
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-auto">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <div className="space-y-3">
-              <div className="text-lg font-medium">Authentication modes</div>
+              <div className="text-lg font-medium pb-1">Sign-up configuration</div>
+              <div className={cn("w-full flex items-center gap-14 rounded")}>
+                <div className="flex grow items-center gap-4">
+                  <div className="grow">
+                    <div className={cn("font-medium leading-5 text-custom-text-100 text-sm")}>
+                      Allow anyone to sign up without invite
+                    </div>
+                    <div className={cn("font-normal leading-5 text-custom-text-300 text-xs")}>
+                      Toggling this off will disable self sign ups.
+                    </div>
+                  </div>
+                </div>
+                <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+                  <div className="flex items-center gap-4">
+                    <ToggleSwitch
+                      value={Boolean(parseInt(enableSignUpConfig))}
+                      onChange={() => {
+                        Boolean(parseInt(enableSignUpConfig)) === true
+                          ? updateConfig("ENABLE_SIGNUP", "0")
+                          : updateConfig("ENABLE_SIGNUP", "1");
+                      }}
+                      size="sm"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="text-lg font-medium pt-6">Authentication modes</div>
               {authenticationMethodsCard.map((method) => (
                 <AuthenticationMethodCard
                   key={method.key}

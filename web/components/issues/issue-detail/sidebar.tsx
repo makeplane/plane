@@ -12,6 +12,7 @@ import {
   Tag,
   Trash2,
   Triangle,
+  Users,
   XCircle,
 } from "lucide-react";
 // hooks
@@ -24,7 +25,6 @@ import {
   RelatedIcon,
   TOAST_TYPE,
   Tooltip,
-  UserGroupIcon,
   setToast,
 } from "@plane/ui";
 import {
@@ -48,7 +48,7 @@ import {
 } from "@/components/issues";
 // helpers
 // types
-import { STATE_GROUPS } from "@/constants/state";
+import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
@@ -117,8 +117,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const stateDetails = getStateById(issue.state_id);
   // auth
   const isArchivingAllowed = !is_archived && issueOperations.archive && isEditable;
-  const isInArchivableGroup =
-    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -219,7 +218,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+                <Users className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
               <MemberDropdown

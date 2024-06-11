@@ -5,9 +5,8 @@ import { RefreshCcw } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
-import { ProjectLogo } from "@/components/project";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 
@@ -35,7 +34,7 @@ export const ProjectInboxHeader: FC = observer(() => {
                   icon={
                     currentProjectDetails && (
                       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
                       </span>
                     )
                   }
@@ -46,7 +45,7 @@ export const ProjectInboxHeader: FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink label="Inbox Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                <BreadcrumbLink label="Inbox" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
               }
             />
           </Breadcrumbs>

@@ -32,3 +32,13 @@ export const PAGE_SORT_BY_OPTIONS: {
   { key: "asc", label: "Ascending" },
   { key: "desc", label: "Descending" },
 ];
+
+export type TCreatePageModal = {
+  isOpen: boolean;
+  pageAccess?: EPageAccess;
+}
+
+export const DEFAULT_CREATE_PAGE_MODAL_DATA: TCreatePageModal = {
+  isOpen: false,
+  pageAccess: EPageAccess.PUBLIC,
+};

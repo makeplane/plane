@@ -219,6 +219,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     scrollableContainerRef={scrollableContainerRef}
                     handleOnDrop={handleOnDrop}
                     orderBy={orderBy}
+                    isDropDisabled={_list.isDropDisabled}
+                    dropErrorMessage={_list.dropErrorMessage}
                     subGroupIssueHeaderCount={(groupByListId: string) =>
                       getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, groupByListId)
                     }

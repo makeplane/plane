@@ -147,6 +147,8 @@ const ProfileIssuesMobileHeader = observer(() => {
             }
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
+            displayFilters={issueFilters?.displayFilters ?? {}}
+            handleDisplayFiltersUpdate={handleDisplayFilters}
             states={states}
             labels={workspaceLabels}
             memberIds={members}

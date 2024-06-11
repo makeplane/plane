@@ -3,20 +3,19 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// ui
 import { Spinner, StateGroupIcon } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppRouter, useProjectState } from "@/hooks/store";
-import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
-// icons
-// helpers
-// types
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-import { TDropdownProps } from "./types";
 // constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
+// types
+import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -25,7 +24,8 @@ type Props = TDropdownProps & {
   onChange: (val: string) => void;
   onClose?: () => void;
   projectId: string;
-  value: string;
+  showDefaultState?: boolean;
+  value: string | undefined;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -43,6 +43,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     onClose,
     placement,
     projectId,
+    showDefaultState = true,
     showTooltip = false,
     tabIndex,
     value,
@@ -73,8 +74,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useAppRouter();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
-  const defaultStateList = statesList?.find((state) => state.default);
-  const stateValue = value ? value : defaultStateList?.id;
+  const defaultState = statesList?.find((state) => state.default);
+  const stateValue = value ?? (showDefaultState ? defaultState?.id : undefined);
 
   const options = statesList?.map((state) => ({
     value: state.id,
@@ -99,50 +100,27 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       setStateLoader(false);
     }
   };
+
+  const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    onOpen,
+    query,
+    setIsOpen,
+    setQuery,
+  });
+
   useEffect(() => {
     if (projectId) onOpen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    onClose && onClose();
-  };
-
-  const toggleDropdown = () => {
-    if (!isOpen) onOpen();
-    setIsOpen((prevIsOpen) => !prevIsOpen);
-    if (isOpen) onClose && onClose();
-  };
-
   const dropdownOnChange = (val: string) => {
     onChange(val);
     handleClose();
   };
-
-  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleDropdown();
-  };
-
-  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (query !== "" && e.key === "Escape") {
-      e.stopPropagation();
-      setQuery("");
-    }
-  };
-
-  useOutsideClickDetector(dropdownRef, handleClose);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
 
   return (
     <Combobox
@@ -194,7 +172,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                   {!hideIcon && (
                     <StateGroupIcon
                       stateGroup={selectedState?.group ?? "backlog"}
-                      color={selectedState?.color}
+                      color={selectedState?.color ?? "rgba(var(--color-text-300))"}
                       className="h-3 w-3 flex-shrink-0"
                     />
                   )}

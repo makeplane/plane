@@ -18,6 +18,7 @@ import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useEventTracker, useProjectInbox, useWorkspace } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 
 type TInboxIssueCreateRoot = {
   workspaceSlug: string;
@@ -42,6 +43,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const router = useRouter();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // hooks
   const { captureIssueEvent } = useEventTracker();
   const { createInboxIssue } = useProjectInbox();
@@ -61,8 +63,33 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     [formData]
   );
 
+  const handleEscKeyDown = (event: KeyboardEvent) => {
+    if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+      handleModalClose();
+    } else {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is still processing changes. Please wait before proceeding.",
+      });
+      event.preventDefault(); // Prevent default action if editor is not ready to discard
+    }
+  };
+
+  useKeypress("Escape", handleEscKeyDown);
+
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is still processing changes. Please wait before proceeding.",
+      });
+      return;
+    }
+
     const payload: Partial<TIssue> = {
       name: formData.name || "",
       description_html: formData.description_html || "<p></p>",
@@ -139,6 +166,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             handleData={handleFormData}
             editorRef={descriptionEditorRef}
             containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
+            onEnterKeyPress={() => submitBtnRef?.current?.click()}
           />
           <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
         </div>
@@ -153,11 +181,27 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           <span className="text-xs">Create more</span>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="neutral-primary" size="sm" type="button" onClick={handleModalClose}>
+          <Button
+            variant="neutral-primary"
+            size="sm"
+            type="button"
+            onClick={() => {
+              if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+                handleModalClose();
+              } else {
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: "Error!",
+                  message: "Editor is still processing changes. Please wait before proceeding.",
+                });
+              }
+            }}
+          >
             Discard
           </Button>
           <Button
             variant="primary"
+            ref={submitBtnRef}
             size="sm"
             type="submit"
             loading={formSubmitting}

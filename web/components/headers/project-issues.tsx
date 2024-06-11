@@ -9,9 +9,8 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-import { ProjectLogo } from "@/components/project";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -43,6 +42,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   } = useMember();
   const {
     issuesFilter: { issueFilters, updateFilters },
+    issues: { issuesCount },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -105,12 +105,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issueCount = currentProjectDetails
-    ? !issueFilters?.displayFilters?.sub_issue && currentProjectDetails?.sub_issues
-      ? currentProjectDetails?.total_issues - currentProjectDetails?.sub_issues
-      : currentProjectDetails?.total_issues
-    : undefined;
-
   const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
 
   return (
@@ -135,7 +129,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                       currentProjectDetails ? (
                         currentProjectDetails && (
                           <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                            <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
                           </span>
                         )
                       ) : (
@@ -153,14 +147,14 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
-            {issueCount && issueCount > 0 ? (
+            {issuesCount && issuesCount > 0 ? (
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
+                tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
                 position="bottom"
               >
                 <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                  {issueCount}
+                  {issuesCount}
                 </span>
               </Tooltip>
             ) : null}
@@ -188,6 +182,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }

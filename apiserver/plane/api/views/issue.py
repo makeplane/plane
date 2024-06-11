@@ -36,7 +36,7 @@ from plane.app.permissions import (
     ProjectLitePermission,
     ProjectMemberPermission,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -182,7 +182,6 @@ class IssueAPIEndpoint(BaseAPIView):
         issue_queryset = (
             self.get_queryset()
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()

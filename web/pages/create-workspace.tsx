@@ -16,8 +16,8 @@ import DefaultLayout from "@/layouts/default-layout";
 import { NextPageWithLayout } from "@/lib/types";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
 // types
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
@@ -33,11 +33,13 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
     organization_size: "",
   });
   // hooks
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const onSubmit = async (workspace: IWorkspace) => {
     await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
+
+  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
   return (
     <>
@@ -50,11 +52,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              {theme === "light" ? (
-                <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-              ) : (
-                <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-              )}
+              <Image src={logo} alt="Plane logo" />
             </div>
           </Link>
           <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
