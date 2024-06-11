@@ -19,7 +19,7 @@ export interface IModuleStore {
   //Loaders
   loader: boolean;
   fetchedMap: Record<string, boolean>;
-  plotType: TModulePlotType;
+  plotType: Record<string, TModulePlotType>;
   // observables
   moduleMap: Record<string, IModule>;
   // computed
@@ -31,8 +31,9 @@ export interface IModuleStore {
   getModuleById: (moduleId: string) => IModule | null;
   getModuleNameById: (moduleId: string) => string;
   getProjectModuleIds: (projectId: string) => string[] | null;
+  getPlotTypeByModuleId: (moduleId: string) => TModulePlotType;
   // actions
-  setPlotType: (plotType: TModulePlotType) => void;
+  setPlotType: (moduleId: string, plotType: TModulePlotType) => void;
   // fetch
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
@@ -74,7 +75,7 @@ export class ModulesStore implements IModuleStore {
   // observables
   loader: boolean = false;
   moduleMap: Record<string, IModule> = {};
-  plotType: TModulePlotType = "burndown";
+  plotType: Record<string, TModulePlotType> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
   // root store
@@ -218,11 +219,15 @@ export class ModulesStore implements IModuleStore {
     return projectModuleIds;
   });
 
+  getPlotTypeByModuleId = (moduleId: string) => this.plotType[moduleId] || "burndown";
+
   /**
    * @description updates the plot type for the module store
    * @param {TModulePlotType} plotType
    */
-  setPlotType = (plotType: TModulePlotType) => (this.plotType = plotType);
+  setPlotType = (moduleId: string, plotType: TModulePlotType) => {
+    set(this.plotType, [moduleId], plotType);
+  };
 
   /**
    * @description fetch all modules
@@ -314,7 +319,7 @@ export class ModulesStore implements IModuleStore {
   fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
     await this.moduleService
       .getModuleDetails(workspaceSlug, projectId, moduleId, {
-        plot_type: this.plotType,
+        plot_type: this.getPlotTypeByModuleId(moduleId),
       })
       .then((response) => {
         runInAction(() => {
