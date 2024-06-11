@@ -17,8 +17,18 @@ export type TModuleStatus =
 
 export interface IModule {
   backlog_issues: number;
+  started_issues: number;
+  unstarted_issues: number;
   cancelled_issues: number;
+  backlog_estimate_issues: number;
+  started_estimate_issues: number;
+  unstarted_estimate_issues: number;
+  cancelled_estimate_issues: number;
+  total_issues: number;
   completed_issues: number;
+  total_estimate_points?: number;
+  completed_estimate_points?: number;
+
   created_at: string;
   created_by?: string;
   description: string;
@@ -39,13 +49,8 @@ export interface IModule {
   sort_order: number;
   sub_issues?: number;
   start_date: string | null;
-  started_issues: number;
   status?: TModuleStatus;
   target_date: string | null;
-  total_issues: number;
-  unstarted_issues: number;
-  total_estimate_points?: number;
-  completed_estimate_points?: number;
   updated_at: string;
   updated_by?: string;
   archived_at: string | null;
@@ -78,3 +83,5 @@ export type ModuleLink = {
 export type SelectModuleType =
   | (IModule & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
+
+export type TModulePlotType = "burndown" | "points";

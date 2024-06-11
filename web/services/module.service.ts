@@ -1,5 +1,5 @@
 // types
-import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/types";
+import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse, TModulePlotType } from "@plane/types";
 // services
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
@@ -43,6 +43,19 @@ export class ModuleService extends APIService {
 
   async getModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<IModule> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getAnalyticsModuleDetails(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    params: { plot_type: TModulePlotType }
+  ): Promise<IModule | undefined> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, { params: params })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

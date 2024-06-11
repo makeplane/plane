@@ -58,12 +58,12 @@ export type TProgressSnapshot = {
 export type TAssigneesDistribution = {
   assignee_id: string | null;
   avatar: string | null;
-  completed_issues: number;
   first_name: string | null;
   last_name: string | null;
   display_name: string | null;
-  pending_issues: number;
-  total_issues: number;
+  total: number;
+  pending: number;
+  completed: number;
 };
 
 export type TCompletionChartDistribution = {
@@ -72,11 +72,11 @@ export type TCompletionChartDistribution = {
 
 export type TLabelsDistribution = {
   color: string | null;
-  completed_issues: number;
   label_id: string | null;
   label_name: string | null;
-  pending_issues: number;
-  total_issues: number;
+  total: number;
+  pending: number;
+  completed: number;
 };
 
 export interface CycleIssueResponse {

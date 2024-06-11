@@ -162,8 +162,8 @@ export const SidebarProgressStats: React.FC<Props> = observer((props) => {
                         <span>{assignee?.display_name ?? ""}</span>
                       </div>
                     }
-                    completed={assignee.completed_issues}
-                    total={assignee.total_issues}
+                    completed={assignee.completed}
+                    total={assignee.total}
                     {...(!isPeekView &&
                       !isCompleted && {
                         onClick: () => handleFiltersUpdate("assignees", assignee.assignee_id ?? ""),
@@ -183,8 +183,8 @@ export const SidebarProgressStats: React.FC<Props> = observer((props) => {
                         <span>No assignee</span>
                       </div>
                     }
-                    completed={assignee.completed_issues}
-                    total={assignee.total_issues}
+                    completed={assignee.completed}
+                    total={assignee.total}
                   />
                 );
             })
@@ -218,8 +218,8 @@ export const SidebarProgressStats: React.FC<Props> = observer((props) => {
                         <span className="text-xs">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
-                    completed={label.completed_issues}
-                    total={label.total_issues}
+                    completed={label.completed}
+                    total={label.total}
                     {...(!isPeekView &&
                       !isCompleted && {
                         onClick: () => handleFiltersUpdate("labels", label.label_id ?? ""),
@@ -242,8 +242,8 @@ export const SidebarProgressStats: React.FC<Props> = observer((props) => {
                         <span className="text-xs">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
-                    completed={label.completed_issues}
-                    total={label.total_issues}
+                    completed={label.completed}
+                    total={label.total}
                   />
                 );
               }

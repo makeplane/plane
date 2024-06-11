@@ -5,7 +5,7 @@ import update from "lodash/update";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IModule, ILinkDetails } from "@plane/types";
+import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
 // helpers
 import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // services
@@ -36,6 +36,12 @@ export interface IModuleStore {
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
+  fetchAnalyticsModuleDetails: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    plotType: TModulePlotType
+  ) => Promise<IModule | undefined>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
@@ -96,6 +102,7 @@ export class ModulesStore implements IModuleStore {
       fetchArchivedModules: action,
       fetchArchivedModuleDetails: action,
       fetchModuleDetails: action,
+      fetchAnalyticsModuleDetails: action,
       createModule: action,
       updateModuleDetails: action,
       deleteModule: action,
@@ -307,6 +314,29 @@ export class ModulesStore implements IModuleStore {
       });
       return response;
     });
+
+  fetchAnalyticsModuleDetails = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    plotType: TModulePlotType
+  ) => {
+    try {
+      const moduleDetails = await this.moduleService.getAnalyticsModuleDetails(workspaceSlug, projectId, moduleId, {
+        plot_type: plotType,
+      });
+
+      if (moduleDetails) {
+        runInAction(() => {
+          set(this.moduleMap, [moduleId], moduleDetails);
+        });
+      }
+
+      return moduleDetails;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   /**
    * @description creates a new module

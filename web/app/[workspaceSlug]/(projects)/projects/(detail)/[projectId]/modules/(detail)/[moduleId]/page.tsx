@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { ModuleLayoutRoot } from "@/components/issues";
-import { ModuleDetailsSidebar } from "@/components/modules";
+import { ModuleAnalyticsSidebar } from "@/components/modules";
 // hooks
 import { useModule, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -68,7 +68,7 @@ const ModuleIssuesPage = observer(() => {
                   "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
               }}
             >
-              <ModuleDetailsSidebar moduleId={moduleId.toString()} handleClose={toggleSidebar} />
+              <ModuleAnalyticsSidebar moduleId={moduleId.toString()} handleClose={toggleSidebar} />
             </div>
           )}
         </div>

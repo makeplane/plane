@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import isEqual from "lodash/isEqual";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import {
-  AlertCircle,
   ArchiveRestoreIcon,
   CalendarClock,
   ChevronDown,
@@ -19,7 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // ui
 import {
   CustomMenu,
@@ -33,26 +31,24 @@ import {
   TextArea,
 } from "@plane/ui";
 // components
-import { LinkModal, LinksList, SidebarProgressStats } from "@/components/core";
-import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { LinkModal, LinksList } from "@/components/core";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import { ArchiveModuleModal, DeleteModuleModal } from "@/components/modules";
+import { ArchiveModuleModal, DeleteModuleModal, ModuleAnalyticsProgress } from "@/components/modules";
 // constant
+import { EEstimateSystem } from "@/constants/estimates";
 import {
   MODULE_LINK_CREATED,
   MODULE_LINK_DELETED,
   MODULE_LINK_UPDATED,
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker, useIssues } from "@/hooks/store";
-// types
+import { useModule, useUser, useEventTracker, useProjectEstimates } from "@/hooks/store";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -69,7 +65,7 @@ type Props = {
 };
 
 // TODO: refactor this component
-export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
+export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
@@ -79,8 +75,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = useParams();
-  const searchParams = useSearchParams();
-  const peekModule = searchParams.get("peekModule");
+
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -88,13 +83,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
     useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
-  const {
-    issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.MODULE);
-  const moduleDetails = getModuleById(moduleId);
+  const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
 
+  // derived values
+  const moduleDetails = getModuleById(moduleId);
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
   const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
+
+  const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
+  const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
+  const isEstimatePointValid = estimateType && estimateType?.type == EEstimateSystem.POINTS ? true : false;
 
   const { reset, control } = useForm({
     defaultValues,
@@ -254,46 +252,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
   }, [moduleDetails, reset]);
 
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      let newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        if (key === "state") {
-          if (isEqual(newValues, value)) newValues = [];
-          else newValues = value;
-        } else {
-          value.forEach((val) => {
-            if (!newValues.includes(val)) newValues.push(val);
-            else newValues.splice(newValues.indexOf(val), 1);
-          });
-        }
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        moduleId
-      );
-    },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
-  );
-
-  const startDate = getDate(moduleDetails?.start_date);
-  const endDate = getDate(moduleDetails?.target_date);
-  const isStartValid = startDate && startDate <= new Date();
-  const isEndValid = startDate && endDate && endDate >= startDate;
-
-  const progressPercentage = moduleDetails
-    ? Math.round((moduleDetails.completed_issues / moduleDetails.total_issues) * 100)
-    : null;
-
   const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setModuleLinkModal(true);
@@ -318,6 +276,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const issueCount =
     moduleDetails.total_issues === 0 ? "0 Issue" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+
+  const issueEstimatePointCount =
+    moduleDetails.total_estimate_points === 0
+      ? "0 Issue"
+      : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -559,99 +522,32 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
+
+          {/**
+           * NOTE: Render this section when estimate points of he projects is enabled and the estimate system is points
+           */}
+          {isEstimatePointValid && (
+            <div className="flex items-center justify-start gap-1">
+              <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+                <LayersIcon className="h-4 w-4" />
+                <span className="text-base">Points</span>
+              </div>
+              <div className="flex h-7 w-3/5 items-center">
+                <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
+              </div>
+            </div>
+          )}
         </div>
 
+        {workspaceSlug && projectId && moduleDetails?.id && (
+          <ModuleAnalyticsProgress
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            moduleId={moduleDetails?.id}
+          />
+        )}
+
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
-            <Disclosure defaultOpen>
-              {({ open }) => (
-                <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                  <Disclosure.Button
-                    className="flex w-full items-center justify-between gap-2 p-1.5"
-                    disabled={!isStartValid || !isEndValid}
-                  >
-                    <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">Progress</span>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      {progressPercentage ? (
-                        <span className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-xs font-medium text-amber-500">
-                          {progressPercentage ? `${progressPercentage}%` : ""}
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                      {isStartValid && isEndValid ? (
-                        <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
-                      ) : (
-                        <div className="flex items-center gap-1">
-                          <AlertCircle height={14} width={14} className="text-custom-text-200" />
-                          <span className="text-xs italic text-custom-text-200">
-                            {moduleDetails?.start_date && moduleDetails?.target_date
-                              ? "This module isn't active yet."
-                              : "Invalid date. Please enter valid date."}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </Disclosure.Button>
-                  <Transition show={open}>
-                    <Disclosure.Panel>
-                      <div className="flex flex-col gap-3">
-                        {moduleDetails.start_date && moduleDetails.target_date ? (
-                          <div className=" h-full w-full pt-4">
-                            <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
-                                </div>
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="relative h-40 w-full max-w-80">
-                              <ProgressChart
-                                distribution={moduleDetails.distribution?.completion_chart ?? {}}
-                                startDate={moduleDetails.start_date}
-                                endDate={moduleDetails.target_date}
-                                totalIssues={moduleDetails.total_issues}
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                        {moduleDetails.total_issues > 0 && (
-                          <div className="h-full w-full border-t border-custom-border-200 pt-5">
-                            <SidebarProgressStats
-                              distribution={moduleDetails.distribution}
-                              groupedIssues={{
-                                backlog: moduleDetails.backlog_issues,
-                                unstarted: moduleDetails.unstarted_issues,
-                                started: moduleDetails.started_issues,
-                                completed: moduleDetails.completed_issues,
-                                cancelled: moduleDetails.cancelled_issues,
-                              }}
-                              totalIssues={moduleDetails.total_issues}
-                              module={moduleDetails}
-                              isPeekView={Boolean(peekModule)}
-                              filters={issueFilters}
-                              handleFiltersUpdate={handleFiltersUpdate}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </Disclosure.Panel>
-                  </Transition>
-                </div>
-              )}
-            </Disclosure>
-          </div>
-
           <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
             {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
             <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
