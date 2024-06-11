@@ -5,10 +5,11 @@ import { useParams } from "next/navigation";
 // swr
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
+// type
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// constant
+// fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "@/constants/fetch-keys";
 // services
 import { NotificationService } from "@/services/notification.service";
@@ -79,7 +80,7 @@ const useUserNotification = (): any => {
     }, false);
   };
 
-  const mutateNotification = (notificationId: string, value: Object) => {
+  const mutateNotification = (notificationId: string, value: any) => {
     notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 
