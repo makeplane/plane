@@ -426,7 +426,6 @@ class ModuleViewSet(BaseViewSet):
         return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
-        plot_type = request.GET.get("plot_type", "burndown")
         queryset = (
             self.get_queryset()
             .filter(archived_at__isnull=True)
@@ -443,49 +442,103 @@ class ModuleViewSet(BaseViewSet):
             )
         )
 
-        if plot_type == "points":
-            total_issues_annotation = Sum(
-                Cast("estimate_point__value", IntegerField())
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        data = ModuleDetailSerializer(queryset.first()).data
+        data["estimate_distribution"] = None
+
+        if estimate_type:
+            data["estimate_distribution"]["assignee_distribution"] = (
+                Issue.objects.filter(
+                    issue_module__module_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(first_name=F("assignees__first_name"))
+                .annotate(last_name=F("assignees__last_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(display_name=F("assignees__display_name"))
+                .annotate(avatar=F("assignees__avatar"))
+                .values(
+                    "first_name",
+                    "last_name",
+                    "assignee_id",
+                    "avatar",
+                    "display_name",
+                )
+                .annotate(
+                    total=Sum(Cast("estimate_point__value", IntegerField())),
+                )
+                .annotate(
+                    completed=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("first_name", "last_name")
             )
-            completed_issues_annotation = Sum(
-                Cast("estimate_point__value", IntegerField()),
-                filter=Q(
-                    completed_at__isnull=False,
-                    archived_at__isnull=True,
-                    is_draft=False,
-                ),
+
+            data["estimate_distribution"]["label_distribution"] = (
+                Issue.objects.filter(
+                    issue_module__module_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(
+                    total=Sum(Cast("estimate_point__value", IntegerField())),
+                )
+                .annotate(
+                    completed=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("label_name")
             )
-            pending_issues_annotation = Sum(
-                Cast("estimate_point__value", IntegerField()),
-                filter=Q(
-                    completed_at__isnull=True,
-                    archived_at__isnull=True,
-                    is_draft=False,
-                ),
-            )
-        else:
-            total_issues_annotation = Count(
-                "id",
-                filter=Q(
-                    archived_at__isnull=True,
-                    is_draft=False,
-                ),
-            )
-            completed_issues_annotation = Count(
-                "id",
-                filter=Q(
-                    completed_at__isnull=False,
-                    archived_at__isnull=True,
-                    is_draft=False,
-                ),
-            )
-            pending_issues_annotation = Count(
-                "id",
-                filter=Q(
-                    completed_at__isnull=True,
-                    archived_at__isnull=True,
-                    is_draft=False,
-                ),
+            modules = queryset.first()
+            data["estimate_distribution"]["completion_chart"] = burndown_plot(
+                queryset=modules,
+                slug=slug,
+                project_id=project_id,
+                plot_type="points",
+                module_id=pk,
             )
 
         assignee_distribution = (
@@ -507,13 +560,33 @@ class ModuleViewSet(BaseViewSet):
                 "display_name",
             )
             .annotate(
-                total=total_issues_annotation,
+                total_issues=Count(
+                    "id",
+                    filter=Q(
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                ),
             )
             .annotate(
-                completed=completed_issues_annotation
+                completed_issues=Count(
+                    "id",
+                    filter=Q(
+                        completed_at__isnull=False,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
             )
             .annotate(
-                pending=pending_issues_annotation
+                pending_issues=Count(
+                    "id",
+                    filter=Q(
+                        completed_at__isnull=True,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
             )
             .order_by("first_name", "last_name")
         )
@@ -529,13 +602,33 @@ class ModuleViewSet(BaseViewSet):
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
             .annotate(
-                total=total_issues_annotation,
+                total_issues=Count(
+                    "id",
+                    filter=Q(
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                ),
             )
             .annotate(
-                completed=completed_issues_annotation
+                completed_issues=Count(
+                    "id",
+                    filter=Q(
+                        completed_at__isnull=False,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
             )
             .annotate(
-                pending=pending_issues_annotation
+                pending_issues=Count(
+                    "id",
+                    filter=Q(
+                        completed_at__isnull=True,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
             )
             .order_by("label_name")
         )
@@ -554,7 +647,7 @@ class ModuleViewSet(BaseViewSet):
                 queryset=modules,
                 slug=slug,
                 project_id=project_id,
-                plot_type=plot_type,
+                plot_type="issues",
                 module_id=pk,
             )
 
