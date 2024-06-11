@@ -374,6 +374,51 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             )
 
+            if plot_type == "points":
+                total_issues_annotation = Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+                completed_issues_annotation = Sum(
+                    Cast("estimate_point__value", IntegerField()),
+                    filter=Q(
+                        completed_at__isnull=False,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+                pending_issues_annotation = Sum(
+                    Cast("estimate_point__value", IntegerField()),
+                    filter=Q(
+                        completed_at__isnull=True,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+            else:
+                total_issues_annotation = Count(
+                    "id",
+                    filter=Q(
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+                completed_issues_annotation = Count(
+                    "id",
+                    filter=Q(
+                        completed_at__isnull=False,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+                pending_issues_annotation = Count(
+                    "id",
+                    filter=Q(
+                        completed_at__isnull=True,
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+
             if data:
                 assignee_distribution = (
                     Issue.objects.filter(
@@ -386,31 +431,10 @@ class CycleViewSet(BaseViewSet):
                     .annotate(avatar=F("assignees__avatar"))
                     .values("display_name", "assignee_id", "avatar")
                     .annotate(
-                        total_issues=Count(
-                            "id",
-                            filter=Q(archived_at__isnull=True, is_draft=False),
-                        ),
+                        total=total_issues_annotation,
                     )
-                    .annotate(
-                        completed_issues=Count(
-                            "id",
-                            filter=Q(
-                                completed_at__isnull=False,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
-                    .annotate(
-                        pending_issues=Count(
-                            "id",
-                            filter=Q(
-                                completed_at__isnull=True,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
+                    .annotate(completed=completed_issues_annotation)
+                    .annotate(pending=pending_issues_annotation)
                     .order_by("display_name")
                 )
 
@@ -425,31 +449,10 @@ class CycleViewSet(BaseViewSet):
                     .annotate(label_id=F("labels__id"))
                     .values("label_name", "color", "label_id")
                     .annotate(
-                        total_issues=Count(
-                            "id",
-                            filter=Q(archived_at__isnull=True, is_draft=False),
-                        )
+                        total=total_issues_annotation,
                     )
-                    .annotate(
-                        completed_issues=Count(
-                            "id",
-                            filter=Q(
-                                completed_at__isnull=False,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
-                    .annotate(
-                        pending_issues=Count(
-                            "id",
-                            filter=Q(
-                                completed_at__isnull=True,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
+                    .annotate(completed=completed_issues_annotation)
+                    .annotate(pending=pending_issues_annotation)
                     .order_by("label_name")
                 )
                 data[0]["distribution"] = {
@@ -716,6 +719,51 @@ class CycleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if plot_type == "points":
+            total_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField())
+            )
+            completed_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField()),
+                filter=Q(
+                    completed_at__isnull=False,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            pending_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField()),
+                filter=Q(
+                    completed_at__isnull=True,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+        else:
+            total_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            completed_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    completed_at__isnull=False,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            pending_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    completed_at__isnull=True,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+
         # Assignee Distribution
         assignee_distribution = (
             Issue.objects.filter(
@@ -736,31 +784,10 @@ class CycleViewSet(BaseViewSet):
                 "display_name",
             )
             .annotate(
-                total_issues=Count(
-                    "id",
-                    filter=Q(archived_at__isnull=True, is_draft=False),
-                ),
+                total=total_issues_annotation,
             )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
+            .annotate(completed=completed_issues_annotation)
+            .annotate(pending=pending_issues_annotation)
             .order_by("first_name", "last_name")
         )
 
@@ -776,31 +803,10 @@ class CycleViewSet(BaseViewSet):
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
             .annotate(
-                total_issues=Count(
-                    "id",
-                    filter=Q(archived_at__isnull=True, is_draft=False),
-                ),
+                total=total_issues_annotation,
             )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
+            .annotate(completed=completed_issues_annotation)
+            .annotate(pending=pending_issues_annotation)
             .order_by("label_name")
         )
 
@@ -1018,6 +1024,51 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             cycle_id=cycle_id,
         )
 
+        if plot_type == "points":
+            total_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField())
+            )
+            completed_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField()),
+                filter=Q(
+                    completed_at__isnull=False,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            pending_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField()),
+                filter=Q(
+                    completed_at__isnull=True,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+        else:
+            total_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            completed_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    completed_at__isnull=False,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            pending_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    completed_at__isnull=True,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+
         # Get the assignee distribution
         assignee_distribution = (
             Issue.objects.filter(
@@ -1030,31 +1081,10 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .annotate(avatar=F("assignees__avatar"))
             .values("display_name", "assignee_id", "avatar")
             .annotate(
-                total_issues=Count(
-                    "id",
-                    filter=Q(archived_at__isnull=True, is_draft=False),
-                ),
+                total=total_issues_annotation,
             )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
+            .annotate(completed=completed_issues_annotation)
+            .annotate(pending=pending_issues_annotation)
             .order_by("display_name")
         )
         # assignee distribution serialized
@@ -1065,9 +1095,9 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
                 "avatar": item["avatar"],
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
+                "total": item["total"],
+                "completed": item["completed"],
+                "pending": item["pending"],
             }
             for item in assignee_distribution
         ]
@@ -1084,31 +1114,10 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
             .annotate(
-                total_issues=Count(
-                    "id",
-                    filter=Q(archived_at__isnull=True, is_draft=False),
-                )
+                total=total_issues_annotation,
             )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
+            .annotate(completed=completed_issues_annotation)
+            .annotate(pending=pending_issues_annotation)
             .order_by("label_name")
         )
 
@@ -1119,9 +1128,9 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
                 "avatar": item["avatar"],
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
+                "total": item["total"],
+                "completed": item["completed"],
+                "pending": item["pending"],
             }
             for item in assignee_distribution
         ]
@@ -1134,9 +1143,9 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 "label_id": (
                     str(item["label_id"]) if item["label_id"] else None
                 ),
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
+                "total": item["total"],
+                "completed": item["completed"],
+                "pending": item["pending"],
             }
             for item in label_distribution
         ]

@@ -430,17 +430,14 @@ class IssueVotePublicViewSet(BaseViewSet):
             return IssueVote.objects.none()
 
     def create(self, request, anchor, issue_id):
-        print("hite")
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        print("awer")
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
             project_id=project_deploy_board.project_id,
             issue_id=issue_id,
         )
-        print("AWer")
         # Add the user for workspace tracking
         if not ProjectMember.objects.filter(
             project_id=project_deploy_board.project_id,
