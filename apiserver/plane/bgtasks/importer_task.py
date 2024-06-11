@@ -28,6 +28,7 @@ from plane.db.models import (
 )
 
 from plane.bgtasks.user_welcome_task import send_welcome_slack
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 @shared_task
@@ -99,6 +100,9 @@ def service_importer(service, importer_id):
                 batch_size=100,
                 ignore_conflicts=True,
             )
+
+            # Sync workspace members
+            member_sync_task(importer.workspace.slug)
 
             ProjectMember.objects.bulk_create(
                 [
