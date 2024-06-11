@@ -55,7 +55,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, cycle.id) : null
+    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 10, cycle.id) : null
   );
 
   useSWR(
@@ -63,7 +63,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null
   );
 
-  const cycleIssues = activeCycleIssues ?? [];
+  const cycleIssues = activeCycleIssues;
 
   return (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
@@ -139,8 +139,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           >
             <div className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm">
               {cycleIssues ? (
-                cycleIssues.length > 0 ? (
-                  cycleIssues.map((issue: any) => (
+                cycleIssues?.count > 0 && Array.isArray(cycleIssues.results) ? (
+                  cycleIssues.results.map((issue: any) => (
                     <Link
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
