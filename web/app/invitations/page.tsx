@@ -25,11 +25,11 @@ import { getUserRole } from "@/helpers/user.helper";
 import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import { WorkspaceService } from "@/services/workspace.service";
 // images
-import emptyInvitation from "public/empty-state/invitation.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
+import emptyInvitation from "@/public/empty-state/invitation.svg";
+import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 
@@ -153,10 +153,11 @@ const UserInvitationsPage = observer(() => {
                     return (
                       <div
                         key={invitation.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded border px-3.5 py-5 ${isSelected
+                        className={`flex cursor-pointer items-center gap-2 rounded border px-3.5 py-5 ${
+                          isSelected
                             ? "border-custom-primary-100"
                             : "border-custom-border-200 hover:bg-custom-background-80"
-                          }`}
+                        }`}
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
                         <div className="flex-shrink-0">
