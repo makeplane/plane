@@ -15,6 +15,26 @@ class Command(BaseCommand):
         from plane.license.utils.encryption import encrypt_data
         from plane.license.utils.instance_value import get_configuration_value
 
+        mandatory_keys = [
+            {                           
+                "key": "SECRET_KEY",
+                "value": os.environ.get("SECRET_KEY", "1"),
+                "category": "CONFIGURATION",
+                "is_encrypted": True,
+            }
+        ]
+
+        for item in config_keys:
+            try:
+                InstanceConfiguration.objects.get(key=item.get("key"))
+            except ObjectDoesNotExist:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Either the {obj.key} or entry doesn't exist."
+                    )
+                )
+                return
+
         config_keys = [
             # Authentication Settings
             {
