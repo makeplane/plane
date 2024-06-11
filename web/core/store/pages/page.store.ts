@@ -6,7 +6,7 @@ import { TLogoProps, TPage } from "@plane/types";
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
 // services
-import { PageService } from "@/services/page.service";
+import { ProjectPageService } from "@/services/page";
 import { RootStore } from "../root.store";
 
 export type TLoader = "submitting" | "submitted" | "saved";
@@ -69,7 +69,7 @@ export class PageStore implements IPageStore {
   // reactions
   disposers: Array<() => void> = [];
   // services
-  pageService: PageService;
+  pageService: ProjectPageService;
 
   constructor(
     private store: RootStore,
@@ -144,7 +144,7 @@ export class PageStore implements IPageStore {
       removeFromFavorites: action,
     });
 
-    this.pageService = new PageService();
+    this.pageService = new ProjectPageService();
 
     const titleDisposer = reaction(
       () => this.name,
