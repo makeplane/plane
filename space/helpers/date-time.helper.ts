@@ -1,3 +1,6 @@
+import { format, isValid } from "date-fns";
+import isNumber from "lodash/isNumber";
+
 export const timeAgo = (time: any) => {
   switch (typeof time) {
     case "number":
@@ -14,24 +17,43 @@ export const timeAgo = (time: any) => {
 };
 
 /**
- * @description Returns date and month, if date is of the current year
- * @description Returns date, month adn year, if date is of a different year than current
- * @param {string} date
- * @example renderFullDate("2023-01-01") // 1 Jan
- * @example renderFullDate("2021-01-01") // 1 Jan, 2021
+ * This method returns a date from string of type yyyy-mm-dd
+ * This method is recommended to use instead of new Date() as this does not introduce any timezone offsets
+ * @param date
+ * @returns date or undefined
  */
+export const getDate = (date: string | Date | undefined | null): Date | undefined => {
+  try {
+    if (!date || date === "") return;
 
-export const renderFullDate = (date: string): string => {
-  if (!date) return "";
+    if (typeof date !== "string" && !(date instanceof String)) return date;
 
-  const months: string[] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
+    const year = parseInt(yearString);
+    const month = parseInt(monthString);
+    const day = parseInt(dayString);
+    if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
 
-  const currentDate: Date = new Date();
-  const [year, month, day]: number[] = date.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  } catch (e) {
+    return undefined;
+  }
+};
 
-  const formattedMonth: string = months[month - 1];
-  const formattedDay: string = day < 10 ? `0${day}` : day.toString();
-
-  if (currentDate.getFullYear() === year) return `${formattedDay} ${formattedMonth}`;
-  else return `${formattedDay} ${formattedMonth}, ${year}`;
+/**
+ * @returns {string | null} formatted date in the format of MMM dd, yyyy
+ * @description Returns date in the formatted format
+ * @param {Date | string} date
+ * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
+ */
+export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
+  // Parse the date to check if it is valid
+  const parsedDate = getDate(date);
+  // return if undefined
+  if (!parsedDate) return null;
+  // Check if the parsed date is valid before formatting
+  if (!isValid(parsedDate)) return null; // Return null for invalid dates
+  // Format the date in format (MMM dd, yyyy)
+  const formattedDate = format(parsedDate, "MMM dd, yyyy");
+  return formattedDate;
 };

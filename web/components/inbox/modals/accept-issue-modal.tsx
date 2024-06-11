@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";

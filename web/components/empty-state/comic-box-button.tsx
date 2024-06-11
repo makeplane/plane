@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { Ref, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // popper
@@ -60,7 +62,7 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
         <Popover.Panel
           as="div"
           className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100 p-5 relative min-w-80"
-          ref={setPopperElement}
+          ref={setPopperElement as Ref<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
           static

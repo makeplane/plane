@@ -1,30 +1,29 @@
-import { FC, ReactNode, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, ReactNode, useEffect } from "react";
+import { observer } from "mobx-react";
+// import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-import { IUser } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
+// hooks
+import { useWorkspace, useUser } from "@/hooks/store";
 // types
 
 export interface IPosthogWrapper {
   children: ReactNode;
-  user: IUser | undefined;
-  currentWorkspaceId: string | undefined;
-  workspaceRole: number | undefined;
-  projectRole: number | undefined;
-  posthogAPIKey: string | undefined;
-  posthogHost: string | undefined;
 }
 
-const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaceRole, currentWorkspaceId, projectRole } = props;
-  // states
-  const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
+const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
+  const { children } = props;
+  const {
+    data: user,
+    membership: { currentProjectRole, currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
   // router
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -35,11 +34,11 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         last_name: user.last_name,
         email: user.email,
         // use_case: user.use_case, FIXME:
-        workspace_role: workspaceRole ? getUserRole(workspaceRole) : undefined,
-        project_role: projectRole ? getUserRole(projectRole) : undefined,
+        workspace_role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole) : undefined,
+        project_role: currentProjectRole ? getUserRole(currentProjectRole) : undefined,
       });
     }
-  }, [user, workspaceRole, projectRole]);
+  }, [user, currentProjectRole, currentWorkspaceRole]);
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
@@ -55,30 +54,29 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
 
   useEffect(() => {
     // Join workspace group on workspace change
-    if (lastWorkspaceId !== currentWorkspaceId && currentWorkspaceId && user) {
-      setLastWorkspaceId(currentWorkspaceId);
-      posthog?.identify(user.email);
-      posthog?.group(GROUP_WORKSPACE, currentWorkspaceId);
+    if (currentWorkspace?.id && user?.email) {
+      posthog?.identify(user?.email);
+      posthog?.group(GROUP_WORKSPACE, currentWorkspace?.id);
     }
-  }, [currentWorkspaceId, lastWorkspaceId, user]);
+  }, [currentWorkspace?.id, user?.email]);
 
-  useEffect(() => {
+  useEffect(() =>
     // Track page views
-    const handleRouteChange = () => {
-      posthog?.capture("$pageview");
-    };
-    router.events.on("routeChangeComplete", handleRouteChange);
+    // const handleRouteChange = () => {
+    //   posthog?.capture("$pageview");
+    // };
+    // router.events.on("routeChangeComplete", handleRouteChange);
 
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
+    () => {
+      // router.events.off("routeChangeComplete", handleRouteChange);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    , []);
 
   if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST)
     return <PHProvider client={posthog}>{children}</PHProvider>;
 
   return <>{children}</>;
-};
+});
 
 export default PostHogProvider;

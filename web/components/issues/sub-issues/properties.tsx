@@ -29,8 +29,9 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
       <div className="h-5 flex-shrink-0">
         <StateDropdown
           value={issue.state_id}
-          projectId={issue.project_id}
+          projectId={issue.project_id ?? undefined}
           onChange={(val) =>
+            issue.project_id &&
             subIssueOperations.updateSubIssue(
               workspaceSlug,
               issue.project_id,
@@ -51,6 +52,7 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
         <PriorityDropdown
           value={issue.priority}
           onChange={(val) =>
+            issue.project_id &&
             subIssueOperations.updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
               priority: val,
             })
@@ -64,8 +66,9 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
       <div className="h-5 flex-shrink-0">
         <MemberDropdown
           value={issue.assignee_ids}
-          projectId={issue.project_id}
+          projectId={issue.project_id ?? undefined}
           onChange={(val) =>
+            issue.project_id &&
             subIssueOperations.updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
               assignee_ids: val,
             })

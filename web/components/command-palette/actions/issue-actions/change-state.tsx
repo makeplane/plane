@@ -1,6 +1,8 @@
+"use client";
+
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // hooks
 import { Check } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -18,9 +20,8 @@ type Props = {
 
 export const ChangeIssueState: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  // router params
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     issues: { updateIssue },

@@ -1,3 +1,5 @@
+"use client";
+
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
 // document editor

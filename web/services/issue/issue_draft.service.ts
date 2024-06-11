@@ -1,14 +1,14 @@
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
-import { TIssue } from "@plane/types";
+import { TIssue, TIssuesResponse } from "@plane/types";
 
 export class IssueDraftService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getDraftIssues(workspaceSlug: string, projectId: string, query?: any): Promise<TIssue[]> {
+  async getDraftIssues(workspaceSlug: string, projectId: string, query?: any): Promise<TIssuesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
       params: { ...query },
     })
@@ -18,7 +18,7 @@ export class IssueDraftService extends APIService {
       });
   }
 
-  async createDraftIssue(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createDraftIssue(workspaceSlug: string, projectId: string, data: any): Promise<TIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -26,7 +26,7 @@ export class IssueDraftService extends APIService {
       });
   }
 
-  async updateDraftIssue(workspaceSlug: string, projectId: string, issueId: string, data: any): Promise<any> {
+  async updateDraftIssue(workspaceSlug: string, projectId: string, issueId: string, data: any): Promise<void> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -34,7 +34,7 @@ export class IssueDraftService extends APIService {
       });
   }
 
-  async deleteDraftIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async deleteDraftIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -42,7 +42,7 @@ export class IssueDraftService extends APIService {
       });
   }
 
-  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string, queries?: any): Promise<any> {
+  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string, queries?: any): Promise<TIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`, {
       params: queries,
     })

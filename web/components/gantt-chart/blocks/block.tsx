@@ -10,11 +10,12 @@ import { BLOCK_HEIGHT } from "../constants";
 // components
 import { ChartAddBlock, ChartDraggable } from "../helpers";
 import { useGanttChart } from "../hooks";
-// types
-import { IBlockUpdateData, IGanttBlock } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
-  block: IGanttBlock;
+  blockId: string;
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  showAllBlocks: boolean;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
@@ -27,7 +28,9 @@ type Props = {
 
 export const GanttChartBlock: React.FC<Props> = observer((props) => {
   const {
-    block,
+    blockId,
+    getBlockById,
+    showAllBlocks,
     blockToRender,
     blockUpdateHandler,
     enableBlockLeftResize,
@@ -38,8 +41,13 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     selectionHelpers,
   } = props;
   // store hooks
-  const { updateActiveBlockId, isBlockActive } = useGanttChart();
+  const { currentViewData, updateActiveBlockId, isBlockActive } = useGanttChart();
   const { getIsIssuePeeked } = useIssueDetail();
+
+  const block = getBlockById(blockId, currentViewData);
+
+  // hide the block if it doesn't have start and target dates and showAllBlocks is false
+  if (!block || (!showAllBlocks && !(block.start_date && block.target_date))) return null;
 
   const isBlockVisibleOnChart = block.start_date && block.target_date;
 
@@ -73,13 +81,14 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     });
   };
 
+  if (!block.data) return null;
+
   const isBlockSelected = selectionHelpers.getIsEntitySelected(block.id);
   const isBlockFocused = selectionHelpers.getIsEntityActive(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);
 
   return (
     <div
-      key={`block-${block.id}`}
       className="relative min-w-full w-max"
       style={{
         height: `${BLOCK_HEIGHT}px`,
@@ -93,7 +102,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
           "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
           "border border-r-0 border-custom-border-400": isBlockFocused,
         })}
-        onMouseEnter={() => updateActiveBlockId(block.id)}
+        onMouseEnter={() => updateActiveBlockId(blockId)}
         onMouseLeave={() => updateActiveBlockId(null)}
       >
         {isBlockVisibleOnChart ? (

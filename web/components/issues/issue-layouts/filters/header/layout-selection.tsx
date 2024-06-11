@@ -1,17 +1,19 @@
+"use client";
+
 import React from "react";
 
 // ui
-import { TIssueLayouts } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // types
-import { ISSUE_LAYOUTS } from "@/constants/issue";
+// constants
+import { EIssueLayoutTypes,ISSUE_LAYOUTS } from "@/constants/issue";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
 
 type Props = {
-  layouts: TIssueLayouts[];
-  onChange: (layout: TIssueLayouts) => void;
-  selectedLayout: TIssueLayouts | undefined;
+  layouts: EIssueLayoutTypes[];
+  onChange: (layout: EIssueLayoutTypes) => void;
+  selectedLayout: EIssueLayoutTypes | undefined;
 };
 
 export const LayoutSelection: React.FC<Props> = (props) => {

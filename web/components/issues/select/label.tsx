@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -17,7 +17,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: string[];
   onChange: (value: string[]) => void;
-  projectId: string;
+  projectId: string | undefined;
   label?: JSX.Element;
   disabled?: boolean;
   tabIndex?: number;
@@ -38,8 +38,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     buttonClassName,
   } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectLabels, fetchProjectLabels } = useLabel();
   // states

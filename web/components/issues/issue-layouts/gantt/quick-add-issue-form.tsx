@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState, useRef, FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { IProject, TIssue } from "@plane/types";
@@ -50,13 +52,7 @@ const Inputs: FC<IInputProps> = (props) => {
 type IGanttQuickAddIssueForm = {
   prePopulatedData?: Partial<TIssue>;
   onSuccess?: (data: TIssue) => Promise<void> | void;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -64,10 +60,10 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observer((props) => {
-  const { prePopulatedData, quickAddCallback, viewId } = props;
+  const { prePopulatedData, quickAddCallback } = props;
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
   // hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
@@ -111,7 +107,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {
@@ -129,14 +125,14 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         });
     }

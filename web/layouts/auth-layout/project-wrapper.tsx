@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { JoinProject } from "@/components/auth-screens";
@@ -9,7 +9,7 @@ import { EmptyState, LogoSpinner } from "@/components/common";
 import {
   useEventTracker,
   useCycle,
-  useEstimate,
+  useProjectEstimates,
   useLabel,
   useMember,
   useModule,
@@ -44,10 +44,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   } = useMember();
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
-  const { fetchProjectEstimates } = useEstimate();
+  const { getProjectEstimates } = useProjectEstimates();
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   // fetching project details
   useSWR(
@@ -80,7 +79,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project estimates
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId ? () => getProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project cycles

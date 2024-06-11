@@ -4,7 +4,7 @@ from .project.base import (
     ProjectUserViewsEndpoint,
     ProjectFavoritesViewSet,
     ProjectPublicCoverImagesEndpoint,
-    ProjectDeployBoardViewSet,
+    DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
 )
 
@@ -192,6 +192,7 @@ from .external.base import (
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
+    EstimatePointEndpoint,
 )
 
 from .inbox.base import InboxViewSet, InboxIssueViewSet

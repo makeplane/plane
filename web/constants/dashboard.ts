@@ -1,19 +1,22 @@
+"use client";
+
 import { linearGradientDef } from "@nivo/core";
-// assets
+// icons
 import { BarChart2, Briefcase, CheckCircle, Home } from "lucide-react";
+// types
+import { TIssuesListTypes, TStateGroups } from "@plane/types";
+// ui
 import { ContrastIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
+// assets
 import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
 import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
 import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
 import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
 import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
 import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
-// types
-import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
-// icons
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [

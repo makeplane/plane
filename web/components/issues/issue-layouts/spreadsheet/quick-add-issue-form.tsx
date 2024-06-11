@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { TIssue } from "@plane/types";
@@ -21,13 +23,7 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<TIssue>;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
+  quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -58,13 +54,13 @@ const Inputs = (props: any) => {
 };
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback } = props;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails } = useProject();
   const { captureIssueEvent } = useEventTracker();
   // router
-  const router = useRouter();
+  const pathname = usePathname();
   // form info
   const {
     reset,
@@ -160,12 +156,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(
-        currentWorkspace.slug,
-        currentProjectDetails.id,
-        { ...payload } as TIssue,
-        viewId
-      );
+      const quickAddPromise = quickAddCallback(currentProjectDetails.id, { ...payload } as TIssue);
       setPromiseToast<any>(quickAddPromise, {
         loading: "Adding issue...",
         success: {
@@ -183,14 +174,14 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
-            path: router.asPath,
+            path: pathname,
           });
         })
         .catch((err) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
-            path: router.asPath,
+            path: pathname,
           });
           console.error(err);
         });

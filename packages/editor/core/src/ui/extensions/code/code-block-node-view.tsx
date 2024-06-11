@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import { common, createLowlight } from "lowlight";

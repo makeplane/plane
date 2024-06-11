@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 const useIntegrationPopup = ({
   provider,
@@ -14,8 +14,7 @@ const useIntegrationPopup = ({
 }) => {
   const [authLoader, setAuthLoader] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   const providerUrls: { [key: string]: string } = {
     github: `https://github.com/apps/${github_app_name}/installations/new?state=${workspaceSlug?.toString()}`,

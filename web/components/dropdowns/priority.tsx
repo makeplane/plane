@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, ReactNode, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
@@ -26,7 +28,7 @@ type Props = TDropdownProps & {
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
   onClose?: () => void;
-  value: TIssuePriorities | undefined;
+  value: TIssuePriorities | undefined | null;
 };
 
 type ButtonProps = {
@@ -302,7 +304,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     placement,
     showTooltip = false,
     tabIndex,
-    value,
+    value = "none",
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -361,8 +363,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-      ? BackgroundButton
-      : TransparentButton;
+    ? BackgroundButton
+    : TransparentButton;
 
   return (
     <Combobox
@@ -406,7 +408,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             onClick={handleOnClick}
           >
             <ButtonToRender
-              priority={value}
+              priority={value ?? undefined}
               className={cn(buttonClassName, {
                 "text-custom-text-200": resolvedTheme?.includes("dark") || resolvedTheme === "custom",
               })}

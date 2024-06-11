@@ -1,6 +1,8 @@
+"use client";
+
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { EditorRefApi } from "@plane/rich-text-editor";
@@ -28,7 +30,14 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-import { useAppRouter, useEstimate, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import {
+  useAppRouter,
+  useProjectEstimates,
+  useInstance,
+  useIssueDetail,
+  useProject,
+  useWorkspace,
+} from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
@@ -112,15 +121,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
   // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
   const { projectId: routeProjectId } = useAppRouter();
   const { config } = useInstance();
   const { getProjectById } = useProject();
-  const { areEstimatesEnabledForProject } = useEstimate();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (editorRef.current?.isEditorReadyToDiscard()) {
@@ -414,7 +422,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               <span className="text-xs text-red-500">{errors?.name?.message}</span>
             </div>
             <div className="border-[0.5px] border-custom-border-200 rounded-lg relative">
-              {data?.description_html === undefined ? (
+              {data?.description_html === undefined || !projectId ? (
                 <Loader className="min-h-[150px] max-h-64 space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-3 py-2 pt-3">
                   <Loader.Item width="100%" height="26px" />
                   <div className="flex items-center gap-2">
@@ -441,7 +449,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditor
-                        initialValue={value}
+                        initialValue={value ?? ""}
                         value={data.description_html}
                         workspaceSlug={workspaceSlug?.toString() as string}
                         workspaceId={workspaceId}
@@ -478,7 +486,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         )}
                       </button>
                     )}
-                    {config?.has_openai_configured && (
+                    {config?.has_openai_configured && projectId && (
                       <GptAssistantPopover
                         isOpen={gptAssistantModal}
                         projectId={projectId}
@@ -520,7 +528,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         onChange(stateId);
                         handleFormChange();
                       }}
-                      projectId={projectId}
+                      projectId={projectId?? undefined}
                       buttonVariant="border-with-text"
                       tabIndex={getTabIndex("state_id")}
                     />
@@ -550,7 +558,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 render={({ field: { value, onChange } }) => (
                   <div className="h-7">
                     <MemberDropdown
-                      projectId={projectId}
+                      projectId={projectId ?? undefined}
                       value={value}
                       onChange={(assigneeIds) => {
                         onChange(assigneeIds);
@@ -577,7 +585,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         onChange(labelIds);
                         handleFormChange();
                       }}
-                      projectId={projectId}
+                      projectId={projectId ?? undefined}
                       tabIndex={getTabIndex("label_ids")}
                     />
                   </div>
@@ -622,7 +630,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <CycleDropdown
-                        projectId={projectId}
+                        projectId={projectId ?? undefined}
                         onChange={(cycleId) => {
                           onChange(cycleId);
                           handleFormChange();
@@ -643,7 +651,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <ModuleDropdown
-                        projectId={projectId}
+                        projectId={projectId?? undefined}
                         value={value ?? []}
                         onChange={(moduleIds) => {
                           onChange(moduleIds);
@@ -659,14 +667,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   )}
                 />
               )}
-              {areEstimatesEnabledForProject(projectId) && (
+              {projectId && areEstimateEnabledByProjectId(projectId) && (
                 <Controller
                   control={control}
                   name="estimate_point"
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <EstimateDropdown
-                        value={value}
+                        value={value || undefined}
                         onChange={(estimatePoint) => {
                           onChange(estimatePoint);
                           handleFormChange();
@@ -740,7 +748,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       handleFormChange();
                       setSelectedParentIssue(issue);
                     }}
-                    projectId={projectId}
+                    projectId={projectId?? undefined}
                     issueId={isDraft ? undefined : data?.id}
                   />
                 )}

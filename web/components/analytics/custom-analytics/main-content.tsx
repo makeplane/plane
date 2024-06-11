@@ -1,16 +1,17 @@
-import { useRouter } from "next/router";
-import { mutate } from "swr";
-import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
+"use client";
 
-// components
-import { Button, Loader } from "@plane/ui";
-import { AnalyticsGraph, AnalyticsTable } from "@/components/analytics";
-// ui
-// helpers
-import { ANALYTICS } from "@/constants/fetch-keys";
-import { convertResponseToBarGraphData } from "@/helpers/analytics.helper";
+import { useParams } from "next/navigation";
+import { mutate } from "swr";
 // types
+import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
+// ui
+import { Button, Loader } from "@plane/ui";
+// components
+import { AnalyticsGraph, AnalyticsTable } from "@/components/analytics";
 // fetch-keys
+import { ANALYTICS } from "@/constants/fetch-keys";
+// helpers
+import { convertResponseToBarGraphData } from "@/helpers/analytics.helper";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
@@ -22,8 +23,7 @@ type Props = {
 export const CustomAnalyticsMainContent: React.FC<Props> = (props) => {
   const { analytics, error, fullScreen, params } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
   const barGraphData = convertResponseToBarGraphData(analytics?.distribution, params);

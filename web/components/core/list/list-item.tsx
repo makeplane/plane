@@ -1,5 +1,6 @@
+"use client";
 import React, { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // helpers

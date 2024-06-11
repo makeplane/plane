@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";

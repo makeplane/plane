@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import { Draggable } from "./draggable";
 import { Sortable } from "./sortable";
 
 const meta: Meta<typeof Sortable> = {
@@ -13,7 +12,7 @@ type Story = StoryObj<typeof Sortable>;
 
 const data = [
   { id: "1", name: "John Doe" },
-  { id: "2", name: "Jane Doe 2" },
+  { id: "2", name: "Satish" },
   { id: "3", name: "Alice" },
   { id: "4", name: "Bob" },
   { id: "5", name: "Charlie" },
@@ -26,7 +25,9 @@ export const Default: Story = {
       <div className="border ">{item.name}</div>
       // </Draggable>
     ),
-    onChange: (data) => console.log(data.map(({ id }) => id)),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange: (data) => console.log(data.map(({ id }: any) => id)),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     keyExtractor: (item: any) => item.id,
   },
 };

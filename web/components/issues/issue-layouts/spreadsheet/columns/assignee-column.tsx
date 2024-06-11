@@ -29,7 +29,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
             }
           );
         }}
-        projectId={issue?.project_id}
+        projectId={issue?.project_id ?? undefined}
         disabled={disabled}
         multiple
         placeholder="Assignees"

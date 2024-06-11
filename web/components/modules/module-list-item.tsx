@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 // icons
 import { Check, Info } from "lucide-react";
 // ui
@@ -8,8 +10,12 @@ import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction } from "@/components/modules";
+// constants
+import { EEstimateSystem } from "@/constants/estimates";
+// helpers
+import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useAppRouter, useModule, useProjectEstimates } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -22,18 +28,34 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const parentRef = useRef(null);
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
+  const { projectId } = useAppRouter();
+  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
 
   if (!moduleDetails) return null;
 
-  const completionPercentage =
-    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
+  /**
+   * NOTE: This completion percentage calculation is based on the total issues count.
+   * when estimates are available and estimate type is points, we should consider the estimate point count
+   * when estimates are available and estimate type is not points, then by default we consider the issue count
+   */
+  const isEstimateEnabled =
+    projectId &&
+    currentActiveEstimateId &&
+    areEstimateEnabledByProjectId(projectId) &&
+    estimateById(currentActiveEstimateId)?.type === EEstimateSystem.POINTS;
+
+  const completionPercentage = isEstimateEnabled
+    ? ((moduleDetails?.completed_estimate_points || 0) / (moduleDetails?.total_estimate_points || 0)) * 100
+    : ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
 
   const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
 
@@ -43,19 +65,12 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    const { query } = router;
 
-    if (query.peekModule) {
-      delete query.peekModule;
-      router.push({
-        pathname: router.pathname,
-        query: { ...query },
-      });
+    const query = generateQueryParams(searchParams, ["peekModule"]);
+    if (searchParams.has("peekModule")) {
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push({
-        pathname: router.pathname,
-        query: { ...query, peekModule: moduleId },
-      });
+      router.push(`${pathname}?${query && `${query}&`}peekModule=${moduleId}`);
     }
   };
 

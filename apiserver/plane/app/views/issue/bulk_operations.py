@@ -61,10 +61,16 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
         properties = request.data.get("properties", {})
 
-        if properties.get("start_date", False) and properties.get("target_date", False):
+        if properties.get("start_date", False) and properties.get(
+            "target_date", False
+        ):
             if (
-                datetime.strptime(properties.get("start_date"), "%Y-%m-%d").date()
-                > datetime.strptime(properties.get("target_date"), "%Y-%m-%d").date()
+                datetime.strptime(
+                    properties.get("start_date"), "%Y-%m-%d"
+                ).date()
+                > datetime.strptime(
+                    properties.get("target_date"), "%Y-%m-%d"
+                ).date()
             ):
                 return Response(
                     {
@@ -282,10 +288,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             batch_size=100,
         )
         # update the issue activity
-        [
-            issue_activity.delay(**activity)
-            for activity in issue_activities
-        ]
+        [issue_activity.delay(**activity) for activity in issue_activities]
         [
             bulk_issue_activity.delay(**activity)
             for activity in bulk_issue_activities

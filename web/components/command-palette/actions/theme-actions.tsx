@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";

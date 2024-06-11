@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IEmailCheckData } from "@plane/types";
 // components
 import {
@@ -35,7 +35,12 @@ type TAuthRoot = {
 export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   //router
   const router = useRouter();
-  const { email: emailParam, invitation_id, slug: workspaceSlug, error_code } = router.query;
+  const searchParams = useSearchParams();
+  // query params
+  const emailParam = searchParams.get("email");
+  const invitation_id = searchParams.get("invitation_id");
+  const workspaceSlug = searchParams.get("slug");
+  const error_code = searchParams.get("error_code");
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -130,7 +135,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     setErrorInfo(undefined);
     setEmail("");
     setAuthStep(EAuthSteps.EMAIL);
-    router.push(currentAuthMode === EAuthModes.SIGN_IN ? `/` : "/sign-up", undefined, { shallow: true });
+    router.push(currentAuthMode === EAuthModes.SIGN_IN ? `/` : "/sign-up");
   };
 
   // generating the unique code

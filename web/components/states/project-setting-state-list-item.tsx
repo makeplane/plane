@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 // icons
 import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
 // types
@@ -24,8 +26,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { markStateAsDefault, moveStatePosition } = useProjectState();

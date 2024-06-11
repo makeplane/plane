@@ -1,3 +1,4 @@
+"use client";
 import { FC, Fragment } from "react";
 // react-form
 import { ColorResult, SketchPicker } from "react-color";

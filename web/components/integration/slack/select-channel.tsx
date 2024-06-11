@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // types
 import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
@@ -27,8 +29,7 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = useParams();
 
   // FIXME:
   const { startAuth } = useIntegrationPopup({

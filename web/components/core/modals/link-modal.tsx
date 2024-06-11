@@ -1,5 +1,6 @@
-import { FC, useEffect, Fragment } from "react";
+"use client";
 
+import { FC, useEffect, Fragment } from "react";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless ui

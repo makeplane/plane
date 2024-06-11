@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // hooks
+import { generateQueryParams } from "@/helpers/router.helper";
 import { useModule } from "@/hooks/store";
 // components
 import { ModuleDetailsSidebar } from "./sidebar";
@@ -15,18 +16,17 @@ type Props = {
 export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
   // router
   const router = useRouter();
-  const { peekModule } = router.query;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const peekModule = searchParams.get("peekModule");
   // refs
   const ref = React.useRef(null);
   // store hooks
   const { fetchModuleDetails, fetchArchivedModuleDetails } = useModule();
 
   const handleClose = () => {
-    delete router.query.peekModule;
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query },
-    });
+    const query = generateQueryParams(searchParams, ["peekModule"]);
+    router.push(`${pathname}?${query}`);
   };
 
   useEffect(() => {

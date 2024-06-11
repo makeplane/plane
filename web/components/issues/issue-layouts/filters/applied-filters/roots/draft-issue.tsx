@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 import { AppliedFiltersList } from "@/components/issues";
@@ -10,8 +10,7 @@ import { useIssues, useLabel, useProjectState } from "@/hooks/store";
 
 export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
   // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },

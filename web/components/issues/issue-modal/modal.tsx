@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // ui
@@ -59,12 +61,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
-  const { issues: moduleIssues } = useIssues(EIssuesStoreType.MODULE);
-  const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues } = useIssues(storeType);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
-  // router
-  const router = useRouter();
+  // pathname
+  const pathname = usePathname();
   // local storage
   const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
     Record<string, Partial<TIssue>>
@@ -112,16 +113,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   }, [data, projectId, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
-    if (!workspaceSlug || !activeProjectId) return;
+    if (!workspaceSlug || !issue.project_id) return;
 
-    await cycleIssues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
-    fetchCycleDetails(workspaceSlug, activeProjectId, cycleId);
+    await issues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
+    fetchCycleDetails(workspaceSlug, issue.project_id, cycleId);
   };
 
   const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
     if (!workspaceSlug || !activeProjectId) return;
 
-    await moduleIssues.changeModulesInIssue(workspaceSlug, activeProjectId, issue.id, moduleIds, []);
+    await issues.changeModulesInIssue(workspaceSlug, activeProjectId, issue.id, moduleIds, []);
     moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug, activeProjectId, moduleId));
   };
 
@@ -168,7 +169,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_CREATED,
         payload: { ...response, state: "SUCCESS" },
-        path: router.asPath,
+        path: pathname,
       });
       !createMore && handleClose();
       if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
@@ -184,7 +185,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED" },
-        path: router.asPath,
+        path: pathname,
       });
     }
   };
@@ -205,7 +206,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
-        path: router.asPath,
+        path: pathname,
       });
       handleClose();
     } catch (error) {
@@ -217,7 +218,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
-        path: router.asPath,
+        path: pathname,
       });
     }
   };

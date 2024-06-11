@@ -1,3 +1,5 @@
+"use client";
+
 // types
 import { IProject } from "@plane/types";
 // icons

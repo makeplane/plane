@@ -32,7 +32,7 @@ export interface IProject {
   estimate: string | null;
   id: string;
   identifier: string;
-  is_deployed: boolean;
+  anchor: string | null;
   is_favorite: boolean;
   is_member: boolean;
   logo_props: TLogoProps;

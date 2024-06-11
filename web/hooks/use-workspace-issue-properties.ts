@@ -1,12 +1,12 @@
 import useSWR from "swr";
-import { useCycle, useEstimate, useLabel, useModule, useProjectState } from "./store";
+import { useCycle, useProjectEstimates, useLabel, useModule, useProjectState } from "./store";
 
 export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | undefined) => {
   const { fetchWorkspaceLabels } = useLabel();
 
   const { fetchWorkspaceStates } = useProjectState();
 
-  const { fetchWorkspaceEstimates } = useEstimate();
+  const { getWorkspaceEstimates } = useProjectEstimates();
 
   const { fetchWorkspaceModules } = useModule();
 
@@ -43,7 +43,7 @@ export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | u
   // fetch workspace estimates
   useSWR(
     workspaceSlug ? `WORKSPACE_ESTIMATES_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchWorkspaceEstimates(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => getWorkspaceEstimates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 };

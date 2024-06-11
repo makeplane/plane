@@ -1,5 +1,7 @@
+"use client";
+
 import { Command } from "cmdk";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { IWorkspaceSearchResults } from "@plane/types";
 // helpers
 import { commandGroups } from "@/components/command-palette";

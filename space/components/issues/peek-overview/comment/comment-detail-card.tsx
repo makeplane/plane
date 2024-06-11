@@ -10,25 +10,23 @@ import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetails, useProject, useUser } from "@/hooks/store";
+import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { Comment } from "@/types/issue";
 
 type Props = {
-  workspaceSlug: string;
+  anchor: string;
   comment: Comment;
 };
 
 export const CommentCard: React.FC<Props> = observer((props) => {
-  const { comment, workspaceSlug } = props;
+  const { anchor, comment } = props;
   // store hooks
-  const { workspace } = useProject();
   const { peekId, deleteIssueComment, updateIssueComment } = useIssueDetails();
   const { data: currentUser } = useUser();
+  const { workspaceSlug, workspace: workspaceID } = usePublish(anchor);
   const isInIframe = useIsInIframe();
-  // derived values
-  const workspaceId = workspace?.id;
 
   // states
   const [isEditing, setIsEditing] = useState(false);
@@ -45,13 +43,13 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   });
 
   const handleDelete = () => {
-    if (!workspaceSlug || !peekId) return;
-    deleteIssueComment(workspaceSlug, comment.project, peekId, comment.id);
+    if (!anchor || !peekId) return;
+    deleteIssueComment(anchor, peekId, comment.id);
   };
 
   const handleCommentUpdate = async (formData: Comment) => {
-    if (!workspaceSlug || !peekId) return;
-    updateIssueComment(workspaceSlug, comment.project, peekId, comment.id, formData);
+    if (!anchor || !peekId) return;
+    updateIssueComment(anchor, peekId, comment.id, formData);
     setIsEditing(false);
     editorRef.current?.setEditorValue(formData.comment_html);
     showEditorRef.current?.setEditorValue(formData.comment_html);
@@ -103,8 +101,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditor
-                    workspaceId={workspaceId as string}
-                    workspaceSlug={workspaceSlug}
+                    workspaceId={workspaceID?.toString() ?? ""}
+                    workspaceSlug={workspaceSlug?.toString() ?? ""}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
                     ref={editorRef}
                     initialValue={value}
@@ -135,7 +133,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
             <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html} />
-            <CommentReactions commentId={comment.id} projectId={comment.project} workspaceSlug={workspaceSlug} />
+            <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";

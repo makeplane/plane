@@ -8,6 +8,7 @@ module.exports = {
   content: {
     relative: true,
     files: [
+      "./app/**/*.{js,ts,jsx,tsx}",
       "./components/**/*.tsx",
       "./constants/**/*.{js,ts,jsx,tsx}",
       "./layouts/**/*.tsx",
