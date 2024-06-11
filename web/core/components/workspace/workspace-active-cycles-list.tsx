@@ -5,12 +5,12 @@ import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // plane web components
 import { ActiveCyclesListPage } from "@/plane-web/components/cycles";
-// components
-import { EmptyState } from "../empty-state";
 
 const perPage = 3;
 

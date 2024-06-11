@@ -5,9 +5,9 @@ import { TPageEmbedResponse } from "@plane/types";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // services
-import { PageService } from "@/services/page.service";
+import { ProjectPageService } from "@/services/page";
 
-const pageService = new PageService();
+const pageService = new ProjectPageService();
 
 export const useIssueEmbed = (workspaceSlug: string, projectId: string) => {
   const fetchIssues = async (searchQuery: string): Promise<TEmbedItem[]> =>

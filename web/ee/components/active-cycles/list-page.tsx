@@ -1,10 +1,11 @@
 import { FC, useEffect } from "react";
 import useSWR from "swr";
 // components
-import { ActiveCycleInfoCard } from "@/components/active-cycles";
 import { WorkspaceActiveCycleLoader } from "@/components/ui";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
+// plane web components
+import { ActiveCycleInfoCard } from "@/plane-web/components/active-cycles";
 // services
 import { CycleService } from "@/services/cycle.service";
 const cycleService = new CycleService();

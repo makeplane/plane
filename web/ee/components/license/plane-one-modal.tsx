@@ -7,6 +7,8 @@ import { ExternalLink } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { IInstanceChangeLog } from "@plane/types";
+// local components
+import { MarkdownRenderer } from "@/components/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -15,8 +17,6 @@ import { useInstance } from "@/hooks/store";
 import PlaneOneLogo from "@/public/plane-logos/plane-one.svg";
 // services
 import { InstanceService } from "@/services/instance.service";
-// local components
-import { MarkdownRenderer } from "../ui";
 
 export type PlaneOneModalProps = {
   isOpen: boolean;

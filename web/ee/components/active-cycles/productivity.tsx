@@ -3,8 +3,9 @@ import { FC } from "react";
 import { ICycle } from "@plane/types";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { EmptyState } from "@/components/empty-state";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { EmptyState } from "../empty-state";
 
 export type ActiveCycleProductivityProps = {
   cycle: ICycle;
