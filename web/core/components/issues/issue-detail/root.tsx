@@ -17,7 +17,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 // images
-import emptyIssue from "public/empty-state/issue.svg";
+import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";

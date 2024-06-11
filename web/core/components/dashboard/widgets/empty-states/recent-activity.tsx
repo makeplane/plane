@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // assets
-import DarkImage from "public/empty-state/dashboard/dark/recent-activity.svg";
-import LightImage from "public/empty-state/dashboard/light/recent-activity.svg";
+import DarkImage from "@/public/empty-state/dashboard/dark/recent-activity.svg";
+import LightImage from "@/public/empty-state/dashboard/light/recent-activity.svg";
 
 export const RecentActivityEmptyState = () => {
   // next-themes

@@ -18,8 +18,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { IntegrationService } from "@/services/integrations";
 // icons
-import GithubLogo from "public/services/github.png";
-import SlackLogo from "public/services/slack.png";
+import GithubLogo from "@/public/services/github.png";
+import SlackLogo from "@/public/services/slack.png";
 
 type Props = {
   integration: IAppIntegration;

@@ -9,12 +9,12 @@ import { TIssuesListTypes, TStateGroups } from "@plane/types";
 import { ContrastIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
 // assets
-import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
-import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
-import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
-import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
-import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
-import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
+import CompletedIssuesDark from "@/public/empty-state/dashboard/dark/completed-issues.svg";
+import OverdueIssuesDark from "@/public/empty-state/dashboard/dark/overdue-issues.svg";
+import UpcomingIssuesDark from "@/public/empty-state/dashboard/dark/upcoming-issues.svg";
+import CompletedIssuesLight from "@/public/empty-state/dashboard/light/completed-issues.svg";
+import OverdueIssuesLight from "@/public/empty-state/dashboard/light/overdue-issues.svg";
+import UpcomingIssuesLight from "@/public/empty-state/dashboard/light/upcoming-issues.svg";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 

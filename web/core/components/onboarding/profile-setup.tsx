@@ -24,10 +24,10 @@ import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 import { AuthService } from "@/services/auth.service";
 import { FileService } from "@/services/file.service";
 // assets
-import ProfileSetupDark from "public/onboarding/profile-setup-dark.svg";
-import ProfileSetupLight from "public/onboarding/profile-setup-light.svg";
-import UserPersonalizationDark from "public/onboarding/user-personalization-dark.svg";
-import UserPersonalizationLight from "public/onboarding/user-personalization-light.svg";
+import ProfileSetupDark from "@/public/onboarding/profile-setup-dark.svg";
+import ProfileSetupLight from "@/public/onboarding/profile-setup-light.svg";
+import UserPersonalizationDark from "@/public/onboarding/user-personalization-dark.svg";
+import UserPersonalizationLight from "@/public/onboarding/user-personalization-light.svg";
 
 type TProfileSetupFormValues = {
   first_name: string;

@@ -8,8 +8,8 @@ import { useUser } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // images
-import ProjectNotAuthorizedImg from "public/auth/project-not-authorized.svg";
-import WorkspaceNotAuthorizedImg from "public/auth/workspace-not-authorized.svg";
+import ProjectNotAuthorizedImg from "@/public/auth/project-not-authorized.svg";
+import WorkspaceNotAuthorizedImg from "@/public/auth/workspace-not-authorized.svg";
 
 type Props = {
   actionButton?: React.ReactNode;

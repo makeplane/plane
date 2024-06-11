@@ -9,7 +9,7 @@ import { useProject, useUser } from "@/hooks/store";
 // ui
 // icons
 // images
-import JoinProjectImg from "public/auth/project-not-authorized.svg";
+import JoinProjectImg from "@/public/auth/project-not-authorized.svg";
 
 export const JoinProject: React.FC = () => {
   // states

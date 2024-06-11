@@ -9,8 +9,8 @@ import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
 // assets
-import AllFiltersImage from "public/empty-state/project/all-filters.svg";
-import NameFilterImage from "public/empty-state/project/name-filter.svg";
+import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
+import NameFilterImage from "@/public/empty-state/project/name-filter.svg";
 
 export const ProjectCardList = observer(() => {
   // store hooks

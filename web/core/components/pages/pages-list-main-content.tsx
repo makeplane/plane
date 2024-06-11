@@ -11,8 +11,8 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { EPageAccess } from "@/constants/page";
 import { useCommandPalette, useProjectPages } from "@/hooks/store";
 // assets
-import AllFiltersImage from "public/empty-state/pages/all-filters.svg";
-import NameFilterImage from "public/empty-state/pages/name-filter.svg";
+import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
+import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
 
 type Props = {
   children: React.ReactNode;

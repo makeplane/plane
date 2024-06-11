@@ -19,8 +19,8 @@ import { SingleProgressStats } from "@/components/core";
 import { useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // images
-import emptyLabel from "public/empty-state/empty_label.svg";
-import emptyMembers from "public/empty-state/empty_members.svg";
+import emptyLabel from "@/public/empty-state/empty_label.svg";
+import emptyMembers from "@/public/empty-state/empty_members.svg";
 // components
 // ui
 // types

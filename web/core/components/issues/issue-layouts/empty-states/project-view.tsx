@@ -8,7 +8,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
-import emptyIssue from "public/empty-state/issue.svg";
+import emptyIssue from "@/public/empty-state/issue.svg";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks

@@ -13,12 +13,12 @@ import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tr
 // hooks
 import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
-import CyclesTour from "public/onboarding/cycles.webp";
-import IssuesTour from "public/onboarding/issues.webp";
-import ModulesTour from "public/onboarding/modules.webp";
-import PagesTour from "public/onboarding/pages.webp";
-import ViewsTour from "public/onboarding/views.webp";
-import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
+import CyclesTour from "@/public/onboarding/cycles.webp";
+import IssuesTour from "@/public/onboarding/issues.webp";
+import ModulesTour from "@/public/onboarding/modules.webp";
+import PagesTour from "@/public/onboarding/pages.webp";
+import ViewsTour from "@/public/onboarding/views.webp";
+import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal.svg";
 
 // constants
 

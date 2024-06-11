@@ -2,7 +2,7 @@
 import { IDefaultAnalyticsUser } from "@plane/types";
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
-import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
+import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
 // types
 
 type Props = {

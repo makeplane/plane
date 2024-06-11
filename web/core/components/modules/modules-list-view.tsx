@@ -10,8 +10,8 @@ import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
-import AllFiltersImage from "public/empty-state/module/all-filters.svg";
-import NameFilterImage from "public/empty-state/module/name-filter.svg";
+import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
+import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
 
 export const ModulesListView: React.FC = observer(() => {
   // router

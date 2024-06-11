@@ -3,7 +3,7 @@ import { IUserPriorityDistribution } from "@plane/types";
 import { IssuesByPriorityGraph } from "@/components/graphs";
 import { ProfileEmptyState } from "@/components/ui";
 // assets
-import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
+import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
 // types
 
 type Props = {

@@ -3,7 +3,7 @@ import { IDefaultAnalyticsResponse } from "@plane/types";
 import { LineGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import { MONTHS_LIST } from "@/constants/calendar";
-import emptyGraph from "public/empty-state/empty_graph.svg";
+import emptyGraph from "@/public/empty-state/empty_graph.svg";
 // types
 // constants
 

@@ -26,7 +26,7 @@ import {
 // images
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
-import GithubLogo from "public/services/github.png";
+import GithubLogo from "@/public/services/github.png";
 // hooks
 // components
 // icons

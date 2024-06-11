@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // assets
-import DarkImage from "public/empty-state/dashboard/dark/issues-by-priority.svg";
-import LightImage from "public/empty-state/dashboard/light/issues-by-priority.svg";
+import DarkImage from "@/public/empty-state/dashboard/dark/issues-by-priority.svg";
+import LightImage from "@/public/empty-state/dashboard/light/issues-by-priority.svg";
 
 export const IssuesByPriorityEmptyState = () => {
   // next-themes

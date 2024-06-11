@@ -8,8 +8,8 @@ import { CycleModuleListLayout } from "@/components/ui";
 // hooks
 import { useCycle, useCycleFilter } from "@/hooks/store";
 // assets
-import AllFiltersImage from "public/empty-state/cycle/all-filters.svg";
-import NameFilterImage from "public/empty-state/cycle/name-filter.svg";
+import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
+import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
 
 export interface ICyclesView {
   workspaceSlug: string;

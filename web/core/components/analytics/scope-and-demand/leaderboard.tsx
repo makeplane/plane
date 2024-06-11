@@ -1,7 +1,7 @@
 // ui
 import { ProfileEmptyState } from "@/components/ui";
 // image
-import emptyUsers from "public/empty-state/empty_users.svg";
+import emptyUsers from "@/public/empty-state/empty_users.svg";
 
 type Props = {
   users: {

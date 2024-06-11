@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Image from "next/image";
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BluePlaneLogoWithoutText from "@/public/plane-logos/blue-without-text.png";
 // components
 import { OnboardingStepIndicator } from "./step-indicator";
 
