@@ -1,8 +1,13 @@
+"use client";
+
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
+// ui
 import { Button } from "@plane/ui";
+// components
 import { ActiveCyclesListPage } from "@/components/active-cycles";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EmptyState } from "../empty-state";
 
@@ -14,8 +19,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState<number | null>(null); // workspaceActiveCycles.results.length
   // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = useParams();
 
   const activeCyclesPages = [];
 

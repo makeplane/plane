@@ -37,7 +37,7 @@ class ActiveCycleEndpoint(BaseAPIView):
         WorkspaceUserPermission,
     ]
 
-    def get_results_controller(self, results, active_cycles=None):
+    def get_results_controller(self, results, plot_type, active_cycles=None):
         for cycle in results:
             assignee_distribution = (
                 Issue.issue_objects.filter(
@@ -127,10 +127,12 @@ class ActiveCycleEndpoint(BaseAPIView):
                     slug=self.kwargs.get("slug"),
                     project_id=cycle["project_id"],
                     cycle_id=cycle["id"],
+                    plot_type=plot_type
                 )
         return results
 
     def get(self, request, slug):
+        plot_type = request.GET.get("plot_type", "issues")
         subquery = CycleFavorite.objects.filter(
             user=self.request.user,
             cycle_id=OuterRef("pk"),
@@ -253,7 +255,7 @@ class ActiveCycleEndpoint(BaseAPIView):
                 active_cycles, many=True
             ).data,
             controller=lambda results: self.get_results_controller(
-                results, active_cycles
+                results,plot_type, active_cycles
             ),
             default_per_page=int(request.GET.get("per_page", 3)),
         )
