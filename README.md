@@ -48,7 +48,7 @@ Meet [Plane](https://dub.sh/plane-website-readme), an open-source project manage
 
 The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account.
 
-If you would like to self-host Plane, please see our [deployment guide](https://docs.plane.so/docker-compose).
+If you would like to self-host Plane, please see our [deployment guide](https://docs.plane.so/self-hosting/overview).
 
 | Installation methods | Docs link                                                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
