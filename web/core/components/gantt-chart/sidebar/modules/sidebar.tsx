@@ -4,10 +4,10 @@ import { MutableRefObject } from "react";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { ChartDataType, IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
-import { CyclesSidebarBlock } from "./block";
+import { ModulesSidebarBlock } from "./block";
 // types
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
   enableReorder: boolean;
 };
 
-export const CycleGanttSidebar: React.FC<Props> = (props) => {
+export const ModuleGanttSidebar: React.FC<Props> = (props) => {
   const { blockUpdateHandler, blockIds, getBlockById, enableReorder } = props;
 
   const handleOnDrop = (
@@ -32,27 +32,27 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
   return (
     <div className="h-full">
       {blockIds ? (
-                blockIds.map((blockId, index) => {
-                  const block = getBlockById(blockId);
-                  if (!block.start_date || !block.target_date) return null;
-                  return (
-          <GanttDnDHOC
-            key={block.id}
-            id={block.id}
-            isLastChild={index === blockIds.length - 1}
-            isDragEnabled={enableReorder}
-            onDrop={handleOnDrop}
-          >
-            {(isDragging: boolean, dragHandleRef: MutableRefObject<HTMLButtonElement | null>) => (
-              <CyclesSidebarBlock
-                block={block}
-                enableReorder={enableReorder}
-                isDragging={isDragging}
-                dragHandleRef={dragHandleRef}
-              />
-            )}
-          </GanttDnDHOC>
-                )})
+        blockIds.map((blockId, index) => {
+          const block = getBlockById(blockId);
+          return (
+            <GanttDnDHOC
+              key={block.id}
+              id={block.id}
+              isLastChild={index === blockIds.length - 1}
+              isDragEnabled={enableReorder}
+              onDrop={handleOnDrop}
+            >
+              {(isDragging: boolean, dragHandleRef: MutableRefObject<HTMLButtonElement | null>) => (
+                <ModulesSidebarBlock
+                  block={block}
+                  enableReorder={enableReorder}
+                  isDragging={isDragging}
+                  dragHandleRef={dragHandleRef}
+                />
+              )}
+            </GanttDnDHOC>
+          );
+        })
       ) : (
         <Loader className="space-y-3 pr-2">
           <Loader.Item height="34px" />
