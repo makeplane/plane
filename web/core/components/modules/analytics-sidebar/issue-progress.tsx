@@ -192,6 +192,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                             startDate={moduleDetails.start_date}
                             endDate={moduleDetails.target_date}
                             totalIssues={moduleDetails.total_estimate_points}
+                            plotTitle={"points"}
                           />
                         ) : (
                           <ProgressChart
@@ -199,6 +200,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                             startDate={moduleDetails.start_date}
                             endDate={moduleDetails.target_date}
                             totalIssues={moduleDetails.total_issues}
+                            plotTitle={"issues"}
                           />
                         )}
                       </Fragment>
