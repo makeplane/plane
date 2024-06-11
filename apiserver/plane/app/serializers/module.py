@@ -228,7 +228,7 @@ class ModuleDetailSerializer(ModuleSerializer):
     cancelled_estimate_points = serializers.IntegerField(read_only=True)
 
     class Meta(ModuleSerializer.Meta):
-        fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues"]
+        fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues", "backlog_estimate_points", "unstarted_estimate_points", "started_estimate_points", "cancelled_estimate_points"]
 
 
 class ModuleUserPropertiesSerializer(BaseSerializer):
