@@ -1,16 +1,13 @@
 // types
-<<<<<<< HEAD
 import type {
   TIssue,
   IIssueDisplayProperties,
   TIssueLink,
   TIssueSubIssues,
   TIssueActivity,
+  TIssuesResponse,
   TBulkOperationsPayload,
 } from "@plane/types";
-=======
-import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity, TIssuesResponse, TBulkOperationsPayload } from "@plane/types";
->>>>>>> a0e16692dafacf924ab064e23de17f9a4dbaf707
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -279,7 +276,6 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
-<<<<<<< HEAD
 
   async bulkSubscribeIssues(
     workspaceSlug: string,
@@ -294,6 +290,4 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
-=======
->>>>>>> a0e16692dafacf924ab064e23de17f9a4dbaf707
 }

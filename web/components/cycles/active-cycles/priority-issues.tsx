@@ -33,7 +33,7 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, cycle.id) : null
+    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 10, cycle.id) : null
   );
 
   useSWR(
@@ -41,17 +41,15 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
     workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null
   );
 
-  const cycleIssues = activeCycleIssues ?? [];
-
   return (
     <div className="flex flex-col gap-4 p-4 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <div className="flex items-center justify-between gap-4">
         <h3 className="text-lg text-custom-text-300 font-medium">High-priority issues</h3>
       </div>
       <div className="flex flex-col gap-1 h-full w-full max-h-40 overflow-y-auto">
-        {cycleIssues ? (
-          cycleIssues.length > 0 ? (
-            cycleIssues.map((issue: any) => (
+        {activeCycleIssues ? (
+          activeCycleIssues.count > 0 && Array.isArray(activeCycleIssues.results) ? (
+            activeCycleIssues.results.map((issue: any) => (
               <Link
                 key={issue.id}
                 href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}

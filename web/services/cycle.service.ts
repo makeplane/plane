@@ -1,13 +1,9 @@
-// services
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { APIService } from "@/services/api.service";
 // types
-<<<<<<< HEAD
-import type { CycleDateCheckData, ICycle, IWorkspaceActiveCyclesResponse, TIssue } from "@plane/types";
-=======
-import type { CycleDateCheckData, ICycle, TIssue, TIssuesResponse } from "@plane/types";
->>>>>>> a0e16692dafacf924ab064e23de17f9a4dbaf707
+import type { CycleDateCheckData, ICycle, IWorkspaceActiveCyclesResponse, TIssuesResponse } from "@plane/types";
 // helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
+// services
+import { APIService } from "@/services/api.service";
 
 export class CycleService extends APIService {
   constructor() {
