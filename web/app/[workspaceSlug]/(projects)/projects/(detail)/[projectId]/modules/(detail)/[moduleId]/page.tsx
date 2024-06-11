@@ -9,11 +9,11 @@ import { PageHead } from "@/components/core";
 import { ModuleLayoutRoot } from "@/components/issues";
 import { ModuleDetailsSidebar } from "@/components/modules";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
+// import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssues, useModule, useProject } from "@/hooks/store";
+import { useModule, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
 import emptyModule from "@/public/empty-state/module.svg";
@@ -25,7 +25,7 @@ const ModuleIssuesPage = observer(() => {
   // store hooks
   const { fetchModuleDetails, getModuleById } = useModule();
   const { getProjectById } = useProject();
-  const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  // const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -47,7 +47,7 @@ const ModuleIssuesPage = observer(() => {
 
   if (!workspaceSlug || !projectId || !moduleId) return <></>;
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+  // const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   return (
     <>

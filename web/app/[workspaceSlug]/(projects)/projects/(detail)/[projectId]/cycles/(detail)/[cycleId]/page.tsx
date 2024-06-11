@@ -9,11 +9,11 @@ import { PageHead } from "@/components/core";
 import { CycleDetailsSidebar } from "@/components/cycles";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
+// import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCycle, useIssues, useProject } from "@/hooks/store";
+import { useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
 import emptyCycle from "@/public/empty-state/cycle.svg";
@@ -25,7 +25,7 @@ const CycleDetailPage = observer(() => {
   // store hooks
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { getProjectById } = useProject();
-  const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  // const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // hooks
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   // fetching cycle details
@@ -46,7 +46,7 @@ const CycleDetailPage = observer(() => {
    */
   const toggleSidebar = () => setValue(`${!isSidebarCollapsed}`);
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+  // const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   return (
     <>
