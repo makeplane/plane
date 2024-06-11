@@ -158,7 +158,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     });
   }, [projectPublishSettings, reset]);
 
-  const publishLink = `${SPACE_BASE_URL}/issues/${projectPublishSettings?.anchor}`;
+  const publishLink = `${SPACE_BASE_URL}/${projectPublishSettings?.anchor}`;
 
   const handleCopyLink = () =>
     copyTextToClipboard(publishLink).then(() =>

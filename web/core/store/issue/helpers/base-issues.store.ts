@@ -680,12 +680,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         this.rootIssueStore.issues.removeIssue(data.id);
       });
 
-      if (data.cycle_id && data.cycle_id !== "" && !this.cycleId) {
-        await this.addCycleToIssue(workspaceSlug, projectId, data.cycle_id, response.id);
+      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
+      const currentModuleIds =
+        data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
+
+      const promiseRequests = [];
+      if (currentCycleId) {
+        promiseRequests.push(this.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id));
+      }
+      if (currentModuleIds.length > 0) {
+        promiseRequests.push(this.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, []));
       }
 
-      if (data.module_ids && data.module_ids.length > 0 && !this.moduleId) {
-        await this.changeModulesInIssue(workspaceSlug, projectId, response.id, data.module_ids, []);
+      if (promiseRequests && promiseRequests.length > 0) {
+        await Promise.all(promiseRequests);
       }
 
       return response;
