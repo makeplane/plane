@@ -12,7 +12,7 @@ import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
 import { useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
-import emptyCycle from "public/empty-state/cycle.svg";
+import emptyCycle from "@/public/empty-state/cycle.svg";
 
 const CycleDetailPage = observer(() => {
   // router

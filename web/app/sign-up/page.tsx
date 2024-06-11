@@ -15,10 +15,10 @@ import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 import { useEventTracker } from "@/hooks/store";
 // assets
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
+import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
+import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export type AuthType = "sign-in" | "sign-up";
 

@@ -9,6 +9,9 @@ module.exports = {
     relative: true,
     files: [
       "./app/**/*.{js,ts,jsx,tsx}",
+      "./core/**/*.{js,ts,jsx,tsx}",
+      "./ce/**/*.{js,ts,jsx,tsx}",
+      "./ee/**/*.{js,ts,jsx,tsx}",
       "./components/**/*.tsx",
       "./constants/**/*.{js,ts,jsx,tsx}",
       "./layouts/**/*.tsx",
