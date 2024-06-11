@@ -186,6 +186,7 @@ from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 from .external.base import (
     GPTIntegrationEndpoint,
     UnsplashEndpoint,
+    WorkspaceGPTIntegrationEndpoint,
 )
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
