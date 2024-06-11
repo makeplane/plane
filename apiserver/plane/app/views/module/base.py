@@ -363,6 +363,51 @@ class ModuleViewSet(BaseViewSet):
             )
         )
 
+        if plot_type == "points":
+            total_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField())
+            )
+            completed_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField()),
+                filter=Q(
+                    completed_at__isnull=False,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            pending_issues_annotation = Sum(
+                Cast("estimate_point__value", IntegerField()),
+                filter=Q(
+                    completed_at__isnull=True,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+        else:
+            total_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            completed_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    completed_at__isnull=False,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+            pending_issues_annotation = Count(
+                "id",
+                filter=Q(
+                    completed_at__isnull=True,
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+
         assignee_distribution = (
             Issue.objects.filter(
                 issue_module__module_id=pk,
@@ -382,33 +427,13 @@ class ModuleViewSet(BaseViewSet):
                 "display_name",
             )
             .annotate(
-                total_issues=Count(
-                    "id",
-                    filter=Q(
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
+                total_issues=total_issues_annotation,
             )
             .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
+                completed_issues=completed_issues_annotation
             )
             .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
+                pending_issues=pending_issues_annotation
             )
             .order_by("first_name", "last_name")
         )
@@ -424,33 +449,13 @@ class ModuleViewSet(BaseViewSet):
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
             .annotate(
-                total_issues=Count(
-                    "id",
-                    filter=Q(
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                ),
+                total_issues=total_issues_annotation,
             )
             .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
+                completed_issues=completed_issues_annotation
             )
             .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
+                pending_issues=pending_issues_annotation
             )
             .order_by("label_name")
         )
