@@ -5,7 +5,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-export class PageService extends APIService {
+export class ProjectPageService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

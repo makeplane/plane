@@ -7,7 +7,7 @@ import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // services
-import { PageService } from "@/services/page.service";
+import { ProjectPageService } from "@/services/page";
 // store
 import { IPageStore, PageStore } from "@/store/pages/page.store";
 import { RootStore } from "../root.store";
@@ -48,7 +48,7 @@ export class ProjectPageStore implements IProjectPageStore {
     sortBy: "desc",
   };
   // service
-  service: PageService;
+  service: ProjectPageService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -67,7 +67,7 @@ export class ProjectPageStore implements IProjectPageStore {
       removePage: action,
     });
     // service
-    this.service = new PageService();
+    this.service = new ProjectPageService();
     // initialize display filters of the current project
     reaction(
       () => this.store.router.projectId,
