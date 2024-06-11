@@ -45,9 +45,11 @@ def member_sync_task(slug):
 
         # Check if response is successful
         if response.status_code == 200:
-            return response.json()
+            return
+        # Workspace does not have a subscription
         elif response.status_code == 404:
-            return response.json()
+            return
+        # Invalid request
         else:
             return
     else:
