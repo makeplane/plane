@@ -474,10 +474,12 @@ class ModuleViewSet(BaseViewSet):
                     "display_name",
                 )
                 .annotate(
-                    total=Sum(Cast("estimate_point__value", IntegerField())),
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField())
+                    ),
                 )
                 .annotate(
-                    completed=Sum(
+                    completed_estimates=Sum(
                         Cast("estimate_point__value", IntegerField()),
                         filter=Q(
                             completed_at__isnull=False,
@@ -487,7 +489,7 @@ class ModuleViewSet(BaseViewSet):
                     )
                 )
                 .annotate(
-                    pending=Sum(
+                    pending_estimates=Sum(
                         Cast("estimate_point__value", IntegerField()),
                         filter=Q(
                             completed_at__isnull=True,
@@ -510,10 +512,12 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
                 .annotate(
-                    total=Sum(Cast("estimate_point__value", IntegerField())),
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField())
+                    ),
                 )
                 .annotate(
-                    completed=Sum(
+                    completed_estimates=Sum(
                         Cast("estimate_point__value", IntegerField()),
                         filter=Q(
                             completed_at__isnull=False,
@@ -523,7 +527,7 @@ class ModuleViewSet(BaseViewSet):
                     )
                 )
                 .annotate(
-                    pending=Sum(
+                    pending_estimates=Sum(
                         Cast("estimate_point__value", IntegerField()),
                         filter=Q(
                             completed_at__isnull=True,
@@ -538,12 +542,14 @@ class ModuleViewSet(BaseViewSet):
             data["estimate_distribution"]["label"] = label_distribution
 
             if modules and modules.start_date and modules.target_date:
-                data["estimate_distribution"]["completion_chart"] = burndown_plot(
-                    queryset=modules,
-                    slug=slug,
-                    project_id=project_id,
-                    plot_type="points",
-                    module_id=pk,
+                data["estimate_distribution"]["completion_chart"] = (
+                    burndown_plot(
+                        queryset=modules,
+                        slug=slug,
+                        project_id=project_id,
+                        plot_type="points",
+                        module_id=pk,
+                    )
                 )
 
         assignee_distribution = (
