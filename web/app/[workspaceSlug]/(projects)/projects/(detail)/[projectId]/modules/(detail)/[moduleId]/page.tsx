@@ -8,8 +8,12 @@ import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { ModuleLayoutRoot } from "@/components/issues";
 import { ModuleDetailsSidebar } from "@/components/modules";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useModule, useProject } from "@/hooks/store";
+import { useIssues, useModule, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
 import emptyModule from "@/public/empty-state/module.svg";
@@ -21,6 +25,7 @@ const ModuleIssuesPage = observer(() => {
   // store hooks
   const { fetchModuleDetails, getModuleById } = useModule();
   const { getProjectById } = useProject();
+  const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -42,6 +47,8 @@ const ModuleIssuesPage = observer(() => {
 
   if (!workspaceSlug || !projectId || !moduleId) return <></>;
 
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+
   return (
     <>
       <PageHead title={pageTitle} />
@@ -62,7 +69,9 @@ const ModuleIssuesPage = observer(() => {
           </div>
           {moduleId && !isSidebarCollapsed && (
             <div
-              className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm"
+              className={cn(
+                "flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm fixed right-0 z-10"
+              )}
               style={{
                 boxShadow:
                   "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",

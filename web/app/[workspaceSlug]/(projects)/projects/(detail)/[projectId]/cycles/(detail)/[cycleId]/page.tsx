@@ -8,8 +8,12 @@ import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { CycleDetailsSidebar } from "@/components/cycles";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCycle, useProject } from "@/hooks/store";
+import { useCycle, useIssues, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
 import emptyCycle from "@/public/empty-state/cycle.svg";
@@ -21,6 +25,7 @@ const CycleDetailPage = observer(() => {
   // store hooks
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { getProjectById } = useProject();
+  const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // hooks
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   // fetching cycle details
@@ -40,6 +45,8 @@ const CycleDetailPage = observer(() => {
    * Toggles the sidebar
    */
   const toggleSidebar = () => setValue(`${!isSidebarCollapsed}`);
+
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   return (
     <>
@@ -62,7 +69,9 @@ const CycleDetailPage = observer(() => {
             </div>
             {cycleId && !isSidebarCollapsed && (
               <div
-                className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm"
+                className={cn(
+                  "flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm fixed right-0 z-10"
+                )}
                 style={{
                   boxShadow:
                     "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
