@@ -102,7 +102,13 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
           issue={issueDetails}
           displayProperties={displayProperties}
           activeLayout="Page issue embed"
-          updateIssue={async (projectId, issueId, data) => await updateIssue(workspaceSlug, projectId, issueId, data)}
+          updateIssue={async (projectId, issueId, data) => {
+            if (projectId) {
+              return await updateIssue(workspaceSlug, projectId, issueId, data);
+            }
+
+            return;
+          }}
           isReadOnly={isReadOnly}
         />
       )}
