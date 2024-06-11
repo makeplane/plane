@@ -157,6 +157,62 @@ class ModuleViewSet(BaseViewSet):
             )
             .values("total_estimate_points")[:1]
         )
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                backlog_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("backlog_estimate_point")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                unstarted_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("unstarted_estimate_point")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                started_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("started_estimate_point")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                cancelled_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("cancelled_estimate_point")[:1]
+        )
         return (
             super()
             .get_queryset()
@@ -210,6 +266,30 @@ class ModuleViewSet(BaseViewSet):
                     Subquery(total_issues[:1]),
                     Value(0, output_field=IntegerField()),
                 )
+            )
+            .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
             )
             .annotate(
                 completed_estimate_points=Coalesce(
@@ -427,13 +507,13 @@ class ModuleViewSet(BaseViewSet):
                 "display_name",
             )
             .annotate(
-                total_issues=total_issues_annotation,
+                total=total_issues_annotation,
             )
             .annotate(
-                completed_issues=completed_issues_annotation
+                completed=completed_issues_annotation
             )
             .annotate(
-                pending_issues=pending_issues_annotation
+                pending=pending_issues_annotation
             )
             .order_by("first_name", "last_name")
         )
@@ -449,13 +529,13 @@ class ModuleViewSet(BaseViewSet):
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
             .annotate(
-                total_issues=total_issues_annotation,
+                total=total_issues_annotation,
             )
             .annotate(
-                completed_issues=completed_issues_annotation
+                completed=completed_issues_annotation
             )
             .annotate(
-                pending_issues=pending_issues_annotation
+                pending=pending_issues_annotation
             )
             .order_by("label_name")
         )
