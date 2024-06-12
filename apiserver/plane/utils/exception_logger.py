@@ -14,15 +14,9 @@ def log_exception(e):
     logger = logging.getLogger("plane")
     logger.error(e)
 
-<<<<<<< pages-migrations
     if settings.DEBUG:
         # Print the traceback if in debug mode
         traceback.print_exc(e)
-=======
-    # Log traceback if running in Debug
-    if settings.DEBUG:
-        logger.error(traceback.format_exc(e))
->>>>>>> develop
 
     # Capture in sentry if configured
     capture_exception(e)
