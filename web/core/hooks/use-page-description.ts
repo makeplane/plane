@@ -8,6 +8,7 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { ProjectPageService } from "@/services/page";
 import { IPageStore } from "@/store/pages/page.store";
+import useAutoSave from "./use-auto-save";
 const projectPageService = new ProjectPageService();
 
 type Props = {
@@ -68,6 +69,7 @@ export const usePageDescription = (props: Props) => {
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(async () => {
+    console.log("ran");
     if (!isContentEditable) return;
 
     const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
@@ -112,31 +114,7 @@ export const usePageDescription = (props: Props) => {
     workspaceSlug,
   ]);
 
-  // auto-save updates every 10 seconds
-  // handle ctrl/cmd + S to save the description
-  useEffect(() => {
-    const intervalId = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
-
-    const handleSave = (e: KeyboardEvent) => {
-      const { ctrlKey, metaKey, key } = e;
-      const cmdClicked = ctrlKey || metaKey;
-
-      if (cmdClicked && key.toLowerCase() === "s") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleSaveDescription();
-
-        // reset interval timer
-        clearInterval(intervalId);
-      }
-    };
-    window.addEventListener("keydown", handleSave);
-
-    return () => {
-      clearInterval(intervalId);
-      window.removeEventListener("keydown", handleSave);
-    };
-  }, [handleSaveDescription]);
+  useAutoSave(handleSaveDescription);
 
   // show a confirm dialog if there are any unsaved changes, or saving is going on
   const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
