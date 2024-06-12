@@ -8,10 +8,14 @@ export class IssueDraftService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getDraftIssues(workspaceSlug: string, projectId: string, query?: any): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
-      params: { ...query },
-    })
+  async getDraftIssues(workspaceSlug: string, projectId: string, query?: any, config = {}): Promise<TIssuesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`,
+      {
+        params: { ...query },
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
