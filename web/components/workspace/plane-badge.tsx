@@ -3,7 +3,7 @@ import Image from "next/image";
 // ui
 import { Tooltip, Button, getButtonStyling } from "@plane/ui";
 // components
-import { PlaneOneModal, ProPlanModal } from "@/components/license";
+import { PlaneOneModal, CloudProductsModal } from "@/components/license";
 // hooks
 import { cn } from "@/helpers/common.helper";
 import { useEventTracker, useInstance } from "@/hooks/store";
@@ -31,10 +31,10 @@ export const PlaneBadge: React.FC = () => {
     captureEvent("plane_one_modal_opened", {});
   };
 
-  if (process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL || process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL) {
+  if (process.env.NEXT_PUBLIC_DISCO_BASE_URL !== "") {
     return (
       <>
-        <ProPlanModal isOpen={isProPlanModalOpen} handleClose={() => setIsProPlanModalOpen(false)} />
+        <CloudProductsModal isOpen={isProPlanModalOpen} handleClose={() => setIsProPlanModalOpen(false)} />
         <Button
           variant="outline-primary"
           className="w-1/2 cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"

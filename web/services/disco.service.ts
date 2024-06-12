@@ -1,11 +1,9 @@
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-export class DashboardService extends APIService {
+export class DiscoService extends APIService {
   constructor() {
-    super(API_BASE_URL);
+    super("/disco");
   }
 
   listProducts(): Promise<any> {

@@ -1,10 +1,15 @@
 import { FC, Fragment, useState } from "react";
+import useSWR from "swr";
 // icons
 import { CheckCircle } from "lucide-react";
 // ui
 import { Dialog, Transition, Tab } from "@headlessui/react";
 // store
 import { useEventTracker } from "@/hooks/store";
+// services
+import { DiscoService } from "@/services/disco.service";
+
+const discoService = new DiscoService();
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -30,15 +35,18 @@ const YEARLY_PLAN_ITEMS = [
   "Tiered discounts for the second and third years",
 ];
 
-export type ProPlanModalProps = {
+export type CloudProductsModalProps = {
   isOpen: boolean;
   handleClose: () => void;
 };
 
-export const ProPlanModal: FC<ProPlanModalProps> = (props) => {
+export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   const { isOpen, handleClose } = props;
   // store
   const { captureEvent } = useEventTracker();
+  // fetch products
+  const { data } = useSWR("CLOUD_PAYMENT_PRODUCTS", () => discoService.listProducts());
+  console.log("data", data);
   // states
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
