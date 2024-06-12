@@ -18,10 +18,14 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
-      params: queries,
-    })
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`,
+      {
+        params: queries,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

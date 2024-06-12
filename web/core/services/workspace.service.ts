@@ -257,10 +257,14 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: any): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
-      params,
-    })
+  async getViewIssues(workspaceSlug: string, params: any, config = {}): Promise<TIssuesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/issues/`,
+      {
+        params,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

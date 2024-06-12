@@ -77,18 +77,26 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
    * @param options
    * @returns
    */
-  fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader, options: IssuePaginationOptions) => {
+  fetchIssues = async (
+    workspaceSlug: string,
+    viewId: string,
+    loadType: TLoader,
+    options: IssuePaginationOptions,
+    isExistingPaginationOptions: boolean = false
+  ) => {
     try {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear();
+      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {
+        signal: this.controller.signal,
+      });
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug);
@@ -149,7 +157,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
    */
   fetchIssuesWithExistingPagination = async (workspaceSlug: string, viewId: string, loadType: TLoader) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions);
+    return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
   };
 
   archiveBulkIssues = this.bulkArchiveIssues;

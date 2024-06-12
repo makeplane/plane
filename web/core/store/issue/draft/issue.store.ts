@@ -81,19 +81,22 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader = "init-loader",
-    options: IssuePaginationOptions
+    options: IssuePaginationOptions,
+    isExistingPaginationOptions: boolean = false
   ) => {
     try {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear();
+      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
+      const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params, {
+        signal: this.controller.signal,
+      });
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, projectId);
@@ -157,7 +160,7 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     loadType: TLoader = "mutation"
   ) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions);
+    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
   };
 
   createIssue = this.createDraftIssue;
