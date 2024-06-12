@@ -35,6 +35,8 @@ const IssueSuggestionList = (props: TSuggestionsListProps) => {
             type: "issue-embed-component",
             attrs: {
               entity_identifier: item?.id,
+              project_identifier: item?.projectId,
+              workspace_identifier: item?.workspaceSlug,
               id: transactionId,
               entity_name: "issue",
             },

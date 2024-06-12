@@ -8,7 +8,15 @@ export type TReadOnlyEmbedConfig = {
 
 export type TIssueEmbedConfig = {
   searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>;
-  widgetCallback: (issueId: string) => React.ReactNode;
+  widgetCallback: ({
+    issueId,
+    projectId,
+    workspaceSlug,
+  }: {
+    issueId: string;
+    projectId: string | undefined;
+    workspaceSlug: string | undefined;
+  }) => React.ReactNode;
 };
 
 export type TEmbedItem = {
@@ -16,4 +24,6 @@ export type TEmbedItem = {
   title: string;
   subTitle: string;
   icon: React.ReactNode;
+  projectId: string;
+  workspaceSlug: string;
 };

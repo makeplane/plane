@@ -157,16 +157,29 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     new Promise((resolve) => {
                       setTimeout(async () => {
                         const response = await handleIssueSearch(query);
-                        resolve(response);
+                        const issueItemsWithIdentifiers = response?.map((issue) => ({
+                          ...issue,
+                          projectId: projectId.toString(),
+                          workspaceSlug: workspaceSlug.toString(),
+                        }));
+                        resolve(issueItemsWithIdentifiers);
                       }, 300);
                     }),
-                  widgetCallback: (issueId) => (
-                    <IssueEmbedCard
-                      issueId={issueId}
-                      projectId={projectId?.toString() ?? ""}
-                      workspaceSlug={workspaceSlug?.toString() ?? ""}
-                    />
-                  ),
+                  widgetCallback: ({
+                    issueId,
+                    projectId: projectIdFromEmbed,
+                    workspaceSlug: workspaceSlugFromEmbed,
+                  }) => {
+                    const resolvedProjectId = projectIdFromEmbed ?? projectId?.toString() ?? "";
+                    const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
+                    return (
+                      <IssueEmbedCard
+                        issueId={issueId}
+                        projectId={resolvedProjectId}
+                        workspaceSlug={resolvedWorkspaceSlug}
+                      />
+                    );
+                  },
                 },
               }}
             />
@@ -182,13 +195,22 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
               embedHandler={{
                 issue: {
-                  widgetCallback: (issueId) => (
-                    <IssueEmbedCard
-                      issueId={issueId}
-                      projectId={projectId?.toString() ?? ""}
-                      workspaceSlug={workspaceSlug?.toString() ?? ""}
-                    />
-                  ),
+                  widgetCallback: ({
+                    issueId,
+                    projectId: projectIdFromEmbed,
+                    workspaceSlug: workspaceSlugFromEmbed,
+                  }) => {
+                    const resolvedProjectId = projectIdFromEmbed ?? projectId?.toString() ?? "";
+                    const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
+
+                    return (
+                      <IssueEmbedCard
+                        issueId={issueId}
+                        projectId={resolvedProjectId}
+                        workspaceSlug={resolvedWorkspaceSlug}
+                      />
+                    );
+                  },
                 },
               }}
             />
