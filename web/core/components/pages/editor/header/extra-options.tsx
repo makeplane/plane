@@ -21,12 +21,11 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
   page: IPageStore;
-  projectId: string;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, projectId, readOnlyEditorRef } = props;
+  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
@@ -56,7 +55,6 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
       {isContentEditable && config?.has_openai_configured && (
         <GptAssistantPopover
           isOpen={gptModalOpen}
-          projectId={projectId}
           handleClose={() => {
             setGptModal((prevData) => !prevData);
             // this is done so that the title do not reset after gpt popover closed

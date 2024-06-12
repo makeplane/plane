@@ -41,6 +41,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
+  const nextPath = searchParams.get("next_path");
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -172,6 +173,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
             email={email}
             handleEmailClear={handleEmailClear}
             generateEmailUniqueCode={generateEmailUniqueCode}
+            nextPath={nextPath || undefined}
           />
         )}
         {authStep === EAuthSteps.PASSWORD && (
@@ -184,6 +186,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
               if (step === EAuthSteps.UNIQUE_CODE) generateEmailUniqueCode(email);
               setAuthStep(step);
             }}
+            nextPath={nextPath || undefined}
           />
         )}
         <OAuthOptions isSignUp={authMode === EAuthModes.SIGN_UP} />

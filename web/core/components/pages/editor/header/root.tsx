@@ -15,7 +15,6 @@ type Props = {
   handleDuplicatePage: () => void;
   markings: IMarking[];
   page: IPageStore;
-  projectId: string;
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   editorReady: boolean;
@@ -31,7 +30,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     readOnlyEditorReady,
     handleDuplicatePage,
     page,
-    projectId,
     sidePeekVisible,
     setSidePeekVisible,
   } = props;
@@ -66,7 +64,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
-          projectId={projectId}
           readOnlyEditorRef={readOnlyEditorRef}
         />
       </div>
@@ -79,7 +76,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           markings={markings}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
-          projectId={projectId}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}
         />

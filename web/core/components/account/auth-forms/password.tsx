@@ -26,6 +26,7 @@ type Props = {
   mode: EAuthModes;
   handleEmailClear: () => void;
   handleAuthStep: (step: EAuthSteps) => void;
+  nextPath: string | undefined;
 };
 
 type TPasswordFormValues = {
@@ -42,7 +43,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
-  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
+  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode, nextPath } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   // states
@@ -120,6 +121,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={passwordFormData.email} name="email" />
+      {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
           Email

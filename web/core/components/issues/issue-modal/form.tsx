@@ -239,7 +239,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug.toString(), projectId, {
+      .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
         task: "Generate a proper description for this issue.",
       })
@@ -489,7 +489,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     {config?.has_openai_configured && projectId && (
                       <GptAssistantPopover
                         isOpen={gptAssistantModal}
-                        projectId={projectId}
                         handleClose={() => {
                           setGptAssistantModal((prevData) => !prevData);
                           // this is done so that the title do not reset after gpt popover closed

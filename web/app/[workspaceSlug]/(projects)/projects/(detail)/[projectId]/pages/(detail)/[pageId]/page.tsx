@@ -97,20 +97,17 @@ const PageDetailsPage = observer(() => {
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
         <div className="h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
-          {projectId && (
-            <PageEditorHeaderRoot
-              editorRef={editorRef}
-              readOnlyEditorRef={readOnlyEditorRef}
-              editorReady={editorReady}
-              readOnlyEditorReady={readOnlyEditorReady}
-              handleDuplicatePage={handleDuplicatePage}
-              markings={markings}
-              page={page}
-              projectId={projectId.toString()}
-              sidePeekVisible={sidePeekVisible}
-              setSidePeekVisible={(state) => setSidePeekVisible(state)}
-            />
-          )}
+          <PageEditorHeaderRoot
+            editorRef={editorRef}
+            readOnlyEditorRef={readOnlyEditorRef}
+            editorReady={editorReady}
+            readOnlyEditorReady={readOnlyEditorReady}
+            handleDuplicatePage={handleDuplicatePage}
+            markings={markings}
+            page={page}
+            sidePeekVisible={sidePeekVisible}
+            setSidePeekVisible={(state) => setSidePeekVisible(state)}
+          />
           <PageEditorBody
             editorRef={editorRef}
             handleEditorReady={(val) => setEditorReady(val)}

@@ -5,19 +5,17 @@ import { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
-// ui
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
-// icons
 // components
-// hooks
+import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+// services
 import { AIService } from "@/services/ai.service";
 
 type Props = {
   isOpen: boolean;
-  projectId: string;
   handleClose: () => void;
   onResponse: (response: any) => void;
   onError?: (error: any) => void;
@@ -35,7 +33,7 @@ type FormData = {
 const aiService = new AIService();
 
 export const GptAssistantPopover: React.FC<Props> = (props) => {
-  const { isOpen, projectId, handleClose, onResponse, onError, placement, prompt, button, className = "" } = props;
+  const { isOpen, handleClose, onResponse, onError, placement, prompt, button, className = "" } = props;
   // states
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
@@ -88,7 +86,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
 
   const callAIService = async (formData: FormData) => {
     try {
-      const res = await aiService.createGptTask(workspaceSlug as string, projectId, {
+      const res = await aiService.createGptTask(workspaceSlug.toString(), {
         prompt: prompt || "",
         task: formData.task,
       });
@@ -111,7 +109,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   };
 
   const handleAIResponse = async (formData: FormData) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug) return;
 
     if (formData.task === "") {
       handleInvalidTask();

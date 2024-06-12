@@ -10,8 +10,8 @@ export class AIService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createGptTask(workspaceSlug: string, projectId: string, data: { prompt: string; task: string }): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/ai-assistant/`, data)
+  async createGptTask(workspaceSlug: string, data: { prompt: string; task: string }): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

@@ -69,6 +69,7 @@ export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
     <Link
       className="relative flex h-full w-full items-center gap-2"
       href={`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`}
+      draggable={false}
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />
       <h6 className="flex-grow truncate text-sm font-medium">{moduleDetails?.name}</h6>
