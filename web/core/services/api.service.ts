@@ -11,6 +11,20 @@ export abstract class APIService {
       baseURL,
       withCredentials: true,
     });
+
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors() {
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          window.location.reload();
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   get(url: string, params = {}, config = {}) {
