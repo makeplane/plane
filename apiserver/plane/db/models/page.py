@@ -9,13 +9,17 @@ from django.db import models
 from plane.utils.html_processor import strip_tags
 
 from .project import ProjectBaseModel
+from .base import BaseModel
 
 
 def get_view_props():
     return {"full_width": False}
 
 
-class Page(ProjectBaseModel):
+class Page(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="pages"
+    )
     name = models.CharField(max_length=255, blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
@@ -44,6 +48,13 @@ class Page(ProjectBaseModel):
     is_locked = models.BooleanField(default=False)
     view_props = models.JSONField(default=get_view_props)
     logo_props = models.JSONField(default=dict)
+    is_global = models.BooleanField(default=False)
+    projects = models.ManyToManyField(
+        "db.Project", related_name="pages", through="db.ProjectPage"
+    )
+    teams = models.ManyToManyField(
+        "db.Team", related_name="pages", through="db.TeamPage"
+    )
 
     class Meta:
         verbose_name = "Page"
@@ -56,7 +67,7 @@ class Page(ProjectBaseModel):
         return f"{self.owned_by.email} <{self.name}>"
 
 
-class PageLog(ProjectBaseModel):
+class PageLog(BaseModel):
     TYPE_CHOICES = (
         ("to_do", "To Do"),
         ("issue", "issue"),
@@ -80,6 +91,9 @@ class PageLog(ProjectBaseModel):
         max_length=30,
         choices=TYPE_CHOICES,
         verbose_name="Transaction Type",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )
 
     class Meta:
@@ -171,12 +185,17 @@ class PageFavorite(ProjectBaseModel):
         return f"{self.user.email} <{self.page.name}>"
 
 
-class PageLabel(ProjectBaseModel):
+class PageLabel(BaseModel):
     label = models.ForeignKey(
         "db.Label", on_delete=models.CASCADE, related_name="page_labels"
     )
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, related_name="page_labels"
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_page_label",
     )
 
     class Meta:
@@ -187,3 +206,44 @@ class PageLabel(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.page.name} {self.label.name}"
+
+
+class ProjectPage(BaseModel):
+    project = models.ForeignKey(
+        "db.Project", on_delete=models.CASCADE, related_name="project_pages"
+    )
+    page = models.ForeignKey(
+        "db.Page", on_delete=models.CASCADE, related_name="project_pages"
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="project_pages"
+    )
+
+    class Meta:
+        unique_together = ["project", "page"]
+        verbose_name = "Project Page"
+        verbose_name_plural = "Project Pages"
+        db_table = "project_pages"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.page.name}"
+
+
+class TeamPage(BaseModel):
+    team = models.ForeignKey(
+        "db.Team", on_delete=models.CASCADE, related_name="team_pages"
+    )
+    page = models.ForeignKey(
+        "db.Page", on_delete=models.CASCADE, related_name="team_pages"
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="team_pages"
+    )
+
+    class Meta:
+        unique_together = ["team", "page"]
+        verbose_name = "Team Page"
+        verbose_name_plural = "Team Pages"
+        db_table = "team_pages"
+        ordering = ("-created_at",)

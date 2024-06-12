@@ -278,7 +278,6 @@ def create_page_labels(workspace, project, user_id, pages_count):
                 PageLabel(
                     page_id=page,
                     label_id=label,
-                    project=project,
                     workspace=workspace,
                 )
             )
