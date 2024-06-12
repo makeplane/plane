@@ -570,7 +570,6 @@ def dashboard_recent_collaborators(self, request, slug):
         )
 
     return self.paginate(
-        order_by=request.GET.get("order_by", "-created_at"),
         request=request,
         queryset=project_members_with_activities,
         controller=lambda qs: self.get_results_controller(qs, slug),
