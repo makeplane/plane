@@ -13,13 +13,12 @@ import { usePage } from "@/hooks/store";
 
 type Props = {
   pageId: string;
+  pageLink: string;
   parentRef: React.RefObject<HTMLElement>;
-  projectId: string;
-  workspaceSlug: string;
 };
 
 export const PageQuickActions: React.FC<Props> = observer((props) => {
-  const { pageId, parentRef, projectId, workspaceSlug } = props;
+  const { pageId, pageLink, parentRef } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
@@ -35,7 +34,6 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
     canCurrentUserDeletePage,
   } = usePage(pageId);
 
-  const pageLink = `${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
   const handleCopyText = () =>
     copyUrlToClipboard(pageLink).then(() => {
       setToast({
