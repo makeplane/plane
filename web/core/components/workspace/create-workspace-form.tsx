@@ -148,7 +148,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   onChange={(e) => {
                     onChange(e.target.value);
                     setValue("name", e.target.value);
-                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                      shouldValidate: true,
+                    });
                   }}
                   ref={ref}
                   hasError={Boolean(errors.name)}
@@ -171,7 +173,11 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               control={control}
               name="slug"
               rules={{
-                required: "Workspace URL is required",
+                required: "Workspace slug is required",
+                maxLength: {
+                  value: 48,
+                  message: "Workspace slug should not exceed 48 characters",
+                },
               }}
               render={({ field: { onChange, value, ref } }) => (
                 <Input
@@ -194,6 +200,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           {invalidSlug && (
             <p className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</p>
           )}
+          {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
         </div>
         <div className="space-y-1 text-sm">
           <span>
