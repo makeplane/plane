@@ -29,7 +29,7 @@ jobs:
           else
             echo "MATCH=false" >> $GITHUB_OUTPUT
           fi
-  Auto_Merge:
+  Create_PR:
     if: ${{ needs.Check_Branch.outputs.BRANCH_MATCH == 'true' }}
     needs: [Check_Branch]
     runs-on: ubuntu-latest

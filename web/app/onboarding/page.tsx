@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // types
-import { EPageTypes } from "@plane/constants";
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -13,6 +12,8 @@ import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/component
 // constants
 import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
+// helpers
+import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 // wrappers
@@ -36,14 +37,14 @@ const OnboardingPage = observer(() => {
   const router = useRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { data: user, updateCurrentUser } = useUser();
+  const { isLoading: userLoader, data: user, updateCurrentUser } = useUser();
   const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
+  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
   // fetching user workspace invitations
@@ -98,18 +99,21 @@ const OnboardingPage = observer(() => {
   };
 
   useEffect(() => {
-    // If user is already invited to a workspace, only show profile setup steps.
-    if (workspacesList && workspacesList?.length > 0) {
-      // If password is auto set then show two different steps for profile setup, else merge them.
-      if (user?.is_password_autoset) setTotalSteps(2);
-      else setTotalSteps(1);
-    } else {
-      // If password is auto set then total steps will increase to 4 due to extra step at profile setup stage.
-      if (user?.is_password_autoset) setTotalSteps(4);
-      else setTotalSteps(3);
+    // Never update the total steps if it's already set.
+    if (!totalSteps && userLoader === false && workspaceListLoader === false) {
+      // If user is already invited to a workspace, only show profile setup steps.
+      if (workspacesList && workspacesList?.length > 0) {
+        // If password is auto set then show two different steps for profile setup, else merge them.
+        if (user?.is_password_autoset) setTotalSteps(2);
+        else setTotalSteps(1);
+      } else {
+        // If password is auto set then total steps will increase to 4 due to extra step at profile setup stage.
+        if (user?.is_password_autoset) setTotalSteps(4);
+        else setTotalSteps(3);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userLoader, workspaceListLoader]);
 
   useEffect(() => {
     const handleStepChange = async () => {

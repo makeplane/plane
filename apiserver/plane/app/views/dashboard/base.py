@@ -1,52 +1,53 @@
 # Django imports
-from django.db.models import (
-    Q,
-    Case,
-    When,
-    Value,
-    CharField,
-    Count,
-    F,
-    Exists,
-    OuterRef,
-    Subquery,
-    JSONField,
-    Func,
-    Prefetch,
-    IntegerField,
-)
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import UUIDField
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    Exists,
+    F,
+    Func,
+    IntegerField,
+    JSONField,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    UUIDField,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from rest_framework import status
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
+
+from plane.app.serializers import (
+    DashboardSerializer,
+    IssueActivitySerializer,
+    IssueSerializer,
+    WidgetSerializer,
+)
+from plane.db.models import (
+    Dashboard,
+    DashboardWidget,
+    Issue,
+    IssueActivity,
+    IssueAttachment,
+    IssueLink,
+    IssueRelation,
+    Project,
+    ProjectMember,
+    User,
+    Widget,
+)
+from plane.utils.issue_filters import issue_filters
 
 # Module imports
 from .. import BaseAPIView
-from plane.db.models import (
-    Issue,
-    IssueActivity,
-    ProjectMember,
-    Widget,
-    DashboardWidget,
-    Dashboard,
-    Project,
-    IssueLink,
-    IssueAttachment,
-    IssueRelation,
-    User,
-)
-from plane.app.serializers import (
-    IssueActivitySerializer,
-    IssueSerializer,
-    DashboardSerializer,
-    WidgetSerializer,
-)
-from plane.utils.issue_filters import issue_filters
 
 
 def dashboard_overview_stats(self, request, slug):

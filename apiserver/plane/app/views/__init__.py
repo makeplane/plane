@@ -113,9 +113,7 @@ from .issue.activity import (
     IssueActivityEndpoint,
 )
 
-from .issue.archive import (
-    IssueArchiveViewSet,
-)
+from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
@@ -154,6 +152,8 @@ from .issue.subscriber import (
 )
 
 
+from .issue.bulk_operations import BulkIssueOperationsEndpoint
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,
@@ -186,6 +186,7 @@ from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 from .external.base import (
     GPTIntegrationEndpoint,
     UnsplashEndpoint,
+    WorkspaceGPTIntegrationEndpoint,
 )
 from .estimate.base import (
     ProjectEstimatePointEndpoint,

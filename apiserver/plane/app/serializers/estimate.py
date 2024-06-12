@@ -2,10 +2,6 @@
 from .base import BaseSerializer
 
 from plane.db.models import Estimate, EstimatePoint
-from plane.app.serializers import (
-    WorkspaceLiteSerializer,
-    ProjectLiteSerializer,
-)
 
 from rest_framework import serializers
 

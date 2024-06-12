@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+// import { useEffect } from "react";
+// import * as Sentry from "@sentry/nextjs";
 // import { useRouter } from "next/navigation";
 // services
 import { Button } from "@plane/ui";
@@ -17,16 +17,18 @@ import DefaultLayout from "@/layouts/default-layout";
 // services
 // const authService = new AuthService();
 
-type props = {
-  error: Error & { digest?: string };
-};
+// type props = {
+//   error: Error & { digest?: string };
+// };
 
-const CustomErrorComponent = ({ error }: props) => {
+// TODO: adding error sentry logging.
+// const CustomErrorComponent = ({ error }: props) => {
+const CustomErrorComponent = () => {
   // const router = useRouter();
 
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
+  // useEffect(() => {
+  //   Sentry.captureException(error);
+  // }, [error]);
 
   const handleRefresh = () => {
     window.location.reload();
