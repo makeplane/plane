@@ -239,7 +239,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug.toString(), projectId, {
+      .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
         task: "Generate a proper description for this issue.",
       })
@@ -489,7 +489,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     {config?.has_openai_configured && projectId && (
                       <GptAssistantPopover
                         isOpen={gptAssistantModal}
-                        projectId={projectId}
                         handleClose={() => {
                           setGptAssistantModal((prevData) => !prevData);
                           // this is done so that the title do not reset after gpt popover closed
@@ -528,7 +527,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         onChange(stateId);
                         handleFormChange();
                       }}
-                      projectId={projectId?? undefined}
+                      projectId={projectId ?? undefined}
                       buttonVariant="border-with-text"
                       tabIndex={getTabIndex("state_id")}
                     />
@@ -651,7 +650,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <ModuleDropdown
-                        projectId={projectId?? undefined}
+                        projectId={projectId ?? undefined}
                         value={value ?? []}
                         onChange={(moduleIds) => {
                           onChange(moduleIds);
@@ -748,7 +747,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       handleFormChange();
                       setSelectedParentIssue(issue);
                     }}
-                    projectId={projectId?? undefined}
+                    projectId={projectId ?? undefined}
                     issueId={isDraft ? undefined : data?.id}
                   />
                 )}

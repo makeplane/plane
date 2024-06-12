@@ -9,8 +9,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { IIssueFilterOptions, TModulePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
-import { SidebarProgressStats } from "@/components/core";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { ModuleProgressStats } from "@/components/modules";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
@@ -44,9 +44,10 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
   } = useIssues(EIssuesStoreType.MODULE);
   // state
   const [loader, setLoader] = useState(false);
+
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const plotType = getPlotTypeByModuleId(moduleId);
+  const plotType: TModulePlotType = getPlotTypeByModuleId(moduleId);
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
   const estimateDetails =
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
@@ -66,6 +67,21 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
         ? Math.round((completedIssues / totalIssues) * 100)
         : 0
     : 0;
+
+  const chartDistributionData =
+    plotType === "points" ? moduleDetails?.estimate_distribution : moduleDetails?.distribution || undefined;
+  const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
+
+  const groupedBacklogIssues =
+    plotType === "points" ? moduleDetails?.backlog_estimate_issues : moduleDetails?.backlog_issues;
+  const groupedUnstartedIssues =
+    plotType === "points" ? moduleDetails?.unstarted_estimate_issues : moduleDetails?.unstarted_issues;
+  const groupedStartedIssues =
+    plotType === "points" ? moduleDetails?.started_estimate_issues : moduleDetails?.started_issues;
+  const groupedCompletedIssues =
+    plotType === "points" ? moduleDetails?.completed_estimate_points || 0 : moduleDetails?.completed_issues;
+  const groupedCancelledIssues =
+    plotType === "points" ? moduleDetails?.cancelled_estimate_issues : moduleDetails?.cancelled_issues;
 
   const moduleStartDate = getDate(moduleDetails?.start_date);
   const moduleEndDate = getDate(moduleDetails?.target_date);
@@ -190,68 +206,52 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       <span>Current</span>
                     </div>
                   </div>
-                  {moduleDetails.start_date &&
-                    moduleDetails.target_date &&
-                    moduleDetails.distribution?.completion_chart && (
-                      <Fragment>
-                        {plotType === "points" && totalEstimatePoints ? (
-                          <ProgressChart
-                            distribution={moduleDetails.distribution?.completion_chart ?? {}}
-                            startDate={moduleDetails.start_date}
-                            endDate={moduleDetails.target_date}
-                            totalIssues={totalEstimatePoints}
-                            plotTitle={"points"}
-                          />
-                        ) : (
-                          <ProgressChart
-                            distribution={moduleDetails.distribution?.completion_chart ?? {}}
-                            startDate={moduleDetails.start_date}
-                            endDate={moduleDetails.target_date}
-                            totalIssues={totalIssues}
-                            plotTitle={"issues"}
-                          />
-                        )}
-                      </Fragment>
-                    )}
+                  {moduleStartDate && moduleEndDate && completionChartDistributionData && (
+                    <Fragment>
+                      {plotType === "points" ? (
+                        <ProgressChart
+                          distribution={completionChartDistributionData}
+                          startDate={moduleStartDate}
+                          endDate={moduleEndDate}
+                          totalIssues={totalEstimatePoints}
+                          plotTitle={"points"}
+                        />
+                      ) : (
+                        <ProgressChart
+                          distribution={completionChartDistributionData}
+                          startDate={moduleStartDate}
+                          endDate={moduleEndDate}
+                          totalIssues={totalIssues}
+                          plotTitle={"issues"}
+                        />
+                      )}
+                    </Fragment>
+                  )}
                 </div>
 
                 {/* progress detailed view */}
-                <div>
-                  {totalIssues > 0 && totalEstimatePoints > 0 && (
-                    <div className="w-full border-t border-custom-border-200 pt-5">
-                      <SidebarProgressStats
-                        distribution={moduleDetails.distribution}
-                        groupedIssues={{
-                          backlog:
-                            plotType === "points"
-                              ? moduleDetails.backlog_estimate_issues
-                              : moduleDetails.backlog_issues,
-                          unstarted:
-                            plotType === "points"
-                              ? moduleDetails.unstarted_estimate_issues
-                              : moduleDetails.unstarted_issues,
-                          started:
-                            plotType === "points"
-                              ? moduleDetails.started_estimate_issues
-                              : moduleDetails.started_issues,
-                          completed:
-                            plotType === "points"
-                              ? moduleDetails.completed_estimate_points || 0
-                              : moduleDetails.completed_issues,
-                          cancelled:
-                            plotType === "points"
-                              ? moduleDetails.cancelled_estimate_issues
-                              : moduleDetails.cancelled_issues,
-                        }}
-                        totalIssues={plotType === "points" ? totalEstimatePoints || 0 : totalIssues}
-                        module={moduleDetails}
-                        isPeekView={Boolean(peekModule)}
-                        filters={issueFilters}
-                        handleFiltersUpdate={handleFiltersUpdate}
-                      />
-                    </div>
-                  )}
-                </div>
+                {totalIssues > 0 && totalEstimatePoints > 0 && chartDistributionData && (
+                  <div className="w-full border-t border-custom-border-200 pt-5">
+                    <ModuleProgressStats
+                      plotType={plotType}
+                      distribution={chartDistributionData}
+                      groupedIssues={{
+                        backlog: groupedBacklogIssues || 0,
+                        unstarted: groupedUnstartedIssues || 0,
+                        started: groupedStartedIssues || 0,
+                        completed: groupedCompletedIssues || 0,
+                        cancelled: groupedCancelledIssues || 0,
+                      }}
+                      totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+                      isEditable={Boolean(peekModule)}
+                      size="xs"
+                      roundedTab={false}
+                      noBackground={false}
+                      filters={issueFilters}
+                      handleFiltersUpdate={handleFiltersUpdate}
+                    />
+                  </div>
+                )}
               </Disclosure.Panel>
             </Transition>
           </div>

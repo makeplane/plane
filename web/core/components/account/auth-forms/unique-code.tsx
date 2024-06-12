@@ -19,6 +19,7 @@ type TAuthUniqueCodeForm = {
   email: string;
   handleEmailClear: () => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
+  nextPath: string | undefined;
 };
 
 type TUniqueCodeFormValues = {
@@ -32,7 +33,7 @@ const defaultValues: TUniqueCodeFormValues = {
 };
 
 export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
-  const { mode, email, handleEmailClear, generateEmailUniqueCode } = props;
+  const { mode, email, handleEmailClear, generateEmailUniqueCode, nextPath } = props;
   // hooks
   // const { captureEvent } = useEventTracker();
   // derived values
@@ -80,6 +81,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
+      {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
           Email

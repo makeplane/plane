@@ -2,7 +2,7 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -24,9 +24,10 @@ const isValidURL = (url: string): boolean => {
 };
 
 export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props) => {
+  const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next_path = searchParams.get("next_path");
+  const nextPath = searchParams.get("next_path");
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
@@ -51,9 +52,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = "/profile";
 
-    // validating the next_path from the router query
-    if (next_path && isValidURL(next_path.toString())) {
-      redirectionRoute = next_path.toString();
+    // validating the nextPath from the router query
+    if (nextPath && isValidURL(nextPath.toString())) {
+      redirectionRoute = nextPath.toString();
       return redirectionRoute;
     }
 
@@ -96,7 +97,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push("/");
+      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
@@ -109,7 +110,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push("/");
+      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
       return <></>;
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
@@ -128,7 +129,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         return <></>;
       }
     } else {
-      router.push("/");
+      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
       return <></>;
     }
   }

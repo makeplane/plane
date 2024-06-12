@@ -538,8 +538,8 @@ class ModuleViewSet(BaseViewSet):
                 )
                 .order_by("label_name")
             )
-            data["estimate_distribution"]["assignee"] = assignee_distribution
-            data["estimate_distribution"]["label"] = label_distribution
+            data["estimate_distribution"]["assignees"] = assignee_distribution
+            data["estimate_distribution"]["labels"] = label_distribution
 
             if modules and modules.start_date and modules.target_date:
                 data["estimate_distribution"]["completion_chart"] = (

@@ -15,13 +15,11 @@ import { findTotalDaysInRange } from "@/helpers/date-time.helper";
 
 type Props = {
   block: IGanttBlock;
-  enableReorder: boolean;
   isDragging: boolean;
-  dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
 };
 
 export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
-  const { block, enableReorder, isDragging, dragHandleRef } = props;
+  const { block, isDragging } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive } = useGanttChart();
 
@@ -44,16 +42,6 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
           height: `${BLOCK_HEIGHT}px`,
         }}
       >
-        {enableReorder && (
-          <button
-            type="button"
-            className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
-            ref={dragHandleRef}
-          >
-            <MoreVertical className="h-3.5 w-3.5" />
-            <MoreVertical className="-ml-5 h-3.5 w-3.5" />
-          </button>
-        )}
         <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
           <div className="flex-grow truncate">
             <ModuleGanttSidebarBlock moduleId={block.data.id} />

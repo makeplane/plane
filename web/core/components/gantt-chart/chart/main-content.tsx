@@ -19,9 +19,12 @@ import {
   WeekChartView,
   YearChartView,
 } from "@/components/gantt-chart";
-import { IssueBulkOperationsRoot } from "@/components/issues";
-// helpers
 import { cn } from "@/helpers/common.helper";
+// plane web components
+import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
+// plane web constants
+import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// helpers
 // constants
 import { GANTT_SELECT_GROUP } from "../constants";
 // hooks
@@ -123,7 +126,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       entities={{
         [GANTT_SELECT_GROUP]: blockIds ?? [],
       }}
-      disabled
+      disabled={!ENABLE_BULK_OPERATIONS}
     >
       {(helpers) => (
         <>

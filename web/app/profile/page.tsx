@@ -54,6 +54,7 @@ const ProfileSettingsPage = observer(() => {
     reset,
     watch,
     control,
+    setValue,
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
   // store hooks
@@ -104,6 +105,7 @@ const ProfileSettingsPage = observer(() => {
               message: "Profile picture deleted successfully.",
             });
             setIsRemoving(false);
+            setValue("avatar", "");
           })
           .catch(() => {
             setToast({
@@ -112,7 +114,10 @@ const ProfileSettingsPage = observer(() => {
               message: "There was some error in deleting your profile picture. Please try again.",
             });
           })
-          .finally(() => setIsRemoving(false));
+          .finally(() => {
+            setIsRemoving(false);
+            setIsImageUploadModalOpen(false);
+          });
     });
   };
 
