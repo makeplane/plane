@@ -72,13 +72,11 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                 isDragEnabled={enableReorder}
                 onDrop={handleOnDrop}
               >
-                {(isDragging: boolean, dragHandleRef: MutableRefObject<HTMLButtonElement | null>) => (
+                {(isDragging: boolean) => (
                   <IssuesSidebarBlock
                     block={block}
-                    enableReorder={enableReorder}
                     enableSelection={enableSelection}
                     isDragging={isDragging}
-                    dragHandleRef={dragHandleRef}
                     selectionHelpers={selectionHelpers}
                   />
                 )}

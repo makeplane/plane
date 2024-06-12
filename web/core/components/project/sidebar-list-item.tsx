@@ -12,7 +12,6 @@ import { useParams, usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // icons
 import {
-  MoreVertical,
   PenSquare,
   LinkIcon,
   Star,
@@ -111,7 +110,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop, projectListType } =
     props;
   // store hooks
-  const { sidebarCollapsed: isCollapsed, toggleSidebar } = useAppTheme();
+  const { sidebarCollapsed: isSideBarCollapsed, toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -124,7 +123,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   // router params
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   // pathname
@@ -187,15 +185,13 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     const element = projectRef.current;
-    const dragHandleElement = dragHandleRef.current;
 
     if (!element) return;
 
     return combine(
       draggable({
         element,
-        canDrag: () => !disableDrag && !isCollapsed,
-        dragHandle: dragHandleElement ?? undefined,
+        canDrag: () => !disableDrag && !isSideBarCollapsed,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
           setIsDragging(true);
@@ -211,7 +207,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               const root = createRoot(container);
               root.render(
                 <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
-                  <div className="h-7 w-7 grid place-items-center flex-shrink-0">
+                  <div className="h-6 w-6 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
                   <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
@@ -272,7 +268,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         },
       })
     );
-  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
+  }, [projectRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
@@ -295,56 +291,35 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 "group relative flex w-full items-center rounded-md py-1 text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
                 {
                   "bg-custom-sidebar-background-80": isMenuActive,
-                  "pl-7": disableDrag && !isCollapsed,
                 }
               )}
             >
-              {!disableDrag && (
-                <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
-                  position="top-right"
-                  disabled={isDragging}
-                >
-                  <button
-                    type="button"
-                    className={cn(
-                      "flex opacity-0 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 ml-2",
-                      {
-                        "group-hover:opacity-100": !isCollapsed,
-                        "cursor-not-allowed opacity-60": project.sort_order === null,
-                        flex: isMenuActive,
-                        hidden: isCollapsed,
-                      }
-                    )}
-                    ref={dragHandleRef}
-                  >
-                    <MoreVertical className="-ml-3 h-3.5" />
-                    <MoreVertical className="-ml-5 h-3.5" />
-                  </button>
-                </Tooltip>
-              )}
-              <Tooltip tooltipContent={`${project.name}`} position="right" disabled={!isCollapsed} isMobile={isMobile}>
+              <Tooltip
+                tooltipContent={`${project.name}`}
+                position="right"
+                disabled={!isSideBarCollapsed}
+                isMobile={isMobile}
+              >
                 <Disclosure.Button
                   as="div"
                   className={cn(
-                    "flex flex-grow cursor-pointer select-none items-center justify-between truncate text-left text-sm font-medium",
+                    "flex flex-grow cursor-pointer select-none items-center justify-between truncate text-left text-sm font-medium pl-2",
                     {
-                      "justify-center": isCollapsed,
+                      "justify-center": isSideBarCollapsed,
                     }
                   )}
                 >
                   <div
-                    className={cn("flex w-full flex-grow items-center gap-1 truncate", {
-                      "justify-center": isCollapsed,
+                    className={cn("flex w-full h-7 flex-grow items-center gap-1 truncate", {
+                      "justify-center": isSideBarCollapsed,
                     })}
                   >
-                    <div className="h-7 w-7 grid place-items-center flex-shrink-0">
+                    <div className="h-5 w-5 grid place-items-center flex-shrink-0 mr-1">
                       <Logo logo={project.logo_props} />
                     </div>
-                    {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
+                    {!isSideBarCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
                   </div>
-                  {!isCollapsed && (
+                  {!isSideBarCollapsed && (
                     <ChevronDown
                       className={cn(
                         "mb-0.5 hidden h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300 group-hover:block",
@@ -358,7 +333,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 </Disclosure.Button>
               </Tooltip>
 
-              {!isCollapsed && (
+              {!isSideBarCollapsed && (
                 <CustomMenu
                   customButton={
                     <div
@@ -457,7 +432,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className={`mt-1 space-y-1 ${isCollapsed ? "" : "ml-[2.25rem]"}`}>
+              <Disclosure.Panel className={`mt-1 space-y-1 ${isSideBarCollapsed ? "" : "ml-[2.25rem]"}`}>
                 {navigation(workspaceSlug as string, project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||
@@ -476,17 +451,17 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                           tooltipContent={`${project?.name}: ${item.name}`}
                           position="right"
                           className="ml-2"
-                          disabled={!isCollapsed}
+                          disabled={!isSideBarCollapsed}
                         >
                           <div
                             className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
                               pathname.includes(item.href)
                                 ? "bg-custom-primary-100/10 text-custom-primary-100"
                                 : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                            } ${isCollapsed ? "justify-center" : ""}`}
+                            } ${isSideBarCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4 stroke-[1.5]" />
-                            {!isCollapsed && item.name}
+                            {!isSideBarCollapsed && item.name}
                           </div>
                         </Tooltip>
                       </span>

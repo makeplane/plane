@@ -18,15 +18,13 @@ import { IGanttBlock } from "../../types";
 
 type Props = {
   block: IGanttBlock;
-  enableReorder: boolean;
   enableSelection: boolean;
   isDragging: boolean;
-  dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
   selectionHelpers?: TSelectionHelper;
 };
 
 export const IssuesSidebarBlock = observer((props: Props) => {
-  const { block, enableReorder, enableSelection, isDragging, dragHandleRef, selectionHelpers } = props;
+  const { block, enableSelection, isDragging, selectionHelpers } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive } = useGanttChart();
   const { getIsIssuePeeked } = useIssueDetail();
@@ -60,16 +58,6 @@ export const IssuesSidebarBlock = observer((props: Props) => {
         }}
       >
         <div className="flex items-center gap-2">
-          {enableReorder && (
-            <button
-              type="button"
-              className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
-              ref={dragHandleRef}
-            >
-              <MoreVertical className="h-3.5 w-3.5" />
-              <MoreVertical className="-ml-5 h-3.5 w-3.5" />
-            </button>
-          )}
           {enableSelection && selectionHelpers && (
             <MultipleSelectEntityAction
               className={cn(

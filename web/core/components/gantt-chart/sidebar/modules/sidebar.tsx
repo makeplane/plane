@@ -42,14 +42,7 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
               isDragEnabled={enableReorder}
               onDrop={handleOnDrop}
             >
-              {(isDragging: boolean, dragHandleRef: MutableRefObject<HTMLButtonElement | null>) => (
-                <ModulesSidebarBlock
-                  block={block}
-                  enableReorder={enableReorder}
-                  isDragging={isDragging}
-                  dragHandleRef={dragHandleRef}
-                />
-              )}
+              {(isDragging: boolean) => <ModulesSidebarBlock block={block} isDragging={isDragging} />}
             </GanttDnDHOC>
           );
         })
