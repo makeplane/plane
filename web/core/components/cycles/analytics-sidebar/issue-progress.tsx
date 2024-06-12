@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useCallback, useState } from "react";
+import { FC, Fragment, useCallback, useMemo, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
@@ -88,16 +88,19 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
     plotType === "points" ? cycleDetails?.estimate_distribution : cycleDetails?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
-  const groupedBacklogIssues =
-    plotType === "points" ? cycleDetails?.backlog_estimate_points : cycleDetails?.backlog_issues;
-  const groupedUnstartedIssues =
-    plotType === "points" ? cycleDetails?.unstarted_estimate_points : cycleDetails?.unstarted_issues;
-  const groupedStartedIssues =
-    plotType === "points" ? cycleDetails?.started_estimate_points : cycleDetails?.started_issues;
-  const groupedCompletedIssues =
-    plotType === "points" ? cycleDetails?.completed_estimate_points || 0 : cycleDetails?.completed_issues;
-  const groupedCancelledIssues =
-    plotType === "points" ? cycleDetails?.cancelled_estimate_points : cycleDetails?.cancelled_issues;
+  const groupedIssues = useMemo(
+    () => ({
+      backlog: plotType === "points" ? cycleDetails?.backlog_estimate_points || 0 : cycleDetails?.backlog_issues || 0,
+      unstarted:
+        plotType === "points" ? cycleDetails?.unstarted_estimate_points || 0 : cycleDetails?.unstarted_issues || 0,
+      started: plotType === "points" ? cycleDetails?.started_estimate_points || 0 : cycleDetails?.started_issues || 0,
+      completed:
+        plotType === "points" ? cycleDetails?.completed_estimate_points || 0 : cycleDetails?.completed_issues || 0,
+      cancelled:
+        plotType === "points" ? cycleDetails?.cancelled_estimate_points || 0 : cycleDetails?.cancelled_issues || 0,
+    }),
+    [plotType, cycleDetails]
+  );
 
   const cycleStartDate = getDate(cycleDetails?.start_date);
   const cycleEndDate = getDate(cycleDetails?.end_date);
@@ -252,13 +255,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                       cycleId={cycleId}
                       plotType={plotType}
                       distribution={chartDistributionData}
-                      groupedIssues={{
-                        backlog: groupedBacklogIssues || 0,
-                        unstarted: groupedUnstartedIssues || 0,
-                        started: groupedStartedIssues || 0,
-                        completed: groupedCompletedIssues || 0,
-                        cancelled: groupedCancelledIssues || 0,
-                      }}
+                      groupedIssues={groupedIssues}
                       totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                       isEditable={Boolean(peekCycle)}
                       size="xs"

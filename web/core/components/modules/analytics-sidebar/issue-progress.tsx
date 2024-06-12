@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useCallback, useState } from "react";
+import { FC, Fragment, useCallback, useMemo, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -72,16 +72,19 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
     plotType === "points" ? moduleDetails?.estimate_distribution : moduleDetails?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
-  const groupedBacklogIssues =
-    plotType === "points" ? moduleDetails?.backlog_estimate_points : moduleDetails?.backlog_issues;
-  const groupedUnstartedIssues =
-    plotType === "points" ? moduleDetails?.unstarted_estimate_points : moduleDetails?.unstarted_issues;
-  const groupedStartedIssues =
-    plotType === "points" ? moduleDetails?.started_estimate_points : moduleDetails?.started_issues;
-  const groupedCompletedIssues =
-    plotType === "points" ? moduleDetails?.completed_estimate_points || 0 : moduleDetails?.completed_issues;
-  const groupedCancelledIssues =
-    plotType === "points" ? moduleDetails?.cancelled_estimate_points : moduleDetails?.cancelled_issues;
+  const groupedIssues = useMemo(
+    () => ({
+      backlog: plotType === "points" ? moduleDetails?.backlog_estimate_points || 0 : moduleDetails?.backlog_issues || 0,
+      unstarted:
+        plotType === "points" ? moduleDetails?.unstarted_estimate_points || 0 : moduleDetails?.unstarted_issues || 0,
+      started: plotType === "points" ? moduleDetails?.started_estimate_points || 0 : moduleDetails?.started_issues || 0,
+      completed:
+        plotType === "points" ? moduleDetails?.completed_estimate_points || 0 : moduleDetails?.completed_issues || 0,
+      cancelled:
+        plotType === "points" ? moduleDetails?.cancelled_estimate_points || 0 : moduleDetails?.cancelled_issues || 0,
+    }),
+    [plotType, moduleDetails]
+  );
 
   const moduleStartDate = getDate(moduleDetails?.start_date);
   const moduleEndDate = getDate(moduleDetails?.target_date);
@@ -236,13 +239,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       moduleId={moduleId}
                       plotType={plotType}
                       distribution={chartDistributionData}
-                      groupedIssues={{
-                        backlog: groupedBacklogIssues || 0,
-                        unstarted: groupedUnstartedIssues || 0,
-                        started: groupedStartedIssues || 0,
-                        completed: groupedCompletedIssues || 0,
-                        cancelled: groupedCancelledIssues || 0,
-                      }}
+                      groupedIssues={groupedIssues}
                       totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                       isEditable={Boolean(peekModule)}
                       size="xs"
