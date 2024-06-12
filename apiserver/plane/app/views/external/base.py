@@ -11,7 +11,7 @@ from rest_framework import status
 
 # Module imports
 from ..base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, WorkspaceEntityPermission
 from plane.db.models import Workspace, Project
 from plane.app.serializers import (
     ProjectLiteSerializer,
@@ -78,6 +78,64 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 "response_html": text_html,
                 "project_detail": ProjectLiteSerializer(project).data,
                 "workspace_detail": WorkspaceLiteSerializer(workspace).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def post(self, request, slug):
+        OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
+            [
+                {
+                    "key": "OPENAI_API_KEY",
+                    "default": os.environ.get("OPENAI_API_KEY", None),
+                },
+                {
+                    "key": "GPT_ENGINE",
+                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                },
+            ]
+        )
+
+        # Get the configuration value
+        # Check the keys
+        if not OPENAI_API_KEY or not GPT_ENGINE:
+            return Response(
+                {"error": "OpenAI API key and engine is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        prompt = request.data.get("prompt", False)
+        task = request.data.get("task", False)
+
+        if not task:
+            return Response(
+                {"error": "Task is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        final_text = task + "\n" + prompt
+
+        client = OpenAI(
+            api_key=OPENAI_API_KEY,
+        )
+
+        response = client.chat.completions.create(
+            model=GPT_ENGINE,
+            messages=[{"role": "user", "content": final_text}],
+        )
+
+        text = response.choices[0].message.content.strip()
+        text_html = text.replace("\n", "<br/>")
+        return Response(
+            {
+                "response": text,
+                "response_html": text_html,
             },
             status=status.HTTP_200_OK,
         )
