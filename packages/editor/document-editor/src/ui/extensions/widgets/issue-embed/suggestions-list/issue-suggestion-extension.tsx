@@ -17,6 +17,7 @@ export const IssueEmbedSuggestions = Extension.create({
       },
     };
   },
+
   addProseMirrorPlugins() {
     return [
       Suggestion({
