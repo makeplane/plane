@@ -380,101 +380,101 @@ class CycleViewSet(BaseViewSet):
                 estimate__type="points",
             ).exists()
 
-            data[0]["estimate_distribution"] = {}
-            if estimate_type:
-                assignee_distribution = (
-                    Issue.objects.filter(
-                        issue_cycle__cycle_id=data[0]["id"],
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    .annotate(display_name=F("assignees__display_name"))
-                    .annotate(assignee_id=F("assignees__id"))
-                    .annotate(avatar=F("assignees__avatar"))
-                    .values("display_name", "assignee_id", "avatar")
-                    .annotate(
-                        total_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField())
-                        )
-                    )
-                    .annotate(
-                        completed_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
-                            filter=Q(
-                                completed_at__isnull=False,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
-                    .annotate(
-                        pending_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
-                            filter=Q(
-                                completed_at__isnull=True,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
-                    .order_by("display_name")
-                )
-
-                label_distribution = (
-                    Issue.objects.filter(
-                        issue_cycle__cycle_id=data[0]["id"],
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    .annotate(label_name=F("labels__name"))
-                    .annotate(color=F("labels__color"))
-                    .annotate(label_id=F("labels__id"))
-                    .values("label_name", "color", "label_id")
-                    .annotate(
-                        total_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField())
-                        )
-                    )
-                    .annotate(
-                        completed_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
-                            filter=Q(
-                                completed_at__isnull=False,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
-                    .annotate(
-                        pending_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
-                            filter=Q(
-                                completed_at__isnull=True,
-                                archived_at__isnull=True,
-                                is_draft=False,
-                            ),
-                        )
-                    )
-                    .order_by("label_name")
-                )
-                data[0]["estimate_distribution"] = {
-                    "assignees": assignee_distribution,
-                    "labels": label_distribution,
-                    "completion_chart": {},
-                }
-
-                if data[0]["start_date"] and data[0]["end_date"]:
-                    data[0]["estimate_distribution"]["completion_chart"] = (
-                        burndown_plot(
-                            queryset=queryset.first(),
-                            slug=slug,
-                            project_id=project_id,
-                            plot_type="points",
-                            cycle_id=data[0]["id"],
-                        )
-                    )
-
             if data:
+                data[0]["estimate_distribution"] = {}
+                if estimate_type:
+                    assignee_distribution = (
+                        Issue.objects.filter(
+                            issue_cycle__cycle_id=data[0]["id"],
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(display_name=F("assignees__display_name"))
+                        .annotate(assignee_id=F("assignees__id"))
+                        .annotate(avatar=F("assignees__avatar"))
+                        .values("display_name", "assignee_id", "avatar")
+                        .annotate(
+                            total_estimates=Sum(
+                                Cast("estimate_point__value", IntegerField())
+                            )
+                        )
+                        .annotate(
+                            completed_estimates=Sum(
+                                Cast("estimate_point__value", IntegerField()),
+                                filter=Q(
+                                    completed_at__isnull=False,
+                                    archived_at__isnull=True,
+                                    is_draft=False,
+                                ),
+                            )
+                        )
+                        .annotate(
+                            pending_estimates=Sum(
+                                Cast("estimate_point__value", IntegerField()),
+                                filter=Q(
+                                    completed_at__isnull=True,
+                                    archived_at__isnull=True,
+                                    is_draft=False,
+                                ),
+                            )
+                        )
+                        .order_by("display_name")
+                    )
+
+                    label_distribution = (
+                        Issue.objects.filter(
+                            issue_cycle__cycle_id=data[0]["id"],
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(label_name=F("labels__name"))
+                        .annotate(color=F("labels__color"))
+                        .annotate(label_id=F("labels__id"))
+                        .values("label_name", "color", "label_id")
+                        .annotate(
+                            total_estimates=Sum(
+                                Cast("estimate_point__value", IntegerField())
+                            )
+                        )
+                        .annotate(
+                            completed_estimates=Sum(
+                                Cast("estimate_point__value", IntegerField()),
+                                filter=Q(
+                                    completed_at__isnull=False,
+                                    archived_at__isnull=True,
+                                    is_draft=False,
+                                ),
+                            )
+                        )
+                        .annotate(
+                            pending_estimates=Sum(
+                                Cast("estimate_point__value", IntegerField()),
+                                filter=Q(
+                                    completed_at__isnull=True,
+                                    archived_at__isnull=True,
+                                    is_draft=False,
+                                ),
+                            )
+                        )
+                        .order_by("label_name")
+                    )
+                    data[0]["estimate_distribution"] = {
+                        "assignees": assignee_distribution,
+                        "labels": label_distribution,
+                        "completion_chart": {},
+                    }
+
+                    if data[0]["start_date"] and data[0]["end_date"]:
+                        data[0]["estimate_distribution"]["completion_chart"] = (
+                            burndown_plot(
+                                queryset=queryset.first(),
+                                slug=slug,
+                                project_id=project_id,
+                                plot_type="points",
+                                cycle_id=data[0]["id"],
+                            )
+                        )
+
                 assignee_distribution = (
                     Issue.objects.filter(
                         issue_cycle__cycle_id=data[0]["id"],
@@ -908,7 +908,7 @@ class CycleViewSet(BaseViewSet):
             if data["start_date"] and data["end_date"]:
                 data["estimate_distribution"]["completion_chart"] = (
                     burndown_plot(
-                        queryset=queryset.first(),
+                        queryset=queryset,
                         slug=slug,
                         project_id=project_id,
                         plot_type="points",
