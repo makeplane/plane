@@ -2,7 +2,7 @@
 import os
 
 # Django imports
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
 from plane.license.models import InstanceConfiguration
@@ -19,12 +19,7 @@ class Command(BaseCommand):
 
         for item in mandatory_keys:
             if not os.environ.get(item):
-                self.stdout.write(
-                    self.style.ERROR(
-                        f"{item} env variable is required."
-                    )
-                )
-                exit(1)
+                raise CommandError(f"{item} env variable is required.")
 
         config_keys = [
             # Authentication Settings
