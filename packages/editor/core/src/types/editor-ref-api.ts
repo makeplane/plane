@@ -16,4 +16,6 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
+  isEditorFocused: () => boolean;
+  setFocusAtSavedSelection: () => void;
 }

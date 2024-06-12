@@ -187,6 +187,24 @@ export const useEditor = ({
         scrollSummary(editorRef.current, marking);
       },
       isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
+      isEditorFocused: () => editorRef.current?.isFocused,
+      setFocusAtSavedSelection: () => {
+        if (!editorRef.current || editorRef.current.isDestroyed) {
+          console.error("Editor reference is not available or has been destroyed.");
+          return;
+        }
+        try {
+          let focusPosition = 0;
+          if (savedSelection) {
+            focusPosition = savedSelection.from;
+          }
+          const docSize = editorRef.current.state.doc.content.size;
+          const safePosition = Math.max(0, Math.min(focusPosition, docSize));
+          editorRef.current.chain().focus().setTextSelection(safePosition).run();
+        } catch (error) {
+          console.error("An error occurred while setting focus at position:", error);
+        }
+      },
       setFocusAtPosition: (position: number) => {
         if (!editorRef.current || editorRef.current.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");

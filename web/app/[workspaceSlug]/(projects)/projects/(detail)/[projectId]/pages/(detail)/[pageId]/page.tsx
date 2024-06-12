@@ -20,6 +20,7 @@ import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
+import useFocusOnSlash from "@/hooks/use-focus-on-slash";
 
 const PageDetailsPage = observer(() => {
   // states
@@ -29,6 +30,8 @@ const PageDetailsPage = observer(() => {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
+  // Use the custom hook to focus on the editor when "/" is pressed
+  useFocusOnSlash(editorRef);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
