@@ -5,7 +5,7 @@ import update from "lodash/update";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IModule, ILinkDetails } from "@plane/types";
+import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
 // helpers
 import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // services
@@ -19,6 +19,7 @@ export interface IModuleStore {
   //Loaders
   loader: boolean;
   fetchedMap: Record<string, boolean>;
+  plotType: Record<string, TModulePlotType>;
   // observables
   moduleMap: Record<string, IModule>;
   // computed
@@ -30,7 +31,9 @@ export interface IModuleStore {
   getModuleById: (moduleId: string) => IModule | null;
   getModuleNameById: (moduleId: string) => string;
   getProjectModuleIds: (projectId: string) => string[] | null;
+  getPlotTypeByModuleId: (moduleId: string) => TModulePlotType;
   // actions
+  setPlotType: (moduleId: string, plotType: TModulePlotType) => void;
   // fetch
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
@@ -72,6 +75,7 @@ export class ModulesStore implements IModuleStore {
   // observables
   loader: boolean = false;
   moduleMap: Record<string, IModule> = {};
+  plotType: Record<string, TModulePlotType> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
   // root store
@@ -86,11 +90,13 @@ export class ModulesStore implements IModuleStore {
       // observables
       loader: observable.ref,
       moduleMap: observable,
+      plotType: observable.ref,
       fetchedMap: observable,
       // computed
       projectModuleIds: computed,
       projectArchivedModuleIds: computed,
       // actions
+      setPlotType: action,
       fetchWorkspaceModules: action,
       fetchModules: action,
       fetchArchivedModules: action,
@@ -212,6 +218,26 @@ export class ModulesStore implements IModuleStore {
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
+
+  /**
+   * @description gets the plot type for the module store
+   * @param {TModulePlotType} plotType
+   */
+  getPlotTypeByModuleId = (moduleId: string) => {
+    const { projectId } = this.rootStore.router;
+
+    return projectId && this.rootStore.projectEstimate.areEstimateEnabledByProjectId(projectId)
+      ? this.plotType[moduleId] || "burndown"
+      : "burndown";
+  };
+
+  /**
+   * @description updates the plot type for the module store
+   * @param {TModulePlotType} plotType
+   */
+  setPlotType = (moduleId: string, plotType: TModulePlotType) => {
+    set(this.plotType, [moduleId], plotType);
+  };
 
   /**
    * @description fetch all modules
