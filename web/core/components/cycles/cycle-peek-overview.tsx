@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 // components
-import { CycleDetailsSidebar } from "./sidebar";
+import { CycleDetailsSidebar } from "./";
 
 type Props = {
   projectId: string;
@@ -25,7 +25,7 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
   const { fetchCycleDetails, fetchArchivedCycleDetails } = useCycle();
 
   const handleClose = () => {
-    const query = generateQueryParams(searchParams, ['peekCycle']);
+    const query = generateQueryParams(searchParams, ["peekCycle"]);
     router.push(`${pathname}?${query}`);
   };
 

@@ -206,10 +206,19 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
-      params,
-    })
+  async getUserProfileIssues(
+    workspaceSlug: string,
+    userId: string,
+    params: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/user-issues/${userId}/`,
+      {
+        params,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

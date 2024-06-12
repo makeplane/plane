@@ -105,19 +105,22 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     projectId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
-    moduleId: string
+    moduleId: string,
+    isExistingPaginationOptions: boolean = false
   ) => {
     try {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear();
+      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
+      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params, {
+        signal: this.controller.signal,
+      });
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, projectId, moduleId);
@@ -190,7 +193,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     moduleId: string
   ) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, moduleId);
+    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, moduleId, true);
   };
 
   /**

@@ -1,6 +1,6 @@
 import React from "react";
 import { eachDayOfInterval, isValid } from "date-fns";
-import { TCompletionChartDistribution } from "@plane/types";
+import { TModuleCompletionChartDistribution } from "@plane/types";
 // ui
 import { LineGraph } from "@/components/ui";
 // helpers
@@ -8,11 +8,12 @@ import { getDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.hel
 //types
 
 type Props = {
-  distribution: TCompletionChartDistribution;
+  distribution: TModuleCompletionChartDistribution;
   startDate: string | Date;
   endDate: string | Date;
   totalIssues: number;
   className?: string;
+  plotTitle?: string;
 };
 
 const styleById = {
@@ -41,7 +42,14 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
     />
   ));
 
-const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues, className = "" }) => {
+const ProgressChart: React.FC<Props> = ({
+  distribution,
+  startDate,
+  endDate,
+  totalIssues,
+  className = "",
+  plotTitle = "issues",
+}) => {
   const chartData = Object.keys(distribution ?? []).map((key) => ({
     currentDate: renderFormattedDateWithoutYear(key),
     pending: distribution[key],
@@ -129,7 +137,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         sliceTooltip={(datum) => (
           <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
             {datum.slice.points[0].data.yFormatted}
-            <span className="text-custom-text-200"> issues pending on </span>
+            <span className="text-custom-text-200"> {plotTitle} pending on </span>
             {datum.slice.points[0].data.xFormatted}
           </div>
         )}

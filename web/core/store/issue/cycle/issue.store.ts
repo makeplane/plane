@@ -150,19 +150,22 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     projectId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
-    cycleId: string
+    cycleId: string,
+    isExistingPaginationOptions: boolean = false
   ) => {
     try {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear();
+      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
+      const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params, {
+        signal: this.controller.signal,
+      });
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId);
@@ -235,7 +238,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     cycleId: string
   ) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, cycleId);
+    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, cycleId, true);
   };
 
   /**

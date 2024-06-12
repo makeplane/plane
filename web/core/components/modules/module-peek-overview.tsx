@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useModule } from "@/hooks/store";
 // components
-import { ModuleDetailsSidebar } from "./sidebar";
+import { ModuleAnalyticsSidebar } from "./";
 
 type Props = {
   projectId: string;
@@ -46,7 +46,7 @@ export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, worksp
               "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
           }}
         >
-          <ModuleDetailsSidebar
+          <ModuleAnalyticsSidebar
             moduleId={peekModule?.toString() ?? ""}
             handleClose={handleClose}
             isArchived={isArchived}

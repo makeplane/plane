@@ -105,14 +105,15 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     userId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
-    view: "assigned" | "created" | "subscribed"
+    view: "assigned" | "created" | "subscribed",
+    isExistingPaginationOptions: boolean = false
   ) => {
     try {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear();
+      this.clear(!isExistingPaginationOptions);
 
       // set ViewId
       this.setViewId(view);
@@ -131,7 +132,9 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       else if (this.currentView === "subscribed") params = { ...params, subscriber: userId };
 
       // call the fetch issues API with the params
-      const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
+      const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params, {
+        signal: this.controller.signal,
+      });
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug);
@@ -201,7 +204,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
    */
   fetchIssuesWithExistingPagination = async (workspaceSlug: string, userId: string, loadType: TLoader) => {
     if (!this.paginationOptions || !this.currentView) return;
-    return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView);
+    return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView, true);
   };
 
   archiveBulkIssues = this.bulkArchiveIssues;

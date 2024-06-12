@@ -187,6 +187,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // root store
   rootIssueStore;
   issueFilterStore;
+  // API Abort controller
+  controller: AbortController;
 
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IBaseIssueFilterStore, isArchived = false) {
     makeObservable(this, {
@@ -246,6 +248,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     this.issueDraftService = new IssueDraftService();
     this.moduleService = new ModuleService();
     this.cycleService = new CycleService();
+
+    this.controller = new AbortController();
   }
 
   // Abstract class to be implemented to fetch parent stats such as project, module or cycle details
@@ -1096,13 +1100,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear() {
+  clear(shouldClearPaginationOptions = true) {
     runInAction(() => {
       this.groupedIssueIds = undefined;
       this.issuePaginationData = {};
       this.groupedIssueCount = {};
-      this.paginationOptions = undefined;
+      if (shouldClearPaginationOptions) {
+        this.paginationOptions = undefined;
+      }
     });
+    this.controller.abort();
+    this.controller = new AbortController();
   }
 
   /**

@@ -64,9 +64,9 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
 
   return (
     <LabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
-      {(isDragging, isDroppingInLabel) => (
+      {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded cursor-grab ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
         >
           <div
             className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded  ${
@@ -90,6 +90,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
                 isDragging={isDragging}
                 customMenuItems={customMenuItems}
                 handleLabelDelete={handleLabelDelete}
+                dragHandleRef={dragHandleRef}
               />
             )}
           </div>

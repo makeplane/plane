@@ -67,11 +67,16 @@ export class CycleService extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    queries?: any
+    queries?: any,
+    config = {}
   ): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
-      params: queries,
-    })
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
+      {
+        params: queries,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
