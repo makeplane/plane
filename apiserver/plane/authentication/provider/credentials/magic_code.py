@@ -48,7 +48,7 @@ class MagicCodeProvider(CredentialAdapter):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
                 error_message="SMTP_NOT_CONFIGURED",
-                payload={"email": str(self.key)},
+                payload={"email": str(key)},
             )
 
         if ENABLE_MAGIC_LINK_LOGIN == "0":
@@ -57,7 +57,7 @@ class MagicCodeProvider(CredentialAdapter):
                     "MAGIC_LINK_LOGIN_DISABLED"
                 ],
                 error_message="MAGIC_LINK_LOGIN_DISABLED",
-                payload={"email": str(self.key)},
+                payload={"email": str(key)},
             )
 
         super().__init__(
