@@ -1222,7 +1222,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         ).exists()
 
         if estimate_type:
-            assignee_estimate_distribution = (
+            assignee_estimate_data = (
                 Issue.objects.filter(
                     issue_cycle__cycle_id=cycle_id,
                     workspace__slug=slug,
@@ -1259,8 +1259,24 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 )
                 .order_by("display_name")
             )
+            # assignee distribution serialization
+            assignee_estimate_distribution = [
+                {
+                    "display_name": item["display_name"],
+                    "assignee_id": (
+                        str(item["assignee_id"])
+                        if item["assignee_id"]
+                        else None
+                    ),
+                    "avatar": item["avatar"],
+                    "total_estimates": item["total_estimates"],
+                    "completed_estimates": item["completed_estimates"],
+                    "pending_estimates": item["pending_estimates"],
+                }
+                for item in assignee_estimate_data
+            ]
 
-            label_estimate_distribution = (
+            label_distribution_data = (
                 Issue.objects.filter(
                     issue_cycle__cycle_id=cycle_id,
                     workspace__slug=slug,
@@ -1305,6 +1321,20 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 plot_type="points",
                 cycle_id=cycle_id,
             )
+            # Label distribution serialization
+            label_estimate_distribution = [
+                {
+                    "label_name": item["label_name"],
+                    "color": item["color"],
+                    "label_id": (
+                        str(item["label_id"]) if item["label_id"] else None
+                    ),
+                    "total_estimates": item["total_estimates"],
+                    "completed_estimates": item["completed_estimates"],
+                    "pending_estimates": item["pending_estimates"],
+                }
+                for item in label_distribution_data
+            ]
 
         # Get the assignee distribution
         assignee_distribution = (
