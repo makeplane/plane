@@ -1,9 +1,13 @@
 import { FC, Fragment, useState } from "react";
+import orderBy from "lodash/orderBy";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // icons
 import { CheckCircle } from "lucide-react";
 // ui
 import { Dialog, Transition, Tab } from "@headlessui/react";
+// types
+import { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
 // store
 import { useEventTracker } from "@/hooks/store";
 // services
@@ -11,11 +15,10 @@ import { DiscoService } from "@/services/disco.service";
 
 const discoService = new DiscoService();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
-
-const PRICING_CATEGORIES = ["Monthly", "Yearly"];
 
 const MONTHLY_PLAN_ITEMS = [
   "White-glove onboarding for your use-cases",
@@ -42,27 +45,51 @@ export type CloudProductsModalProps = {
 
 export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   const { isOpen, handleClose } = props;
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
   // store
   const { captureEvent } = useEventTracker();
   // fetch products
-  const { data } = useSWR("CLOUD_PAYMENT_PRODUCTS", () => discoService.listProducts());
+  const { data } = useSWR(
+    workspaceSlug ? "CLOUD_PAYMENT_PRODUCTS" : null,
+    workspaceSlug ? () => discoService.listProducts(workspaceSlug.toString()) : null
+  );
+  const proProduct = data?.find((product: IPaymentProduct) => product?.type === "PRO");
+  const proProductPrices = orderBy(proProduct?.prices || [], ["recurring"], ["asc"]);
   console.log("data", data);
   // states
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
+  const [isLoading, setLoading] = useState(false);
 
-  const handleProPlaneMonthRedirection = () => {
-    if (process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL) {
-      window.open(process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL, "_blank");
-      captureEvent("pro_plan_modal_month_redirection", {});
-    }
+  const handlePaymentLink = (priceId: string) => {
+    if (!workspaceSlug) return;
+    setLoading(true);
+    captureEvent("pro_plan_payment_link_clicked", { workspaceSlug });
+    discoService
+      .getPaymentLink(workspaceSlug.toString(), {
+        price_id: priceId,
+        product_id: proProduct?.id,
+      })
+      .then((response) => {
+        console.log("response", response);
+        if (response.payment_link) {
+          window.open(response.payment_link, "_blank");
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
-  const handleProPlanYearlyRedirection = () => {
-    if (process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL) {
-      window.open(process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL, "_blank");
-      captureEvent("pro_plan_modal_yearly_redirection", {});
+  const getPlaneFeatureItems = (recurringType: string) => {
+    if (recurringType === "month") {
+      return MONTHLY_PLAN_ITEMS;
     }
+    if (recurringType === "year") {
+      return YEARLY_PLAN_ITEMS;
+    }
+    return [];
   };
 
   return (
@@ -103,9 +130,9 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
                   <Tab.Group>
                     <div className="flex w-full justify-center">
                       <Tab.List className="flex space-x-1 rounded-xl bg-custom-background-80 p-1 w-[72%]">
-                        {PRICING_CATEGORIES.map((category, index) => (
+                        {proProductPrices.map((price: IPaymentProductPrice, index: number) => (
                           <Tab
-                            key={category}
+                            key={price?.id}
                             className={({ selected }) =>
                               classNames(
                                 "w-full rounded-lg py-2 text-sm font-medium leading-5",
@@ -118,8 +145,9 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
                             onClick={() => setTabIndex(index)}
                           >
                             <>
-                              {category}
-                              {category === "Yearly" && (
+                              {price.recurring === "month" && ("Monthly" as string)}
+                              {price.recurring === "year" && ("Annual" as string)}
+                              {price.recurring === "year" && (
                                 <span className="bg-custom-primary-100 text-white rounded-full px-2 py-1 ml-1 text-xs">
                                   -28%
                                 </span>
@@ -131,62 +159,38 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
                     </div>
 
                     <Tab.Panels className="mt-2">
-                      <Tab.Panel className={classNames("rounded-xl bg-custom-background-100 p-3")}>
-                        <p className="ml-4 text-4xl font-bold mb-2">
-                          $7
-                          <span className="text-sm ml-3 text-custom-text-300">/user/month</span>
-                        </p>
-                        <ul>
-                          {MONTHLY_PLAN_ITEMS.map((item) => (
-                            <li key={item} className="relative rounded-md p-3 flex">
-                              <p className="text-sm font-medium leading-5 flex items-center">
-                                <CheckCircle className="h-4 w-4 mr-4" />
-                                <span>{item}</span>
-                              </p>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="flex justify-center w-full">
-                          <div className="relative inline-flex group mt-8">
-                            <div className="absolute transition-all duration-1000 opacity-50 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt" />
-                            <button
-                              type="button"
-                              className="relative inline-flex items-center justify-center px-8 py-4 text-sm font-medium border-custom-border-100 border-[1.5px] transition-all duration-200 bg-custom-background-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-border-200"
-                              onClick={handleProPlaneMonthRedirection}
-                            >
-                              Become Early Adopter
-                            </button>
+                      {proProductPrices?.map((price: IPaymentProductPrice, index: number) => (
+                        <Tab.Panel key={index} className={classNames("rounded-xl bg-custom-background-100 p-3")}>
+                          <p className="ml-4 text-4xl font-bold mb-2">
+                            {price.recurring === "month" && "$7"}
+                            {price.recurring === "year" && "$5"}
+                            <span className="text-sm ml-3 text-custom-text-300">/user/month</span>
+                          </p>
+                          <ul>
+                            {getPlaneFeatureItems(price.recurring).map((item) => (
+                              <li key={item} className="relative rounded-md p-3 flex">
+                                <p className="text-sm font-medium leading-5 flex items-center">
+                                  <CheckCircle className="h-4 w-4 mr-4" />
+                                  <span>{item}</span>
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="flex justify-center w-full">
+                            <div className="relative inline-flex group mt-8">
+                              <div className="absolute transition-all duration-1000 opacity-50 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt" />
+                              <button
+                                type="button"
+                                className="relative inline-flex items-center justify-center px-8 py-4 text-sm font-medium border-custom-border-100 border-[1.5px] transition-all duration-200 bg-custom-background-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-border-200"
+                                onClick={() => handlePaymentLink(price.id)}
+                                disabled={isLoading}
+                              >
+                                Become Early Adopter
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </Tab.Panel>
-                      <Tab.Panel className={classNames("rounded-xl bg-custom-background-100 p-3")}>
-                        <p className="ml-4 text-4xl font-bold mb-2">
-                          $5
-                          <span className="text-sm ml-3 text-custom-text-300">/user/month</span>
-                        </p>
-                        <ul>
-                          {YEARLY_PLAN_ITEMS.map((item) => (
-                            <li key={item} className="relative rounded-md p-3 flex">
-                              <p className="text-sm font-medium leading-5 flex items-center">
-                                <CheckCircle className="h-4 w-4 mr-4" />
-                                <span>{item}</span>
-                              </p>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="flex justify-center w-full">
-                          <div className="relative inline-flex group mt-8">
-                            <div className="absolute transition-all duration-1000 opacity-50 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt" />
-                            <button
-                              type="button"
-                              className="relative inline-flex items-center justify-center px-8 py-4 text-sm font-medium border-custom-border-100 border-[1.5px] transition-all duration-200 bg-custom-background-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-border-200"
-                              onClick={handleProPlanYearlyRedirection}
-                            >
-                              Become Early Adopter
-                            </button>
-                          </div>
-                        </div>
-                      </Tab.Panel>
+                        </Tab.Panel>
+                      ))}
                     </Tab.Panels>
                   </Tab.Group>
                 </div>

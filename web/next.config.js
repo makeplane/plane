@@ -67,18 +67,6 @@ const nextConfig = {
       },
     ];
 
-    if (process.env.NEXT_PUBLIC_DISCO_BASE_URL) {
-      const DISCO_BASE_URL = process.env.NEXT_PUBLIC_DISCO_BASE_URL
-      rewrites.push({
-        source: "/disco",
-        destination: `${DISCO_BASE_URL}/api/`,
-      })
-      rewrites.push({
-        source: "/disco/:path*",
-        destination: `${DISCO_BASE_URL}/:path*/`,
-      })
-    }
-
     if (process.env.NEXT_PUBLIC_ADMIN_BASE_URL || process.env.NEXT_PUBLIC_ADMIN_BASE_PATH) {
       const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || ""
       const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || ""

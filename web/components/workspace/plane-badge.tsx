@@ -31,7 +31,7 @@ export const PlaneBadge: React.FC = () => {
     captureEvent("plane_one_modal_opened", {});
   };
 
-  if (process.env.NEXT_PUBLIC_DISCO_BASE_URL !== "") {
+  if (process.env.NEXT_PUBLIC_IS_MULTI_TENANT === "1") {
     return (
       <>
         <CloudProductsModal isOpen={isProPlanModalOpen} handleClose={() => setIsProPlanModalOpen(false)} />
@@ -40,7 +40,7 @@ export const PlaneBadge: React.FC = () => {
           className="w-1/2 cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
           onClick={handleProPlanModalOpen}
         >
-          Plane Pro
+          Upgrade to Pro
         </Button>
       </>
     );
