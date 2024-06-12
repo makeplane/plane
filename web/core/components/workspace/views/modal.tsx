@@ -6,9 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 // types
 import { IWorkspaceView } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { WorkspaceViewForm } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";

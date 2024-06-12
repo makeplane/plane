@@ -5,9 +5,8 @@ import { observer } from "mobx-react";
 // types
 import { IProjectView } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { ProjectViewForm } from "@/components/views";
 // hooks
 import { useProjectView } from "@/hooks/store";

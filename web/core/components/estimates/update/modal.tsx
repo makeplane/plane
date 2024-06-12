@@ -2,9 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Button } from "@plane/ui";
+// ui
+import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateUpdateStageOne } from "@/components/estimates";
 
 type TUpdateEstimateModal = {

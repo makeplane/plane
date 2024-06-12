@@ -6,9 +6,7 @@ import { usePathname } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";

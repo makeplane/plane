@@ -5,9 +5,7 @@ import { useParams } from "next/navigation";
 // types
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { csvDownload } from "@/helpers/download.helper";
 // components

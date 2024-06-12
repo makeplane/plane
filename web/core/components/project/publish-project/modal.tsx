@@ -8,9 +8,7 @@ import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
 import { IProject, TProjectPublishLayouts, TPublishSettings } from "@plane/types";
 // ui
-import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect } from "@plane/ui";
-// components
-import { EModalWidth, ModalCore } from "@/components/core";
+import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
