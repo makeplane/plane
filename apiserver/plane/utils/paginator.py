@@ -393,16 +393,9 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Grouping for single values
         processed_results = self.__get_field_dict()
         for result in results:
-            (
-                print(result["created_at"].date(), result["priority"])
-                if str(result[self.group_by_field_name])
-                == "c88dfd3b-e97e-4948-851b-a5fe1e36ffd0"
-                else None
-            )
             group_value = str(result.get(self.group_by_field_name))
             if group_value in processed_results:
                 processed_results[str(group_value)]["results"].append(result)
-
         return processed_results
 
     def process_results(self, results):
