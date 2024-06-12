@@ -1,4 +1,5 @@
 "use client";
+
 import { FC, ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { AppProgressBar } from "next-nprogress-bar";
@@ -23,16 +24,20 @@ export interface IAppProvider {
   children: ReactNode;
 }
 
+const ToastWithTheme = () => {
+  const { resolvedTheme } = useTheme();
+  return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
+};
+
 export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
-  const { resolvedTheme } = useTheme();
   return (
     <>
       <AppProgressBar height="4px" color="#3F76FF" options={{ showSpinner: false }} shallowRouting />
-      <Toast theme={resolveGeneralTheme(resolvedTheme)} />
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+          <ToastWithTheme />
           <InstanceWrapper>
             <StoreWrapper>
               <CrispWrapper>
