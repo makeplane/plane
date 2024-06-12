@@ -24,8 +24,10 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, pageId, parentRef } = props;
 
   // store hooks
-  const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = usePage(pageId);
+  const page = usePage(pageId);
   const { getUserDetails } = useMember();
+  // derived values
+  const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = page;
 
   // derived values
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
@@ -85,7 +87,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       {/* quick actions dropdown */}
       <PageQuickActions
         parentRef={parentRef}
-        pageId={pageId}
+        page={page}
         pageLink={`${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
       />
     </>

@@ -8,17 +8,17 @@ import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, set
 import { DeletePageModal } from "@/components/pages";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
-// hooks
-import { usePage } from "@/hooks/store";
+// store
+import { IPageStore } from "@/store/pages/page.store";
 
 type Props = {
-  pageId: string;
+  page: IPageStore;
   pageLink: string;
   parentRef: React.RefObject<HTMLElement>;
 };
 
 export const PageQuickActions: React.FC<Props> = observer((props) => {
-  const { pageId, pageLink, parentRef } = props;
+  const { page, pageLink, parentRef } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store hooks
@@ -32,7 +32,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
     canCurrentUserArchivePage,
     canCurrentUserChangeAccess,
     canCurrentUserDeletePage,
-  } = usePage(pageId);
+  } = page;
 
   const handleCopyText = () =>
     copyUrlToClipboard(pageLink).then(() => {
@@ -85,7 +85,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
+      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={page.id ?? ""} />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
         {MENU_ITEMS.map((item) => {
