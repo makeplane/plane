@@ -2,7 +2,7 @@
 import os
 
 # Django imports
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
 from plane.license.models import InstanceConfiguration
@@ -14,6 +14,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from plane.license.utils.encryption import encrypt_data
         from plane.license.utils.instance_value import get_configuration_value
+
+        mandatory_keys = ["SECRET_KEY"]
+
+        for item in mandatory_keys:
+            if not os.environ.get(item):
+                raise CommandError(f"{item} env variable is required.")
 
         config_keys = [
             # Authentication Settings

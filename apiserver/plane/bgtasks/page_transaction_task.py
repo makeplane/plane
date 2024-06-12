@@ -60,7 +60,6 @@ def page_transaction(new_value, old_value, page_id):
                 entity_identifier=mention["entity_identifier"],
                 entity_name=mention["entity_name"] if mention["entity_name"] else "issue",
                 workspace_id=page.workspace_id,
-                project_id=page.project_id,
                 created_at=timezone.now(),
                 updated_at=timezone.now(),
             )

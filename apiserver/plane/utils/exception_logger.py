@@ -10,14 +10,13 @@ from sentry_sdk import capture_exception
 
 
 def log_exception(e):
-    print(e)
     # Log the error
     logger = logging.getLogger("plane")
     logger.error(e)
 
-    # Log traceback if running in Debug
     if settings.DEBUG:
-        logger.error(traceback.format_exc(e))
+        # Print the traceback if in debug mode
+        traceback.print_exc(e)
 
     # Capture in sentry if configured
     capture_exception(e)
