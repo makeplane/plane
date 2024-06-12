@@ -157,6 +157,62 @@ class ModuleViewSet(BaseViewSet):
             )
             .values("total_estimate_points")[:1]
         )
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                backlog_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("backlog_estimate_point")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                unstarted_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("unstarted_estimate_point")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                started_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("started_estimate_point")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_module__module_id=OuterRef("pk"),
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                cancelled_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("cancelled_estimate_point")[:1]
+        )
         return (
             super()
             .get_queryset()
@@ -210,6 +266,30 @@ class ModuleViewSet(BaseViewSet):
                     Subquery(total_issues[:1]),
                     Value(0, output_field=IntegerField()),
                 )
+            )
+            .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
             )
             .annotate(
                 completed_estimate_points=Coalesce(
@@ -346,7 +426,6 @@ class ModuleViewSet(BaseViewSet):
         return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
-        plot_type = request.GET.get("plot_type", "burndown")
         queryset = (
             self.get_queryset()
             .filter(archived_at__isnull=True)
@@ -362,6 +441,116 @@ class ModuleViewSet(BaseViewSet):
                 .values("count")
             )
         )
+
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        data = ModuleDetailSerializer(queryset.first()).data
+        modules = queryset.first()
+
+        data["estimate_distribution"] = {}
+
+        if estimate_type:
+            assignee_distribution = (
+                Issue.objects.filter(
+                    issue_module__module_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(first_name=F("assignees__first_name"))
+                .annotate(last_name=F("assignees__last_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(display_name=F("assignees__display_name"))
+                .annotate(avatar=F("assignees__avatar"))
+                .values(
+                    "first_name",
+                    "last_name",
+                    "assignee_id",
+                    "avatar",
+                    "display_name",
+                )
+                .annotate(
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField())
+                    ),
+                )
+                .annotate(
+                    completed_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("first_name", "last_name")
+            )
+
+            label_distribution = (
+                Issue.objects.filter(
+                    issue_module__module_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField())
+                    ),
+                )
+                .annotate(
+                    completed_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_estimates=Sum(
+                        Cast("estimate_point__value", IntegerField()),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("label_name")
+            )
+            data["estimate_distribution"]["assignees"] = assignee_distribution
+            data["estimate_distribution"]["labels"] = label_distribution
+
+            if modules and modules.start_date and modules.target_date:
+                data["estimate_distribution"]["completion_chart"] = (
+                    burndown_plot(
+                        queryset=modules,
+                        slug=slug,
+                        project_id=project_id,
+                        plot_type="points",
+                        module_id=pk,
+                    )
+                )
 
         assignee_distribution = (
             Issue.objects.filter(
@@ -388,7 +577,7 @@ class ModuleViewSet(BaseViewSet):
                         archived_at__isnull=True,
                         is_draft=False,
                     ),
-                )
+                ),
             )
             .annotate(
                 completed_issues=Count(
@@ -455,21 +644,17 @@ class ModuleViewSet(BaseViewSet):
             .order_by("label_name")
         )
 
-        data = ModuleDetailSerializer(queryset.first()).data
         data["distribution"] = {
             "assignees": assignee_distribution,
             "labels": label_distribution,
             "completion_chart": {},
         }
-
-        # Fetch the modules
-        modules = queryset.first()
         if modules and modules.start_date and modules.target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
                 queryset=modules,
                 slug=slug,
                 project_id=project_id,
-                plot_type=plot_type,
+                plot_type="issues",
                 module_id=pk,
             )
 
