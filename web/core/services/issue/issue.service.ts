@@ -1,5 +1,13 @@
 // types
-import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity, TIssuesResponse, TBulkOperationsPayload } from "@plane/types";
+import type {
+  TIssue,
+  IIssueDisplayProperties,
+  TIssueLink,
+  TIssueSubIssues,
+  TIssueActivity,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -263,6 +271,20 @@ export class IssueService extends APIService {
     archived_at: string;
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkSubscribeIssues(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      issue_ids: string[];
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-subscribe-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

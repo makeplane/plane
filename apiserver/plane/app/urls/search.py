@@ -4,6 +4,7 @@ from django.urls import path
 from plane.app.views import (
     GlobalSearchEndpoint,
     IssueSearchEndpoint,
+    SearchEndpoint,
 )
 
 
@@ -17,5 +18,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/search-issues/",
         IssueSearchEndpoint.as_view(),
         name="project-issue-search",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
+        SearchEndpoint.as_view(),
+        name="search",
     ),
 ]
