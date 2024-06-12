@@ -179,7 +179,9 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
                   onChange={(event) => {
                     onChange(event.target.value);
                     setValue("name", event.target.value);
-                    setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                    setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                      shouldValidate: true,
+                    });
                   }}
                   placeholder="Enter workspace name..."
                   ref={ref}
@@ -202,6 +204,13 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
           <Controller
             control={control}
             name="slug"
+            rules={{
+              required: "Workspace slug is required",
+              maxLength: {
+                value: 48,
+                message: "Workspace slug should not exceed 48 characters",
+              },
+            }}
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={`relative flex items-center rounded-md border-[0.5px] px-3 ${
@@ -230,6 +239,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
           {invalidSlug && (
             <p className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</p>
           )}
+          {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
         </div>
         <hr className="w-full border-onboarding-border-100" />
         <div className="space-y-1">
