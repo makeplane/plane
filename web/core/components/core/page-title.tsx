@@ -1,4 +1,4 @@
-import Head from "next/head";
+import { useHead } from "@plane/ui";
 
 type PageHeadTitleProps = {
   title?: string;
@@ -8,11 +8,7 @@ type PageHeadTitleProps = {
 export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
   const { title } = props;
 
-  if (!title) return null;
+  useHead({ title });
 
-  return (
-    <Head>
-      <title>{title}</title>
-    </Head>
-  );
+  return null;
 };
