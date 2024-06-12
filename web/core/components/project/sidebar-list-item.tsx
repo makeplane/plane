@@ -12,6 +12,7 @@ import { useParams, usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // icons
 import {
+  MoreVertical,
   PenSquare,
   LinkIcon,
   Star,
@@ -123,6 +124,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   // router params
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   // pathname
@@ -185,6 +187,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     const element = projectRef.current;
+    const dragHandleElement = dragHandleRef.current;
 
     if (!element) return;
 
@@ -192,6 +195,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
       draggable({
         element,
         canDrag: () => !disableDrag && !isSideBarCollapsed,
+        dragHandle: dragHandleElement ?? undefined,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
           setIsDragging(true);
@@ -207,7 +211,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               const root = createRoot(container);
               root.render(
                 <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
-                  <div className="h-6 w-6 grid place-items-center flex-shrink-0">
+                  <div className="size-4 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
                   <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
@@ -268,7 +272,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         },
       })
     );
-  }, [projectRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
+  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
@@ -288,12 +292,39 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
             <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
             <div
               className={cn(
-                "group relative flex w-full items-center rounded-md py-1 text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
+                "h-9 group relative flex w-full px-3 py-2 items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
                 {
                   "bg-custom-sidebar-background-80": isMenuActive,
+                  "pr-0": !isSideBarCollapsed,
                 }
               )}
             >
+              {!disableDrag && (
+                <Tooltip
+                  isMobile={isMobile}
+                  tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+                  position="top-right"
+                  disabled={isDragging}
+                >
+                  <button
+                    type="button"
+                    className={cn(
+                      "absolute -left-[18px] flex opacity-0 rounded text-custom-sidebar-text-400 ml-2 cursor-grab",
+                      {
+                        "group-hover:opacity-100": !isSideBarCollapsed,
+                        "cursor-not-allowed opacity-60": project.sort_order === null,
+                        "cursor-grabbing": isDragging,
+                        flex: isMenuActive,
+                        hidden: isSideBarCollapsed,
+                      }
+                    )}
+                    ref={dragHandleRef}
+                  >
+                    <MoreVertical className="-ml-3 h-3.5" />
+                    <MoreVertical className="-ml-5 h-3.5" />
+                  </button>
+                </Tooltip>
+              )}
               <Tooltip
                 tooltipContent={`${project.name}`}
                 position="right"
@@ -303,18 +334,18 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 <Disclosure.Button
                   as="div"
                   className={cn(
-                    "flex flex-grow cursor-pointer select-none items-center justify-between truncate text-left text-sm font-medium pl-2",
+                    "flex flex-grow cursor-pointer select-none items-center justify-between truncate text-left text-sm font-medium",
                     {
                       "justify-center": isSideBarCollapsed,
                     }
                   )}
                 >
                   <div
-                    className={cn("flex w-full h-7 flex-grow items-center gap-1 truncate", {
+                    className={cn("flex w-full flex-grow items-center gap-2.5 truncate", {
                       "justify-center": isSideBarCollapsed,
                     })}
                   >
-                    <div className="h-5 w-5 grid place-items-center flex-shrink-0 mr-1">
+                    <div className="size-5 grid place-items-center flex-shrink-0">
                       <Logo logo={project.logo_props} />
                     </div>
                     {!isSideBarCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
@@ -322,7 +353,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!isSideBarCollapsed && (
                     <ChevronDown
                       className={cn(
-                        "mb-0.5 hidden h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300 group-hover:block",
+                        "hidden h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300 group-hover:block",
                         {
                           "rotate-180": open,
                           block: isMenuActive,
@@ -338,17 +369,16 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   customButton={
                     <div
                       ref={actionSectionRef}
-                      className="my-auto mt-1.5 w-full cursor-pointer px-1 text-custom-sidebar-text-400 duration-300"
+                      className="size-5 flex items-center justify-center cursor-pointer px-1 text-custom-sidebar-text-400 duration-300"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <MoreHorizontal className="h-3.5 w-3.5" />
                     </div>
                   }
-                  className={cn("hidden flex-shrink-0 group-hover:block", {
+                  className={cn("hidden flex-shrink-0 mr-1 group-hover:block", {
                     "!block": isMenuActive,
                   })}
                   buttonClassName="!text-custom-sidebar-text-400"
-                  ellipsis
                   placement="bottom-start"
                 >
                   {!project.is_favorite && (
@@ -432,7 +462,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className={`mt-1 space-y-1 ${isSideBarCollapsed ? "" : "ml-[2.25rem]"}`}>
+              <Disclosure.Panel className={`mt-1 space-y-1 ${isSideBarCollapsed ? "" : "ml-[1.25rem]"}`}>
                 {navigation(workspaceSlug as string, project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||
