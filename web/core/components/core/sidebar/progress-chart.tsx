@@ -1,6 +1,6 @@
 import React from "react";
 import { eachDayOfInterval, isValid } from "date-fns";
-import { TCompletionChartDistribution } from "@plane/types";
+import { TModuleCompletionChartDistribution } from "@plane/types";
 // ui
 import { LineGraph } from "@/components/ui";
 // helpers
@@ -8,7 +8,7 @@ import { getDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.hel
 //types
 
 type Props = {
-  distribution: TCompletionChartDistribution;
+  distribution: TModuleCompletionChartDistribution;
   startDate: string | Date;
   endDate: string | Date;
   totalIssues: number;

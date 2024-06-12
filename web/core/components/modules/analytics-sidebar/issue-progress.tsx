@@ -73,15 +73,15 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
   const groupedBacklogIssues =
-    plotType === "points" ? moduleDetails?.backlog_estimate_issues : moduleDetails?.backlog_issues;
+    plotType === "points" ? moduleDetails?.backlog_estimate_points : moduleDetails?.backlog_issues;
   const groupedUnstartedIssues =
-    plotType === "points" ? moduleDetails?.unstarted_estimate_issues : moduleDetails?.unstarted_issues;
+    plotType === "points" ? moduleDetails?.unstarted_estimate_points : moduleDetails?.unstarted_issues;
   const groupedStartedIssues =
-    plotType === "points" ? moduleDetails?.started_estimate_issues : moduleDetails?.started_issues;
+    plotType === "points" ? moduleDetails?.started_estimate_points : moduleDetails?.started_issues;
   const groupedCompletedIssues =
     plotType === "points" ? moduleDetails?.completed_estimate_points || 0 : moduleDetails?.completed_issues;
   const groupedCancelledIssues =
-    plotType === "points" ? moduleDetails?.cancelled_estimate_issues : moduleDetails?.cancelled_issues;
+    plotType === "points" ? moduleDetails?.cancelled_estimate_points : moduleDetails?.cancelled_issues;
 
   const moduleStartDate = getDate(moduleDetails?.start_date);
   const moduleEndDate = getDate(moduleDetails?.target_date);
@@ -230,9 +230,10 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                 </div>
 
                 {/* progress detailed view */}
-                {totalIssues > 0 && totalEstimatePoints > 0 && chartDistributionData && (
+                {chartDistributionData && (
                   <div className="w-full border-t border-custom-border-200 pt-5">
                     <ModuleProgressStats
+                      moduleId={moduleId}
                       plotType={plotType}
                       distribution={chartDistributionData}
                       groupedIssues={{

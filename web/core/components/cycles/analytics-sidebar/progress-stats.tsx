@@ -7,9 +7,9 @@ import { Tab } from "@headlessui/react";
 import {
   IIssueFilterOptions,
   IIssueFilters,
-  TModuleDistribution,
-  TModuleEstimateDistribution,
-  TModulePlotType,
+  TCycleDistribution,
+  TCycleEstimateDistribution,
+  TCyclePlotType,
   TStateGroups,
 } from "@plane/types";
 import { Avatar, StateGroupIcon } from "@plane/ui";
@@ -233,10 +233,10 @@ const progressStats = [
   },
 ];
 
-type TModuleProgressStats = {
-  moduleId: string;
-  plotType: TModulePlotType;
-  distribution: TModuleDistribution | TModuleEstimateDistribution | undefined;
+type TCycleProgressStats = {
+  cycleId: string;
+  plotType: TCyclePlotType;
+  distribution: TCycleDistribution | TCycleEstimateDistribution | undefined;
   groupedIssues: Record<string, number>;
   totalIssuesCount: number;
   isEditable?: boolean;
@@ -247,9 +247,9 @@ type TModuleProgressStats = {
   noBackground?: boolean;
 };
 
-export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) => {
+export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
   const {
-    moduleId,
+    cycleId,
     plotType,
     distribution,
     groupedIssues,
@@ -262,15 +262,15 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
     noBackground = false,
   } = props;
   // hooks
-  const { storedValue: currentTab, setValue: setModuleTab } = useLocalStorage(
-    `module-analytics-tab-${moduleId}`,
+  const { storedValue: currentTab, setValue: setCycleTab } = useLocalStorage(
+    `cycle-analytics-tab-${cycleId}`,
     "stat-assignees"
   );
   // derived values
   const currentTabIndex = (tab: string): number => progressStats.findIndex((stat) => stat.key === tab);
 
-  const currentDistribution = distribution as TModuleDistribution;
-  const currentEstimateDistribution = distribution as TModuleEstimateDistribution;
+  const currentDistribution = distribution as TCycleDistribution;
+  const currentEstimateDistribution = distribution as TCycleEstimateDistribution;
 
   const distributionAssigneeData: TAssigneeData =
     plotType === "burndown"
@@ -334,7 +334,7 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
                   : "text-custom-text-400 hover:text-custom-text-300"
               )}
               key={stat.key}
-              onClick={() => setModuleTab(stat.key)}
+              onClick={() => setCycleTab(stat.key)}
             >
               {stat.title}
             </Tab>

@@ -1446,7 +1446,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 "assignees": assignee_distribution_data,
                 "completion_chart": completion_chart,
             },
-            "estimates_distribution": (
+            "estimate_distribution": (
                 {}
                 if not estimate_type
                 else {

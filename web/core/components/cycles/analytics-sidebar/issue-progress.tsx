@@ -1,63 +1,80 @@
 "use client";
 
 import { FC, Fragment, useCallback, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { IIssueFilterOptions, TModulePlotType } from "@plane/types";
+import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
-import { SidebarProgressStats } from "@/components/core";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { CycleProgressStats } from "@/components/cycles";
 // constants
 import { EEstimateSystem } from "@/constants/estimates";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useModule, useProjectEstimates } from "@/hooks/store";
+import { useIssues, useCycle, useProjectEstimates } from "@/hooks/store";
 
-type TModuleAnalyticsProgress = {
+type TCycleAnalyticsProgress = {
   workspaceSlug: string;
   projectId: string;
-  moduleId: string;
+  cycleId: string;
 };
 
-const moduleBurnDownChartOptions = [
+const cycleBurnDownChartOptions = [
   { value: "burndown", label: "Issues" },
   { value: "points", label: "Points" },
 ];
 
-export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((props) => {
+const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
+  if (!cycleDetails || cycleDetails === null) return cycleDetails;
+
+  const updatedCycleDetails: any = { ...cycleDetails };
+  if (!isEmpty(cycleDetails.progress_snapshot)) {
+    Object.keys(cycleDetails.progress_snapshot || {}).forEach((key) => {
+      const currentKey = key as keyof TProgressSnapshot;
+      if (!isEmpty(cycleDetails.progress_snapshot) && !isEmpty(updatedCycleDetails)) {
+        updatedCycleDetails[currentKey as keyof ICycle] = cycleDetails?.progress_snapshot?.[currentKey];
+      }
+    });
+  }
+  return updatedCycleDetails;
+};
+
+export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((props) => {
   // props
-  const { workspaceSlug, projectId, moduleId } = props;
+  const { workspaceSlug, projectId, cycleId } = props;
   // router
   const searchParams = useSearchParams();
-  const peekModule = searchParams.get("peekModule") || undefined;
+  const peekCycle = searchParams.get("peekCycle") || undefined;
   // hooks
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const { getPlotTypeByModuleId, setPlotType, getModuleById, fetchModuleDetails } = useModule();
+  const { getPlotTypeByCycleId, setPlotType, getCycleById, fetchCycleDetails } = useCycle();
   const {
     issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.MODULE);
+  } = useIssues(EIssuesStoreType.CYCLE);
   // state
   const [loader, setLoader] = useState(false);
+
   // derived values
-  const moduleDetails = getModuleById(moduleId);
-  const plotType = getPlotTypeByModuleId(moduleId);
+  const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
+  const plotType: TCyclePlotType = getPlotTypeByCycleId(cycleId);
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
   const estimateDetails =
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
 
-  const completedIssues = moduleDetails?.completed_issues || 0;
-  const totalIssues = moduleDetails?.total_issues || 0;
-  const completedEstimatePoints = moduleDetails?.completed_estimate_points || 0;
-  const totalEstimatePoints = moduleDetails?.total_estimate_points || 0;
+  const completedIssues = cycleDetails?.completed_issues || 0;
+  const totalIssues = cycleDetails?.total_issues || 0;
+  const completedEstimatePoints = cycleDetails?.completed_estimate_points || 0;
+  const totalEstimatePoints = cycleDetails?.total_estimate_points || 0;
 
-  const progressHeaderPercentage = moduleDetails
+  const progressHeaderPercentage = cycleDetails
     ? plotType === "points"
       ? completedEstimatePoints != 0 && totalEstimatePoints != 0
         ? Math.round((completedEstimatePoints / totalEstimatePoints) * 100)
@@ -67,23 +84,38 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
         : 0
     : 0;
 
-  const moduleStartDate = getDate(moduleDetails?.start_date);
-  const moduleEndDate = getDate(moduleDetails?.target_date);
-  const isModuleStartDateValid = moduleStartDate && moduleStartDate <= new Date();
-  const isModuleEndDateValid = moduleStartDate && moduleEndDate && moduleEndDate >= moduleStartDate;
-  const isModuleDateValid = isModuleStartDateValid && isModuleEndDateValid;
+  const chartDistributionData =
+    plotType === "points" ? cycleDetails?.estimate_distribution : cycleDetails?.distribution || undefined;
+  const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
+
+  const groupedBacklogIssues =
+    plotType === "points" ? cycleDetails?.backlog_estimate_points : cycleDetails?.backlog_issues;
+  const groupedUnstartedIssues =
+    plotType === "points" ? cycleDetails?.unstarted_estimate_points : cycleDetails?.unstarted_issues;
+  const groupedStartedIssues =
+    plotType === "points" ? cycleDetails?.started_estimate_points : cycleDetails?.started_issues;
+  const groupedCompletedIssues =
+    plotType === "points" ? cycleDetails?.completed_estimate_points || 0 : cycleDetails?.completed_issues;
+  const groupedCancelledIssues =
+    plotType === "points" ? cycleDetails?.cancelled_estimate_points : cycleDetails?.cancelled_issues;
+
+  const cycleStartDate = getDate(cycleDetails?.start_date);
+  const cycleEndDate = getDate(cycleDetails?.end_date);
+  const isCycleStartDateValid = cycleStartDate && cycleStartDate <= new Date();
+  const isCycleEndDateValid = cycleStartDate && cycleEndDate && cycleEndDate >= cycleStartDate;
+  const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
 
   // handlers
-  const onChange = async (value: TModulePlotType) => {
-    setPlotType(moduleId, value);
-    if (!workspaceSlug || !projectId || !moduleId) return;
+  const onChange = async (value: TCyclePlotType) => {
+    setPlotType(cycleId, value);
+    if (!workspaceSlug || !projectId || !cycleId) return;
     try {
       setLoader(true);
-      await fetchModuleDetails(workspaceSlug, projectId, moduleId);
+      await fetchCycleDetails(workspaceSlug, projectId, cycleId);
       setLoader(false);
     } catch (error) {
       setLoader(false);
-      setPlotType(moduleId, plotType);
+      setPlotType(cycleId, plotType);
     }
   };
 
@@ -112,20 +144,20 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
         projectId.toString(),
         EIssueFilterType.FILTERS,
         { [key]: newValues },
-        moduleId
+        cycleId
       );
     },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
+    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
-  if (!moduleDetails) return <></>;
+  if (!cycleDetails) return <></>;
   return (
     <div className="border-t border-custom-border-200 space-y-4 py-4 px-3">
-      <Disclosure defaultOpen={isModuleDateValid ? true : false}>
+      <Disclosure defaultOpen={isCycleDateValid ? true : false}>
         {({ open }) => (
           <div className="space-y-6">
             {/* progress bar header */}
-            {isModuleDateValid ? (
+            {isCycleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
                   <div className="font-medium text-custom-text-200 text-sm">Progress</div>
@@ -139,12 +171,12 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       <CustomSelect
                         value={plotType}
                         label={
-                          <span>{moduleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>
+                          <span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>
                         }
                         onChange={onChange}
                         maxHeight="lg"
                       >
-                        {moduleBurnDownChartOptions.map((item) => (
+                        {cycleBurnDownChartOptions.map((item) => (
                           <CustomSelect.Option key={item.value} value={item.value}>
                             {item.label}
                           </CustomSelect.Option>
@@ -168,8 +200,8 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                 <div className="flex items-center gap-1">
                   <AlertCircle height={14} width={14} className="text-custom-text-200" />
                   <span className="text-xs italic text-custom-text-200">
-                    {moduleDetails?.start_date && moduleDetails?.target_date
-                      ? "This module isn't active yet."
+                    {cycleDetails?.start_date && cycleDetails?.end_date
+                      ? "This cycle isn't active yet."
                       : "Invalid date. Please enter valid date."}
                   </span>
                 </div>
@@ -190,68 +222,53 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       <span>Current</span>
                     </div>
                   </div>
-                  {moduleDetails.start_date &&
-                    moduleDetails.target_date &&
-                    moduleDetails.distribution?.completion_chart && (
-                      <Fragment>
-                        {plotType === "points" && totalEstimatePoints ? (
-                          <ProgressChart
-                            distribution={moduleDetails.distribution?.completion_chart ?? {}}
-                            startDate={moduleDetails.start_date}
-                            endDate={moduleDetails.target_date}
-                            totalIssues={totalEstimatePoints}
-                            plotTitle={"points"}
-                          />
-                        ) : (
-                          <ProgressChart
-                            distribution={moduleDetails.distribution?.completion_chart ?? {}}
-                            startDate={moduleDetails.start_date}
-                            endDate={moduleDetails.target_date}
-                            totalIssues={totalIssues}
-                            plotTitle={"issues"}
-                          />
-                        )}
-                      </Fragment>
-                    )}
+                  {cycleStartDate && cycleEndDate && completionChartDistributionData && (
+                    <Fragment>
+                      {plotType === "points" ? (
+                        <ProgressChart
+                          distribution={completionChartDistributionData}
+                          startDate={cycleStartDate}
+                          endDate={cycleEndDate}
+                          totalIssues={totalEstimatePoints}
+                          plotTitle={"points"}
+                        />
+                      ) : (
+                        <ProgressChart
+                          distribution={completionChartDistributionData}
+                          startDate={cycleStartDate}
+                          endDate={cycleEndDate}
+                          totalIssues={totalIssues}
+                          plotTitle={"issues"}
+                        />
+                      )}
+                    </Fragment>
+                  )}
                 </div>
 
                 {/* progress detailed view */}
-                <div>
-                  {totalIssues > 0 && totalEstimatePoints > 0 && (
-                    <div className="w-full border-t border-custom-border-200 pt-5">
-                      <SidebarProgressStats
-                        distribution={moduleDetails.distribution}
-                        groupedIssues={{
-                          backlog:
-                            plotType === "points"
-                              ? moduleDetails.backlog_estimate_issues
-                              : moduleDetails.backlog_issues,
-                          unstarted:
-                            plotType === "points"
-                              ? moduleDetails.unstarted_estimate_issues
-                              : moduleDetails.unstarted_issues,
-                          started:
-                            plotType === "points"
-                              ? moduleDetails.started_estimate_issues
-                              : moduleDetails.started_issues,
-                          completed:
-                            plotType === "points"
-                              ? moduleDetails.completed_estimate_points || 0
-                              : moduleDetails.completed_issues,
-                          cancelled:
-                            plotType === "points"
-                              ? moduleDetails.cancelled_estimate_issues
-                              : moduleDetails.cancelled_issues,
-                        }}
-                        totalIssues={plotType === "points" ? totalEstimatePoints || 0 : totalIssues}
-                        module={moduleDetails}
-                        isPeekView={Boolean(peekModule)}
-                        filters={issueFilters}
-                        handleFiltersUpdate={handleFiltersUpdate}
-                      />
-                    </div>
-                  )}
-                </div>
+                {chartDistributionData && (
+                  <div className="w-full border-t border-custom-border-200 pt-5">
+                    <CycleProgressStats
+                      cycleId={cycleId}
+                      plotType={plotType}
+                      distribution={chartDistributionData}
+                      groupedIssues={{
+                        backlog: groupedBacklogIssues || 0,
+                        unstarted: groupedUnstartedIssues || 0,
+                        started: groupedStartedIssues || 0,
+                        completed: groupedCompletedIssues || 0,
+                        cancelled: groupedCancelledIssues || 0,
+                      }}
+                      totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+                      isEditable={Boolean(peekCycle)}
+                      size="xs"
+                      roundedTab={false}
+                      noBackground={false}
+                      filters={issueFilters}
+                      handleFiltersUpdate={handleFiltersUpdate}
+                    />
+                  </div>
+                )}
               </Disclosure.Panel>
             </Transition>
           </div>

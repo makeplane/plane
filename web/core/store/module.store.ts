@@ -219,7 +219,17 @@ export class ModulesStore implements IModuleStore {
     return projectModuleIds;
   });
 
-  getPlotTypeByModuleId = (moduleId: string) => this.plotType[moduleId] || "burndown";
+  /**
+   * @description gets the plot type for the module store
+   * @param {TModulePlotType} plotType
+   */
+  getPlotTypeByModuleId = (moduleId: string) => {
+    const { projectId } = this.rootStore.router;
+
+    return projectId && this.rootStore.projectEstimate.areEstimateEnabledByProjectId(projectId)
+      ? this.plotType[moduleId] || "burndown"
+      : "burndown";
+  };
 
   /**
    * @description updates the plot type for the module store
@@ -317,16 +327,12 @@ export class ModulesStore implements IModuleStore {
    * @returns IModule
    */
   fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
-    await this.moduleService
-      .getModuleDetails(workspaceSlug, projectId, moduleId, {
-        plot_type: this.getPlotTypeByModuleId(moduleId),
-      })
-      .then((response) => {
-        runInAction(() => {
-          set(this.moduleMap, [moduleId], response);
-        });
-        return response;
+    await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
+      runInAction(() => {
+        set(this.moduleMap, [moduleId], response);
       });
+      return response;
+    });
 
   /**
    * @description creates a new module

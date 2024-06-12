@@ -59,12 +59,13 @@ export interface IModule {
   cancelled_issues: number;
   total_estimate_points?: number;
   completed_estimate_points?: number;
-  backlog_estimate_issues: number;
-  started_estimate_issues: number;
-  unstarted_estimate_issues: number;
-  cancelled_estimate_issues: number;
+  backlog_estimate_points: number;
+  started_estimate_points: number;
+  unstarted_estimate_points: number;
+  cancelled_estimate_points: number;
   distribution?: TModuleDistribution;
   estimate_distribution?: TModuleEstimateDistribution;
+
   id: string;
   name: string;
   description: string;
