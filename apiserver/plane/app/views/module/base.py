@@ -455,7 +455,7 @@ class ModuleViewSet(BaseViewSet):
         data["estimate_distribution"] = {}
 
         if estimate_type:
-            label_distribution = (
+            assignee_distribution = (
                 Issue.objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
@@ -501,7 +501,7 @@ class ModuleViewSet(BaseViewSet):
                 .order_by("first_name", "last_name")
             )
 
-            assignee_distribution = (
+            label_distribution = (
                 Issue.objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
