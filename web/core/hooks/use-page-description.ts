@@ -18,13 +18,13 @@ type Props = {
   workspaceSlug: string | string[] | undefined;
 };
 
-const AUTO_SAVE_TIME = 10000;
-
 export const usePageDescription = (props: Props) => {
   const { editorRef, page, projectId, workspaceSlug } = props;
+
   // states
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   const [descriptionUpdates, setDescriptionUpdates] = useState<Uint8Array[]>([]);
+
   // derived values
   const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
   const pageDescription = page.description_html;
@@ -33,18 +33,20 @@ export const usePageDescription = (props: Props) => {
   const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => projectPageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
+      ? async () => {
+          const description = await projectPageService.fetchDescriptionYJS(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId.toString()
+          );
+          return description ? new Uint8Array(description) : undefined;
+        }
       : null,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       revalidateIfStale: false,
     }
-  );
-  // description in Uint8Array format
-  const pageDescriptionYJS = useMemo(
-    () => (descriptionYJS ? new Uint8Array(descriptionYJS) : undefined),
-    [descriptionYJS]
   );
 
   // push the new updates to the updates array
@@ -56,8 +58,8 @@ export const usePageDescription = (props: Props) => {
   // TODO: this is a one-time operation, and needs to be removed once all the pages are updated
   useEffect(() => {
     const changeHTMLToBinary = async () => {
-      if (!pageDescriptionYJS || !pageDescription) return;
-      if (pageDescriptionYJS.byteLength === 0) {
+      if (!descriptionYJS || !pageDescription) return;
+      if (descriptionYJS.byteLength === 0) {
         const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
         await updateDescription(yDocBinaryString, pageDescription ?? "<p></p>");
@@ -66,10 +68,9 @@ export const usePageDescription = (props: Props) => {
       } else setIsDescriptionReady(true);
     };
     changeHTMLToBinary();
-  }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
+  }, [mutateDescriptionYJS, pageDescription, descriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(async () => {
-    console.log("ran");
     if (!isContentEditable) return;
 
     const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
@@ -118,6 +119,7 @@ export const usePageDescription = (props: Props) => {
 
   // show a confirm dialog if there are any unsaved changes, or saving is going on
   const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
+
   useEffect(() => {
     if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
     else setShowAlert(false);
@@ -126,6 +128,6 @@ export const usePageDescription = (props: Props) => {
   return {
     handleDescriptionChange,
     isDescriptionReady,
-    pageDescriptionYJS,
+    pageDescriptionYJS: descriptionYJS,
   };
 };
