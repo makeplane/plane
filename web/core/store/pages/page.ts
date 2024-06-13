@@ -12,7 +12,7 @@ import { ProjectPageService } from "@/services/page";
 
 export type TLoader = "submitting" | "submitted" | "saved";
 
-export interface IPageStore extends TPage {
+export interface IPage extends TPage {
   // observables
   isSubmitting: TLoader;
   // computed
@@ -44,7 +44,7 @@ export interface IPageStore extends TPage {
   removeFromFavorites: () => Promise<void>;
 }
 
-export class PageStore implements IPageStore {
+export class Page implements IPage {
   // loaders
   isSubmitting: TLoader = "saved";
   // page properties
