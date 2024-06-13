@@ -1,6 +1,4 @@
 import { action, observable, makeObservable } from "mobx";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 
 export interface IThemeStore {
   // observables

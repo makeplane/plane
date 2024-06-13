@@ -6,13 +6,13 @@ import { computedFn } from "mobx-utils";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
+// store
+import { CoreRootStore } from "../root.store";
 import { IMemberRootStore } from ".";
 
 export interface IWorkspaceMembership {
@@ -63,7 +63,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // services
   workspaceService;
 
-  constructor(_memberRoot: IMemberRootStore, _rootStore: RootStore) {
+  constructor(_memberRoot: IMemberRootStore, _rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       workspaceMemberMap: observable,
