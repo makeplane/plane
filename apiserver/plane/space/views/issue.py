@@ -31,7 +31,7 @@ from plane.db.models import (
     IssueVote,
     ProjectPublicMember,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,

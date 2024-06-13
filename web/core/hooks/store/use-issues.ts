@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import merge from "lodash/merge";
+import { TIssueMap } from "@plane/types";
 // mobx store
 import { TIssueMap } from "@plane/types";
 import { EIssuesStoreType } from "@/constants/issue";
