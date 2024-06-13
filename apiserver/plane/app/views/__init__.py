@@ -181,9 +181,20 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.workspace import (
+    WorkspacePageViewSet,
+    WorkspacePagesDescriptionViewSet,
+)
+from .search.base import (
+    GlobalSearchEndpoint,
+    SearchEndpoint,
+)
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
-
+from .search.issue import IssueSearchEndpoint
+from .search.workspace import (
+    WorkspaceSearchEndpoint,
+    WorkspaceEntitySearchEndpoint,
+)
 
 from .external.base import (
     GPTIntegrationEndpoint,

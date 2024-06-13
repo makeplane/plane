@@ -95,6 +95,8 @@ from .page import (
     PageLogSerializer,
     SubPageSerializer,
     PageDetailSerializer,
+    WorkspacePageSerializer,
+    WorkspacePageDetailSerializer,
 )
 
 from .estimate import (
