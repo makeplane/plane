@@ -22,7 +22,7 @@ export class ThemeStore implements IThemeStore {
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
 
-  constructor(private store: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
       sidebarCollapsed: observable.ref,

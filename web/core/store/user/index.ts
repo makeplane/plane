@@ -5,12 +5,11 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { IUser } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
+import { CoreRootStore } from "@/store/root.store";
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
 import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
@@ -56,7 +55,7 @@ export class UserStore implements IUserStore {
   userService: UserService;
   authService: AuthService;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     // stores
     this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
