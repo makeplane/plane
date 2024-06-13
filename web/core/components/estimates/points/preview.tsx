@@ -4,7 +4,8 @@ import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 // components
 import { EstimatePointUpdate, EstimatePointDelete } from "@/components/estimates/points";
-import { minEstimatesCount } from "@/constants/estimates";
+// plane web constants
+import { minEstimatesCount } from "@/plane-web/constants/estimates";
 
 type TEstimatePointItemPreview = {
   workspaceSlug: string;

@@ -4,10 +4,10 @@ import { FC } from "react";
 import { Crown } from "lucide-react";
 import { TEstimateUpdateStageKeys } from "@plane/types";
 import { Tooltip } from "@plane/ui";
-// constants
-import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/constants/estimates";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// plane web constants
+import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/plane-web/constants/estimates";
 
 type TEstimateUpdateStageOne = {
   handleEstimateEditType?: (stage: TEstimateUpdateStageKeys) => void;

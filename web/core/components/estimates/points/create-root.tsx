@@ -7,8 +7,8 @@ import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
-// constants
-import { maxEstimatesCount } from "@/constants/estimates";
+// plane web constants
+import { maxEstimatesCount } from "@/plane-web/constants/estimates";
 
 type TEstimatePointCreateRoot = {
   workspaceSlug: string;

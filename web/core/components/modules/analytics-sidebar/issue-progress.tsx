@@ -12,12 +12,13 @@ import { CustomSelect, Spinner } from "@plane/ui";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
 // constants
-import { EEstimateSystem } from "@/constants/estimates";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useModule, useProjectEstimates } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type TModuleAnalyticsProgress = {
   workspaceSlug: string;

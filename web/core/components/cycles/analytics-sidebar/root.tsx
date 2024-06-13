@@ -16,7 +16,6 @@ import { ArchiveCycleModal, CycleDeleteModal, CycleAnalyticsProgress } from "@/c
 import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
-import { EEstimateSystem } from "@/constants/estimates";
 import { CYCLE_UPDATED } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
@@ -24,6 +23,8 @@ import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/help
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember, useProjectEstimates } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 // services
 import { CycleService } from "@/services/cycle.service";
 
