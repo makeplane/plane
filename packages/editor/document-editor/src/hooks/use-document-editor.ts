@@ -59,6 +59,9 @@ export const useDocumentEditor = ({
   // indexedDB provider
   useLayoutEffect(() => {
     const localProvider = new IndexeddbPersistence(id, provider.document);
+    localProvider.on("synced", () => {
+      provider.setHasIndexedDBSynced(true);
+    });
     return () => {
       localProvider?.destroy();
     };
