@@ -10,10 +10,10 @@ import {
   TWidgetKeys,
   TWidgetStatsRequestParams,
 } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { DashboardService } from "@/services/dashboard.service";
+// plane web store
+import { CoreRootStore } from "./root.store";
 
 export interface IDashboardStore {
   // error states
@@ -74,7 +74,7 @@ export class DashboardStore implements IDashboardStore {
   // services
   dashboardService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // error states
       widgetStatsError: observable,

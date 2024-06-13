@@ -2,10 +2,10 @@ import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { IWorkspace } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
+// store
+import { CoreRootStore } from "@/store/root.store";
 // sub-stores
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 import { IWebhookStore, WebhookStore } from "./webhook.store";
@@ -44,7 +44,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       loader: observable.ref,
       // observables

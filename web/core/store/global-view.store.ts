@@ -7,10 +7,10 @@ import { computedFn } from "mobx-utils";
 import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // constants
 import { EIssueFilterType } from "@/constants/issue";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
+// store
+import { CoreRootStore } from "./root.store";
 
 export interface IGlobalViewStore {
   // observables
@@ -41,7 +41,7 @@ export class GlobalViewStore implements IGlobalViewStore {
   // services
   workspaceService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       globalViewMap: observable,

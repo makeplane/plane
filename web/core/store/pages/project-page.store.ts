@@ -6,12 +6,11 @@ import { computedFn } from "mobx-utils";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
 import { IPage, Page } from "@/store/pages/page";
+import { CoreRootStore } from "../root.store";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -51,7 +50,7 @@ export class ProjectPageStore implements IProjectPageStore {
   // service
   service: ProjectPageService;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
