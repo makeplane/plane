@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.ee",
     # Third-party things
     "rest_framework",
     "corsheaders",

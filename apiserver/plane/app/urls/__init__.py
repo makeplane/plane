@@ -18,10 +18,13 @@ from .views import urlpatterns as view_urls
 from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 
+# Enterprise URLS
 from .importer import urlpatterns as importer_urls
 from .integration import urlpatterns as integration_urls
 from .active_cycle import urlpatterns as active_cycle_urls
 
+# url patterns
+from plane.ee.app.urls import urlpatterns as ee_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -47,4 +50,5 @@ urlpatterns = [
     *active_cycle_urls,
     *integration_urls,
     *importer_urls,
+    *ee_urls,
 ]
