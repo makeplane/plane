@@ -80,6 +80,6 @@
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
-    "typescript": "^5.4.2"
+    "typescript": "4.7.4"
   }
 }
