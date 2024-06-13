@@ -1465,10 +1465,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if unGrouped, then return the path as ALL_ISSUES along with orderByUpdates
     if (!this.issueGroupKey) return action ? [{ path: [ALL_ISSUES], action }, ...orderByUpdates] : orderByUpdates;
 
+    const issueGroupKey = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
+    const issueBeforeUpdateGroupKey = issueBeforeUpdate?.[this.issueGroupKey] as string | string[] | null | undefined;
     // if grouped, the get the Difference between the two issue properties (this.issueGroupKey) on which groupBy is performed
     const groupActionsArray = getDifference(
-      this.getArrayStringArray(issue, issue?.[this.issueGroupKey], this.groupBy),
-      this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdate?.[this.issueGroupKey], this.groupBy),
+      this.getArrayStringArray(issue, issueGroupKey, this.groupBy),
+      this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateGroupKey, this.groupBy),
       action
     );
 
@@ -1482,10 +1484,16 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         ...orderByUpdates,
       ];
 
+    const issueSubGroupKey = issue?.[this.issueSubGroupKey] as string | string[] | null | undefined;
+    const issueBeforeUpdateSubGroupKey = issueBeforeUpdate?.[this.issueSubGroupKey] as
+      | string
+      | string[]
+      | null
+      | undefined;
     // if subGrouped, the get the Difference between the two issue properties (this.issueGroupKey) on which subGroupBy is performed
     const subGroupActionsArray = getDifference(
-      this.getArrayStringArray(issue, issue?.[this.issueSubGroupKey], this.subGroupBy),
-      this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdate?.[this.issueSubGroupKey], this.subGroupBy),
+      this.getArrayStringArray(issue, issueSubGroupKey, this.subGroupBy),
+      this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateSubGroupKey, this.subGroupBy),
       action
     );
 
@@ -1494,10 +1502,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       ...getSubGroupIssueKeyActions(
         groupActionsArray,
         subGroupActionsArray,
-        this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdate?.[this.issueGroupKey], this.groupBy),
-        this.getArrayStringArray(issue, issue?.[this.issueGroupKey], this.groupBy),
-        this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdate?.[this.issueSubGroupKey], this.subGroupBy),
-        this.getArrayStringArray(issue, issue?.[this.issueSubGroupKey], this.subGroupBy)
+        this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateGroupKey, this.groupBy),
+        this.getArrayStringArray(issue, issueGroupKey, this.groupBy),
+        this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateSubGroupKey, this.subGroupBy),
+        this.getArrayStringArray(issue, issueSubGroupKey, this.subGroupBy)
       ),
       ...orderByUpdates,
     ];
@@ -1525,9 +1533,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if they are not equal and issues are not grouped then, provide path as ALL_ISSUES
     if (!this.issueGroupKey) return [{ path: [ALL_ISSUES], action: EIssueGroupedAction.REORDER }];
 
+    const issueGroupKey = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
     // if they are grouped then identify the paths based on props on which group by is dependent on
     const issueKeyActions: { path: string[]; action: EIssueGroupedAction.REORDER }[] = [];
-    const groupByValues = this.getArrayStringArray(issue, issue[this.issueGroupKey]);
+    const groupByValues = this.getArrayStringArray(issue, issueGroupKey);
 
     // if issues are not subGrouped then, provide path from groupByValues
     if (!this.issueSubGroupKey) {
@@ -1538,8 +1547,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       return issueKeyActions;
     }
 
+    const issueSubGroupKey = issue?.[this.issueSubGroupKey] as string | string[] | null | undefined;
     // if they are grouped then identify the paths based on props on which sub group by is dependent on
-    const subGroupByValues = this.getArrayStringArray(issue, issue[this.issueSubGroupKey]);
+    const subGroupByValues = this.getArrayStringArray(issue, issueSubGroupKey);
 
     // if issues are subGrouped then, provide path from subGroupByValues
     for (const groupKey of groupByValues) {
