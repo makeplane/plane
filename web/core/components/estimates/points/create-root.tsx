@@ -8,7 +8,7 @@ import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
 // plane web constants
-import { maxEstimatesCount } from "@/plane-web/constants/estimates";
+import { estimateCount } from "@/plane-web/constants/estimates";
 
 type TEstimatePointCreateRoot = {
   workspaceSlug: string;
@@ -89,7 +89,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
   };
 
   const handleCreate = () => {
-    if (estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount - 1) {
+    if (estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1) {
       handleEstimatePointCreate("add", {
         id: undefined,
         key: estimatePoints.length + (estimatePointCreate?.length || 0) + 1,
@@ -143,7 +143,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
             isError={estimatePointCreateError.includes(estimatePoint.key) ? true : false}
           />
         ))}
-      {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= maxEstimatesCount - 1 && (
+      {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
         <Button variant="link-primary" size="sm" prependIcon={<Plus />} onClick={handleCreate}>
           Add {estimateType}
         </Button>

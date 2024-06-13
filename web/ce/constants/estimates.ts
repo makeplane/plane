@@ -13,8 +13,10 @@ export enum EEstimateUpdateStages {
   SWITCH = "switch",
 }
 
-export const minEstimatesCount = 2;
-export const maxEstimatesCount = 6;
+export const estimateCount = {
+  min: 2,
+  max: 6,
+};
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {
