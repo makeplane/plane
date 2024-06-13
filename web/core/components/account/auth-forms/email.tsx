@@ -66,9 +66,10 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             autoFocus
           />
           {email.length > 0 && (
-            <div className="flex-shrink-0 h-5 w-5 mr-2 bg-onboarding-background-200 hover:cursor-pointer">
-              <XCircle className="h-5 w-5 stroke-custom-text-400" onClick={() => setEmail("")} />
-            </div>
+            <XCircle
+              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              onClick={() => setEmail("")}
+            />
           )}
         </div>
         {emailError?.email && !isFocused && (

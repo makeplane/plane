@@ -5,9 +5,10 @@ import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // constants
 import { ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
-import { EEstimateSystem } from "@/constants/estimates";
 // hooks
 import { useAppRouter, useProjectEstimates } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   value: TYAxisValues;

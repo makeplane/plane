@@ -10,13 +10,13 @@ import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction } from "@/components/modules";
-// constants
-import { EEstimateSystem } from "@/constants/estimates";
 // helpers
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useAppRouter, useModule, useProjectEstimates } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   moduleId: string;
