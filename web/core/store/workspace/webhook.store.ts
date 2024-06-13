@@ -3,10 +3,10 @@ import { action, observable, makeObservable, computed, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IWebhook } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WebhookService } from "@/services/webhook.service";
+// store
+import { CoreRootStore } from "../root.store";
 
 export interface IWebhookStore {
   // observables
@@ -43,7 +43,7 @@ export class WebhookStore implements IWebhookStore {
   // root store
   rootStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       webhooks: observable,
