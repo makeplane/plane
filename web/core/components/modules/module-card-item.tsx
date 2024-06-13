@@ -12,7 +12,6 @@ import { FavoriteStar } from "@/components/core";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
-import { EEstimateSystem } from "@/constants/estimates";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
@@ -22,6 +21,8 @@ import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   moduleId: string;
