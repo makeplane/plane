@@ -121,18 +121,3 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
     is_ee: true,
   },
 };
-
-export const ESTIMATE_OPTIONS_STAGE_ONE = [
-  {
-    key: EEstimateUpdateStages.EDIT,
-    title: "Add, update or remove estimates",
-    description: "Manage current system either adding, updating or removing the points or categories.",
-    is_ee: true,
-  },
-  {
-    key: EEstimateUpdateStages.SWITCH,
-    title: "Change estimate type",
-    description: "Convert your points system to categories system and vice versa.",
-    is_ee: true,
-  },
-];

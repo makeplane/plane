@@ -7,12 +7,13 @@ import {
   EstimateEmptyScreen,
   EstimateDisableSwitch,
   CreateEstimateModal,
-  UpdateEstimateModal,
   DeleteEstimateModal,
   EstimateList,
 } from "@/components/estimates";
 // hooks
 import { useProject, useProjectEstimates } from "@/hooks/store";
+// plane web components
+import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 
 type TEstimateRoot = {
   workspaceSlug: string;

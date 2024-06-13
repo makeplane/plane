@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pen, Trash } from "lucide-react";
+import { Crown, Pen, Trash } from "lucide-react";
+import { Tooltip } from "@plane/ui";
 
 type TEstimateListItem = {
   estimateId: string;
@@ -12,17 +13,24 @@ type TEstimateListItem = {
 };
 
 export const EstimateListItemButtons: FC<TEstimateListItem> = observer((props) => {
-  const { estimateId, isAdmin, isEditable, onEditClick, onDeleteClick } = props;
-  if (!isAdmin || !isEditable) return <></>;
+  const { estimateId, isAdmin, isEditable, onDeleteClick } = props;
 
+  if (!isAdmin || !isEditable) return <></>;
   return (
     <div className="relative flex items-center gap-1">
-      <button
-        className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
-        onClick={() => onEditClick && onEditClick(estimateId)}
+      <Tooltip
+        tooltipContent={
+          <div className="relative flex items-center gap-2">
+            <div>Upgrade</div>
+            <Crown size={12} className="text-amber-400" />
+          </div>
+        }
+        position="top"
       >
-        <Pen size={12} />
-      </button>
+        <button className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80">
+          <Pen size={12} />
+        </button>
+      </Tooltip>
       <button
         className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
         onClick={() => onDeleteClick && onDeleteClick(estimateId)}
