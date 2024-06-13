@@ -21,7 +21,7 @@ export const PagesAppSidebarQuickActions = observer(() => {
       <button
         type="button"
         className={cn(
-          "flex-grow text-custom-text-300 text-sm font-medium border-[0.5px] border-custom-sidebar-border-300 text-left rounded h-full hover:bg-custom-sidebar-background-80 px-2 flex items-center gap-2",
+          "flex-grow text-custom-text-300 text-sm font-medium border-[0.5px] border-custom-sidebar-border-300 text-left rounded h-full hover:bg-custom-sidebar-background-90 px-2 flex items-center gap-2",
           {
             "flex-shrink-0 size-8 grid place-items-center": isSidebarCollapsed,
           }
@@ -42,7 +42,7 @@ export const PagesAppSidebarQuickActions = observer(() => {
       <button
         type="button"
         className={cn(
-          "flex-shrink-0 grid place-items-center h-full aspect-square border-[0.5px] border-custom-sidebar-border-300 rounded hover:bg-custom-sidebar-background-80",
+          "flex-shrink-0 grid place-items-center h-full aspect-square border-[0.5px] border-custom-sidebar-border-300 rounded hover:bg-custom-sidebar-background-90",
           {
             "size-8": isSidebarCollapsed,
           }

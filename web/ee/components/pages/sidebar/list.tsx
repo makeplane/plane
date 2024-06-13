@@ -1,10 +1,14 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { ChevronRight, Plus } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { ChevronRight, Globe2, Lock, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { TPageNavigationTabs } from "@plane/types";
+// ui
+import { ArchiveIcon, Tooltip } from "@plane/ui";
 // constants
 import { EPageAccess } from "@/constants/page";
 // helpers
@@ -17,43 +21,41 @@ import { PagesAppSidebarListItem } from "@/plane-web/components/pages";
 import { useWorkspacePages } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebarList = observer(() => {
+  // params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { toggleCreatePageModal } = useCommandPalette();
-  const { currentWorkspacePublicPageIds, currentWorkspacePrivatePageIds, currentWorkspaceArchivePageIds } =
-    useWorkspacePages();
+  const { getCurrentWorkspacePageIdsByType } = useWorkspacePages();
   // derived values
   const isCollapsed = sidebarCollapsed || false;
-  const totalPublicPages = currentWorkspacePublicPageIds?.length ?? 0;
-  const totalPrivatePages = currentWorkspacePrivatePageIds?.length ?? 0;
-  const totalArchivePages = currentWorkspaceArchivePageIds?.length ?? 0;
 
   const sectionsList: {
     [key in TPageNavigationTabs]: {
       key: TPageNavigationTabs;
       label: string;
+      icon: any;
       pageIds: string[] | undefined;
-      shouldOpenByDefault: boolean;
     };
   } = {
     public: {
       key: "public",
       label: "Public pages",
-      pageIds: currentWorkspacePublicPageIds,
-      shouldOpenByDefault: totalPublicPages !== 0,
+      icon: Globe2,
+      pageIds: getCurrentWorkspacePageIdsByType("public"),
     },
     private: {
       key: "private",
       label: "Private pages",
-      pageIds: currentWorkspacePrivatePageIds,
-      shouldOpenByDefault: totalPublicPages === 0 && totalPrivatePages !== 0,
+      icon: Lock,
+      pageIds: getCurrentWorkspacePageIdsByType("private"),
     },
     archived: {
       key: "archived",
       label: "Archived pages",
-      pageIds: currentWorkspaceArchivePageIds,
-      shouldOpenByDefault: totalPublicPages === 0 && totalPrivatePages === 0 && totalArchivePages !== 0,
+      icon: ArchiveIcon,
+      pageIds: getCurrentWorkspacePageIdsByType("archived"),
     },
   };
 
@@ -66,40 +68,49 @@ export const PagesAppSidebarList = observer(() => {
       {Object.values(sectionsList).map((section) => (
         <Disclosure key={section.key} as="div" className="flex flex-col" defaultOpen={section.key === "public"}>
           <>
-            {!isCollapsed && (
-              <div className="group w-full flex items-center justify-between rounded py-1.5 pl-1 pr-2 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className="w-full flex items-center gap-1 whitespace-nowrap rounded text-left text-sm font-semibold text-custom-sidebar-text-400"
+            <div className="group w-full flex items-center justify-between rounded py-1.5 px-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
+              <Tooltip tooltipHeading={section.label} tooltipContent="" disabled={!isCollapsed}>
+                <Link
+                  href={`/${workspaceSlug}/pages/${section.key}`}
+                  className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400", {
+                    "flex justify-center": isCollapsed,
+                  })}
                 >
-                  {({ open }) => (
-                    <>
-                      {section.label}
+                  {isCollapsed ? <section.icon className="size-4 text-custom-sidebar-text-200" /> : section.label}
+                </Link>
+              </Tooltip>
+              {!isCollapsed && (
+                <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  {section.key !== "archived" && (
+                    <button
+                      className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+                      onClick={() => {
+                        setTrackElement("Sidebar");
+                        toggleCreatePageModal({
+                          isOpen: true,
+                          pageAccess: section.key === "public" ? EPageAccess.PUBLIC : EPageAccess.PRIVATE,
+                        });
+                      }}
+                    >
+                      <Plus className="size-4" />
+                    </button>
+                  )}
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+                  >
+                    {({ open }) => (
                       <ChevronRight
-                        className={cn("size-3.5 transition-all", {
+                        className={cn("size-4 transition-all", {
                           "rotate-90": open,
                         })}
                       />
-                    </>
-                  )}
-                </Disclosure.Button>
-                {section.key !== "archived" && (
-                  <button
-                    className="opacity-0 group-hover:opacity-100"
-                    onClick={() => {
-                      setTrackElement("Sidebar");
-                      toggleCreatePageModal({
-                        isOpen: true,
-                        pageAccess: section.key === "public" ? EPageAccess.PUBLIC : EPageAccess.PRIVATE,
-                      });
-                    }}
-                  >
-                    <Plus className="size-3" strokeWidth={3} />
-                  </button>
-                )}
-              </div>
-            )}
+                    )}
+                  </Disclosure.Button>
+                </div>
+              )}
+            </div>
             <Transition
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"
@@ -110,11 +121,15 @@ export const PagesAppSidebarList = observer(() => {
             >
               <Disclosure.Panel
                 as="div"
-                className={cn({
-                  "ml-1": !sidebarCollapsed,
+                className={cn("ml-1", {
+                  hidden: isCollapsed,
                 })}
               >
-                {section.pageIds?.map((pageId) => <PagesAppSidebarListItem key={pageId} pageId={pageId} />)}
+                {section.pageIds && section.pageIds.length > 0 ? (
+                  section.pageIds.map((pageId) => <PagesAppSidebarListItem key={pageId} pageId={pageId} />)
+                ) : (
+                  <p className="text-custom-text-400 text-xs font-medium ml-1">No {section.key} pages</p>
+                )}
               </Disclosure.Panel>
             </Transition>
           </>

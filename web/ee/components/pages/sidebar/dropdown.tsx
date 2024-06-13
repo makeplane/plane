@@ -100,7 +100,7 @@ export const PagesAppSidebarDropdown = observer(() => {
       <Menu as="div" className="relative h-full flex-grow truncate text-left">
         {({ open }) => (
           <>
-            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none">
+            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:outline-none">
               <div
                 className={`flex items-center  gap-x-2 truncate rounded p-1 ${
                   sidebarCollapsed ? "justify-center" : "justify-between"

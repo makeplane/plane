@@ -39,7 +39,7 @@ export const PagesAppSidebarListItem: React.FC<Props> = observer((props) => {
       <Link
         href={`/${workspaceSlug}/pages/${page.id}`}
         className={cn(
-          "w-full flex items-center gap-1 py-1.5 px-1 rounded-md text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80",
+          "w-full flex items-center gap-1 py-1.5 px-1 rounded-md text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90",
           {
             "justify-center": isCollapsed,
             "bg-custom-primary-100/10 text-custom-primary-100": isPageActive,
