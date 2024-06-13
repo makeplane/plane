@@ -4,9 +4,7 @@ import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
-import { WorkspaceService } from "@/services/workspace.service";
+import { computedFn } from "mobx-utils";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -17,11 +15,13 @@ import {
   TStaticViewTypes,
   IssuePaginationOptions,
 } from "@plane/types";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { WorkspaceService } from "@/services/workspace.service";
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
-import { computedFn } from "mobx-utils";
 // constants
 // services
 

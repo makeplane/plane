@@ -15,9 +15,9 @@ import { calculateTimeAgo } from "@/helpers/date-time.helper";
 //hooks
 // services
 import { useUser } from "@/hooks/store";
+import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
 import { UserService } from "@/services/user.service";
 // assets
-import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
 
 const userService = new UserService();
 

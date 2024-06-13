@@ -1,7 +1,6 @@
 module.exports = {
   extends: [
     "next",
-    "turbo",
     "prettier",
     "plugin:@typescript-eslint/recommended",
   ],
@@ -17,6 +16,7 @@ module.exports = {
     },
   },
   rules: {
+    "no-useless-escape": "off",
     "prefer-const": "error",
     "no-irregular-whitespace": "error",
     "no-trailing-spaces": "error",
@@ -37,6 +37,7 @@ module.exports = {
       {
         selector: ["function", "variable"],
         format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
+        leadingUnderscore: "allow",
       },
     ],
   },

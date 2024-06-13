@@ -1,6 +1,5 @@
 "use client";
 
-import { MutableRefObject } from "react";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -43,12 +42,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
               isDragEnabled={enableReorder}
               onDrop={handleOnDrop}
             >
-              {(isDragging: boolean) => (
-                <CyclesSidebarBlock
-                  block={block}
-                  isDragging={isDragging}
-                />
-              )}
+              {(isDragging: boolean) => <CyclesSidebarBlock block={block} isDragging={isDragging} />}
             </GanttDnDHOC>
           );
         })

@@ -1,8 +1,8 @@
 import isEmpty from "lodash/isEmpty";
-import { EIssueGroupedAction } from "./base-issues.store";
 import uniq from "lodash/uniq";
 import { TIssue } from "@plane/types";
 import { ALL_ISSUES } from "@/constants/issue";
+import { EIssueGroupedAction } from "./base-issues.store";
 
 /**
  * returns,
@@ -172,6 +172,4 @@ export const getSortOrderToFilterEmptyValues = (key: string, object: any) => {
 };
 
 // get IssueIds from Issue data List
-export const getIssueIds = (issues: TIssue[]) => {
-  return issues.map((issue) => issue?.id);
-};
+export const getIssueIds = (issues: TIssue[]) => issues.map((issue) => issue?.id);

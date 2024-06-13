@@ -10,8 +10,8 @@ import {
 } from "@plane/types";
 // services
 // types
-import { IIssueRootStore } from "../root.store";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { IIssueRootStore } from "../root.store";
 import { IProjectViewIssuesFilter } from "./filter.store";
 
 export interface IProjectViewIssues extends IBaseIssuesStore {
@@ -125,7 +125,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       this.setLoader("pagination", groupId, subGroupId);
 
       // get params from stored pagination options
-      let params = this.issueFilterStore?.getFilterParams(
+      const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
         cursorObject?.nextCursor,
         groupId,
