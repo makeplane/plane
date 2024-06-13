@@ -11,14 +11,13 @@ import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper
 // hooks
 import { useAppRouter } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-
 // store
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
-  page: IPageStore;
+  page: IPage;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {

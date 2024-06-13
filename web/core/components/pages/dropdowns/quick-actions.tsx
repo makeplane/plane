@@ -9,10 +9,10 @@ import { DeletePageModal } from "@/components/pages";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 
 type Props = {
-  page: IPageStore;
+  page: IPage;
   pageLink: string;
   parentRef: React.RefObject<HTMLElement>;
 };

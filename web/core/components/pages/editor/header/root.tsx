@@ -7,14 +7,14 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
   markings: IMarking[];
-  page: IPageStore;
+  page: IPage;
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   editorReady: boolean;

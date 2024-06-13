@@ -6,10 +6,11 @@ import { computedFn } from "mobx-utils";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { RootStore } from "@/store/root.store";
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
 import { IMemberRootStore } from ".";

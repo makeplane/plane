@@ -5,13 +5,14 @@ import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
-import { RootStore } from "../root.store";
 
 export type TLoader = "submitting" | "submitted" | "saved";
 
-export interface IPageStore extends TPage {
+export interface IPage extends TPage {
   // observables
   isSubmitting: TLoader;
   // computed
@@ -43,7 +44,7 @@ export interface IPageStore extends TPage {
   removeFromFavorites: () => Promise<void>;
 }
 
-export class PageStore implements IPageStore {
+export class Page implements IPage {
   // loaders
   isSubmitting: TLoader = "saved";
   // page properties
