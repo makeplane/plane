@@ -1,8 +1,7 @@
 import React from "react";
 import { AlertTriangle, Info, LucideIcon } from "lucide-react";
-// ui
-import { Button, TButtonVariant } from "@plane/ui";
 // components
+import { Button, TButtonVariant } from "../button";
 import { ModalCore } from "./modal-core";
 // constants
 import { EModalPosition, EModalWidth } from "./constants";
