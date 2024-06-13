@@ -46,7 +46,8 @@ export class UserService extends APIService {
   }
 
   async currentUser(): Promise<IUser> {
-    return this.get("/api/users/me/")
+    // Using validateStatus: null to bypass interceptors for unauthorized errors.
+    return this.get("/api/users/me/", { validateStatus: null })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -206,10 +207,19 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
-      params,
-    })
+  async getUserProfileIssues(
+    workspaceSlug: string,
+    userId: string,
+    params: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/user-issues/${userId}/`,
+      {
+        params,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

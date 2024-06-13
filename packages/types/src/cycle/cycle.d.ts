@@ -2,32 +2,81 @@ import type { TIssue, IIssueFilterOptions } from "@plane/types";
 
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
 
-export interface ICycle {
-  backlog_issues: number;
-  cancelled_issues: number;
+export type TCycleCompletionChartDistribution = {
+  [key: string]: number | null;
+};
+
+export type TCycleDistributionBase = {
+  total_issues: number;
+  pending_issues: number;
   completed_issues: number;
+};
+
+export type TCycleEstimateDistributionBase = {
+  total_estimates: number;
+  pending_estimates: number;
+  completed_estimates: number;
+};
+
+export type TCycleAssigneesDistribution = {
+  assignee_id: string | null;
+  avatar: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  display_name: string | null;
+};
+
+export type TCycleLabelsDistribution = {
+  color: string | null;
+  label_id: string | null;
+  label_name: string | null;
+};
+
+export type TCycleDistribution = {
+  assignees: (TCycleAssigneesDistribution & TCycleDistributionBase)[];
+  completion_chart: TCycleCompletionChartDistribution;
+  labels: (TCycleLabelsDistribution & TCycleDistributionBase)[];
+};
+
+export type TCycleEstimateDistribution = {
+  assignees: (TCycleAssigneesDistribution & TCycleEstimateDistributionBase)[];
+  completion_chart: TCycleCompletionChartDistribution;
+  labels: (TCycleLabelsDistribution & TCycleEstimateDistributionBase)[];
+};
+
+export type TProgressSnapshot = {
+  total_issues: number;
+  completed_issues: number;
+  backlog_issues: number;
+  started_issues: number;
+  unstarted_issues: number;
+  cancelled_issues: number;
+  total_estimate_points?: number;
+  completed_estimate_points?: number;
+  backlog_estimate_points: number;
+  started_estimate_points: number;
+  unstarted_estimate_points: number;
+  cancelled_estimate_points: number;
+  distribution?: TCycleDistribution;
+  estimate_distribution?: TCycleEstimateDistribution;
+};
+
+export interface ICycle extends TProgressSnapshot {
+  progress_snapshot: TProgressSnapshot | undefined;
+
   created_at?: string;
   created_by?: string;
   description: string;
-  distribution?: {
-    assignees: TAssigneesDistribution[];
-    completion_chart: TCompletionChartDistribution;
-    labels: TLabelsDistribution[];
-  };
   end_date: string | null;
   id: string;
   is_favorite?: boolean;
   name: string;
   owned_by_id: string;
-  progress_snapshot: TProgressSnapshot;
   project_id: string;
   status?: TCycleGroups;
   sort_order: number;
   start_date: string | null;
-  started_issues: number;
   sub_issues?: number;
-  total_issues: number;
-  unstarted_issues: number;
   updated_at?: string;
   updated_by?: string;
   archived_at: string | null;
@@ -37,47 +86,6 @@ export interface ICycle {
   };
   workspace_id: string;
 }
-
-export type TProgressSnapshot = {
-  backlog_issues: number;
-  cancelled_issues: number;
-  completed_estimates: number | null;
-  completed_issues: number;
-  distribution?: {
-    assignees: TAssigneesDistribution[];
-    completion_chart: TCompletionChartDistribution;
-    labels: TLabelsDistribution[];
-  };
-  started_estimates: number | null;
-  started_issues: number;
-  total_estimates: number | null;
-  total_issues: number;
-  unstarted_issues: number;
-};
-
-export type TAssigneesDistribution = {
-  assignee_id: string | null;
-  avatar: string | null;
-  completed_issues: number;
-  first_name: string | null;
-  last_name: string | null;
-  display_name: string | null;
-  pending_issues: number;
-  total_issues: number;
-};
-
-export type TCompletionChartDistribution = {
-  [key: string]: number | null;
-};
-
-export type TLabelsDistribution = {
-  color: string | null;
-  completed_issues: number;
-  label_id: string | null;
-  label_name: string | null;
-  pending_issues: number;
-  total_issues: number;
-};
 
 export interface CycleIssueResponse {
   id: string;
@@ -102,3 +110,5 @@ export type CycleDateCheckData = {
   end_date: string;
   cycle_id?: string;
 };
+
+export type TCyclePlotType = "burndown" | "points";

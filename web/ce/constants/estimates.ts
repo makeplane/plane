@@ -13,8 +13,10 @@ export enum EEstimateUpdateStages {
   SWITCH = "switch",
 }
 
-export const minEstimatesCount = 2;
-export const maxEstimatesCount = 6;
+export const estimateCount = {
+  min: 2,
+  max: 6,
+};
 
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {
@@ -119,18 +121,3 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
     is_ee: true,
   },
 };
-
-export const ESTIMATE_OPTIONS_STAGE_ONE = [
-  {
-    key: EEstimateUpdateStages.EDIT,
-    title: "Add, update or remove estimates",
-    description: "Manage current system either adding, updating or removing the points or categories.",
-    is_ee: true,
-  },
-  {
-    key: EEstimateUpdateStages.SWITCH,
-    title: "Change estimate type",
-    description: "Convert your points system to categories system and vice versa.",
-    is_ee: true,
-  },
-];

@@ -188,4 +188,17 @@ def issue_group_values(field, slug, project_id=None, filters=dict):
             return list(queryset.filter(project_id=project_id))
         else:
             return list(queryset)
+
+    if field == "created_by":
+        queryset = (
+            Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(**filters)
+            .values_list("created_by", flat=True)
+            .distinct()
+        )
+        if project_id:
+            return list(queryset.filter(project_id=project_id))
+        else:
+            return list(queryset)
+
     return []

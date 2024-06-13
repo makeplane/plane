@@ -222,9 +222,13 @@ class ModuleSerializer(DynamicBaseSerializer):
 class ModuleDetailSerializer(ModuleSerializer):
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     sub_issues = serializers.IntegerField(read_only=True)
+    backlog_estimate_points = serializers.IntegerField(read_only=True)
+    unstarted_estimate_points = serializers.IntegerField(read_only=True)
+    started_estimate_points = serializers.IntegerField(read_only=True)
+    cancelled_estimate_points = serializers.IntegerField(read_only=True)
 
     class Meta(ModuleSerializer.Meta):
-        fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues"]
+        fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues", "backlog_estimate_points", "unstarted_estimate_points", "started_estimate_points", "cancelled_estimate_points"]
 
 
 class ModuleUserPropertiesSerializer(BaseSerializer):

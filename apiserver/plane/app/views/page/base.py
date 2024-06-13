@@ -6,7 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Subquery
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.http import StreamingHttpResponse
@@ -14,6 +14,7 @@ from django.http import StreamingHttpResponse
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
 
 from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import (
@@ -27,6 +28,7 @@ from plane.db.models import (
     PageLog,
     UserFavorite,
     ProjectMember,
+    ProjectPage,
 )
 
 # Module imports
@@ -66,28 +68,31 @@ class PageViewSet(BaseViewSet):
             user=self.request.user,
             entity_type="page",
             entity_identifier=OuterRef("pk"),
-            project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        project_subquery = ProjectPage.objects.filter(
+            page_id=OuterRef("id"), project_id=self.kwargs.get("project_id")
+        ).values_list("project_id", flat=True)[:1]
         return self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
             )
             .filter(parent__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .select_related("project")
+            .prefetch_related("projects")
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
+            .annotate(project=Subquery(project_subquery))
+            .filter(project=self.kwargs.get("project_id"))
             .distinct()
         )
 
@@ -115,7 +120,9 @@ class PageViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk):
         try:
             page = Page.objects.get(
-                pk=pk, workspace__slug=slug, project_id=project_id
+                pk=pk,
+                workspace__slug=slug,
+                projects__id=project_id,
             )
 
             if page.is_locked:
@@ -127,7 +134,9 @@ class PageViewSet(BaseViewSet):
             parent = request.data.get("parent", None)
             if parent:
                 _ = Page.objects.get(
-                    pk=parent, workspace__slug=slug, project_id=project_id
+                    pk=parent,
+                    workspace__slug=slug,
+                    projects__id=project_id,
                 )
 
             # Only update access if the page owner is the requesting  user
@@ -187,7 +196,7 @@ class PageViewSet(BaseViewSet):
 
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         ).first()
 
         page.is_locked = True
@@ -196,7 +205,7 @@ class PageViewSet(BaseViewSet):
 
     def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         ).first()
 
         page.is_locked = False
@@ -211,7 +220,7 @@ class PageViewSet(BaseViewSet):
 
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         )
 
         # only the owner or admin can archive the page
@@ -238,7 +247,7 @@ class PageViewSet(BaseViewSet):
 
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         )
 
         # only the owner or admin can un archive the page
@@ -267,7 +276,7 @@ class PageViewSet(BaseViewSet):
 
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         )
 
         # only the owner and admin can delete the page
@@ -380,7 +389,6 @@ class SubPagesEndpoint(BaseAPIView):
         pages = (
             PageLog.objects.filter(
                 page_id=page_id,
-                project_id=project_id,
                 workspace__slug=slug,
                 entity_name__in=["forward_link", "back_link"],
             )
@@ -399,7 +407,7 @@ class PagesDescriptionViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         )
         binary_data = page.description_binary
 
@@ -419,7 +427,7 @@ class PagesDescriptionViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         page = Page.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, projects__id=project_id
         )
 
         base64_data = request.data.get("description_binary")

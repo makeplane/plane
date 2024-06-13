@@ -2,7 +2,7 @@
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
-import type { CycleDateCheckData, ICycle, TIssue, TIssuesResponse } from "@plane/types";
+import type { CycleDateCheckData, ICycle, TIssuesResponse } from "@plane/types";
 // helpers
 
 export class CycleService extends APIService {
@@ -50,11 +50,16 @@ export class CycleService extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    queries?: any
+    queries?: any,
+    config = {}
   ): Promise<TIssuesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
-      params: queries,
-    })
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
+      {
+        params: queries,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

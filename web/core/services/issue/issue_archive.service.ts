@@ -9,10 +9,14 @@ export class IssueArchiveService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getArchivedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`, {
-      params: { ...queries },
-    })
+  async getArchivedIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`,
+      {
+        params: { ...queries },
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

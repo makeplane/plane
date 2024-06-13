@@ -8,6 +8,8 @@ from plane.db.models import (
     PageLog,
     PageLabel,
     Label,
+    ProjectPage,
+    Project,
 )
 
 
@@ -18,6 +20,7 @@ class PageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    project = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = Page
@@ -33,17 +36,16 @@ class PageSerializer(BaseSerializer):
             "is_locked",
             "archived_at",
             "workspace",
-            "project",
             "created_at",
             "updated_at",
             "created_by",
             "updated_by",
             "view_props",
             "logo_props",
+            "project",
         ]
         read_only_fields = [
             "workspace",
-            "project",
             "owned_by",
         ]
 
@@ -57,11 +59,23 @@ class PageSerializer(BaseSerializer):
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
         description_html = self.context["description_html"]
+
+        # Get the workspace id from the project
+        project = Project.objects.get(pk=project_id)
+
         page = Page.objects.create(
             **validated_data,
             description_html=description_html,
-            project_id=project_id,
             owned_by_id=owned_by_id,
+            workspace_id=project.workspace_id,
+        )
+
+        ProjectPage.objects.create(
+            workspace_id=page.workspace_id,
+            project_id=project_id,
+            page_id=page.id,
+            created_by_id=page.created_by_id,
+            updated_by_id=page.updated_by_id,
         )
 
         if labels is not None:
@@ -70,7 +84,6 @@ class PageSerializer(BaseSerializer):
                     PageLabel(
                         label=label,
                         page=page,
-                        project_id=project_id,
                         workspace_id=page.workspace_id,
                         created_by_id=page.created_by_id,
                         updated_by_id=page.updated_by_id,
@@ -90,7 +103,6 @@ class PageSerializer(BaseSerializer):
                     PageLabel(
                         label=label,
                         page=instance,
-                        project_id=instance.project_id,
                         workspace_id=instance.workspace_id,
                         created_by_id=instance.created_by_id,
                         updated_by_id=instance.updated_by_id,
@@ -120,7 +132,6 @@ class SubPageSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project",
             "page",
         ]
 
@@ -141,6 +152,5 @@ class PageLogSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project",
             "page",
         ]

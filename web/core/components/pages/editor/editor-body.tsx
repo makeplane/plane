@@ -22,7 +22,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // services
 import { FileService } from "@/services/file.service";
 // store
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 
 const fileService = new FileService();
 
@@ -30,7 +30,7 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   markings: IMarking[];
-  page: IPageStore;
+  page: IPage;
   sidePeekVisible: boolean;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;

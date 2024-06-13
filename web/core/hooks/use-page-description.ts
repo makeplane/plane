@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 // editor
 import { applyUpdates, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
 import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+import useAutoSave from "@/hooks/use-auto-save";
 // services
 import { ProjectPageService } from "@/services/page";
-import { IPageStore } from "@/store/pages/page.store";
-import useAutoSave from "./use-auto-save";
+import { IPage } from "@/store/pages/page";
 const projectPageService = new ProjectPageService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
-  page: IPageStore;
+  page: IPage;
   projectId: string | string[] | undefined;
   workspaceSlug: string | string[] | undefined;
 };
