@@ -191,7 +191,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
-        "modules__id": "module_ids",
+        "issue_module__module_id": "module_ids",
     }
 
     def __init__(
@@ -269,6 +269,8 @@ class GroupedOffsetPaginator(OffsetPaginator):
             False,
             queryset.filter(row_number__gte=stop).exists(),
         )
+
+        # Add previous cursors
         prev_cursor = Cursor(
             limit,
             page - 1,
@@ -414,7 +416,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
-        "modules__id": "module_ids",
+        "issue_module__module_id": "module_ids",
     }
 
     def __init__(
