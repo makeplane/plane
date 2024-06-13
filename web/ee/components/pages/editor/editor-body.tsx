@@ -24,10 +24,10 @@ import { IssueEmbedCard } from "@/plane-web/components/pages";
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 import { useWorkspacePageDescription } from "@/plane-web/hooks/use-workspace-page-description";
+// store
+import { IWorkspacePageDetails } from "@/plane-web/store/pages/page";
 // services
 import { FileService } from "@/services/file.service";
-// store
-import { IPageStore } from "@/store/pages/page.store";
 
 const fileService = new FileService();
 
@@ -35,7 +35,7 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   markings: IMarking[];
-  page: IPageStore;
+  page: IWorkspacePageDetails;
   sidePeekVisible: boolean;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
