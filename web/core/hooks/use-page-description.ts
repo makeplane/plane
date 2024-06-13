@@ -7,12 +7,12 @@ import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { ProjectPageService } from "@/services/page";
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 const projectPageService = new ProjectPageService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
-  page: IPageStore;
+  page: IPage;
   projectId: string | string[] | undefined;
   workspaceSlug: string | string[] | undefined;
 };
