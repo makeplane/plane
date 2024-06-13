@@ -9,10 +9,10 @@ import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject } from "@
 import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/estimates";
-// constants
-import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TCreateEstimateModal = {
   workspaceSlug: string;

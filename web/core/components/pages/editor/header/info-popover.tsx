@@ -4,10 +4,10 @@ import { Calendar, History, Info } from "lucide-react";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // store
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 
 type Props = {
-  page: IPageStore;
+  page: IPage;
 };
 
 export const PageInfoPopover: React.FC<Props> = (props) => {

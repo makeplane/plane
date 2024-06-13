@@ -8,12 +8,12 @@ import { computedFn } from "mobx-utils";
 import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
 // helpers
 import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ModuleService } from "@/services/module.service";
 import { ModuleArchiveService } from "@/services/module_archive.service";
 import { ProjectService } from "@/services/project";
-// store
-import { RootStore } from "@/store/root.store";
 
 export interface IModuleStore {
   //Loaders

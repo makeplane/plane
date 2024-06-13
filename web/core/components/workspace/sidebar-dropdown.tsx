@@ -16,7 +16,10 @@ import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { GOD_MODE_URL } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+// plane web components
+import { AppSwitcher } from "@/plane-web/components/sidebar";
 import { WorkspaceLogo } from "./logo";
+
 // Static Data
 const userLinks = (workspaceSlug: string) => [
   {
@@ -137,6 +140,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
+                    <AppSwitcher />
                     {workspacesList ? (
                       <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                         {workspacesList.length > 0 &&

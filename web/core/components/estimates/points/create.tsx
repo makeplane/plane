@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// constants
-import { EEstimateSystem } from "@/constants/estimates";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useEstimate } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type TEstimatePointCreate = {
   workspaceSlug: string;

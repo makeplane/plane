@@ -15,11 +15,12 @@ import {
 } from "@plane/types";
 // helpers
 import { EInboxIssueCurrentTab, EInboxIssueStatus, EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
 import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { RootStore } from "@/store/root.store";
 
 type TLoader =
   | "init-loading"

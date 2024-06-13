@@ -15,12 +15,12 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // store
-import { IPageStore } from "@/store/pages/page.store";
+import { IPage } from "@/store/pages/page";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  page: IPageStore;
+  page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
 };
 

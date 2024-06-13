@@ -14,7 +14,8 @@ import {
   getWorkspaceEventPayload,
   getPageEventPayload,
 } from "@/constants/event-tracker";
-import { RootStore } from "./root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 
 export interface IEventTrackerStore {
   // properties

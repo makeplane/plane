@@ -6,10 +6,11 @@ import { computedFn } from "mobx-utils";
 import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store
-import { RootStore } from "@/store/root.store";
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
 import { IMemberRootStore } from ".";

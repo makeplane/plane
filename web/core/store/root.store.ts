@@ -26,7 +26,7 @@ import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 
 enableStaticRendering(typeof window === "undefined");
 
-export class RootStore {
+export class CoreRootStore {
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
   memberRoot: IMemberRootStore;

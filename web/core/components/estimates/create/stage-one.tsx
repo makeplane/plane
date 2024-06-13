@@ -6,8 +6,8 @@ import { TEstimateSystemKeys } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // components
 import { RadioInput } from "@/components/estimates";
-// constants
-import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
+// plane web constants
+import { ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;
