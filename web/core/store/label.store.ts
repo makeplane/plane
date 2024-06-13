@@ -6,10 +6,10 @@ import { computedFn } from "mobx-utils";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 // helpers
 import { buildTree } from "@/helpers/array.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueLabelService } from "@/services/issue";
+// store
+import { CoreRootStore } from "./root.store";
 
 export interface ILabelStore {
   //Loaders
@@ -55,7 +55,7 @@ export class LabelStore implements ILabelStore {
   // services
   issueLabelService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       labelMap: observable,
       fetchedMap: observable,
