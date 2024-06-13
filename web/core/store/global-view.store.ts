@@ -7,10 +7,10 @@ import { computedFn } from "mobx-utils";
 import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // constants
 import { EIssueFilterType } from "@/constants/issue";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
-// types
-import { RootStore } from "@/store/root.store";
 
 export interface IGlobalViewStore {
   // observables

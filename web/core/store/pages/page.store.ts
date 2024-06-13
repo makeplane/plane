@@ -5,9 +5,10 @@ import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
-import { RootStore } from "../root.store";
 
 export type TLoader = "submitting" | "submitted" | "saved";
 

@@ -10,10 +10,10 @@ import {
   TWidgetKeys,
   TWidgetStatsRequestParams,
 } from "@plane/types";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { DashboardService } from "@/services/dashboard.service";
-// stores
-import { RootStore } from "@/store/root.store";
 
 export interface IDashboardStore {
   // error states

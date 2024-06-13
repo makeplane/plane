@@ -1,7 +1,8 @@
 import { action, makeObservable, observable } from "mobx";
 // types
 import { IUserLite } from "@plane/types";
-import { RootStore } from "@/store/root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 import { IProjectMemberStore, ProjectMemberStore } from "./project-member.store";
 import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace-member.store";
 

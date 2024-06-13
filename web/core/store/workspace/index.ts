@@ -1,10 +1,11 @@
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { IWorkspace } from "@plane/types";
-import { WorkspaceService } from "@/services/workspace.service";
-import { RootStore } from "../root.store";
 // types
+import { IWorkspace } from "@plane/types";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
+import { WorkspaceService } from "@/services/workspace.service";
 // sub-stores
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 import { IWebhookStore, WebhookStore } from "./webhook.store";

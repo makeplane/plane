@@ -1,8 +1,8 @@
 "use client";
 
 import { ReactElement, createContext } from "react";
-// mobx store
-import { RootStore } from "@/store/root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 
 export let rootStore = new RootStore();
 
