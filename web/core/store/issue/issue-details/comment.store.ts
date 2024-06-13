@@ -5,9 +5,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
+import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap } from "@plane/types";
 import { IssueCommentService } from "@/services/issue";
 // types
-import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap } from "@plane/types";
 import { IIssueDetail } from "./root.store";
 
 export type TCommentLoader = "fetch" | "create" | "update" | "delete" | "mutate" | undefined;

@@ -1,16 +1,17 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
-import update from "lodash/update";
-import uniq from "lodash/uniq";
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import orderBy from "lodash/orderBy";
 import clone from "lodash/clone";
-import indexOf from "lodash/indexOf";
-import set from "lodash/set";
+import concat from "lodash/concat";
 import get from "lodash/get";
+import indexOf from "lodash/indexOf";
+import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
+import orderBy from "lodash/orderBy";
+import pull from "lodash/pull";
+import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // types
 import {
   TIssue,
@@ -27,15 +28,12 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
 } from "@plane/types";
-import { IIssueRootStore } from "../root.store";
-import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
-// constants
 import { ALL_ISSUES, EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
-// helpers
-// services
+import { convertToISODateString } from "@/helpers/date-time.helper";
+import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
-import { CycleService } from "@/services/cycle.service";
+import { IIssueRootStore } from "../root.store";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -44,8 +42,10 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
-import { convertToISODateString } from "@/helpers/date-time.helper";
-import isEmpty from "lodash/isEmpty";
+import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+// constants
+// helpers
+// services
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -385,17 +385,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * gets the Loader value of particular group/subgroup/ALL_ISSUES
    */
-  getIssueLoader = (groupId?: string, subGroupId?: string) => {
-    return get(this.loader, getGroupKey(groupId, subGroupId));
-  };
+  getIssueLoader = (groupId?: string, subGroupId?: string) => get(this.loader, getGroupKey(groupId, subGroupId));
 
   /**
    * gets the pagination data of particular group/subgroup/ALL_ISSUES
    */
   getPaginationData = computedFn(
-    (groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined => {
-      return get(this.issuePaginationData, [getGroupKey(groupId, subGroupId)]);
-    }
+    (groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined =>
+      get(this.issuePaginationData, [getGroupKey(groupId, subGroupId)])
   );
 
   /**
@@ -1165,17 +1162,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
           // add issue Id at the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => {
-            return this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy);
-          });
+          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
+            this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
+          );
         }
 
         //if update is delete, remove it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.DELETE) {
           // remove issue Id from the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => {
-            return pull(issueIds, issueId);
-          });
+          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => pull(issueIds, issueId));
         }
 
         // accumulate the updates so that we don't end up updating the count twice for the same issue
@@ -1184,9 +1179,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         //if update is reorder, reorder it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.REORDER) {
           // re-order/re-sort the issue Ids at the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => {
-            return this.issuesSortWithOrderBy(issueIds, this.orderBy);
-          });
+          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
+            this.issuesSortWithOrderBy(issueIds, this.orderBy)
+          );
         }
       }
 
@@ -1363,9 +1358,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // if groupedIssueIds is an array, update the `groupedIssueIds` store at the issuePath
     if (groupedIssueIds && Array.isArray(groupedIssueIds)) {
-      update(this, ["groupedIssueIds", ...issuePath], (issueIds: string[] = []) => {
-        return this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds as string[])), this.orderBy);
-      });
+      update(this, ["groupedIssueIds", ...issuePath], (issueIds: string[] = []) =>
+        this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds as string[])), this.orderBy)
+      );
       // return true to indicate the store has been updated
       return true;
     }
