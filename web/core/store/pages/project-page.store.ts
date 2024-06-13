@@ -6,11 +6,12 @@ import { computedFn } from "mobx-utils";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
 import { IPageStore, PageStore } from "@/store/pages/page.store";
-import { RootStore } from "../root.store";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 

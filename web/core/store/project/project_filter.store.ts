@@ -3,8 +3,8 @@ import { action, computed, observable, makeObservable, runInAction, reaction } f
 import { computedFn } from "mobx-utils";
 // types
 import { TProjectDisplayFilters, TProjectFilters, TProjectAppliedDisplayFilterKeys } from "@plane/types";
-// store
-import { RootStore } from "@/store/root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 
 export interface IProjectFilterStore {
   // observables
