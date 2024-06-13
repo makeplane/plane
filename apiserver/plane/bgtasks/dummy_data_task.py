@@ -37,7 +37,7 @@ from plane.db.models import (
 def create_project(workspace, user_id):
     fake = Faker()
     name = fake.name()
-    unique_id = str(uuid.uuid4())[:5] 
+    unique_id = str(uuid.uuid4())[:5]
 
     project = Project.objects.create(
         workspace=workspace,
@@ -244,7 +244,6 @@ def create_pages(workspace, project, user_id, pages_count):
         pages.append(
             Page(
                 name=fake.name(),
-                project=project,
                 workspace=workspace,
                 owned_by_id=user_id,
                 access=random.randint(0, 1),
@@ -292,8 +291,14 @@ def create_issues(workspace, project, user_id, issue_count):
     fake = Faker()
     Faker.seed(0)
 
-    states = State.objects.filter(workspace=workspace, project=project).exclude(group="Triage").values_list("id", flat=True)
-    creators = ProjectMember.objects.filter(workspace=workspace, project=project).values_list("member_id", flat=True)
+    states = (
+        State.objects.filter(workspace=workspace, project=project)
+        .exclude(group="Triage")
+        .values_list("id", flat=True)
+    )
+    creators = ProjectMember.objects.filter(
+        workspace=workspace, project=project
+    ).values_list("member_id", flat=True)
 
     issues = []
 
