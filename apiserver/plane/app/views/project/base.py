@@ -240,6 +240,12 @@ class ProjectViewSet(BaseViewSet):
             )
         ).first()
 
+        if project is None:
+            return Response(
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
