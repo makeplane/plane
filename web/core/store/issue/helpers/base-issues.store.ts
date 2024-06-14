@@ -305,8 +305,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
 
-    if (!groupBy && !subGroupBy && Array.isArray(groupedIssueIds)) {
-      return groupedIssueIds as string[];
+    const allIssues = groupedIssueIds[ALL_ISSUES];
+    if (!groupBy && !subGroupBy && allIssues && Array.isArray(allIssues)) {
+      return allIssues as string[];
     }
 
     if (groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
@@ -314,7 +315,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     }
 
     if (groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[subGroupId]?.[groupId] as string[];
+      return (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId] as string[];
     }
 
     return undefined;
@@ -420,6 +421,24 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       return get(this.groupedIssueCount, [getGroupKey(groupId, subGroupId)]);
     }
   );
+
+  /**
+   * Gets the next page cursor based on number of issues currently available
+   * @param groupId groupId for the cursor
+   * @param subGroupId subgroupId for cursor
+   * @returns next page cursor or undefined
+   */
+  getNextCursor = (groupId: string | undefined, subGroupId: string | undefined): string | undefined => {
+    const groupedIssues = this.getIssueIds(groupId, subGroupId) ?? [];
+    const currentIssueCount = groupedIssues.length;
+
+    if (!this.paginationOptions) return;
+
+    const { perPageCount } = this.paginationOptions;
+    const nextPage = Math.floor(currentIssueCount / perPageCount);
+
+    return `${perPageCount}:${nextPage}:0`;
+  };
 
   /**
    * This Method is called after fetching the first paginated issues

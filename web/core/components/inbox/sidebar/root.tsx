@@ -17,6 +17,7 @@ import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;
@@ -51,6 +52,9 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     fetchInboxPaginationIssues,
     getAppliedFiltersCount,
   } = useProjectInbox();
+  const {
+    issues: { getIssueLoader },
+  } = useIssuesStore();
 
   const router = useRouter();
 
@@ -59,8 +63,10 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
   }, [workspaceSlug, projectId, fetchInboxPaginationIssues]);
 
+  const isPaginating = !!getIssueLoader();
+
   // page observer
-  useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
+  useIntersectionObserver(containerRef, isPaginating ? null : elementRef, fetchNextPages, "20%");
 
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">

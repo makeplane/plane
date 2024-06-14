@@ -12,6 +12,7 @@ import { TRenderQuickActions } from "../list/list-view-types";
 import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -52,6 +53,10 @@ export const SpreadsheetTable = observer((props: Props) => {
   const isScrolled = useRef(false);
   const [intersectionElement, setIntersectionElement] = useState<HTMLTableSectionElement | null>(null);
 
+  const {
+    issues: { getIssueLoader },
+  } = useIssuesStore();
+
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
     const scrollLeft = containerRef.current.scrollLeft;
@@ -85,7 +90,9 @@ export const SpreadsheetTable = observer((props: Props) => {
     };
   }, [handleScroll, containerRef]);
 
-  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
+  const isPaginating = !!getIssueLoader();
+
+  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
