@@ -114,9 +114,7 @@ from .issue.activity import (
     IssueActivityEndpoint,
 )
 
-from .issue.archive import (
-    IssueArchiveViewSet,
-)
+from .issue.archive import IssueArchiveViewSet, ArchivedIssueDescriptionViewSet
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
@@ -127,7 +125,7 @@ from .issue.comment import (
     CommentReactionViewSet,
 )
 
-from .issue.draft import IssueDraftViewSet
+from .issue.draft import IssueDraftViewSet, DraftIssueDescriptionViewSet
 
 from .issue.label import (
     LabelViewSet,

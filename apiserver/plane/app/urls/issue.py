@@ -20,6 +20,7 @@ from plane.app.views import (
     IssueViewSet,
     LabelViewSet,
     IssueDescriptionViewSet,
+    ArchivedIssueDescriptionViewSet,
 )
 
 urlpatterns = [
@@ -265,6 +266,16 @@ urlpatterns = [
         ),
         name="project-issue-archive-unarchive",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/description/",
+        ArchivedIssueDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="archived-issue-description",
+    ),
     ## End Issue Archives
     ## Issue Relation
     path(
@@ -308,5 +319,15 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/<uuid:pk>/description/",
+        IssueDraftViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="draft-issue-description",
     ),
 ]
