@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { AlertModalCore, EModalPosition, EModalWidth } from "@/components/core";
+import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks

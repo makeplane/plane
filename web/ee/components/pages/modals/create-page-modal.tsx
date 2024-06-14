@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 // types
 import { TPage } from "@plane/types";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { PageForm } from "@/components/pages";
 // constants
 import { PAGE_CREATED } from "@/constants/event-tracker";
