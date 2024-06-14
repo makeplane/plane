@@ -18,6 +18,8 @@ export const MultipleSelectEntityAction: React.FC<Props> = (props) => {
   // derived values
   const isSelected = selectionHelpers.getIsEntitySelected(id);
 
+  if (selectionHelpers.isSelectionDisabled) return null;
+
   return (
     <Checkbox
       className={cn("!outline-none size-3.5", className)}

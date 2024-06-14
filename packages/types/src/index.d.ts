@@ -30,3 +30,4 @@ export * from "./common";
 export * from "./pragmatic";
 // enterprise
 export * from "./active-cycle";
+export * from "./payment";
