@@ -5,6 +5,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@pl
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 // components
@@ -12,7 +13,6 @@ import { TRenderQuickActions } from "../list/list-view-types";
 import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
-import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
