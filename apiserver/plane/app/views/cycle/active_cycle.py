@@ -9,8 +9,12 @@ from django.db.models import (
     Prefetch,
     Q,
     Value,
+    Sum,
     When,
+    Subquery,
+    IntegerField,
 )
+from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
 
@@ -21,13 +25,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     ActiveCycleSerializer,
 )
-from plane.db.models import (
-    Cycle,
-    CycleFavorite,
-    Issue,
-    Label,
-    User,
-)
+from plane.db.models import Cycle, CycleFavorite, Issue, Label, User, Project
 from plane.utils.analytics_plot import burndown_plot
 from plane.app.views.base import BaseAPIView
 
@@ -39,6 +37,106 @@ class ActiveCycleEndpoint(BaseAPIView):
 
     def get_results_controller(self, results, plot_type, active_cycles=None):
         for cycle in results:
+            estimate_type = Project.objects.filter(
+                pk=cycle["project_id"],
+                workspace__slug=self.kwargs.get("slug"),
+                estimate__isnull=False,
+                estimate__type="points",
+            ).exists()
+            cycle["estimate_distribution"] = {}
+            if estimate_type:
+                assignee_distribution = (
+                    Issue.objects.filter(
+                        issue_cycle__cycle_id=cycle["id"],
+                        project_id=cycle["project_id"],
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                    .annotate(display_name=F("assignees__display_name"))
+                    .annotate(assignee_id=F("assignees__id"))
+                    .annotate(avatar=F("assignees__avatar"))
+                    .values("display_name", "assignee_id", "avatar")
+                    .annotate(
+                        total_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField())
+                        )
+                    )
+                    .annotate(
+                        completed_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=False,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=True,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .order_by("display_name")
+                )
+
+                label_distribution = (
+                    Issue.objects.filter(
+                        issue_cycle__cycle_id=cycle["id"],
+                        project_id=cycle["project_id"],
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                    .annotate(label_name=F("labels__name"))
+                    .annotate(color=F("labels__color"))
+                    .annotate(label_id=F("labels__id"))
+                    .values("label_name", "color", "label_id")
+                    .annotate(
+                        total_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField())
+                        )
+                    )
+                    .annotate(
+                        completed_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=False,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=True,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .order_by("label_name")
+                )
+                cycle["estimate_distribution"] = {
+                    "assignees": assignee_distribution,
+                    "labels": label_distribution,
+                    "completion_chart": {},
+                }
+
+                if cycle["start_date"] and cycle["end_date"]:
+                    cycle["estimate_distribution"]["completion_chart"] = (
+                        burndown_plot(
+                            queryset=active_cycles.get(pk=cycle["id"]),
+                            slug=self.kwargs.get("slug"),
+                            project_id=cycle["project_id"],
+                            cycle_id=cycle["id"],
+                            plot_type="points",
+                        )
+                    )
+
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle["id"],
@@ -127,7 +225,7 @@ class ActiveCycleEndpoint(BaseAPIView):
                     slug=self.kwargs.get("slug"),
                     project_id=cycle["project_id"],
                     cycle_id=cycle["id"],
-                    plot_type=plot_type
+                    plot_type="issues",
                 )
         return results
 
@@ -138,6 +236,89 @@ class ActiveCycleEndpoint(BaseAPIView):
             cycle_id=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
+        )
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                backlog_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("backlog_estimate_point")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                unstarted_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("unstarted_estimate_point")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                started_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("started_estimate_point")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                cancelled_estimate_point=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("cancelled_estimate_point")[:1]
+        )
+        completed_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="completed",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                completed_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("completed_estimate_points")[:1]
+        )
+        total_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                issue_cycle__cycle_id=OuterRef("pk"),
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(
+                total_estimate_points=Sum(
+                    Cast("estimate_point__value", IntegerField())
+                )
+            )
+            .values("total_estimate_points")[:1]
         )
         active_cycles = (
             Cycle.objects.filter(
@@ -229,6 +410,42 @@ class ActiveCycleEndpoint(BaseAPIView):
                     output_field=CharField(),
                 )
             )
+            .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                completed_estimate_points=Coalesce(
+                    Subquery(completed_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
+            .annotate(
+                total_estimate_points=Coalesce(
+                    Subquery(total_estimate_point),
+                    Value(0, output_field=IntegerField()),
+                ),
+            )
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
@@ -255,7 +472,7 @@ class ActiveCycleEndpoint(BaseAPIView):
                 active_cycles, many=True
             ).data,
             controller=lambda results: self.get_results_controller(
-                results,plot_type, active_cycles
+                results, plot_type, active_cycles
             ),
             default_per_page=int(request.GET.get("per_page", 3)),
         )

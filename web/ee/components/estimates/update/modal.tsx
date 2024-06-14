@@ -1,8 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
-// components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useEstimate } from "@/hooks/store";
 // plane web components
