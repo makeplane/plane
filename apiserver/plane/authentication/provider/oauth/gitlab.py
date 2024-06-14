@@ -16,49 +16,37 @@ from plane.authentication.adapter.error import (
 
 class GitLabOAuthProvider(OauthAdapter):
 
-    (GITLAB_HOST,) = get_configuration_value(
-        [
-                {
-                    "key": "GITLAB_HOST",
-                    "default": os.environ.get("GITLAB_HOST", "https://gitlab.com"),
-                },
-        ]
-    )
-
-    if not GITLAB_HOST:
-        raise AuthenticationException(
-            error_code=AUTHENTICATION_ERROR_CODES["GITLAB_NOT_CONFIGURED"],
-            error_message="GITLAB_NOT_CONFIGURED",
-        )
-
-    host = GITLAB_HOST
-
-    token_url = (
-        f"{host}/oauth/token"
-    )
-    userinfo_url = (
-        f"{host}/api/v4/user"
-    )
-
     provider = "gitlab"
     scope = "read_user"
 
     def __init__(self, request, code=None, state=None, callback=None):
 
-        GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET = get_configuration_value(
-            [
-                {
-                    "key": "GITLAB_CLIENT_ID",
-                    "default": os.environ.get("GITLAB_CLIENT_ID"),
-                },
-                {
-                    "key": "GITLAB_CLIENT_SECRET",
-                    "default": os.environ.get("GITLAB_CLIENT_SECRET"),
-                },
-            ]
+        GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "GITLAB_CLIENT_ID",
+                        "default": os.environ.get("GITLAB_CLIENT_ID"),
+                    },
+                    {
+                        "key": "GITLAB_CLIENT_SECRET",
+                        "default": os.environ.get("GITLAB_CLIENT_SECRET"),
+                    },
+                    {
+                        "key": "GITLAB_HOST",
+                        "default": os.environ.get(
+                            "GITLAB_HOST", "https://gitlab.com"
+                        ),
+                    },
+                ]
+            )
         )
 
-        if not (GITLAB_CLIENT_ID and GITLAB_CLIENT_SECRET):
+        self.host = GITLAB_HOST
+        self.token_url = f"{self.host}/oauth/token"
+        self.userinfo_url = f"{self.host}/api/v4/user"
+
+        if not (GITLAB_CLIENT_ID and GITLAB_CLIENT_SECRET and GITLAB_HOST):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITLAB_NOT_CONFIGURED"],
                 error_message="GITLAB_NOT_CONFIGURED",
@@ -75,9 +63,7 @@ class GitLabOAuthProvider(OauthAdapter):
             "scope": self.scope,
             "state": state,
         }
-        auth_url = (
-            f"{self.host}/oauth/authorize?{urlencode(url_params)}"
-        )
+        auth_url = f"{self.host}/oauth/authorize?{urlencode(url_params)}"
         super().__init__(
             request,
             self.provider,
@@ -98,7 +84,7 @@ class GitLabOAuthProvider(OauthAdapter):
             "client_secret": self.client_secret,
             "code": self.code,
             "redirect_uri": self.redirect_uri,
-            "grant_type": "authorization_code"
+            "grant_type": "authorization_code",
         }
         token_response = self.get_user_token(
             data=data, headers={"Accept": "application/json"}
@@ -109,7 +95,8 @@ class GitLabOAuthProvider(OauthAdapter):
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("created_at") + token_response.get("expires_in"),
+                        token_response.get("created_at")
+                        + token_response.get("expires_in"),
                         tz=pytz.utc,
                     )
                     if token_response.get("expires_in")
