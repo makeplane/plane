@@ -77,7 +77,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
   const defaultState = statesList?.find((state) => state.default);
-  const stateValue = value ?? (showDefaultState ? defaultState?.id : undefined);
+  const stateValue = !!value ? value : showDefaultState ? defaultState?.id : undefined;
 
   const options = statesList?.map((state) => ({
     value: state.id,
