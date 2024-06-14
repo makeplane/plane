@@ -319,6 +319,8 @@ export const InstanceSetupForm: FC = (props) => {
           <div className="relative flex items-center pt-2 gap-2">
             <div>
               <Checkbox
+                className="w-4 h-4"
+                iconClassName="w-3 h-3"
                 id="is_telemetry_enabled"
                 onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
                 checked={formData.is_telemetry_enabled}
