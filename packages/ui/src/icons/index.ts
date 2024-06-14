@@ -12,6 +12,7 @@ export * from "./dice-icon";
 export * from "./discord-icon";
 export * from "./full-screen-panel-icon";
 export * from "./github-icon";
+export * from "./gitlab-icon";
 export * from "./layer-stack";
 export * from "./layers-icon";
 export * from "./photo-filter-icon";

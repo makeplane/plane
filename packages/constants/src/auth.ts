@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-// helpers
-import { SUPPORT_EMAIL } from "./common.helper";
 
 export enum EPageTypes {
   PUBLIC = "PUBLIC",
@@ -22,6 +20,7 @@ export enum EAuthSteps {
   UNIQUE_CODE = "UNIQUE_CODE",
 }
 
+// TODO: remove this
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
   INLINE_FIRST_NAME = "INLINE_FIRST_NAME",
@@ -30,19 +29,19 @@ export enum EErrorAlertType {
   INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
 }
 
-export enum EAuthenticationErrorCodes {
+export enum EAuthErrorCodes {
   // Global
   INSTANCE_NOT_CONFIGURED = "5000",
   INVALID_EMAIL = "5005",
   EMAIL_REQUIRED = "5010",
   SIGNUP_DISABLED = "5015",
-  MAGIC_LINK_LOGIN_DISABLED = "5016",
-  PASSWORD_LOGIN_DISABLED = "5018",
-  USER_ACCOUNT_DEACTIVATED = "5019",
+  MAGIC_LINK_LOGIN_DISABLED = "5017",
+  PASSWORD_LOGIN_DISABLED = "5019",
+  SMTP_NOT_CONFIGURED = "5025",
   // Password strength
   INVALID_PASSWORD = "5020",
-  SMTP_NOT_CONFIGURED = "5025",
   // Sign Up
+  USER_ACCOUNT_DEACTIVATED = "5019",
   USER_ALREADY_EXIST = "5030",
   AUTHENTICATION_FAILED_SIGN_UP = "5035",
   REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5040",
@@ -57,12 +56,9 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL_MAGIC_SIGN_IN = "5080",
   MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED = "5085",
   // Both Sign in and Sign up for magic
-  INVALID_MAGIC_CODE_SIGN_IN = "5090",
-  INVALID_MAGIC_CODE_SIGN_UP = "5092",
-  EXPIRED_MAGIC_CODE_SIGN_IN = "5095",
-  EXPIRED_MAGIC_CODE_SIGN_UP = "5097",
-  EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN = "5100",
-  EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP = "5102",
+  INVALID_MAGIC_CODE = "5090",
+  EXPIRED_MAGIC_CODE = "5095",
+  EMAIL_CODE_ATTEMPT_EXHAUSTED = "5100",
   // Oauth
   OAUTH_NOT_CONFIGURED = "5104",
   GOOGLE_NOT_CONFIGURED = "5105",
@@ -76,7 +72,7 @@ export enum EAuthenticationErrorCodes {
   EXPIRED_PASSWORD_TOKEN = "5130",
   // Change password
   INCORRECT_OLD_PASSWORD = "5135",
-  MISSING_PASSWORD = "5138",
+  MISSING_PASSWORD= "5138",
   INVALID_NEW_PASSWORD = "5140",
   // set passowrd
   PASSWORD_ALREADY_SET = "5145",
@@ -89,57 +85,44 @@ export enum EAuthenticationErrorCodes {
   ADMIN_AUTHENTICATION_FAILED = "5175",
   ADMIN_USER_ALREADY_EXIST = "5180",
   ADMIN_USER_DOES_NOT_EXIST = "5185",
-  ADMIN_USER_DEACTIVATED = "5190",
-  // Rate limit
-  RATE_LIMIT_EXCEEDED = "5900",
 }
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
-  code: EAuthenticationErrorCodes;
+  code: EAuthErrorCodes;
   title: string;
   message: ReactNode;
 };
 
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
 } = {
   // global
-  [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
+  [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
     title: `Instance not configured`,
     message: () => `Instance not configured. Please contact your administrator.`,
   },
-  [EAuthenticationErrorCodes.INVALID_EMAIL]: {
+  [EAuthErrorCodes.SIGNUP_DISABLED]: {
+    title: `Sign up disabled`,
+    message: () => `Sign up disabled. Please contact your administrator.`,
+  },
+  [EAuthErrorCodes.INVALID_PASSWORD]: {
+    title: `Invalid password`,
+    message: () => `Invalid password. Please try again.`,
+  },
+  [EAuthErrorCodes.SMTP_NOT_CONFIGURED]: {
+    title: `SMTP not configured`,
+    message: () => `SMTP not configured. Please contact your administrator.`,
+  },
+
+  // email check in both sign up and sign in
+  [EAuthErrorCodes.INVALID_EMAIL]: {
     title: `Invalid email`,
     message: () => `Invalid email. Please try again.`,
   },
   [EAuthenticationErrorCodes.EMAIL_REQUIRED]: {
     title: `Email required`,
     message: () => `Email required. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.SIGNUP_DISABLED]: {
-    title: `Sign up disabled`,
-    message: () => `Sign up disabled. Please contact your administrator.`,
-  },
-  [EAuthenticationErrorCodes.MAGIC_LINK_LOGIN_DISABLED]: {
-    title: `Magic link login disabled`,
-    message: () => `Magic link login disabled. Please contact your administrator.`,
-  },
-  [EAuthenticationErrorCodes.PASSWORD_LOGIN_DISABLED]: {
-    title: `Password login disabled`,
-    message: () => `Password login disabled. Please contact your administrator.`,
-  },
-  [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
-    title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
-  },
-  [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
-    title: `Invalid password`,
-    message: () => `Invalid password. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
-    title: `SMTP not configured`,
-    message: () => `SMTP not configured. Please contact your administrator.`,
   },
 
   // sign up
@@ -179,6 +162,11 @@ const errorCodeMessages: {
     message: () => `Invalid email. Please try again.`,
   },
 
+  // sign in
+  [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
+    title: `User account deactivated`,
+    message: () => <div>Your account is deactivated. Contact support@plane.so.</div>,
+  },
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
     title: `User does not exist`,
     message: (email = undefined) => (
@@ -216,27 +204,15 @@ const errorCodeMessages: {
   },
 
   // Both Sign in and Sign up
-  [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN]: {
+  [EAuthenticationErrorCodes.INVALID_MAGIC_CODE]: {
     title: `Authentication failed`,
     message: () => `Invalid magic code. Please try again.`,
   },
-  [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP]: {
-    title: `Authentication failed`,
-    message: () => `Invalid magic code. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN]: {
+  [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE]: {
     title: `Expired magic code`,
     message: () => `Expired magic code. Please try again.`,
   },
-  [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP]: {
-    title: `Expired magic code`,
-    message: () => `Expired magic code. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN]: {
-    title: `Expired magic code`,
-    message: () => `Expired magic code. Please try again.`,
-  },
-  [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP]: {
+  [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED]: {
     title: `Expired magic code`,
     message: () => `Expired magic code. Please try again.`,
   },
@@ -274,7 +250,7 @@ const errorCodeMessages: {
   // Reset Password
   [EAuthenticationErrorCodes.INVALID_PASSWORD_TOKEN]: {
     title: `Invalid password token`,
-    message: () => `Invalid password token.`,
+    message: () => `Invalid password token. Please try again.`,
   },
   [EAuthenticationErrorCodes.EXPIRED_PASSWORD_TOKEN]: {
     title: `Expired password token`,
@@ -282,6 +258,7 @@ const errorCodeMessages: {
   },
 
   // Change password
+
   [EAuthenticationErrorCodes.MISSING_PASSWORD]: {
     title: `Password required`,
     message: () => `Password required. Please try again.`,
@@ -350,14 +327,6 @@ const errorCodeMessages: {
       </div>
     ),
   },
-  [EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED]: {
-    title: `Admin user deactivated`,
-    message: () => <div>Your account is deactivated</div>,
-  },
-  [EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED]: {
-    title: "",
-    message: () => `Rate limit exceeded. Please try again later.`,
-  },
 };
 
 export const authErrorHandler = (
@@ -369,9 +338,6 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.INVALID_EMAIL,
     EAuthenticationErrorCodes.EMAIL_REQUIRED,
     EAuthenticationErrorCodes.SIGNUP_DISABLED,
-    EAuthenticationErrorCodes.MAGIC_LINK_LOGIN_DISABLED,
-    EAuthenticationErrorCodes.PASSWORD_LOGIN_DISABLED,
-    EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED,
     EAuthenticationErrorCodes.INVALID_PASSWORD,
     EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED,
     EAuthenticationErrorCodes.USER_ALREADY_EXIST,
@@ -386,23 +352,16 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN,
     EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
     EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED,
-    EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
-    EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
-    EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
-    EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
-    EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
-    EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
-    EAuthenticationErrorCodes.OAUTH_NOT_CONFIGURED,
+    EAuthenticationErrorCodes.INVALID_MAGIC_CODE,
+    EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE,
+    EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED,
     EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.GITHUB_NOT_CONFIGURED,
-    EAuthenticationErrorCodes.GITLAB_NOT_CONFIGURED,
     EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
     EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
-    EAuthenticationErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
     EAuthenticationErrorCodes.INVALID_PASSWORD_TOKEN,
     EAuthenticationErrorCodes.EXPIRED_PASSWORD_TOKEN,
     EAuthenticationErrorCodes.INCORRECT_OLD_PASSWORD,
-    EAuthenticationErrorCodes.MISSING_PASSWORD,
     EAuthenticationErrorCodes.INVALID_NEW_PASSWORD,
     EAuthenticationErrorCodes.PASSWORD_ALREADY_SET,
     EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST,
@@ -413,8 +372,6 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
-    EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
-    EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))
