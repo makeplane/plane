@@ -83,7 +83,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
                   </div>
                 </div>
                 {plotType === "points" ? (
-                  <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
+                  <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
                   <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
                 )}
@@ -97,7 +97,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
                         distribution={completionChartDistributionData}
                         startDate={cycle.start_date ?? ""}
                         endDate={cycle.end_date ?? ""}
-                        totalIssues={cycle.total_issues}
+                        totalIssues={cycle.total_estimate_points || 0}
                         plotTitle={"points"}
                       />
                     ) : (
@@ -105,7 +105,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
                         distribution={completionChartDistributionData}
                         startDate={cycle.start_date ?? ""}
                         endDate={cycle.end_date ?? ""}
-                        totalIssues={cycle.total_estimate_points || 0}
+                        totalIssues={cycle.total_issues || 0}
                         plotTitle={"issues"}
                       />
                     )}
