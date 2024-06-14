@@ -3,7 +3,6 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { isNil } from "lodash";
 import { observer } from "mobx-react";
 import { cn } from "@plane/editor-core";
 // plane packages
