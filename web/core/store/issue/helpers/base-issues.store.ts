@@ -744,9 +744,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       runInAction(() => {
         issueIds.forEach((issueId) => {
-          this.updateIssue(workspaceSlug, projectId, issueId, {
-            archived_at: response.archived_at,
-          });
+          this.updateIssue(
+            workspaceSlug,
+            projectId,
+            issueId,
+            {
+              archived_at: response.archived_at,
+            },
+            false
+          );
           this.removeIssueFromList(issueId);
         });
       });
