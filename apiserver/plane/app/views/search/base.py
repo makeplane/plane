@@ -2,14 +2,17 @@
 import re
 
 # Django imports
-from django.db.models import Q, OuterRef, Exists
+from django.db.models import Q, OuterRef, Subquery, Value, UUIDField, CharField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView
+from plane.app.views.base import BaseAPIView
 from plane.db.models import (
     Workspace,
     Project,
@@ -20,7 +23,6 @@ from plane.db.models import (
     IssueView,
     ProjectPage,
 )
-from plane.utils.issue_search import search_issues
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -146,29 +148,51 @@ class GlobalSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
 
-        pages = Page.objects.filter(
-            q,
-            projects__project_projectmember__member=self.request.user,
-            projects__project_projectmember__is_active=True,
-            projects__archived_at__isnull=True,
-            workspace__slug=slug,
+        pages = (
+            Page.objects.filter(
+                q,
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
+                workspace__slug=slug,
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .annotate(
+                project_identifiers=Coalesce(
+                    ArrayAgg(
+                        "projects__identifier",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(CharField())),
+                ),
+            )
         )
 
         if workspace_search == "false" and project_id:
+            project_subquery = ProjectPage.objects.filter(
+                page_id=OuterRef("id"),
+                project_id=project_id,
+            ).values_list("project_id", flat=True)[:1]
+
             pages = pages.annotate(
-                project=Exists(
-                    ProjectPage.objects.filter(
-                        page_id=OuterRef("id"),
-                        project_id=self.kwargs.get("project_id"),
-                    )
-                )
-            ).filter(project=True)
+                project_id=Subquery(project_subquery)
+            ).filter(project_id=project_id)
 
         return pages.distinct().values(
             "name",
             "id",
-            "project_id",
-            "project__identifier",
+            "project_ids",
+            "project_identifiers",
             "workspace__slug",
         )
 
