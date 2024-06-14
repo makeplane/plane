@@ -1,7 +1,6 @@
 import { FC, Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { observer } from "mobx-react";
 import { ICycle, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
