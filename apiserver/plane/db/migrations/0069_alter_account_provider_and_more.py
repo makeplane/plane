@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0066_account_id_token_cycle_logo_props_module_logo_props'),
+        ('db', '0068_remove_pagelabel_project_remove_pagelog_project_and_more'),
     ]
 
     operations = [
