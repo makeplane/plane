@@ -1,5 +1,7 @@
 "use client";
+// import * as Y from "yjs";
 import * as React from "react";
+import { IndexeddbPersistence } from "y-indexeddb";
 // editor-core
 import {
   EditorContainer,
@@ -15,16 +17,16 @@ import {
 import { RichTextEditorExtensions } from "src/ui/extensions";
 // components
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
+import { CollaborationProvider } from "./extensions/collaboration-provider";
 
 export type IRichTextEditor = {
-  initialValue: string;
-  value?: string | null;
+  value: Uint8Array;
   dragDropEnabled?: boolean;
   fileHandler: TFileHandler;
   id?: string;
   containerClassName?: string;
   editorClassName?: string;
-  onChange?: (json: object, html: string) => void;
+  onChange: (updates: Uint8Array) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   debouncedUpdatesEnabled?: boolean;
   mentionHandler: {
@@ -40,7 +42,6 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const {
     onChange,
     dragDropEnabled,
-    initialValue,
     value,
     fileHandler,
     containerClassName,
@@ -62,13 +63,33 @@ const RichTextEditor = (props: IRichTextEditor) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
+  const provider = React.useMemo(
+    () =>
+      new CollaborationProvider({
+        name: id,
+        onChange,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id]
+  );
+
+  // // update document on value change
+  // React.useEffect(() => {
+  //   if (value.byteLength > 0) Y.applyUpdate(provider.document, value);
+  // }, [value, provider.document]);
+  //
+  // indexedDB provider
+  React.useLayoutEffect(() => {
+    // const localProvider = new IndexeddbPersistence(id, provider.document);
+    // return () => {
+    //   localProvider?.destroy();
+    // };
+  }, [provider, id]);
+
   const editor = useEditor({
     id,
     editorClassName,
     fileHandler,
-    onChange,
-    initialValue,
-    value,
     forwardedRef,
     // rerenderOnPropsChange,
     extensions: RichTextEditorExtensions({
