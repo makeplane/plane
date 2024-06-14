@@ -1,8 +1,8 @@
+import type { TIssueCommentReaction, TIssueReaction } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 // types
-import type { TIssueCommentReaction, TIssueReaction } from "@plane/types";
 
 export class IssueReactionService extends APIService {
   constructor() {

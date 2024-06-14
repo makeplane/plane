@@ -1,8 +1,4 @@
 // services
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { APIService } from "@/services/api.service";
-// helpers
-// types
 import {
   IWorkspace,
   IWorkspaceMemberMe,
@@ -17,6 +13,10 @@ import {
   IWorkspaceView,
   TIssuesResponse,
 } from "@plane/types";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
+// helpers
+// types
 
 export class WorkspaceService extends APIService {
   constructor() {

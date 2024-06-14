@@ -53,9 +53,12 @@ export class CoreRootStore {
 
   constructor() {
     this.router = new RouterStore();
+    this.commandPalette = new CommandPaletteStore();
+    this.instance = new InstanceStore();
+    this.user = new UserStore(this);
+    this.theme = new ThemeStore();
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.user = new UserStore(this);
     this.memberRoot = new MemberRootStore(this);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
@@ -67,15 +70,10 @@ export class CoreRootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
-    this.commandPalette = new CommandPaletteStore();
-    this.theme = new ThemeStore(this);
     this.eventTracker = new EventTrackerStore(this);
-    this.instance = new InstanceStore();
     this.multipleSelect = new MultipleSelectStore();
-    // inbox
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
-    this.theme = new ThemeStore(this);
     this.projectEstimate = new ProjectEstimateStore(this);
   }
 
@@ -83,6 +81,10 @@ export class CoreRootStore {
     // handling the system theme when user logged out from the app
     localStorage.setItem("theme", "system");
 
+    this.router = new RouterStore();
+    this.commandPalette = new CommandPaletteStore();
+    this.instance = new InstanceStore();
+    this.user = new UserStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this);
@@ -96,11 +98,7 @@ export class CoreRootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
-    this.router = new RouterStore();
-    this.commandPalette = new CommandPaletteStore();
     this.eventTracker = new EventTrackerStore(this);
-    this.instance = new InstanceStore();
-    this.user = new UserStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.multipleSelect = new MultipleSelectStore();

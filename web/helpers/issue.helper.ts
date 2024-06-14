@@ -168,14 +168,13 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is overdue, highlight the due date
   return targetDateDistance <= 0;
 };
-export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => {
-  return {
+export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
     data: block,
     id: block?.id,
     sort_order: block?.sort_order,
     start_date: getDate(block?.start_date),
     target_date: getDate(block?.target_date),
-  };};
+  });
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
   const changedFields: Partial<TIssue> = {};

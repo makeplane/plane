@@ -1,7 +1,7 @@
+import { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
-import { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "@plane/types";
 
 export class JiraImporterService extends APIService {
   constructor() {

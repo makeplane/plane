@@ -1,8 +1,8 @@
 // services
+import type { IIssueFiltersResponse } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
-import type { IIssueFiltersResponse } from "@plane/types";
 
 export class IssueFiltersService extends APIService {
   constructor() {

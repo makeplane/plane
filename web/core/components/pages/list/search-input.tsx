@@ -1,16 +1,17 @@
 import { FC, useState, useRef } from "react";
-import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useProjectPages } from "@/hooks/store";
+// hooks
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
-export const PageSearchInput: FC = observer(() => {
-  // hooks
-  const {
-    filters: { searchQuery },
-    updateFilters,
-  } = useProjectPages();
+type Props = {
+  searchQuery: string;
+  updateSearchQuery: (val: string) => void;
+};
+
+export const PageSearchInput: FC<Props> = (props) => {
+  const { searchQuery, updateSearchQuery } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -22,7 +23,7 @@ export const PageSearchInput: FC = observer(() => {
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateFilters("searchQuery", "");
+      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
       else {
         setIsSearchOpen(false);
         inputRef.current?.blur();
@@ -59,7 +60,7 @@ export const PageSearchInput: FC = observer(() => {
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
           placeholder="Search pages"
           value={searchQuery}
-          onChange={(e) => updateFilters("searchQuery", e.target.value)}
+          onChange={(e) => updateSearchQuery(e.target.value)}
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (
@@ -67,7 +68,7 @@ export const PageSearchInput: FC = observer(() => {
             type="button"
             className="grid place-items-center"
             onClick={() => {
-              updateFilters("searchQuery", "");
+              updateSearchQuery("");
               setIsSearchOpen(false);
             }}
           >
@@ -77,4 +78,4 @@ export const PageSearchInput: FC = observer(() => {
       </div>
     </>
   );
-});
+};
