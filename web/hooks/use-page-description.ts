@@ -48,6 +48,7 @@ export const usePageDescription = (props: Props) => {
 
   // push the new updates to the updates array
   const handleDescriptionChange = useCallback((updates: Uint8Array) => {
+    console.log("updates", updates);
     setDescriptionUpdates((prev) => [...prev, updates]);
   }, []);
 
@@ -115,8 +116,8 @@ export const usePageDescription = (props: Props) => {
   // auto-save updates every 10 seconds
   // handle ctrl/cmd + S to save the description
   useEffect(() => {
-    const intervalId = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
-
+    // const intervalId = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
+    //
     const handleSave = (e: KeyboardEvent) => {
       const { ctrlKey, metaKey, key } = e;
       const cmdClicked = ctrlKey || metaKey;
@@ -126,21 +127,23 @@ export const usePageDescription = (props: Props) => {
         e.stopPropagation();
         handleSaveDescription();
 
-        // reset interval timer
-        clearInterval(intervalId);
+        // // reset interval timer
+        // clearInterval(intervalId);
       }
     };
     window.addEventListener("keydown", handleSave);
 
     return () => {
-      clearInterval(intervalId);
+      // clearInterval(intervalId);
       window.removeEventListener("keydown", handleSave);
     };
   }, [handleSaveDescription]);
 
   // show a confirm dialog if there are any unsaved changes, or saving is going on
   const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
+
   useEffect(() => {
+    console.log("descriptionUpdates", descriptionUpdates.length);
     if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
     else setShowAlert(false);
   }, [descriptionUpdates, isSubmitting, setShowAlert]);

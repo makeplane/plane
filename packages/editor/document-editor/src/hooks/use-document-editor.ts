@@ -53,12 +53,14 @@ export const useDocumentEditor = ({
 
   // update document on value change
   useEffect(() => {
-    if (value.byteLength > 0) Y.applyUpdate(provider.document, value);
+    if (value.byteLength > 0) {
+      Y.applyUpdate(provider.document, value);
+    }
   }, [value, provider.document]);
 
   // indexedDB provider
   useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(id, provider.document);
+    const localProvider = new IndexeddbPersistence(`page-` + id, provider.document);
     localProvider.on("synced", () => {
       provider.setHasIndexedDBSynced(true);
     });
