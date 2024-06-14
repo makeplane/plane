@@ -27,6 +27,7 @@ import {
   TGroupedIssueCount,
   TPaginationData,
   TBulkOperationsPayload,
+  TIssueDescription,
 } from "@plane/types";
 import { ALL_ISSUES, EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
 import { convertToISODateString } from "@/helpers/date-time.helper";
@@ -221,6 +222,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       createIssue: action,
       updateIssue: action,
+      updateIssueDescription: action,
       createDraftIssue: action,
       updateDraftIssue: action,
       issueQuickAdd: action.bound,
@@ -550,6 +552,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // If errored out update store again to revert the change
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
       this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+      throw error;
+    }
+  }
+
+  updateIssueDescription = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ) => {
+    try {
+      this.rootIssueStore.issues.updateIssue(issueId, data);
+      await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, data);
+    } catch (error) {
       throw error;
     }
   }
