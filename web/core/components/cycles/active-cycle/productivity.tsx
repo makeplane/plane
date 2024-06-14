@@ -1,4 +1,5 @@
 import { FC, Fragment, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { ICycle, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
@@ -20,7 +21,7 @@ const cycleBurnDownChartOptions = [
   { value: "points", label: "Points" },
 ];
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props) => {
+export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
   // hooks
   const { getPlotTypeByCycleId, setPlotType, fetchCycleDetails } = useCycle();
@@ -124,4 +125,4 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
       </Link>
     </div>
   );
-};
+});
