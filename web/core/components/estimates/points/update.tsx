@@ -88,7 +88,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
             isEstimateValid = true;
           }
         } else if (currentEstimateType && currentEstimateType === EEstimateSystem.CATEGORIES) {
-          if (estimateInputValue && estimateInputValue.length > 0) {
+          if (estimateInputValue && estimateInputValue.length > 0 && Number(estimateInputValue) < 0) {
             isEstimateValid = true;
           }
         }
