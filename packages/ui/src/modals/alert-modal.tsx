@@ -1,11 +1,12 @@
-"use client";
+import React from "react";
 import { AlertTriangle, Info, LucideIcon } from "lucide-react";
-// ui
-import { Button, TButtonVariant } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+import { Button, TButtonVariant } from "../button";
+import { ModalCore } from "./modal-core";
+// constants
+import { EModalPosition, EModalWidth } from "./constants";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "../../helpers";
 
 export type TModalVariant = "danger" | "primary";
 

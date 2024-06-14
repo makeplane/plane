@@ -1,19 +1,9 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+// constants
+import { EModalPosition, EModalWidth } from "./constants";
 // helpers
-import { cn } from "@/helpers/common.helper";
-
-export enum EModalPosition {
-  TOP = "flex items-center justify-center text-center mx-4 my-10 md:my-20",
-  CENTER = "flex items-end sm:items-center justify-center p-4 min-h-full",
-}
-
-export enum EModalWidth {
-  XL = "sm:max-w-xl",
-  XXL = "sm:max-w-2xl",
-  XXXL = "sm:max-w-3xl",
-  XXXXL = "sm:max-w-4xl",
-}
+import { cn } from "../../helpers";
 
 type Props = {
   children: React.ReactNode;
