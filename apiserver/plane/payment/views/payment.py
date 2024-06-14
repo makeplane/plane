@@ -51,6 +51,7 @@ class PaymentLinkEndpoint(BaseAPIView):
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/payment-link/",
                     json={
                         "workspace_id": str(workspace.id),
+                        "slug": slug,
                         "stripe_product_id": product_id,
                         "stripe_price_id": price_id,
                         "customer_email": request.user.email,

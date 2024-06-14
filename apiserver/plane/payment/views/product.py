@@ -26,11 +26,9 @@ class ProductEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-
                 count = WorkspaceMember.objects.filter(
                     workspace__slug=slug
                 ).count()
-
                 response = requests.get(
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/?quantity={count}",
                     headers={"content-type": "application/json"},
