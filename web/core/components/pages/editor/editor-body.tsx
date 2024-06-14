@@ -12,7 +12,7 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
-import { PageContentBrowser, PageEditorTitle } from '@/components/pages';
+import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -86,7 +86,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
-  // if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
+  if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">

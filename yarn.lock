@@ -8843,8 +8843,6 @@ isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==
 
-<<<<<<< HEAD
-=======
 isomorphic-dompurify@^2.12.0:
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/isomorphic-dompurify/-/isomorphic-dompurify-2.12.0.tgz#fd63aa7d1509f6fcf24f824b36cef06e663808b7"
@@ -8854,7 +8852,6 @@ isomorphic-dompurify@^2.12.0:
     dompurify "^3.1.5"
     jsdom "^24.1.0"
 
->>>>>>> develop
 isomorphic.js@^0.2.4:
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/isomorphic.js/-/isomorphic.js-0.2.5.tgz#13eecf36f2dba53e85d355e11bf9d4208c6f7f88"
@@ -9152,22 +9149,9 @@ levn@^0.4.1:
     type-check "~0.4.0"
 
 lib0@^0.2.42, lib0@^0.2.74, lib0@^0.2.85, lib0@^0.2.86:
-<<<<<<< HEAD
-  version "0.2.93"
-  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.93.tgz#95487c2a97657313cb1d91fbcf9f6d64b7fcd062"
-  integrity sha512-M5IKsiFJYulS+8Eal8f+zAqf5ckm1vffW0fFDxfgxJ+uiVopvDdd3PxJmz0GsVi3YNO7QCFSq0nAsiDmNhLj9Q==
-  dependencies:
-    isomorphic.js "^0.2.4"
-
-lie@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/lie/-/lie-3.1.1.tgz#9a436b2cc7746ca59de7a41fa469b3efb76bd87e"
-  integrity sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==
-=======
   version "0.2.94"
   resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.94.tgz#fc28b4b65f816599f1e2f59d3401e231709535b3"
   integrity sha512-hZ3p54jL4Wpu7IOg26uC7dnEWiMyNlUrb9KoG7+xYs45WkQwpVvKFndVq2+pqLYKe1u8Fp3+zAfZHVvTK34PvQ==
->>>>>>> develop
   dependencies:
     isomorphic.js "^0.2.4"
 
@@ -13991,15 +13975,9 @@ y-indexeddb@^9.0.12:
     lib0 "^0.2.74"
 
 y-prosemirror@^1.2.5:
-<<<<<<< HEAD
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.5.tgz#c448f80a6017190bc69a30a33f3930e9924fad3a"
-  integrity sha512-T/JATxC8P2Dbvq/dAiaiztD1a8KEwRP8oLRlT8YlaZdNlLGE1Ea0IJ8If25UlDYmk+4+uqLbqT/S+dzUmwwgbA==
-=======
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.6.tgz#a324991cc158a6ff3b3f5902111b3dbf8928e603"
   integrity sha512-rGz8kX4v/uFJrLaqZvsezY1JGN/zTDSPMO76zRbNcpE63OEiw2PBCEQi9ZlfbEwgCMoeJLUT+otNyO/Oj73TGQ==
->>>>>>> develop
   dependencies:
     lib0 "^0.2.42"
 
