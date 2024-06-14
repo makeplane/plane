@@ -1,4 +1,3 @@
-import { action, observable, makeObservable, runInAction } from "mobx";
 // base class
 // types
 import concat from "lodash/concat";
@@ -6,7 +5,9 @@ import get from "lodash/get";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
+import { action, observable, makeObservable, runInAction } from "mobx";
 // types
+import { computedFn } from "mobx-utils";
 import {
   TIssue,
   TLoader,
@@ -15,11 +16,10 @@ import {
   ViewFlags,
   TBulkOperationsPayload,
 } from "@plane/types";
-import { IIssueRootStore } from "../root.store";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-import { ICycleIssuesFilter } from "./filter.store";
-import { computedFn } from "mobx-utils";
 import { ALL_ISSUES } from "@/constants/issue";
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import { IIssueRootStore } from "../root.store";
+import { ICycleIssuesFilter } from "./filter.store";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
@@ -369,9 +369,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       set(this.activeCycleIds, [cycleId, "nextCursor"], response.next_cursor);
       set(this.activeCycleIds, [cycleId, "nextPageResults"], response.next_page_results);
       set(this.activeCycleIds, [cycleId, "issueCount"], response.total_count);
-      update(this.activeCycleIds, [cycleId, "issueIds"], (issueIds: string[] = []) => {
-        return this.issuesSortWithOrderBy(uniq(concat(issueIds, activeIssueIds)), this.orderBy);
-      });
+      update(this.activeCycleIds, [cycleId, "issueIds"], (issueIds: string[] = []) => this.issuesSortWithOrderBy(uniq(concat(issueIds, activeIssueIds)), this.orderBy));
 
       return response;
     } catch (error) {

@@ -79,7 +79,7 @@ const useUserNotification = (): any => {
     }, false);
   };
 
-  const mutateNotification = (notificationId: string, value: Object) => {
+  const mutateNotification = (notificationId: string, value: object) => {
     notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 

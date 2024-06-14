@@ -1,9 +1,9 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useCallback } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
+import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
 import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
@@ -17,9 +17,14 @@ type TEstimatePointCreateRoot = {
   estimateType: TEstimateSystemKeys;
   estimatePoints: TEstimatePointsObject[];
   setEstimatePoints: Dispatch<SetStateAction<TEstimatePointsObject[] | undefined>>;
-  estimatePointCreate: TEstimatePointsObject[] | undefined;
-  setEstimatePointCreate: Dispatch<SetStateAction<TEstimatePointsObject[] | undefined>>;
-  estimatePointCreateError: number[];
+  estimatePointError?: TEstimateTypeError;
+  handleEstimatePointError?: (
+    key: number,
+    oldValue: string,
+    newValue: string,
+    message: string | undefined,
+    mode: "add" | "delete"
+  ) => void;
 };
 
 export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
@@ -31,10 +36,11 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
     estimateType,
     estimatePoints,
     setEstimatePoints,
-    estimatePointCreate,
-    setEstimatePointCreate,
-    estimatePointCreateError,
+    estimatePointError,
+    handleEstimatePointError,
   } = props;
+  // states
+  const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
 
   const handleEstimatePoint = useCallback(
     (mode: "add" | "remove" | "update", value: TEstimatePointsObject) => {
@@ -90,11 +96,13 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
 
   const handleCreate = () => {
     if (estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1) {
+      const currentKey = estimatePoints.length + (estimatePointCreate?.length || 0) + 1;
       handleEstimatePointCreate("add", {
         id: undefined,
-        key: estimatePoints.length + (estimatePointCreate?.length || 0) + 1,
+        key: currentKey,
         value: "",
       });
+      handleEstimatePointError && handleEstimatePointError(currentKey, "", "", undefined, "add");
     }
   };
 
@@ -119,6 +127,14 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
                 handleEstimatePoint("update", { ...value, value: estimatePointValue })
               }
               handleEstimatePointValueRemove={() => handleEstimatePoint("remove", value)}
+              estimatePointError={estimatePointError?.[value.key] || undefined}
+              handleEstimatePointError={(
+                newValue: string,
+                message: string | undefined,
+                mode: "add" | "delete" = "add"
+              ) =>
+                handleEstimatePointError && handleEstimatePointError(value.key, value.value, newValue, message, mode)
+              }
             />
           )}
           onChange={(data: TEstimatePointsObject[]) => handleDragEstimatePoints(data)}
@@ -140,7 +156,11 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
             }
             closeCallBack={() => handleEstimatePointCreate("remove", estimatePoint)}
             handleCreateCallback={() => estimatePointCreate.length === 1 && handleCreate()}
-            isError={estimatePointCreateError.includes(estimatePoint.key) ? true : false}
+            estimatePointError={estimatePointError?.[estimatePoint.key] || undefined}
+            handleEstimatePointError={(newValue: string, message: string | undefined, mode: "add" | "delete" = "add") =>
+              handleEstimatePointError &&
+              handleEstimatePointError(estimatePoint.key, estimatePoint.value, newValue, message, mode)
+            }
           />
         ))}
       {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (

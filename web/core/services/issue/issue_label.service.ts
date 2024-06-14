@@ -1,8 +1,8 @@
+import { IIssueLabel } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 // types
-import { IIssueLabel } from "@plane/types";
 
 export class IssueLabelService extends APIService {
   constructor() {

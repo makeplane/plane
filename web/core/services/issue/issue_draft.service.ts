@@ -1,7 +1,7 @@
+import { TIssue, TIssuesResponse } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
-import { TIssue, TIssuesResponse } from "@plane/types";
 
 export class IssueDraftService extends APIService {
   constructor() {

@@ -6,10 +6,10 @@ import { computedFn } from "mobx-utils";
 import { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@/helpers/state.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectStateService } from "@/services/project";
+// plane web store
+import { CoreRootStore } from "./root.store";
 
 export interface IStateStore {
   //Loaders
@@ -52,7 +52,7 @@ export class StateStore implements IStateStore {
   router;
   stateService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       stateMap: observable,
