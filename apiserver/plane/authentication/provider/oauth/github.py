@@ -105,14 +105,26 @@ class GitHubOAuthProvider(OauthAdapter):
         )
 
     def __get_email(self, headers):
-        # Github does not provide email in user response
-        emails_url = "https://api.github.com/user/emails"
-        emails_response = requests.get(emails_url, headers=headers).json()
-        email = next(
-            (email["email"] for email in emails_response if email["primary"]),
-            None,
-        )
-        return email
+        try:
+            # Github does not provide email in user response
+            emails_url = "https://api.github.com/user/emails"
+            emails_response = requests.get(emails_url, headers=headers).json()
+            email = next(
+                (
+                    email["email"]
+                    for email in emails_response
+                    if email["primary"]
+                ),
+                None,
+            )
+            return email
+        except requests.RequestException:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "GITHUB_OAUTH_PROVIDER_ERROR"
+                ],
+                error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+            )
 
     def set_user_data(self):
         user_info_response = self.get_user_response()

@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";

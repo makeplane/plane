@@ -128,6 +128,7 @@ export interface IUserActivityResponse {
   prev_page_results: boolean;
   results: IIssueActivity[];
   total_pages: number;
+  total_results: number;
 }
 
 export type UserAuth = {
@@ -184,6 +185,8 @@ export interface IUserEmailNotificationSettings {
   mention: boolean;
   issue_completed: boolean;
 }
+
+export type TProfileViews = "assigned" | "created" | "subscribed";
 
 // export interface ICurrentUser {
 //   id: readonly string;

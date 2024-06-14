@@ -1,10 +1,10 @@
 "use client";
 
-// icons
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // types
-import { IIssueLabel, IIssueState, TFilters } from "@/types/issue";
+import { IStateLite } from "@plane/types";
+import { IIssueLabel, TFilters } from "@/types/issue";
 // components
 import { AppliedPriorityFilters } from "./priority";
 import { AppliedStateFilters } from "./state";
@@ -14,7 +14,7 @@ type Props = {
   handleRemoveAllFilters: () => void;
   handleRemoveFilter: (key: keyof TFilters, value: string | null) => void;
   labels?: IIssueLabel[] | undefined;
-  states?: IIssueState[] | undefined;
+  states?: IStateLite[] | undefined;
 };
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");

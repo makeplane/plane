@@ -28,6 +28,7 @@ from plane.db.models import (
     Project,
     State,
     User,
+    EstimatePoint,
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
@@ -448,21 +449,37 @@ def track_estimate_points(
     if current_instance.get("estimate_point") != requested_data.get(
         "estimate_point"
     ):
+        old_estimate = (
+            EstimatePoint.objects.filter(
+                pk=current_instance.get("estimate_point")
+            ).first()
+            if current_instance.get("estimate_point") is not None
+            else None
+        )
+        new_estimate = (
+            EstimatePoint.objects.filter(
+                pk=requested_data.get("estimate_point")
+            ).first()
+            if requested_data.get("estimate_point") is not None
+            else None
+        )
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=(
+                old_identifier=(
                     current_instance.get("estimate_point")
                     if current_instance.get("estimate_point") is not None
-                    else ""
+                    else None
                 ),
-                new_value=(
+                new_identifier=(
                     requested_data.get("estimate_point")
                     if requested_data.get("estimate_point") is not None
-                    else ""
+                    else None
                 ),
+                old_value=old_estimate.value if old_estimate else None,
+                new_value=new_estimate.value if new_estimate else None,
                 field="estimate_point",
                 project_id=project_id,
                 workspace_id=workspace_id,

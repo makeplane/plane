@@ -112,7 +112,7 @@ export const useEditor = ({
     if (value === null || value === undefined) return;
     if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
       try {
-        editor.commands.setContent(value);
+        editor.commands.setContent(value, false, { preserveWhitespace: "full" });
         const currentSavedSelection = savedSelectionRef.current;
         if (currentSavedSelection) {
           const docLength = editor.state.doc.content.size;
@@ -147,7 +147,7 @@ export const useEditor = ({
         const item = getEditorMenuItem(itemName);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelection);
+            item.command(savedSelectionRef.current);
           } else {
             item.command();
           }
@@ -186,6 +186,7 @@ export const useEditor = ({
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
+      isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editorRef.current || editorRef.current.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");

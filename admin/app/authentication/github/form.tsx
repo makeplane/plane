@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Link from "next/link";

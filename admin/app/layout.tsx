@@ -16,7 +16,7 @@ import { UserProvider } from "@/lib/user-provider";
 // styles
 import "./globals.css";
 
-function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   // themes
   const { resolvedTheme } = useTheme();
 
@@ -44,5 +44,3 @@ function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
-
-export default RootLayout;

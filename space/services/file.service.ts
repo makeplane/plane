@@ -4,30 +4,6 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-interface UnSplashImage {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  promoted_at: Date;
-  width: number;
-  height: number;
-  color: string;
-  blur_hash: string;
-  description: null;
-  alt_description: string;
-  urls: UnSplashImageUrls;
-  [key: string]: any;
-}
-
-interface UnSplashImageUrls {
-  raw: string;
-  full: string;
-  regular: string;
-  small: string;
-  thumb: string;
-  small_s3: string;
-}
-
 class FileService extends APIService {
   private cancelSource: any;
 
@@ -119,40 +95,6 @@ class FileService extends APIService {
       "Content-Type": "application/json",
     })
       .then((response) => response?.status)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteFile(workspaceId: string, assetUrl: string): Promise<any> {
-    const lastIndex = assetUrl.lastIndexOf("/");
-    const assetId = assetUrl.substring(lastIndex + 1);
-
-    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async uploadUserFile(file: FormData): Promise<any> {
-    return this.post(`/api/users/file-assets/`, file, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteUserFile(assetUrl: string): Promise<any> {
-    const lastIndex = assetUrl.lastIndexOf("/");
-    const assetId = assetUrl.substring(lastIndex + 1);
-
-    return this.delete(`/api/users/file-assets/${assetId}`)
-      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

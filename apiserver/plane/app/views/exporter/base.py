@@ -1,14 +1,14 @@
 # Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+
+from plane.app.permissions import WorkSpaceAdminPermission
+from plane.app.serializers import ExporterHistorySerializer
+from plane.bgtasks.export_task import issue_export_task
+from plane.db.models import ExporterHistory, Project, Workspace
 
 # Module imports
 from .. import BaseAPIView
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.bgtasks.export_task import issue_export_task
-from plane.db.models import Project, ExporterHistory, Workspace
-
-from plane.app.serializers import ExporterHistorySerializer
 
 
 class ExportIssuesEndpoint(BaseAPIView):
@@ -72,6 +72,7 @@ class ExportIssuesEndpoint(BaseAPIView):
             "cursor", False
         ):
             return self.paginate(
+                order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=exporter_history,
                 on_results=lambda exporter_history: ExporterHistorySerializer(
