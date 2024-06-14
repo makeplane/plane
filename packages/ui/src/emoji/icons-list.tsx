@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
+// icons
+import { Search } from "lucide-react";
+import { MATERIAL_ICONS_LIST } from "./icons";
+import { InfoIcon } from "../icons";
 // components
 import { Input } from "../form-fields";
+// hooks
+import useFontFaceObserver from "use-font-face-observer";
 // helpers
 import { cn } from "../../helpers";
 import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
-// icons
-import { MATERIAL_ICONS_LIST } from "./icons";
-import { InfoIcon } from "../icons";
-import { Search } from "lucide-react";
 
 export const IconsList: React.FC<TIconsListProps> = (props) => {
   const { defaultColor, onChange } = props;
@@ -27,6 +29,15 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
   }, [defaultColor]);
 
   const filteredArray = MATERIAL_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
+
+  const isMaterialSymbolsFontLoaded = useFontFaceObserver([
+    {
+      family: `Material Symbols Rounded`,
+      style: `normal`,
+      weight: `normal`,
+      stretch: `condensed`,
+    },
+  ]);
 
   return (
     <>
@@ -118,12 +129,16 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
               });
             }}
           >
-            <span
-              style={{ color: activeColor }}
-              className="material-symbols-rounded !text-[1.25rem] !leading-[1.25rem]"
-            >
-              {icon.name}
-            </span>
+            {isMaterialSymbolsFontLoaded ? (
+              <span
+                style={{ color: activeColor }}
+                className="material-symbols-rounded !text-[1.25rem] !leading-[1.25rem]"
+              >
+                {icon.name}
+              </span>
+            ) : (
+              <span className="size-5 rounded animate-pulse bg-custom-background-80" />
+            )}
           </button>
         ))}
       </div>
