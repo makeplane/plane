@@ -254,4 +254,15 @@ class Migration(migrations.Migration):
                 to="db.workspace",
             ),
         ),
+        # Add account changes
+        migrations.AlterField(
+            model_name='account',
+            name='provider',
+            field=models.CharField(choices=[('google', 'Google'), ('github', 'Github'), ('gitlab', 'GitLab')]),
+        ),
+        migrations.AlterField(
+            model_name='socialloginconnection',
+            name='medium',
+            field=models.CharField(choices=[('Google', 'google'), ('Github', 'github'), ('GitLab', 'gitlab'), ('Jira', 'jira')], default=None, max_length=20),
+        ),
     ]
