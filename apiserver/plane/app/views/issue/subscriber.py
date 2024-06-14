@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet, BaseAPIView
+from .. import BaseViewSet
 from plane.app.serializers import (
     IssueSubscriberSerializer,
     ProjectMemberLiteSerializer,
@@ -15,8 +15,6 @@ from plane.app.permissions import (
 from plane.db.models import (
     IssueSubscriber,
     ProjectMember,
-    Issue,
-    Workspace
 )
 
 
@@ -126,40 +124,3 @@ class IssueSubscriberViewSet(BaseViewSet):
             {"subscribed": issue_subscriber}, status=status.HTTP_200_OK
         )
 
-
-class BulkSubscribeIssuesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def post(self, request, slug, project_id):
-        issue_ids = request.data.get("issue_ids", [])
-        workspace = Workspace.objects.filter(slug=slug).first()
-
-        if not len(issue_ids):
-            return Response(
-                {"error": "Issue IDs are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        issues = Issue.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
-        )
-
-        IssueSubscriber.objects.bulk_create(
-            [
-                IssueSubscriber(
-                    subscriber_id=request.user.id,
-                    issue=issue,
-                    project_id=project_id,
-                    workspace_id=workspace.id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for issue in issues
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
-        )
-
-        return Response(status=status.HTTP_204_NO_CONTENT)

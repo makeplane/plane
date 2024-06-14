@@ -114,7 +114,7 @@ from .issue.activity import (
     IssueActivityEndpoint,
 )
 
-from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
+from .issue.archive import IssueArchiveViewSet
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
@@ -150,11 +150,7 @@ from .issue.sub_issue import (
 
 from .issue.subscriber import (
     IssueSubscriberViewSet,
-    BulkSubscribeIssuesEndpoint,
 )
-
-
-from .issue.bulk_operations import BulkIssueOperationsEndpoint
 
 from .module.base import (
     ModuleViewSet,

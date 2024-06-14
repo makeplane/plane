@@ -94,8 +94,8 @@ def track_assignees(
     added_assignees = requested_assignees - current_assignees
 
     bulk_subscribers = []
-    for added_asignee in added_assignees:
-        assignee = User.objects.get(pk=added_asignee)
+    for added_assignee in added_assignees:
+        assignee = User.objects.get(pk=added_assignee)
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,

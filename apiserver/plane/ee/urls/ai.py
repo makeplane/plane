@@ -1,7 +1,7 @@
 # Django imports
 from django.urls import path
 
-from plane.ee.app.views import RephraseGrammarEndpoint
+from plane.ee.views import RephraseGrammarEndpoint
 
 
 urlpatterns = [

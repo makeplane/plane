@@ -8,8 +8,8 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.license.utils.instance_value import get_configuration_value
-from plane.ee.app.views.base import BaseAPIView
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.ee.views.base import BaseAPIView
+from plane.ee.permissions import WorkspaceEntityPermission
 
 
 class RephraseGrammarEndpoint(BaseAPIView):
