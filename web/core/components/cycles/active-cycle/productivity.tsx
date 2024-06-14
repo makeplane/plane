@@ -1,5 +1,6 @@
 import { FC, Fragment, useState } from "react";
 import Link from "next/link";
+import { observer } from "mobx-react";
 import { ICycle, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
@@ -7,7 +8,7 @@ import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { useCycle } from "@/hooks/store";
+import { useCycle, useProjectEstimates } from "@/hooks/store";
 
 export type ActiveCycleProductivityProps = {
   workspaceSlug: string;
@@ -20,10 +21,11 @@ const cycleBurnDownChartOptions = [
   { value: "points", label: "Points" },
 ];
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props) => {
+export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
   // hooks
   const { getPlotTypeByCycleId, setPlotType, fetchCycleDetails } = useCycle();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
   // state
   const [loader, setLoader] = useState(false);
   // derived values
@@ -46,27 +48,31 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
   return (
-    <div className="flex flex-col justify-center min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col justify-center min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+      <div className="relative flex items-center justify-between gap-4 -mt-7">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
-        <div id="no-redirection" className="flex items-center gap-2">
-          <CustomSelect
-            value={plotType}
-            label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
-            onChange={onChange}
-            maxHeight="lg"
-          >
-            {cycleBurnDownChartOptions.map((item) => (
-              <CustomSelect.Option key={item.value} value={item.value}>
-                {item.label}
-              </CustomSelect.Option>
-            ))}
-          </CustomSelect>
-          {loader && <Spinner className="h-3 w-3" />}
-        </div>
+        {areEstimateEnabledByProjectId(projectId) && (
+          <>
+            <CustomSelect
+              value={plotType}
+              label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
+              onChange={onChange}
+              maxHeight="lg"
+              className="m-0 p-0"
+            >
+              {cycleBurnDownChartOptions.map((item) => (
+                <CustomSelect.Option key={item.value} value={item.value}>
+                  {item.label}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+            {loader && <Spinner className="h-3 w-3" />}
+          </>
+        )}
       </div>
+
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
         {cycle.total_issues > 0 ? (
           <>
@@ -124,4 +130,4 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
       </Link>
     </div>
   );
-};
+});
