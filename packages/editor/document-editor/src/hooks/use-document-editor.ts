@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { EditorProps } from "@tiptap/pm/view";
-import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 // editor-core
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler, useEditor } from "@plane/editor-core";
@@ -57,17 +56,6 @@ export const useDocumentEditor = ({
       Y.applyUpdate(provider.document, value);
     }
   }, [value, provider.document]);
-
-  // indexedDB provider
-  useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(`page-` + id, provider.document);
-    localProvider.on("synced", () => {
-      provider.setHasIndexedDBSynced(true);
-    });
-    return () => {
-      localProvider?.destroy();
-    };
-  }, [provider, id]);
 
   const editor = useEditor({
     id,

@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import { IndexeddbPersistence } from "y-indexeddb";
 
 export interface CompleteCollaboratorProviderConfiguration {
   /**
@@ -31,10 +32,18 @@ export class CollaborationProvider {
     hasIndexedDBSynced: false,
   };
 
+  private indexeddbProvider: IndexeddbPersistence;
+
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
 
     this.configuration.document = configuration.document ?? new Y.Doc();
+    this.indexeddbProvider = new IndexeddbPersistence(this.configuration.name, this.configuration.document);
+    this.indexeddbProvider.whenSynced.then(() => {
+      this.setHasIndexedDBSynced(true);
+      console.log("IndexedDB has synced");
+    });
+
     this.document.on("update", this.documentUpdateHandler.bind(this));
     this.document.on("destroy", this.documentDestroyHandler.bind(this));
   }
@@ -66,5 +75,8 @@ export class CollaborationProvider {
   documentDestroyHandler() {
     this.document.off("update", this.documentUpdateHandler);
     this.document.off("destroy", this.documentDestroyHandler);
+    this.indexeddbProvider.destroy().then(() => {
+      console.log("IndexedDB provider destroyed");
+    });
   }
 }
