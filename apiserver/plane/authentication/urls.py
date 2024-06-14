@@ -8,6 +8,8 @@ from .views import (
     ChangePasswordEndpoint,
     # App
     EmailCheckEndpoint,
+    GitLabCallbackEndpoint,
+    GitLabOauthInitiateEndpoint,
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
     GoogleCallbackEndpoint,
@@ -31,6 +33,8 @@ from .views import (
     SAMLLogoutEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
+    GitLabCallbackSpaceEndpoint,
+    GitLabOauthInitiateSpaceEndpoint,
     GitHubCallbackSpaceEndpoint,
     GitHubOauthInitiateSpaceEndpoint,
     GoogleCallbackSpaceEndpoint,
@@ -159,6 +163,27 @@ urlpatterns = [
         "spaces/github/callback/",
         GitHubCallbackSpaceEndpoint.as_view(),
         name="github-callback",
+    ),
+    ## Gitlab Oauth
+    path(
+        "gitlab/",
+        GitLabOauthInitiateEndpoint.as_view(),
+        name="gitlab-initiate",
+    ),
+    path(
+        "gitlab/callback/",
+        GitLabCallbackEndpoint.as_view(),
+        name="gitlab-callback",
+    ),
+    path(
+        "spaces/gitlab/",
+        GitLabOauthInitiateSpaceEndpoint.as_view(),
+        name="gitlab-initiate",
+    ),
+    path(
+        "spaces/gitlab/callback/",
+        GitLabCallbackSpaceEndpoint.as_view(),
+        name="gitlab-callback",
     ),
     # Email Check
     path(

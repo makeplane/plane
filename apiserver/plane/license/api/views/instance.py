@@ -58,6 +58,7 @@ class InstanceEndpoint(BaseAPIView):
             IS_SAML_ENABLED,
             SAML_PROVIDER_NAME,
             GITHUB_APP_NAME,
+            IS_GITLAB_ENABLED,
             EMAIL_HOST,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
@@ -95,6 +96,10 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "GITHUB_APP_NAME",
                     "default": os.environ.get("GITHUB_APP_NAME", ""),
+                },
+                {
+                    "key": "IS_GITLAB_ENABLED",
+                    "default": os.environ.get("IS_GITLAB_ENABLED", "0"),
                 },
                 {
                     "key": "EMAIL_HOST",
@@ -135,6 +140,7 @@ class InstanceEndpoint(BaseAPIView):
         # Authentication
         data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
+        data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
         data["is_oidc_enabled"] = IS_OIDC_ENABLED == "1"

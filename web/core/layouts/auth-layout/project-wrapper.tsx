@@ -116,7 +116,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   if (projectExists && projectId && hasPermissionToProject[projectId.toString()] === false) return <JoinProject />;
 
   // check if the project info is not found.
-  if (!projectExists && projectId && hasPermissionToProject[projectId.toString()] === false)
+  if (!projectExists && projectId && !!hasPermissionToProject[projectId.toString()] === false)
     return (
       <div className="container grid h-screen place-items-center bg-custom-background-100">
         <EmptyState

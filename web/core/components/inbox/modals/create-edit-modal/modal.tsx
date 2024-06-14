@@ -1,8 +1,9 @@
 import { FC } from "react";
 // types
 import { TIssue } from "@plane/types";
+// ui
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { InboxIssueCreateRoot, InboxIssueEditRoot } from "@/components/inbox/modals/create-edit-modal";
 
 type TInboxIssueCreateEditModalRoot = {

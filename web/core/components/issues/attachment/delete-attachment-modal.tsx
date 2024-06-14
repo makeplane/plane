@@ -1,7 +1,8 @@
 import { FC, useState } from "react";
+// types
 import type { TIssueAttachment } from "@plane/types";
-// components
-import { AlertModalCore } from "@/components/core";
+// ui
+import { AlertModalCore } from "@plane/ui";
 // helper
 import { getFileName } from "@/helpers/attachment.helper";
 // types

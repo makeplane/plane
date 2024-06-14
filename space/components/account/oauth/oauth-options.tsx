@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 // components
-import { GithubOAuthButton, GoogleOAuthButton } from "@/components/account";
+import { GithubOAuthButton, GitlabOAuthButton, GoogleOAuthButton } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -22,6 +22,7 @@ export const OAuthOptions: React.FC = observer(() => {
           </div>
         )}
         {config?.is_github_enabled && <GithubOAuthButton text="Sign in with Github" />}
+        {config?.is_gitlab_enabled && <GitlabOAuthButton text="Sign in with GitLab" />}
       </div>
     </>
   );

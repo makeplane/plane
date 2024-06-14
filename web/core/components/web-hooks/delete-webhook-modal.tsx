@@ -3,9 +3,7 @@
 import React, { FC, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { AlertModalCore } from "@/components/core";
+import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useWebhook } from "@/hooks/store";
 
