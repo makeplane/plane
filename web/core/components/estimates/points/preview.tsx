@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
-import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
+import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 // components
 import { EstimatePointUpdate, EstimatePointDelete } from "@/components/estimates/points";
 // plane web constants
@@ -17,6 +17,8 @@ type TEstimatePointItemPreview = {
   estimatePoints: TEstimatePointsObject[];
   handleEstimatePointValueUpdate?: (estimateValue: string) => void;
   handleEstimatePointValueRemove?: () => void;
+  estimatePointError?: TEstimateTypeErrorObject | undefined;
+  handleEstimatePointError?: (newValue: string, message: string | undefined) => void;
 };
 
 export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
@@ -30,6 +32,8 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
     estimatePoints,
     handleEstimatePointValueUpdate,
     handleEstimatePointValueRemove,
+    estimatePointError,
+    handleEstimatePointError,
   } = props;
   // state
   const [estimatePointEditToggle, setEstimatePointEditToggle] = useState(false);
@@ -90,6 +94,8 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
             handleEstimatePointValueUpdate && handleEstimatePointValueUpdate(estimatePointValue)
           }
           closeCallBack={() => setEstimatePointEditToggle(false)}
+          estimatePointError={estimatePointError}
+          handleEstimatePointError={handleEstimatePointError}
         />
       )}
 
