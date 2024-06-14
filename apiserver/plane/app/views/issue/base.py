@@ -598,7 +598,7 @@ class IssueDescriptionViewSet(BaseViewSet):
     ]
 
     def retrieve(self, request, slug, project_id, pk):
-        issue = Issue.objects.get(
+        issue = Issue.issue_objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
         binary_data = issue.description_binary
@@ -618,7 +618,7 @@ class IssueDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, pk):
-        issue = Issue.objects.get(
+        issue = Issue.issue_objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
 
