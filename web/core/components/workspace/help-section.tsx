@@ -15,6 +15,7 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // assets
 import packageJson from "package.json";
+import { PlaneBadge } from "./plane-badge";
 
 const HELP_OPTIONS = [
   {
@@ -69,11 +70,9 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
         )}
       >
         {!isCollapsed && (
-          <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-            <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2 py-1 text-center text-xs font-medium text-green-500 outline-none leading-6">
-              Community
-            </div>
-          </Tooltip>
+          <>
+            <PlaneBadge />
+          </>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
           <Tooltip tooltipContent="Shortcuts" isMobile={isMobile}>

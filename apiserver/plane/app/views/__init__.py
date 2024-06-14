@@ -94,6 +94,7 @@ from .cycle.base import (
     CycleViewSet,
     TransferCycleIssueEndpoint,
 )
+from .cycle.active_cycle import ActiveCycleEndpoint
 from .cycle.issue import (
     CycleIssueViewSet,
 )
@@ -149,6 +150,7 @@ from .issue.sub_issue import (
 
 from .issue.subscriber import (
     IssueSubscriberViewSet,
+    BulkSubscribeIssuesEndpoint,
 )
 
 
@@ -179,9 +181,20 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.workspace import (
+    WorkspacePageViewSet,
+    WorkspacePagesDescriptionViewSet,
+)
+from .search.base import (
+    GlobalSearchEndpoint,
+    SearchEndpoint,
+)
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint
-
+from .search.issue import IssueSearchEndpoint
+from .search.workspace import (
+    WorkspaceSearchEndpoint,
+    WorkspaceEntitySearchEndpoint,
+)
 
 from .external.base import (
     GPTIntegrationEndpoint,
@@ -223,6 +236,28 @@ from .dashboard.base import DashboardEndpoint, WidgetsEndpoint
 
 from .error_404 import custom_404_view
 
+from .importer.base import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint,
+)
+
+from .integration.base import (
+    IntegrationViewSet,
+    WorkspaceIntegrationViewSet,
+)
+
+from .integration.github import (
+    GithubRepositoriesEndpoint,
+    GithubRepositorySyncViewSet,
+    GithubIssueSyncViewSet,
+    GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
+)
+
+from .integration.slack import SlackProjectSyncViewSet
 from .exporter.base import ExportIssuesEndpoint
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint

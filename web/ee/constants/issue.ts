@@ -1,1 +1,1 @@
-export * from "ce/constants/issue";
+export const ENABLE_BULK_OPERATIONS = true;
