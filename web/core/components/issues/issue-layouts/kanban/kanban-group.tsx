@@ -218,7 +218,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? []
     : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
 
-  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false);
+  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false) ?? 0;
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
@@ -235,10 +235,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     </div>
   );
 
-  const shouldLoadMore =
-    nextPageResults === undefined && groupIssueCount !== undefined
-      ? issueIds?.length < groupIssueCount
-      : !!nextPageResults;
+  const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
       const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
