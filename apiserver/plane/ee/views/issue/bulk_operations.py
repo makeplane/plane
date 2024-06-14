@@ -111,10 +111,10 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
-                            {"state": properties.get("state")}
+                            {"state_id": properties.get("state_id")}
                         ),
                         "current_instance": json.dumps(
-                            {"state": str(issue.state_id)}
+                            {"state_id": str(issue.state_id)}
                         ),
                         "issue_id": str(issue.id),
                         "actor_id": str(request.user.id),
@@ -123,6 +123,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     }
                 )
                 issue.state_id = properties.get("state_id")
+                if issue.state.group == "completed":
+                    issue.completed_at = timezone.now()
 
             # Start date
             if properties.get("start_date", False):
@@ -269,12 +271,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         # Bulk update all the objects
         Issue.objects.bulk_update(
             bulk_update_issues,
-            [
-                "priority",
-                "start_date",
-                "target_date",
-                "state",
-            ],
+            ["priority", "start_date", "target_date", "state_id", "completed_at"],
             batch_size=100,
         )
 
