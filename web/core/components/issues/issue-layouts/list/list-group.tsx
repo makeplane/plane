@@ -3,7 +3,6 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { isNil } from "lodash";
 import { observer } from "mobx-react";
 import { cn } from "@plane/editor-core";
 // plane packages
@@ -64,7 +63,7 @@ interface Props {
 
 export const ListGroup = observer((props: Props) => {
   const {
-    groupIssueIds,
+    groupIssueIds = [],
     group,
     issuesMap,
     group_by,
@@ -101,7 +100,7 @@ export const ListGroup = observer((props: Props) => {
 
   useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
 
-  const groupIssueCount = getGroupIssueCount(group.id, undefined, false);
+  const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
   const isPaginating = !!getIssueLoader(group.id);
 
@@ -223,7 +222,7 @@ export const ListGroup = observer((props: Props) => {
   const isGroupByCreatedBy = group_by === "created_by";
   const shouldExpand = (!!groupIssueCount && isExpanded) || !group_by;
 
-  return groupIssueIds && !isNil(groupIssueCount) && validateEmptyIssueGroups(groupIssueCount) ? (
+  return validateEmptyIssueGroups(groupIssueCount) ? (
     <div
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
