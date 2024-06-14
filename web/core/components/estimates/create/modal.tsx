@@ -29,8 +29,8 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
   const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
-  const [estimatePointCreateError, setEstimatePointCreateError] = useState<number[]>([]);
   const [buttonLoader, setButtonLoader] = useState(false);
+  const [estimatePointCreateError, setEstimatePointCreateError] = useState<number[]>([]);
 
   const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
 
@@ -38,6 +38,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
     if (isOpen) {
       setEstimateSystem(EEstimateSystem.POINTS);
       setEstimatePoints(undefined);
+      setEstimatePointCreateError([]);
     }
   }, [isOpen]);
 
