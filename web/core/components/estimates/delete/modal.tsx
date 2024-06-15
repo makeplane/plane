@@ -2,9 +2,8 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
+// ui
+import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useEstimate, useProject, useProjectEstimates } from "@/hooks/store";
 

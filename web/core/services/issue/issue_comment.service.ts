@@ -1,7 +1,7 @@
+import { TIssueComment } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
-import { TIssueComment } from "@plane/types";
 // helper
 
 export class IssueCommentService extends APIService {
@@ -17,7 +17,7 @@ export class IssueCommentService extends APIService {
       | {
           created_at__gt: string;
         }
-      | {} = {}
+      | object = {}
   ): Promise<TIssueComment[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`, {
       params: {

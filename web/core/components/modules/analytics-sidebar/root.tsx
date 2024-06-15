@@ -34,8 +34,6 @@ import {
 import { LinkModal, LinksList } from "@/components/core";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ArchiveModuleModal, DeleteModuleModal, ModuleAnalyticsProgress } from "@/components/modules";
-// constant
-import { EEstimateSystem } from "@/constants/estimates";
 import {
   MODULE_LINK_CREATED,
   MODULE_LINK_DELETED,
@@ -49,6 +47,8 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useModule, useUser, useEventTracker, useProjectEstimates } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",

@@ -15,8 +15,8 @@ import { IJiraImporterForm } from "@plane/types";
 import { Button } from "@plane/ui";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // assets
-import { JiraImporterService } from "@/services/integrations";
 import JiraLogo from "@/public/services/jira.svg";
+import { JiraImporterService } from "@/services/integrations";
 // types
 import {
   JiraGetImportDetail,

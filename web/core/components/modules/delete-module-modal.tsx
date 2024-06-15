@@ -6,9 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 // types
 import type { IModule } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { AlertModalCore } from "@/components/core";
+import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MODULE_DELETED } from "@/constants/event-tracker";
 // hooks

@@ -4,6 +4,7 @@ import { FC } from "react";
 // emoji-picker-react
 import { Emoji } from "emoji-picker-react";
 // import { icons } from "lucide-react";
+import useFontFaceObserver from "use-font-face-observer";
 import { TLogoProps } from "@plane/types";
 // helpers
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
@@ -26,8 +27,28 @@ export const Logo: FC<Props> = (props) => {
   const color = icon?.color;
   const lucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === value);
 
+  const isMaterialSymbolsFontLoaded = useFontFaceObserver([
+    {
+      family: `Material Symbols Rounded`,
+      style: `normal`,
+      weight: `normal`,
+      stretch: `condensed`,
+    },
+  ]);
   // if no value, return empty fragment
   if (!value) return <></>;
+
+  if (!isMaterialSymbolsFontLoaded) {
+    return (
+      <span
+        style={{
+          height: size,
+          width: size,
+        }}
+        className="rounded animate-pulse bg-custom-background-80"
+      />
+    );
+  }
 
   // emoji
   if (in_use === "emoji") {

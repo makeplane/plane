@@ -52,7 +52,6 @@ export interface IKanBan {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
-  subGroupIssueHeaderCount?: (listId: string) => number;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -77,7 +76,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     scrollableContainerRef,
     handleOnDrop,
     showEmptyGroup = true,
-    subGroupIssueHeaderCount,
     orderBy,
     isDropDisabled,
     dropErrorMessage,
@@ -116,7 +114,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
         showIssues: true,
       };
       if (!showEmptyGroup) {
-        groupVisibility.showGroup = subGroupIssueHeaderCount ? subGroupIssueHeaderCount(_list.id) > 0 : true;
+        groupVisibility.showGroup = (getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0;
       }
       return groupVisibility;
     } else {
@@ -172,7 +170,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                 <KanbanGroup
                   groupId={subList.id}
                   issuesMap={issuesMap}
-groupedIssueIds={groupedIssueIds}
+                  groupedIssueIds={groupedIssueIds}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}

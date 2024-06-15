@@ -3,9 +3,9 @@ import { action, makeObservable, runInAction } from "mobx";
 import { TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
 // services
 // types
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { IIssueRootStore } from "../root.store";
 import { IArchivedIssuesFilter } from "./filter.store";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 
 export interface IArchivedIssues extends IBaseIssuesStore {
   // observable
@@ -131,7 +131,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
-        cursorObject?.nextCursor,
+        this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
       );

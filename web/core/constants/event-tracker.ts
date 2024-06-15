@@ -183,7 +183,7 @@ export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";
 export const PROJECT_MEMBER_ADDED = "Project member added";
 export const PROJECT_MEMBER_LEAVE = "Project member leave";
-export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
+export const WORKSPACE_MEMBER_LEAVE = "Workspace member leave";
 // Sign-in & Sign-up Events
 export const NAVIGATE_TO_SIGNUP = "Navigate to sign-up page";
 export const NAVIGATE_TO_SIGNIN = "Navigate to sign-in page";

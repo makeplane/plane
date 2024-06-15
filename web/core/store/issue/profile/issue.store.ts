@@ -1,13 +1,13 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import { UserService } from "@/services/user.service";
 import { TIssue, TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
+import { UserService } from "@/services/user.service";
 
 // services
 // types
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { IIssueRootStore } from "../root.store";
 import { IProfileIssuesFilter } from "./filter.store";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 
 export interface IProfileIssues extends IBaseIssuesStore {
   // observable
@@ -167,7 +167,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       // get params from stored pagination options
       let params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
-        cursorObject?.nextCursor,
+        this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
       );

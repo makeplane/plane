@@ -1,8 +1,8 @@
 import isEmpty from "lodash/isEmpty";
-import { EIssueGroupedAction } from "./base-issues.store";
 import uniq from "lodash/uniq";
 import { TIssue } from "@plane/types";
 import { ALL_ISSUES } from "@/constants/issue";
+import { EIssueGroupedAction } from "./base-issues.store";
 
 /**
  * returns,
@@ -137,21 +137,15 @@ export const getDifference = (
   const DELETE = [];
 
   // For all the current issues values that are not in the previous array, Add them to the ADD array
-  if (isEmpty(current)) ADD.push("None");
-  else {
-    for (const currentValue of current) {
-      if (previous.includes(currentValue)) continue;
-      ADD.push(currentValue);
-    }
+  for (const currentValue of current) {
+    if (previous.includes(currentValue)) continue;
+    ADD.push(currentValue);
   }
 
   // For all the previous issues values that are not in the current array, Add them to the ADD array
-  if (isEmpty(previous)) DELETE.push("None");
-  else {
-    for (const previousValue of previous) {
-      if (current.includes(previousValue)) continue;
-      DELETE.push(previousValue);
-    }
+  for (const previousValue of previous) {
+    if (current.includes(previousValue)) continue;
+    DELETE.push(previousValue);
   }
 
   // if there are no action provided, return the arrays
@@ -159,8 +153,8 @@ export const getDifference = (
 
   // If there is an action provided, return the values of both arrays under that array
   if (action === EIssueGroupedAction.ADD)
-    return { [EIssueGroupedAction.ADD]: uniq([...ADD, ...DELETE]), [EIssueGroupedAction.DELETE]: [] };
-  else return { [EIssueGroupedAction.DELETE]: uniq([...ADD, ...DELETE]), [EIssueGroupedAction.ADD]: [] };
+    return { [EIssueGroupedAction.ADD]: uniq([...ADD]), [EIssueGroupedAction.DELETE]: [] };
+  else return { [EIssueGroupedAction.DELETE]: uniq([...DELETE]), [EIssueGroupedAction.ADD]: [] };
 };
 
 /**
@@ -178,6 +172,4 @@ export const getSortOrderToFilterEmptyValues = (key: string, object: any) => {
 };
 
 // get IssueIds from Issue data List
-export const getIssueIds = (issues: TIssue[]) => {
-  return issues.map((issue) => issue?.id);
-};
+export const getIssueIds = (issues: TIssue[]) => issues.map((issue) => issue?.id);

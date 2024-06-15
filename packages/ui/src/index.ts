@@ -7,6 +7,7 @@ export * from "./dropdowns";
 export * from "./dropdown";
 export * from "./form-fields";
 export * from "./icons";
+export * from "./modals";
 export * from "./progress";
 export * from "./spinners";
 export * from "./tooltip";

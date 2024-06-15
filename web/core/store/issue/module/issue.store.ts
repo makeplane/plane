@@ -1,8 +1,5 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-// services
-// types
 import {
   TIssue,
   TLoader,
@@ -11,6 +8,9 @@ import {
   TIssuesResponse,
   TBulkOperationsPayload,
 } from "@plane/types";
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+// services
+// types
 // store
 import { IIssueRootStore } from "../root.store";
 import { IModuleIssuesFilter } from "./filter.store";
@@ -160,7 +160,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
-        cursorObject?.nextCursor,
+        this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
       );

@@ -4,6 +4,7 @@ require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
+  trailingSlash: true,
   reactStrictMode: false,
   swcMinify: true,
   output: "standalone",

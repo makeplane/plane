@@ -3,8 +3,8 @@ import { action, computed, observable, makeObservable, runInAction, reaction } f
 import { computedFn } from "mobx-utils";
 // types
 import { TCycleDisplayFilters, TCycleFilters, TCycleFiltersByState } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+// store
+import { CoreRootStore } from "./root.store";
 
 export interface ICycleFilterStore {
   // observables
@@ -35,9 +35,9 @@ export class CycleFilterStore implements ICycleFilterStore {
   searchQuery: string = "";
   archivedCyclesSearchQuery: string = "";
   // root store
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       displayFilters: observable,

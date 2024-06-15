@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimate, useProjectEstimates } from "@/hooks/store";
-import { EstimateListItemButtons } from "./estimate-list-item-buttons";
+// plane web components
+import { EstimateListItemButtons } from "@/plane-web/components/estimates";
 
 type TEstimateListItem = {
   estimateId: string;

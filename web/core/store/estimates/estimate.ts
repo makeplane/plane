@@ -11,12 +11,11 @@ import {
   IEstimateFormData,
   TEstimatePointsObject,
 } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import estimateService from "@/services/project/estimate.service";
 // store
 import { IEstimatePoint, EstimatePoint } from "@/store/estimates/estimate-point";
+import { CoreRootStore } from "@/store/root.store";
 
 type TErrorCodes = {
   status: string;
@@ -73,7 +72,7 @@ export class Estimate implements IEstimate {
   estimatePoints: Record<string, IEstimatePoint> = {};
 
   constructor(
-    private store: RootStore,
+    private store: CoreRootStore,
     private data: IEstimateType
   ) {
     makeObservable(this, {

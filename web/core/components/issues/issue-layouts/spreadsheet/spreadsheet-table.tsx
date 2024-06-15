@@ -5,6 +5,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@pl
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 // components
@@ -52,6 +53,10 @@ export const SpreadsheetTable = observer((props: Props) => {
   const isScrolled = useRef(false);
   const [intersectionElement, setIntersectionElement] = useState<HTMLTableSectionElement | null>(null);
 
+  const {
+    issues: { getIssueLoader },
+  } = useIssuesStore();
+
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
     const scrollLeft = containerRef.current.scrollLeft;
@@ -85,7 +90,9 @@ export const SpreadsheetTable = observer((props: Props) => {
     };
   }, [handleScroll, containerRef]);
 
-  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
+  const isPaginating = !!getIssueLoader();
+
+  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 

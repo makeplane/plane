@@ -6,13 +6,13 @@ import { computedFn } from "mobx-utils";
 import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
+// store
+import { CoreRootStore } from "../root.store";
 import { IMemberRootStore } from ".";
 
 interface IProjectMemberDetails {
@@ -61,7 +61,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
   // services
   projectMemberService;
 
-  constructor(_memberRoot: IMemberRootStore, _rootStore: RootStore) {
+  constructor(_memberRoot: IMemberRootStore, _rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       projectMemberMap: observable,

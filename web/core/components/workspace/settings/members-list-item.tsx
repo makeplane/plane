@@ -11,7 +11,7 @@ import { CustomSelect, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { WORKSPACE_MEMBER_lEAVE } from "@/constants/event-tracker";
+import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "@/hooks/store";
@@ -48,7 +48,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
 
     await leaveWorkspace(workspaceSlug.toString())
       .then(() => {
-        captureEvent(WORKSPACE_MEMBER_lEAVE, {
+        captureEvent(WORKSPACE_MEMBER_LEAVE, {
           state: "SUCCESS",
           element: "Workspace settings members page",
         });

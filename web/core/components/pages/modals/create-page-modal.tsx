@@ -2,8 +2,9 @@ import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 // types
 import { TPage } from "@plane/types";
+// ui
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { PageForm } from "@/components/pages";
 // constants
 import { PAGE_CREATED } from "@/constants/event-tracker";

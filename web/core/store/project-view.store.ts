@@ -3,10 +3,10 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IProjectView } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ViewService } from "@/services/view.service";
+// store
+import { CoreRootStore } from "./root.store";
 
 export interface IProjectViewStore {
   //Loaders
@@ -49,7 +49,7 @@ export class ProjectViewStore implements IProjectViewStore {
   // services
   viewService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,

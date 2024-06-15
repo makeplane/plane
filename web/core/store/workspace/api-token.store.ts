@@ -2,10 +2,10 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { IApiToken } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { APITokenService } from "@/services/api_token.service";
+// store
+import { CoreRootStore } from "../root.store";
 
 export interface IApiTokenStore {
   // observables
@@ -28,7 +28,7 @@ export class ApiTokenStore implements IApiTokenStore {
   // root store
   rootStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       apiTokens: observable,
