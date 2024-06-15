@@ -11,3 +11,4 @@ export * from "./relation-select";
 export * from "./root";
 export * from "./sidebar";
 export * from "./subscription";
+export * from "./issue-detail-quick-actions";
