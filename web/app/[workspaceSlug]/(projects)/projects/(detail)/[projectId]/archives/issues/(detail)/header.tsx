@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { IssueDetailQuickActions } from "@/components/issues";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
@@ -90,6 +91,11 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <IssueDetailQuickActions
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        issueId={archivedIssueId.toString()}
+      />
     </div>
   );
 });

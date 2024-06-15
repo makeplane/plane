@@ -1,34 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import {
   CalendarCheck2,
   CalendarClock,
   CircleDot,
   CopyPlus,
   LayoutPanelTop,
-  LinkIcon,
   Signal,
   Tag,
-  Trash2,
   Triangle,
   Users,
   XCircle,
 } from "lucide-react";
 // hooks
 // components
-import {
-  ArchiveIcon,
-  ContrastIcon,
-  DiceIcon,
-  DoubleCircleIcon,
-  RelatedIcon,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-} from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon } from "@plane/ui";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -39,8 +27,6 @@ import {
 // ui
 // helpers
 import {
-  ArchiveIssueModal,
-  DeleteIssueModal,
   IssueCycleSelect,
   IssueLabel,
   IssueLinkRoot,
@@ -50,17 +36,13 @@ import {
 } from "@/components/issues";
 // helpers
 // types
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProjectEstimates, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 // components
 import type { TIssueOperations } from "./root";
-import { IssueSubscription } from "./subscription";
 // icons
 // helpers
 // types
@@ -70,56 +52,24 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  is_archived: boolean;
   isEditable: boolean;
 };
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, is_archived, isEditable } = props;
-  // states
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [archiveIssueModal, setArchiveIssueModal] = useState(false);
-  // router
-  const router = useRouter();
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const { data: currentUser } = useUser();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
-  const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
-  const handleDeleteIssue = async () => {
-    await issueOperations.remove(workspaceSlug, projectId, issueId);
-    router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
-  };
-
-  const handleArchiveIssue = async () => {
-    if (!issueOperations.archive) return;
-    await issueOperations.archive(workspaceSlug, projectId, issueId);
-    router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
-  };
   // derived values
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
-  // auth
-  const isArchivingAllowed = !is_archived && issueOperations.archive && isEditable;
-  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -129,72 +79,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issue}
-        onSubmit={handleDeleteIssue}
-      />
-      <ArchiveIssueModal
-        isOpen={archiveIssueModal}
-        handleClose={() => setArchiveIssueModal(false)}
-        data={issue}
-        onSubmit={handleArchiveIssue}
-      />
-      <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-        <div className="flex items-center justify-end px-5 pb-3">
-          <div className="flex flex-wrap items-center gap-4">
-            {currentUser && !is_archived && (
-              <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
-            )}
-            <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
-              <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
-                <button
-                  type="button"
-                  className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
-                  onClick={handleCopyText}
-                >
-                  <LinkIcon className="h-4 w-4" />
-                </button>
-              </Tooltip>
-              {isArchivingAllowed && (
-                <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
-                >
-                  <button
-                    type="button"
-                    className={cn(
-                      "grid h-5 w-5 place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary",
-                      {
-                        "hover:text-custom-text-200": isInArchivableGroup,
-                        "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
-                      }
-                    )}
-                    onClick={() => {
-                      if (!isInArchivableGroup) return;
-                      setArchiveIssueModal(true);
-                    }}
-                  >
-                    <ArchiveIcon className="h-4 w-4" />
-                  </button>
-                </Tooltip>
-              )}
-              {isEditable && (
-                <Tooltip tooltipContent="Delete" isMobile={isMobile}>
-                  <button
-                    type="button"
-                    className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
-                    onClick={() => setDeleteIssueModal(true)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </Tooltip>
-              )}
-            </div>
-          </div>
-        </div>
-
+      <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-6 text-sm font-medium">Properties</h5>
           {/* TODO: render properties using a common component */}
