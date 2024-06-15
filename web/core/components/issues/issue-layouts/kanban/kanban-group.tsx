@@ -91,9 +91,15 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
   }, [loadMoreIssues, groupId, sub_group_id])
 
-  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssuesInThisGroup, `0% 100% 100% 100%`);
-  const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
+  const isPaginating = !!getIssueLoader(groupId);
 
+  useIntersectionObserver(
+    containerRef,
+    isPaginating ? null : intersectionElement,
+    loadMoreIssuesInThisGroup,
+    `0% 100% 100% 100%`
+  );
+  const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
@@ -216,7 +222,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
-  const isPaginating = !!getIssueLoader(groupId, sub_group_id);
 
   const loadMore = isPaginating ? (
     <KanbanIssueBlockLoader />

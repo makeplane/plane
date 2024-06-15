@@ -98,11 +98,11 @@ export const ListGroup = observer((props: Props) => {
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
-
   const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
   const isPaginating = !!getIssueLoader(group.id);
+
+  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
 
   const shouldLoadMore =
     nextPageResults === undefined && groupIssueCount !== undefined && groupIssueIds
