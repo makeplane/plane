@@ -8,9 +8,8 @@ import { CalendarCheck2, CalendarClock, Info, MoveRight } from "lucide-react";
 // types
 import type { TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
+import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast, FavoriteStar } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
