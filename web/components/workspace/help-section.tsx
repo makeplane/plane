@@ -69,7 +69,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
         {!isCollapsed && (
           <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
             <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2 py-1 text-center text-xs font-medium text-green-500 outline-none leading-6">
-              Community
+              {`Version: v${packageJson.version}`}
             </div>
           </Tooltip>
         )}
@@ -83,17 +83,6 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
               onClick={() => toggleShortcutModal(true)}
             >
               <Zap className="h-3.5 w-3.5" />
-            </button>
-          </Tooltip>
-          <Tooltip tooltipContent="Help" isMobile={isMobile}>
-            <button
-              type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-                isCollapsed ? "w-full" : ""
-              }`}
-              onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-            >
-              <HelpCircle className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
 

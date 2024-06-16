@@ -161,14 +161,6 @@ export const WORKSPACE_SETTINGS_LINKS: {
     Icon: SettingIcon,
   },
   {
-    key: "billing-and-plans",
-    label: "Billing and plans",
-    href: `/settings/billing`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing`,
-    Icon: SettingIcon,
-  },
-  {
     key: "export",
     label: "Exports",
     href: `/settings/exports`,

@@ -288,12 +288,12 @@ export const SIDEBAR_MENU_ITEMS: {
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views`),
     Icon: CheckCircle,
   },
-  {
+  /*{
     key: "active-cycles",
     label: "Active Cycles",
     href: `/active-cycles`,
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles`,
     Icon: ContrastIcon,
-  },
+  }*/,
 ];
