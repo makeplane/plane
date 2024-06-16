@@ -7,6 +7,7 @@ import { PanelRight } from "lucide-react";
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { IssueDetailQuickActions } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -74,6 +75,11 @@ export const ProjectIssueDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <IssueDetailQuickActions
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        issueId={issueId.toString()}
+      />
       <button className="block md:hidden" onClick={() => toggleIssueDetailSidebar()}>
         <PanelRight
           className={cn("h-4 w-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")}

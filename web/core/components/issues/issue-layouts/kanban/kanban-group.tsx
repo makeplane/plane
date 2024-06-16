@@ -91,9 +91,15 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
   }, [loadMoreIssues, groupId, sub_group_id])
 
-  useIntersectionObserver(containerRef, intersectionElement, loadMoreIssuesInThisGroup, `0% 100% 100% 100%`);
-  const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
+  const isPaginating = !!getIssueLoader(groupId);
 
+  useIntersectionObserver(
+    containerRef,
+    isPaginating ? null : intersectionElement,
+    loadMoreIssuesInThisGroup,
+    `0% 100% 100% 100%`
+  );
+  const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
@@ -212,11 +218,10 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? []
     : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
 
-  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false);
+  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false) ?? 0;
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
-  const isPaginating = !!getIssueLoader(groupId, sub_group_id);
 
   const loadMore = isPaginating ? (
     <KanbanIssueBlockLoader />
@@ -230,10 +235,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     </div>
   );
 
-  const shouldLoadMore =
-    nextPageResults === undefined && groupIssueCount !== undefined
-      ? issueIds?.length < groupIssueCount
-      : !!nextPageResults;
+  const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
       const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 

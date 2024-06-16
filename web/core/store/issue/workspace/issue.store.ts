@@ -130,7 +130,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       const params = this.issueFilterStore?.getFilterParams(
         viewId,
         this.paginationOptions,
-        cursorObject?.nextCursor,
+        this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
       );

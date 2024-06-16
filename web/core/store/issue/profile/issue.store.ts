@@ -167,7 +167,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       // get params from stored pagination options
       let params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
-        cursorObject?.nextCursor,
+        this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
       );

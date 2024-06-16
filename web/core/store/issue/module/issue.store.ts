@@ -160,7 +160,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
-        cursorObject?.nextCursor,
+        this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
       );
