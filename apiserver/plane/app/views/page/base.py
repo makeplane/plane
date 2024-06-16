@@ -327,7 +327,7 @@ class PageViewSet(BaseViewSet):
 
         # remove parent from all the children
         _ = Page.objects.filter(
-            parent_id=pk, project_id=project_id, workspace__slug=slug
+            parent_id=pk, projects__id=project_id, workspace__slug=slug
         ).update(parent=None)
 
         page.delete()
