@@ -139,6 +139,9 @@ export const CoreEditorExtensions = ({
   }),
   Placeholder.configure({
     placeholder: ({ editor, node }) => {
+      if (!editor.isFocused && editor.state.doc.content.size === 2) {
+        return "Focus by pressing /";
+      }
       if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
       if (editor.storage.image.uploadInProgress) return "";
