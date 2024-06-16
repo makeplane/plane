@@ -24,9 +24,3 @@ services:
     build:
       context: ./apiserver
       dockerfile: ./Dockerfile.api
-
-  proxy:
-    image: ${DOCKERHUB_USER:-local}/plane-proxy:${APP_RELEASE:-latest}
-    build:
-      context: ./nginx
-      dockerfile: ./Dockerfile

@@ -49,7 +49,6 @@ services:
     env_file:
       - ./apiserver/.env
     depends_on:
-      - plane-db
       - plane-redis
 
   worker:
@@ -65,7 +64,6 @@ services:
       - ./apiserver/.env
     depends_on:
       - api
-      - plane-db
       - plane-redis
 
   beat-worker:
@@ -81,7 +79,6 @@ services:
       - ./apiserver/.env
     depends_on:
       - api
-      - plane-db
       - plane-redis
 
   migrator:
@@ -96,23 +93,7 @@ services:
     env_file:
       - ./apiserver/.env
     depends_on:
-      - plane-db
       - plane-redis
-
-  plane-db:
-    container_name: plane-db
-    image: postgres:15.2-alpine
-    restart: always
-    command: postgres -c 'max_connections=1000'
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /var/lib/postgresql/data
 
   plane-redis:
     container_name: plane-redis
@@ -121,36 +102,5 @@ services:
     volumes:
       - redisdata:/data
 
-  plane-minio:
-    container_name: plane-minio
-    image: minio/minio
-    restart: always
-    command: server /export --console-address ":9090"
-    volumes:
-      - uploads:/export
-    environment:
-      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
-
-  # Comment this if you already have a reverse proxy running
-  proxy:
-    container_name: proxy
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - ${NGINX_PORT}:80
-    environment:
-      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-    depends_on:
-      - web
-      - api
-      - space
-      - admin
-
 volumes:
-  pgdata:
   redisdata:
-  uploads:
