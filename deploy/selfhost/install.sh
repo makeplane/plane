@@ -438,4 +438,5 @@ then
 fi
 
 print_header
+USE_GLOBAL_IMAGES=0
 askForAction $@
