@@ -250,7 +250,7 @@ export const useMultipleSelect = (props: Props) => {
   const isGroupSelected = useCallback(
     (groupID: string) => {
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
-      const totalSelected = groupEntities.filter((entity) => getIsEntitySelected(entity.entityID ?? "")).length;
+      const totalSelected = groupEntities.filter((entity) => getIsEntitySelected(entity?.entityID ?? "")).length;
       if (totalSelected === 0) return "empty";
       if (totalSelected === groupEntities.length) return "complete";
       return "partial";

@@ -16,7 +16,7 @@ type Props = {
 export const SingleExport: FC<Props> = ({ service, refreshing }) => {
   const provider = service.provider;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   const checkExpiry = (inputDateString: string) => {
     const currentDate = new Date();
