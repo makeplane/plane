@@ -7,6 +7,8 @@ from plane.app.views import (
     PageLogEndpoint,
     SubPagesEndpoint,
     PagesDescriptionViewSet,
+    WorkspacePageViewSet,
+    WorkspacePagesDescriptionViewSet,
 )
 
 
@@ -32,6 +34,27 @@ urlpatterns = [
         ),
         name="project-pages",
     ),
+    path(
+        "workspaces/<str:slug>/pages/",
+        WorkspacePageViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/",
+        WorkspacePageViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-pages",
+    ),
     # favorite pages
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:pk>/",
@@ -54,16 +77,26 @@ urlpatterns = [
         ),
         name="project-page-archive-unarchive",
     ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/archive/",
+        WorkspacePageViewSet.as_view(
+            {
+                "post": "archive",
+                "delete": "unarchive",
+            }
+        ),
+        name="workspace-page-archive-unarchive",
+    ),
     # lock and unlock
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
-        PageViewSet.as_view(
+        "workspaces/<str:slug>/pages/<uuid:pk>/lock/",
+        WorkspacePageViewSet.as_view(
             {
                 "post": "lock",
                 "delete": "unlock",
             }
         ),
-        name="project-pages-lock-unlock",
+        name="workspace-pages-lock-unlock",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/",
@@ -83,6 +116,16 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
         PagesDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="page-description",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/description/",
+        WorkspacePagesDescriptionViewSet.as_view(
             {
                 "get": "retrieve",
                 "patch": "partial_update",
