@@ -250,7 +250,7 @@ export const useMultipleSelect = (props: Props) => {
   const isGroupSelected = useCallback(
     (groupID: string) => {
       const groupEntities = entitiesList.filter((entity) => entity.groupID === groupID);
-      const totalSelected = groupEntities.filter((entity) => getIsEntitySelected(entity.entityID ?? "")).length;
+      const totalSelected = groupEntities.filter((entity) => getIsEntitySelected(entity?.entityID ?? "")).length;
       if (totalSelected === 0) return "empty";
       if (totalSelected === groupEntities.length) return "complete";
       return "partial";
@@ -359,7 +359,7 @@ export const useMultipleSelect = (props: Props) => {
   useEffect(() => {
     if (disabled) return;
     selectedEntityIds.map((entityID) => {
-      const isEntityPresent = entitiesList.find((en) => en.entityID === entityID);
+      const isEntityPresent = entitiesList.find((en) => en?.entityID === entityID);
       if (!isEntityPresent) {
         const entityDetails = getEntityDetailsFromEntityID(entityID);
         if (entityDetails) {
