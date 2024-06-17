@@ -7,7 +7,7 @@ import { Search, X } from "lucide-react";
 import { IStateLite } from "@plane/types";
 import { IIssueLabel, IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
 // components
-import { FilterPriority, FilterState } from "./";
+import { FilterPriority, FilterState } from ".";
 
 type Props = {
   filters: IIssueFilterOptions;

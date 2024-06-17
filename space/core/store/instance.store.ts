@@ -2,10 +2,10 @@ import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { IInstance, IInstanceConfig } from "@plane/types";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { InstanceService } from "@/services/instance.service";
-// store types
-import { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
