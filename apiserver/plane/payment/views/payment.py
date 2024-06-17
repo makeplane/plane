@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkSpaceAdminPermission
 from plane.db.models import WorkspaceMember, Workspace
+from plane.authentication.utils.host import base_host
 
 
 class PaymentLinkEndpoint(BaseAPIView):
@@ -56,6 +57,7 @@ class PaymentLinkEndpoint(BaseAPIView):
                         "stripe_price_id": price_id,
                         "customer_email": request.user.email,
                         "members_list": list(workspace_members),
+                        "host": base_host(request=request, is_app=True),
                     },
                     headers={"content-type": "application/json"},
                 )
