@@ -13,7 +13,7 @@ type DocumentEditorProps = {
   fileHandler: TFileHandler;
   value: Uint8Array;
   editorClassName: string;
-  onChange: (updates: Uint8Array) => void;
+  onChange: (updates: Uint8Array, source?: string) => void;
   editorProps?: EditorProps;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
@@ -56,6 +56,16 @@ export const useDocumentEditor = ({
       Y.applyUpdate(provider.document, value);
     }
   }, [value, provider.document]);
+
+  useEffect(() => {
+    const syncUpdatesFromIndexedDB = async () => {
+      const update = await provider.getUpdateFromIndexedDB();
+      onChange(update, "initialSync");
+    };
+
+    syncUpdatesFromIndexedDB();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const editor = useEditor({
     id,

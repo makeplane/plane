@@ -5,7 +5,6 @@ import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import { PageService } from "@/services/page.service";
 import { IPageStore } from "@/store/pages/page.store";
-import { CollaborationProvider } from "./CollaborationProvider"; // Adjust the import path as needed
 
 const pageService = new PageService();
 
@@ -43,9 +42,17 @@ export const usePageDescription = (props: Props) => {
     [descriptionYJS]
   );
 
-  const handleDescriptionChange = useCallback((updates: Uint8Array) => {
-    console.log("updates", updates);
-    setDescriptionUpdates((prev) => [...prev, updates]);
+  const handleDescriptionChange = useCallback((updates: Uint8Array, source: string) => {
+    setDescriptionUpdates((prev) => {
+      const updatesArray = [...prev, updates];
+
+      if (source === "initialSync") {
+        handleSaveDescription(updatesArray);
+      }
+
+      return updatesArray;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -62,42 +69,46 @@ export const usePageDescription = (props: Props) => {
     changeHTMLToBinary();
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
-  const handleSaveDescription = useCallback(async () => {
-    if (!isContentEditable) return;
+  const handleSaveDescription = useCallback(
+    async (initSyncUpdateArray?: Uint8Array[]) => {
+      const updatesArray = initSyncUpdateArray ?? descriptionUpdates;
+      if (!isContentEditable) return;
 
-    const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
-      if (!workspaceSlug || !projectId || !pageId || !latestDescription) return;
-      const descriptionArray = new Uint8Array(latestDescription);
-      const combinedBinaryString = applyUpdates(descriptionArray, updates);
-      const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-      await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
-    };
+      const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
+        if (!workspaceSlug || !projectId || !pageId || !latestDescription) return;
+        const descriptionArray = new Uint8Array(latestDescription);
+        const combinedBinaryString = applyUpdates(descriptionArray, updates);
+        const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
+        await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
+      };
 
-    try {
-      setIsSubmitting("submitting");
-      const latestDescription = await mutateDescriptionYJS();
-      if (descriptionUpdates.length <= 0) {
+      try {
+        setIsSubmitting("submitting");
+        const latestDescription = await mutateDescriptionYJS();
+        if (updatesArray.length <= 0) {
+          setIsSubmitting("saved");
+          return;
+        }
+        const mergedUpdates = mergeUpdates(updatesArray);
+        await applyUpdatesAndSave(latestDescription, mergedUpdates);
+        setDescriptionUpdates([]);
+      } catch (error) {
         setIsSubmitting("saved");
-        return;
+        throw error;
       }
-      const mergedUpdates = mergeUpdates(descriptionUpdates);
-      await applyUpdatesAndSave(latestDescription, mergedUpdates);
-      setDescriptionUpdates([]);
-    } catch (error) {
-      setIsSubmitting("saved");
-      throw error;
-    }
-  }, [
-    descriptionUpdates,
-    editorRef,
-    isContentEditable,
-    mutateDescriptionYJS,
-    pageId,
-    projectId,
-    setIsSubmitting,
-    updateDescription,
-    workspaceSlug,
-  ]);
+    },
+    [
+      descriptionUpdates,
+      editorRef,
+      isContentEditable,
+      mutateDescriptionYJS,
+      pageId,
+      projectId,
+      setIsSubmitting,
+      updateDescription,
+      workspaceSlug,
+    ]
+  );
 
   useEffect(() => {
     const handleSave = (e: KeyboardEvent) => {
@@ -124,22 +135,6 @@ export const usePageDescription = (props: Props) => {
     if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
     else setShowAlert(false);
   }, [descriptionUpdates, isSubmitting, setShowAlert]);
-
-  useEffect(() => {
-    const syncUpdatesFromIndexedDB = async () => {
-      const provider = new CollaborationProvider({
-        name: `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}`,
-        onChange: handleDescriptionChange,
-      });
-
-      const updates = await provider.getUpdatesFromIndexedDB();
-      if (updates.length > 0) {
-        setDescriptionUpdates(updates);
-      }
-    };
-
-    syncUpdatesFromIndexedDB();
-  }, [handleDescriptionChange, pageId, projectId, workspaceSlug]);
 
   return {
     handleDescriptionChange,

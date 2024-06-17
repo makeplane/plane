@@ -72,6 +72,12 @@ export class CollaborationProvider {
     this.configuration.onChange?.(update);
   }
 
+  async getUpdateFromIndexedDB(): Promise<Uint8Array> {
+    await this.indexeddbProvider.whenSynced;
+    const update = Y.encodeStateAsUpdate(this.indexeddbProvider.doc);
+    return update;
+  }
+
   documentDestroyHandler() {
     this.document.off("update", this.documentUpdateHandler);
     this.document.off("destroy", this.documentDestroyHandler);
