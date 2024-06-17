@@ -187,11 +187,11 @@ class OffsetPaginator:
 
 class GroupedOffsetPaginator(OffsetPaginator):
 
-    # Field mappers
+    # Field mappers - list m2m fields here
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
-        "modules__id": "module_ids",
+        "issue_module__module_id": "module_ids",
     }
 
     def __init__(
@@ -205,8 +205,12 @@ class GroupedOffsetPaginator(OffsetPaginator):
     ):
         # Initiate the parent class for all the parameters
         super().__init__(queryset, *args, **kwargs)
+
+        # Set the group by field name
         self.group_by_field_name = group_by_field_name
+        # Set the group by fields
         self.group_by_fields = group_by_fields
+        # Set the count filter - this are extra filters that need to be passed to calculate the counts with the filters
         self.count_filter = count_filter
 
     def get_result(self, limit=50, cursor=None):
@@ -224,8 +228,11 @@ class GroupedOffsetPaginator(OffsetPaginator):
         offset = cursor.offset * cursor.value
         stop = offset + (cursor.value or limit) + 1
 
+        # Check if the offset is greater than the max offset
         if self.max_offset is not None and offset >= self.max_offset:
             raise BadPaginationError("Pagination offset too large")
+
+        # Check if the offset is less than 0
         if offset < 0:
             raise BadPaginationError("Pagination offset cannot be negative")
 
@@ -269,6 +276,8 @@ class GroupedOffsetPaginator(OffsetPaginator):
             False,
             queryset.filter(row_number__gte=stop).exists(),
         )
+
+        # Add previous cursors
         prev_cursor = Cursor(
             limit,
             page - 1,
@@ -305,7 +314,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         )
 
     def __get_total_queryset(self):
-        # Get total queryset
+        # Get total items for each group
         return (
             self.queryset.values(self.group_by_field_name)
             .annotate(
@@ -328,7 +337,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
                 )
                 + (1 if group.get("count") == 0 else group.get("count"))
             )
-
         return total_group_dict
 
     def __get_field_dict(self):
@@ -353,7 +361,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Grouping for m2m values
         total_group_dict = self.__get_total_dict()
 
-        # Preparing a dict to keep track of group IDs associated with each label ID
+        # Preparing a dict to keep track of group IDs associated with each entity ID
         result_group_mapping = defaultdict(set)
         # Preparing a dict to group result by group ID
         grouped_by_field_name = defaultdict(list)
@@ -390,7 +398,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         return processed_results
 
     def __query_grouper(self, results):
-        # Grouping for single values
+        # Grouping for values that are not m2m
         processed_results = self.__get_field_dict()
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
@@ -411,10 +419,11 @@ class GroupedOffsetPaginator(OffsetPaginator):
 
 
 class SubGroupedOffsetPaginator(OffsetPaginator):
+    # Field mappers this are the fields that are m2m
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
-        "modules__id": "module_ids",
+        "issue_module__module_id": "module_ids",
     }
 
     def __init__(
@@ -428,11 +437,18 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         *args,
         **kwargs,
     ):
+        # Initiate the parent class for all the parameters
         super().__init__(queryset, *args, **kwargs)
+
+        # Set the group by field name
         self.group_by_field_name = group_by_field_name
         self.group_by_fields = group_by_fields
+
+        # Set the sub group by field name
         self.sub_group_by_field_name = sub_group_by_field_name
         self.sub_group_by_fields = sub_group_by_fields
+
+        # Set the count filter - this are extra filters that need to be passed to calculate the counts with the filters
         self.count_filter = count_filter
 
     def get_result(self, limit=30, cursor=None):
@@ -441,13 +457,19 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         if cursor is None:
             cursor = Cursor(0, 0, 0)
 
+        # get the minimum value
         limit = min(limit, self.max_limit)
 
         # Adjust the initial offset and stop based on the cursor and limit
         queryset = self.queryset
 
+        # the current page
         page = cursor.offset
+
+        # the offset
         offset = cursor.offset * cursor.value
+
+        # the stop
         stop = offset + (cursor.value or limit) + 1
 
         if self.max_offset is not None and offset >= self.max_offset:
@@ -496,6 +518,8 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             False,
             queryset.filter(row_number__gte=stop).exists(),
         )
+
+        # Add previous cursors
         prev_cursor = Cursor(
             limit,
             page - 1,
@@ -579,19 +603,24 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             subgroup = str(item[self.sub_group_by_field_name])
             count = item["count"]
 
+            # Create a dictionary of group and sub group
             if group not in total_sub_group_dict:
                 total_sub_group_dict[str(group)] = {}
 
+            # Create a dictionary of sub group
             if subgroup not in total_sub_group_dict[group]:
                 total_sub_group_dict[str(group)][str(subgroup)] = {}
 
+            # Create a nested dictionary of group and sub group
             total_sub_group_dict[group][subgroup] = count
 
         return total_group_dict, total_sub_group_dict
 
     def __get_field_dict(self):
+        # Create a field dictionary
         total_group_dict, total_sub_group_dict = self.__get_total_dict()
 
+        # Create a dictionary of group and sub group
         return {
             str(group): {
                 "results": {
@@ -621,7 +650,6 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 result_id = result["id"]
                 group_id = result[self.group_by_field_name]
                 result_group_mapping[str(result_id)].add(str(group_id))
-
         # Use the same calculation for the sub group
         if self.sub_group_by_field_name in self.FIELD_MAPPER:
             for result in results:
@@ -635,6 +663,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             group_value = str(result.get(self.group_by_field_name))
             # Get the sub group value
             sub_group_value = str(result.get(self.sub_group_by_field_name))
+            # Check if the group value is in the processed results
+            result_id = result["id"]
+
             if (
                 group_value in processed_results
                 and sub_group_value
@@ -647,12 +678,14 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                         [] if "None" in group_ids else group_ids
                     )
                 if self.sub_group_by_field_name in self.FIELD_MAPPER:
-                    sub_group_ids = list(result_group_mapping[str(result_id)])
-                    # for multi groups
-                    result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
-                        [] if "None" in sub_group_ids else sub_group_ids
+                    sub_group_ids = list(
+                        result_sub_group_mapping[str(result_id)]
                     )
-
+                    # for multi groups
+                    result[
+                        self.FIELD_MAPPER.get(self.sub_group_by_field_name)
+                    ] = ([] if "None" in sub_group_ids else sub_group_ids)
+                # If a result belongs to multiple groups, add it to each group
                 processed_results[str(group_value)]["results"][
                     str(sub_group_value)
                 ]["results"].append(result)
@@ -677,8 +710,10 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 self.group_by_field_name in self.FIELD_MAPPER
                 or self.sub_group_by_field_name in self.FIELD_MAPPER
             ):
+                # if the grouping is done through m2m then
                 processed_results = self.__query_multi_grouper(results=results)
             else:
+                # group it directly
                 processed_results = self.__query_grouper(results=results)
         else:
             processed_results = {}

@@ -5,10 +5,10 @@ import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
+// store
+import { CoreRootStore } from "../root.store";
 
 export type TLoader = "submitting" | "submitted" | "saved";
 
@@ -73,7 +73,7 @@ export class Page implements IPage {
   pageService: ProjectPageService;
 
   constructor(
-    private store: RootStore,
+    private store: CoreRootStore,
     page: TPage
   ) {
     this.id = page?.id || undefined;

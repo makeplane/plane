@@ -13,6 +13,10 @@ export interface CompleteCollaboratorProviderConfiguration {
    * onChange callback
    */
   onChange: (updates: Uint8Array) => void;
+  /**
+   * Whether connection to the database has been established and all available content has been loaded or not.
+   */
+  hasIndexedDBSynced: boolean;
 }
 
 export type CollaborationProviderConfiguration = Required<Pick<CompleteCollaboratorProviderConfiguration, "name">> &
@@ -24,6 +28,7 @@ export class CollaborationProvider {
     // @ts-expect-error cannot be undefined
     document: undefined,
     onChange: () => {},
+    hasIndexedDBSynced: false,
   };
 
   constructor(configuration: CollaborationProviderConfiguration) {
@@ -45,7 +50,12 @@ export class CollaborationProvider {
     return this.configuration.document;
   }
 
+  setHasIndexedDBSynced(hasIndexedDBSynced: boolean) {
+    this.configuration.hasIndexedDBSynced = hasIndexedDBSynced;
+  }
+
   documentUpdateHandler(update: Uint8Array, origin: any) {
+    if (!this.configuration.hasIndexedDBSynced) return;
     // return if the update is from the provider itself
     if (origin === this) return;
 

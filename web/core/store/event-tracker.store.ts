@@ -14,8 +14,8 @@ import {
   getWorkspaceEventPayload,
   getPageEventPayload,
 } from "@/constants/event-tracker";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+// store
+import { CoreRootStore } from "./root.store";
 
 export interface IEventTrackerStore {
   // properties
@@ -39,7 +39,7 @@ export interface IEventTrackerStore {
 export class EventTrackerStore implements IEventTrackerStore {
   trackElement: string | undefined = undefined;
   rootStore;
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // properties
       trackElement: observable,

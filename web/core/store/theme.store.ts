@@ -1,6 +1,4 @@
 import { action, observable, makeObservable } from "mobx";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 
 export interface IThemeStore {
   // observables
@@ -22,7 +20,7 @@ export class ThemeStore implements IThemeStore {
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
 
-  constructor(private store: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
       sidebarCollapsed: observable.ref,

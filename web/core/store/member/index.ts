@@ -1,8 +1,8 @@
 import { action, makeObservable, observable } from "mobx";
 // types
 import { IUserLite } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+// store
+import { CoreRootStore } from "../root.store";
 import { IProjectMemberStore, ProjectMemberStore } from "./project-member.store";
 import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace-member.store";
 
@@ -23,7 +23,7 @@ export class MemberRootStore implements IMemberRootStore {
   workspace: IWorkspaceMemberStore;
   project: IProjectMemberStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       memberMap: observable,

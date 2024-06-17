@@ -4,11 +4,11 @@ import { makeObservable, observable, runInAction, action } from "mobx";
 import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
 // helpers
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { InboxIssueService } from "@/services/inbox";
 import { IssueService } from "@/services/issue";
+// store
+import { CoreRootStore } from "../root.store";
 
 export interface IInboxIssueStore {
   isLoading: boolean;
@@ -48,7 +48,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     workspaceSlug: string,
     projectId: string,
     data: TInboxIssue,
-    private store: RootStore
+    private store: CoreRootStore
   ) {
     this.id = data.id;
     this.status = data.status;

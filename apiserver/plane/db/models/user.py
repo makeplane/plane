@@ -182,7 +182,7 @@ class Account(TimeAuditModel):
     )
     provider_account_id = models.CharField(max_length=255)
     provider = models.CharField(
-        choices=(("google", "Google"), ("github", "Github")),
+        choices=(("google", "Google"), ("github", "Github"), ("gitlab", "GitLab")),
     )
     access_token = models.TextField()
     access_token_expired_at = models.DateTimeField(null=True)

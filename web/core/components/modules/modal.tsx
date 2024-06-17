@@ -6,9 +6,8 @@ import { useForm } from "react-hook-form";
 // types
 import type { IModule } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { ModuleForm } from "@/components/modules";
 // constants
 import { MODULE_CREATED, MODULE_UPDATED } from "@/constants/event-tracker";

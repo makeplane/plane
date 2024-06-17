@@ -17,12 +17,14 @@ import { useInstance } from "@/hooks/store";
 // images
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
+import GitlabLogo from "@/public/logos/gitlab-logo.svg";
 import GoogleLogo from "@/public/logos/google-logo.svg";
 // local components
 import {
   AuthenticationMethodCard,
   EmailCodesConfiguration,
   PasswordLoginConfiguration,
+  GitlabConfiguration,
   GithubConfiguration,
   GoogleConfiguration,
 } from "./components";
@@ -115,6 +117,13 @@ const InstanceAuthenticationPage = observer(() => {
         />
       ),
       config: <GithubConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
+    },
+    {
+      key: "gitlab",
+      name: "GitLab",
+      description: "Allow members to login or sign up to plane with their GitLab accounts.",
+      icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+      config: <GitlabConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
     },
   ];
 

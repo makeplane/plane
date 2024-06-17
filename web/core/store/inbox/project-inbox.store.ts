@@ -15,12 +15,11 @@ import {
 } from "@plane/types";
 // helpers
 import { EInboxIssueCurrentTab, EInboxIssueStatus, EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
 import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import { CoreRootStore } from "../root.store";
 
 type TLoader =
   | "init-loading"
@@ -90,7 +89,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   // services
   inboxIssueService;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     makeObservable(this, {
       currentTab: observable.ref,
       loader: observable.ref,

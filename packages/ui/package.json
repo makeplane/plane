@@ -34,7 +34,8 @@
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
     "sonner": "^1.4.41",
-    "tailwind-merge": "^2.0.0"
+    "tailwind-merge": "^2.0.0",
+    "use-font-face-observer": "^1.2.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",

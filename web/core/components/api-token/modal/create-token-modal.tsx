@@ -6,10 +6,9 @@ import { mutate } from "swr";
 // types
 import { IApiToken } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // helpers
