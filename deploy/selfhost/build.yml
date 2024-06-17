@@ -12,21 +12,21 @@ services:
     build:
       context: ./
       dockerfile: ./space/Dockerfile.space
-      depends_on:
-      - web
+    depends_on:
+    - web
 
   admin:
     image: ${DOCKERHUB_USER:-local}/plane-admin:${APP_RELEASE:-latest}
     build:
       context: ./
       dockerfile: ./admin/Dockerfile.admin
-      depends_on:
-      - space
+    depends_on:
+    - space
 
   api:
     image: ${DOCKERHUB_USER:-local}/plane-backend:${APP_RELEASE:-latest}
     build:
       context: ./apiserver
       dockerfile: ./Dockerfile.api
-      depends_on:
-      - admin
+    depends_on:
+    - admin
