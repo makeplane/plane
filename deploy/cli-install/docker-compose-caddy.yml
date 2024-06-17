@@ -137,7 +137,7 @@ services:
 
   plane-redis:
     <<: *app-env
-    image: registry.plane.tools/plane/redis:7.2.4-alpine
+    image: registry.plane.tools/plane/valkey:7.2.5-alpine
     restart: unless-stopped
     volumes:
       - ${INSTALL_DIR}/data/redis:/data
