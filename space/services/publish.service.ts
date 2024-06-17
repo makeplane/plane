@@ -1,5 +1,5 @@
 // types
-import { TPublishSettings } from "@plane/types";
+import { TProjectPublishSettings } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -10,7 +10,7 @@ class PublishService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchPublishSettings(anchor: string): Promise<TPublishSettings> {
+  async fetchPublishSettings(anchor: string): Promise<TProjectPublishSettings> {
     return this.get(`/api/public/anchor/${anchor}/settings/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,7 +18,7 @@ class PublishService extends APIService {
       });
   }
 
-  async fetchAnchorFromProjectDetails(workspaceSlug: string, projectID: string): Promise<TPublishSettings> {
+  async fetchAnchorFromProjectDetails(workspaceSlug: string, projectID: string): Promise<TProjectPublishSettings> {
     return this.get(`/api/public/workspaces/${workspaceSlug}/projects/${projectID}/anchor/`)
       .then((response) => response?.data)
       .catch((error) => {
