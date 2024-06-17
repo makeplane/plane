@@ -1,10 +1,8 @@
 import { FC, Fragment, useState } from "react";
 import orderBy from "lodash/orderBy";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
-// icons
 import { CheckCircle } from "lucide-react";
-// ui
 import { Dialog, Transition, Tab } from "@headlessui/react";
 // types
 import { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
@@ -47,8 +45,8 @@ export type CloudProductsModalProps = {
 
 export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   const { isOpen, handleClose } = props;
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // params
+  const { workspaceSlug } = useParams();
   // store
   const { captureEvent } = useEventTracker();
   // fetch products

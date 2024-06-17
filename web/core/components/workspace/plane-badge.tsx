@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Tooltip, Button, getButtonStyling } from "@plane/ui";
@@ -21,8 +21,8 @@ import packageJson from "package.json";
 const discoService = new DiscoService();
 
 export const PlaneBadge: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // params
+  const { workspaceSlug } = useParams();
   // states
   const [isProPlanModalOpen, setIsProPlanModalOpen] = useState(false);
   const [isProPlanDetailsModalOpen, setProPlanDetailsModalOpen] = useState(false);
