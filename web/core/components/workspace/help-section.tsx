@@ -17,6 +17,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 // assets
 import packageJson from "package.json";
+import { PlaneBadge } from "./plane-badge";
 
 const HELP_OPTIONS = [
   {
