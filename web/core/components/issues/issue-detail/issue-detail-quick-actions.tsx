@@ -146,7 +146,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       .finally(() => setIsRestoring(false));
   };
 
-  
   // auth
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const canRestoreIssue = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

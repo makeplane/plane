@@ -169,7 +169,15 @@ class PageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    project = serializers.UUIDField(read_only=True)
+    # Many to many
+    label_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
+    project_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
 
     class Meta:
         model = Page
@@ -191,17 +199,13 @@ class PageSerializer(BaseSerializer):
             "updated_by",
             "view_props",
             "logo_props",
-            "project",
+            "label_ids",
+            "project_ids",
         ]
         read_only_fields = [
             "workspace",
             "owned_by",
         ]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["labels"] = [str(label.id) for label in instance.labels.all()]
-        return data
 
     def create(self, validated_data):
         labels = validated_data.pop("labels", None)
@@ -211,6 +215,8 @@ class PageSerializer(BaseSerializer):
 
         # Get the workspace id from the project
         project = Project.objects.get(pk=project_id)
+
+        # Create the page
         page = Page.objects.create(
             **validated_data,
             description_html=description_html,
@@ -218,6 +224,7 @@ class PageSerializer(BaseSerializer):
             workspace_id=project.workspace_id,
         )
 
+        # Create the project page
         ProjectPage.objects.create(
             workspace_id=page.workspace_id,
             project_id=project_id,
@@ -226,6 +233,7 @@ class PageSerializer(BaseSerializer):
             updated_by_id=page.updated_by_id,
         )
 
+        # Create page labels
         if labels is not None:
             PageLabel.objects.bulk_create(
                 [

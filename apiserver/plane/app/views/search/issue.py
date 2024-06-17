@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from ..base import BaseAPIView
+from .base import BaseAPIView
 from plane.db.models import (
     Issue,
 )

@@ -186,6 +186,7 @@ from .search.base import (
     SearchEndpoint,
 )
 
+from .search.base import GlobalSearchEndpoint
 from .search.issue import IssueSearchEndpoint
 from .search.workspace import (
     WorkspaceSearchEndpoint,
