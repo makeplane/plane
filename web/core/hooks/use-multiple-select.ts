@@ -359,7 +359,7 @@ export const useMultipleSelect = (props: Props) => {
   useEffect(() => {
     if (disabled) return;
     selectedEntityIds.map((entityID) => {
-      const isEntityPresent = entitiesList.find((en) => en.entityID === entityID);
+      const isEntityPresent = entitiesList.find((en) => en?.entityID === entityID);
       if (!isEntityPresent) {
         const entityDetails = getEntityDetailsFromEntityID(entityID);
         if (entityDetails) {

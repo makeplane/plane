@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
+// icons
 import { Search, Briefcase, X, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
