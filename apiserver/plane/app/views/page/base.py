@@ -6,10 +6,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Q, Value, UUIDField
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.http import StreamingHttpResponse
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework import status
@@ -70,9 +73,6 @@ class PageViewSet(BaseViewSet):
             entity_identifier=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
-        project_subquery = ProjectPage.objects.filter(
-            page_id=OuterRef("id"), project_id=self.kwargs.get("project_id")
-        ).values_list("project_id", flat=True)[:1]
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -91,8 +91,33 @@ class PageViewSet(BaseViewSet):
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
-            .annotate(project=Subquery(project_subquery))
-            .filter(project=self.kwargs.get("project_id"))
+            .annotate(
+                project=Exists(
+                    ProjectPage.objects.filter(
+                        page_id=OuterRef("id"),
+                        project_id=self.kwargs.get("project_id"),
+                    )
+                )
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "page_labels__label_id",
+                        distinct=True,
+                        filter=~Q(page_labels__label_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .filter(project=True)
             .distinct()
         )
 
@@ -112,7 +137,7 @@ class PageViewSet(BaseViewSet):
             serializer.save()
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
-            page = Page.objects.get(pk=serializer.data["id"])
+            page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -302,7 +327,7 @@ class PageViewSet(BaseViewSet):
 
         # remove parent from all the children
         _ = Page.objects.filter(
-            parent_id=pk, project_id=project_id, workspace__slug=slug
+            parent_id=pk, projects__id=project_id, workspace__slug=slug
         ).update(parent=None)
 
         page.delete()

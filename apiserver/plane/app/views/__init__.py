@@ -180,7 +180,8 @@ from .page.base import (
     PagesDescriptionViewSet,
 )
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint
+from .search.base import GlobalSearchEndpoint
+from .search.issue import IssueSearchEndpoint
 
 
 from .external.base import (

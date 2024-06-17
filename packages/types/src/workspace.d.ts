@@ -112,6 +112,14 @@ export interface IWorkspaceIssueSearchResult {
   workspace__slug: string;
 }
 
+export interface IWorkspacePageSearchResult {
+  id: string;
+  name: string;
+  project_ids: string[];
+  project__identifiers: string[];
+  workspace__slug: string;
+}
+
 export interface IWorkspaceProjectSearchResult {
   id: string;
   identifier: string;
@@ -127,7 +135,7 @@ export interface IWorkspaceSearchResults {
     cycle: IWorkspaceDefaultSearchResult[];
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
-    page: IWorkspaceDefaultSearchResult[];
+    page: IWorkspacePageSearchResult[];
   };
 }
 

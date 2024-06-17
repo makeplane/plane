@@ -53,14 +53,14 @@ export class Page implements IPage {
   logo_props: TLogoProps | undefined;
   description_html: string | undefined;
   color: string | undefined;
-  labels: string[] | undefined;
+  label_ids: string[] | undefined;
   owned_by: string | undefined;
   access: EPageAccess | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | null | undefined;
   workspace: string | undefined;
-  project: string | undefined;
+  project_ids: string[] | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
@@ -81,14 +81,14 @@ export class Page implements IPage {
     this.logo_props = page?.logo_props || undefined;
     this.description_html = page?.description_html || undefined;
     this.color = page?.color || undefined;
-    this.labels = page?.labels || undefined;
+    this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
     this.access = page?.access || EPageAccess.PUBLIC;
     this.is_favorite = page?.is_favorite || false;
     this.is_locked = page?.is_locked || false;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
-    this.project = page?.project || undefined;
+    this.project_ids = page?.project_ids || undefined;
     this.created_by = page?.created_by || undefined;
     this.updated_by = page?.updated_by || undefined;
     this.created_at = page?.created_at || undefined;
@@ -104,14 +104,14 @@ export class Page implements IPage {
       logo_props: observable.ref,
       description_html: observable.ref,
       color: observable.ref,
-      labels: observable,
+      label_ids: observable,
       owned_by: observable.ref,
       access: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       archived_at: observable.ref,
       workspace: observable.ref,
-      project: observable.ref,
+      project_ids: observable,
       created_by: observable.ref,
       updated_by: observable.ref,
       created_at: observable.ref,
@@ -181,7 +181,7 @@ export class Page implements IPage {
       name: this.name,
       description_html: this.description_html,
       color: this.color,
-      labels: this.labels,
+      label_ids: this.label_ids,
       owned_by: this.owned_by,
       access: this.access,
       logo_props: this.logo_props,
@@ -189,7 +189,7 @@ export class Page implements IPage {
       is_locked: this.is_locked,
       archived_at: this.archived_at,
       workspace: this.workspace,
-      project: this.project,
+      project_ids: this.project_ids,
       created_by: this.created_by,
       updated_by: this.updated_by,
       created_at: this.created_at,
