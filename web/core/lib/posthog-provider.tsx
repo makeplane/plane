@@ -1,6 +1,5 @@
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-// 
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
