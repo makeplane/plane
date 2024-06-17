@@ -25,7 +25,7 @@ import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 // plane web constants
 import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
 // utils
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, isSubGrouped } from "../utils";
 import { ListGroup } from "./list-group";
 import { TRenderQuickActions } from "./list-view-types";
 
@@ -119,8 +119,8 @@ export const List: React.FC<IList> = observer((props) => {
   let entities: Record<string, string[]> = {};
 
   if (is_list) {
-    entities = Object.assign(orderedGroups, { [groupIds[0]]: groupedIssueIds[ALL_ISSUES] });
-  } else if(Array.isArray(groupedIssueIds[groupIds[0]])){
+    entities = Object.assign(orderedGroups, { [groupIds[0]]: groupedIssueIds[ALL_ISSUES] ?? [] });
+  } else if (!isSubGrouped(groupedIssueIds)) {
     entities = Object.assign(orderedGroups, { ...groupedIssueIds });
   } else {
     entities = orderedGroups;
