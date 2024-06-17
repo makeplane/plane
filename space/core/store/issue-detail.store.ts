@@ -1,9 +1,9 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { v4 as uuidv4 } from "uuid";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import IssueService from "@/services/issue.service";
-// store types
-import { RootStore } from "@/store/root.store";
 // types
 import { IIssue, IPeekMode, IVote } from "@/types/issue";
 

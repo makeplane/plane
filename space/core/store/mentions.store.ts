@@ -1,6 +1,8 @@
 import { computed, makeObservable } from "mobx";
+// editor
 import { IMentionHighlight } from "@plane/lite-text-editor";
-import { RootStore } from "./root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 
 export interface IMentionsStore {
   // mentionSuggestions: IMentionSuggestion[];

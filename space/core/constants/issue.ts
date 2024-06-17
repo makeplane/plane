@@ -1,4 +1,4 @@
-import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
+import { Kanban, List } from "lucide-react";
 // types
 import { TIssuePriorities } from "@plane/types";
 import { TIssueLayout, TIssueFilterKeys, TIssueFilterPriorityObject } from "@/types/issue";
@@ -29,9 +29,9 @@ export const ISSUE_LAYOUTS: {
 }[] = [
   { key: "list", title: "List", icon: List },
   { key: "kanban", title: "Kanban", icon: Kanban },
-  { key: "calendar", title: "Calendar", icon: Calendar },
-  { key: "spreadsheet", title: "Spreadsheet", icon: Sheet },
-  { key: "gantt", title: "Gantt chart", icon: GanttChartSquare },
+  // { key: "calendar", title: "Calendar", icon: Calendar },
+  // { key: "spreadsheet", title: "Spreadsheet", icon: Sheet },
+  // { key: "gantt", title: "Gantt chart", icon: GanttChartSquare },
 ];
 
 export const issuePriorityFilters: TIssueFilterPriorityObject[] = [

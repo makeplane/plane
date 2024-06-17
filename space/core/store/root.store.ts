@@ -10,7 +10,7 @@ import { IPublishListStore, PublishListStore } from "./publish/publish_list.stor
 
 enableStaticRendering(typeof window === "undefined");
 
-export class RootStore {
+export class CoreRootStore {
   instance: IInstanceStore;
   user: IUserStore;
   issue: IIssueStore;

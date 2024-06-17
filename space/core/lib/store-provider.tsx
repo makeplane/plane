@@ -2,8 +2,8 @@
 
 import { ReactNode, createContext } from "react";
 import { ThemeProvider } from "next-themes";
-// store
-import { RootStore } from "@/store/root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 
 let rootStore = new RootStore();
 

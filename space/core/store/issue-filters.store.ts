@@ -5,8 +5,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-// store
-import { RootStore } from "@/store/root.store";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // types
 import {
   TIssueLayoutOptions,
@@ -115,16 +115,11 @@ export class IssueFilterStore implements IIssueFilterStore {
   updateLayoutOptions = (options: TIssueLayoutOptions) => set(this, ["layoutOptions"], options);
 
   initIssueFilters = async (anchor: string, initFilters: TIssueFilters) => {
-    try {
-      if (this.filters === undefined) runInAction(() => (this.filters = {}));
-      if (this.filters && initFilters) set(this.filters, [anchor], initFilters);
+    if (this.filters === undefined) runInAction(() => (this.filters = {}));
+    if (this.filters && initFilters) set(this.filters, [anchor], initFilters);
 
-      const appliedFilters = this.getAppliedFilters(anchor);
-
-      await this.store.issue.fetchPublicIssues(anchor, appliedFilters);
-    } catch (error) {
-      throw error;
-    }
+    const appliedFilters = this.getAppliedFilters(anchor);
+    await this.store.issue.fetchPublicIssues(anchor, appliedFilters);
   };
 
   updateIssueFilters = async <K extends keyof TIssueFilters>(
@@ -133,19 +128,14 @@ export class IssueFilterStore implements IIssueFilterStore {
     filterKey: keyof TIssueFilters[K],
     filterValue: TIssueFilters[K][typeof filterKey]
   ) => {
-    try {
-      if (!filterKind || !filterKey || !filterValue) return;
-      if (this.filters === undefined) runInAction(() => (this.filters = {}));
+    if (!filterKind || !filterKey || !filterValue) return;
+    if (this.filters === undefined) runInAction(() => (this.filters = {}));
 
-      runInAction(() => {
-        if (this.filters) set(this.filters, [anchor, filterKind, filterKey], filterValue);
-      });
+    runInAction(() => {
+      if (this.filters) set(this.filters, [anchor, filterKind, filterKey], filterValue);
+    });
 
-      const appliedFilters = this.getAppliedFilters(anchor);
-
-      await this.store.issue.fetchPublicIssues(anchor, appliedFilters);
-    } catch (error) {
-      throw error;
-    }
+    const appliedFilters = this.getAppliedFilters(anchor);
+    await this.store.issue.fetchPublicIssues(anchor, appliedFilters);
   };
 }

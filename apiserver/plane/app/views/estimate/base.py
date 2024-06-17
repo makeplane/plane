@@ -62,12 +62,15 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         path="/api/workspaces/:slug/estimates/", url_params=True, user=False
     )
     def create(self, request, slug, project_id):
-        estimate = request.data.get('estimate')
+        estimate = request.data.get("estimate")
         estimate_name = estimate.get("name", generate_random_name())
-        estimate_type = estimate.get("type", 'categories')
+        estimate_type = estimate.get("type", "categories")
         last_used = estimate.get("last_used", False)
         estimate = Estimate.objects.create(
-            name=estimate_name, project_id=project_id, last_used=last_used, type=estimate_type
+            name=estimate_name,
+            project_id=project_id,
+            last_used=last_used,
+            type=estimate_type,
         )
 
         estimate_points = request.data.get("estimate_points", [])
@@ -125,8 +128,12 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         estimate = Estimate.objects.get(pk=estimate_id)
 
         if request.data.get("estimate"):
-            estimate.name = request.data.get("estimate").get("name", estimate.name)
-            estimate.type = request.data.get("estimate").get("type", estimate.type)
+            estimate.name = request.data.get("estimate").get(
+                "name", estimate.name
+            )
+            estimate.type = request.data.get("estimate").get(
+                "type", estimate.type
+            )
             estimate.save()
 
         estimate_points_data = request.data.get("estimate_points", [])
@@ -204,7 +211,9 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer = EstimatePointSerializer(estimate_point).data
         return Response(serializer, status=status.HTTP_200_OK)
 
-    def partial_update(self, request, slug, project_id, estimate_id, estimate_point_id):
+    def partial_update(
+        self, request, slug, project_id, estimate_id, estimate_point_id
+    ):
         #  TODO: add a key validation if the same key already exists
         estimate_point = EstimatePoint.objects.get(
             pk=estimate_point_id,
@@ -225,7 +234,7 @@ class EstimatePointEndpoint(BaseViewSet):
     def destroy(
         self, request, slug, project_id, estimate_id, estimate_point_id
     ):
-        new_estimate_id = request.GET.get("new_estimate_id", None)
+        new_estimate_id = request.data.get("new_estimate_id", None)
         estimate_points = EstimatePoint.objects.filter(
             estimate_id=estimate_id,
             project_id=project_id,
@@ -236,8 +245,8 @@ class EstimatePointEndpoint(BaseViewSet):
             _ = Issue.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
-                estimate_id=estimate_point_id,
-            ).update(estimate_id=new_estimate_id)
+                estimate_point_id=estimate_point_id,
+            ).update(estimate_point_id=new_estimate_id)
 
         # delete the estimate point
         old_estimate_point = EstimatePoint.objects.filter(
