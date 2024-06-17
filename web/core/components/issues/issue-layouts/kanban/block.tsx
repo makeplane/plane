@@ -4,6 +4,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
+import { useParams } from "next/navigation";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks
 import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
@@ -11,7 +12,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
+import { useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -117,8 +118,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
+  // router
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
-  const { workspaceSlug } = useAppRouter();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { isMobile } = usePlatformOS();
 

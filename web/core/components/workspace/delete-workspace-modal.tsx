@@ -2,10 +2,10 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+// types
 import type { IWorkspace } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,7 +13,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { WORKSPACE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspace } from "@/hooks/store";
-// types
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   isOpen: boolean;
@@ -29,7 +29,7 @@ const defaultValues = {
 export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   const { isOpen, data, onClose } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();

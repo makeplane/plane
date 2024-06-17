@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
@@ -12,10 +12,11 @@ import { IssueDetailQuickActions } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const ProjectIssueDetailsHeader = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
   // store hooks
   const { currentProjectDetails } = useProject();

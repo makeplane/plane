@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+
 import { useTheme } from "next-themes";
 import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -9,6 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export const SwitchAccountModal: React.FC<Props> = (props) => {
   // states
   const [switchingAccount, setSwitchingAccount] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { data: userData, signOut } = useUser();
 

@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 // types
+import { useParams } from "next/navigation";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -12,7 +13,7 @@ import {
   TProfileViews,
 } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useAppRouter, useIssues } from "./store";
+import { useIssues } from "./store";
 
 interface IssueActions {
   fetchIssues: (
@@ -67,9 +68,12 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
 };
 
 const useProjectIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
-
-  const { workspaceSlug, projectId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
@@ -150,8 +154,13 @@ const useProjectIssueActions = () => {
 };
 
 const useCycleIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  const cycleId = routerCycleId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-  const { workspaceSlug, projectId, cycleId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions, cycleId?: string) => {
@@ -256,9 +265,13 @@ const useCycleIssueActions = () => {
 };
 
 const useModuleIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  const moduleId = routerModuleId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
-
-  const { workspaceSlug, projectId, moduleId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions, moduleId?: string) => {
@@ -353,9 +366,12 @@ const useModuleIssueActions = () => {
 };
 
 const useProfileIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, userId: routerUserId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const userId = routerUserId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROFILE);
-
-  const { workspaceSlug, userId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
@@ -434,9 +450,13 @@ const useProfileIssueActions = () => {
 };
 
 const useProjectViewIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, viewId: routerViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  const viewId = routerViewId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-
-  const { workspaceSlug, projectId, viewId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
@@ -517,9 +537,12 @@ const useProjectViewIssueActions = () => {
 };
 
 const useDraftIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
-
-  const { workspaceSlug, projectId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
@@ -584,9 +607,12 @@ const useDraftIssueActions = () => {
 };
 
 const useArchivedIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
-
-  const { workspaceSlug, projectId } = useAppRouter();
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
@@ -643,9 +669,13 @@ const useArchivedIssueActions = () => {
 };
 
 const useGlobalIssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const globalViewId = routerGlobalViewId?.toString();
+  // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.GLOBAL);
 
-  const { workspaceSlug, globalViewId } = useAppRouter();
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
       if (!workspaceSlug || !globalViewId) return;

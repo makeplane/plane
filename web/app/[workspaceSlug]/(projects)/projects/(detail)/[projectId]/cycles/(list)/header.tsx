@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // components
@@ -12,10 +12,11 @@ import { CyclesViewHeader } from "@/components/cycles";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const CyclesListHeader: FC = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();

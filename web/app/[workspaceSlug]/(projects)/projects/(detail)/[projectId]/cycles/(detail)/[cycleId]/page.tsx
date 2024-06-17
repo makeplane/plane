@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/common";
@@ -14,13 +14,14 @@ import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCycle, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
 import emptyCycle from "@/public/empty-state/cycle.svg";
 
 const CycleDetailPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
   const { fetchCycleDetails, getCycleById } = useCycle();

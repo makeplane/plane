@@ -2,7 +2,6 @@
 
 // import { useEffect } from "react";
 // import * as Sentry from "@sentry/nextjs";
-// import { useRouter } from "next/navigation";
 // services
 import { Button } from "@plane/ui";
 // helpers
@@ -24,7 +23,7 @@ import DefaultLayout from "@/layouts/default-layout";
 // TODO: adding error sentry logging.
 // const CustomErrorComponent = ({ error }: props) => {
 const CustomErrorComponent = () => {
-  // const router = useRouter();
+  // const router = useAppRouter();
 
   // useEffect(() => {
   //   Sentry.captureException(error);

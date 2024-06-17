@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
 // types
@@ -33,6 +33,7 @@ import {
   useIssues,
   useCommandPalette,
 } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -64,7 +65,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId } = useParams();
   // hooks
   const { isMobile } = usePlatformOS();

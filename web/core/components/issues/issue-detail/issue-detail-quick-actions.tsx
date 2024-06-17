@@ -2,7 +2,7 @@
 
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
@@ -17,6 +17,7 @@ import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useProjectState, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -34,7 +35,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const [isRestoring, setIsRestoring] = useState(false);
 
   // router
-  const router = useRouter();
+  const router = useAppRouter();
 
   // hooks
   const {

@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
 // components
@@ -12,11 +12,12 @@ import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ProjectArchivesHeader: FC = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   const activeTab = pathname.split("/").pop();

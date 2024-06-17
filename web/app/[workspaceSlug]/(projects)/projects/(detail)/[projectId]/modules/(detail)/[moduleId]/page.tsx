@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/common";
@@ -12,13 +12,14 @@ import { ModuleAnalyticsSidebar } from "@/components/modules";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useModule, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
 import emptyModule from "@/public/empty-state/module.svg";
 
 const ModuleIssuesPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId } = useParams();
   // store hooks
   const { fetchModuleDetails, getModuleById } = useModule();

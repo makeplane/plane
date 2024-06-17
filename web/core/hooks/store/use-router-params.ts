@@ -3,8 +3,8 @@ import { useContext } from "react";
 import { StoreContext } from "@/lib/store-context";
 import { IRouterStore } from "@/store/router.store";
 
-export const useAppRouter = (): IRouterStore => {
+export const useRouterParams = (): IRouterStore => {
   const context = useContext(StoreContext);
-  if (context === undefined) throw new Error("useAppRouter must be used within StoreProvider");
+  if (context === undefined) throw new Error("useRouterParams must be used within StoreProvider");
   return context.router;
 };

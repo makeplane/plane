@@ -1,16 +1,17 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { X, PenSquare } from "lucide-react";
 // components
 import { PageHead } from "@/components/core";
 import { DraftIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/draft-issue-layout-root";
 // hooks
 import { useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 const ProjectDraftIssuesPage = observer(() => {
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store
   const { getProjectById } = useProject();

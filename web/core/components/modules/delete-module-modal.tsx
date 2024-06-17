@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // types
 import type { IModule } from "@plane/types";
 // ui
@@ -11,6 +11,7 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { MODULE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useModule } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   data: IModule;
@@ -23,7 +24,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId, peekModule } = useParams();
   // store hooks
   const { captureModuleEvent } = useEventTracker();

@@ -1,12 +1,13 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // hooks
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useAppRouter, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -15,8 +16,10 @@ type Props = {
 
 export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { issueId } = props;
+  // router
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
-  const { workspaceSlug } = useAppRouter();
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
@@ -71,10 +74,12 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
 // rendering issues on gantt sidebar
 export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { issueId } = props;
+  // router
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
-  const { workspaceSlug } = useAppRouter();
   const {
     issue: { getIssueById },
     setPeekIssue,

@@ -1,18 +1,20 @@
 import { observer } from "mobx-react";
 // hooks
+import { useParams } from "next/navigation";
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { EUserProjectRoles } from "@/constants/project";
-import { useAppRouter, useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 // components
 // types
 // constants
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
+  // router
+  const { profileViewId } = useParams();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
-  const { profileViewId } = useAppRouter();
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
@@ -24,7 +26,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
     <BaseKanBanRoot
       QuickActions={ProjectIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
-      viewId={profileViewId}
+      viewId={profileViewId.toString()}
     />
   );
 });

@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // document-editor
 import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
@@ -20,6 +20,7 @@ import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 const PageDetailsPage = observer(() => {
   // states
@@ -30,7 +31,7 @@ const PageDetailsPage = observer(() => {
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
   const { createPage, getPageById } = useProjectPages();

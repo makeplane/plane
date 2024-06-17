@@ -2,12 +2,12 @@
 
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { AlertTriangleIcon } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// icons
+// types
 import { IProject } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -15,7 +15,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useUser } from "@/hooks/store";
-// types
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type FormData = {
   projectName: string;
@@ -36,7 +36,7 @@ export interface ILeaveProjectModal {
 export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const { project, isOpen, onClose } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();

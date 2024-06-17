@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // types
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
@@ -16,6 +15,7 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -34,7 +34,7 @@ const OnboardingPage = observer(() => {
   const [step, setStep] = useState<EOnboardingSteps | null>(null);
   const [totalSteps, setTotalSteps] = useState<number | null>(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
   const { isLoading: userLoader, data: user, updateCurrentUser } = useUser();

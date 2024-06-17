@@ -1,10 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
+// components
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
+// constants
 import { EUserProjectRoles } from "@/constants/project";
+// hooks
 import { useProjectInbox, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -17,7 +20,7 @@ type TInboxContentRoot = {
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, isMobileSidebar, setIsMobileSidebar } = props;
   /// router
-  const router = useRouter();
+  const router = useAppRouter();
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks

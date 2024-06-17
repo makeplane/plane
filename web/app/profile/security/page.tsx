@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 // ui
@@ -17,6 +16,7 @@ import { authErrorHandler } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -49,7 +49,7 @@ const SecurityPage = observer(() => {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { data: currentUser } = useUser();
   // use form
   const {
