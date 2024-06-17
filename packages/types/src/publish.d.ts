@@ -25,6 +25,7 @@ type TPublishSettings = {
   created_at: string | undefined;
   created_by: string | undefined;
   entity_identifier: string | undefined;
+  entity_name: TPublishEntityType | undefined;
   id: string | undefined;
   inbox: unknown;
   is_comments_enabled: boolean;
@@ -39,6 +40,5 @@ type TPublishSettings = {
 };
 
 export type TProjectPublishSettings = TPublishSettings & {
-  entity_name: TPublishEntityType | undefined;
   view_props: TProjectPublishViewProps | undefined;
 };
