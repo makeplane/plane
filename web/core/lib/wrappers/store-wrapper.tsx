@@ -50,7 +50,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
         dom
       );
     } else unsetCustomCssVariables();
-  }, [userProfile, userProfile?.theme, userProfile?.theme?.palette, setTheme, dom]);
+  }, [userProfile, userProfile?.theme, userProfile?.theme?.palette, setTheme, dom, resolvedTheme]);
 
   useEffect(() => {
     if (dom) return;
