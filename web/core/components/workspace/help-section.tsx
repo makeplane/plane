@@ -13,6 +13,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useCommandPalette } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 // assets
 import packageJson from "package.json";
 import { PlaneBadge } from "./plane-badge";
@@ -70,9 +72,9 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
         )}
       >
         {!isCollapsed && (
-          <>
-            <PlaneBadge />
-          </>
+          <div className="w-1/2">
+            <WorkspaceEditionBadge />
+          </div>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
           <Tooltip tooltipContent="Shortcuts" isMobile={isMobile}>
