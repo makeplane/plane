@@ -162,7 +162,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       };
 
       switch (type) {
-        case EIssueFilterType.FILTERS:
+        case EIssueFilterType.FILTERS: {
           const updatedFilters = filters as IIssueFilterOptions;
           _filters.filters = { ..._filters.filters, ...updatedFilters };
 
@@ -183,7 +183,8 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             filters: _filters.filters,
           });
           break;
-        case EIssueFilterType.DISPLAY_FILTERS:
+        }
+        case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };
 
@@ -224,7 +225,8 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
           });
 
           break;
-        case EIssueFilterType.DISPLAY_PROPERTIES:
+        }
+        case EIssueFilterType.DISPLAY_PROPERTIES: {
           const updatedDisplayProperties = filters as IIssueDisplayProperties;
           _filters.displayProperties = { ..._filters.displayProperties, ...updatedDisplayProperties };
 
@@ -242,8 +244,9 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             display_properties: _filters.displayProperties,
           });
           break;
+        }
 
-        case EIssueFilterType.KANBAN_FILTERS:
+        case EIssueFilterType.KANBAN_FILTERS: {
           const updatedKanbanFilters = filters as TIssueKanbanFilters;
           _filters.kanbanFilters = { ..._filters.kanbanFilters, ...updatedKanbanFilters };
 
@@ -264,6 +267,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
           });
 
           break;
+        }
         default:
           break;
       }

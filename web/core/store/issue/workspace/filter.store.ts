@@ -190,7 +190,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       };
 
       switch (type) {
-        case EIssueFilterType.FILTERS:
+        case EIssueFilterType.FILTERS: {
           const updatedFilters = filters as IIssueFilterOptions;
           _filters.filters = { ..._filters.filters, ...updatedFilters };
 
@@ -207,7 +207,8 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
           );
           break;
-        case EIssueFilterType.DISPLAY_FILTERS:
+        }
+        case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };
 
@@ -252,7 +253,8 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
 
           break;
-        case EIssueFilterType.DISPLAY_PROPERTIES:
+        }
+        case EIssueFilterType.DISPLAY_PROPERTIES: {
           const updatedDisplayProperties = filters as IIssueDisplayProperties;
           _filters.displayProperties = { ..._filters.displayProperties, ...updatedDisplayProperties };
 
@@ -274,8 +276,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
               display_properties: _filters.displayProperties,
             });
           break;
+        }
 
-        case EIssueFilterType.KANBAN_FILTERS:
+        case EIssueFilterType.KANBAN_FILTERS: {
           const updatedKanbanFilters = filters as TIssueKanbanFilters;
           _filters.kanbanFilters = { ..._filters.kanbanFilters, ...updatedKanbanFilters };
 
@@ -296,6 +299,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           });
 
           break;
+        }
         default:
           break;
       }
