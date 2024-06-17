@@ -520,10 +520,11 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    def get(self, request, slug, project_id):
-        if not DeployBoard.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).exists():
+    def get(self, request, anchor):
+        deploy_board = DeployBoard.objects.filter(
+            anchor=anchor, entity_name="project"
+        ).first()
+        if not deploy_board:
             return Response(
                 {"error": "Project is not published"},
                 status=status.HTTP_404_NOT_FOUND,
@@ -542,6 +543,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         ]
 
         order_by_param = request.GET.get("order_by", "-created_at")
+
+        project_id = deploy_board.entity_identifier
+        slug = deploy_board.workspace.slug
 
         issue_queryset = (
             Issue.issue_objects.annotate(

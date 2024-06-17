@@ -156,7 +156,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     });
   }, [projectPublishSettings, reset]);
 
-  const publishLink = `${SPACE_BASE_URL}/${projectPublishSettings?.anchor}`;
+  const publishLink = `${SPACE_BASE_URL}/issues/${projectPublishSettings?.anchor}`;
 
   const handleCopyLink = () =>
     copyTextToClipboard(publishLink).then(() =>
@@ -171,7 +171,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish page</h5>
+          <h5 className="text-xl font-medium text-custom-text-200">Publish project</h5>
           {project.anchor && (
             <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
