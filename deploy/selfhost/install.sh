@@ -394,19 +394,6 @@ else
     COMPOSE_CMD="docker compose"
 fi
 
-# CPU ARCHITECHTURE BASED SETTINGS
-CPU_ARCH=$(uname -m)
-if [[ $FORCE_CPU == "amd64" || $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
-then
-    USE_GLOBAL_IMAGES=1
-    DOCKERHUB_USER=marigbede
-    PULL_POLICY=always
-else
-    USE_GLOBAL_IMAGES=0
-    DOCKERHUB_USER=myplane
-    PULL_POLICY=never
-fi
-
 if [ "$BRANCH" == "master" ];
 then
     export APP_RELEASE=stable
@@ -438,5 +425,4 @@ then
 fi
 
 print_header
-USE_GLOBAL_IMAGES=0
 askForAction $@
