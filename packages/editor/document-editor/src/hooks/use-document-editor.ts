@@ -57,6 +57,7 @@ export const useDocumentEditor = ({
     }
   }, [value, provider.document]);
 
+  // sync document with indexedDB initially
   useEffect(() => {
     const syncUpdatesFromIndexedDB = async () => {
       const update = await provider.getUpdateFromIndexedDB();
@@ -65,7 +66,7 @@ export const useDocumentEditor = ({
 
     syncUpdatesFromIndexedDB();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [provider]);
 
   const editor = useEditor({
     id,

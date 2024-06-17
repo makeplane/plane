@@ -131,7 +131,6 @@ export const usePageDescription = (props: Props) => {
   const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
 
   useEffect(() => {
-    console.log("descriptionUpdates", descriptionUpdates.length);
     if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
     else setShowAlert(false);
   }, [descriptionUpdates, isSubmitting, setShowAlert]);
