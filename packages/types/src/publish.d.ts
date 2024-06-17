@@ -1,6 +1,6 @@
 import { IProject, IProjectLite, IWorkspaceLite } from "@plane/types";
 
-export type TPublishEntityType = "project";
+export type TPublishEntityType = "project" | "page";
 
 export type TProjectPublishLayouts =
   | "calendar"
