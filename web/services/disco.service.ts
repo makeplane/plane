@@ -1,4 +1,4 @@
-import { IPaymentProduct } from "@plane/types";
+import { IPaymentProduct, IWorkspaceProductSubscription } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -9,7 +9,6 @@ export class DiscoService extends APIService {
     super(API_BASE_URL);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   listProducts(workspaceSlug: string): Promise<IPaymentProduct[]> {
     return this.get(`/api/payments/workspaces/${workspaceSlug}/products/`)
       .then((response) => response?.data)
@@ -20,6 +19,14 @@ export class DiscoService extends APIService {
 
   getPaymentLink(workspaceSlug: string, data = {}) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/payment-link/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  getWorkspaceCurrentPlane(workspaceSlug: string): Promise<IWorkspaceProductSubscription> {
+    return this.get(`/api/payments/workspaces/${workspaceSlug}/current-plan/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

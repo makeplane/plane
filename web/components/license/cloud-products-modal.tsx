@@ -8,6 +8,8 @@ import { CheckCircle } from "lucide-react";
 import { Dialog, Transition, Tab } from "@headlessui/react";
 // types
 import { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
+// ui
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // store
 import { useEventTracker } from "@/hooks/store";
 // services
@@ -76,6 +78,13 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
         if (response.payment_link) {
           window.open(response.payment_link, "_blank");
         }
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to generate payment link. Please try again.",
+        });
       })
       .finally(() => {
         setLoading(false);

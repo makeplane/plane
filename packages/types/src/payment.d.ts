@@ -14,3 +14,8 @@ export type IPaymentProduct = {
   type: "PRO" | "ULTIMATE";
   prices: IPaymentProductPrice[];
 };
+
+export type IWorkspaceProductSubscription = {
+  product: FREE | PRO | ULTIMATE;
+  expiry_date: string | null;
+};
