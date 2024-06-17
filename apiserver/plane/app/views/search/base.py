@@ -2,14 +2,17 @@
 import re
 
 # Django imports
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Subquery, Value, UUIDField, CharField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView
+from plane.app.views.base import BaseAPIView
 from plane.db.models import (
     Workspace,
     Project,
@@ -18,8 +21,8 @@ from plane.db.models import (
     Module,
     Page,
     IssueView,
+    ProjectPage,
 )
-from plane.utils.issue_search import search_issues
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -145,22 +148,51 @@ class GlobalSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
 
-        pages = Page.objects.filter(
-            q,
-            projects__project_projectmember__member=self.request.user,
-            projects__project_projectmember__is_active=True,
-            projects__archived_at__isnull=True,
-            workspace__slug=slug,
+        pages = (
+            Page.objects.filter(
+                q,
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
+                workspace__slug=slug,
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .annotate(
+                project_identifiers=Coalesce(
+                    ArrayAgg(
+                        "projects__identifier",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(CharField())),
+                ),
+            )
         )
 
         if workspace_search == "false" and project_id:
-            pages = pages.filter(project_id=project_id)
+            project_subquery = ProjectPage.objects.filter(
+                page_id=OuterRef("id"),
+                project_id=project_id,
+            ).values_list("project_id", flat=True)[:1]
+
+            pages = pages.annotate(
+                project_id=Subquery(project_subquery)
+            ).filter(project_id=project_id)
 
         return pages.distinct().values(
             "name",
             "id",
-            "project_id",
-            "project__identifier",
+            "project_ids",
+            "project_identifiers",
             "workspace__slug",
         )
 
@@ -228,76 +260,3 @@ class GlobalSearchEndpoint(BaseAPIView):
             func = MODELS_MAPPER.get(model, None)
             results[model] = func(query, slug, project_id, workspace_search)
         return Response({"results": results}, status=status.HTTP_200_OK)
-
-
-class IssueSearchEndpoint(BaseAPIView):
-    def get(self, request, slug, project_id):
-        query = request.query_params.get("search", False)
-        workspace_search = request.query_params.get(
-            "workspace_search", "false"
-        )
-        parent = request.query_params.get("parent", "false")
-        issue_relation = request.query_params.get("issue_relation", "false")
-        cycle = request.query_params.get("cycle", "false")
-        module = request.query_params.get("module", False)
-        sub_issue = request.query_params.get("sub_issue", "false")
-        target_date = request.query_params.get("target_date", True)
-
-        issue_id = request.query_params.get("issue_id", False)
-
-        issues = Issue.issue_objects.filter(
-            workspace__slug=slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-        )
-
-        if workspace_search == "false":
-            issues = issues.filter(project_id=project_id)
-
-        if query:
-            issues = search_issues(query, issues)
-
-        if parent == "true" and issue_id:
-            issue = Issue.issue_objects.get(pk=issue_id)
-            issues = issues.filter(
-                ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
-            )
-        if issue_relation == "true" and issue_id:
-            issue = Issue.issue_objects.get(pk=issue_id)
-            issues = issues.filter(
-                ~Q(pk=issue_id),
-                ~Q(issue_related__issue=issue),
-                ~Q(issue_relation__related_issue=issue),
-            )
-        if sub_issue == "true" and issue_id:
-            issue = Issue.issue_objects.get(pk=issue_id)
-            issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
-            if issue.parent:
-                issues = issues.filter(~Q(pk=issue.parent_id))
-
-        if cycle == "true":
-            issues = issues.exclude(issue_cycle__isnull=False)
-
-        if module:
-            issues = issues.exclude(issue_module__module=module)
-
-        if target_date == "none":
-            issues = issues.filter(target_date__isnull=True)
-
-        return Response(
-            issues.values(
-                "name",
-                "id",
-                "start_date",
-                "sequence_id",
-                "project__name",
-                "project__identifier",
-                "project_id",
-                "workspace__slug",
-                "state__name",
-                "state__group",
-                "state__color",
-            ),
-            status=status.HTTP_200_OK,
-        )

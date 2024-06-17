@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 //TODO: remove temp flag isActive later and use showAlert as the source of truth
 const useReloadConfirmations = (isActive = true) => {

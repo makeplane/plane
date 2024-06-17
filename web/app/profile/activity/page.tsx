@@ -6,9 +6,12 @@ import { observer } from "mobx-react";
 import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar";
 import { EmptyState } from "@/components/empty-state";
-import { ProfileActivityListPage } from "@/components/profile";
+import {
+  ProfileActivityListPage,
+  ProfileSettingContentHeader,
+  ProfileSettingContentWrapper,
+} from "@/components/profile";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 
@@ -51,22 +54,17 @@ const ProfileActivityPage = observer(() => {
   return (
     <>
       <PageHead title="Profile - Activity" />
-      <section className="mx-auto mt-5 md:mt-16 h-full w-full flex flex-col overflow-hidden px-5 md:px-8 pb-8 lg:w-3/5">
-        <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
-          <SidebarHamburgerToggle />
-          <h3 className="text-xl font-medium">Activity</h3>
-        </div>
-        <div className="vertical-scrollbar scrollbar-md flex h-full w-full flex-col overflow-y-auto">
-          {activityPages}
-          {isLoadMoreVisible && (
-            <div className="flex w-full items-center justify-center text-xs">
-              <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
-                Load more
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
+      <ProfileSettingContentWrapper>
+        <ProfileSettingContentHeader title="Activity" />
+        {activityPages}
+        {isLoadMoreVisible && (
+          <div className="flex w-full items-center justify-center text-xs">
+            <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+              Load more
+            </Button>
+          </div>
+        )}
+      </ProfileSettingContentWrapper>
     </>
   );
 });
