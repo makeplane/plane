@@ -2,12 +2,13 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IUser } from "@plane/types";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // store types
 import { ProfileStore, IProfileStore } from "@/store/profile.store";
-import { RootStore } from "@/store/root.store";
 // types
 import { ActorDetail } from "@/types/issue";
 

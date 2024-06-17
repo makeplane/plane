@@ -2,12 +2,12 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { IStateLite } from "@plane/types";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import IssueService from "@/services/issue.service";
 // types
 import { IIssue, IIssueLabel } from "@/types/issue";
-// store
-import { RootStore } from "./root.store";
 
 export interface IIssueStore {
   loader: boolean;
@@ -88,6 +88,7 @@ export class IssueStore implements IIssueStore {
     } catch (error) {
       this.loader = false;
       this.error = error;
+      throw error;
     }
   };
 

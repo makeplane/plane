@@ -16,7 +16,7 @@ def log_exception(e):
 
     if settings.DEBUG:
         # Print the traceback if in debug mode
-        traceback.print_exc(e)
+        print(traceback.format_exc())
 
     # Capture in sentry if configured
     capture_exception(e)
