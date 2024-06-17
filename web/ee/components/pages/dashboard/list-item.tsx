@@ -45,13 +45,7 @@ export const PagesAppDashboardListItem: React.FC<Props> = (props) => {
           e.stopPropagation();
         }}
       >
-        <PageQuickActions
-          parentRef={parentRef}
-          // @ts-expect-error types of workspace page store and project page store needs to be same
-          // TODO: make the types same
-          page={page}
-          pageLink={`/${workspaceSlug}/pages`}
-        />
+        <PageQuickActions parentRef={parentRef} page={page} pageLink={`/${workspaceSlug}/pages`} />
       </div>
     </Link>
   );

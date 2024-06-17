@@ -85,13 +85,7 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
       />
 
       {/* quick actions dropdown */}
-      <PageQuickActions
-        parentRef={parentRef}
-        // @ts-expect-error types of workspace page store and project page store needs to be same
-        // TODO: make the types same
-        page={page}
-        pageLink={`${workspaceSlug}/pages/${pageId}`}
-      />
+      <PageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${pageId}`} />
     </>
   );
 });

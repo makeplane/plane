@@ -3,18 +3,14 @@ import unset from "lodash/unset";
 import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TPageFilters, TPageNavigationTabs } from "@plane/types";
+import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
-// plane web helpers
-import { filterPagesByPageType, orderPages, shouldFilterPage } from "@/plane-web/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/workspace-page.service";
 // plane web store
 import { IWorkspacePageDetails, WorkspacePageDetails } from "@/plane-web/store/pages/page";
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import { TWorkspacePage } from "@/plane-web/types";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -36,9 +32,9 @@ export interface IWorkspacePageStore {
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
-  fetchAllPages: () => Promise<TWorkspacePage[] | undefined>;
-  fetchPageById: (pageId: string) => Promise<TWorkspacePage | undefined>;
-  createPage: (pageData: Partial<TWorkspacePage>) => Promise<TWorkspacePage | undefined>;
+  fetchAllPages: () => Promise<TPage[] | undefined>;
+  fetchPageById: (pageId: string) => Promise<TPage | undefined>;
+  createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   deletePage: (pageId: string) => Promise<void>;
 }
 
@@ -227,7 +223,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    * @description create a page
    * @param {Partial<TPage>} pageData
    */
-  createPage = async (pageData: Partial<TWorkspacePage>) => {
+  createPage = async (pageData: Partial<TPage>) => {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug) return undefined;

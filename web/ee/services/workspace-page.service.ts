@@ -1,9 +1,7 @@
 // types
-import { TPageEmbedType } from "@plane/types";
+import { TPage, TPageEmbedType } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// plane web types
-import { TWorkspacePage } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -12,7 +10,7 @@ export class WorkspacePageService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchAll(workspaceSlug: string): Promise<TWorkspacePage[]> {
+  async fetchAll(workspaceSlug: string): Promise<TPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -20,7 +18,7 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async fetchById(workspaceSlug: string, pageId: string): Promise<TWorkspacePage> {
+  async fetchById(workspaceSlug: string, pageId: string): Promise<TPage> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -28,7 +26,7 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async create(workspaceSlug: string, data: Partial<TWorkspacePage>): Promise<TWorkspacePage> {
+  async create(workspaceSlug: string, data: Partial<TPage>): Promise<TPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/pages/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -36,7 +34,7 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async update(workspaceSlug: string, pageId: string, data: Partial<TWorkspacePage>): Promise<TWorkspacePage> {
+  async update(workspaceSlug: string, pageId: string, data: Partial<TPage>): Promise<TPage> {
     return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {

@@ -103,8 +103,6 @@ const PageDetailsPage = observer(() => {
             readOnlyEditorReady={readOnlyEditorReady}
             handleDuplicatePage={handleDuplicatePage}
             markings={markings}
-            // @ts-expect-error types of workspace page store and project page store needs to be same
-            // TODO: make the types same
             page={page}
             sidePeekVisible={sidePeekVisible}
             setSidePeekVisible={(state) => setSidePeekVisible(state)}

@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TLogoProps } from "@plane/types";
+import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
@@ -9,16 +9,14 @@ import { EUserProjectRoles } from "@/constants/project";
 import { WorkspacePageService } from "@/plane-web/services/workspace-page.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import { TWorkspacePage } from "@/plane-web/types";
 
 export type TLoader = "submitting" | "submitted" | "saved";
 
-export interface IWorkspacePageDetails extends TWorkspacePage {
+export interface IWorkspacePageDetails extends TPage {
   // observables
   isSubmitting: TLoader;
   // computed
-  asJSON: TWorkspacePage | undefined;
+  asJSON: TPage | undefined;
   currentUserHighestRole: EUserProjectRoles;
   isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
   canCurrentUserEditPage: boolean; // it will give the user permission to read the page or write the page
@@ -33,7 +31,7 @@ export interface IWorkspacePageDetails extends TWorkspacePage {
   setIsSubmitting: (value: TLoader) => void;
   cleanup: () => void;
   // actions
-  update: (pageData: Partial<TWorkspacePage>) => Promise<TWorkspacePage | undefined>;
+  update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (binaryString: string, descriptionHTML: string) => Promise<void>;
   makePublic: () => Promise<void>;
@@ -56,14 +54,14 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
   logo_props: TLogoProps | undefined;
   description_html: string | undefined;
   color: string | undefined;
-  labels: string[] | undefined;
+  label_ids: string[] | undefined;
   owned_by: string | undefined;
   access: EPageAccess | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | null | undefined;
   workspace: string | undefined;
-  projects: string[] | undefined;
+  project_ids: string[] | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
@@ -77,21 +75,21 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
 
   constructor(
     private store: RootStore,
-    page: TWorkspacePage
+    page: TPage
   ) {
     this.id = page?.id || undefined;
     this.name = page?.name;
     this.logo_props = page?.logo_props || undefined;
     this.description_html = page?.description_html || undefined;
     this.color = page?.color || undefined;
-    this.labels = page?.labels || undefined;
+    this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
     this.access = page?.access || EPageAccess.PUBLIC;
     this.is_favorite = page?.is_favorite || false;
     this.is_locked = page?.is_locked || false;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
-    this.projects = page?.projects || undefined;
+    this.project_ids = page?.project_ids || undefined;
     this.created_by = page?.created_by || undefined;
     this.updated_by = page?.updated_by || undefined;
     this.created_at = page?.created_at || undefined;
@@ -107,14 +105,14 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
       logo_props: observable.ref,
       description_html: observable.ref,
       color: observable.ref,
-      labels: observable,
+      label_ids: observable,
       owned_by: observable.ref,
       access: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       archived_at: observable.ref,
       workspace: observable.ref,
-      projects: observable,
+      project_ids: observable,
       created_by: observable.ref,
       updated_by: observable.ref,
       created_at: observable.ref,
@@ -185,7 +183,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
       name: this.name,
       description_html: this.description_html,
       color: this.color,
-      labels: this.labels,
+      label_ids: this.label_ids,
       owned_by: this.owned_by,
       access: this.access,
       logo_props: this.logo_props,
@@ -193,7 +191,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
       is_locked: this.is_locked,
       archived_at: this.archived_at,
       workspace: this.workspace,
-      projects: this.projects,
+      project_ids: this.project_ids,
       created_by: this.created_by,
       updated_by: this.updated_by,
       created_at: this.created_at,
@@ -204,7 +202,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
   get currentUserHighestRole() {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return EUserProjectRoles.GUEST;
-    const projectsList = this.projects ?? [];
+    const projectsList = this.project_ids ?? [];
     const allProjectsRoles = this.store.user.membership.workspaceProjectsRole[workspaceSlug];
     if (!allProjectsRoles) return EUserProjectRoles.GUEST;
     const userRoles = projectsList.map((projectId) => allProjectsRoles[projectId]);
@@ -293,7 +291,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description update the page
    * @param {Partial<TPage>} pageData
    */
-  update = async (pageData: Partial<TWorkspacePage>) => {
+  update = async (pageData: Partial<TPage>) => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !this.id) return undefined;
 
@@ -301,7 +299,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
     try {
       runInAction(() => {
         Object.keys(pageData).forEach((key) => {
-          const currentPageKey = key as keyof TWorkspacePage;
+          const currentPageKey = key as keyof TPage;
           set(this, key, pageData[currentPageKey] || undefined);
         });
       });
@@ -310,7 +308,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
     } catch (error) {
       runInAction(() => {
         Object.keys(pageData).forEach((key) => {
-          const currentPageKey = key as keyof TWorkspacePage;
+          const currentPageKey = key as keyof TPage;
           set(this, key, currentPage?.[currentPageKey] || undefined);
         });
       });
