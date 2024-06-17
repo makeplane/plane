@@ -304,7 +304,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
         </Button>
       </div>
-      {errors.name?.message && <p className="p-0.5 text-sm text-red-500">{errors.name?.message}</p>}
+      {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
     </form>
   );
 });
