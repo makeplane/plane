@@ -1,10 +1,16 @@
 import { observable, makeObservable, computed } from "mobx";
 // types
-import { IWorkspaceLite, TProjectDetails, TPublishEntityType, TPublishSettings, TPublishViewProps } from "@plane/types";
+import {
+  IWorkspaceLite,
+  TProjectDetails,
+  TPublishEntityType,
+  TProjectPublishSettings,
+  TProjectPublishViewProps,
+} from "@plane/types";
 // store types
 import { RootStore } from "@/store/root.store";
 
-export interface IPublishStore extends TPublishSettings {
+export interface IPublishStore extends TProjectPublishSettings {
   // computed
   workspaceSlug: string | undefined;
   canComment: boolean;
@@ -27,14 +33,14 @@ export class PublishStore implements IPublishStore {
   is_reactions_enabled: boolean;
   updated_at: string | undefined;
   updated_by: string | undefined;
-  view_props: TPublishViewProps | undefined;
+  view_props: TProjectPublishViewProps | undefined;
   is_votes_enabled: boolean;
   workspace: string | undefined;
   workspace_detail: IWorkspaceLite | undefined;
 
   constructor(
     private store: RootStore,
-    publishSettings: TPublishSettings
+    publishSettings: TProjectPublishSettings
   ) {
     this.anchor = publishSettings.anchor;
     this.is_comments_enabled = publishSettings.is_comments_enabled;

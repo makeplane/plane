@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
-import { IProject, TProjectPublishLayouts, TPublishSettings } from "@plane/types";
+import { IProject, TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-const defaultValues: Partial<TPublishSettings> = {
+const defaultValues: Partial<TProjectPublishSettings> = {
   is_comments_enabled: false,
   is_reactions_enabled: false,
   is_votes_enabled: false,
@@ -81,12 +81,12 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     }
   }, [fetchPublishSettings, isOpen, project, projectPublishSettings, workspaceSlug]);
 
-  const handlePublishProject = async (payload: Partial<TPublishSettings>) => {
+  const handlePublishProject = async (payload: Partial<TProjectPublishSettings>) => {
     if (!workspaceSlug) return;
     await publishProject(workspaceSlug.toString(), project.id, payload);
   };
 
-  const handleUpdatePublishSettings = async (payload: Partial<TPublishSettings>) => {
+  const handleUpdatePublishSettings = async (payload: Partial<TProjectPublishSettings>) => {
     if (!workspaceSlug || !payload.id) return;
 
     await updatePublishSettings(workspaceSlug.toString(), project.id, payload.id, payload).then((res) => {
@@ -124,7 +124,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     .map(([key, value]) => key)
     .filter((l) => VIEW_OPTIONS.find((o) => o.key === l));
 
-  const handleFormSubmit = async (formData: Partial<TPublishSettings>) => {
+  const handleFormSubmit = async (formData: Partial<TProjectPublishSettings>) => {
     if (!selectedLayouts || selectedLayouts.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -134,7 +134,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       return;
     }
 
-    const payload: Partial<TPublishSettings> = {
+    const payload: Partial<TProjectPublishSettings> = {
       id: formData.id,
       is_comments_enabled: formData.is_comments_enabled,
       is_reactions_enabled: formData.is_reactions_enabled,
