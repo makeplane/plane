@@ -71,6 +71,7 @@ export const CoreEditorExtensions = ({
     },
     code: false,
     codeBlock: false,
+    history: false,
     horizontalRule: false,
     blockquote: false,
     dropcursor: {
