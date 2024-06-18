@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // types
 import { IInstance, IInstanceConfig } from "@plane/types";
 // services
@@ -19,6 +19,8 @@ export interface IInstanceStore {
   instance: IInstance | undefined;
   config: IInstanceConfig | undefined;
   error: TError | undefined;
+  // computed
+  isUpdateAvailable: boolean;
   // action
   fetchInstanceInfo: () => Promise<void>;
 }
@@ -38,11 +40,18 @@ export class InstanceStore implements IInstanceStore {
       instance: observable,
       config: observable,
       error: observable,
+      // computed
+      isUpdateAvailable: computed,
       // actions
       fetchInstanceInfo: action,
     });
     // services
     this.instanceService = new InstanceService();
+  }
+
+  get isUpdateAvailable() {
+    if (!this.instance || !this.instance.latest_version) return false;
+    return this.instance.current_version !== this.instance.latest_version;
   }
 
   /**

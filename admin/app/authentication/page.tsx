@@ -10,7 +10,6 @@ import { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
 import { PageHeader } from "@/components/core";
-// hooks
 // helpers
 import { cn, resolveGeneralTheme } from "@/helpers/common.helper";
 import { useInstance } from "@/hooks/store";
@@ -19,6 +18,9 @@ import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
 import GitlabLogo from "@/public/logos/gitlab-logo.svg";
 import GoogleLogo from "@/public/logos/google-logo.svg";
+// images - enterprise
+import OIDCLogo from "@/public/logos/oidc-logo.png";
+import SAMLLogo from "@/public/logos/saml-logo.svg";
 // local components
 import {
   AuthenticationMethodCard,
@@ -27,6 +29,9 @@ import {
   GitlabConfiguration,
   GithubConfiguration,
   GoogleConfiguration,
+  // enterprise
+  OIDCConfiguration,
+  SAMLConfiguration,
 } from "./components";
 
 type TInstanceAuthenticationMethodCard = {
@@ -126,6 +131,24 @@ const InstanceAuthenticationPage = observer(() => {
       config: <GitlabConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
     },
   ];
+
+  // Enterprise authentication methods
+  authenticationMethodsCard.push(
+    {
+      key: "oidc",
+      name: "OIDC",
+      description: "Authenticate your users via the OpenID connect protocol.",
+      icon: <Image src={OIDCLogo} height={20} width={20} alt="OIDC Logo" />,
+      config: <OIDCConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
+    },
+    {
+      key: "saml",
+      name: "SAML",
+      description: "Authenticate your users via Security Assertion Markup Language protocol.",
+      icon: <Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pb-0.5 pl-0.5" />,
+      config: <SAMLConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
+    }
+  );
 
   return (
     <>
