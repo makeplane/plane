@@ -273,10 +273,19 @@ export class Estimate implements IEstimate {
         newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
       );
 
+      const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
+      if (currentIssues) {
+        currentIssues.map((issue) => {
+          if (issue.estimate_point === estimatePointId) {
+            this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
+          }
+        });
+      }
+
       runInAction(() => {
         unset(this.estimatePoints, [estimatePointId]);
       });
-      if (deleteEstimatePoint && deleteEstimatePoint.length > 0) {
+      if (deleteEstimatePoint) {
         runInAction(() => {
           deleteEstimatePoint.map((estimatePoint) => {
             if (estimatePoint.id)

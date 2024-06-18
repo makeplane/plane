@@ -22,7 +22,7 @@ export interface IInboxIssueStore {
   // actions
   updateInboxIssueStatus: (status: TInboxIssueStatus) => Promise<void>; // accept, decline
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
-  updateInboxIssueSnoozeTill: (date: Date) => Promise<void>; // snooze the issue
+  updateInboxIssueSnoozeTill: (date: Date | undefined) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   fetchIssueActivity: () => Promise<void>; // fetching the issue activity
@@ -53,7 +53,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     this.id = data.id;
     this.status = data.status;
     this.issue = data?.issue;
-    this.snoozed_till = data?.snoozed_till ? new Date(data.snoozed_till) : undefined;
+    this.snoozed_till = data?.snoozed_till || undefined;
     this.duplicate_to = data?.duplicate_to || undefined;
     this.created_by = data?.created_by || undefined;
     this.duplicate_issue_detail = data?.duplicate_issue_detail || undefined;
@@ -124,8 +124,8 @@ export class InboxIssueStore implements IInboxIssueStore {
     }
   };
 
-  updateInboxIssueSnoozeTill = async (date: Date) => {
-    const inboxStatus = EInboxIssueStatus.SNOOZED;
+  updateInboxIssueSnoozeTill = async (date: Date | undefined) => {
+    const inboxStatus = date ? EInboxIssueStatus.SNOOZED : EInboxIssueStatus.PENDING;
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
       snoozed_till: this.snoozed_till,
@@ -134,7 +134,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       if (!this.issue.id) return;
       const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
-        snoozed_till: new Date(date),
+        snoozed_till: date ? new Date(date) : null,
       });
       runInAction(() => {
         set(this, "status", inboxIssue?.status);
