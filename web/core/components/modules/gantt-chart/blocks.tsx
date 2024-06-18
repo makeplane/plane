@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // hooks
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";
@@ -10,7 +10,8 @@ import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 import { MODULE_STATUS } from "@/constants/module";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // constants
-import { useAppRouter, useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -20,9 +21,9 @@ type Props = {
 export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceSlug } = useAppRouter();
   const { getModuleById } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -34,7 +35,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
       className="relative flex h-full w-full items-center rounded"
       style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === moduleDetails?.status)?.color }}
       onClick={() =>
-        router.push(`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`)
+        router.push(`/${workspaceSlug?.toString()}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`)
       }
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
@@ -59,8 +60,8 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
 
 export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { moduleId } = props;
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceSlug } = useAppRouter();
   const { getModuleById } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -68,7 +69,7 @@ export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <Link
       className="relative flex h-full w-full items-center gap-2"
-      href={`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`}
+      href={`/${workspaceSlug?.toString()}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`}
       draggable={false}
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />

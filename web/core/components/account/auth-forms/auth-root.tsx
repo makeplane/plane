@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { IEmailCheckData } from "@plane/types";
 // components
 import {
@@ -23,6 +23,7 @@ import {
 } from "@/helpers/authentication.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -34,7 +35,7 @@ type TAuthRoot = {
 
 export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   //router
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   // query params
   const emailParam = searchParams.get("email");

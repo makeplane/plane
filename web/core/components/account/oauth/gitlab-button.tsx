@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -12,14 +12,14 @@ export type GitlabOAuthButtonProps = {
 };
 
 export const GitlabOAuthButton: FC<GitlabOAuthButtonProps> = (props) => {
-  const { query } = useRouter();
-  const { next_path } = query;
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get("next_path") || undefined;
   const { text } = props;
   // hooks
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
+    window.location.assign(`${API_BASE_URL}/auth/gitlab/${nextPath ? `?next_path=${nextPath}` : ``}`);
   };
 
   return (

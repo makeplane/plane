@@ -1,20 +1,22 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
+import { useParams } from "next/navigation";
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { EUserProjectRoles } from "@/constants/project";
-import { useAppRouter, useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 // components
 // types
 // constants
 import { BaseListRoot } from "../base-list-root";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
+  // router
+  const { profileViewId } = useParams();
+  // store
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
-
-  const { profileViewId } = useAppRouter();
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
@@ -26,7 +28,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     <BaseListRoot
       QuickActions={ProjectIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
-      viewId={profileViewId}
+      viewId={profileViewId.toString()}
     />
   );
 });

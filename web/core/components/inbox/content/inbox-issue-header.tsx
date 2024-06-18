@@ -2,7 +2,6 @@
 
 import { FC, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import {
   CircleCheck,
   CircleX,
@@ -33,6 +32,7 @@ import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useProjectInbox, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -60,7 +60,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     membership: { currentProjectRole },
   } = useUser();
 
-  const router = useRouter();
+  const router = useAppRouter();
   const { getProjectById } = useProject();
 
   const issue = inboxIssue?.issue;

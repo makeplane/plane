@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // icons
 import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
@@ -17,6 +17,7 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -43,7 +44,7 @@ const authService = new AuthService();
 
 const SetPasswordPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");

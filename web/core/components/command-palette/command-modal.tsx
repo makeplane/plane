@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -26,6 +26,7 @@ import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -68,7 +69,7 @@ export const CommandModal: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
 
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // router params
   const { workspaceSlug, projectId, issueId } = useParams();
 

@@ -3,13 +3,14 @@
 /* eslint-disable react/display-name */
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { TIssue } from "@plane/types";
 // components
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import { cn } from "@/helpers/common.helper";
-import { useAppRouter, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // types
@@ -31,7 +32,7 @@ export const CalendarIssueBlock = observer(
     const blockRef = useRef(null);
     const menuActionRef = useRef<HTMLDivElement | null>(null);
     // hooks
-    const { workspaceSlug, projectId } = useAppRouter();
+    const { workspaceSlug, projectId } = useParams();
     const { getProjectIdentifierById } = useProject();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
@@ -45,7 +46,7 @@ export const CalendarIssueBlock = observer(
       issue.project_id &&
       issue.id &&
       !getIsIssuePeeked(issue.id) &&
-      setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+      setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -69,7 +70,7 @@ export const CalendarIssueBlock = observer(
     return (
       <ControlLink
         id={`issue-${issue.id}`}
-        href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+        href={`/${workspaceSlug.toString()}/projects/${projectId.toString()}/issues/${issue.id}`}
         target="_blank"
         onClick={() => handleIssuePeekOverview(issue)}
         className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"

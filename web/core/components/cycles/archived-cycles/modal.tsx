@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, Fragment } from "react";
-import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useCycle } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   workspaceSlug: string;
@@ -20,7 +20,7 @@ type Props = {
 export const ArchiveCycleModal: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, cycleId, isOpen, handleClose } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // states
   const [isArchiving, setIsArchiving] = useState(false);
   // store hooks

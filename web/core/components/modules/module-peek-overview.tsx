@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useModule } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { ModuleAnalyticsSidebar } from "./";
 
@@ -15,7 +16,7 @@ type Props = {
 
 export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");

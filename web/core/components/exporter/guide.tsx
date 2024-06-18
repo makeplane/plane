@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
@@ -20,6 +20,7 @@ import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -31,7 +32,7 @@ const IntegrationGuide = observer(() => {
   const per_page = 10;
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");

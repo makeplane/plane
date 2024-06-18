@@ -4,7 +4,7 @@ import { useState } from "react";
 //TODO: remove temp flag isActive later and use showAlert as the source of truth
 const useReloadConfirmations = (isActive = true) => {
   const [showAlert, setShowAlert] = useState(false);
-  // const router = useRouter();
+  // const router = useAppRouter();
 
   // const handleBeforeUnload = useCallback(
   //   (event: BeforeUnloadEvent) => {

@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
 import { Check, Info } from "lucide-react";
 // ui
@@ -13,7 +13,8 @@ import { ModuleListItemAction } from "@/components/modules";
 // helpers
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
-import { useAppRouter, useModule, useProjectEstimates } from "@/hooks/store";
+import { useModule, useProjectEstimates } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
@@ -27,14 +28,13 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // refs
   const parentRef = useRef(null);
   // router
-  const router = useRouter();
-  const { workspaceSlug } = useParams();
+  const router = useAppRouter();
+  const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
-  const { projectId } = useAppRouter();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived values
@@ -50,7 +50,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const isEstimateEnabled =
     projectId &&
     currentActiveEstimateId &&
-    areEstimateEnabledByProjectId(projectId) &&
+    areEstimateEnabledByProjectId(projectId?.toString()) &&
     estimateById(currentActiveEstimateId)?.type === EEstimateSystem.POINTS;
 
   const completionPercentage = isEstimateEnabled

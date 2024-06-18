@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   isOpen: boolean;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const DeactivateAccountModal: React.FC<Props> = (props) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const { isOpen, onClose } = props;
   // hooks
   const { deactivateAccount, signOut } = useUser();

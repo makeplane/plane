@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
@@ -9,16 +10,18 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useAppRouter, useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
   const { toggleCreateIssueModal, toggleCommandPaletteModal } = useCommandPalette();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
   const {

@@ -3,10 +3,12 @@
 import { Command } from "cmdk";
 // hooks
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
+// hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   closePalette: () => void;
@@ -15,7 +17,7 @@ type Props = {
 export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) => {
   const { closePalette } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // router params
   const { workspaceSlug } = useParams();
   // mobx store

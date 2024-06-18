@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/common";
@@ -10,11 +10,12 @@ import { ProjectViewLayoutRoot } from "@/components/issues";
 // hooks
 import { useProject, useProjectView } from "@/hooks/store";
 // assets
+import { useAppRouter } from "@/hooks/use-app-router";
 import emptyView from "@/public/empty-state/view.svg";
 
 const ProjectViewIssuesPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
   const { fetchViewDetails, getViewById } = useProjectView();
