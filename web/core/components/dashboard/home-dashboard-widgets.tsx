@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { useParams } from "next/navigation";
 // types
 import { TWidgetKeys } from "@plane/types";
 // components
@@ -14,7 +15,7 @@ import {
   WidgetProps,
 } from "@/components/dashboard";
 // hooks
-import { useAppRouter, useDashboard } from "@/hooks/store";
+import { useDashboard } from "@/hooks/store";
 
 const WIDGETS_LIST: {
   [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };
@@ -30,8 +31,9 @@ const WIDGETS_LIST: {
 };
 
 export const DashboardWidgets = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceSlug } = useAppRouter();
   const { homeDashboardId, homeDashboardWidgets } = useDashboard();
 
   const doesWidgetExist = (widgetKey: TWidgetKeys) =>
@@ -49,10 +51,11 @@ export const DashboardWidgets = observer(() => {
         if (widget.fullWidth)
           return (
             <div key={key} className="lg:col-span-2">
-              <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />
+              <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug.toString()} />
             </div>
           );
-        else return <WidgetComponent key={key} dashboardId={homeDashboardId} workspaceSlug={workspaceSlug} />;
+        else
+          return <WidgetComponent key={key} dashboardId={homeDashboardId} workspaceSlug={workspaceSlug.toString()} />;
       })}
     </div>
   );

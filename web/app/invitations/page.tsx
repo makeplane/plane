@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 // icons
@@ -22,7 +22,9 @@ import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
+// hooks
 import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // images
@@ -38,7 +40,7 @@ const UserInvitationsPage = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
   const { data: currentUser } = useUser();

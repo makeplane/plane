@@ -2,7 +2,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { CalendarCheck2, CopyPlus, Signal, Tag, Users } from "lucide-react";
 import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink, DoubleCircleIcon, Tooltip } from "@plane/ui";
@@ -13,6 +12,7 @@ import { IssueLabel, TIssueOperations } from "@/components/issues";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   workspaceSlug: string;
@@ -26,7 +26,7 @@ type Props = {
 export const InboxIssueContentProperties: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
 
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { currentProjectDetails } = useProject();
 

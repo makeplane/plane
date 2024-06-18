@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
@@ -12,10 +12,11 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {

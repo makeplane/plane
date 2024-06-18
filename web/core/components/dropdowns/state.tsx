@@ -2,6 +2,7 @@
 
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -10,7 +11,7 @@ import { Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -73,7 +74,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     ],
   });
   // store hooks
-  const { workspaceSlug } = useAppRouter();
+  const { workspaceSlug } = useParams();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
   const defaultState = statesList?.find((state) => state.default);
@@ -98,7 +99,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const onOpen = async () => {
     if (!statesList && workspaceSlug && projectId) {
       setStateLoader(true);
-      await fetchProjectStates(workspaceSlug, projectId);
+      await fetchProjectStates(workspaceSlug.toString(), projectId);
       setStateLoader(false);
     }
   };

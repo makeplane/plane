@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { CycleDetailsSidebar } from "./";
 
@@ -15,7 +16,7 @@ type Props = {
 
 export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle");

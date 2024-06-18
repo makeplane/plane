@@ -1,20 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-
+import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
-// services
-// components
 import { ArrowLeft, Check, List, Settings, UploadCloud, Users } from "lucide-react";
+// types
 import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -22,17 +19,14 @@ import {
   GithubImportUsers,
   GithubImportConfirm,
 } from "@/components/integration";
-// icons
-// images
+// fetch keys
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
-import GithubLogo from "@/public/services/github.png";
-import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 // hooks
-// components
-// icons
+import { useAppRouter } from "@/hooks/use-app-router";
 // images
-// types
-// fetch-keys
+import GithubLogo from "@/public/services/github.png";
+// services
+import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 
 export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {
@@ -93,7 +87,7 @@ export const GithubImporterRoot: React.FC = () => {
   });
   const [users, setUsers] = useState<IUserDetails[]>([]);
 
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");

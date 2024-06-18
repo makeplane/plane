@@ -2,7 +2,6 @@
 
 import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { TInboxIssueCurrentTab } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -16,6 +15,7 @@ import { cn } from "@/helpers/common.helper";
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
@@ -56,7 +56,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     issues: { getIssueLoader },
   } = useIssuesStore();
 
-  const router = useRouter();
+  const router = useAppRouter();
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;

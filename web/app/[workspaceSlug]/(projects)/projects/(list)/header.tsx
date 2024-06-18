@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
-// icons
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Search, Briefcase, X, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
@@ -18,17 +18,18 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useAppRouter, useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsListHeader = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { workspaceSlug } = useAppRouter();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
@@ -69,7 +70,7 @@ export const ProjectsListHeader = observer(() => {
         }
       }
 
-      updateFilters(workspaceSlug, { [key]: newValues });
+      updateFilters(workspaceSlug.toString(), { [key]: newValues });
     },
     [filters, updateFilters, workspaceSlug]
   );
@@ -145,7 +146,7 @@ export const ProjectsListHeader = observer(() => {
             value={displayFilters?.order_by}
             onChange={(val) => {
               if (!workspaceSlug || val === displayFilters?.order_by) return;
-              updateDisplayFilters(workspaceSlug, {
+              updateDisplayFilters(workspaceSlug.toString(), {
                 order_by: val,
               });
             }}
@@ -162,7 +163,7 @@ export const ProjectsListHeader = observer(() => {
               handleFiltersUpdate={handleFilters}
               handleDisplayFiltersUpdate={(val) => {
                 if (!workspaceSlug) return;
-                updateDisplayFilters(workspaceSlug, val);
+                updateDisplayFilters(workspaceSlug.toString(), val);
               }}
               memberIds={workspaceMemberIds ?? undefined}
             />

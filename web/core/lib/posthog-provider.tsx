@@ -1,6 +1,5 @@
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-// import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
@@ -23,7 +22,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   } = useUser();
   const { currentWorkspace } = useWorkspace();
   // router
-  // const router = useRouter();
+  // const router = useAppRouter();
 
   useEffect(() => {
     if (user) {

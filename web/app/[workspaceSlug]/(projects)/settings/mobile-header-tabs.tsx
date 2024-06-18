@@ -1,8 +1,11 @@
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+// constants
 import { WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const MobileWorkspaceSettingsTabs = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   return (

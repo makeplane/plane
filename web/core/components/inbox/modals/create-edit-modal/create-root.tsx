@@ -2,7 +2,7 @@
 
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 // editor
 import { EditorRefApi } from "@plane/rich-text-editor";
 // types
@@ -20,6 +20,7 @@ import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useEventTracker, useProjectInbox, useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 
 type TInboxIssueCreateRoot = {
@@ -42,7 +43,7 @@ export const defaultIssueData: Partial<TIssue> = {
 
 export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
   const { workspaceSlug, projectId, handleModalClose } = props;
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);

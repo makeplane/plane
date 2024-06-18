@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -11,7 +12,7 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
 // hooks
-import { useAppRouter, useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -50,6 +51,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
     placeholderText,
   } = props;
+  // router
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +65,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // store hooks
-  const { workspaceSlug } = useAppRouter();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
   const storeLabels = getProjectLabels(projectId);

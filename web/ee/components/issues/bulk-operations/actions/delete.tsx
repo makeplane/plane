@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
-// hooks
-import { useAppRouter } from "@/hooks/store";
 // plane web components
 import { BulkDeleteConfirmationModal } from "@/plane-web/components/issues";
 
@@ -18,7 +17,7 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
   // states
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   // store hooks
-  const { projectId, workspaceSlug } = useAppRouter();
+  const { projectId, workspaceSlug } = useParams();
 
   return (
     <>

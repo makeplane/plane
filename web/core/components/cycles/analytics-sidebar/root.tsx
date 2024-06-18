@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { ArchiveRestoreIcon, LinkIcon, Trash2, ChevronRight, CalendarClock, SquareUser } from "lucide-react";
@@ -23,6 +23,7 @@ import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/help
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember, useProjectEstimates } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 // services
@@ -49,7 +50,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { setTrackElement, captureCycleEvent } = useEventTracker();

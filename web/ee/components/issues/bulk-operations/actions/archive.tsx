@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { useParams } from "next/navigation";
 import { ArchiveIcon, Tooltip } from "@plane/ui";
 // constants
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProjectState } from "@/hooks/store";
 // plane web components
 import { BulkArchiveConfirmationModal } from "@/plane-web/components/issues";
 
@@ -21,7 +22,7 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
   // states
   const [isBulkArchiveModalOpen, setIsBulkArchiveModalOpen] = useState(false);
   // store hooks
-  const { projectId, workspaceSlug } = useAppRouter();
+  const { projectId, workspaceSlug } = useParams();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -42,8 +43,8 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
           handleClose={() => setIsBulkArchiveModalOpen(false)}
           issueIds={selectedIssueIds}
           onSubmit={handleClearSelection}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
+          projectId={projectId.toString()}
+          workspaceSlug={workspaceSlug.toString()}
         />
       )}
       <Tooltip
