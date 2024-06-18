@@ -274,7 +274,7 @@ export class Estimate implements IEstimate {
       );
 
       const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
-      if (currentIssues && currentIssues.length > 0) {
+      if (currentIssues) {
         currentIssues.map((issue) => {
           if (issue.estimate_point === estimatePointId) {
             this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
