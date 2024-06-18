@@ -163,20 +163,24 @@ export class Estimate implements IEstimate {
     projectId: string,
     payload: TEstimatePointsObject[]
   ): Promise<IEstimateType | undefined> => {
-    if (!this.id || !payload) return;
+    try {
+      if (!this.id || !payload) return;
 
-    const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, {
-      estimate_points: payload,
-    });
-    runInAction(() => {
-      estimate?.points &&
-        estimate?.points.map((estimatePoint) => {
-          if (estimatePoint.id)
-            set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
-        });
-    });
+      const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, {
+        estimate_points: payload,
+      });
+      runInAction(() => {
+        estimate?.points &&
+          estimate?.points.map((estimatePoint) => {
+            if (estimatePoint.id)
+              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+          });
+      });
 
-    return estimate;
+      return estimate;
+    } catch (error) {
+      throw error;
+    }
   };
 
   /**
@@ -191,25 +195,29 @@ export class Estimate implements IEstimate {
     projectId: string,
     payload: IEstimateFormData
   ): Promise<IEstimateType | undefined> => {
-    if (!this.id || !payload) return;
+    try {
+      if (!this.id || !payload) return;
 
-    const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, payload);
-    if (estimate) {
-      runInAction(() => {
-        this.name = estimate?.name;
-        this.type = estimate?.type;
-        estimate?.points &&
-          estimate?.points.map((estimatePoint) => {
-            if (estimatePoint.id)
-              this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
-                key: estimatePoint.key,
-                value: estimatePoint.value,
-              });
-          });
-      });
+      const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, payload);
+      if (estimate) {
+        runInAction(() => {
+          this.name = estimate?.name;
+          this.type = estimate?.type;
+          estimate?.points &&
+            estimate?.points.map((estimatePoint) => {
+              if (estimatePoint.id)
+                this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
+                  key: estimatePoint.key,
+                  value: estimatePoint.value,
+                });
+            });
+        });
+      }
+
+      return estimate;
+    } catch (error) {
+      throw error;
     }
-
-    return estimate;
   };
 
   /**
@@ -224,15 +232,19 @@ export class Estimate implements IEstimate {
     projectId: string,
     payload: Partial<IEstimatePointType>
   ): Promise<IEstimatePointType | undefined> => {
-    if (!this.id || !payload) return;
+    try {
+      if (!this.id || !payload) return;
 
-    const estimatePoint = await estimateService.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
-    if (estimatePoint) {
-      runInAction(() => {
-        if (estimatePoint.id) {
-          set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
-        }
-      });
+      const estimatePoint = await estimateService.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
+      if (estimatePoint) {
+        runInAction(() => {
+          if (estimatePoint.id) {
+            set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+          }
+        });
+      }
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -250,37 +262,41 @@ export class Estimate implements IEstimate {
     estimatePointId: string,
     newEstimatePointId: string | undefined
   ): Promise<IEstimatePointType[] | undefined> => {
-    if (!this.id) return;
+    try {
+      if (!this.id) return;
 
-    const deleteEstimatePoint = await estimateService.removeEstimatePoint(
-      workspaceSlug,
-      projectId,
-      this.id,
-      estimatePointId,
-      newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
-    );
+      const deleteEstimatePoint = await estimateService.removeEstimatePoint(
+        workspaceSlug,
+        projectId,
+        this.id,
+        estimatePointId,
+        newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
+      );
 
-    const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
-    if (currentIssues && currentIssues.length > 0) {
-      currentIssues.map((issue) => {
-        if (issue.estimate_point === estimatePointId) {
-          this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
-        }
-      });
-    }
-
-    runInAction(() => {
-      unset(this.estimatePoints, [estimatePointId]);
-    });
-    if (deleteEstimatePoint && deleteEstimatePoint.length > 0) {
-      runInAction(() => {
-        deleteEstimatePoint.map((estimatePoint) => {
-          if (estimatePoint.id)
-            set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+      const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
+      if (currentIssues && currentIssues.length > 0) {
+        currentIssues.map((issue) => {
+          if (issue.estimate_point === estimatePointId) {
+            this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
+          }
         });
-      });
-    }
+      }
 
-    return deleteEstimatePoint;
+      runInAction(() => {
+        unset(this.estimatePoints, [estimatePointId]);
+      });
+      if (deleteEstimatePoint) {
+        runInAction(() => {
+          deleteEstimatePoint.map((estimatePoint) => {
+            if (estimatePoint.id)
+              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+          });
+        });
+      }
+
+      return deleteEstimatePoint;
+    } catch (error) {
+      throw error;
+    }
   };
 }
