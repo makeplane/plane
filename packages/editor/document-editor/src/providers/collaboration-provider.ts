@@ -25,8 +25,7 @@ export type CollaborationProviderConfiguration = Required<Pick<CompleteCollabora
 export class CollaborationProvider {
   public configuration: CompleteCollaboratorProviderConfiguration = {
     name: "",
-    // @ts-expect-error cannot be undefined
-    document: undefined,
+    document: new Y.Doc(),
     onChange: () => {},
     hasIndexedDBSynced: false,
   };
@@ -34,7 +33,6 @@ export class CollaborationProvider {
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
 
-    this.configuration.document = configuration.document ?? new Y.Doc();
     this.document.on("update", this.documentUpdateHandler.bind(this));
     this.document.on("destroy", this.documentDestroyHandler.bind(this));
   }
@@ -65,7 +63,7 @@ export class CollaborationProvider {
     this.configuration.onChange?.(stateVector);
   }
 
-  async getUpdateFromIndexedDB(): Promise<Uint8Array> {
+  getUpdateFromIndexedDB(): Uint8Array {
     const update = Y.encodeStateAsUpdate(this.document);
     return update;
   }

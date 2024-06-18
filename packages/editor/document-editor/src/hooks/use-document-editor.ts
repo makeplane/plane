@@ -57,11 +57,14 @@ export const useDocumentEditor = ({
   const localProvider = useMemo(() => {
     const localProvider = new IndexeddbPersistence(`page-` + id, provider.document);
     localProvider.on("synced", () => {
-      provider.setHasIndexedDBSynced(true);
+      provider.setHasIndexedDBSynced(!!provider.document.get("default")._start);
       setIndexedDbIsSynced(!!provider.document.get("default")._start);
+      const update = provider.getUpdateFromIndexedDB();
+      onChange(update, "initialSync");
     });
 
     return localProvider;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, provider]);
 
   // update document on value change from server
@@ -70,17 +73,6 @@ export const useDocumentEditor = ({
       Y.applyUpdate(provider.document, value);
     }
   }, [value, provider.document]);
-
-  useEffect(() => {
-    const syncUpdatesFromIndexedDB = async () => {
-      if (isIndexedDbSynced) {
-        const update = await provider.getUpdateFromIndexedDB();
-        onChange(update, "initialSync");
-      }
-    };
-    syncUpdatesFromIndexedDB();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider, isIndexedDbSynced]);
 
   useLayoutEffect(
     () => () => {

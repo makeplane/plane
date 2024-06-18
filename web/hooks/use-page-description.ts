@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
-import { applyUpdates, areBytewiseEqual, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
+import { applyUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
 import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
+import useAutoSave from "@/hooks/use-auto-save";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import { PageService } from "@/services/page.service";
 import { IPageStore } from "@/store/pages/page.store";
@@ -15,20 +16,28 @@ type Props = {
   workspaceSlug: string | string[] | undefined;
 };
 
-const AUTO_SAVE_TIME = 10000;
-
 export const usePageDescription = (props: Props) => {
   const { editorRef, page, projectId, workspaceSlug } = props;
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
-  const [description, setDescription] = useState<Uint8Array>();
+  const [localDescriptionYJS, setLocalDescriptionYJS] = useState<Uint8Array>();
   const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
+  const [hasLocalChanges, setHasLocalChanges] = useState(true);
+
   const pageDescription = page.description_html;
   const pageId = page.id;
 
-  const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
+  const { data: pageDescriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => pageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
+      ? async () => {
+          const encodedDescription = await pageService.fetchDescriptionYJS(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId.toString()
+          );
+          const decodedDescription = new Uint8Array(encodedDescription);
+          return decodedDescription;
+        }
       : null,
     {
       revalidateOnFocus: false,
@@ -37,19 +46,14 @@ export const usePageDescription = (props: Props) => {
     }
   );
 
-  const pageDescriptionYJS = useMemo(
-    () => (descriptionYJS ? new Uint8Array(descriptionYJS) : undefined),
-    [descriptionYJS]
-  );
-
-  const handleDescriptionChange = useCallback((updates: Uint8Array, source: string) => {
-    setIsSubmitting("submitting");
-    setDescription(() => {
+  const handleDescriptionChange = useCallback((update: Uint8Array, source: string) => {
+    setHasLocalChanges(true);
+    setLocalDescriptionYJS(() => {
       if (source === "initialSync") {
-        handleSaveDescription(updates);
+        handleSaveDescription(update);
       }
 
-      return updates;
+      return update;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -60,8 +64,11 @@ export const usePageDescription = (props: Props) => {
       if (pageDescriptionYJS.byteLength === 0) {
         const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
+
         await updateDescription(yDocBinaryString, pageDescription ?? "<p></p>");
+
         await mutateDescriptionYJS();
+
         setIsDescriptionReady(true);
       } else setIsDescriptionReady(true);
     };
@@ -70,21 +77,25 @@ export const usePageDescription = (props: Props) => {
 
   const handleSaveDescription = useCallback(
     async (initSyncVector?: Uint8Array) => {
-      const update = initSyncVector ?? description;
+      const update = localDescriptionYJS ?? initSyncVector;
+
       if (!isContentEditable) return;
 
       const applyUpdatesAndSave = async (latestDescription: any, update: Uint8Array | undefined) => {
         if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
         const descriptionArray = new Uint8Array(latestDescription);
 
-        if (areBytewiseEqual(descriptionArray, update)) {
+        if (!hasLocalChanges) {
           setIsSubmitting("saved");
           return;
         }
 
         const combinedBinaryString = applyUpdates(descriptionArray, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-        await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
+        await updateDescription(combinedBinaryString, descriptionHTML).finally(() => {
+          setIsSubmitting("saved");
+          setHasLocalChanges(false);
+        });
       };
 
       try {
@@ -97,10 +108,11 @@ export const usePageDescription = (props: Props) => {
       }
     },
     [
-      description,
+      localDescriptionYJS,
       editorRef,
       isContentEditable,
       mutateDescriptionYJS,
+      hasLocalChanges,
       pageId,
       projectId,
       setIsSubmitting,
@@ -109,34 +121,17 @@ export const usePageDescription = (props: Props) => {
     ]
   );
 
-  useEffect(() => {
-    const handleSave = (e: KeyboardEvent) => {
-      const { ctrlKey, metaKey, key } = e;
-      const cmdClicked = ctrlKey || metaKey;
+  useAutoSave(handleSaveDescription);
 
-      if (cmdClicked && key.toLowerCase() === "s") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleSaveDescription();
-      }
-    };
-    window.addEventListener("keydown", handleSave);
-
-    return () => {
-      window.removeEventListener("keydown", handleSave);
-    };
-  }, [handleSaveDescription]);
-
-  console.log("setIsSubmitting", isSubmitting);
-  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  const { setShowAlert } = useReloadConfirmations(true);
 
   useEffect(() => {
-    if (isSubmitting === "submitting") {
+    if (hasLocalChanges || isSubmitting === "submitting") {
       setShowAlert(true);
     } else {
       setShowAlert(false);
     }
-  }, [setShowAlert, isSubmitting]);
+  }, [setShowAlert, hasLocalChanges, isSubmitting]);
 
   return {
     handleDescriptionChange,
