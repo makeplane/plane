@@ -15,7 +15,7 @@ import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
-import { USER_DETAILS } from "@/constants/event-tracker";
+import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
 // helpers
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
@@ -142,8 +142,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
       captureEvent(USER_DETAILS, {
+        use_case: formData.use_case,
+        role: formData.role,
         state: "SUCCESS",
-        element: "Onboarding",
+        element: E_ONBOARDING_STEP_1,
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -157,7 +159,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     } catch {
       captureEvent(USER_DETAILS, {
         state: "FAILED",
-        element: "Onboarding",
+        element: E_ONBOARDING_STEP_1,
       });
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -181,7 +183,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     } catch {
       captureEvent(USER_DETAILS, {
         state: "FAILED",
-        element: "Onboarding",
+        element: E_ONBOARDING_STEP_1,
       });
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -202,8 +204,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
       captureEvent(USER_DETAILS, {
+        use_case: formData.use_case,
+        role: formData.role,
         state: "SUCCESS",
-        element: "Onboarding",
+        element: E_ONBOARDING_STEP_2,
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -217,7 +221,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     } catch {
       captureEvent(USER_DETAILS, {
         state: "FAILED",
-        element: "Onboarding",
+        element: E_ONBOARDING_STEP_2,
       });
       setToast({
         type: TOAST_TYPE.ERROR,

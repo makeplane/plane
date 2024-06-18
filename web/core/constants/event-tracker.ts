@@ -192,6 +192,8 @@ export const SETUP_PASSWORD = "Password setup";
 export const PASSWORD_CREATE_SELECTED = "Password created";
 export const PASSWORD_CREATE_SKIPPED = "Skipped to setup";
 export const SIGN_IN_WITH_PASSWORD = "Sign in with password";
+export const SIGN_UP_WITH_PASSWORD = "Sign up with password";
+export const SIGN_IN_WITH_CODE = "Sign in with magic link";
 export const FORGOT_PASSWORD = "Forgot password clicked";
 export const FORGOT_PASS_LINK = "Forgot password link generated";
 export const NEW_PASS_CREATED = "New password created";
@@ -222,3 +224,8 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+//Elements
+export const E_ONBOARDING = "Onboarding";
+export const E_ONBOARDING_STEP_1 = "Onboarding step 1";
+export const E_ONBOARDING_STEP_2 = "Onboarding step 2";
