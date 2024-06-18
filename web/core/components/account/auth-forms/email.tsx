@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, FormEvent, useMemo, useState } from "react";
+import { FC, FormEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
@@ -40,6 +40,10 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   };
 
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
+
+  useEffect(() => {
+    () => setIsSubmitting(false);
+  }, []);
 
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">

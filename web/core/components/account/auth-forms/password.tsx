@@ -66,6 +66,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   useEffect(() => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+    () => setIsSubmitting(false);
   }, [csrfToken]);
 
   const redirectToUniqueCodeSignIn = async () => {
