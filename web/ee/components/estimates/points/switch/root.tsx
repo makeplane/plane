@@ -112,8 +112,12 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
     if ([(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateSystemSwitchType)) {
       estimatePoints?.map((estimatePoint) => {
         if (estimateSystemSwitchType && estimatePoint.value && estimatePoint.value != "") {
-          if (Number(estimatePoint.value) && Number(estimatePoint.value) >= 0) {
-            estimatePointArray.push(estimatePoint.value);
+          if (!isNaN(Number(estimatePoint.value))) {
+            if (Number(estimatePoint.value) <= 0) {
+              handleEstimatePointError(estimatePoint.key, "", "", "Estimate point should be greater than 0.");
+            } else {
+              estimatePointArray.push(estimatePoint.value);
+            }
           } else {
             handleEstimatePointError(estimatePoint.key, "", "", "Estimate point value should be a number.");
           }
