@@ -15,6 +15,8 @@ import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { PageExtraActions } from "@/plane-web/components/pages";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -146,6 +148,7 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <PageExtraActions />
       {isContentEditable && (
         <Button
           variant="primary"
