@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { useParams } from "next/navigation";
 import { SubscribeIcon, Tooltip } from "@plane/ui";
-// hooks
-import { useAppRouter } from "@/hooks/store";
 // plane web components
 import { BulkSubscribeConfirmationModal } from "@/plane-web/components/issues";
 
@@ -17,7 +16,7 @@ export const BulkSubscribeIssues: React.FC<Props> = observer((props) => {
   // states
   const [isBulkSubscribeModalOpen, setIsBulkSubscribeModalOpen] = useState(false);
   // store hooks
-  const { projectId, workspaceSlug } = useAppRouter();
+  const { projectId, workspaceSlug } = useParams();
 
   return (
     <>
