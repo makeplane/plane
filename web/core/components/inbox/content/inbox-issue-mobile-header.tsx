@@ -20,6 +20,7 @@ import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
@@ -68,6 +69,8 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
   const router = useAppRouter();
   const issue = inboxIssue?.issue;
   const currentInboxIssueId = issue?.id;
+  // days left for snooze
+  const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
 
   if (!issue || !inboxIssue) return null;
 
@@ -129,7 +132,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
-                  {inboxIssue.snoozed_till ? "Un-snooze" : "Snooze"}
+                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
                 </div>
               </CustomMenu.MenuItem>
             )}

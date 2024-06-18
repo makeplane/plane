@@ -22,7 +22,7 @@ export interface IInboxIssueStore {
   // actions
   updateInboxIssueStatus: (status: TInboxIssueStatus) => Promise<void>; // accept, decline
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
-  updateInboxIssueSnoozeTill: (date: Date | null) => Promise<void>; // snooze the issue
+  updateInboxIssueSnoozeTill: (date: Date | undefined) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   fetchIssueActivity: () => Promise<void>; // fetching the issue activity
@@ -124,7 +124,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     }
   };
 
-  updateInboxIssueSnoozeTill = async (date: Date | null) => {
+  updateInboxIssueSnoozeTill = async (date: Date | undefined) => {
     const inboxStatus = date ? EInboxIssueStatus.SNOOZED : EInboxIssueStatus.PENDING;
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
