@@ -1,12 +1,14 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { EditorProps } from "@tiptap/pm/view";
-import * as Y from "yjs";
 // editor-core
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler, useEditor } from "@plane/editor-core";
 // custom provider
 import { CollaborationProvider } from "src/providers/collaboration-provider";
 // extensions
 import { DocumentEditorExtensions } from "src/ui/extensions";
+// yjs
+import * as Y from "yjs";
+import { IndexeddbPersistence } from "y-indexeddb";
 
 type DocumentEditorProps = {
   id: string;
@@ -50,23 +52,44 @@ export const useDocumentEditor = ({
     [id]
   );
 
-  // update document on value change
+  const [isIndexedDbSynced, setIndexedDbIsSynced] = useState(false);
+
+  const localProvider = useMemo(() => {
+    const localProvider = new IndexeddbPersistence(`page-` + id, provider.document);
+    localProvider.on("synced", () => {
+      provider.setHasIndexedDBSynced(true);
+      setIndexedDbIsSynced(!!provider.document.get("default")._start);
+    });
+
+    return localProvider;
+  }, [id, provider]);
+
+  // update document on value change from server
   useEffect(() => {
     if (value.byteLength > 0) {
       Y.applyUpdate(provider.document, value);
     }
   }, [value, provider.document]);
 
-  // sync document with indexedDB initially
   useEffect(() => {
     const syncUpdatesFromIndexedDB = async () => {
-      const update = await provider.getUpdateFromIndexedDB();
-      onChange(update, "initialSync");
+      if (isIndexedDbSynced) {
+        const update = await provider.getUpdateFromIndexedDB();
+        onChange(update, "initialSync");
+      }
     };
-
     syncUpdatesFromIndexedDB();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider]);
+  }, [provider, isIndexedDbSynced]);
+
+  useLayoutEffect(
+    () => () => {
+      provider.setHasIndexedDBSynced(false);
+      setIndexedDbIsSynced(false);
+      localProvider.destroy();
+    },
+    [localProvider, provider]
+  );
 
   const editor = useEditor({
     id,
@@ -85,5 +108,5 @@ export const useDocumentEditor = ({
     tabIndex,
   });
 
-  return editor;
+  return { editor, isIndexedDbSynced };
 };

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import { applyUpdates, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
+import { applyUpdates, areBytewiseEqual, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
 import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import { PageService } from "@/services/page.service";
@@ -20,7 +20,7 @@ const AUTO_SAVE_TIME = 10000;
 export const usePageDescription = (props: Props) => {
   const { editorRef, page, projectId, workspaceSlug } = props;
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
-  const [descriptionUpdates, setDescriptionUpdates] = useState<Uint8Array[]>([]);
+  const [description, setDescription] = useState<Uint8Array>();
   const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
   const pageDescription = page.description_html;
   const pageId = page.id;
@@ -43,14 +43,13 @@ export const usePageDescription = (props: Props) => {
   );
 
   const handleDescriptionChange = useCallback((updates: Uint8Array, source: string) => {
-    setDescriptionUpdates((prev) => {
-      const updatesArray = [...prev, updates];
-
+    setIsSubmitting("submitting");
+    setDescription(() => {
       if (source === "initialSync") {
-        handleSaveDescription(updatesArray);
+        handleSaveDescription(updates);
       }
 
-      return updatesArray;
+      return updates;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -70,14 +69,20 @@ export const usePageDescription = (props: Props) => {
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(
-    async (initSyncUpdateArray?: Uint8Array[]) => {
-      const updatesArray = initSyncUpdateArray ?? descriptionUpdates;
+    async (initSyncVector?: Uint8Array) => {
+      const update = initSyncVector ?? description;
       if (!isContentEditable) return;
 
-      const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
-        if (!workspaceSlug || !projectId || !pageId || !latestDescription) return;
+      const applyUpdatesAndSave = async (latestDescription: any, update: Uint8Array | undefined) => {
+        if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
         const descriptionArray = new Uint8Array(latestDescription);
-        const combinedBinaryString = applyUpdates(descriptionArray, updates);
+
+        if (areBytewiseEqual(descriptionArray, update)) {
+          setIsSubmitting("saved");
+          return;
+        }
+
+        const combinedBinaryString = applyUpdates(descriptionArray, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
         await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
       };
@@ -85,20 +90,14 @@ export const usePageDescription = (props: Props) => {
       try {
         setIsSubmitting("submitting");
         const latestDescription = await mutateDescriptionYJS();
-        if (updatesArray.length <= 0) {
-          setIsSubmitting("saved");
-          return;
-        }
-        const mergedUpdates = mergeUpdates(updatesArray);
-        await applyUpdatesAndSave(latestDescription, mergedUpdates);
-        setDescriptionUpdates([]);
+        await applyUpdatesAndSave(latestDescription, update);
       } catch (error) {
         setIsSubmitting("saved");
         throw error;
       }
     },
     [
-      descriptionUpdates,
+      description,
       editorRef,
       isContentEditable,
       mutateDescriptionYJS,
@@ -128,12 +127,16 @@ export const usePageDescription = (props: Props) => {
     };
   }, [handleSaveDescription]);
 
-  const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
+  console.log("setIsSubmitting", isSubmitting);
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
-    if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
-    else setShowAlert(false);
-  }, [descriptionUpdates, isSubmitting, setShowAlert]);
+    if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [setShowAlert, isSubmitting]);
 
   return {
     handleDescriptionChange,

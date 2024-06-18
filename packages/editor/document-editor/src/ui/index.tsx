@@ -52,7 +52,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   };
 
   // use document editor
-  const editor = useDocumentEditor({
+  const { editor, isIndexedDbSynced } = useDocumentEditor({
     id,
     editorClassName,
     fileHandler,
@@ -72,7 +72,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !isIndexedDbSynced) return null;
 
   return (
     <PageRenderer
