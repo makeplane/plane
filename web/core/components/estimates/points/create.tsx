@@ -82,8 +82,8 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
 
       if (!isRepeated) {
         if (currentEstimateType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(currentEstimateType)) {
-          if (estimateInputValue && Number(estimateInputValue) >= 0) {
-            if (Number(estimateInputValue) === 0) {
+          if (estimateInputValue && !isNaN(Number(estimateInputValue))) {
+            if (Number(estimateInputValue) <= 0) {
               handleEstimatePointError &&
                 handleEstimatePointError(estimateInputValue, "Estimate point should be greater than 0.");
               return;
