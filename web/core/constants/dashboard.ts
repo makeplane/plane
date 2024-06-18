@@ -264,7 +264,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "Home",
     href: ``,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
     Icon: Home,
   },
   {
@@ -272,7 +272,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "Analytics",
     href: `/analytics`,
     access: EUserWorkspaceRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics`),
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
     Icon: BarChart2,
   },
   {
@@ -280,7 +280,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "Projects",
     href: `/projects`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
     Icon: Briefcase,
   },
   {
@@ -288,7 +288,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "All Issues",
     href: `/workspace-views/all-issues`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views`),
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
     Icon: CheckCircle,
   },
   {
@@ -296,7 +296,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "Active Cycles",
     href: `/active-cycles`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
     Icon: ContrastIcon,
   },
 ];

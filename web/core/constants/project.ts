@@ -80,7 +80,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "General",
     href: `/settings`,
     access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
     Icon: SettingIcon,
   },
   {
@@ -88,7 +88,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "Members",
     href: `/settings/members`,
     access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
     Icon: SettingIcon,
   },
   {
@@ -96,7 +96,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "Features",
     href: `/settings/features`,
     access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features/`,
     Icon: SettingIcon,
   },
   {
@@ -104,7 +104,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "States",
     href: `/settings/states`,
     access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states/`,
     Icon: SettingIcon,
   },
   {
@@ -112,7 +112,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "Labels",
     href: `/settings/labels`,
     access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels/`,
     Icon: SettingIcon,
   },
   {
@@ -120,7 +120,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "Estimates",
     href: `/settings/estimates`,
     access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates/`,
     Icon: SettingIcon,
   },
   {
@@ -128,7 +128,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "Automations",
     href: `/settings/automations`,
     access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,
     Icon: SettingIcon,
   },
 ];

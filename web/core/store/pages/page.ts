@@ -109,6 +109,7 @@ export class Page implements IPage {
       label_ids: observable,
       owned_by: observable.ref,
       access: observable.ref,
+      anchor: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       archived_at: observable.ref,

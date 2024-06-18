@@ -149,7 +149,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "General",
     href: `/settings`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
     Icon: SettingIcon,
   },
   {
@@ -157,7 +157,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "Members",
     href: `/settings/members`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
     Icon: SettingIcon,
   },
   {
@@ -165,7 +165,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "Billing and plans",
     href: `/settings/billing`,
     access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
     Icon: SettingIcon,
   },
   {
@@ -173,7 +173,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "Exports",
     href: `/settings/exports`,
     access: EUserWorkspaceRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
     Icon: SettingIcon,
   },
   {
@@ -181,7 +181,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "Webhooks",
     href: `/settings/webhooks`,
     access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
     Icon: SettingIcon,
   },
   {
@@ -189,7 +189,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "API tokens",
     href: `/settings/api-tokens`,
     access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
     Icon: SettingIcon,
   },
 ];

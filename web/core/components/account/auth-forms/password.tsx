@@ -10,7 +10,12 @@ import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
 // constants
-import { FORGOT_PASSWORD } from "@/constants/event-tracker";
+import {
+  FORGOT_PASSWORD,
+  SIGN_IN_WITH_CODE,
+  SIGN_IN_WITH_PASSWORD,
+  SIGN_UP_WITH_PASSWORD,
+} from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -70,6 +75,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   const redirectToUniqueCodeSignIn = async () => {
     handleAuthStep(EAuthSteps.UNIQUE_CODE);
+    captureEvent(SIGN_IN_WITH_CODE);
   };
 
   const passwordSupport =
@@ -116,7 +122,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       className="mt-5 space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
-      onSubmit={() => setIsSubmitting(true)}
+      onSubmit={() => {
+        setIsSubmitting(true);
+        captureEvent(mode === EAuthModes.SIGN_IN ? SIGN_IN_WITH_PASSWORD : SIGN_UP_WITH_PASSWORD);
+      }}
       onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
