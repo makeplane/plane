@@ -3,7 +3,9 @@ import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 // components
-import { EstimatePointUpdate, EstimatePointDelete } from "@/components/estimates/points";
+import { EstimatePointUpdate } from "@/components/estimates/points";
+// plane web components
+import { EstimatePointDelete } from "@/plane-web/components/estimates";
 // plane web constants
 import { estimateCount } from "@/plane-web/constants/estimates";
 
