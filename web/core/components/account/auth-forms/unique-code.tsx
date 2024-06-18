@@ -66,7 +66,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
   useEffect(() => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
-    () => setIsSubmitting(false);
+    return () => setIsSubmitting(false);
   }, [csrfToken]);
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;

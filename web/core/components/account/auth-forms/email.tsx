@@ -41,9 +41,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
 
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
-  useEffect(() => {
-    () => setIsSubmitting(false);
-  }, []);
+  useEffect(() => () => setIsSubmitting(false), []);
 
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
