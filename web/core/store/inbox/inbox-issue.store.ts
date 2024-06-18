@@ -53,7 +53,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     this.id = data.id;
     this.status = data.status;
     this.issue = data?.issue;
-    this.snoozed_till = data?.snoozed_till ? new Date(data.snoozed_till) : undefined;
+    this.snoozed_till = data?.snoozed_till || undefined;
     this.duplicate_to = data?.duplicate_to || undefined;
     this.created_by = data?.created_by || undefined;
     this.duplicate_issue_detail = data?.duplicate_issue_detail || undefined;
