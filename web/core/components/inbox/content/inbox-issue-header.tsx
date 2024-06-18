@@ -28,6 +28,7 @@ import { IssueUpdateStatus } from "@/components/issues";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
+import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -71,6 +72,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canDelete = isAllowed || inboxIssue?.created_by === currentUser?.id;
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2].includes(inboxIssue.status) : undefined;
+  // days left for snooze
+  const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
@@ -109,7 +112,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     handleRedirection(nextOrPreviousIssueId);
   };
 
-  const handleInboxSIssueSnooze = async (date: Date) => {
+  const handleInboxIssueSnooze = async (date: Date) => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueSnoozeTill(date);
     setIsSnoozeDateModalOpen(false);
@@ -125,6 +128,16 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
       router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });
+  };
+
+  const handleIssueSnoozeAction = async () => {
+    if (inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0) {
+      const nextOrPreviousIssueId = redirectIssue();
+      await inboxIssue?.updateInboxIssueSnoozeTill(undefined);
+      handleRedirection(nextOrPreviousIssueId);
+    } else {
+      setIsSnoozeDateModalOpen(true);
+    }
   };
 
   const handleCopyIssueLink = () =>
@@ -209,7 +222,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           isOpen={isSnoozeDateModalOpen}
           handleClose={() => setIsSnoozeDateModalOpen(false)}
           value={inboxIssue?.snoozed_till}
-          onConfirm={handleInboxSIssueSnooze}
+          onConfirm={handleInboxIssueSnooze}
         />
       </>
 
@@ -299,10 +312,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 {isAllowed && (
                   <CustomMenu verticalEllipsis placement="bottom-start">
                     {canMarkAsAccepted && (
-                      <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
+                        <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
                         <div className="flex items-center gap-2">
                           <Clock size={14} strokeWidth={2} />
-                          Snooze
+                            {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
+                              ? "Un-snooze"
+                              : "Snooze"}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
@@ -337,7 +352,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           handleCopyIssueLink={handleCopyIssueLink}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
-          setIsSnoozeDateModalOpen={setIsSnoozeDateModalOpen}
+          handleIssueSnoozeAction={handleIssueSnoozeAction}
           setSelectDuplicateIssue={setSelectDuplicateIssue}
           setDeleteIssueModal={setDeleteIssueModal}
           canMarkAsAccepted={canMarkAsAccepted}
