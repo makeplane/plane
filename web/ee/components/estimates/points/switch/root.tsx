@@ -84,28 +84,18 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
         handleEstimatePointError(estimatePoint.key, "", "", "Please fill this estimate point field");
       }
     });
-    if (isNonEmptyPoints.length === estimatePoints?.length) {
-      isValid = true;
-    } else {
-      isValid = false;
-    }
 
     // validate if fields are repeated
     const repeatedValues: string[] = [];
     estimatePoints?.map((estimatePoint) => {
       if (estimatePoint.value && estimatePoint.value != "") {
-        if (repeatedValues.includes(estimatePoint.value)) {
+        if (repeatedValues.includes(estimatePoint.value.trim())) {
           handleEstimatePointError(estimatePoint.key, "", "", "Estimate point value cannot be repeated");
         } else {
-          repeatedValues.push(estimatePoint.value);
+          repeatedValues.push(estimatePoint.value.trim());
         }
       }
     });
-    if (repeatedValues.length === estimatePoints?.length) {
-      isValid = true;
-    } else {
-      isValid = false;
-    }
 
     // validate if fields are valid in points and time required number values and categories required string values
     const estimatePointArray: string[] = [];
@@ -134,7 +124,12 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
         }
       });
     }
-    if (estimatePointArray.length === estimatePoints?.length) {
+
+    if (
+      isNonEmptyPoints.length === estimatePoints?.length &&
+      repeatedValues.length === estimatePoints?.length &&
+      estimatePointArray.length === estimatePoints?.length
+    ) {
       isValid = true;
     } else {
       isValid = false;
