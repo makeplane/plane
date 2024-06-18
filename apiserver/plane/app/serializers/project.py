@@ -13,7 +13,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
-    ProjectDeployBoard,
+    DeployBoard,
     ProjectPublicMember,
 )
 
@@ -114,7 +114,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
-    is_deployed = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
 
     def get_members(self, obj):
@@ -148,7 +148,7 @@ class ProjectDetailSerializer(BaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
-    is_deployed = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
 
     class Meta:
         model = Project
@@ -206,14 +206,14 @@ class ProjectMemberLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class ProjectDeployBoardSerializer(BaseSerializer):
+class DeployBoardSerializer(BaseSerializer):
     project_details = ProjectLiteSerializer(read_only=True, source="project")
     workspace_detail = WorkspaceLiteSerializer(
         read_only=True, source="workspace"
     )
 
     class Meta:
-        model = ProjectDeployBoard
+        model = DeployBoard
         fields = "__all__"
         read_only_fields = [
             "workspace",

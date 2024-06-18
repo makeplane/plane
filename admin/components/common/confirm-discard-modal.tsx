@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 // headless ui
@@ -43,33 +45,22 @@ export const ConfirmDiscardModal: React.FC<Props> = (props) => {
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-300"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-300">
                         You have unsaved changes
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-400">
-                          Changes you made will be lost if you go back. Do you
-                          wish to go back?
+                          Changes you made will be lost if you go back. Do you wish to go back?
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end items-center p-4 sm:px-6 gap-2">
-                  <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    onClick={handleClose}
-                  >
+                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                     Keep editing
                   </Button>
-                  <Link
-                    href={onDiscardHref}
-                    className={getButtonStyling("primary", "sm")}
-                  >
+                  <Link href={onDiscardHref} className={getButtonStyling("primary", "sm")}>
                     Go back
                   </Link>
                 </div>

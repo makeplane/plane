@@ -2,7 +2,7 @@
 import os
 
 # Django imports
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
 from plane.license.models import InstanceConfiguration
@@ -14,6 +14,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from plane.license.utils.encryption import encrypt_data
         from plane.license.utils.instance_value import get_configuration_value
+
+        mandatory_keys = ["SECRET_KEY"]
+
+        for item in mandatory_keys:
+            if not os.environ.get(item):
+                raise CommandError(f"{item} env variable is required.")
 
         config_keys = [
             # Authentication Settings
@@ -57,6 +63,24 @@ class Command(BaseCommand):
                 "key": "GITHUB_CLIENT_SECRET",
                 "value": os.environ.get("GITHUB_CLIENT_SECRET"),
                 "category": "GITHUB",
+                "is_encrypted": True,
+            },
+            {
+                "key": "GITLAB_HOST",
+                "value": os.environ.get("GITLAB_HOST"),
+                "category": "GITLAB",
+                "is_encrypted": False,
+            },
+            {
+                "key": "GITLAB_CLIENT_ID",
+                "value": os.environ.get("GITLAB_CLIENT_ID"),
+                "category": "GITLAB",
+                "is_encrypted": False,
+            },
+            {
+                "key": "GITLAB_CLIENT_SECRET",
+                "value": os.environ.get("GITLAB_CLIENT_SECRET"),
+                "category": "GITLAB",
                 "is_encrypted": True,
             },
             {
@@ -145,7 +169,7 @@ class Command(BaseCommand):
                     )
                 )
 
-        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED"]
+        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED"]
         if not InstanceConfiguration.objects.filter(key__in=keys).exists():
             for key in keys:
                 if key == "IS_GOOGLE_ENABLED":
@@ -207,6 +231,46 @@ class Command(BaseCommand):
                         value = "0"
                     InstanceConfiguration.objects.create(
                         key="IS_GITHUB_ENABLED",
+                        value=value,
+                        category="AUTHENTICATION",
+                        is_encrypted=False,
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"{key} loaded with value from environment variable."
+                        )
+                    )
+                if key == "IS_GITLAB_ENABLED":
+                    GITLAB_HOST, GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET = (
+                        get_configuration_value(
+                            [
+                                {
+                                    "key": "GITLAB_HOST",
+                                    "default": os.environ.get(
+                                        "GITLAB_HOST", "https://gitlab.com"
+                                    ),
+                                },
+                                {
+                                    "key": "GITLAB_CLIENT_ID",
+                                    "default": os.environ.get(
+                                        "GITLAB_CLIENT_ID", ""
+                                    ),
+                                },
+                                {
+                                    "key": "GITLAB_CLIENT_SECRET",
+                                    "default": os.environ.get(
+                                        "GITLAB_CLIENT_SECRET", ""
+                                    ),
+                                },
+                            ]
+                        )
+                    )
+                    if bool(GITLAB_HOST) and bool(GITLAB_CLIENT_ID) and bool(GITLAB_CLIENT_SECRET):
+                        value = "1"
+                    else:
+                        value = "0"
+                    InstanceConfiguration.objects.create(
+                        key="IS_GITLAB_ENABLED",
                         value=value,
                         category="AUTHENTICATION",
                         is_encrypted=False,

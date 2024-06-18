@@ -33,7 +33,7 @@ class AnalyticsEndpoint(BaseAPIView):
             "state__group",
             "labels__id",
             "assignees__id",
-            "estimate_point",
+            "estimate_point__value",
             "issue_cycle__cycle_id",
             "issue_module__module_id",
             "priority",
@@ -381,9 +381,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         )
 
         open_estimate_sum = open_issues_queryset.aggregate(
-            sum=Sum("estimate_point")
+            sum=Sum("point")
         )["sum"]
-        total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))[
+        total_estimate_sum = base_issues.aggregate(sum=Sum("point"))[
             "sum"
         ]
 

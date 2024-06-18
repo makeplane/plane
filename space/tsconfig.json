@@ -11,7 +11,11 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["core/*"],
+      "@/helpers/*": ["helpers/*"],
+      "@/public/*": ["public/*"],
+      "@/styles/*": ["styles/*"],
+      "@/plane-web/*": ["ce/*"]
     },
     "plugins": [
       {

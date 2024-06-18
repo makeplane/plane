@@ -1,5 +1,5 @@
 # Python imports
-# import uuid
+import uuid
 
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
@@ -183,8 +183,8 @@ class UserEndpoint(BaseViewSet):
         profile.save()
 
         # Reset password
-        # user.is_password_autoset = True
-        # user.set_password(uuid.uuid4().hex)
+        user.is_password_autoset = True
+        user.set_password(uuid.uuid4().hex)
 
         # Deactivate the user
         user.is_active = False
@@ -250,6 +250,7 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
         ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
             on_results=lambda issue_activities: IssueActivitySerializer(

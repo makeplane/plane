@@ -66,7 +66,7 @@ def invalidate_cache_directly(
         custom_path = path if path is not None else request.get_full_path()
     auth_header = (
         None
-        if request.user.is_anonymous
+        if request and request.user.is_anonymous
         else str(request.user.id) if user else None
     )
     key = generate_cache_key(custom_path, auth_header)

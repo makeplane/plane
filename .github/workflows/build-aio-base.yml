@@ -1,0 +1,91 @@
+name: Build AIO Base Image
+
+on:
+  workflow_dispatch:
+
+env:
+  TARGET_BRANCH: ${{ github.ref_name }}
+
+jobs:
+  base_build_setup:
+    name: Build Preparation
+    runs-on: ubuntu-latest
+    outputs:
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+      build_base: ${{ steps.changed_files.outputs.base_any_changed }}
+
+    steps:
+      - id: set_env_variables
+        name: Set Environment Variables
+        run: |
+          echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
+          echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
+          echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
+          echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
+          echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v42
+        with:
+          files_yaml: |
+            base: 
+              - aio/Dockerfile.base
+
+  base_build_push:
+    if: ${{ needs.base_build_setup.outputs.build_base == 'true' || github.event_name == 'workflow_dispatch' || needs.base_build_setup.outputs.gh_branch_name == 'master' }}
+    runs-on: ubuntu-latest
+    needs: [base_build_setup]
+    env:
+      BASE_IMG_TAG: makeplane/plane-aio-base:${{ needs.base_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.base_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.base_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.base_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.base_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.base_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set Docker Tag
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/plane-aio-base:latest
+          else
+            TAG=${{ env.BASE_IMG_TAG }}
+          fi
+          echo "BASE_IMG_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Build and Push to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: ./aio
+          file: ./aio/Dockerfile.base
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.BASE_IMG_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}

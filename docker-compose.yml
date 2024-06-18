@@ -116,7 +116,7 @@ services:
 
   plane-redis:
     container_name: plane-redis
-    image: redis:7.2.4-alpine
+    image: valkey/valkey:7.2.5-alpine
     restart: always
     volumes:
       - redisdata:/data

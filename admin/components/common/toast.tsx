@@ -1,3 +1,5 @@
+"use client";
+
 import { useTheme } from "next-themes";
 // ui
 import { Toast as ToastComponent } from "@plane/ui";
