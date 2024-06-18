@@ -1,1 +1,1 @@
-export const PageExtraActions = () => null;
+export const PageDetailsHeaderExtraActions = () => null;

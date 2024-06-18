@@ -10,13 +10,13 @@ import { TLogoProps } from "@plane/types";
 import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-// helper
+// helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { PageExtraActions } from "@/plane-web/components/pages";
+import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -148,7 +148,7 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      <PageExtraActions />
+      <PageDetailsHeaderExtraActions />
       {isContentEditable && (
         <Button
           variant="primary"
