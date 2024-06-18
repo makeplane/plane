@@ -120,7 +120,7 @@ export const PROJECT_SETTINGS_LINKS: {
     label: "Integrations",
     href: `/settings/integrations`,
     access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations/`,
     Icon: SettingIcon,
   },
   {
