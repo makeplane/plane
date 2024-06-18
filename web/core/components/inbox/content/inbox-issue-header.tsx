@@ -109,7 +109,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     handleRedirection(nextOrPreviousIssueId);
   };
 
-  const handleInboxSIssueSnooze = async (date: Date) => {
+  const handleInboxIssueSnooze = async (date: Date) => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueSnoozeTill(date);
     setIsSnoozeDateModalOpen(false);
@@ -125,6 +125,16 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
       router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });
+  };
+
+  const handleIssueSnoozeAction = async () => {
+    if (!inboxIssue?.snoozed_till) {
+      setIsSnoozeDateModalOpen(true);
+    } else {
+      const nextOrPreviousIssueId = redirectIssue();
+      await inboxIssue?.updateInboxIssueSnoozeTill(null);
+      handleRedirection(nextOrPreviousIssueId);
+    }
   };
 
   const handleCopyIssueLink = () =>
@@ -209,7 +219,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           isOpen={isSnoozeDateModalOpen}
           handleClose={() => setIsSnoozeDateModalOpen(false)}
           value={inboxIssue?.snoozed_till}
-          onConfirm={handleInboxSIssueSnooze}
+          onConfirm={handleInboxIssueSnooze}
         />
       </>
 
@@ -299,10 +309,10 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 {isAllowed && (
                   <CustomMenu verticalEllipsis placement="bottom-start">
                     {canMarkAsAccepted && (
-                      <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
+                        <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
                         <div className="flex items-center gap-2">
                           <Clock size={14} strokeWidth={2} />
-                          Snooze
+                            {inboxIssue.snoozed_till ? "Un-snooze" : "Snooze"}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
@@ -337,7 +347,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           handleCopyIssueLink={handleCopyIssueLink}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
-          setIsSnoozeDateModalOpen={setIsSnoozeDateModalOpen}
+          handleIssueSnoozeAction={handleIssueSnoozeAction}
           setSelectDuplicateIssue={setSelectDuplicateIssue}
           setDeleteIssueModal={setDeleteIssueModal}
           canMarkAsAccepted={canMarkAsAccepted}

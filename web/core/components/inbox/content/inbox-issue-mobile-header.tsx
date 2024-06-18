@@ -38,7 +38,7 @@ type Props = {
   setAcceptIssueModal: (value: boolean) => void;
   setDeclineIssueModal: (value: boolean) => void;
   setDeleteIssueModal: (value: boolean) => void;
-  setIsSnoozeDateModalOpen: (value: boolean) => void;
+  handleIssueSnoozeAction: () => Promise<void>;
   setSelectDuplicateIssue: (value: boolean) => void;
   handleCopyIssueLink: () => void;
   isMobileSidebar: boolean;
@@ -59,7 +59,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     setAcceptIssueModal,
     setDeclineIssueModal,
     setDeleteIssueModal,
-    setIsSnoozeDateModalOpen,
+    handleIssueSnoozeAction,
     setSelectDuplicateIssue,
     handleCopyIssueLink,
     isMobileSidebar,
@@ -126,10 +126,10 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsAccepted && !isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem onClick={() => setIsSnoozeDateModalOpen(true)}>
+              <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
-                  Snooze
+                  {inboxIssue.snoozed_till ? "Un-snooze" : "Snooze"}
                 </div>
               </CustomMenu.MenuItem>
             )}
