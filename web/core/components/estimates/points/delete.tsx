@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
-import { TEstimatePointsObject } from "@plane/types";
+import { TEstimatePointsObject, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EstimatePointDropdown } from "@/components/estimates/points";
@@ -16,27 +16,37 @@ type TEstimatePointDelete = {
   estimateId: string;
   estimatePointId: string;
   callback: () => void;
+  estimatePointError?: TEstimateTypeErrorObject | undefined;
+  handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
 export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) => {
-  const { workspaceSlug, projectId, estimateId, estimatePointId, callback } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    estimateId,
+    estimatePointId,
+    callback,
+    estimatePointError,
+    handleEstimatePointError,
+  } = props;
   // hooks
   const { estimatePointIds, estimatePointById, deleteEstimatePoint } = useEstimate(estimateId);
   const { asJson: estimatePoint } = useEstimatePoint(estimateId, estimatePointId);
   // states
   const [loader, setLoader] = useState(false);
   const [estimateInputValue, setEstimateInputValue] = useState<string | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
 
   const handleClose = () => {
     setEstimateInputValue("");
+    handleEstimatePointError && handleEstimatePointError(estimateId, undefined, "delete");
     callback();
   };
 
   const handleDelete = async () => {
     if (!workspaceSlug || !projectId || !projectId) return;
 
-    setError(undefined);
+    handleEstimatePointError && handleEstimatePointError(estimateId, undefined, "delete");
 
     if (estimateInputValue)
       try {
@@ -50,7 +60,6 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
         );
 
         setLoader(false);
-        setError(undefined);
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Estimate point updated",
@@ -59,14 +68,15 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
         handleClose();
       } catch {
         setLoader(false);
-        setError("something went wrong. please try again later");
+        // handleEstimatePointError &&
+        //   handleEstimatePointError(estimateId, "something went wrong. please try again later");
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Estimate point failed to updated",
           message: "We are unable to process your request, please try again.",
         });
       }
-    else setError("please select option");
+    else handleEstimatePointError && handleEstimatePointError(estimateId, "please select option");
   };
 
   // derived values
@@ -80,7 +90,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
     .filter((estimatePoint) => estimatePoint != undefined) as TEstimatePointsObject[];
 
   return (
-    <div className="relative flex items-center gap-2 text-base">
+    <div className="relative flex items-center gap-2 text-base pr-2.5">
       <div className="flex-grow relative flex items-center gap-3">
         <div className="w-full border border-custom-border-200 rounded p-2.5 bg-custom-background-90">
           {estimatePoint?.value}
@@ -90,10 +100,10 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
         </div>
         <EstimatePointDropdown
           options={selectDropdownOptions}
-          error={error}
+          error={estimatePointError?.message ? "Continue or discard the estimate point delete operation." : undefined}
           callback={(estimateId: string) => {
             setEstimateInputValue(estimateId);
-            setError(undefined);
+            handleEstimatePointError && handleEstimatePointError(estimateId, undefined);
           }}
         />
       </div>
