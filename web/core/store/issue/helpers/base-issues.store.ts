@@ -804,7 +804,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
               // convert existing value to an array
               const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
               this.rootIssueStore.issues.updateIssue(issueId, {
-                [property]: uniq([newExistingValue, ...propertyValue]),
+                [property]: uniq([...newExistingValue, ...propertyValue]),
               });
             } else {
               // if property value is not an array, simply update the value
