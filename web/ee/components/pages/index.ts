@@ -1,3 +1,4 @@
+export * from "./extra-actions";
 export * from "./dashboard";
 export * from "./editor";
 export * from "./list";
