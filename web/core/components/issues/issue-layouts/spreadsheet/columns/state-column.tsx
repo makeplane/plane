@@ -16,7 +16,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 max-w-48 border-b-[0.5px] border-custom-border-200">
       <StateDropdown
         projectId={issue.project_id ?? undefined}
         value={issue.state_id}
@@ -26,6 +26,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
+        showTooltip
       />
     </div>
   );
