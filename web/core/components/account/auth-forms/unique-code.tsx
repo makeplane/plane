@@ -3,10 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
+// constants
+import { CODE_VERIFIED } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
+import { useEventTracker } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -17,6 +20,7 @@ const authService = new AuthService();
 type TAuthUniqueCodeForm = {
   mode: EAuthModes;
   email: string;
+  isExistingEmail: boolean;
   handleEmailClear: () => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
   nextPath: string | undefined;
@@ -33,9 +37,9 @@ const defaultValues: TUniqueCodeFormValues = {
 };
 
 export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
-  const { mode, email, handleEmailClear, generateEmailUniqueCode, nextPath } = props;
+  const { mode, email, handleEmailClear, generateEmailUniqueCode, isExistingEmail, nextPath } = props;
   // hooks
-  // const { captureEvent } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   // derived values
   const defaultResetTimerValue = 5;
   // states
@@ -76,7 +80,13 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       className="mt-5 space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
-      onSubmit={() => setIsSubmitting(true)}
+      onSubmit={() => {
+        setIsSubmitting(true);
+        captureEvent(CODE_VERIFIED, {
+          state: "SUCCESS",
+          first_time: !isExistingEmail,
+        });
+      }}
       onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />

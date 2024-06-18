@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, Fragment } from "react";
-import { useRouter } from "next/navigation";
+
 import { Transition, Dialog } from "@headlessui/react";
-import type { IProject } from "@plane/types";
-// hooks
-import { Button } from "@plane/ui";
-import { useProject, useUser } from "@/hooks/store";
-// ui
 // types
+import type { IProject } from "@plane/types";
+// ui
+import { Button } from "@plane/ui";
+// hooks
+import { useProject, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 // type
 type TJoinProjectModalProps = {
@@ -28,7 +29,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   } = useUser();
   const { fetchProjects } = useProject();
   // router
-  const router = useRouter();
+  const router = useAppRouter();
 
   const handleJoin = () => {
     setIsJoiningLoading(true);

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
+
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
@@ -16,6 +16,7 @@ import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCycle, useEventTracker, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -27,7 +28,7 @@ type Props = {
 export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const { parentRef, cycleId, projectId, workspaceSlug } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);

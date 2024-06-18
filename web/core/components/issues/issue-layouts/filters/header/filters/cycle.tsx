@@ -3,11 +3,12 @@
 import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { TCycleGroups } from "@plane/types";
 // components
 import { Loader, CycleGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-import { useAppRouter, useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store";
 // ui
 // types
 
@@ -21,14 +22,14 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks
-  const { projectId } = useAppRouter();
+  const { projectId } = useParams();
   const { getCycleById, getProjectCycleIds } = useCycle();
 
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const cycleIds = projectId ? getProjectCycleIds(projectId) : undefined;
+  const cycleIds = projectId ? getProjectCycleIds(projectId.toString()) : undefined;
   const cycles = cycleIds?.map((projectId) => getCycleById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 

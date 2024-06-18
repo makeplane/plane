@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-// import { useRouter } from "next/navigation";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
 
@@ -34,7 +33,7 @@ export type TSelectionHelper = {
 export const useMultipleSelect = (props: Props) => {
   const { containerRef, disabled, entities } = props;
   // router
-  // const router = useRouter();
+  // const router = useAppRouter();
   // store hooks
   const {
     selectedEntityIds,

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
 // components
@@ -14,6 +14,7 @@ import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -24,7 +25,7 @@ const workspaceService = new WorkspaceService();
 
 const WorkspaceInvitationPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // query params
   const searchParams = useSearchParams();
   const invitation_id = searchParams.get("invitation_id");

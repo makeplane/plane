@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 //components
 import { Avatar } from "@plane/ui";
 //store
-import { useUser, useMember, useAppRouter } from "@/hooks/store";
+import { useUser, useMember } from "@/hooks/store";
 
 interface Props {
   projectId?: string;
@@ -26,7 +27,7 @@ export const MemberOptions = observer((props: Props) => {
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // store hooks
-  const { workspaceSlug } = useAppRouter();
+  const { workspaceSlug } = useParams();
   const {
     getUserDetails,
     project: { getProjectMemberIds, fetchProjectMembers },
@@ -55,7 +56,7 @@ export const MemberOptions = observer((props: Props) => {
 
   const memberIds = projectId ? getProjectMemberIds(projectId) : workspaceMemberIds;
   const onOpen = () => {
-    if (!memberIds && workspaceSlug && projectId) fetchProjectMembers(workspaceSlug, projectId);
+    if (!memberIds && workspaceSlug && projectId) fetchProjectMembers(workspaceSlug.toString(), projectId);
   };
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

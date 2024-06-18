@@ -4,6 +4,7 @@ import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react-lite";
+import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
@@ -15,7 +16,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppRouter, useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -59,8 +60,11 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
   // hooks
-  const { workspaceSlug, projectId } = useAppRouter();
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 

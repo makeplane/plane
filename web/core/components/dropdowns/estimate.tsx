@@ -1,5 +1,6 @@
 import { Fragment, ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -7,7 +8,6 @@ import { Combobox } from "@headlessui/react";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import {
-  useAppRouter,
   useEstimate,
   useProjectEstimates,
   //  useEstimate
@@ -78,9 +78,9 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
       },
     ],
   });
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceSlug } = useAppRouter();
-
   const { currentActiveEstimateId, getProjectEstimates } = useProjectEstimates();
   const { estimatePointIds, estimatePointById } = useEstimate(
     currentActiveEstimateId ? currentActiveEstimateId : undefined
@@ -120,7 +120,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const selectedEstimate = value && estimatePointById ? estimatePointById(value) : undefined;
 
   const onOpen = async () => {
-    if (!currentActiveEstimateId && workspaceSlug && projectId) await getProjectEstimates(workspaceSlug, projectId);
+    if (!currentActiveEstimateId && workspaceSlug && projectId) await getProjectEstimates(workspaceSlug.toString(), projectId);
   };
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({

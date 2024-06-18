@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // icons
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // types
@@ -30,13 +30,14 @@ import {
   useCommandPalette,
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ProjectIssuesHeader = observer(() => {
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const {

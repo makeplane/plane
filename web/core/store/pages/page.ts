@@ -56,6 +56,7 @@ export class Page implements IPage {
   label_ids: string[] | undefined;
   owned_by: string | undefined;
   access: EPageAccess | undefined;
+  anchor?: string | null | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | null | undefined;
@@ -84,6 +85,7 @@ export class Page implements IPage {
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
     this.access = page?.access || EPageAccess.PUBLIC;
+    this.anchor = page?.anchor || undefined;
     this.is_favorite = page?.is_favorite || false;
     this.is_locked = page?.is_locked || false;
     this.archived_at = page?.archived_at || undefined;
@@ -184,6 +186,7 @@ export class Page implements IPage {
       label_ids: this.label_ids,
       owned_by: this.owned_by,
       access: this.access,
+      anchor: this.anchor,
       logo_props: this.logo_props,
       is_favorite: this.is_favorite,
       is_locked: this.is_locked,
@@ -434,15 +437,10 @@ export class Page implements IPage {
   archive = async () => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-
-    try {
-      const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
-      runInAction(() => {
-        this.archived_at = response.archived_at;
-      });
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
+    runInAction(() => {
+      this.archived_at = response.archived_at;
+    });
   };
 
   /**
@@ -451,31 +449,21 @@ export class Page implements IPage {
   restore = async () => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-
-    try {
-      await this.pageService.restore(workspaceSlug, projectId, this.id);
-      runInAction(() => {
-        this.archived_at = null;
-      });
-    } catch (error) {
-      throw error;
-    }
+    await this.pageService.restore(workspaceSlug, projectId, this.id);
+    runInAction(() => {
+      this.archived_at = null;
+    });
   };
 
   updatePageLogo = async (logo_props: TLogoProps) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-
-    try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
-        logo_props,
-      });
-      runInAction(() => {
-        this.logo_props = logo_props;
-      });
-    } catch (error) {
-      throw error;
-    }
+    await this.pageService.update(workspaceSlug, projectId, this.id, {
+      logo_props,
+    });
+    runInAction(() => {
+      this.logo_props = logo_props;
+    });
   };
 
   /**

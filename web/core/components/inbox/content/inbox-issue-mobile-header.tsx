@@ -2,7 +2,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import {
   CircleCheck,
   CircleX,
@@ -21,6 +20,8 @@ import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -64,7 +65,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     isMobileSidebar,
     setIsMobileSidebar,
   } = props;
-  const router = useRouter();
+  const router = useAppRouter();
   const issue = inboxIssue?.issue;
   const currentInboxIssueId = issue?.id;
 

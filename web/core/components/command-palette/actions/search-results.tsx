@@ -1,11 +1,12 @@
 "use client";
 
 import { Command } from "cmdk";
-import { useRouter } from "next/navigation";
+// types
 import { IWorkspaceSearchResults } from "@plane/types";
 // helpers
 import { commandGroups } from "@/components/command-palette";
-// types
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   closePalette: () => void;
@@ -15,7 +16,7 @@ type Props = {
 export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
   const { closePalette, results } = props;
 
-  const router = useRouter();
+  const router = useAppRouter();
 
   return (
     <>

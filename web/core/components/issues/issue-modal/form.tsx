@@ -30,14 +30,7 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-import {
-  useAppRouter,
-  useProjectEstimates,
-  useInstance,
-  useIssueDetail,
-  useProject,
-  useWorkspace,
-} from "@/hooks/store";
+import { useProjectEstimates, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
@@ -121,11 +114,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId: routeProjectId } = useParams();
   // store hooks
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-  const { projectId: routeProjectId } = useAppRouter();
   const { config } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();

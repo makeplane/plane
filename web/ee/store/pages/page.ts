@@ -57,6 +57,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
   label_ids: string[] | undefined;
   owned_by: string | undefined;
   access: EPageAccess | undefined;
+  anchor?: string | null | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | null | undefined;
@@ -85,6 +86,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
     this.access = page?.access || EPageAccess.PUBLIC;
+    this.anchor = page?.anchor || undefined;
     this.is_favorite = page?.is_favorite || false;
     this.is_locked = page?.is_locked || false;
     this.archived_at = page?.archived_at || undefined;
@@ -186,6 +188,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
       label_ids: this.label_ids,
       owned_by: this.owned_by,
       access: this.access,
+      anchor: this.anchor,
       logo_props: this.logo_props,
       is_favorite: this.is_favorite,
       is_locked: this.is_locked,

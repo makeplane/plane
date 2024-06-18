@@ -2,7 +2,7 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -10,6 +10,7 @@ import { LogoSpinner } from "@/components/common";
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type TPageType = EPageTypes;
 
@@ -25,7 +26,7 @@ const isValidURL = (url: string): boolean => {
 
 export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props) => {
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // props

@@ -37,7 +37,9 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
     ]
 
     def get(self, request, anchor):
-        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").values_list
+        deploy_board = DeployBoard.objects.filter(
+            anchor=anchor, entity_name="project"
+        ).values_list
         projects = (
             Project.objects.filter(workspace=deploy_board.workspace)
             .annotate(

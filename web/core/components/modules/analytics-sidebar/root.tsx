@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import {
   ArchiveRestoreIcon,
@@ -47,6 +47,7 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useModule, useUser, useEventTracker, useProjectEstimates } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
@@ -73,7 +74,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
 
   // store hooks
