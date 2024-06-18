@@ -13,21 +13,21 @@ export const PROFILE_ACTION_LINKS: {
     key: "profile",
     label: "Profile",
     href: `/profile`,
-    highlight: (pathname: string) => pathname === "/profile",
+    highlight: (pathname: string) => pathname === "/profile/",
     Icon: CircleUser,
   },
   {
     key: "security",
     label: "Security",
     href: `/profile/security`,
-    highlight: (pathname: string) => pathname === "/profile/security",
+    highlight: (pathname: string) => pathname === "/profile/security/",
     Icon: KeyRound,
   },
   {
     key: "activity",
     label: "Activity",
     href: `/profile/activity`,
-    highlight: (pathname: string) => pathname === "/profile/activity",
+    highlight: (pathname: string) => pathname === "/profile/activity/",
     Icon: Activity,
   },
   {
@@ -41,7 +41,7 @@ export const PROFILE_ACTION_LINKS: {
       key: "notifications",
       label: "Notifications",
       href: `/profile/notifications`,
-      highlight: (pathname: string) => pathname === "/profile/notifications",
+      highlight: (pathname: string) => pathname === "/profile/notifications/",
       Icon: Bell,
     },
 ];

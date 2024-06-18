@@ -299,23 +299,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
-    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
-    if (!displayFilters || !groupedIssueIds) return undefined;
+    if (!groupedIssueIds) return undefined;
 
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-
-    const allIssues = groupedIssueIds[ALL_ISSUES];
-    if (!groupBy && !subGroupBy && allIssues && Array.isArray(allIssues)) {
+    const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
+    if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
       return allIssues as string[];
     }
 
-    if (groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return groupedIssueIds[groupId] as string[];
+    if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
+      return (groupedIssueIds[groupId] ?? []) as string[];
     }
 
-    if (groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId] as string[];
+    if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
+      return ((groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? []) as string[];
     }
 
     return undefined;
