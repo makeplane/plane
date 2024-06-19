@@ -22,10 +22,11 @@ type Props = {
   handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  handleSaveDescription: (initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
+  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef, handleSaveDescription } = props;
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
@@ -79,6 +80,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
       <PageOptionsDropdown
         editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
         handleDuplicatePage={handleDuplicatePage}
+        handleSaveDescription={handleSaveDescription}
         page={page}
       />
     </div>

@@ -19,7 +19,7 @@ interface IDocumentEditor {
   handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
-  onChange: (updates: Uint8Array) => void;
+  onChange: (update: Uint8Array, source?: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -52,7 +52,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   };
 
   // use document editor
-  const editor = useDocumentEditor({
+  const { editor, isIndexedDbSynced } = useDocumentEditor({
     id,
     editorClassName,
     fileHandler,
@@ -72,7 +72,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !isIndexedDbSynced) return null;
 
   return (
     <PageRenderer

@@ -20,6 +20,7 @@ import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
+import { usePageDescription } from "@/hooks/use-page-description";
 
 const PageDetailsPage = observer(() => {
   // states
@@ -46,6 +47,16 @@ const PageDetailsPage = observer(() => {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+    }
+  );
+
+  // project-description
+  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS, handleSaveDescription } = usePageDescription(
+    {
+      editorRef,
+      page,
+      projectId,
+      workspaceSlug,
     }
   );
 
@@ -103,6 +114,7 @@ const PageDetailsPage = observer(() => {
             editorReady={editorReady}
             readOnlyEditorReady={readOnlyEditorReady}
             handleDuplicatePage={handleDuplicatePage}
+            handleSaveDescription={handleSaveDescription}
             markings={markings}
             page={page}
             sidePeekVisible={sidePeekVisible}
@@ -117,6 +129,9 @@ const PageDetailsPage = observer(() => {
             page={page}
             sidePeekVisible={sidePeekVisible}
             updateMarkings={updateMarkings}
+            handleDescriptionChange={handleDescriptionChange}
+            isDescriptionReady={isDescriptionReady}
+            pageDescriptionYJS={pageDescriptionYJS}
           />
           <IssuePeekOverview />
         </div>
