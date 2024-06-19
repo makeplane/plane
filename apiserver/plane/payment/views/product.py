@@ -15,10 +15,10 @@ from plane.app.permissions.workspace import (
     WorkspaceUserPermission,
 )
 from plane.db.models import WorkspaceMember, Workspace
+from plane.utils.exception_logger import log_exception
 
 
 class ProductEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -31,8 +31,12 @@ class ProductEndpoint(BaseAPIView):
                 ).count()
                 response = requests.get(
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/?quantity={count}",
-                    headers={"content-type": "application/json"},
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
                 )
+                response.raise_for_status()
                 response = response.json()
                 return Response(response, status=status.HTTP_200_OK)
             else:
@@ -40,7 +44,8 @@ class ProductEndpoint(BaseAPIView):
                     {"error": "error fetching product details"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            log_exception(e)
             return Response(
                 {"error": "error fetching product details"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -48,7 +53,6 @@ class ProductEndpoint(BaseAPIView):
 
 
 class WorkspaceProductEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkspaceUserPermission,
     ]
@@ -59,8 +63,12 @@ class WorkspaceProductEndpoint(BaseAPIView):
                 workspace = Workspace.objects.get(slug=slug)
                 response = requests.get(
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace.id)}/",
-                    headers={"content-type": "application/json"},
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
                 )
+                response.raise_for_status()
                 response = response.json()
                 return Response(response, status=status.HTTP_200_OK)
             else:
@@ -68,7 +76,8 @@ class WorkspaceProductEndpoint(BaseAPIView):
                     {"error": "error fetching product details"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            log_exception(e)
             return Response(
                 {"error": "error fetching product details"},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -14,10 +14,10 @@ from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkSpaceAdminPermission
 from plane.db.models import WorkspaceMember, Workspace
 from plane.authentication.utils.host import base_host
+from plane.utils.exception_logger import log_exception
 
 
 class PaymentLinkEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -50,6 +50,10 @@ class PaymentLinkEndpoint(BaseAPIView):
             if settings.PAYMENT_SERVER_BASE_URL:
                 response = requests.post(
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/payment-link/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
                     json={
                         "workspace_id": str(workspace.id),
                         "slug": slug,
@@ -59,8 +63,8 @@ class PaymentLinkEndpoint(BaseAPIView):
                         "members_list": list(workspace_members),
                         "host": base_host(request=request, is_app=True),
                     },
-                    headers={"content-type": "application/json"},
                 )
+                response.raise_for_status()
                 response = response.json()
                 return Response(response, status=status.HTTP_200_OK)
             else:
@@ -68,7 +72,8 @@ class PaymentLinkEndpoint(BaseAPIView):
                     {"error": "error fetching payment link"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            log_exception(e)
             return Response(
                 {"error": "error fetching payment link"},
                 status=status.HTTP_400_BAD_REQUEST,
