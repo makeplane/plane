@@ -173,7 +173,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "Integrations",
     href: `/settings/integrations`,
     access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations/`,
     Icon: SettingIcon,
   },
   {
@@ -181,7 +181,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
     label: "Imports",
     href: `/settings/imports`,
     access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports/`,
     Icon: SettingIcon,
   },
   {

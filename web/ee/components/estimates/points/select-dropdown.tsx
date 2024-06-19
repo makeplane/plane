@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useRef, Fragment, useState } from "react";
+import { usePopper } from "react-popper";
 import { Info, Check, ChevronDown } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 import { TEstimatePointsObject } from "@plane/types";
@@ -8,7 +9,6 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type TEstimatePointDropdown = {
@@ -22,13 +22,18 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // ref
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useDynamicDropdownPosition(isDropdownOpen, () => setIsDropdownOpen(false), buttonRef, dropdownRef);
   useOutsideClickDetector(dropdownContainerRef, () => setIsDropdownOpen(false));
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+  });
 
   // derived values
   const selectedValue = selectedOption
@@ -45,6 +50,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
     <div ref={dropdownContainerRef} className="w-full relative">
       <Listbox
         as="div"
+        ref={dropdownRef}
         value={selectedOption}
         onChange={(selectedOption) => {
           setSelectedOption(selectedOption);
@@ -55,7 +61,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
       >
         <Listbox.Button
           type="button"
-          ref={buttonRef}
+          ref={setReferenceElement}
           onClick={() => setIsDropdownOpen((prev) => !prev)}
           className={cn(
             "relative w-full rounded border flex items-center gap-3 p-2.5",
@@ -78,6 +84,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
             </>
           )}
         </Listbox.Button>
+
         <Transition
           show={isDropdownOpen}
           as={Fragment}
@@ -88,40 +95,44 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Listbox.Options
-            ref={dropdownRef}
-            className="fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 shadow-sm focus:outline-none"
+          <div
+            className="p-1.5 fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 shadow-sm focus:outline-none"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
           >
-            <div className="p-1.5">
-              <Listbox.Option
-                value={"none"}
-                className={cn(
-                  `cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-90`,
-                  selectedOption === "none" ? "text-custom-text-100" : "text-custom-text-300"
-                )}
-              >
-                <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
-                  <div className="text-sm font-medium w-full line-clamp-1">None</div>
-                  {selectedOption === "none" && <Check size={12} />}
-                </div>
-              </Listbox.Option>
-              {options.map((option) => (
+            <Listbox.Options>
+              <div>
                 <Listbox.Option
-                  key={option?.key}
-                  value={option?.id}
+                  value={"none"}
                   className={cn(
                     `cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-90`,
-                    selectedOption === option?.id ? "text-custom-text-100" : "text-custom-text-300"
+                    selectedOption === "none" ? "text-custom-text-100" : "text-custom-text-300"
                   )}
                 >
                   <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
-                    <div className="text-sm font-medium w-full line-clamp-1">{option.value}</div>
-                    {selectedOption === option?.id && <Check size={12} />}
+                    <div className="text-sm font-medium w-full line-clamp-1">None</div>
+                    {selectedOption === "none" && <Check size={12} />}
                   </div>
                 </Listbox.Option>
-              ))}
-            </div>
-          </Listbox.Options>
+                {options.map((option) => (
+                  <Listbox.Option
+                    key={option?.key}
+                    value={option?.id}
+                    className={cn(
+                      `cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-90`,
+                      selectedOption === option?.id ? "text-custom-text-100" : "text-custom-text-300"
+                    )}
+                  >
+                    <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
+                      <div className="text-sm font-medium w-full line-clamp-1">{option.value}</div>
+                      {selectedOption === option?.id && <Check size={12} />}
+                    </div>
+                  </Listbox.Option>
+                ))}
+              </div>
+            </Listbox.Options>
+          </div>
         </Transition>
       </Listbox>
     </div>

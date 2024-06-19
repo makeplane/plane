@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
 import { TEstimatePointsObject, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { EstimatePointDropdown } from "@/components/estimates/points";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
+// plane web components
+import { EstimatePointDropdown } from "@/plane-web/components/estimates";
 
 type TEstimatePointDelete = {
   workspaceSlug: string;
