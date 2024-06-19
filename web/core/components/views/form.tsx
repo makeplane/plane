@@ -11,11 +11,12 @@ import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, PhotoFilterIcon, 
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { LayoutDropDown } from "../dropdowns/layout";
 
 type Props = {
   data?: IProjectView | null;
@@ -48,7 +49,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
     reset,
     setValue,
     watch,
-  } = useForm<IProjectView>({
+  } = useForm<IProjectView & { layout: EIssueLayoutTypes }>({
     defaultValues,
   });
 
@@ -90,13 +91,13 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleCreateUpdateView = async (formData: IProjectView) => {
+  const handleCreateUpdateView = async (formData: IProjectView & { layout: EIssueLayoutTypes }) => {
     await handleFormSubmit({
       name: formData.name,
       description: formData.description,
       logo_props: formData.logo_props,
       filters: formData.filters,
-      display_filters: formData.display_filters,
+      display_filters: { ...formData.display_filters, layout: formData.layout },
       display_properties: formData.display_properties,
     } as IProjectView);
 
@@ -207,6 +208,18 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   value={value}
                   onChange={onChange}
                   tabIndex={2}
+                />
+              )}
+            />
+          </div>
+          <div>
+            <Controller
+              control={control}
+              name="layout"
+              render={({ field: { onChange, value } }) => (
+                <LayoutDropDown
+                  onChange={(selectedValue: EIssueLayoutTypes) => onChange(selectedValue)}
+                  value={value}
                 />
               )}
             />

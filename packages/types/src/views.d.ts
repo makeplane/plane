@@ -13,6 +13,9 @@ export interface IProjectView {
   is_favorite: boolean;
   created_by: string;
   updated_by: string;
+  isLocked: boolean | null;
+  isPrivate: boolean | null;
+  isPublished: boolean | null;
   name: string;
   description: string;
   filters: IIssueFilterOptions;

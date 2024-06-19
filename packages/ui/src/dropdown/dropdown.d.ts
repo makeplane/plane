@@ -24,8 +24,8 @@ export interface IDropdown {
   // options props
   keyExtractor: (option: TDropdownOption) => string;
   optionsContainerClassName?: string;
-  queryArray: string[];
-  sortByKey: string;
+  queryArray?: string[];
+  sortByKey?: string;
   firstItem?: (optionValue: string) => boolean;
   renderItem?: ({ value, selected }: { value: string; selected: boolean }) => React.ReactNode;
   loader?: React.ReactNode;
@@ -52,7 +52,7 @@ export interface ISingleSelectDropdown extends IDropdown {
 
 export interface IDropdownButton {
   isOpen: boolean;
-  buttonContent?: (isOpen: boolean) => React.ReactNode;
+  buttonContent?: (isOpen: boolean, value: string | string[] | undefined) => React.ReactNode;
   buttonClassName?: string;
   buttonContainerClassName?: string;
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -78,6 +78,8 @@ export interface IDropdownOptions {
   inputIcon?: React.ReactNode;
   inputContainerClassName?: string;
   disableSearch?: boolean;
+
+  handleClose?: () => void;
 
   keyExtractor: (option: TDropdownOption) => string;
   renderItem: (({ value, selected }: { value: string; selected: boolean }) => React.ReactNode) | undefined;
