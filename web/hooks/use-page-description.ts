@@ -46,10 +46,10 @@ export const usePageDescription = (props: Props) => {
     }
   );
 
-  const handleDescriptionChange = useCallback((update: Uint8Array, source: string) => {
+  const handleDescriptionChange = useCallback((update: Uint8Array, source?: string) => {
     setHasLocalChanges(true);
     setLocalDescriptionYJS(() => {
-      if (source === "initialSync") {
+      if (source && source === "initialSync") {
         handleSaveDescription(update);
       }
 

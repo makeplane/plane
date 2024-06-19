@@ -19,7 +19,7 @@ interface IDocumentEditor {
   handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
-  onChange: (updates: Uint8Array, source?: string) => void;
+  onChange: (update: Uint8Array, source?: string) => void;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;

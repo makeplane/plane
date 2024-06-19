@@ -15,7 +15,7 @@ type DocumentEditorProps = {
   fileHandler: TFileHandler;
   value: Uint8Array;
   editorClassName: string;
-  onChange: (updates: Uint8Array, source?: string) => void;
+  onChange: (update: Uint8Array, source?: string) => void;
   editorProps?: EditorProps;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: {
