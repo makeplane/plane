@@ -16,7 +16,7 @@ x-app-env: &app-env
     - POSTGRES_DB=${POSTGRES_DB:-plane}
     - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     - PGDATA=${PGDATA:-/var/lib/postgresql/data}
-    - DATABASE_URL=${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
+    - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${PGHOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     # REDIS SETTINGS
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
@@ -83,7 +83,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/docker-entrypoint-api.sh
+    command: bash bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
@@ -97,7 +97,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/docker-entrypoint-worker.sh
+    command: bash bin/docker-entrypoint-migrator.sh
     volumes:
       - logs_worker:/code/plane/logs
     depends_on:
@@ -110,7 +110,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
-    command: ./bin/docker-entrypoint-beat.sh
+    command: bash bin/docker-entrypoint-migrator.sh
     volumes:
       - logs_beat-worker:/code/plane/logs
     depends_on:
@@ -123,7 +123,7 @@ services:
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: ${PULL_POLICY:-always}
     restart: "no"
-    command: ./bin/docker-entrypoint-migrator.sh
+    command: bash bin/docker-entrypoint-migrator.sh
     volumes:
       - logs_migrator:/code/plane/logs
     depends_on:
