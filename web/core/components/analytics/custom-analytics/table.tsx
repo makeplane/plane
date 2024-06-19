@@ -81,7 +81,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                   )}
                 >
                   <Tooltip tooltipContent={generateDisplayName(`${item.name}`, analytics, params, "x_axis")}>
-                    <div className="overflow-hidden w-full max-w-80 lg:max-w-xl truncate">
+                    <div className="overflow-hidden w-full whitespace-normal break-words truncate line-clamp-1">
                       {generateDisplayName(`${item.name}`, analytics, params, "x_axis")}
                     </div>
                   </Tooltip>
