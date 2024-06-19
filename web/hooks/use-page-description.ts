@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
-import { applyUpdates, hashYjsDocument, proseMirrorJSONToBinaryString } from "@plane/document-editor";
+import { applyUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
 import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 import useAutoSave from "@/hooks/use-auto-save";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
@@ -76,18 +76,11 @@ export const usePageDescription = (props: Props) => {
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
   const handleSaveDescription = useCallback(
-    async (initSyncVector?: Uint8Array) => {
-      const update = localDescriptionYJS ?? initSyncVector;
+    async (initSyncVectorAsUpdate?: Uint8Array) => {
+      const update = localDescriptionYJS ?? initSyncVectorAsUpdate;
 
-      if (localDescriptionYJS === undefined || pageDescriptionYJS === undefined) return;
-      const hashHex = await hashYjsDocument(localDescriptionYJS);
-      const hashHex2 = await hashYjsDocument(pageDescriptionYJS);
-      console.log(hashHex, hashHex2, hashHex === hashHex2);
-      // const stateVector1 = Y.encodeStateVectorFromUpdate(localDescriptionYJS);
+      if (update == null) return;
 
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      // console.log("usePageDescription#(anon) diff1: %s", diff1); // __AUTO_GENERATED_PRINT_VAR_END__
-      // console.log("usePageDescription#(anon) diff2: %s", diff2); // __AUTO_GENERATED_PRINT_VAR_END__
       if (!isContentEditable) return;
 
       const applyUpdatesAndSave = async (latestDescription: any, update: Uint8Array | undefined) => {
