@@ -52,6 +52,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
+  const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
   // pathname
@@ -71,7 +72,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       setDescription(data?.description_html || "<p></p>");
       return;
     }
-    const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId, isDraft ? "DRAFT" : "DEFAULT");
+    const response = await fetchIssue(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      issueId,
+      isDraft ? "DRAFT" : "DEFAULT"
+    );
     if (response) setDescription(response?.description_html || "<p></p>");
   };
 
@@ -142,15 +148,43 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      const response = is_draft_issue
-        ? await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload)
-        : createIssue && (await createIssue(payload.project_id, payload));
+      let response;
+
+      // if draft issue, use draft issue store to create issue
+      if (is_draft_issue) {
+        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+      }
+      // if cycle id in payload does not match the cycleId in url
+      // or if the moduleIds in Payload does not match the moduleId in url
+      // use the project issue store to create issues
+      else if (
+        (payload.cycle_id !== cycleId && storeType === EIssuesStoreType.CYCLE) ||
+        (!payload.module_ids?.includes(moduleId?.toString()) && storeType === EIssuesStoreType.MODULE)
+      ) {
+        response = await projectIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+      } // else just use the existing store type's create method
+      else if (createIssue) {
+        response = await createIssue(payload.project_id, payload);
+      }
+
       if (!response) throw new Error();
 
-      if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
+      // check if we should add issue to cycle/module
+      if (
+        payload.cycle_id &&
+        payload.cycle_id !== "" &&
+        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
+      ) {
         await addIssueToCycle(response, payload.cycle_id);
-      if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
+      }
+      if (
+        payload.module_ids &&
+        payload.module_ids.length > 0 &&
+        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+      ) {
         await addIssueToModule(response, payload.module_ids);
+      }
+
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
