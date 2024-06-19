@@ -64,7 +64,7 @@ export const usePageDescription = (props: Props) => {
   useEffect(() => {
     const changeHTMLToBinary = async () => {
       if (!pageDescriptionYJS || !pageDescription) return;
-      if (pageDescriptionYJS.byteLength === 0) {
+      if (pageDescriptionYJS.length === 0) {
         const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
 
@@ -99,7 +99,7 @@ export const usePageDescription = (props: Props) => {
 
       if (!isContentEditable) return;
 
-      const applyUpdatesAndSave = async (latestDescription: any, update: Uint8Array | undefined) => {
+      const applyUpdatesAndSave = async (latestDescription: Uint8Array, update: Uint8Array | undefined) => {
         if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
 
         if (!editorRef.current?.hasUnsyncedChanges()) {
@@ -119,7 +119,9 @@ export const usePageDescription = (props: Props) => {
       try {
         setIsSubmitting("submitting");
         const latestDescription = await mutateDescriptionYJS();
-        await applyUpdatesAndSave(latestDescription, update);
+        if (latestDescription) {
+          await applyUpdatesAndSave(latestDescription, update);
+        }
       } catch (error) {
         setIsSubmitting("saved");
         throw error;
