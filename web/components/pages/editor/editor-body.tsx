@@ -17,7 +17,7 @@ import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/compon
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
-import { usePageDescription } from "@/hooks/use-page-description";
+// import { usePageDescription } from "@/hooks/use-page-description";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // services
 import { FileService } from "@/services/file.service";
@@ -35,6 +35,10 @@ type Props = {
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
   updateMarkings: (description_html: string) => void;
+  handleDescriptionChange: (update: Uint8Array, source?: string | undefined) => void;
+  isDescriptionReady: boolean;
+  pageDescriptionYJS: Uint8Array | undefined;
+  handleSaveDescription: (initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -47,6 +51,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     page,
     sidePeekVisible,
     updateMarkings,
+    isDescriptionReady,
+    pageDescriptionYJS,
+    handleDescriptionChange,
   } = props;
   // router
   const router = useRouter();
@@ -66,13 +73,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // project-description
-  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS } = usePageDescription({
-    editorRef,
-    page,
-    projectId,
-    workspaceSlug,
-  });
+
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",

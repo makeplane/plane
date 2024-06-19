@@ -147,5 +147,6 @@ export const usePageDescription = (props: Props) => {
     handleDescriptionChange,
     isDescriptionReady,
     pageDescriptionYJS,
+    handleSaveDescription,
   };
 };

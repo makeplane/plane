@@ -19,6 +19,7 @@ import { PageEditorBody, PageEditorHeaderRoot } from "@/components/pages";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
+import { usePageDescription } from "@/hooks/use-page-description";
 // layouts
 import { AppLayout } from "@/layouts/app-layout";
 // lib
@@ -49,6 +50,16 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+    }
+  );
+
+  // project-description
+  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS, handleSaveDescription } = usePageDescription(
+    {
+      editorRef,
+      page,
+      projectId,
+      workspaceSlug,
     }
   );
 
@@ -112,6 +123,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               projectId={projectId.toString()}
               sidePeekVisible={sidePeekVisible}
               setSidePeekVisible={(state) => setSidePeekVisible(state)}
+              handleSaveDescription={handleSaveDescription}
             />
           )}
           <PageEditorBody
@@ -123,6 +135,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             page={page}
             sidePeekVisible={sidePeekVisible}
             updateMarkings={updateMarkings}
+            handleDescriptionChange={handleDescriptionChange}
+            isDescriptionReady={isDescriptionReady}
+            pageDescriptionYJS={pageDescriptionYJS}
+            handleSaveDescription={handleSaveDescription}
           />
           <IssuePeekOverview />
         </div>
