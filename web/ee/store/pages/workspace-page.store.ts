@@ -7,7 +7,7 @@ import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // plane web services
-import { WorkspacePageService } from "@/plane-web/services/workspace-page.service";
+import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
 import { IWorkspacePageDetails, WorkspacePageDetails } from "@/plane-web/store/pages/page";
 import { RootStore } from "@/plane-web/store/root.store";

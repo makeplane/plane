@@ -151,6 +151,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               name="logo_props"
               render={({ field: { value, onChange } }) => (
                 <CustomEmojiIconPicker
+                  closeOnSelect={false}
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"

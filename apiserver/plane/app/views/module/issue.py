@@ -44,21 +44,7 @@ from plane.utils.paginator import (
 
 # Module imports
 from .. import BaseViewSet
-from plane.app.serializers import (
-    ModuleIssueSerializer,
-    IssueSerializer,
-)
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import (
-    ModuleIssue,
-    Project,
-    Issue,
-    IssueLink,
-    IssueAttachment,
-)
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.utils.issue_filters import issue_filters
-from plane.utils.user_timezone_converter import user_timezone_converter
 
 
 class ModuleIssueViewSet(BaseViewSet):

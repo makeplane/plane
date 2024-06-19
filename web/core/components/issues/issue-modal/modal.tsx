@@ -96,7 +96,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
     if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProjectId)
-      setActiveProjectId(projectId.toString() ?? workspaceProjectIds?.[0]);
+      setActiveProjectId(projectId?.toString() ?? workspaceProjectIds?.[0]);
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);

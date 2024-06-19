@@ -6,7 +6,7 @@ import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
-import { WorkspacePageService } from "@/plane-web/services/workspace-page.service";
+import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
 import { IWorkspacePageDetails } from "@/plane-web/store/pages/page";
 const workspacePageService = new WorkspacePageService();

@@ -16,9 +16,8 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import WorkspaceEntityPermission
-from plane.app.serializers import (
+from plane.ee.serializers import (
     WorkspacePageSerializer,
-    PageDetailSerializer,
     WorkspacePageDetailSerializer,
 )
 from plane.db.models import (
@@ -26,9 +25,10 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     Workspace,
+    DeployBoard,
 )
 
-from ..base import BaseViewSet
+from plane.ee.views.base import BaseViewSet
 
 from plane.bgtasks.page_transaction_task import page_transaction
 
@@ -80,6 +80,13 @@ class WorkspacePageViewSet(BaseViewSet):
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="page",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .distinct()
         )
 
@@ -100,8 +107,8 @@ class WorkspacePageViewSet(BaseViewSet):
             serializer.save(is_global=True)
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
-            page = Page.objects.get(pk=serializer.data["id"])
-            serializer = PageDetailSerializer(page)
+            page = self.get_queryset().filter(pk=serializer.data["id"]).first()
+            serializer = WorkspacePageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,7 +144,7 @@ class WorkspacePageViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = PageDetailSerializer(
+            serializer = WorkspacePageDetailSerializer(
                 page, data=request.data, partial=True
             )
             page_description = page.description_html

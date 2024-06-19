@@ -70,7 +70,7 @@ export const CalendarIssueBlock = observer(
     return (
       <ControlLink
         id={`issue-${issue.id}`}
-        href={`/${workspaceSlug.toString()}/projects/${projectId.toString()}/issues/${issue.id}`}
+        href={`/${workspaceSlug?.toString()}/projects/${projectId?.toString()}/issues/${issue.id}`}
         target="_blank"
         onClick={() => handleIssuePeekOverview(issue)}
         className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"

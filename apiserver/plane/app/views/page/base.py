@@ -32,6 +32,7 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     ProjectPage,
+    DeployBoard,
 )
 
 # Module imports
@@ -118,6 +119,13 @@ class PageViewSet(BaseViewSet):
                 ),
             )
             .filter(project=True)
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="page",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .distinct()
         )
 
@@ -460,6 +468,18 @@ class PagesDescriptionViewSet(BaseViewSet):
         if base64_data:
             # Decode the base64 data to bytes
             new_binary_data = base64.b64decode(base64_data)
+            # capture the page transaction
+            if request.data.get("description_html"):
+                page_transaction.delay(
+                    new_value=request.data,
+                    old_value=json.dumps(
+                        {
+                            "description_html": page.description_html,
+                        },
+                        cls=DjangoJSONEncoder,
+                    ),
+                    page_id=pk,
+                )
 
             # Store the updated binary data
             page.description_binary = new_binary_data
