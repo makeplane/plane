@@ -28,7 +28,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     <BaseListRoot
       QuickActions={ProjectIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
-      viewId={profileViewId.toString()}
+      viewId={profileViewId?.toString()}
     />
   );
 });

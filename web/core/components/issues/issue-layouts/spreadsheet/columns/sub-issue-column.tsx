@@ -22,7 +22,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const redirectToIssueDetail = () => {
-    router.push(`/${workspaceSlug.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}#sub-issues`);
+    router.push(`/${workspaceSlug?.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}#sub-issues`);
   };
 
   return (

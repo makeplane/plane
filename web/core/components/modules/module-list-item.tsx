@@ -83,7 +83,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   return (
     <ListItem
       title={moduleDetails?.name ?? ""}
-      itemLink={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+      itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onItemClick={handleItemClick}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
