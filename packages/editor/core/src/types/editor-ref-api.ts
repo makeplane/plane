@@ -11,6 +11,8 @@ export type EditorReadOnlyRefApi = {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   setEditorValueAtCursorPosition: (content: string) => void;
+  setSynced: () => void;
+  hasUnsyncedChanges: () => boolean;
   executeMenuItemCommand: (itemName: EditorMenuItemNames) => void;
   isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
   onStateChange: (callback: () => void) => () => void;

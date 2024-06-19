@@ -21,7 +21,6 @@ export const usePageDescription = (props: Props) => {
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   const [localDescriptionYJS, setLocalDescriptionYJS] = useState<Uint8Array>();
   const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
-  const [hasLocalChanges, setHasLocalChanges] = useState(true);
 
   const pageDescription = page.description_html;
   const pageId = page.id;
@@ -46,9 +45,11 @@ export const usePageDescription = (props: Props) => {
     }
   );
 
+  // set the merged local doc by the provider to the react local state
   const handleDescriptionChange = useCallback((update: Uint8Array, source?: string) => {
-    setHasLocalChanges(true);
     setLocalDescriptionYJS(() => {
+      // handle the initial sync case where indexeddb gives extra update, in
+      // this case we need to save the update to the DB
       if (source && source === "initialSync") {
         handleSaveDescription(update);
       }
@@ -58,6 +59,8 @@ export const usePageDescription = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // if description_binary field is empty, convert description_html to yDoc and update the DB
+  // TODO: this is a one-time operation, and needs to be removed once all the pages are updated
   useEffect(() => {
     const changeHTMLToBinary = async () => {
       if (!pageDescriptionYJS || !pageDescription) return;
@@ -75,6 +78,19 @@ export const usePageDescription = (props: Props) => {
     changeHTMLToBinary();
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
+  useEffect(() => {}, [localDescriptionYJS, editorRef]);
+
+  const { setShowAlert } = useReloadConfirmations(true);
+
+  useEffect(() => {
+    if (editorRef?.current?.hasUnsyncedChanges() || isSubmitting === "submitting") {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [setShowAlert, isSubmitting, editorRef, localDescriptionYJS]);
+
+  // merge the description from remote to local state and only save if there are local changes
   const handleSaveDescription = useCallback(
     async (initSyncVectorAsUpdate?: Uint8Array) => {
       const update = localDescriptionYJS ?? initSyncVectorAsUpdate;
@@ -85,18 +101,18 @@ export const usePageDescription = (props: Props) => {
 
       const applyUpdatesAndSave = async (latestDescription: any, update: Uint8Array | undefined) => {
         if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
-        const descriptionArray = new Uint8Array(latestDescription);
 
-        if (!hasLocalChanges) {
+        if (!editorRef.current?.hasUnsyncedChanges()) {
           setIsSubmitting("saved");
           return;
         }
 
-        const combinedBinaryString = applyUpdates(descriptionArray, update);
+        const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
         await updateDescription(combinedBinaryString, descriptionHTML).finally(() => {
+          editorRef.current?.setSynced();
+          setShowAlert(false);
           setIsSubmitting("saved");
-          setHasLocalChanges(false);
         });
       };
 
@@ -111,10 +127,10 @@ export const usePageDescription = (props: Props) => {
     },
     [
       localDescriptionYJS,
+      setShowAlert,
       editorRef,
       isContentEditable,
       mutateDescriptionYJS,
-      hasLocalChanges,
       pageId,
       projectId,
       setIsSubmitting,
@@ -124,16 +140,6 @@ export const usePageDescription = (props: Props) => {
   );
 
   useAutoSave(handleSaveDescription);
-
-  const { setShowAlert } = useReloadConfirmations(true);
-
-  useEffect(() => {
-    if (hasLocalChanges || isSubmitting === "submitting") {
-      setShowAlert(true);
-    } else {
-      setShowAlert(false);
-    }
-  }, [setShowAlert, hasLocalChanges, isSubmitting]);
 
   return {
     handleDescriptionChange,

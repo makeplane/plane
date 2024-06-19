@@ -28,6 +28,7 @@ export interface CustomEditorProps {
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
+  provider?: any;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -53,6 +54,7 @@ export const useEditor = ({
   forwardedRef,
   tabIndex,
   handleEditorReady,
+  provider,
   mentionHandler,
   placeholder,
 }: CustomEditorProps) => {
@@ -173,6 +175,16 @@ export const useEditor = ({
         return () => {
           editorRef.current?.off("transaction");
         };
+      },
+      setSynced: () => {
+        if (provider) {
+          provider.setSynced();
+        }
+      },
+      hasUnsyncedChanges: () => {
+        if (provider) {
+          return provider.hasUnsyncedChanges();
+        }
       },
       getMarkDown: (): string => {
         const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();

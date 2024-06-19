@@ -8,7 +8,6 @@ import { CollaborationProvider } from "src/providers/collaboration-provider";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 // yjs
 import * as Y from "yjs";
-import { IndexeddbPersistence } from "y-indexeddb";
 
 type DocumentEditorProps = {
   id: string;
@@ -54,19 +53,6 @@ export const useDocumentEditor = ({
 
   const [isIndexedDbSynced, setIndexedDbIsSynced] = useState(false);
 
-  const localProvider = useMemo(() => {
-    const localProvider = new IndexeddbPersistence(`page-` + id, provider.document);
-    localProvider.on("synced", () => {
-      provider.setHasIndexedDBSynced(!!provider.document.get("default")._start);
-      setIndexedDbIsSynced(!!provider.document.get("default")._start);
-      const update = provider.getUpdateFromIndexedDB();
-      onChange(update, "initialSync");
-    });
-
-    return localProvider;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, provider]);
-
   // update document on value change from server
   useEffect(() => {
     if (value.byteLength > 0) {
@@ -74,14 +60,18 @@ export const useDocumentEditor = ({
     }
   }, [value, provider.document]);
 
-  useLayoutEffect(
-    () => () => {
-      provider.setHasIndexedDBSynced(false);
+  // watch for indexedDb to complete syncing, only after which the editor is
+  // rendered
+  useLayoutEffect(() => {
+    async function checkIndexDbSynced() {
+      const hasSynced = await provider.hasIndexedDBSynced();
+      setIndexedDbIsSynced(hasSynced);
+    }
+    checkIndexDbSynced();
+    return () => {
       setIndexedDbIsSynced(false);
-      localProvider.destroy();
-    },
-    [localProvider, provider]
-  );
+    };
+  }, [provider]);
 
   const editor = useEditor({
     id,
@@ -96,6 +86,7 @@ export const useDocumentEditor = ({
       setHideDragHandle: setHideDragHandleFunction,
       provider,
     }),
+    provider,
     placeholder,
     tabIndex,
   });
