@@ -7,7 +7,8 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
+import { AuthenticationMethodCard } from "@/components/authentication";
+import { PageHeader } from "@/components/common";
 // helpers
 import { resolveGeneralTheme } from "@/helpers/common.helper";
 // hooks
@@ -16,7 +17,6 @@ import { useInstance } from "@/hooks/store";
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
 // local components
-import { AuthenticationMethodCard } from "../components";
 import { InstanceGithubConfigForm } from "./form";
 
 const InstanceGithubAuthenticationPage = observer(() => {
