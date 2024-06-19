@@ -52,7 +52,7 @@ from plane.db.models import (
 )
 
 
-class GlobalViewViewSet(BaseViewSet):
+class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
     permission_classes = [
@@ -75,7 +75,7 @@ class GlobalViewViewSet(BaseViewSet):
         )
 
 
-class GlobalViewIssuesViewSet(BaseViewSet):
+class WorkspaceViewIssuesViewSet(BaseViewSet):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
