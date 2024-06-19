@@ -15,6 +15,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
   // store hooks
   const {
     workspace: {
+      fetchWorkspaceMembers,
       fetchWorkspaceMemberInvitations,
       workspaceMemberIds,
       getSearchedWorkspaceMemberIds,
@@ -26,6 +27,10 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
   useSWR(
     workspaceSlug ? `WORKSPACE_INVITATIONS_${workspaceSlug.toString()}` : null,
     workspaceSlug ? () => fetchWorkspaceMemberInvitations(workspaceSlug.toString()) : null
+  );
+  useSWR(
+    workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug.toString()}` : null,
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
 
   if (!workspaceMemberIds && !workspaceMemberInvitationIds) return <MembersSettingsLoader />;
