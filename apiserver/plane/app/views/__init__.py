@@ -177,10 +177,7 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
-from .page.workspace import (
-    WorkspacePageViewSet,
-    WorkspacePagesDescriptionViewSet,
-)
+
 from .search.base import (
     GlobalSearchEndpoint,
     SearchEndpoint,

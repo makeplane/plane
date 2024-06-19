@@ -30,7 +30,6 @@ from .project import (
     ProjectIdentifierSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
-    DeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
@@ -95,8 +94,6 @@ from .page import (
     PageLogSerializer,
     SubPageSerializer,
     PageDetailSerializer,
-    WorkspacePageSerializer,
-    WorkspacePageDetailSerializer,
 )
 
 from .estimate import (
@@ -136,3 +133,5 @@ from .integration import (
     GithubCommentSyncSerializer,
     SlackProjectSyncSerializer,
 )
+
+from .deploy_board import DeployBoardSerializer
