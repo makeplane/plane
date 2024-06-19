@@ -55,14 +55,14 @@ export const useDocumentEditor = ({
 
   // update document on value change from server
   useEffect(() => {
-    if (value.byteLength > 0) {
+    if (value.length > 0) {
       Y.applyUpdate(provider.document, value);
     }
   }, [value, provider.document]);
 
   // watch for indexedDb to complete syncing, only after which the editor is
   // rendered
-  useLayoutEffect(() => {
+  useEffect(() => {
     async function checkIndexDbSynced() {
       const hasSynced = await provider.hasIndexedDBSynced();
       setIndexedDbIsSynced(hasSynced);

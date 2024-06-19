@@ -40,7 +40,7 @@ export class CollaborationProvider {
 
     this.indexeddbProvider = new IndexeddbPersistence(`page-${this.configuration.name}`, this.document);
     this.indexeddbProvider.on("synced", () => {
-      this.configuration.hasIndexedDBSynced = !!this.document.get("default")._start;
+      this.configuration.hasIndexedDBSynced = true;
     });
     this.document.on("update", this.documentUpdateHandler.bind(this));
     this.document.on("destroy", this.documentDestroyHandler.bind(this));
