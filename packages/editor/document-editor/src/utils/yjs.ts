@@ -74,31 +74,3 @@ export const mergeUpdates = (updates: Uint8Array[]): Uint8Array => {
   const mergedUpdates = Y.mergeUpdates(updates);
   return mergedUpdates;
 };
-
-/**
- * @description compare two Uint8Arrays for equality
- * @param {Uint8Array} a
- * @param {Uint8Array} b
- * @returns {boolean} true if the two Uint8Arrays are equal, false otherwise
- */
-export const areBytewiseEqual = (a: Uint8Array, b: Uint8Array): boolean => {
-  if (!(a instanceof Uint8Array) || !(b instanceof Uint8Array)) {
-    throw new TypeError("Both arguments must be Uint8Array instances");
-  }
-
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  if (typeof indexedDB !== "undefined" && indexedDB.cmp) {
-    return indexedDB.cmp(a, b) === 0;
-  } else {
-    // fallback to bytewise comparison
-    for (let i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-};
