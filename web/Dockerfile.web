@@ -1,7 +1,7 @@
 # *****************************************************************************
 # STAGE 1: Build the project
 # *****************************************************************************
-FROM node:20-alpine AS builder
+FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
@@ -15,7 +15,7 @@ RUN turbo prune --scope=web --docker
 # STAGE 2: Install dependencies & build the project
 # *****************************************************************************
 # Add lockfile and package.json's of isolated subworkspace
-FROM node:20-alpine AS installer
+FROM node:18-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -56,7 +56,7 @@ RUN yarn turbo run build --filter=web
 # *****************************************************************************
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
-FROM node:20-alpine AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 
 COPY --from=installer /app/web/next.config.js .

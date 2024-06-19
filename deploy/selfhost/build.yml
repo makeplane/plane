@@ -2,31 +2,21 @@ version: "3.8"
 
 services:
   web:
-    image: ${DOCKERHUB_USER:-local}/plane-frontend:${APP_RELEASE:-latest}
-    build:
-      context: .
-      dockerfile: ./web/Dockerfile.web
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-web:latest
 
   space:
-    image: ${DOCKERHUB_USER:-local}/plane-space:${APP_RELEASE:-latest}
-    build:
-      context: ./
-      dockerfile: ./space/Dockerfile.space
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-space:latest
     depends_on:
     - web
 
   admin:
-    image: ${DOCKERHUB_USER:-local}/plane-admin:${APP_RELEASE:-latest}
-    build:
-      context: ./
-      dockerfile: ./admin/Dockerfile.admin
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-admin:latest
     depends_on:
     - space
 
   api:
-    image: ${DOCKERHUB_USER:-local}/plane-backend:${APP_RELEASE:-latest}
-    build:
-      context: ./apiserver
-      dockerfile: ./Dockerfile.api
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-api:latest
+    env_file:
+      - .env.db
     depends_on:
     - admin

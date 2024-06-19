@@ -1,51 +1,31 @@
 services:
   web:
     container_name: web
-    build:
-      context: .
-      dockerfile: ./web/Dockerfile.web
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-space:latest
     restart: always
-    command: node web/server.js web
     depends_on:
       - api
 
   admin:
     container_name: admin
-    build:
-      context: .
-      dockerfile: ./admin/Dockerfile.admin
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-admin:latest
     restart: always
-    command: node admin/server.js admin
     depends_on:
       - api
       - web
 
   space:
     container_name: space
-    build:
-      context: .
-      dockerfile: ./space/Dockerfile.space
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-space:latest
     restart: always
-    command: node space/server.js space
     depends_on:
       - api
       - web
 
   api:
     container_name: api
-    build:
-      context: ./apiserver
-      dockerfile: Dockerfile.api
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-api:latest
     restart: always
-    command: ./bin/docker-entrypoint-api.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -53,13 +33,8 @@ services:
 
   worker:
     container_name: bgworker
-    build:
-      context: ./apiserver
-      dockerfile: Dockerfile.api
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-api:latest
     restart: always
-    command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -68,13 +43,8 @@ services:
 
   beat-worker:
     container_name: beatworker
-    build:
-      context: ./apiserver
-      dockerfile: Dockerfile.api
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-api:latest
     restart: always
-    command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -83,13 +53,8 @@ services:
 
   migrator:
     container_name: plane-migrator
-    build:
-      context: ./apiserver
-      dockerfile: Dockerfile.api
-      args:
-        DOCKER_BUILDKIT: 1
+    image: 585136111625.dkr.ecr.eu-west-1.amazonaws.com/apin-plane-api:latest
     restart: no
-    command: ./bin/docker-entrypoint-migrator.sh
     env_file:
       - ./apiserver/.env
     depends_on:
