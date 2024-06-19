@@ -12,10 +12,10 @@ const ErrorPage = () => {
     <div className="grid h-screen place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Exception Detected!</h3>
-          <p className="mx-auto w-1/2 text-sm text-custom-text-200">
-            We{"'"}re Sorry! An exception has been detected, and our engineering team has been notified. We apologize
-            for any inconvenience this may have caused. Please reach out to our engineering team at{" "}
+          <h3 className="text-lg font-semibold">Yikes! That doesn{"'"}t look good.</h3>
+          <p className="mx-auto md:w-1/2 text-sm text-custom-text-200">
+            That crashed Plane, pun intended. No worries, though. Our engineers have been notified. If you have more
+            details, please write to{" "}
             <a href="mailto:support@plane.so" className="text-custom-primary">
               support@plane.so
             </a>{" "}
@@ -27,8 +27,8 @@ const ErrorPage = () => {
               rel="noopener noreferrer"
             >
               Discord
-            </a>{" "}
-            server for further assistance.
+            </a>
+            .
           </p>
         </div>
         <div className="flex items-center justify-center gap-2">

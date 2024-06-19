@@ -33,14 +33,15 @@ export const UserLoggedIn = observer(() => {
 
       <div className="size-full grid place-items-center p-6">
         <div className="text-center">
-          <div className="mx-auto size-52 grid place-items-center rounded-full bg-custom-background-80">
-            <div className="size-32">
+          <div className="mx-auto size-32 md:size-52 grid place-items-center rounded-full bg-custom-background-80">
+            <div className="size-16 md:size-32 grid place-items-center">
               <Image src={UserLoggedInImage} alt="User already logged in" />
             </div>
           </div>
-          <h1 className="mt-12 text-3xl font-semibold">Logged in successfully!</h1>
-          <p className="mt-4">
-            You{"'"}ve successfully logged in. Please enter the appropriate project URL to view the issue board.
+          <h1 className="mt-8 md:mt-12 text-xl md:text-3xl font-semibold">Nice! Just one more step.</h1>
+          <p className="mt-2 md:mt-4 text-sm md:text-base">
+            Enter the public-share URL or link of the view or Page you are trying to see in the browser{"'"}s address
+            bar.
           </p>
         </div>
       </div>

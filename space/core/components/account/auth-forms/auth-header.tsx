@@ -24,8 +24,8 @@ const Titles: TAuthHeaderDetails = {
     subHeader: "Contribute in nudging the features you want to get built.",
   },
   [EAuthModes.SIGN_UP]: {
-    header: "Comment or react to issues",
-    subHeader: "Use plane to add your valuable inputs to features.",
+    header: "View, comment, and do more",
+    subHeader: "Sign up or log in to work with Plane Issues and Pages.",
   },
 };
 
@@ -48,8 +48,8 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
   return (
     <>
       <div className="space-y-1 text-center">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">{header}</h3>
-        <p className="font-medium text-onboarding-text-400">{subHeader}</p>
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-onboarding-text-100">{header}</h3>
+        <p className="text-xs sm:text-sm md:text-base font-medium text-onboarding-text-400">{subHeader}</p>
       </div>
       {children}
     </>

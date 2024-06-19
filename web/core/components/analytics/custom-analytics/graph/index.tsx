@@ -8,7 +8,7 @@ import { Tooltip } from "@plane/ui";
 // ui
 import { BarGraph } from "@/components/ui";
 // helpers
-import { generateBarColor, generateDisplayName } from "@/helpers/analytics.helper";
+import { generateBarColor, generateDisplayName, renderChartDynamicLabel } from "@/helpers/analytics.helper";
 import { findStringWithMostCharacters } from "@/helpers/array.helper";
 // types
 import { CustomTooltip } from "./custom-tooltip";
@@ -66,7 +66,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
       height={fullScreen ? "400px" : "300px"}
       margin={{
         right: 20,
-        bottom: params.x_axis === "assignees__id" ? 50 : longestXAxisLabel.length * 5 + 20,
+        bottom: params.x_axis === "assignees__id" ? 50 : renderChartDynamicLabel(longestXAxisLabel)?.length * 5 + 20,
       }}
       axisBottom={{
         tickSize: 0,
@@ -111,18 +111,20 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                   );
               }
             : (datum) => (
-                <g transform={`translate(${datum.x},${datum.y + 10})`}>
-                  <text
-                    x={0}
-                    y={datum.y}
-                    textAnchor={`${barGraphData.data.length > 7 ? "end" : "middle"}`}
-                    fontSize={10}
-                    fill="rgb(var(--color-text-200))"
-                    className={`${barGraphData.data.length > 7 ? "-rotate-45" : ""}`}
-                  >
-                    {generateDisplayName(datum.value, analytics, params, "x_axis")}
-                  </text>
-                </g>
+                <Tooltip tooltipContent={generateDisplayName(datum.value, analytics, params, "x_axis")}>
+                  <g transform={`translate(${datum.x},${datum.y + 20})`}>
+                    <text
+                      x={0}
+                      y={datum.y}
+                      textAnchor={`${barGraphData.data.length > 7 ? "end" : "middle"}`}
+                      fontSize={10}
+                      fill="rgb(var(--color-text-200))"
+                      className={`${barGraphData.data.length > 7 ? "-rotate-45" : ""}`}
+                    >
+                      {renderChartDynamicLabel(generateDisplayName(datum.value, analytics, params, "x_axis"))?.label}
+                    </text>
+                  </g>
+                </Tooltip>
               ),
       }}
       theme={{
