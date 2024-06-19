@@ -175,7 +175,14 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
         />
         {estimatePointError?.message && (
           <>
-            <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
+            <Tooltip
+              tooltipContent={
+                (estimateInputValue || "")?.length >= 1
+                  ? `You have some unsaved changes, Please save them before clicking on done`
+                  : estimatePointError?.message
+              }
+              position="bottom"
+            >
               <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
                 <Info size={14} />
               </div>
