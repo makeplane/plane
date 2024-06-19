@@ -79,8 +79,6 @@ export const usePageDescription = (props: Props) => {
     changeHTMLToBinary();
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
-  useEffect(() => {}, [localDescriptionYJS, editorRef]);
-
   const { setShowAlert } = useReloadConfirmations(true);
 
   useEffect(() => {
