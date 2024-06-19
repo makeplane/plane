@@ -140,7 +140,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
 
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative mt-6 h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
@@ -151,6 +151,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               name="logo_props"
               render={({ field: { value, onChange } }) => (
                 <CustomEmojiIconPicker
+                  closeOnSelect={false}
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
@@ -177,7 +178,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
                   }
                   disabled={!isAdmin}
-                  closeOnSelect={false}
                 />
               )}
             />
@@ -357,13 +357,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              variant="primary"
-              type="button"
-              loading={isLoading}
-              disabled={!isAdmin}
-            >
+            <Button variant="primary" type="submit" loading={isLoading} disabled={!isAdmin}>
               {isLoading ? "Updating..." : "Update project"}
             </Button>
             <span className="text-sm italic text-custom-sidebar-text-400">
@@ -372,6 +366,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           </>
         </div>
       </div>
-    </>
+    </form>
   );
 };
