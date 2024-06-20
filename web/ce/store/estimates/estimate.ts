@@ -52,8 +52,8 @@ export class Estimate implements IEstimate {
   estimatePoints: Record<string, IEstimatePoint> = {};
 
   constructor(
-    private store: CoreRootStore,
-    private data: IEstimateType
+    public store: CoreRootStore,
+    public data: IEstimateType
   ) {
     makeObservable(this, {
       // data model observables
