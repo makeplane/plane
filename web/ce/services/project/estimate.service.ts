@@ -7,7 +7,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-class EstimateService extends APIService {
+export class EstimateService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
