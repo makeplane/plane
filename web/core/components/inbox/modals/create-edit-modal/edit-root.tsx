@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // editor
-import { EditorRefApi } from "@plane/rich-text-editor";
+import { EditorRefApi } from "@plane/editor";
 // types
 import { TIssue } from "@plane/types";
 // ui

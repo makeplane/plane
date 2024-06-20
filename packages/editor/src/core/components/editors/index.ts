@@ -1,3 +1,4 @@
+export * from "./document";
 export * from "./lite-text";
 export * from "./rich-text";
 export * from "./editor-container";

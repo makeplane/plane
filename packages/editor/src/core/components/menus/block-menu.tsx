@@ -7,7 +7,7 @@ interface BlockMenuProps {
   editor: Editor;
 }
 
-export default function BlockMenu(props: BlockMenuProps) {
+export const BlockMenu = (props: BlockMenuProps) => {
   const { editor } = props;
   const menuRef = useRef<HTMLDivElement>(null);
   const popup = useRef<Instance | null>(null);
@@ -171,4 +171,4 @@ export default function BlockMenu(props: BlockMenuProps) {
       })}
     </div>
   );
-}
+};

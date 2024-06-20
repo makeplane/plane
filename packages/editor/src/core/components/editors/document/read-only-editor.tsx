@@ -1,8 +1,14 @@
 import { forwardRef, MutableRefObject } from "react";
-import { EditorReadOnlyRefApi, getEditorClassNames, IMentionHighlight, useReadOnlyEditor } from "@plane/editor";
 // components
-import { PageRenderer } from "src/ui/components/page-renderer";
-import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
+import { PageRenderer } from "@/components/editors";
+// helpers
+import { getEditorClassNames } from "@/helpers/common";
+// hooks
+import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane editor extensions
+import { IssueWidget } from "@/plane-editor/extensions";
+// types
+import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
 
 interface IDocumentReadOnlyEditor {
   initialValue: string;
@@ -32,7 +38,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     mentionHandler,
     forwardedRef,
     handleEditorReady,
-    extensions: [IssueWidgetPlaceholder()],
+    extensions: [IssueWidget],
   });
 
   if (!editor) {
@@ -52,4 +58,4 @@ const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocument
 
 DocumentReadOnlyEditorWithRef.displayName = "DocumentReadOnlyEditorWithRef";
 
-export { DocumentReadOnlyEditor, DocumentReadOnlyEditorWithRef };
+export { DocumentReadOnlyEditorWithRef };

@@ -1,9 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { EditorContainer, EditorContentWrapper } from "@plane/editor";
-import { Node } from "@tiptap/pm/model";
-import { EditorView } from "@tiptap/pm/view";
-import { Editor, ReactRenderer } from "@tiptap/react";
-import { LinkView, LinkViewProps } from "./links/link-view";
 import {
   autoUpdate,
   computePosition,
@@ -14,7 +9,13 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
-import BlockMenu from "../menu//block-menu";
+import { Node } from "@tiptap/pm/model";
+import { EditorView } from "@tiptap/pm/view";
+import { Editor, ReactRenderer } from "@tiptap/react";
+// components
+import { EditorContainer, EditorContentWrapper } from "@/components/editors";
+import { LinkView, LinkViewProps } from "@/components/links";
+import { BlockMenu } from "@/components/menus";
 
 type IPageRenderer = {
   editor: Editor;

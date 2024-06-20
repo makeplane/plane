@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // document-editor
-import { EditorRefApi, useEditorMarkings } from "@plane/document-editor";
+import { EditorRefApi, useEditorMarkings } from "@plane/editor";
 // types
 import { TPage } from "@plane/types";
 // ui

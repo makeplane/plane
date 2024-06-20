@@ -1,5 +1,6 @@
 import { Copy, GlobeIcon, Link2Off, PencilIcon } from "lucide-react";
-import { LinkViewProps } from "./link-view";
+// components
+import { LinkViewProps } from "@/components/links";
 
 export const LinkPreview = ({
   viewProps,

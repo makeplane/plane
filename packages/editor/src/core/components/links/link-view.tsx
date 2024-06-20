@@ -1,8 +1,7 @@
-import { Editor } from "@tiptap/react";
 import { CSSProperties, useEffect, useState } from "react";
-import { LinkEditView } from "./link-edit-view";
-import { LinkInputView } from "./link-input-view";
-import { LinkPreview } from "./link-preview";
+import { Editor } from "@tiptap/react";
+// components
+import { LinkEditView, LinkInputView, LinkPreview } from "@/components/links";
 
 export interface LinkViewProps {
   view?: "LinkPreview" | "LinkEditView" | "LinkInputView";

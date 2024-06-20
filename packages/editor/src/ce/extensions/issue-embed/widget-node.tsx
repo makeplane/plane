@@ -7,7 +7,6 @@ export const IssueWidget = Node.create({
   name: "issue-embed-component",
   group: "block",
   atom: true,
-
   addAttributes() {
     return {
       id: {
@@ -33,11 +32,9 @@ export const IssueWidget = Node.create({
       },
     };
   },
-
   addNodeView() {
     return ReactNodeViewRenderer((props: object) => <IssueWidgetCard {...props} />);
   },
-
   parseHTML() {
     return [
       {

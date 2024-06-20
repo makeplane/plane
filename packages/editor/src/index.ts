@@ -6,17 +6,20 @@ import "src/styles/github-dark.css";
 
 // editors
 export {
-  LiteTextReadOnlyEditorWithRef,
+  DocumentEditorWithRef,
+  DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
-  RichTextReadOnlyEditorWithRef,
+  LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
+  RichTextReadOnlyEditorWithRef,
 } from "@/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 
-// utils
+// helpers
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
+export * from "@/helpers/yjs";
 export * from "@/extensions/table/table";
 export { startImageUpload } from "@/plugins/image";
 
@@ -25,6 +28,7 @@ export * from "@/components/menus";
 
 // hooks
 export { useEditor } from "@/hooks/use-editor";
+export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 
 // types

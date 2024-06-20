@@ -1,13 +1,18 @@
 import { useEffect, useLayoutEffect, useMemo } from "react";
+import Collaboration from "@tiptap/extension-collaboration";
 import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
-// editor-core
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler, useEditor } from "@plane/editor";
-// custom provider
-import { CollaborationProvider } from "src/providers/collaboration-provider";
 // extensions
-import { DocumentEditorExtensions } from "src/ui/extensions";
+import { DragAndDrop, SlashCommand } from "@/extensions";
+// hooks
+import { TFileHandler, useEditor } from "@/hooks/use-editor";
+// plane editor extensions
+import { IssueWidget } from "@/plane-editor/extensions";
+// plane editor provider
+import { CollaborationProvider } from "@/plane-editor/providers/collaboration-provider";
+// types
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
 
 type DocumentEditorProps = {
   id: string;
@@ -27,20 +32,22 @@ type DocumentEditorProps = {
   tabIndex?: number;
 };
 
-export const useDocumentEditor = ({
-  id,
-  editorProps = {},
-  value,
-  editorClassName,
-  fileHandler,
-  onChange,
-  forwardedRef,
-  tabIndex,
-  handleEditorReady,
-  mentionHandler,
-  placeholder,
-  setHideDragHandleFunction,
-}: DocumentEditorProps) => {
+export const useDocumentEditor = (props: DocumentEditorProps) => {
+  const {
+    id,
+    editorProps = {},
+    value,
+    editorClassName,
+    fileHandler,
+    onChange,
+    forwardedRef,
+    tabIndex,
+    handleEditorReady,
+    mentionHandler,
+    placeholder,
+    setHideDragHandleFunction,
+  } = props;
+
   const provider = useMemo(
     () =>
       new CollaborationProvider({
@@ -75,11 +82,14 @@ export const useDocumentEditor = ({
     handleEditorReady,
     forwardedRef,
     mentionHandler,
-    extensions: DocumentEditorExtensions({
-      uploadFile: fileHandler.upload,
-      setHideDragHandle: setHideDragHandleFunction,
-      provider,
-    }),
+    extensions: [
+      SlashCommand(fileHandler.upload),
+      DragAndDrop(setHideDragHandleFunction),
+      IssueWidget,
+      Collaboration.configure({
+        document: provider.document,
+      }),
+    ],
     placeholder,
     tabIndex,
   });

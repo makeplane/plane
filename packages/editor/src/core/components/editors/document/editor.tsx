@@ -2,9 +2,9 @@ import React, { useState } from "react";
 // editor-core
 import { getEditorClassNames, EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler } from "@plane/editor";
 // components
-import { PageRenderer } from "src/ui/components/page-renderer";
+import { PageRenderer } from "@/components/editors";
 // hooks
-import { useDocumentEditor } from "src/hooks/use-document-editor";
+import { useDocumentEditor } from "@/hooks/use-document-editor";
 
 interface IDocumentEditor {
   id: string;
@@ -84,4 +84,4 @@ const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((p
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
 
-export { DocumentEditor, DocumentEditorWithRef };
+export { DocumentEditorWithRef };

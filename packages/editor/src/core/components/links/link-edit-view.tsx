@@ -1,8 +1,10 @@
-import { isValidHttpUrl } from "@plane/editor";
+import { useEffect, useRef, useState } from "react";
 import { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { LinkViewProps } from "./link-view";
+// components
+import { LinkViewProps } from "@/components/links";
+// helpers
+import { isValidHttpUrl } from "@/helpers/common";
 
 const InputView = ({
   label,
@@ -50,7 +52,7 @@ export const LinkEditView = ({
   };
 
   const isValidUrl = (urlString: string) => {
-    var urlPattern = new RegExp(
+    const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" + // validate protocol
         "([\\w-]+\\.)+[\\w-]{2,}" + // validate domain name
         "|((\\d{1,3}\\.){3}\\d{1,3})" + // validate IP (v4) address
