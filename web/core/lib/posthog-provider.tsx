@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import posthog from "posthog-js";
@@ -7,7 +9,7 @@ import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useWorkspace, useUser } from "@/hooks/store";
+import { useWorkspace, useUser, useInstance } from "@/hooks/store";
 // types
 
 export interface IPosthogWrapper {
@@ -21,8 +23,9 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
     membership: { currentProjectRole, currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
-  // router
-  // const router = useAppRouter();
+  const { instance } = useInstance();
+
+  const is_telemetry_enabled = instance?.is_telemetry_enabled || false;
 
   useEffect(() => {
     if (user) {
@@ -32,12 +35,14 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        // use_case: user.use_case, FIXME:
         workspace_role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole) : undefined,
         project_role: currentProjectRole ? getUserRole(currentProjectRole) : undefined,
       });
+      if (currentWorkspace) {
+        posthog?.group(GROUP_WORKSPACE, currentWorkspace?.id);
+      }
     }
-  }, [user, currentProjectRole, currentWorkspaceRole]);
+  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
@@ -47,32 +52,12 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
+        capture_pageleave: true,
       });
     }
   }, []);
 
-  useEffect(() => {
-    // Join workspace group on workspace change
-    if (currentWorkspace?.id && user?.email) {
-      posthog?.identify(user?.email);
-      posthog?.group(GROUP_WORKSPACE, currentWorkspace?.id);
-    }
-  }, [currentWorkspace?.id, user?.email]);
-
-  useEffect(() =>
-    // Track page views
-    // const handleRouteChange = () => {
-    //   posthog?.capture("$pageview");
-    // };
-    // router.events.on("routeChangeComplete", handleRouteChange);
-
-    () => {
-      // router.events.off("routeChangeComplete", handleRouteChange);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    , []);
-
-  if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST)
+  if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST && is_telemetry_enabled)
     return <PHProvider client={posthog}>{children}</PHProvider>;
 
   return <>{children}</>;
