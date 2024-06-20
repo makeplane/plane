@@ -53,7 +53,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
 
       <div
         ref={actionSectionRef}
-        className={`absolute right-3 flex items-start gap-3.5 px-4 ${
+        className={`absolute right-2.5 flex items-start gap-3.5 px-4 ${
           isMenuActive || isLabelGroup
             ? "opacity-100"
             : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"

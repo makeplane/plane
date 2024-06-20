@@ -115,88 +115,95 @@ export const CreateUpdateLabelInline = observer(
     }, [labelToUpdate, setValue]);
 
     return (
-      <form
-        ref={ref}
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
-        }}
-        className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
-      >
-        <div className="flex-shrink-0">
-          <Popover className="relative z-10 flex h-full w-full items-center justify-center">
-            {({ open }) => (
-              <>
-                <Popover.Button
-                  className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                    open ? "text-custom-text-100" : "text-custom-text-200"
-                  }`}
-                >
-                  <span
-                    className="h-4 w-4 rounded-full"
-                    style={{
-                      backgroundColor: watch("color"),
-                    }}
-                  />
-                </Popover.Button>
-
-                <Transition
-                  as={React.Fragment}
-                  enter="transition ease-out duration-200"
-                  enterFrom="opacity-0 translate-y-1"
-                  enterTo="opacity-100 translate-y-0"
-                  leave="transition ease-in duration-150"
-                  leaveFrom="opacity-100 translate-y-0"
-                  leaveTo="opacity-0 translate-y-1"
-                >
-                  <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
-                    <Controller
-                      name="color"
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TwitterPicker
-                          colors={LABEL_COLOR_OPTIONS}
-                          color={value}
-                          onChange={(value) => onChange(value.hex)}
-                        />
-                      )}
+      <>
+        <form
+          ref={ref}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
+          }}
+          className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
+        >
+          <div className="flex-shrink-0">
+            <Popover className="relative z-10 flex h-full w-full items-center justify-center">
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    className={`group inline-flex items-center text-base font-medium focus:outline-none ${
+                      open ? "text-custom-text-100" : "text-custom-text-200"
+                    }`}
+                  >
+                    <span
+                      className="h-4 w-4 rounded-full"
+                      style={{
+                        backgroundColor: watch("color"),
+                      }}
                     />
-                  </Popover.Panel>
-                </Transition>
-              </>
-            )}
-          </Popover>
-        </div>
-        <div className="flex flex-1 flex-col justify-center">
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: "Label title is required",
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="labelName"
-                name="name"
-                type="text"
-                autoFocus
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.name)}
-                placeholder="Label title"
-                className="w-full"
-              />
-            )}
-          />
-        </div>
-        <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
-          Cancel
-        </Button>
-        <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
-          {isUpdating ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"}
-        </Button>
-      </form>
+                  </Popover.Button>
+
+                  <Transition
+                    as={React.Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 translate-y-1"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 translate-y-1"
+                  >
+                    <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                      <Controller
+                        name="color"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <TwitterPicker
+                            colors={LABEL_COLOR_OPTIONS}
+                            color={value}
+                            onChange={(value) => onChange(value.hex)}
+                          />
+                        )}
+                      />
+                    </Popover.Panel>
+                  </Transition>
+                </>
+              )}
+            </Popover>
+          </div>
+          <div className="flex flex-1 flex-col justify-center">
+            <Controller
+              control={control}
+              name="name"
+              rules={{
+                required: "Label title is required",
+                maxLength: {
+                  value: 255,
+                  message: "Label name should not exceed 255 characters",
+                },
+              }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="labelName"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Label title"
+                  className="w-full"
+                />
+              )}
+            />
+          </div>
+          <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
+            {isUpdating ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"}
+          </Button>
+        </form>
+        {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
+      </>
     );
   })
 );
