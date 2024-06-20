@@ -4,9 +4,8 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
-import { Avatar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { PageQuickActions } from "@/components/pages/dropdowns";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
