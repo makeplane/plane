@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
@@ -99,7 +99,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 canEditProperties={canEditProperties}
                 containerRef={containerRef}
                 canLoadMoreIssues={canLoadMoreIssues}
-          loadMoreIssues={loadMoreIssues}
+                loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
               />
@@ -107,7 +107,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             <div className="border-t border-custom-border-100">
               <div className="z-5 sticky bottom-0 left-0 mb-3">
                 {enableQuickCreateIssue && !disableIssueCreation && (
-                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback}/>
+                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} />
                 )}
               </div>
             </div>

@@ -6,9 +6,8 @@ import { CalendarCheck2, CalendarClock, MoveRight, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, Tooltip, setPromiseToast } from "@plane/ui";
+import { Avatar, AvatarGroup, FavoriteStar, Tooltip, setPromiseToast } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants

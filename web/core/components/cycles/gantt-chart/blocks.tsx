@@ -44,7 +44,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
                   : "",
       }}
       onClick={() =>
-        router.push(`/${workspaceSlug.toString()}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)
+        router.push(`/${workspaceSlug?.toString()}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)
       }
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
@@ -80,7 +80,7 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <Link
       className="relative flex h-full w-full items-center gap-2"
-      href={`/${workspaceSlug.toString()}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`}
+      href={`/${workspaceSlug?.toString()}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`}
       draggable={false}
     >
       <ContrastIcon

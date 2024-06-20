@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // editor
 import { EditorRefApi } from "@plane/lite-text-editor";

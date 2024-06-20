@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";

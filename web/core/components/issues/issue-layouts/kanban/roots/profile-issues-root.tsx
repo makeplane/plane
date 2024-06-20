@@ -26,7 +26,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
     <BaseKanBanRoot
       QuickActions={ProjectIssueQuickActions}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
-      viewId={profileViewId.toString()}
+      viewId={profileViewId?.toString()}
     />
   );
 });

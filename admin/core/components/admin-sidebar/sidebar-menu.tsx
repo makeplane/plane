@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";

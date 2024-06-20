@@ -3,7 +3,7 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // hooks

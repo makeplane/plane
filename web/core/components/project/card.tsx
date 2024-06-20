@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
@@ -18,10 +18,10 @@ import {
   setPromiseToast,
   ContextMenu,
   TContextMenuItem,
+  FavoriteStar,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { FavoriteStar } from "@/components/core";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // types
 import { IStateLite } from "@plane/types";
