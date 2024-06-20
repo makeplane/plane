@@ -158,6 +158,7 @@ export const InstanceSetupForm: FC = (props) => {
           onError={() => setIsSubmitting(false)}
         >
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+          <input type="hidden" name="is_telemetry_enabled" value={formData.is_telemetry_enabled ? "True" : "False"} />
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="w-full space-y-1">
@@ -318,9 +319,9 @@ export const InstanceSetupForm: FC = (props) => {
           <div className="relative flex items-center pt-2 gap-2">
             <div>
               <Checkbox
+                className="w-4 h-4"
+                iconClassName="w-3 h-3"
                 id="is_telemetry_enabled"
-                name="is_telemetry_enabled"
-                value={formData.is_telemetry_enabled ? "True" : "False"}
                 onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
                 checked={formData.is_telemetry_enabled}
               />

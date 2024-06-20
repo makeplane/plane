@@ -1,6 +1,7 @@
 import re
 import uuid
 from datetime import timedelta
+
 from django.utils import timezone
 
 # The date from pattern
@@ -63,24 +64,27 @@ def date_filter(filter, date_term, queries):
     """
     for query in queries:
         date_query = query.split(";")
-        if len(date_query) >= 2:
-            match = pattern.match(date_query[0])
-            if match:
-                if len(date_query) == 3:
-                    digit, term = date_query[0].split("_")
-                    string_date_filter(
-                        filter=filter,
-                        duration=int(digit),
-                        subsequent=date_query[1],
-                        term=term,
-                        date_filter=date_term,
-                        offset=date_query[2],
-                    )
-            else:
-                if "after" in date_query:
-                    filter[f"{date_term}__gte"] = date_query[0]
+        if date_query:
+            if len(date_query) >= 2:
+                match = pattern.match(date_query[0])
+                if match:
+                    if len(date_query) == 3:
+                        digit, term = date_query[0].split("_")
+                        string_date_filter(
+                            filter=filter,
+                            duration=int(digit),
+                            subsequent=date_query[1],
+                            term=term,
+                            date_filter=date_term,
+                            offset=date_query[2],
+                        )
                 else:
-                    filter[f"{date_term}__lte"] = date_query[0]
+                    if "after" in date_query:
+                        filter[f"{date_term}__gte"] = date_query[0]
+                    else:
+                        filter[f"{date_term}__lte"] = date_query[0]
+            else:
+                filter[f"{date_term}__contains"] = date_query[0]
 
 
 def filter_state(params, filter, method, prefix=""):
@@ -158,6 +162,8 @@ def filter_parent(params, filter, method, prefix=""):
         parents = [
             item for item in params.get("parent").split(",") if item != "null"
         ]
+        if "None" in parents:
+            filter[f"{prefix}parent__isnull"] = True
         parents = filter_valid_uuids(parents)
         if len(parents) and "" not in parents:
             filter[f"{prefix}parent__in"] = parents
@@ -176,6 +182,8 @@ def filter_labels(params, filter, method, prefix=""):
         labels = [
             item for item in params.get("labels").split(",") if item != "null"
         ]
+        if "None" in labels:
+            filter[f"{prefix}labels__isnull"] = True
         labels = filter_valid_uuids(labels)
         if len(labels) and "" not in labels:
             filter[f"{prefix}labels__in"] = labels
@@ -196,6 +204,8 @@ def filter_assignees(params, filter, method, prefix=""):
             for item in params.get("assignees").split(",")
             if item != "null"
         ]
+        if "None" in assignees:
+            filter[f"{prefix}assignees__isnull"] = True
         assignees = filter_valid_uuids(assignees)
         if len(assignees) and "" not in assignees:
             filter[f"{prefix}assignees__in"] = assignees
@@ -238,6 +248,8 @@ def filter_created_by(params, filter, method, prefix=""):
             for item in params.get("created_by").split(",")
             if item != "null"
         ]
+        if "None" in created_bys:
+            filter[f"{prefix}created_by__isnull"] = True
         created_bys = filter_valid_uuids(created_bys)
         if len(created_bys) and "" not in created_bys:
             filter[f"{prefix}created_by__in"] = created_bys
@@ -381,6 +393,8 @@ def filter_cycle(params, filter, method, prefix=""):
         cycles = [
             item for item in params.get("cycle").split(",") if item != "null"
         ]
+        if "None" in cycles:
+            filter[f"{prefix}issue_cycle__cycle_id__isnull"] = True
         cycles = filter_valid_uuids(cycles)
         if len(cycles) and "" not in cycles:
             filter[f"{prefix}issue_cycle__cycle_id__in"] = cycles
@@ -399,6 +413,8 @@ def filter_module(params, filter, method, prefix=""):
         modules = [
             item for item in params.get("module").split(",") if item != "null"
         ]
+        if "None" in modules:
+            filter[f"{prefix}issue_module__module_id__isnull"] = True
         modules = filter_valid_uuids(modules)
         if len(modules) and "" not in modules:
             filter[f"{prefix}issue_module__module_id__in"] = modules

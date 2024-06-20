@@ -6,6 +6,7 @@ from plane.app.views import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
+    PagesDescriptionViewSet,
 )
 
 
@@ -78,5 +79,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/sub-pages/",
         SubPagesEndpoint.as_view(),
         name="sub-page",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
+        PagesDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="page-description",
     ),
 ]

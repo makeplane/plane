@@ -119,8 +119,15 @@ class Issue(ProjectBaseModel):
         blank=True,
         related_name="state_issue",
     )
-    estimate_point = models.IntegerField(
+    point = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(12)],
+        null=True,
+        blank=True,
+    )
+    estimate_point = models.ForeignKey(
+        "db.EstimatePoint",
+        on_delete=models.SET_NULL,
+        related_name="issue_estimates",
         null=True,
         blank=True,
     )
@@ -128,6 +135,7 @@ class Issue(ProjectBaseModel):
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
+    description_binary = models.BinaryField(null=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
