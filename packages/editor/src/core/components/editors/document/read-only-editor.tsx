@@ -1,12 +1,14 @@
 import { forwardRef, MutableRefObject } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// extensions
+import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
-// plane editor extensions
-import { IssueWidget } from "@/plane-editor/extensions";
+// plane web types
+import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
 
@@ -14,6 +16,7 @@ interface IDocumentReadOnlyEditor {
   initialValue: string;
   containerClassName: string;
   editorClassName?: string;
+  embedHandler: TEmbedConfig;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {
@@ -26,6 +29,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   const {
     containerClassName,
     editorClassName = "",
+    embedHandler,
     initialValue,
     forwardedRef,
     tabIndex,
@@ -38,7 +42,12 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     mentionHandler,
     forwardedRef,
     handleEditorReady,
-    extensions: [IssueWidget],
+    extensions: [
+      embedHandler?.issue &&
+        IssueWidget({
+          widgetCallback: embedHandler?.issue.widgetCallback,
+        }),
+    ],
   });
 
   if (!editor) {

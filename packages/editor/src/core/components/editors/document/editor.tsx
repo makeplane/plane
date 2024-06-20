@@ -5,37 +5,41 @@ import { getEditorClassNames, EditorRefApi, IMentionHighlight, IMentionSuggestio
 import { PageRenderer } from "@/components/editors";
 // hooks
 import { useDocumentEditor } from "@/hooks/use-document-editor";
+// plane web types
+import { TEmbedConfig } from "@/plane-editor/types";
 
 interface IDocumentEditor {
-  id: string;
-  value: Uint8Array;
-  fileHandler: TFileHandler;
-  handleEditorReady?: (value: boolean) => void;
   containerClassName?: string;
   editorClassName?: string;
-  onChange: (updates: Uint8Array) => void;
+  embedHandler: TEmbedConfig;
+  fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  handleEditorReady?: (value: boolean) => void;
+  id: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
-  tabIndex?: number;
+  onChange: (updates: Uint8Array) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  tabIndex?: number;
+  value: Uint8Array;
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
-    onChange,
-    id,
-    value,
-    fileHandler,
     containerClassName,
     editorClassName = "",
-    mentionHandler,
-    handleEditorReady,
+    embedHandler,
+    fileHandler,
     forwardedRef,
-    tabIndex,
+    handleEditorReady,
+    id,
+    mentionHandler,
+    onChange,
     placeholder,
+    tabIndex,
+    value,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
@@ -49,6 +53,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   const editor = useDocumentEditor({
     id,
     editorClassName,
+    embedHandler,
     fileHandler,
     value,
     onChange,

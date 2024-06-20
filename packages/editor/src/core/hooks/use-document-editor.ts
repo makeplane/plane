@@ -4,48 +4,50 @@ import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 // extensions
-import { DragAndDrop, SlashCommand } from "@/extensions";
+import { DragAndDrop, IssueWidget, SlashCommand } from "@/extensions";
 // hooks
 import { TFileHandler, useEditor } from "@/hooks/use-editor";
 // plane editor extensions
-import { IssueWidget } from "@/plane-editor/extensions";
+import { TEmbedConfig } from "@/plane-editor/extensions";
 // plane editor provider
 import { CollaborationProvider } from "@/plane-editor/providers/collaboration-provider";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
 
 type DocumentEditorProps = {
-  id: string;
-  fileHandler: TFileHandler;
-  value: Uint8Array;
   editorClassName: string;
-  onChange: (updates: Uint8Array) => void;
   editorProps?: EditorProps;
+  embedHandler?: TEmbedConfig;
+  fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  handleEditorReady?: (value: boolean) => void;
+  id: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
-  handleEditorReady?: (value: boolean) => void;
+  onChange: (updates: Uint8Array) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
+  value: Uint8Array;
 };
 
 export const useDocumentEditor = (props: DocumentEditorProps) => {
   const {
-    id,
-    editorProps = {},
-    value,
     editorClassName,
+    editorProps = {},
+    embedHandler,
     fileHandler,
-    onChange,
     forwardedRef,
-    tabIndex,
     handleEditorReady,
+    id,
     mentionHandler,
+    onChange,
     placeholder,
     setHideDragHandleFunction,
+    tabIndex,
+    value,
   } = props;
 
   const provider = useMemo(
@@ -85,7 +87,10 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     extensions: [
       SlashCommand(fileHandler.upload),
       DragAndDrop(setHideDragHandleFunction),
-      IssueWidget,
+      embedHandler?.issue &&
+        IssueWidget({
+          widgetCallback: embedHandler.issue.widgetCallback,
+        }),
       Collaboration.configure({
         document: provider.document,
       }),

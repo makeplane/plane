@@ -3,6 +3,7 @@ export * from "./code-inline";
 export * from "./custom-link";
 export * from "./custom-list-keymap";
 export * from "./image";
+export * from "./issue-embed";
 export * from "./mentions";
 export * from "./table";
 export * from "./typography";
