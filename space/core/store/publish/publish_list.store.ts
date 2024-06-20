@@ -2,12 +2,11 @@ import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
 // types
 import { TProjectPublishSettings } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import PublishService from "@/services/publish.service";
 // store
 import { PublishStore } from "@/store/publish/publish.store";
+import { CoreRootStore } from "@/store/root.store";
 
 export interface IPublishListStore {
   // observables
@@ -22,7 +21,7 @@ export class PublishListStore implements IPublishListStore {
   // service
   publishService;
 
-  constructor(private rootStore: RootStore) {
+  constructor(private rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       publishMap: observable,

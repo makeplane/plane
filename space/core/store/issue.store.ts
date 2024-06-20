@@ -2,10 +2,10 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { IStateLite } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import IssueService from "@/services/issue.service";
+// store
+import { CoreRootStore } from "@/store/root.store";
 // types
 import { IIssue, IIssueLabel } from "@/types/issue";
 
@@ -39,11 +39,11 @@ export class IssueStore implements IIssueStore {
   filteredLabels: string[] = [];
   filteredPriorities: string[] = [];
   // root store
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
   // services
   issueService: IssueService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       loader: observable.ref,
       error: observable,
