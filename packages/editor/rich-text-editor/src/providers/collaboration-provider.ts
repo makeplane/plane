@@ -38,7 +38,7 @@ export class CollaborationProvider {
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
 
-    this.indexeddbProvider = new IndexeddbPersistence(`page-${this.configuration.name}`, this.document);
+    this.indexeddbProvider = new IndexeddbPersistence(`issue-${this.configuration.name}`, this.document);
     this.indexeddbProvider.on("synced", () => {
       this.configuration.hasIndexedDBSynced = true;
     });

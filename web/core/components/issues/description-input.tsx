@@ -59,35 +59,27 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     canUpdateDescription: true,
     workspaceSlug,
   });
-  if (!isDescriptionReady)
+
+  if (!isDescriptionReady || !issueDescriptionYJS)
     return (
       <Loader>
         <Loader.Item height="150px" />
       </Loader>
     );
 
-  if (!issueDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
-
   return (
     <>
-      {!disabled ? (
-        <RichTextEditor
-          id={issueId}
-          value={value}
-          workspaceSlug={workspaceSlug}
-          workspaceId={workspaceId}
-          projectId={projectId}
-          dragDropEnabled
-          onChange={handleDescriptionChange}
-          placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
-          containerClassName={containerClassName}
-        />
-      ) : (
-        <RichTextReadOnlyEditor
-          initialValue={""}
-          containerClassName={containerClassName}
-        />
-      )}
+      <RichTextEditor
+        id={issueId}
+        value={issueDescriptionYJS}
+        workspaceSlug={workspaceSlug}
+        workspaceId={workspaceId}
+        projectId={projectId}
+        dragDropEnabled
+        onChange={handleDescriptionChange}
+        placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
+        containerClassName={containerClassName}
+      />
     </>
   );
 });

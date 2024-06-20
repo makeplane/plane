@@ -50,11 +50,12 @@ export const useIssueDescription = (props: Props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+
   // derived values
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
   const issueDescription = issueDetails?.description_html;
 
-  const { data: issueDescriptionYJS, mutate: mutateDescriptionBinary } = useSWR(
+  const { data: issueDescriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DESCRIPTION_BINARY_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
       ? async () => {
@@ -93,26 +94,33 @@ export const useIssueDescription = (props: Props) => {
   useEffect(() => {
     const changeHTMLToBinary = async () => {
       if (!workspaceSlug || !projectId || !issueId) return;
+
       if (!issueDescriptionYJS || !issueDescription) return;
-      if (issueDescriptionYJS.byteLength === 0) {
+
+      if (issueDescriptionYJS.length === 0 && !isDescriptionReady) {
         const { contentJSON, editorSchema } = generateJSONfromHTML(issueDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
-        await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
+
+        // TODO - make sure mobx is also taken care of
+        await issueService.updateDescriptionBinary(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
           description_binary: yDocBinaryString,
           description_html: issueDescription ?? "<p></p>",
         });
-        await mutateDescriptionBinary();
+
+        await mutateDescriptionYJS();
+
         setIsDescriptionReady(true);
       } else setIsDescriptionReady(true);
     };
     changeHTMLToBinary();
   }, [
+    isDescriptionReady,
+    mutateDescriptionYJS,
     issueDescription,
-    issueId,
-    mutateDescriptionBinary,
-    issueDescriptionYJS,
-    projectId,
     updateIssueDescription,
+    issueDescriptionYJS,
+    issueId,
+    projectId,
     workspaceSlug,
   ]);
 
@@ -140,21 +148,21 @@ export const useIssueDescription = (props: Props) => {
 
         const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-        await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
-          description_binary: combinedBinaryString,
-          description_html: descriptionHTML,
-        }).finally(() => {
-          editorRef.current?.setSynced();
-          setShowAlert(false);
-          setIsSubmitting("saved");
-          setIsSubmitting("saved");
-        });
+        await issueService
+          .updateDescriptionBinary(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
+            description_binary: combinedBinaryString,
+            description_html: descriptionHTML ?? "<p></p>",
+          })
+          .finally(() => {
+            editorRef.current?.setSynced();
+            setShowAlert(false);
+            setIsSubmitting("saved");
+          });
       };
 
       try {
         setIsSubmitting("submitting");
-        // fetch the latest description
-        const latestDescription = await mutateDescriptionBinary();
+        const latestDescription = await mutateDescriptionYJS();
         if (latestDescription) {
           await applyUpdatesAndSave(latestDescription, update);
         }
@@ -165,13 +173,13 @@ export const useIssueDescription = (props: Props) => {
     },
     [
       localDescriptionYJS,
+      setShowAlert,
       canUpdateDescription,
       editorRef,
       issueId,
-      mutateDescriptionBinary,
+      mutateDescriptionYJS,
       projectId,
       setIsSubmitting,
-      updateIssueDescription,
       workspaceSlug,
     ]
   );

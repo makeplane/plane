@@ -92,12 +92,11 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
-          swrIssueDescription={swrIssueDetails?.description_html}
+          value={issue.description_binary}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           isSubmitting={isSubmitting}
           issueId={issue.id}
-          initialValue={issue.description_html}
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
