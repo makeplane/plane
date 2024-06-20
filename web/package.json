@@ -7,7 +7,7 @@
     "develop": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint": "next lint --dir .",
     "export": "next export",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },

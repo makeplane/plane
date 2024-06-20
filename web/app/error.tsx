@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
@@ -16,17 +14,8 @@ import { AuthService } from "@/services/auth.service";
 // services
 const authService = new AuthService();
 
-type props = {
-  error: Error & { digest?: string };
-  reset: () => void;
-};
-
-export default function CustomErrorComponent({ error }: props) {
+export default function CustomErrorComponent() {
   const router = useAppRouter();
-
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
 
   const handleRefresh = () => {
     window.location.reload();
