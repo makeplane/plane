@@ -106,6 +106,7 @@ from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
     IssueUserDisplayPropertyEndpoint,
+    IssueDescriptionViewSet,
     BulkDeleteIssuesEndpoint,
 )
 
@@ -113,7 +114,8 @@ from .issue.activity import (
     IssueActivityEndpoint,
 )
 
-from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
+from .issue.archive import IssueArchiveViewSet
+from .issue.archive import IssueArchiveViewSet, ArchivedIssueDescriptionViewSet
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
@@ -124,7 +126,7 @@ from .issue.comment import (
     CommentReactionViewSet,
 )
 
-from .issue.draft import IssueDraftViewSet
+from .issue.draft import IssueDraftViewSet, DraftIssueDescriptionViewSet
 
 from .issue.label import (
     LabelViewSet,
@@ -150,9 +152,6 @@ from .issue.sub_issue import (
 from .issue.subscriber import (
     IssueSubscriberViewSet,
 )
-
-
-from .issue.bulk_operations import BulkIssueOperationsEndpoint
 
 from .module.base import (
     ModuleViewSet,
@@ -194,7 +193,11 @@ from .estimate.base import (
     EstimatePointEndpoint,
 )
 
-from .inbox.base import InboxViewSet, InboxIssueViewSet
+from .inbox.base import (
+    InboxViewSet,
+    InboxIssueViewSet,
+    InboxIssueDescriptionViewSet,
+)
 
 from .analytic.base import (
     AnalyticsEndpoint,

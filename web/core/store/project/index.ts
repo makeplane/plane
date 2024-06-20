@@ -1,5 +1,4 @@
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import { CoreRootStore } from "../root.store";
 import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
 import { IProjectStore, ProjectStore } from "./project.store";
 import { IProjectFilterStore, ProjectFilterStore } from "./project_filter.store";
@@ -15,7 +14,7 @@ export class ProjectRootStore {
   projectFilter: IProjectFilterStore;
   publish: IProjectPublishStore;
 
-  constructor(_root: RootStore) {
+  constructor(_root: CoreRootStore) {
     this.project = new ProjectStore(_root);
     this.projectFilter = new ProjectFilterStore(_root);
     this.publish = new ProjectPublishStore(this);

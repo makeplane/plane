@@ -2,10 +2,10 @@ import set from "lodash/set";
 import { makeObservable, observable } from "mobx";
 // types
 import { IUserAccount } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { UserService } from "@/services/user.service";
+// store
+import { CoreRootStore } from "../root.store";
 
 export interface IAccountStore {
   // observables
@@ -25,7 +25,7 @@ export class AccountStore implements IAccountStore {
   // service
   userService: UserService;
   constructor(
-    private store: RootStore,
+    private store: CoreRootStore,
     private _account: IUserAccount
   ) {
     makeObservable(this, {

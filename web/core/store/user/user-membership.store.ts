@@ -5,12 +5,12 @@ import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/ty
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectMemberService } from "@/services/project";
 import { UserService } from "@/services/user.service";
 import { WorkspaceService } from "@/services/workspace.service";
+// plane web store
+import { CoreRootStore } from "../root.store";
 
 export interface IUserMembershipStore {
   // observables
@@ -68,7 +68,7 @@ export class UserMembershipStore implements IUserMembershipStore {
   workspaceService;
   projectMemberService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       workspaceMemberInfo: observable,

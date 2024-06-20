@@ -50,7 +50,6 @@ export const useIssueDescription = (props: Props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-
   // derived values
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
   const issueDescription = issueDetails?.description_html;

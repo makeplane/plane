@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, MutableRefObject, useState } from "react";
+import { RefObject, useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { Loader } from "@plane/ui";
@@ -38,7 +38,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     canLoadMoreBlocks,
     ganttContainerRef,
     showAllBlocks = false,
-    selectionHelpers
+    selectionHelpers,
   } = props;
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);

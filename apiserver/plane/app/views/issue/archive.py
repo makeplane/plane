@@ -1,5 +1,6 @@
 # Python imports
 import json
+import base64
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -12,6 +13,7 @@ from django.db.models import (
     Exists,
 )
 from django.utils import timezone
+from django.http import StreamingHttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
@@ -319,56 +321,46 @@ class IssueArchiveViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class BulkArchiveIssuesEndpoint(BaseAPIView):
+class ArchivedIssueDescriptionViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
     ]
 
-    def post(self, request, slug, project_id):
-        issue_ids = request.data.get("issue_ids", [])
-
-        if not len(issue_ids):
-            return Response(
-                {"error": "Issue IDs are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        issues = Issue.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
-        ).select_related("state")
-        bulk_archive_issues = []
-        for issue in issues:
-            if issue.state.group not in ["completed", "cancelled"]:
-                return Response(
-                    {
-                        "error_code": 4091,
-                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            issue_activity.delay(
-                type="issue.activity.updated",
-                requested_data=json.dumps(
-                    {
-                        "archived_at": str(timezone.now().date()),
-                        "automation": False,
-                    }
-                ),
-                actor_id=str(request.user.id),
-                issue_id=str(issue.id),
-                project_id=str(project_id),
-                current_instance=json.dumps(
-                    IssueSerializer(issue).data, cls=DjangoJSONEncoder
-                ),
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
-            )
-            issue.archived_at = timezone.now().date()
-            bulk_archive_issues.append(issue)
-        Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
-
-        return Response(
-            {"archived_at": str(timezone.now().date())},
-            status=status.HTTP_200_OK,
+    def retrieve(self, request, slug, project_id, pk):
+        issue = Issue.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
         )
+        binary_data = issue.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="issue_description.bin"'
+        )
+        return response
+
+    def partial_update(self, request, slug, project_id, pk):
+        issue = Issue.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+
+        base64_data = request.data.get("description_binary")
+
+        if base64_data:
+            # Decode the base64 data to bytes
+            new_binary_data = base64.b64decode(base64_data)
+
+            # Store the updated binary data
+            issue.description_binary = new_binary_data
+            issue.description_html = request.data.get("description_html")
+            issue.save()
+            return Response({"message": "Updated successfully"})
+        else:
+            return Response({"error": "No binary data provided"})

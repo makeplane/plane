@@ -9,6 +9,7 @@ import {
   IMentionSuggestion,
   EditorRefApi,
   TFileHandler,
+  useConflictFreeEditor,
 } from "@plane/editor-core";
 // components
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";

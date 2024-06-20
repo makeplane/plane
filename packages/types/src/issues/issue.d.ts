@@ -3,9 +3,13 @@ import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction } from "./issue_reaction";
 
-// new issue structure types
+export type TIssueDescription = {
+  description_binary: string;
+  description_html: string;
+};
 
-export type TBaseIssue = {
+// new issue structure types
+export type TIssue = TIssueDescription & {
   id: string;
   sequence_id: number;
   name: string;

@@ -1,9 +1,9 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
+import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap } from "@plane/types";
 import { IssueService } from "@/services/issue";
 // types
-import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap } from "@plane/types";
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueLinkStoreActions {

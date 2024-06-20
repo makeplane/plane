@@ -16,10 +16,10 @@ import { useUser, useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { IntegrationService } from "@/services/integrations";
 // icons
 import GithubLogo from "@/public/services/github.png";
 import SlackLogo from "@/public/services/slack.png";
+import { IntegrationService } from "@/services/integrations";
 
 type Props = {
   integration: IAppIntegration;

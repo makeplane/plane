@@ -4,6 +4,7 @@ from django.urls import path
 from plane.app.views import (
     InboxViewSet,
     InboxIssueViewSet,
+    InboxIssueDescriptionViewSet,
 )
 
 
@@ -49,5 +50,15 @@ urlpatterns = [
             }
         ),
         name="inbox-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:issue_id>/description/",
+        InboxIssueDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="inbox-issue-description",
     ),
 ]

@@ -7,6 +7,7 @@ import type {
   TIssueActivity,
   TIssuesResponse,
   TBulkOperationsPayload,
+  TIssueDescription,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -71,6 +72,19 @@ export class IssueService extends APIService {
       },
       responseType: "arraybuffer",
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateDescriptionBinary(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,5 +1,5 @@
 // types
-import type { TInboxIssue, TIssue, TInboxIssueWithPagination } from "@plane/types";
+import type { TInboxIssue, TIssue, TInboxIssueWithPagination, TIssueDescription } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -62,6 +62,38 @@ export class InboxIssueService extends APIService {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/`, {
       issue: data,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
+      {
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        responseType: "arraybuffer",
+      }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateDescriptionBinary(
+    workspaceSlug: string,
+    projectId: string,
+    inboxIssueId: string,
+    data: TIssueDescription
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

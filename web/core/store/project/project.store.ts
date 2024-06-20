@@ -6,11 +6,11 @@ import { computedFn } from "mobx-utils";
 import { IProject } from "@plane/types";
 // helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
+// store
+import { CoreRootStore } from "../root.store";
 
 export interface IProjectStore {
   // observables
@@ -53,7 +53,7 @@ export class ProjectStore implements IProjectStore {
     [projectId: string]: IProject; // projectId: project Info
   } = {};
   // root store
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
   // service
   projectService;
   projectArchiveService;
@@ -61,7 +61,7 @@ export class ProjectStore implements IProjectStore {
   issueService;
   stateService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,

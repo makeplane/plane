@@ -19,8 +19,8 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkIssueOperationsEndpoint,
-    BulkArchiveIssuesEndpoint,
+    IssueDescriptionViewSet,
+    ArchivedIssueDescriptionViewSet,
 )
 
 urlpatterns = [
@@ -50,6 +50,16 @@ urlpatterns = [
             }
         ),
         name="project-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/description/",
+        IssueDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="issue-description",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
@@ -82,11 +92,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
-        BulkArchiveIssuesEndpoint.as_view(),
-        name="bulk-archive-issues",
     ),
     ##
     path(
@@ -261,6 +266,16 @@ urlpatterns = [
         ),
         name="project-issue-archive-unarchive",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/description/",
+        ArchivedIssueDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="archived-issue-description",
+    ),
     ## End Issue Archives
     ## Issue Relation
     path(
@@ -306,8 +321,13 @@ urlpatterns = [
         name="project-issue-draft",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
-        BulkIssueOperationsEndpoint.as_view(),
-        name="bulk-operations-issues",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/<uuid:pk>/description/",
+        IssueDraftViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="draft-issue-description",
     ),
 ]

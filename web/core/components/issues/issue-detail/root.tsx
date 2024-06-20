@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter } from "next/navigation";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueDescription } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
@@ -25,6 +25,12 @@ import { IssueDetailsSidebar } from "./sidebar";
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateDescription: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -64,6 +70,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     issue: { getIssueById },
     fetchIssue,
     updateIssue,
+    updateIssueDescription,
     removeIssue,
     archiveIssue,
     addCycleToIssue,
@@ -112,6 +119,35 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               change_details: Object.values(data).join(","),
             },
             path: pathname,
+          });
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue update failed",
+          });
+        }
+      },
+      updateDescription: async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) => {
+        try {
+          await updateIssueDescription(workspaceSlug, projectId, issueId, data);
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue detail page" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
           });
           setToast({
             title: "Error!",

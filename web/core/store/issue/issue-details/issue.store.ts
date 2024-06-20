@@ -1,7 +1,7 @@
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueDescription } from "@plane/types";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
@@ -16,6 +16,12 @@ export interface IIssueStoreActions {
     issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED"
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssueDescription: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -156,6 +162,19 @@ export class IssueStore implements IIssueStore {
     await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
+
+  /**
+   * @description update the issue description
+   * @param {string} binaryString
+   * @param {string} descriptionHTML
+   */
+  updateIssueDescription = async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) =>
+    this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssueDescription(
+      workspaceSlug,
+      projectId,
+      issueId,
+      data
+    );
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
