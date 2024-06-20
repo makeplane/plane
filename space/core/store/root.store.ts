@@ -36,7 +36,7 @@ export class CoreRootStore {
     this.user.hydrate(data?.user || undefined);
   };
 
-  reset = () => {
+  reset() {
     localStorage.setItem("theme", "system");
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
@@ -45,5 +45,5 @@ export class CoreRootStore {
     this.mentionStore = new MentionsStore(this);
     this.issueFilter = new IssueFilterStore(this);
     this.publishList = new PublishListStore(this);
-  };
+  }
 }

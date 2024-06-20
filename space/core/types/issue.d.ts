@@ -1,4 +1,4 @@
-import { IStateLite, IWorkspaceLite, TIssuePriorities, TStateGroups } from "@plane/types";
+import { IStateLite, IWorkspaceLite, TIssue, TIssuePriorities, TStateGroups } from "@plane/types";
 
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 export type TIssueLayoutOptions = {
@@ -39,18 +39,13 @@ export type TIssuesResponse = {
   issues: IIssue[];
 };
 
-export interface IIssue {
-  id: string;
+export interface IIssue
+  extends Pick<TIssue, "description_html" | "id" | "name" | "priority" | "sequence_id" | "start_date" | "target_date"> {
   comments: Comment[];
-  description_html: string;
   label_details: any;
-  name: string;
-  priority: TIssuePriorityKey | null;
   project: string;
   project_detail: any;
   reactions: IIssueReaction[];
-  sequence_id: number;
-  start_date: any;
   state: string;
   state_detail: {
     id: string;
@@ -58,7 +53,6 @@ export interface IIssue {
     group: TIssueGroupKey;
     color: string;
   };
-  target_date: any;
   votes: IVote[];
 }
 

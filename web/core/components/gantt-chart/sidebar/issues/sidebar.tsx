@@ -8,6 +8,7 @@ import { Loader } from "@plane/ui";
 import { IGanttBlock, IBlockUpdateData } from "@/components/gantt-chart/types";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
@@ -41,9 +42,20 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     selectionHelpers,
   } = props;
 
+  const {
+    issues: { getIssueLoader },
+  } = useIssuesStore();
+
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  useIntersectionObserver(ganttContainerRef, intersectionElement, loadMoreBlocks, "50% 0% 50% 0%");
+  const isPaginating = !!getIssueLoader();
+
+  useIntersectionObserver(
+    ganttContainerRef,
+    isPaginating ? null : intersectionElement,
+    loadMoreBlocks,
+    "50% 0% 50% 0%"
+  );
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,

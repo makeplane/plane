@@ -10,11 +10,13 @@ import { TLogoProps } from "@plane/types";
 import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-// helper
+// helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -28,6 +30,10 @@ export const PageDetailsHeader = observer(() => {
   // store hooks
   const { currentProjectDetails } = useProject();
   const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
+  // use platform
+  const { platform } = usePlatformOS();
+  // derived values
+  const isMac = platform === "MacOS";
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -48,10 +54,6 @@ export const PageDetailsHeader = observer(() => {
         });
     }
   };
-  // use platform
-  const { platform } = usePlatformOS();
-  // derived values
-  const isMac = platform === "MacOS";
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -146,6 +148,7 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <PageDetailsHeaderExtraActions />
       {isContentEditable && (
         <Button
           variant="primary"
@@ -159,7 +162,7 @@ export const PageDetailsHeader = observer(() => {
             });
             window.dispatchEvent(event);
           }}
-          className="flex-shrink-0"
+          className="flex-shrink-0 w-24"
           loading={isSubmitting === "submitting"}
         >
           {isSubmitting === "submitting" ? "Saving" : "Save changes"}
