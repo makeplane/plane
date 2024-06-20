@@ -6,10 +6,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IEstimate as IEstimateType, IEstimateFormData } from "@plane/types";
-// services
-import estimateService from "@/services/project/estimate.service";
+// plane web services
+import estimateService from "@/plane-web/services/project/estimate.service";
+// plane web store
+import { IEstimate, Estimate } from "@/plane-web/store/estimates/estimate";
 // store
-import { IEstimate, Estimate } from "@/store/estimates/estimate";
 import { CoreRootStore } from "../root.store";
 
 type TEstimateLoader = "init-loader" | "mutation-loader" | undefined;
