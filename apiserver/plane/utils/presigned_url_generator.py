@@ -12,6 +12,7 @@ def generate_download_presigned_url(
     Generate a presigned URL to download an object from S3, dynamically setting
     the Content-Disposition based on the file metadata.
     """
+    # Create a new S3 client
     if settings.USE_MINIO:
         s3_client = boto3.client(
             "s3",
@@ -29,6 +30,7 @@ def generate_download_presigned_url(
         )
 
     try:
+        # Generate a presigned URL for the object
         url = s3_client.generate_presigned_url(
             "get_object",
             Params={
