@@ -7,8 +7,8 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IEstimate as IEstimateType, IEstimatePoint as IEstimatePointType, TEstimateSystemKeys } from "@plane/types";
-// services
-import estimateService from "@/services/project/estimate.service";
+// plane web services
+import estimateService from "@/plane-web/services/project/estimate.service";
 // store
 import { IEstimatePoint, EstimatePoint } from "@/store/estimates/estimate-point";
 import { CoreRootStore } from "@/store/root.store";

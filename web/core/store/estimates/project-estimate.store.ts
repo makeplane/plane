@@ -6,10 +6,10 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IEstimate as IEstimateType, IEstimateFormData } from "@plane/types";
+// plane web services
+import estimateService from "@/plane-web/services/project/estimate.service";
 // plane web store
 import { IEstimate, Estimate } from "@/plane-web/store/estimates/estimate";
-// services
-import estimateService from "@/services/project/estimate.service";
 // store
 import { CoreRootStore } from "../root.store";
 
