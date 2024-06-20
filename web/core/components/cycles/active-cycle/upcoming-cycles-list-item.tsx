@@ -6,9 +6,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Users } from "lucide-react";
 // ui
-import { Avatar, AvatarGroup, setPromiseToast } from "@plane/ui";
+import { Avatar, AvatarGroup, FavoriteStar, setPromiseToast } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
