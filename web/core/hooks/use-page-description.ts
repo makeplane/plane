@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 // editor
 import { applyUpdates, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
-import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
+import { EditorRefApi, generateJSONfromHTML } from "@plane/editor";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
