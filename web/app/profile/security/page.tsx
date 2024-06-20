@@ -115,8 +115,8 @@ const SecurityPage = observer(() => {
     password === oldPassword;
 
   const passwordSupport = password.length > 0 &&
-    (getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID || isPasswordInputFocused) && (
-      <PasswordStrengthMeter password={password} />
+    getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
+      <PasswordStrengthMeter password={password} isFocused={isPasswordInputFocused} />
     );
 
   if (isPageLoading)

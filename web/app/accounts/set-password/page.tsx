@@ -181,7 +181,7 @@ const SetPasswordPage = observer(() => {
                       />
                     )}
                   </div>
-                  {isPasswordInputFocused && <PasswordStrengthMeter password={passwordFormData.password} />}
+                  <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">

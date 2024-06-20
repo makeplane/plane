@@ -96,8 +96,9 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       </div>
     ) : (
       passwordFormData.password.length > 0 &&
-      (getPasswordStrength(passwordFormData.password) != E_PASSWORD_STRENGTH.STRENGTH_VALID ||
-        isPasswordInputFocused) && <PasswordStrengthMeter password={passwordFormData.password} />
+      getPasswordStrength(passwordFormData.password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
+        <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
+      )
     );
 
   const isButtonDisabled = useMemo(

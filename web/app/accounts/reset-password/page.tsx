@@ -187,7 +187,7 @@ export default function ResetPasswordPage() {
                       />
                     )}
                   </div>
-                  {isPasswordInputFocused && <PasswordStrengthMeter password={resetFormData.password} />}
+                  <PasswordStrengthMeter password={resetFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
