@@ -41,15 +41,13 @@ const useReloadConfirmations = (isActive = true) => {
     // handle browser refresh
     window.addEventListener("beforeunload", handleBeforeUnload, true);
     // handle anchor tag click
-    const body = document.querySelector("body");
-    if (!body) return;
-    body.addEventListener("click", handleAnchorClick, true);
-  // TODO: handle back / forward button click
+    window.addEventListener("click", handleAnchorClick, true);
+    // TODO: handle back / forward button click
 
     return () => {
       // cleanup
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      body.removeEventListener("click", handleAnchorClick, true);
+      window.removeEventListener("beforeunload", handleBeforeUnload, true);
+      window.removeEventListener("click", handleAnchorClick, true);
     };
   }, [handleAnchorClick, handleBeforeUnload]);
 
