@@ -69,10 +69,39 @@ class WorkspaceViewViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project__isnull=True)
+            .filter(Q(owned_by=self.request.user) | Q(access=1))
             .select_related("workspace")
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
         )
+
+    def partial_update(self, request, slug, pk):
+        workspace_view = IssueView.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+        )
+
+        if workspace_view.is_locked:
+            return Response(
+                {"error": "view is locked"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Only update the view if owner is updating
+        if workspace_view.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Only the owner of the view can update the view"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = IssueViewSerializer(
+            workspace_view, data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
@@ -294,6 +323,7 @@ class IssueViewViewSet(BaseViewSet):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
+            .filter(Q(owned_by=self.request.user) | Q(access=1))
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
@@ -312,6 +342,33 @@ class IssueViewViewSet(BaseViewSet):
             queryset, many=True, fields=fields if fields else None
         ).data
         return Response(views, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, slug, project_id, pk):
+        issue_view = IssueView.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+
+        if issue_view.is_locked:
+            return Response(
+                {"error": "view is locked"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Only update the view if owner is updating
+        if issue_view.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Only the owner of the view can update the view"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = IssueViewSerializer(
+            issue_view, data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
