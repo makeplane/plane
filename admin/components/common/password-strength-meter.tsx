@@ -1,69 +1,94 @@
 "use client";
 
+import { FC, useMemo } from "react";
+// import { CircleCheck } from "lucide-react";
 // helpers
-import { CircleCheck } from "lucide-react";
 import { cn } from "@/helpers/common.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
-// icons
+import {
+  E_PASSWORD_STRENGTH,
+  // PASSWORD_CRITERIA,
+  getPasswordStrength,
+} from "@/helpers/password.helper";
 
-type Props = {
+type TPasswordStrengthMeter = {
   password: string;
+  isFocused?: boolean;
 };
 
-export const PasswordStrengthMeter: React.FC<Props> = (props: Props) => {
-  const { password } = props;
+export const PasswordStrengthMeter: FC<TPasswordStrengthMeter> = (props) => {
+  const { password, isFocused = false } = props;
+  // derived values
+  const strength = useMemo(() => getPasswordStrength(password), [password]);
+  const strengthBars = useMemo(() => {
+    switch (strength) {
+      case E_PASSWORD_STRENGTH.EMPTY: {
+        return {
+          bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
+          text: "Please enter your password.",
+          textColor: "text-custom-text-100",
+        };
+      }
+      case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID: {
+        return {
+          bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
+          text: "Password length should me more than 8 characters.",
+          textColor: "text-red-500",
+        };
+      }
+      case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID: {
+        return {
+          bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
+          text: "Password is weak.",
+          textColor: "text-red-500",
+        };
+      }
+      case E_PASSWORD_STRENGTH.STRENGTH_VALID: {
+        return {
+          bars: [`bg-green-500`, `bg-green-500`, `bg-green-500`],
+          text: "Password is strong.",
+          textColor: "text-green-500",
+        };
+      }
+      default: {
+        return {
+          bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
+          text: "Please enter your password.",
+          textColor: "text-custom-text-100",
+        };
+      }
+    }
+  }, [strength]);
 
-  const strength = getPasswordStrength(password);
-  let bars = [];
-  let text = "";
-  let textColor = "";
+  const isPasswordMeterVisible = isFocused ? true : strength === E_PASSWORD_STRENGTH.STRENGTH_VALID ? false : true;
 
-  if (password.length === 0) {
-    bars = [`bg-[#F0F0F3]`, `bg-[#F0F0F3]`, `bg-[#F0F0F3]`];
-    text = "Password requirements";
-  } else if (password.length < 8) {
-    bars = [`bg-[#DC3E42]`, `bg-[#F0F0F3]`, `bg-[#F0F0F3]`];
-    text = "Password is too short";
-    textColor = `text-[#DC3E42]`;
-  } else if (strength < 3) {
-    bars = [`bg-[#FFBA18]`, `bg-[#FFBA18]`, `bg-[#F0F0F3]`];
-    text = "Password is weak";
-    textColor = `text-[#FFBA18]`;
-  } else {
-    bars = [`bg-[#3E9B4F]`, `bg-[#3E9B4F]`, `bg-[#3E9B4F]`];
-    text = "Password is strong";
-    textColor = `text-[#3E9B4F]`;
-  }
-
-  const criteria = [
-    { label: "Min 8 characters", isValid: password.length >= 8 },
-    { label: "Min 1 upper-case letter", isValid: /[A-Z]/.test(password) },
-    { label: "Min 1 number", isValid: /\d/.test(password) },
-    { label: "Min 1 special character", isValid: /[!@#$%^&*]/.test(password) },
-  ];
-
+  if (!isPasswordMeterVisible) return <></>;
   return (
-    <div className="w-full">
-      <div className="flex w-full gap-1.5">
-        {bars.map((color, index) => (
-          <div key={index} className={cn("w-full h-1 rounded-full", color)} />
-        ))}
+    <div className="w-full space-y-2 pt-2">
+      <div className="space-y-1.5">
+        <div className="relative flex items-center gap-2">
+          {strengthBars?.bars.map((color, index) => (
+            <div key={`${color}-${index}`} className={cn("w-full h-1 rounded-full", color)} />
+          ))}
+        </div>
+        <div className={cn(`text-xs font-medium text-custom-text-100`, strengthBars?.textColor)}>
+          {strengthBars?.text}
+        </div>
       </div>
-      <p className={cn("text-xs font-medium py-1", textColor)}>{text}</p>
-      <div className="flex flex-wrap gap-x-4 gap-y-2">
-        {criteria.map((criterion, index) => (
+
+      {/* <div className="relative flex flex-wrap gap-x-4 gap-y-2">
+        {PASSWORD_CRITERIA.map((criteria) => (
           <div
-            key={index}
+            key={criteria.key}
             className={cn(
-              "flex items-center gap-1 text-xs font-medium",
-              criterion.isValid ? `text-[#3E9B4F]` : "text-custom-text-400"
+              "relative flex items-center gap-1 text-xs",
+              criteria.isCriteriaValid(password) ? `text-green-500/70` : "text-custom-text-300"
             )}
           >
             <CircleCheck width={14} height={14} />
-            {criterion.label}
+            {criteria.label}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
