@@ -7,8 +7,8 @@ import useSWR from "swr";
 // ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
-import { AuthenticationMethodCard } from "../components";
+import { PageHeader } from "@/components/common";
+import { AuthenticationMethodCard } from "@/components/authentication";
 import { InstanceSAMLConfigForm } from "./form";
 // hooks
 import { useInstance } from "@/hooks/store";
