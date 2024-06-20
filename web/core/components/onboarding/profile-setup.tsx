@@ -17,7 +17,7 @@ import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding
 // constants
 import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
 // helpers
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 // services
@@ -248,30 +248,30 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     });
   };
 
+  // derived values
   const isPasswordAlreadySetup = !user?.is_password_autoset;
-  const isSignUpUsingMagicCode = user?.last_login_medium === "magic-code";
-
-  const password = watch("password");
-  const confirmPassword = watch("confirm_password");
-  const isValidPassword = (password: string, confirmPassword?: string) =>
-    getPasswordStrength(password) >= 3 && password === confirmPassword;
+  const isValidPassword = useMemo(() => {
+    const currentPassword = watch("password") || undefined;
+    const currentConfirmPassword = watch("confirm_password") || undefined;
+    if (currentPassword) {
+      if (
+        currentPassword === currentConfirmPassword &&
+        getPasswordStrength(currentPassword) === E_PASSWORD_STRENGTH.STRENGTH_VALID
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }, [watch]);
 
   // Check for all available fields validation and if password field is available, then checks for password validation (strength + confirmation).
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
   const isButtonDisabled = useMemo(
-    () =>
-      !isSubmitting &&
-      isValid &&
-      (isPasswordAlreadySetup
-        ? true
-        : isSignUpUsingMagicCode
-          ? !!password && isValidPassword(password, confirmPassword)
-          : !!password
-            ? isValidPassword(password, confirmPassword)
-            : true)
-        ? false
-        : true,
-    [isSubmitting, isValid, isPasswordAlreadySetup, isSignUpUsingMagicCode, password, confirmPassword]
+    () => (!isSubmitting && isValid && (isPasswordAlreadySetup ? true : isValidPassword) ? false : true),
+    [isSubmitting, isValid, isPasswordAlreadySetup, isValidPassword]
   );
 
   const isCurrentStepUserPersonalization = profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION;
@@ -412,94 +412,98 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     {errors.last_name && <span className="text-sm text-red-500">{errors.last_name.message}</span>}
                   </div>
                 </div>
+
+                {/* setting up password for the first time */}
                 {!isPasswordAlreadySetup && (
-                  <div className="space-y-1">
-                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-                      Set a password{" "}
-                      {!isSignUpUsingMagicCode && <span className="text-onboarding-text-400">(optional)</span>}
-                    </label>
-                    <Controller
-                      control={control}
-                      name="password"
-                      rules={{
-                        required: isSignUpUsingMagicCode ? "Password is required" : false,
-                      }}
-                      render={({ field: { value, onChange, ref } }) => (
-                        <div className="relative flex items-center rounded-md">
-                          <Input
-                            type={showPassword.password ? "text" : "password"}
-                            name="password"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            hasError={Boolean(errors.password)}
-                            placeholder="New password..."
-                            className="w-full border-[0.5px] border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-                            onFocus={() => setIsPasswordInputFocused(true)}
-                            onBlur={() => setIsPasswordInputFocused(false)}
-                          />
-                          {showPassword.password ? (
-                            <EyeOff
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => handleShowPassword("password")}
+                  <>
+                    <div className="space-y-1">
+                      <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+                        Set a password (optional)
+                      </label>
+                      <Controller
+                        control={control}
+                        name="password"
+                        rules={{
+                          required: false,
+                        }}
+                        render={({ field: { value, onChange, ref } }) => (
+                          <div className="relative flex items-center rounded-md">
+                            <Input
+                              type={showPassword.password ? "text" : "password"}
+                              name="password"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              hasError={Boolean(errors.password)}
+                              placeholder="New password..."
+                              className="w-full border-[0.5px] border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
+                              onFocus={() => setIsPasswordInputFocused(true)}
+                              onBlur={() => setIsPasswordInputFocused(false)}
                             />
-                          ) : (
-                            <Eye
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => handleShowPassword("password")}
+                            {showPassword.password ? (
+                              <EyeOff
+                                className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                                onClick={() => handleShowPassword("password")}
+                              />
+                            ) : (
+                              <Eye
+                                className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                                onClick={() => handleShowPassword("password")}
+                              />
+                            )}
+                          </div>
+                        )}
+                      />
+                      <PasswordStrengthMeter password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                        Confirm password (optional)
+                      </label>
+                      <Controller
+                        control={control}
+                        name="confirm_password"
+                        rules={{
+                          required: watch("password") ? true : false,
+                          validate: (value) =>
+                            watch("password") ? (value === watch("password") ? true : "Passwords don't match") : true,
+                        }}
+                        render={({ field: { value, onChange, ref } }) => (
+                          <div className="relative flex items-center rounded-md">
+                            <Input
+                              type={showPassword.retypePassword ? "text" : "password"}
+                              name="confirm_password"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              hasError={Boolean(errors.confirm_password)}
+                              placeholder="Confirm password..."
+                              className="w-full border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                             />
-                          )}
-                        </div>
+                            {showPassword.retypePassword ? (
+                              <EyeOff
+                                className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                                onClick={() => handleShowPassword("retypePassword")}
+                              />
+                            ) : (
+                              <Eye
+                                className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                                onClick={() => handleShowPassword("retypePassword")}
+                              />
+                            )}
+                          </div>
+                        )}
+                      />
+                      {errors.confirm_password && (
+                        <span className="text-sm text-red-500">{errors.confirm_password.message}</span>
                       )}
-                    />
-                    {isPasswordInputFocused && <PasswordStrengthMeter password={watch("password") ?? ""} />}
-                    {errors.password && <span className="text-sm text-red-500">{errors.password.message}</span>}
-                  </div>
-                )}
-                {!isPasswordAlreadySetup && (
-                  <div className="space-y-1">
-                    <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-                      Confirm password
-                    </label>
-                    <Controller
-                      control={control}
-                      name="confirm_password"
-                      rules={{
-                        validate: (value) => value === password || "Passwords don't match",
-                      }}
-                      render={({ field: { value, onChange, ref } }) => (
-                        <div className="relative flex items-center rounded-md">
-                          <Input
-                            type={showPassword.retypePassword ? "text" : "password"}
-                            name="confirm_password"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            hasError={Boolean(errors.password)}
-                            placeholder="Confirm password..."
-                            className="w-full border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
-                          />
-                          {showPassword.retypePassword ? (
-                            <EyeOff
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => handleShowPassword("retypePassword")}
-                            />
-                          ) : (
-                            <Eye
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                              onClick={() => handleShowPassword("retypePassword")}
-                            />
-                          )}
-                        </div>
-                      )}
-                    />
-                    {errors.confirm_password && (
-                      <span className="text-sm text-red-500">{errors.confirm_password.message}</span>
-                    )}
-                  </div>
+                    </div>
+                  </>
                 )}
               </>
             )}
+
+            {/* user role once the password is set */}
             {profileSetupStep !== EProfileSetupSteps.USER_DETAILS && (
               <>
                 <div className="space-y-1">

@@ -357,7 +357,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <Tag className="h-4 w-4 flex-shrink-0" />
             <span>Labels</span>
           </div>
-          <div className="flex w-full flex-col gap-3">
+          <div className="flex w-full flex-col gap-3 truncate">
             <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
           </div>
         </div>
