@@ -42,7 +42,7 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
+          if [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
