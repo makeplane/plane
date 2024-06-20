@@ -3,6 +3,7 @@
 import "src/styles/editor.css";
 import "src/styles/table.css";
 import "src/styles/github-dark.css";
+import "src/styles/drag-drop.css";
 
 // editors
 export {
