@@ -1,5 +1,5 @@
 // types
-import { TPublishSettings } from "@plane/types";
+import { TProjectPublishSettings } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -10,7 +10,7 @@ export class ProjectPublishService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchPublishSettings(workspaceSlug: string, projectID: string): Promise<TPublishSettings> {
+  async fetchPublishSettings(workspaceSlug: string, projectID: string): Promise<TProjectPublishSettings> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -21,8 +21,8 @@ export class ProjectPublishService extends APIService {
   async publishProject(
     workspaceSlug: string,
     projectID: string,
-    data: Partial<TPublishSettings>
-  ): Promise<TPublishSettings> {
+    data: Partial<TProjectPublishSettings>
+  ): Promise<TProjectPublishSettings> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -34,8 +34,8 @@ export class ProjectPublishService extends APIService {
     workspaceSlug: string,
     projectID: string,
     project_publish_id: string,
-    data: Partial<TPublishSettings>
-  ): Promise<TPublishSettings> {
+    data: Partial<TProjectPublishSettings>
+  ): Promise<TProjectPublishSettings> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectID}/project-deploy-boards/${project_publish_id}/`,
       data

@@ -102,6 +102,13 @@ class IssueView(WorkspaceBaseModel):
     )
     sort_order = models.FloatField(default=65535)
     logo_props = models.JSONField(default=dict)
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="views",
+    )
+    is_locked = models.BooleanField(default=False)
+
 
     class Meta:
         verbose_name = "Issue View"

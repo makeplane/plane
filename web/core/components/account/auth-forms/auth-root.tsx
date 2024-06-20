@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { IEmailCheckData } from "@plane/types";
 // components
 import {
@@ -23,6 +23,7 @@ import {
 } from "@/helpers/authentication.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -34,7 +35,7 @@ type TAuthRoot = {
 
 export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   //router
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   // query params
   const emailParam = searchParams.get("email");
@@ -49,6 +50,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
+  const [isExistingEmail, setIsExistingEmail] = useState(false);
   // hooks
   const { config } = useInstance();
 
@@ -124,6 +126,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
             setAuthStep(EAuthSteps.PASSWORD);
           }
         }
+        setIsExistingEmail(response.existing);
       })
       .catch((error) => {
         const errorhandler = authErrorHandler(error?.error_code?.toString(), data?.email || undefined);
@@ -171,6 +174,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           <AuthUniqueCodeForm
             mode={authMode}
             email={email}
+            isExistingEmail={isExistingEmail}
             handleEmailClear={handleEmailClear}
             generateEmailUniqueCode={generateEmailUniqueCode}
             nextPath={nextPath || undefined}

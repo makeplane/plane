@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // icons
 import { ChevronDown, ListFilter } from "lucide-react";
 // types
@@ -10,9 +11,11 @@ import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/pr
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useAppRouter, useMember, useProjectFilter } from "@/hooks/store";
+import { useMember, useProjectFilter } from "@/hooks/store";
 
 export const ProjectsListMobileHeader = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   const {
     currentWorkspaceDisplayFilters: displayFilters,
     currentWorkspaceFilters: filters,
@@ -20,7 +23,6 @@ export const ProjectsListMobileHeader = observer(() => {
     updateFilters,
   } = useProjectFilter();
 
-  const { workspaceSlug } = useAppRouter();
 
   const {
     workspace: { workspaceMemberIds },
@@ -39,7 +41,7 @@ export const ProjectsListMobileHeader = observer(() => {
         if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-      updateFilters(workspaceSlug, { [key]: newValues });
+      updateFilters(workspaceSlug.toString(), { [key]: newValues });
     },
     [filters, updateFilters, workspaceSlug]
   );
@@ -52,7 +54,7 @@ export const ProjectsListMobileHeader = observer(() => {
         value={displayFilters?.order_by}
         onChange={(val) => {
           if (!workspaceSlug || val === displayFilters?.order_by) return;
-          updateDisplayFilters(workspaceSlug, {
+          updateDisplayFilters(workspaceSlug.toString(), {
             order_by: val,
           });
         }}
@@ -78,7 +80,7 @@ export const ProjectsListMobileHeader = observer(() => {
             handleFiltersUpdate={handleFilters}
             handleDisplayFiltersUpdate={(val) => {
               if (!workspaceSlug) return;
-              updateDisplayFilters(workspaceSlug, val);
+              updateDisplayFilters(workspaceSlug.toString(), val);
             }}
             memberIds={workspaceMemberIds ?? undefined}
           />

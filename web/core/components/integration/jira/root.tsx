@@ -3,21 +3,24 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
 import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
+// types
 import { IJiraImporterForm } from "@plane/types";
-// services
-// fetch keys
-// components
+// ui
 import { Button } from "@plane/ui";
+// fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 // assets
 import JiraLogo from "@/public/services/jira.svg";
+// services
 import { JiraImporterService } from "@/services/integrations";
-// types
+// components
 import {
   JiraGetImportDetail,
   JiraProjectDetail,
@@ -64,7 +67,7 @@ export const JiraImporterRoot: React.FC = () => {
   });
   const [disableTopBarAfter, setDisableTopBarAfter] = useState<TJiraIntegrationSteps | null>(null);
 
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
 
   const methods = useForm<IJiraImporterForm>({

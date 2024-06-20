@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { History, LucideIcon, MessageCircle } from "lucide-react";
 // types
 import { TIssueComment } from "@plane/types";

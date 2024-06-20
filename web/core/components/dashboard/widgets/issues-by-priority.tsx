@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// types
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
-// hooks
 // components
 import {
   DurationFilterDropdown,
@@ -11,20 +10,21 @@ import {
   WidgetLoader,
   WidgetProps,
 } from "@/components/dashboard/widgets";
-// helpers
-// types
-// constants
 import { IssuesByPriorityGraph } from "@/components/graphs";
+// constants
 import { EDurationFilters } from "@/constants/dashboard";
+// helpers
 import { getCustomDates } from "@/helpers/dashboard.helper";
+// hooks
 import { useDashboard } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 const WIDGET_KEY = "issues_by_priority";
 
 export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
   // derived values

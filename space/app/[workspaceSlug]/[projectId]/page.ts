@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 // types
-import { TPublishSettings } from "@plane/types";
+import { TProjectPublishSettings } from "@plane/types";
 // services
 import PublishService from "@/services/publish.service";
 
@@ -20,7 +20,7 @@ export default async function IssuesPage(props: Props) {
   const { workspaceSlug, projectId } = params;
   const { board, peekId } = searchParams;
 
-  let response: TPublishSettings | undefined = undefined;
+  let response: TProjectPublishSettings | undefined = undefined;
   try {
     response = await publishService.fetchAnchorFromProjectDetails(workspaceSlug, projectId);
   } catch (error) {

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 // ui
@@ -11,12 +10,13 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar";
+import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import { getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -49,7 +49,7 @@ const SecurityPage = observer(() => {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { data: currentUser } = useUser();
   // use form
   const {
@@ -130,15 +130,9 @@ const SecurityPage = observer(() => {
   return (
     <>
       <PageHead title="Profile - Change Password" />
-      <div className="flex h-full flex-col">
-        <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
-          <SidebarHamburgerToggle />
-        </div>
-        <form
-          onSubmit={handleSubmit(handleChangePassword)}
-          className="mx-auto md:mt-16 mt-10 flex h-full w-full flex-col gap-8 px-4 md:px-8 pb-8 lg:w-3/5"
-        >
-          <h3 className="text-xl font-medium">Change password</h3>
+      <ProfileSettingContentWrapper>
+        <ProfileSettingContentHeader title="Change password" />
+        <form onSubmit={handleSubmit(handleChangePassword)} className="flex flex-col gap-8 py-6">
           <div className="flex flex-col gap-10 w-full max-w-96">
             <div className="space-y-1">
               <h4 className="text-sm">Current password</h4>
@@ -262,7 +256,7 @@ const SecurityPage = observer(() => {
             </Button>
           </div>
         </form>
-      </div>
+      </ProfileSettingContentWrapper>
     </>
   );
 });

@@ -95,7 +95,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       </div>
 
       {isCreateToggle && (
-        <form className="relative flex items-center gap-x-2" onSubmit={handleSubmit(handleLabel)}>
+        <form className="relative flex items-center gap-x-2 p-1" onSubmit={handleSubmit(handleLabel)}>
           <div>
             <Controller
               name="color"
@@ -107,7 +107,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
                       <button type="button" ref={setReferenceElement} className="grid place-items-center outline-none">
                         {value && value?.trim() !== "" && (
                           <span
-                            className="h-6 w-6 rounded"
+                            className="h-5 w-5 rounded"
                             style={{
                               backgroundColor: value ?? "black",
                             }}
@@ -146,21 +146,21 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
                 ref={ref}
                 hasError={Boolean(errors.name)}
                 placeholder="Title"
-                className="w-full"
+                className="w-full text-xs px-1.5 py-1"
                 disabled={isSubmitting}
               />
             )}
           />
           <button
             type="button"
-            className="grid place-items-center rounded bg-red-500 p-1.5"
+            className="grid place-items-center rounded bg-red-500 p-1"
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
-            <X className="h-4 w-4 text-white" />
+            <X className="h-3.5 w-3.5 text-white" />
           </button>
-          <button type="submit" className="grid place-items-center rounded bg-green-500 p-1.5" disabled={isSubmitting}>
-            {isSubmitting ? <Loader className="spin h-4 w-4 text-white" /> : <Plus className="h-4 w-4 text-white" />}
+          <button type="submit" className="grid place-items-center rounded bg-green-500 p-1" disabled={isSubmitting}>
+            {isSubmitting ? <Loader className="spin h-3.5 w-3.5 text-white" /> : <Plus className="h-3.5 w-3.5 text-white" />}
           </button>
         </form>
       )}

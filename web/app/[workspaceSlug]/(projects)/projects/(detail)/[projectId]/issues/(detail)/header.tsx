@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
@@ -12,13 +12,14 @@ import { IssueDetailQuickActions } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const ProjectIssueDetailsHeader = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
   const { issueDetailSidebarCollapsed, toggleIssueDetailSidebar } = useAppTheme();
   const {
     issue: { getIssueById },
@@ -31,7 +32,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs onBack={router.back}>
+          <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={

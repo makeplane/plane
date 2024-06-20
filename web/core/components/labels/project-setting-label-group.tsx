@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // store

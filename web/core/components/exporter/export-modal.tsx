@@ -2,17 +2,17 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
+// types
 import { IUser, IImporterService } from "@plane/types";
-// hooks
+// ui
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
-
+// hooks
 import { useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";
-// ui
-// types
 
 type Props = {
   isOpen: boolean;
@@ -31,7 +31,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const [exportLoading, setExportLoading] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();

@@ -2,7 +2,7 @@
 
 import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 // icons
 import { Check, Info } from "lucide-react";
 // types
@@ -16,6 +16,7 @@ import { CycleListItemAction } from "@/components/cycles/list";
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TCyclesListItem = {
@@ -34,7 +35,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // refs
   const parentRef = useRef(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // hooks

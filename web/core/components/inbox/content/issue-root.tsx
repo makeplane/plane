@@ -55,31 +55,15 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
-        try {
-          return;
-        } catch (error) {
-          setToast({
-            title: "Issue fetch failed",
-            type: TOAST_TYPE.ERROR,
-            message: "Issue fetch failed",
-          });
-        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+      fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
+        return;
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
-        try {
-          return;
-        } catch (error) {
-          setToast({
-            title: "Issue remove failed",
-            type: TOAST_TYPE.ERROR,
-            message: "Issue remove failed",
-          });
-        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+      remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
+        return;
       },
-      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+      update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
           captureIssueEvent({

@@ -2,7 +2,7 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { TPublishSettings } from "@plane/types";
+import { TProjectPublishSettings } from "@plane/types";
 // services
 import { ProjectPublishService } from "@/services/project";
 // store
@@ -13,22 +13,22 @@ export interface IProjectPublishStore {
   generalLoader: boolean;
   fetchSettingsLoader: boolean;
   // observables
-  publishSettingsMap: Record<string, TPublishSettings>; // projectID => TPublishSettings
+  publishSettingsMap: Record<string, TProjectPublishSettings>; // projectID => TProjectPublishSettings
   // helpers
-  getPublishSettingsByProjectID: (projectID: string) => TPublishSettings | undefined;
+  getPublishSettingsByProjectID: (projectID: string) => TProjectPublishSettings | undefined;
   // actions
-  fetchPublishSettings: (workspaceSlug: string, projectID: string) => Promise<TPublishSettings>;
+  fetchPublishSettings: (workspaceSlug: string, projectID: string) => Promise<TProjectPublishSettings>;
   updatePublishSettings: (
     workspaceSlug: string,
     projectID: string,
     projectPublishId: string,
-    data: Partial<TPublishSettings>
-  ) => Promise<TPublishSettings>;
+    data: Partial<TProjectPublishSettings>
+  ) => Promise<TProjectPublishSettings>;
   publishProject: (
     workspaceSlug: string,
     projectID: string,
-    data: Partial<TPublishSettings>
-  ) => Promise<TPublishSettings>;
+    data: Partial<TProjectPublishSettings>
+  ) => Promise<TProjectPublishSettings>;
   unPublishProject: (workspaceSlug: string, projectID: string, projectPublishId: string) => Promise<void>;
 }
 
@@ -37,7 +37,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
   generalLoader: boolean = false;
   fetchSettingsLoader: boolean = false;
   // observables
-  publishSettingsMap: Record<string, TPublishSettings> = {};
+  publishSettingsMap: Record<string, TProjectPublishSettings> = {};
   // root store
   projectRootStore: ProjectRootStore;
   // services
@@ -65,9 +65,9 @@ export class ProjectPublishStore implements IProjectPublishStore {
   /**
    * @description returns the publish settings of a particular project
    * @param {string} projectID
-   * @returns {TPublishSettings | undefined}
+   * @returns {TProjectPublishSettings | undefined}
    */
-  getPublishSettingsByProjectID = (projectID: string): TPublishSettings | undefined =>
+  getPublishSettingsByProjectID = (projectID: string): TProjectPublishSettings | undefined =>
     this.publishSettingsMap?.[projectID] ?? undefined;
 
   /**
@@ -103,7 +103,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
    * @param data
    * @returns
    */
-  publishProject = async (workspaceSlug: string, projectID: string, data: Partial<TPublishSettings>) => {
+  publishProject = async (workspaceSlug: string, projectID: string, data: Partial<TProjectPublishSettings>) => {
     try {
       runInAction(() => {
         this.generalLoader = true;
@@ -135,7 +135,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
     workspaceSlug: string,
     projectID: string,
     projectPublishId: string,
-    data: Partial<TPublishSettings>
+    data: Partial<TProjectPublishSettings>
   ) => {
     try {
       runInAction(() => {

@@ -5,6 +5,7 @@ import { Briefcase, FileText, LayoutGrid } from "lucide-react";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
+  IWorkspacePageSearchResult,
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
@@ -67,9 +68,9 @@ export const commandGroups: {
   },
   page: {
     icon: <FileText className="h-3 w-3" />,
-    itemName: (page: IWorkspaceDefaultSearchResult) => (
+    itemName: (page: IWorkspacePageSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{page.project__identifier}</span> {page.name}
+        <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
       </h6>
     ),
     path: (page: IWorkspaceDefaultSearchResult) =>

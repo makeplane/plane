@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { cn } from "@/helpers/common.helper";

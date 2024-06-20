@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
-// hooks
+// components
 import {
   DurationFilterDropdown,
   IssuesByStateGroupEmptyState,
@@ -11,14 +11,14 @@ import {
   WidgetProps,
 } from "@/components/dashboard/widgets";
 import { PieGraph } from "@/components/ui";
+// constants
 import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "@/constants/dashboard";
 import { STATE_GROUPS } from "@/constants/state";
-import { getCustomDates } from "@/helpers/dashboard.helper";
-import { useDashboard } from "@/hooks/store";
-// components
 // helpers
-// types
-// constants
+import { getCustomDates } from "@/helpers/dashboard.helper";
+// hooks
+import { useDashboard } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 const WIDGET_KEY = "issues_by_state_groups";
 
@@ -28,7 +28,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   const [defaultStateGroup, setDefaultStateGroup] = useState<TStateGroups | null>(null);
   const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups | null>(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
   // derived values

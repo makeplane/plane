@@ -54,13 +54,12 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
         {areEstimateEnabledByProjectId(projectId) && (
-          <>
+          <div className="relative flex items-center gap-2">
             <CustomSelect
               value={plotType}
               label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
               onChange={onChange}
               maxHeight="lg"
-              className="m-0 p-0"
             >
               {cycleBurnDownChartOptions.map((item) => (
                 <CustomSelect.Option key={item.value} value={item.value}>
@@ -69,7 +68,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
               ))}
             </CustomSelect>
             {loader && <Spinner className="h-3 w-3" />}
-          </>
+          </div>
         )}
       </div>
 

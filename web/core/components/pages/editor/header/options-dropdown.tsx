@@ -1,6 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
@@ -9,7 +10,6 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useAppRouter } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store
 import { IPage } from "@/store/pages/page";
@@ -36,7 +36,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     restore,
   } = page;
   // store hooks
-  const { workspaceSlug, projectId } = useAppRouter();
+  const { workspaceSlug, projectId } = useParams();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
   const handleArchivePage = async () =>
@@ -102,7 +102,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "copy-page-link",
       action: () => {
-        copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${id}`).then(() =>
+        copyUrlToClipboard(`${workspaceSlug?.toString()}/projects/${projectId?.toString()}/pages/${id}`).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",

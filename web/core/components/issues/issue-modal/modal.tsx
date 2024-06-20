@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { usePathname } from "next/navigation";
+import { observer } from "mobx-react";
+import { useParams, usePathname } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // ui
@@ -11,15 +11,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import {
-  useEventTracker,
-  useCycle,
-  useIssues,
-  useModule,
-  useProject,
-  useIssueDetail,
-  useAppRouter,
-} from "@/hooks/store";
+import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDetail } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 // components
@@ -55,11 +47,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [description, setDescription] = useState<string | undefined>(undefined);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
-  const { workspaceSlug, projectId, cycleId, moduleId } = useAppRouter();
+  const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
+  const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
   // pathname
@@ -79,7 +72,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       setDescription(data?.description_html || "<p></p>");
       return;
     }
-    const response = await fetchIssue(workspaceSlug, projectId, issueId, isDraft ? "DRAFT" : "DEFAULT");
+    const response = await fetchIssue(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      issueId,
+      isDraft ? "DRAFT" : "DEFAULT"
+    );
     if (response) setDescription(response?.description_html || "<p></p>");
   };
 
@@ -104,7 +102,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
     if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProjectId)
-      setActiveProjectId(projectId ?? workspaceProjectIds?.[0]);
+      setActiveProjectId(projectId?.toString() ?? workspaceProjectIds?.[0]);
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
@@ -113,15 +111,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
     if (!workspaceSlug || !issue.project_id) return;
 
-    await issues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
-    fetchCycleDetails(workspaceSlug, issue.project_id, cycleId);
+    await issues.addIssueToCycle(workspaceSlug.toString(), issue.project_id, cycleId, [issue.id]);
+    fetchCycleDetails(workspaceSlug.toString(), issue.project_id, cycleId);
   };
 
   const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
     if (!workspaceSlug || !activeProjectId) return;
 
-    await issues.changeModulesInIssue(workspaceSlug, activeProjectId, issue.id, moduleIds, []);
-    moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug, activeProjectId, moduleId));
+    await issues.changeModulesInIssue(workspaceSlug.toString(), activeProjectId, issue.id, moduleIds, []);
+    moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug.toString(), activeProjectId, moduleId));
   };
 
   const handleCreateMoreToggleChange = (value: boolean) => {
@@ -133,7 +131,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       // updating the current edited issue data in the local storage
       let draftIssues = localStorageDraftIssues ? localStorageDraftIssues : {};
       if (workspaceSlug) {
-        draftIssues = { ...draftIssues, [workspaceSlug]: changesMade };
+        draftIssues = { ...draftIssues, [workspaceSlug.toString()]: changesMade };
         setLocalStorageDraftIssue(draftIssues);
       }
     }
@@ -150,15 +148,43 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      const response = is_draft_issue
-        ? await draftIssues.createIssue(workspaceSlug, payload.project_id, payload)
-        : createIssue && (await createIssue(payload.project_id, payload));
+      let response;
+
+      // if draft issue, use draft issue store to create issue
+      if (is_draft_issue) {
+        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+      }
+      // if cycle id in payload does not match the cycleId in url
+      // or if the moduleIds in Payload does not match the moduleId in url
+      // use the project issue store to create issues
+      else if (
+        (payload.cycle_id !== cycleId && storeType === EIssuesStoreType.CYCLE) ||
+        (!payload.module_ids?.includes(moduleId?.toString()) && storeType === EIssuesStoreType.MODULE)
+      ) {
+        response = await projectIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+      } // else just use the existing store type's create method
+      else if (createIssue) {
+        response = await createIssue(payload.project_id, payload);
+      }
+
       if (!response) throw new Error();
 
-      if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
+      // check if we should add issue to cycle/module
+      if (
+        payload.cycle_id &&
+        payload.cycle_id !== "" &&
+        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
+      ) {
         await addIssueToCycle(response, payload.cycle_id);
-      if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
+      }
+      if (
+        payload.module_ids &&
+        payload.module_ids.length > 0 &&
+        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+      ) {
         await addIssueToModule(response, payload.module_ids);
+      }
+
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -193,7 +219,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     try {
       isDraft
-        ? await draftIssues.updateIssue(workspaceSlug, payload.project_id, data.id, payload)
+        ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
         : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
       setToast({
@@ -249,8 +275,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           data={{
             ...data,
             description_html: description,
-            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
-            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
+            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
+            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
           issueTitleRef={issueTitleRef}
           onChange={handleFormChange}
@@ -267,8 +293,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           data={{
             ...data,
             description_html: description,
-            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
-            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
+            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
+            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
           onClose={() => handleClose(false)}
           isCreateMoreToggleEnabled={createMore}

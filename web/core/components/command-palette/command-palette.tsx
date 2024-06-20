@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -24,6 +24,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { IssueService } from "@/services/issue";
@@ -33,7 +34,7 @@ const issueService = new IssueService();
 
 export const CommandPalette: FC = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // router params
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = useParams();
   // pathname

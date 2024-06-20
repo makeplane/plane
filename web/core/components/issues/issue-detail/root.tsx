@@ -2,7 +2,7 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -16,6 +16,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
@@ -57,7 +58,7 @@ export type TIssueDetailRoot = {
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   // hooks
   const {

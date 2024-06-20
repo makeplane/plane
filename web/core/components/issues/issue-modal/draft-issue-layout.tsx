@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import type { TIssue } from "@plane/types";
 // hooks

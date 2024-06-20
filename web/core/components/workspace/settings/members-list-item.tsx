@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
@@ -15,6 +15,7 @@ import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -26,7 +27,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const {

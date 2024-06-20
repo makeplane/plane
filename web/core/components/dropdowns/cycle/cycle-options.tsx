@@ -3,6 +3,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // components
 import { Check, Search } from "lucide-react";
@@ -12,7 +13,7 @@ import { TCycleGroups } from "@plane/types";
 // ui
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
-import { useAppRouter, useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store";
 // types
 
 type DropdownOptions =
@@ -37,7 +38,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   // store hooks
-  const { workspaceSlug } = useAppRouter();
+  const { workspaceSlug } = useParams();
   const { getProjectCycleIds, fetchAllCycles, getCycleById } = useCycle();
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   });
 
   const onOpen = () => {
-    if (workspaceSlug && !cycleIds) fetchAllCycles(workspaceSlug, projectId);
+    if (workspaceSlug && !cycleIds) fetchAllCycles(workspaceSlug.toString(), projectId);
   };
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

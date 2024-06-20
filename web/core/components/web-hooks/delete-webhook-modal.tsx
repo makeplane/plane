@@ -1,11 +1,12 @@
 "use client";
 
 import React, { FC, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useWebhook } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 interface IDeleteWebhook {
   isOpen: boolean;
@@ -17,7 +18,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { removeWebhook } = useWebhook();
 

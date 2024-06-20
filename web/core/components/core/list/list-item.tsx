@@ -1,10 +1,11 @@
 "use client";
 import React, { FC } from "react";
-import { useRouter } from "next/navigation";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 
 interface IListItemProps {
   title: string;
@@ -34,7 +35,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
   } = props;
 
   // router
-  const router = useRouter();
+  const router = useAppRouter();
 
   // handlers
   const handleControlLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {

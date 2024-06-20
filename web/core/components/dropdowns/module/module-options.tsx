@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -10,7 +11,7 @@ import { Combobox } from "@headlessui/react";
 import { DiceIcon } from "@plane/ui";
 //store
 import { cn } from "@/helpers/common.helper";
-import { useAppRouter, useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store";
 //hooks
 //icon
 //types
@@ -39,7 +40,7 @@ export const ModuleOptions = observer((props: Props) => {
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // store hooks
-  const { workspaceSlug } = useAppRouter();
+  const { workspaceSlug } = useParams();
   const { getProjectModuleIds, fetchModules, getModuleById } = useModule();
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export const ModuleOptions = observer((props: Props) => {
   const moduleIds = getProjectModuleIds(projectId);
 
   const onOpen = () => {
-    if (workspaceSlug && !moduleIds) fetchModules(workspaceSlug, projectId);
+    if (workspaceSlug && !moduleIds) fetchModules(workspaceSlug.toString(), projectId);
   };
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

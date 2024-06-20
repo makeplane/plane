@@ -299,23 +299,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
-    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
-    if (!displayFilters || !groupedIssueIds) return undefined;
+    if (!groupedIssueIds) return undefined;
 
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-
-    const allIssues = groupedIssueIds[ALL_ISSUES];
-    if (!groupBy && !subGroupBy && allIssues && Array.isArray(allIssues)) {
+    const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
+    if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
       return allIssues as string[];
     }
 
-    if (groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return groupedIssueIds[groupId] as string[];
+    if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
+      return (groupedIssueIds[groupId] ?? []) as string[];
     }
 
-    if (groupBy && subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId] as string[];
+    if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
+      return ((groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? []) as string[];
     }
 
     return undefined;
@@ -804,7 +800,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
               // convert existing value to an array
               const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
               this.rootIssueStore.issues.updateIssue(issueId, {
-                [property]: uniq([newExistingValue, ...propertyValue]),
+                [property]: uniq([...newExistingValue, ...propertyValue]),
               });
             } else {
               // if property value is not an array, simply update the value
@@ -1631,7 +1627,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const dataIdsArray = isDataIdsArray ? dataIds : [dataIds];
 
     switch (dataType) {
-      case "state_id":
+      case "state_id": {
         const stateMap = this.rootIssueStore?.stateMap;
         if (!stateMap) break;
         for (const dataId of dataIdsArray) {
@@ -1639,7 +1635,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           if (state && state.name) dataValues.push(state.name.toLocaleLowerCase());
         }
         break;
-      case "label_ids":
+      }
+      case "label_ids": {
         const labelMap = this.rootIssueStore?.labelMap;
         if (!labelMap) break;
         for (const dataId of dataIdsArray) {
@@ -1647,7 +1644,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           if (label && label.name) dataValues.push(label.name.toLocaleLowerCase());
         }
         break;
-      case "assignee_ids":
+      }
+      case "assignee_ids": {
         const memberMap = this.rootIssueStore?.memberMap;
         if (!memberMap) break;
         for (const dataId of dataIdsArray) {
@@ -1655,7 +1653,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           if (member && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
         }
         break;
-      case "module_ids":
+      }
+      case "module_ids": {
         const moduleMap = this.rootIssueStore?.moduleMap;
         if (!moduleMap) break;
         for (const dataId of dataIdsArray) {
@@ -1663,7 +1662,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           if (currentModule && currentModule.name) dataValues.push(currentModule.name.toLocaleLowerCase());
         }
         break;
-      case "cycle_id":
+      }
+      case "cycle_id": {
         const cycleMap = this.rootIssueStore?.cycleMap;
         if (!cycleMap) break;
         for (const dataId of dataIdsArray) {
@@ -1671,6 +1671,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           if (cycle && cycle.name) dataValues.push(cycle.name.toLocaleLowerCase());
         }
         break;
+      }
     }
 
     return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order])[0] : dataValues) : dataValues[0];
