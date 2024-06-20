@@ -2,6 +2,7 @@
 
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
@@ -10,7 +11,8 @@ import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useWorkspace, useUser, useInstance } from "@/hooks/store";
-// types
+// dynamic imports
+const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -58,7 +60,12 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   }, []);
 
   if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST && is_telemetry_enabled)
-    return <PHProvider client={posthog}>{children}</PHProvider>;
+    return (
+      <PHProvider client={posthog}>
+        <PostHogPageView />
+        {children}
+      </PHProvider>
+    );
 
   return <>{children}</>;
 });
