@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
 // constants
@@ -33,13 +33,7 @@ interface IBaseListRoot {
   isCompletedCycle?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const {
-    QuickActions,
-    viewId,
-    addIssuesToView,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-  } = props;
+  const { QuickActions, viewId, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const storeType = useIssueStoreType() as ListStoreType;
   //stores
@@ -71,10 +65,9 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
   }, [fetchIssues, storeType, group_by, viewId]);
 
-
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
-// auth
-const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  // auth
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
@@ -116,24 +109,24 @@ const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProj
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-custom-background-90`}>
-      <List
-        issuesMap={issueMap}
-        displayProperties={displayProperties}
-        group_by={group_by}
-        orderBy={orderBy}
-        updateIssue={updateIssue}
-        quickActions={renderQuickActions}
-        groupedIssueIds={groupedIssueIds ?? {}}
-        loadMoreIssues={loadMoreIssues}
-        showEmptyGroup={showEmptyGroup}
-        quickAddCallback={quickAddIssue}
-        enableIssueQuickAdd={!!enableQuickAdd}
-        canEditProperties={canEditProperties}
-        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-        addIssuesToView={addIssuesToView}
-        isCompletedCycle={isCompletedCycle}
-        handleOnDrop={handleOnDrop}
-      />
+        <List
+          issuesMap={issueMap}
+          displayProperties={displayProperties}
+          group_by={group_by}
+          orderBy={orderBy}
+          updateIssue={updateIssue}
+          quickActions={renderQuickActions}
+          groupedIssueIds={groupedIssueIds ?? {}}
+          loadMoreIssues={loadMoreIssues}
+          showEmptyGroup={showEmptyGroup}
+          quickAddCallback={quickAddIssue}
+          enableIssueQuickAdd={!!enableQuickAdd}
+          canEditProperties={canEditProperties}
+          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+          addIssuesToView={addIssuesToView}
+          isCompletedCycle={isCompletedCycle}
+          handleOnDrop={handleOnDrop}
+        />
       </div>
     </IssueLayoutHOC>
   );

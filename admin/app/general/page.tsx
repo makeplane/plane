@@ -1,5 +1,5 @@
 "use client";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components

@@ -14,7 +14,12 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import {
+  EIssueFilterType,
+  EIssuesStoreType,
+  EIssueLayoutTypes,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { SPACE_BASE_URL } from "@/helpers/common.helper";
@@ -52,7 +57,7 @@ export const ProjectIssuesHeader = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
@@ -122,7 +127,7 @@ export const ProjectIssuesHeader = observer(() => {
       <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <div className="flex items-center gap-2.5">
-            <Breadcrumbs onBack={() => router.back()}>
+            <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
@@ -178,7 +183,8 @@ export const ProjectIssuesHeader = observer(() => {
         </div>
         <div className="items-center gap-2 hidden md:flex">
           <LayoutSelection
-            layouts={[EIssueLayoutTypes.LIST,
+            layouts={[
+              EIssueLayoutTypes.LIST,
               EIssueLayoutTypes.KANBAN,
               EIssueLayoutTypes.CALENDAR,
               EIssueLayoutTypes.SPREADSHEET,

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Circle, ChevronDown, ChevronUp } from "lucide-react";
 import { TIssueKanbanFilters } from "@plane/types";
 // mobx

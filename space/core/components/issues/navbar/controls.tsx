@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
 import { IssuesLayoutSelection, NavbarTheme, UserAvatar } from "@/components/issues";

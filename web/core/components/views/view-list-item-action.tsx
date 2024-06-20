@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { IProjectView } from "@plane/types";
+// ui
+import { FavoriteStar } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // constants
 import { EUserProjectRoles } from "@/constants/project";

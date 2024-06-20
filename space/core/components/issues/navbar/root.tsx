@@ -1,6 +1,6 @@
 "use client";
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 // components
 import { ProjectLogo } from "@/components/common";
