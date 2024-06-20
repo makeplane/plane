@@ -112,7 +112,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                       }}
                     />
                   </Tab.Panel>
-                  <Tab.Panel className="h-80 w-full">
+                  <Tab.Panel className="h-80 w-full relative overflow-hidden overflow-y-auto">
                     <LucideIconsList
                       defaultColor={defaultIconColor}
                       onChange={(val) => {
