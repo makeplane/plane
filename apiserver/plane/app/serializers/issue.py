@@ -468,7 +468,7 @@ class IssueLinkSerializer(BaseSerializer):
                 {"error": "URL already exists for this Issue"}
             )
 
-        # Workspacve
+        # Workspace
         project = Project.objects.get(pk=validated_data.get("project_id"))
         # Fetch metadata from URL
         validated_data["metadata"] = get_metadata(

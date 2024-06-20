@@ -21,6 +21,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    Project,
 )
 
 from .base import BaseSerializer
@@ -28,6 +29,8 @@ from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
+from plane.utils.metadata import get_metadata
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 
 class IssueSerializer(BaseSerializer):
@@ -272,6 +275,8 @@ class LabelSerializer(BaseSerializer):
 
 
 class IssueLinkSerializer(BaseSerializer):
+    metadata = serializers.SerializerMethodField()
+
     class Meta:
         model = IssueLink
         fields = "__all__"
@@ -285,6 +290,12 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def get_metadata(self, obj):
+        logo = obj.metadata.get("logo", None)
+        if logo:
+            obj.metadata["logo"] = generate_download_presigned_url(logo)
+        return obj.metadata
 
     def validate_url(self, value):
         # Check URL format
@@ -309,16 +320,32 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
+
+        # Workspace
+        project = Project.objects.get(pk=validated_data.get("project_id"))
+        # Fetch metadata from URL
+        validated_data["metadata"] = get_metadata(
+            validated_data.get("url"), project.workspace_id
+        )
+
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
+
+        validated_data["metadata"] = get_metadata(
+            validated_data.get("url"), instance.workspace_id
+        )
 
         return super().update(instance, validated_data)
 
