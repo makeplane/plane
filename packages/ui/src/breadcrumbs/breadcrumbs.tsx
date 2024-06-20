@@ -4,9 +4,10 @@ import { ChevronRight } from "lucide-react";
 type BreadcrumbsProps = {
   children: React.ReactNode;
   onBack?: () => void;
+  isLoading?: boolean;
 };
 
-const Breadcrumbs = ({ children, onBack }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ children, onBack, isLoading = false }: BreadcrumbsProps) => {
   const [isSmallScreen, setIsSmallScreen] = React.useState(false);
 
   React.useEffect(() => {
@@ -21,6 +22,13 @@ const Breadcrumbs = ({ children, onBack }: BreadcrumbsProps) => {
 
   const childrenArray = React.Children.toArray(children);
 
+  const BreadcrumbItemLoader = (
+    <div className="flex items-center gap-1 animate-pulse">
+      <span className="h-5 w-5 bg-custom-background-80 rounded" />
+      <span className="h-5 w-16 bg-custom-background-80 rounded" />
+    </div>
+  );
+
   return (
     <div className="flex items-center space-x-2 overflow-hidden">
       {!isSmallScreen && (
@@ -33,7 +41,7 @@ const Breadcrumbs = ({ children, onBack }: BreadcrumbsProps) => {
                 </div>
               )}
               <div className={`flex items-center gap-2.5 ${isSmallScreen && index > 0 ? "hidden sm:flex" : "flex"}`}>
-                {child}
+                {isLoading ? BreadcrumbItemLoader : child}
               </div>
             </React.Fragment>
           ))}
@@ -50,7 +58,9 @@ const Breadcrumbs = ({ children, onBack }: BreadcrumbsProps) => {
             )}
             <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
           </div>
-          <div className="flex items-center gap-2.5">{childrenArray[childrenArray.length - 1]}</div>
+          <div className="flex items-center gap-2.5">
+            {isLoading ? BreadcrumbItemLoader : childrenArray[childrenArray.length - 1]}
+          </div>
         </>
       )}
       {isSmallScreen && childrenArray.length === 1 && childrenArray}
