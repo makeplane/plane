@@ -1,4 +1,4 @@
-import { enableStaticRendering } from "mobx-react-lite";
+import { enableStaticRendering } from "mobx-react";
 // stores
 import { IInstanceStore, InstanceStore } from "./instance.store";
 import { IThemeStore, ThemeStore } from "./theme.store";

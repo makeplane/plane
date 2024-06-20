@@ -207,7 +207,8 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
     try {
       const response = await super.createIssue(workspaceSlug, projectId, data, moduleId, false);
-      await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
+      const moduleIds = data.module_ids && data.module_ids.length > 1 ? data.module_ids : [moduleId];
+      await this.changeModulesInIssue(workspaceSlug, projectId, response.id, moduleIds, []);
 
       return response;
     } catch (error) {

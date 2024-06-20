@@ -11,9 +11,9 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // store
 import { useEventTracker } from "@/hooks/store";
 // services
-import { DiscoService } from "@/services/disco.service";
+import { PaymentService } from "@/plane-web/services/payment.service";
 
-const discoService = new DiscoService();
+const paymentService = new PaymentService();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function classNames(...classes: any[]) {
@@ -51,12 +51,17 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   const { captureEvent } = useEventTracker();
   // fetch products
   const { data } = useSWR(
-    workspaceSlug ? "CLOUD_PAYMENT_PRODUCTS" : null,
-    workspaceSlug ? () => discoService.listProducts(workspaceSlug.toString()) : null
+    workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL ? "CLOUD_PAYMENT_PRODUCTS" : null,
+    workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL
+      ? () => paymentService.listProducts(workspaceSlug.toString())
+      : null,
+    {
+      errorRetryCount: 2,
+    }
   );
-  const proProduct = data?.find((product: IPaymentProduct) => product?.type === "PRO");
+  const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
   const proProductPrices = orderBy(proProduct?.prices || [], ["recurring"], ["asc"]);
-  console.log("data", data);
+  console.log("proProductPrices", proProductPrices);
   // states
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
@@ -66,7 +71,7 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
     if (!workspaceSlug) return;
     setLoading(true);
     captureEvent("pro_plan_payment_link_clicked", { workspaceSlug });
-    discoService
+    paymentService
       .getPaymentLink(workspaceSlug.toString(), {
         price_id: priceId,
         product_id: proProduct?.id,

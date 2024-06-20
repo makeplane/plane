@@ -15,11 +15,10 @@ import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // constants
 import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 
 type Props = {
@@ -46,7 +45,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   // store hooks
   const {
     issues: { bulkUpdateProperties },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssuesStore();
   // form info
   const {
     control,

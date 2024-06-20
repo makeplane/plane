@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, XCircle } from "lucide-react";
+import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // components
@@ -61,6 +61,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
+  const [isBannerMessage, setBannerMessage] = useState(false);
 
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -104,10 +105,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     () =>
       !isSubmitting &&
       !!passwordFormData.password &&
-      (mode === EAuthModes.SIGN_UP
-        ? getPasswordStrength(passwordFormData.password) >= 3 &&
-          passwordFormData.password === passwordFormData.confirm_password
-        : true)
+      (mode === EAuthModes.SIGN_UP ? passwordFormData.password === passwordFormData.confirm_password : true)
         ? false
         : true,
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
@@ -118,140 +116,162 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
 
   return (
-    <form
-      className="mt-5 space-y-4"
-      method="POST"
-      action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
-      onSubmit={() => {
-        setIsSubmitting(true);
-        captureEvent(mode === EAuthModes.SIGN_IN ? SIGN_IN_WITH_PASSWORD : SIGN_UP_WITH_PASSWORD);
-      }}
-      onError={() => setIsSubmitting(false)}
-    >
-      <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-      <input type="hidden" value={passwordFormData.email} name="email" />
-      {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
-      <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
-          Email
-        </label>
-        <div
-          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
-        >
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={passwordFormData.email}
-            onChange={(e) => handleFormChange("email", e.target.value)}
-            placeholder="name@company.com"
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
-            disabled
-          />
-          {passwordFormData.email.length > 0 && (
-            <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={handleEmailClear}
-            />
-          )}
+    <>
+      {isBannerMessage && (
+        <div className="relative flex items-center p-2 rounded-md gap-2 border border-red-500/50 bg-red-500/10">
+          <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
+            <Info size={16} className="text-red-500" />
+          </div>
+          <div className="w-full text-sm font-medium text-red-500">Try setting-up a strong password to proceed</div>
+          <div
+            className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
+            onClick={() => setBannerMessage(false)}
+          >
+            <X className="w-4 h-4 flex-shrink-0 text-red-500" />
+          </div>
         </div>
-      </div>
-
-      <div className="space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-          {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
-        </label>
-        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
-          <Input
-            type={showPassword?.password ? "text" : "password"}
-            name="password"
-            value={passwordFormData.password}
-            onChange={(e) => handleFormChange("password", e.target.value)}
-            placeholder="Enter password"
-            className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-            onFocus={() => setIsPasswordInputFocused(true)}
-            onBlur={() => setIsPasswordInputFocused(false)}
-            autoFocus
-          />
-          {showPassword?.password ? (
-            <EyeOff
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => handleShowPassword("password")}
-            />
-          ) : (
-            <Eye
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => handleShowPassword("password")}
-            />
-          )}
-        </div>
-        {passwordSupport}
-      </div>
-
-      {mode === EAuthModes.SIGN_UP && (
+      )}
+      <form
+        className="mt-5 space-y-4"
+        method="POST"
+        action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
+        onSubmit={(event) => {
+          event.preventDefault(); // Prevent form from submitting by default
+          if (getPasswordStrength(passwordFormData.password) >= 3) {
+            setIsSubmitting(true);
+            captureEvent(mode === EAuthModes.SIGN_IN ? SIGN_IN_WITH_PASSWORD : SIGN_UP_WITH_PASSWORD);
+            event.currentTarget.submit(); // Manually submit the form if the condition is met
+          } else {
+            setBannerMessage(true);
+          }
+        }}
+        onError={() => setIsSubmitting(false)}
+      >
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+        <input type="hidden" value={passwordFormData.email} name="email" />
+        {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-            Confirm password
+          <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+            Email
+          </label>
+          <div
+            className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+          >
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={passwordFormData.email}
+              onChange={(e) => handleFormChange("email", e.target.value)}
+              placeholder="name@company.com"
+              className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+              disabled
+            />
+            {passwordFormData.email.length > 0 && (
+              <XCircle
+                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                onClick={handleEmailClear}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+            {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
-              type={showPassword?.retypePassword ? "text" : "password"}
-              name="confirm_password"
-              value={passwordFormData.confirm_password}
-              onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-              placeholder="Confirm password"
+              type={showPassword?.password ? "text" : "password"}
+              name="password"
+              value={passwordFormData.password}
+              onChange={(e) => handleFormChange("password", e.target.value)}
+              placeholder="Enter password"
               className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-              onFocus={() => setIsRetryPasswordInputFocused(true)}
-              onBlur={() => setIsRetryPasswordInputFocused(false)}
+              onFocus={() => setIsPasswordInputFocused(true)}
+              onBlur={() => setIsPasswordInputFocused(false)}
+              autoFocus
             />
-            {showPassword?.retypePassword ? (
+            {showPassword?.password ? (
               <EyeOff
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
+                onClick={() => handleShowPassword("password")}
               />
             ) : (
               <Eye
                 className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
+                onClick={() => handleShowPassword("password")}
               />
             )}
           </div>
-          {!!passwordFormData.confirm_password &&
-            passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+          {passwordSupport}
         </div>
-      )}
 
-      <div className="space-y-2.5">
-        {mode === EAuthModes.SIGN_IN ? (
-          <>
-            <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-              {isSubmitting ? (
-                <Spinner height="20px" width="20px" />
-              ) : isSMTPConfigured ? (
-                "Continue"
+        {mode === EAuthModes.SIGN_UP && (
+          <div className="space-y-1">
+            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+              Confirm password
+            </label>
+            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+              <Input
+                type={showPassword?.retypePassword ? "text" : "password"}
+                name="confirm_password"
+                value={passwordFormData.confirm_password}
+                onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+                placeholder="Confirm password"
+                className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                onFocus={() => setIsRetryPasswordInputFocused(true)}
+                onBlur={() => setIsRetryPasswordInputFocused(false)}
+              />
+              {showPassword?.retypePassword ? (
+                <EyeOff
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => handleShowPassword("retypePassword")}
+                />
               ) : (
-                "Go to workspace"
+                <Eye
+                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  onClick={() => handleShowPassword("retypePassword")}
+                />
               )}
-            </Button>
-            {isSMTPConfigured && (
-              <Button
-                type="button"
-                onClick={redirectToUniqueCodeSignIn}
-                variant="outline-primary"
-                className="w-full"
-                size="lg"
-              >
-                Sign in with unique code
-              </Button>
-            )}
-          </>
-        ) : (
-          <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-          </Button>
+            </div>
+            {!!passwordFormData.confirm_password &&
+              passwordFormData.password !== passwordFormData.confirm_password &&
+              renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+          </div>
         )}
-      </div>
-    </form>
+
+        <div className="space-y-2.5">
+          {mode === EAuthModes.SIGN_IN ? (
+            <>
+              <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+                {isSubmitting ? (
+                  <Spinner height="20px" width="20px" />
+                ) : isSMTPConfigured ? (
+                  "Continue"
+                ) : (
+                  "Go to workspace"
+                )}
+              </Button>
+              {isSMTPConfigured && (
+                <Button
+                  type="button"
+                  onClick={redirectToUniqueCodeSignIn}
+                  variant="outline-primary"
+                  className="w-full"
+                  size="lg"
+                >
+                  Sign in with unique code
+                </Button>
+              )}
+            </>
+          ) : (
+            <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
+            </Button>
+          )}
+        </div>
+      </form>
+    </>
   );
 });

@@ -5,8 +5,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+// store
+import { CoreRootStore } from "@/store/root.store";
 // types
 import {
   TIssueLayoutOptions,
@@ -47,7 +47,7 @@ export class IssueFilterStore implements IIssueFilterStore {
   };
   filters: { [anchor: string]: TIssueFilters } | undefined = undefined;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     makeObservable(this, {
       // observables
       layoutOptions: observable,

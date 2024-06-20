@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useState, useRef, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
@@ -117,7 +117,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug, projectId: routeProjectId } = useParams();
   // store hooks
   const workspaceStore = useWorkspace();
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString())?.id as string;
   const { config } = useInstance();
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
@@ -173,7 +173,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
-    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug, projectId);
+    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 

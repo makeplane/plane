@@ -47,11 +47,6 @@ from plane.db.models import (
     Label,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.utils.grouper import (
-    issue_group_values,
-    issue_on_results,
-    issue_queryset_grouper,
-)
 
 from plane.utils.issue_filters import issue_filters
 

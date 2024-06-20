@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 // ui
 import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   handleClose: () => void;
@@ -23,7 +22,7 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
   // store hooks
   const {
     issues: { removeBulkIssues },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssuesStore();
 
   const handleSubmit = async () => {
     setIsDeleting(true);

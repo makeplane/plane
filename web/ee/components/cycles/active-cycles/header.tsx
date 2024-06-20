@@ -55,9 +55,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
               {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
                 <img
                   src={cycleOwnerDetails?.avatar}
-                  height={18}
-                  width={18}
-                  className="rounded-full"
+                  className="rounded-full flex-shrink-0 w-5 h-5 object-cover"
                   alt={cycleOwnerDetails?.display_name}
                 />
               ) : (

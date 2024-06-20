@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { IssueEmojiReactions, IssueVotes } from "@/components/issues/peek-overview";
 // hooks
 import { usePublish } from "@/hooks/store";

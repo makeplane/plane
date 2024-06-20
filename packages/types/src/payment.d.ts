@@ -16,6 +16,6 @@ export type IPaymentProduct = {
 };
 
 export type IWorkspaceProductSubscription = {
-  product: FREE | PRO | ULTIMATE;
+  product: "FREE" | "PRO" | "ULTIMATE";
   expiry_date: string | null;
 };

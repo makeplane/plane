@@ -1,3 +1,10 @@
-from plane.app.views.base import BaseAPIView
-from plane.app.views.base import BaseViewSet
-from plane.app.views.base import TimezoneMixin
+from plane.app.views.base import BaseAPIView as BaseAPIViewBase
+from plane.app.views.base import BaseViewSet as BaseViewSetBase
+
+
+class BaseViewSet(BaseViewSetBase):
+    pass
+
+
+class BaseAPIView(BaseAPIViewBase):
+    pass

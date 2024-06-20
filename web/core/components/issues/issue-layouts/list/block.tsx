@@ -3,7 +3,7 @@
 import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 // types

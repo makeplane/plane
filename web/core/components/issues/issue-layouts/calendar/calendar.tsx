@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import type {
   IIssueDisplayFilterOptions,
@@ -221,31 +221,31 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           </div>
         </IssueLayoutHOC>
 
-          {/* mobile view */}
-          <div className="md:hidden">
-            <p className="p-4 text-xl font-semibold">
-              {`${selectedDate.getDate()} ${
-                MONTHS_LIST[selectedDate.getMonth() + 1].title
-              }, ${selectedDate.getFullYear()}`}
-            </p>
-            <CalendarIssueBlocks
-              date={selectedDate}
-              issues={issues}
-              issueIdList={issueIdList}
-              quickActions={quickActions}
-              loadMoreIssues={loadMoreIssues}
-                        getPaginationData={getPaginationData}
-                        getGroupIssueCount={getGroupIssueCount}
-              enableQuickIssueCreate
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-              quickAddCallback={quickAddCallback}
-              addIssuesToView={addIssuesToView}
-              readOnly={readOnly}
-              isDragDisabled
-              isMobileView
-            />
-          </div>
+        {/* mobile view */}
+        <div className="md:hidden">
+          <p className="p-4 text-xl font-semibold">
+            {`${selectedDate.getDate()} ${
+              MONTHS_LIST[selectedDate.getMonth() + 1].title
+            }, ${selectedDate.getFullYear()}`}
+          </p>
+          <CalendarIssueBlocks
+            date={selectedDate}
+            issues={issues}
+            issueIdList={issueIdList}
+            quickActions={quickActions}
+            loadMoreIssues={loadMoreIssues}
+            getPaginationData={getPaginationData}
+            getGroupIssueCount={getGroupIssueCount}
+            enableQuickIssueCreate
+            disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+            quickAddCallback={quickAddCallback}
+            addIssuesToView={addIssuesToView}
+            readOnly={readOnly}
+            isDragDisabled
+            isMobileView
+          />
         </div>
+      </div>
     </>
   );
 });

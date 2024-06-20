@@ -6,7 +6,7 @@ import { TLogoProps, TPage } from "@plane/types";
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
 // plane web services
-import { WorkspacePageService } from "@/plane-web/services/workspace-page.service";
+import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -110,6 +110,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
       label_ids: observable,
       owned_by: observable.ref,
       access: observable.ref,
+      anchor: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       archived_at: observable.ref,
@@ -441,15 +442,10 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
   archive = async () => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !this.id) return undefined;
-
-    try {
-      const response = await this.pageService.archive(workspaceSlug, this.id);
-      runInAction(() => {
-        this.archived_at = response.archived_at;
-      });
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.pageService.archive(workspaceSlug, this.id);
+    runInAction(() => {
+      this.archived_at = response.archived_at;
+    });
   };
 
   /**
@@ -458,31 +454,21 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
   restore = async () => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !this.id) return undefined;
-
-    try {
-      await this.pageService.restore(workspaceSlug, this.id);
-      runInAction(() => {
-        this.archived_at = null;
-      });
-    } catch (error) {
-      throw error;
-    }
+    await this.pageService.restore(workspaceSlug, this.id);
+    runInAction(() => {
+      this.archived_at = null;
+    });
   };
 
   updatePageLogo = async (logo_props: TLogoProps) => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !this.id) return undefined;
-
-    try {
-      await this.pageService.update(workspaceSlug, this.id, {
-        logo_props,
-      });
-      runInAction(() => {
-        this.logo_props = logo_props;
-      });
-    } catch (error) {
-      throw error;
-    }
+    await this.pageService.update(workspaceSlug, this.id, {
+      logo_props,
+    });
+    runInAction(() => {
+      this.logo_props = logo_props;
+    });
   };
 
   /**

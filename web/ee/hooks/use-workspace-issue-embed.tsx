@@ -5,7 +5,7 @@ import { TPageEmbedResponse } from "@plane/types";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // plane web services
-import { WorkspacePageService } from "@/plane-web/services/workspace-page.service";
+import { WorkspacePageService } from "@/plane-web/services/page";
 const pageService = new WorkspacePageService();
 
 export const useWorkspaceIssueEmbed = (workspaceSlug: string) => {

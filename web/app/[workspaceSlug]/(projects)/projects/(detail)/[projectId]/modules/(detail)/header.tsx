@@ -15,7 +15,12 @@ import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssuesStoreType, EIssueFilterType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import {
+  EIssuesStoreType,
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -81,7 +86,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const {
@@ -160,7 +165,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
         <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <Breadcrumbs onBack={router.back}>
+            <Breadcrumbs onBack={router.back} isLoading={loader}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
@@ -209,8 +214,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                           {issuesCount && issuesCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"
-                                } in this module`}
+                              tooltipContent={`There are ${issuesCount} ${
+                                issuesCount > 1 ? "issues" : "issue"
+                              } in this module`}
                               position="bottom"
                             >
                               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">

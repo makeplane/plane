@@ -1,5 +1,4 @@
 import os
-import uuid
 
 # third party imports
 from celery import shared_task

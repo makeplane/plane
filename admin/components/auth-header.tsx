@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // mobx
 // ui

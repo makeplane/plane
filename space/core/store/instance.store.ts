@@ -2,10 +2,10 @@ import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { IInstance, IInstanceConfig } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { InstanceService } from "@/services/instance.service";
+// store
+import { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -35,7 +35,7 @@ export class InstanceStore implements IInstanceStore {
   // services
   instanceService;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,

@@ -361,3 +361,4 @@ APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 # Cloud server base url
 PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
+PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")

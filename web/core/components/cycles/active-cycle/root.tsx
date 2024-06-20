@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
 import { Disclosure } from "@headlessui/react";

@@ -2,17 +2,17 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IWorkspaceProductSubscription } from "@plane/types";
 // services
-import { DiscoService } from "@/services/disco.service";
+import { PaymentService } from "@/plane-web/services/payment.service";
 
-const discoService = new DiscoService();
+const paymentService = new PaymentService();
 
 export interface IWorkspaceSubscriptionStore {
-  subscribedPlan: "FREE" | "PRO";
+  subscribedPlan: "FREE" | "PRO" | "ULTIMATE";
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
 }
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
-  subscribedPlan: "FREE" | "PRO" = "FREE";
+  subscribedPlan: "FREE" | "PRO" | "ULTIMATE" = "FREE";
 
   constructor() {
     makeObservable(this, {
@@ -23,9 +23,9 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
 
   fetchWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
     try {
-      const response = await discoService.getWorkspaceCurrentPlane(workspaceSlug);
+      const response = await paymentService.getWorkspaceCurrentPlane(workspaceSlug);
       runInAction(() => {
-        this.subscribedPlan = response.product;
+        this.subscribedPlan = response?.product || "FREE";
       });
       return response;
     } catch (error) {

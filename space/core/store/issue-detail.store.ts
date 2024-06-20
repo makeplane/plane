@@ -1,9 +1,9 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { v4 as uuidv4 } from "uuid";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import IssueService from "@/services/issue.service";
+// store
+import { CoreRootStore } from "@/store/root.store";
 // types
 import { IIssue, IPeekMode, IVote } from "@/types/issue";
 
@@ -45,11 +45,11 @@ export class IssueDetailStore implements IIssueDetailStore {
     [key: string]: IIssue;
   } = {};
   // root store
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
   // services
   issueService: IssueService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       loader: observable.ref,
       error: observable.ref,

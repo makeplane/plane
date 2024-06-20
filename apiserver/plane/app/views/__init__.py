@@ -80,8 +80,8 @@ from .workspace.cycle import (
 
 from .state.base import StateViewSet
 from .view.base import (
-    GlobalViewViewSet,
-    GlobalViewIssuesViewSet,
+    WorkspaceViewViewSet,
+    WorkspaceViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
 )
@@ -177,10 +177,7 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
-from .page.workspace import (
-    WorkspacePageViewSet,
-    WorkspacePagesDescriptionViewSet,
-)
+
 from .search.base import (
     GlobalSearchEndpoint,
     SearchEndpoint,

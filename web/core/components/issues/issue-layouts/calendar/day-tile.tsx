@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { differenceInCalendarDays } from "date-fns";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // ui

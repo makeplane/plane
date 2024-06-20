@@ -2,10 +2,10 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { TUserProfile } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { UserService } from "@/services/user.service";
+// store
+import { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -59,7 +59,7 @@ export class ProfileStore implements IProfileStore {
   // services
   userService: UserService;
 
-  constructor(public store: RootStore) {
+  constructor(public store: CoreRootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,

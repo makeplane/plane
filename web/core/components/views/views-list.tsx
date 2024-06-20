@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";

@@ -65,7 +65,7 @@ from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State
 from .user import Account, Profile, User
-from .view import GlobalView, IssueView, IssueViewFavorite
+from .view import IssueView, IssueViewFavorite
 from .webhook import Webhook, WebhookLog
 from .workspace import (
     Team,
