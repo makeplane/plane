@@ -125,29 +125,6 @@ class CycleAPIEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .annotate(
-                total_estimates=Sum("issue_cycle__issue__estimate_point")
-            )
-            .annotate(
-                completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
