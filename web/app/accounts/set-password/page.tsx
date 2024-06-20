@@ -14,7 +14,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -79,7 +79,7 @@ const SetPasswordPage = observer(() => {
   const isButtonDisabled = useMemo(
     () =>
       !!passwordFormData.password &&
-      getPasswordStrength(passwordFormData.password) >= 3 &&
+      getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
       passwordFormData.password === passwordFormData.confirm_password
         ? false
         : true,
@@ -181,7 +181,7 @@ const SetPasswordPage = observer(() => {
                       />
                     )}
                   </div>
-                  {isPasswordInputFocused && <PasswordStrengthMeter password={passwordFormData.password} />}
+                  <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">

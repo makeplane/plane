@@ -13,7 +13,7 @@ import { PageHead } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -107,16 +107,17 @@ const SecurityPage = observer(() => {
   }, [currentUser, router]);
 
   const isButtonDisabled =
-    getPasswordStrength(password) < 3 ||
+    getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID ||
     oldPassword.trim() === "" ||
     password.trim() === "" ||
     confirmPassword.trim() === "" ||
     password !== confirmPassword ||
     password === oldPassword;
 
-  const passwordSupport = password.length > 0 && (getPasswordStrength(password) < 3 || isPasswordInputFocused) && (
-    <PasswordStrengthMeter password={password} />
-  );
+  const passwordSupport = password.length > 0 &&
+    getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
+      <PasswordStrengthMeter password={password} isFocused={isPasswordInputFocused} />
+    );
 
   if (isPageLoading)
     return (

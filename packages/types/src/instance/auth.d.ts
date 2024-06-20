@@ -1,3 +1,11 @@
+export type TInstanceAuthenticationModes = {
+  key: string;
+  name: string;
+  description: string;
+  icon: JSX.Element;
+  config: JSX.Element;
+};
+
 export type TInstanceAuthenticationMethodKeys =
   | "ENABLE_SIGNUP"
   | "ENABLE_MAGIC_LINK_LOGIN"

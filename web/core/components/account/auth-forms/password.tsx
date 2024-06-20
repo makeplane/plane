@@ -19,7 +19,7 @@ import {
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // services
@@ -96,8 +96,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       </div>
     ) : (
       passwordFormData.password.length > 0 &&
-      (getPasswordStrength(passwordFormData.password) < 3 || isPasswordInputFocused) && (
-        <PasswordStrengthMeter password={passwordFormData.password} />
+      getPasswordStrength(passwordFormData.password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
+        <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
       )
     );
 
@@ -137,7 +137,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
         onSubmit={(event) => {
           event.preventDefault(); // Prevent form from submitting by default
-          if (getPasswordStrength(passwordFormData.password) >= 3) {
+          if (getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID) {
             setIsSubmitting(true);
             captureEvent(mode === EAuthModes.SIGN_IN ? SIGN_IN_WITH_PASSWORD : SIGN_UP_WITH_PASSWORD);
             event.currentTarget.submit(); // Manually submit the form if the condition is met

@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import { HelpSection, SidebarMenu, SidebarDropdown } from "@/components/admin-sidebar";
 import { useTheme } from "@/hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // components
 
-export interface IInstanceSidebar {}
+export interface IInstanceSidebar { }
 
 export const InstanceSidebar: FC<IInstanceSidebar> = observer(() => {
   // store

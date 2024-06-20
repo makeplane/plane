@@ -120,7 +120,8 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const selectedEstimate = value && estimatePointById ? estimatePointById(value) : undefined;
 
   const onOpen = async () => {
-    if (!currentActiveEstimateId && workspaceSlug && projectId) await getProjectEstimates(workspaceSlug.toString(), projectId);
+    if (!currentActiveEstimateId && workspaceSlug && projectId)
+      await getProjectEstimates(workspaceSlug.toString(), projectId);
   };
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({

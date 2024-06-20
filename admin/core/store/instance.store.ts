@@ -9,7 +9,7 @@ import {
   IInstanceConfig,
 } from "@plane/types";
 // helpers
-import { EInstanceStatus, TInstanceStatus } from "@/helpers";
+import { EInstanceStatus, TInstanceStatus } from "@/helpers/instance.helper";
 // services
 import { InstanceService } from "@/services/instance.service";
 // root store

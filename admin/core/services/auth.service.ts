@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // services
-import { APIService } from "services/api.service";
+import { APIService } from "@/services/api.service";
 
 type TCsrfTokenResponse = {
   csrf_token: string;
