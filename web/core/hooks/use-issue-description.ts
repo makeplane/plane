@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 // editor
-import { applyUpdates, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
+import { applyUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
 import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
@@ -31,8 +31,6 @@ type Props = {
   workspaceSlug: string | string[] | undefined;
 };
 
-const AUTO_SAVE_TIME = 10000;
-
 export const useIssueDescription = (props: Props) => {
   const {
     canUpdateDescription,
@@ -46,19 +44,29 @@ export const useIssueDescription = (props: Props) => {
   } = props;
   // states
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
-  const [descriptionUpdates, setDescriptionUpdates] = useState<Uint8Array[]>([]);
+  const [localDescriptionYJS, setLocalDescriptionYJS] = useState<Uint8Array>();
+
   // store hooks
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+
   // derived values
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
   const issueDescription = issueDetails?.description_html;
 
-  const { data: descriptionBinary, mutate: mutateDescriptionBinary } = useSWR(
+  const { data: issueDescriptionYJS, mutate: mutateDescriptionBinary } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DESCRIPTION_BINARY_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
-      ? () => issueService.fetchDescriptionBinary(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? async () => {
+          const encodedDescription = await issueService.fetchDescriptionBinary(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            issueId.toString()
+          );
+          const decodedDescription = new Uint8Array(encodedDescription);
+          return decodedDescription;
+        }
       : null,
     {
       revalidateOnFocus: false,
@@ -66,15 +74,19 @@ export const useIssueDescription = (props: Props) => {
       revalidateIfStale: false,
     }
   );
-  // description in Uint8Array format
-  const issueDescriptionYJS = useMemo(
-    () => (descriptionBinary ? new Uint8Array(descriptionBinary) : undefined),
-    [descriptionBinary]
-  );
 
   // push the new updates to the updates array
-  const handleDescriptionChange = useCallback((updates: Uint8Array) => {
-    setDescriptionUpdates((prev) => [...prev, updates]);
+  const handleDescriptionChange = useCallback((update: Uint8Array, source?: string) => {
+    setLocalDescriptionYJS(() => {
+      // handle the initial sync case where indexeddb gives extra update, in
+      // this case we need to save the update to the DB
+      if (source && source === "initialSync") {
+        handleSaveDescription(update);
+      }
+
+      return update;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // if description_binary field is empty, convert description_html to yDoc and update the DB
@@ -105,63 +117,67 @@ export const useIssueDescription = (props: Props) => {
     workspaceSlug,
   ]);
 
-  const handleSaveDescription = useCallback(async () => {
-    if (!canUpdateDescription) return;
-
-    const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
-      if (!workspaceSlug || !projectId || !issueId || !latestDescription) return;
-      // convert description to Uint8Array
-      const descriptionArray = new Uint8Array(latestDescription);
-      // apply the updates to the description
-      const combinedBinaryString = applyUpdates(descriptionArray, updates);
-      // get the latest html content
-      const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-      // make a request to update the descriptions
-      await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
-        description_binary: combinedBinaryString,
-        description_html: descriptionHTML,
-      }).finally(() => setIsSubmitting("saved"));
-    };
-
-    try {
-      setIsSubmitting("submitting");
-      // fetch the latest description
-      const latestDescription = await mutateDescriptionBinary();
-      // return if there are no updates
-      if (descriptionUpdates.length <= 0) {
-        setIsSubmitting("saved");
-        return;
-      }
-      // merge the updates array into one single update
-      const mergedUpdates = mergeUpdates(descriptionUpdates);
-      await applyUpdatesAndSave(latestDescription, mergedUpdates);
-      // reset the updates array to empty
-      setDescriptionUpdates([]);
-    } catch (error) {
-      setIsSubmitting("saved");
-      throw error;
-    }
-  }, [
-    canUpdateDescription,
-    descriptionUpdates,
-    editorRef,
-    issueId,
-    mutateDescriptionBinary,
-    projectId,
-    setIsSubmitting,
-    updateIssueDescription,
-    workspaceSlug,
-  ]);
-
-  useAutoSave(handleSaveDescription);
-
-  // show a confirm dialog if there are any unsaved changes, or saving is going on
-  const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
+  const { setShowAlert } = useReloadConfirmations(true);
 
   useEffect(() => {
-    if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
-    else setShowAlert(false);
-  }, [descriptionUpdates, isSubmitting, setShowAlert]);
+    if (editorRef?.current?.hasUnsyncedChanges() || isSubmitting === "submitting") {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [setShowAlert, isSubmitting, editorRef, localDescriptionYJS]);
+
+  // merge the description from remote to local state and only save if there are local changes
+  const handleSaveDescription = useCallback(
+    async (initSyncVectorAsUpdate?: Uint8Array) => {
+      const update = localDescriptionYJS ?? initSyncVectorAsUpdate;
+
+      if (update == null) return;
+
+      if (!canUpdateDescription) return;
+
+      const applyUpdatesAndSave = async (latestDescription: any, update: Uint8Array) => {
+        if (!workspaceSlug || !projectId || !issueId || !latestDescription || !update) return;
+
+        const combinedBinaryString = applyUpdates(latestDescription, update);
+        const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
+        await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
+          description_binary: combinedBinaryString,
+          description_html: descriptionHTML,
+        }).finally(() => {
+          editorRef.current?.setSynced();
+          setShowAlert(false);
+          setIsSubmitting("saved");
+          setIsSubmitting("saved");
+        });
+      };
+
+      try {
+        setIsSubmitting("submitting");
+        // fetch the latest description
+        const latestDescription = await mutateDescriptionBinary();
+        if (latestDescription) {
+          await applyUpdatesAndSave(latestDescription, update);
+        }
+      } catch (error) {
+        setIsSubmitting("saved");
+        throw error;
+      }
+    },
+    [
+      localDescriptionYJS,
+      canUpdateDescription,
+      editorRef,
+      issueId,
+      mutateDescriptionBinary,
+      projectId,
+      setIsSubmitting,
+      updateIssueDescription,
+      workspaceSlug,
+    ]
+  );
+
+  useAutoSave(handleSaveDescription);
 
   return {
     handleDescriptionChange,

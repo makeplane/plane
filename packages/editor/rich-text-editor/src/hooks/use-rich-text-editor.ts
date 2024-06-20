@@ -5,7 +5,7 @@ import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler, useE
 // custom provider
 import { CollaborationProvider } from "src/providers/collaboration-provider";
 // extensions
-import { DocumentEditorExtensions } from "src/ui/extensions";
+import { RichTextEditorExtensions } from "src/ui/extensions";
 // yjs
 import * as Y from "yjs";
 
@@ -25,9 +25,10 @@ type DocumentEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
+  dragDropEnabled?: boolean;
 };
 
-export const useDocumentEditor = ({
+export const useRichTextEditor = ({
   id,
   editorProps = {},
   value,
@@ -40,6 +41,7 @@ export const useDocumentEditor = ({
   mentionHandler,
   placeholder,
   setHideDragHandleFunction,
+  dragDropEnabled,
 }: DocumentEditorProps) => {
   const provider = useMemo(
     () =>
@@ -81,8 +83,9 @@ export const useDocumentEditor = ({
     handleEditorReady,
     forwardedRef,
     mentionHandler,
-    extensions: DocumentEditorExtensions({
+    extensions: RichTextEditorExtensions({
       uploadFile: fileHandler.upload,
+      dragDropEnabled,
       setHideDragHandle: setHideDragHandleFunction,
       provider,
     }),

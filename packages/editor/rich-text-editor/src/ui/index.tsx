@@ -1,7 +1,5 @@
 "use client";
-// import * as Y from "yjs";
 import * as React from "react";
-import { IndexeddbPersistence } from "y-indexeddb";
 // editor-core
 import {
   EditorContainer,
@@ -9,20 +7,18 @@ import {
   getEditorClassNames,
   IMentionHighlight,
   IMentionSuggestion,
-  useEditor,
   EditorRefApi,
   TFileHandler,
 } from "@plane/editor-core";
-// extensions
-import { RichTextEditorExtensions } from "src/ui/extensions";
 // components
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
-import { CollaborationProvider } from "./extensions/collaboration-provider";
+import { useRichTextEditor } from "src/hooks/use-rich-text-editor";
 
 export type IRichTextEditor = {
   value: Uint8Array;
   dragDropEnabled?: boolean;
   fileHandler: TFileHandler;
+  handleEditorReady?: (value: boolean) => void;
   id?: string;
   containerClassName?: string;
   editorClassName?: string;
@@ -52,7 +48,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     placeholder,
     tabIndex,
     mentionHandler,
-    onEnterKeyPress,
+    handleEditorReady,
   } = props;
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
@@ -62,45 +58,20 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
-
-  const provider = React.useMemo(
-    () =>
-      new CollaborationProvider({
-        name: id,
-        onChange,
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id]
-  );
-
-  // // update document on value change
-  // React.useEffect(() => {
-  //   if (value.byteLength > 0) Y.applyUpdate(provider.document, value);
-  // }, [value, provider.document]);
-  //
-  // indexedDB provider
-  React.useLayoutEffect(() => {
-    // const localProvider = new IndexeddbPersistence(id, provider.document);
-    // return () => {
-    //   localProvider?.destroy();
-    // };
-  }, [provider, id]);
-
-  const editor = useEditor({
+  // use document editor
+  const { editor, isIndexedDbSynced } = useRichTextEditor({
     id,
     editorClassName,
     fileHandler,
+    value,
+    onChange,
+    handleEditorReady,
     forwardedRef,
-    // rerenderOnPropsChange,
-    extensions: RichTextEditorExtensions({
-      uploadFile: fileHandler.upload,
-      dragDropEnabled,
-      setHideDragHandle: setHideDragHandleFunction,
-      onEnterKeyPress,
-    }),
-    tabIndex,
     mentionHandler,
     placeholder,
+    setHideDragHandleFunction,
+    tabIndex,
+    dragDropEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -109,7 +80,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !isIndexedDbSynced) return null;
 
   return (
     <EditorContainer

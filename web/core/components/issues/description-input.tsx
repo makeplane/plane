@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -15,6 +15,10 @@ import { TIssueOperations } from "@/components/issues/issue-detail";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+import { EditorRefApi } from "@plane/rich-text-editor";
+import page from "app/page";
+import { useIssueDescription } from "@/hooks/use-issue-description";
+import { PageContentLoader } from "../pages";
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -25,6 +29,7 @@ export type IssueDescriptionInputProps = {
   disabled?: boolean;
   issueOperations: TIssueOperations;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
   swrIssueDescription: string | null | undefined;
 };
@@ -36,12 +41,25 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     projectId,
     issueId,
     disabled,
-    swrIssueDescription,
     initialValue,
     issueOperations,
+    isSubmitting,
     setIsSubmitting,
     placeholder,
   } = props;
+
+  const editorRef = useRef<EditorRefApi>(null);
+
+  const { handleDescriptionChange, isDescriptionReady, issueDescriptionYJS } = useIssueDescription({
+    editorRef,
+    projectId,
+    updateIssueDescription: issueOperations.update,
+    issueId,
+    setIsSubmitting,
+    isSubmitting,
+    canUpdateDescription: true,
+    workspaceSlug,
+  });
 
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
@@ -90,6 +108,8 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     [handleSubmit, issueId]
   );
 
+  if (!issueDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
+
   return (
     <>
       {localIssueDescription.description_html ? (
@@ -100,17 +120,14 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
             !disabled ? (
               <RichTextEditor
                 id={issueId}
+                ref={editorRef}
                 initialValue={localIssueDescription.description_html ?? "<p></p>"}
-                value={swrIssueDescription ?? null}
+                value={issueDescriptionYJS}
                 workspaceSlug={workspaceSlug}
                 workspaceId={workspaceId}
                 projectId={projectId}
                 dragDropEnabled
-                onChange={(_description: object, description_html: string) => {
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  debouncedFormSave();
-                }}
+                onCheck={handleDescriptionChange}
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
                 }
