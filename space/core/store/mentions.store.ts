@@ -1,8 +1,8 @@
 import { computed, makeObservable } from "mobx";
 // editor
 import { IMentionHighlight } from "@plane/lite-text-editor";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+// store
+import { CoreRootStore } from "@/store/root.store";
 
 export interface IMentionsStore {
   // mentionSuggestions: IMentionSuggestion[];
@@ -13,7 +13,7 @@ export class MentionsStore implements IMentionsStore {
   // root store
   rootStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     // rootStore
     this.rootStore = _rootStore;
 
