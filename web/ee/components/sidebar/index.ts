@@ -1,1 +1,1 @@
-export * from "ce/components/sidebar";
+export * from "./app-switcher";
