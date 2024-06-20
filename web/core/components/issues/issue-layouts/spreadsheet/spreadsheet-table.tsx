@@ -1,5 +1,5 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";

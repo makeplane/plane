@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FC, ChangeEvent } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 import { Info, X } from "lucide-react";
 import { IProject } from "@plane/types";

@@ -1,5 +1,5 @@
 import { Fragment, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ChevronDown, LucideIcon } from "lucide-react";
 // headless ui
 import { Combobox } from "@headlessui/react";
