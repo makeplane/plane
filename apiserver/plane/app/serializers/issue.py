@@ -33,7 +33,10 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     State,
+    Project,
 )
+from plane.utils.metadata import get_metadata
+from plane.utils.presigned_url_generator import generate_download_presigned_url
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -419,6 +422,7 @@ class IssueModuleDetailSerializer(BaseSerializer):
 
 class IssueLinkSerializer(BaseSerializer):
     created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    metadata = serializers.SerializerMethodField()
 
     class Meta:
         model = IssueLink
@@ -432,6 +436,12 @@ class IssueLinkSerializer(BaseSerializer):
             "updated_at",
             "issue",
         ]
+
+    def get_metadata(self, obj):
+        logo = obj.metadata.get("logo", None)
+        if logo:
+            obj.metadata["logo"] = generate_download_presigned_url(logo)
+        return obj.metadata
 
     def validate_url(self, value):
         # Check URL format
@@ -449,6 +459,7 @@ class IssueLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
+        # Check if URL already exists for this Issue
         if IssueLink.objects.filter(
             url=validated_data.get("url"),
             issue_id=validated_data.get("issue_id"),
@@ -456,17 +467,32 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
+
+        # Workspacve
+        project = Project.objects.get(pk=validated_data.get("project_id"))
+        # Fetch metadata from URL
+        validated_data["metadata"] = get_metadata(
+            validated_data.get("url"), project.workspace_id
+        )
+
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
 
+        validated_data["metadata"] = get_metadata(
+            validated_data.get("url"), instance.workspace_id
+        )
         return super().update(instance, validated_data)
 
 
