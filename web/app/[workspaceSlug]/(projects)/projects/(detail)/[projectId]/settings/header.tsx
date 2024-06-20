@@ -22,7 +22,7 @@ export const ProjectSettingHeader: FC = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
 
   if (currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER) return null;
 
@@ -31,7 +31,7 @@ export const ProjectSettingHeader: FC = observer(() => {
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
           <div className="z-50">
-            <Breadcrumbs onBack={router.back}>
+            <Breadcrumbs onBack={router.back} isLoading={loader}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={

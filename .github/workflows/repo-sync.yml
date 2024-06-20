@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - preview
 
 env:
   SOURCE_BRANCH_NAME: ${{ github.ref_name }}

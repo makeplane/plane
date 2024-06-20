@@ -1,5 +1,5 @@
 import { FC, Fragment } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { TIssue } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

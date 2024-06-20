@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, Fragment, useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { usePopper } from "react-popper";

@@ -7,8 +7,8 @@ import {
   TProjectPublishSettings,
   TProjectPublishViewProps,
 } from "@plane/types";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+// store
+import { CoreRootStore } from "../root.store";
 
 export interface IPublishStore extends TProjectPublishSettings {
   // computed
@@ -39,7 +39,7 @@ export class PublishStore implements IPublishStore {
   workspace_detail: IWorkspaceLite | undefined;
 
   constructor(
-    private store: RootStore,
+    private store: CoreRootStore,
     publishSettings: TProjectPublishSettings
   ) {
     this.anchor = publishSettings.anchor;

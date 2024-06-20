@@ -1,6 +1,7 @@
+import React from "react";
 import { Star } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "../helpers";
 
 type Props = {
   buttonClassName?: string;

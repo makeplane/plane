@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";

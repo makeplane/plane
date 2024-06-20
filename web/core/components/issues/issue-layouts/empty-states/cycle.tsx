@@ -3,7 +3,7 @@
 import { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import size from "lodash/size";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";

@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
 import { Tooltip } from "@plane/ui";
