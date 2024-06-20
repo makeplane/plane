@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";

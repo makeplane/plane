@@ -80,8 +80,8 @@ from .workspace.cycle import (
 
 from .state.base import StateViewSet
 from .view.base import (
-    GlobalViewViewSet,
-    GlobalViewIssuesViewSet,
+    WorkspaceViewViewSet,
+    WorkspaceViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
 )

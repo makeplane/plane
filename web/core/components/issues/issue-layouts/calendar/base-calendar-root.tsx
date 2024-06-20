@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useCallback, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { TGroupedIssues } from "@plane/types";
 // components
@@ -156,7 +156,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
         />
-    </div>
+      </div>
     </>
   );
 });

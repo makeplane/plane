@@ -1,6 +1,6 @@
 "use client";
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { IssueListLayoutBlock, IssueListLayoutHeader } from "@/components/issues";
 // mobx hook

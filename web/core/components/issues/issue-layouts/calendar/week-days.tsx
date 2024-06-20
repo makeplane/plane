@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // components
 import { CalendarDayTile } from "@/components/issues";
@@ -17,7 +17,7 @@ type Props = {
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
-  quickActions: TRenderQuickActions
+  quickActions: TRenderQuickActions;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;

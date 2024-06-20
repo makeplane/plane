@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { IEmailCheckData } from "@plane/types";
 // components
@@ -85,7 +85,8 @@ export const AuthRoot: FC = observer(() => {
   const isSMTPConfigured = config?.is_smtp_configured || false;
   const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
-  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+  const isOAuthEnabled =
+    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {

@@ -36,7 +36,6 @@ from .project import (
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import (
-    GlobalViewSerializer,
     IssueViewSerializer,
 )
 

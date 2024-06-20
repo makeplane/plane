@@ -2,7 +2,7 @@
 
 import { FC, useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // hooks
 import { useIssue, useIssueFilter } from "@/hooks/store";

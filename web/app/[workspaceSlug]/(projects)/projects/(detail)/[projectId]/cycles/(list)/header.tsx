@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";

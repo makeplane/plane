@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { IssueKanBanBlock, IssueKanBanHeader } from "@/components/issues";
 // ui

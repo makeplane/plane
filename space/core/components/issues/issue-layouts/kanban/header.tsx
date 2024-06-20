@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { IStateLite } from "@plane/types";
 // ui

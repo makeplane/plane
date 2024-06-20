@@ -52,7 +52,7 @@ from plane.db.models import (
 )
 
 
-class GlobalViewViewSet(BaseViewSet):
+class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
     permission_classes = [
@@ -61,7 +61,7 @@ class GlobalViewViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
-        serializer.save(workspace_id=workspace.id)
+        serializer.save(workspace_id=workspace.id, owned_by=self.request.user)
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -75,7 +75,7 @@ class GlobalViewViewSet(BaseViewSet):
         )
 
 
-class GlobalViewIssuesViewSet(BaseViewSet):
+class WorkspaceViewIssuesViewSet(BaseViewSet):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -271,7 +271,10 @@ class IssueViewViewSet(BaseViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
+        serializer.save(
+            project_id=self.kwargs.get("project_id"),
+            owned_by=self.request.user,
+        )
 
     def get_queryset(self):
         subquery = UserFavorite.objects.filter(
