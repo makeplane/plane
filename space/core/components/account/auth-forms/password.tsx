@@ -8,7 +8,7 @@ import { Button, Input, Spinner } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 // types
@@ -67,8 +67,8 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   const passwordSupport = passwordFormData.password.length > 0 &&
     mode === EAuthModes.SIGN_UP &&
-    (getPasswordStrength(passwordFormData.password) < 3 || isPasswordInputFocused) && (
-      <PasswordStrengthMeter password={passwordFormData.password} />
+    getPasswordStrength(passwordFormData.password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
+      <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
     );
 
   const isButtonDisabled = useMemo(
@@ -76,7 +76,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       !isSubmitting &&
       !!passwordFormData.password &&
       (mode === EAuthModes.SIGN_UP
-        ? getPasswordStrength(passwordFormData.password) >= 3 &&
+        ? getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
           passwordFormData.password === passwordFormData.confirm_password
         : true)
         ? false
