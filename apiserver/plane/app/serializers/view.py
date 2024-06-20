@@ -3,18 +3,12 @@ from rest_framework import serializers
 
 # Module imports
 from .base import DynamicBaseSerializer
-from .workspace import WorkspaceLiteSerializer
-from .project import ProjectLiteSerializer
 from plane.db.models import IssueView
 from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(
-        source="workspace", read_only=True
-    )
 
     class Meta:
         model = IssueView
@@ -24,6 +18,8 @@ class IssueViewSerializer(DynamicBaseSerializer):
             "project",
             "query",
             "owned_by",
+            "access",
+            "is_locked",
         ]
 
     def create(self, validated_data):

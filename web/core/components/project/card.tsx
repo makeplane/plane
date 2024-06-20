@@ -18,10 +18,10 @@ import {
   setPromiseToast,
   ContextMenu,
   TContextMenuItem,
+  FavoriteStar,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { FavoriteStar } from "@/components/core";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // constants
 import { EUserProjectRoles } from "@/constants/project";

@@ -8,9 +8,8 @@ import { CalendarCheck2, CalendarClock, MoveRight, SquareUser } from "lucide-rea
 // types
 import { IModule } from "@plane/types";
 // ui
-import { Tooltip, setPromiseToast } from "@plane/ui";
+import { FavoriteStar, Tooltip, setPromiseToast } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";

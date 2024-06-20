@@ -6,9 +6,8 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
-import { LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
+import { FavoriteStar, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants

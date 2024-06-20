@@ -12,7 +12,12 @@ import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssuesStoreType, EIssueFilterType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import {
+  EIssuesStoreType,
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
@@ -42,7 +47,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
@@ -131,7 +136,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   return (
     <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
-        <Breadcrumbs>
+        <Breadcrumbs isLoading={loader}>
           <Breadcrumbs.BreadcrumbItem
             type="text"
             link={

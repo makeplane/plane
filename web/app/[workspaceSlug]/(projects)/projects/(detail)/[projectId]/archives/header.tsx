@@ -25,7 +25,7 @@ export const ProjectArchivesHeader: FC = observer(() => {
   const {
     issuesFilter: { issueFilters },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
@@ -42,7 +42,7 @@ export const ProjectArchivesHeader: FC = observer(() => {
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={router.back}>
+          <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
