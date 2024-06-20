@@ -1,9 +1,9 @@
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-// services
-import { APIService } from "services/api.service";
 // types
 import type { IUser } from "@plane/types";
+// services
+import { APIService } from "@/services/api.service";
 
 interface IUserSession extends IUser {
   isAuthenticated: boolean;

@@ -10,7 +10,7 @@ import { Button, Checkbox, Input, Spinner } from "@plane/ui";
 import { Banner, PasswordStrengthMeter } from "@/components/common";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -121,7 +121,7 @@ export const InstanceSetupForm: FC = (props) => {
       formData.first_name &&
       formData.email &&
       formData.password &&
-      getPasswordStrength(formData.password) >= 3 &&
+      getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
       formData.password === formData.confirm_password
         ? false
         : true,
@@ -271,7 +271,7 @@ export const InstanceSetupForm: FC = (props) => {
             {errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message && (
               <p className="px-1 text-xs text-red-500">{errorData.message}</p>
             )}
-            {isPasswordInputFocused && <PasswordStrengthMeter password={formData.password} />}
+            <PasswordStrengthMeter password={formData.password} isFocused={isPasswordInputFocused} />
           </div>
 
           <div className="w-full space-y-1">

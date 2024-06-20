@@ -678,3 +678,17 @@ div.web-view-spinner div.bar12 {
 .disable-autofill-style:-webkit-autofill:active {
   -webkit-background-clip: text;
 }
+
+.epr-search-container > input {
+  background-color: rgb(var(--color-background-90)) !important;
+  color: rgb(var(--color-text-100)) !important;
+  border: none !important;
+}
+
+.epr-search-container > input::placeholder {
+  color: rgb(var(--color-text-400)) !important;
+}
+
+.epr-search-container > .epr-icn-search {
+  color: rgb(var(--color-text-400)) !important;
+}

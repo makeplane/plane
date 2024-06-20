@@ -10,7 +10,7 @@ import { Settings } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { SidebarHamburgerToggle } from "@/components/admin-sidebar";
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 
 export const InstanceHeader: FC = observer(() => {
   const pathName = usePathname();
