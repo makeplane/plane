@@ -20,7 +20,7 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
   const isButtonDisabled = useMemo(
     () =>
       !!resetFormData.password &&
-      getPasswordStrength(resetFormData.password) >= 3 &&
+      getPasswordStrength(resetFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
       resetFormData.password === resetFormData.confirm_password
         ? false
         : true,
@@ -187,7 +187,7 @@ export default function ResetPasswordPage() {
                       />
                     )}
                   </div>
-                  {isPasswordInputFocused && <PasswordStrengthMeter password={resetFormData.password} />}
+                  <PasswordStrengthMeter password={resetFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
