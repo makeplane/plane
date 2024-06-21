@@ -1,15 +1,18 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Info, MoveRight } from "lucide-react";
-import { TEstimatePointsObject, TEstimateTypeErrorObject } from "@plane/types";
+import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimatePoint } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type TEstimatePointItemSwitchPreview = {
   estimateId: string;
+  estimateSystemSwitchType: TEstimateSystemKeys;
   estimatePointId: string | undefined;
   estimatePoint: TEstimatePointsObject;
   handleEstimatePoint: (value: string) => void;
@@ -19,6 +22,7 @@ type TEstimatePointItemSwitchPreview = {
 export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview> = observer((props) => {
   const {
     estimateId,
+    estimateSystemSwitchType,
     estimatePointId,
     estimatePoint: currentEstimatePoint,
     handleEstimatePoint,
@@ -26,6 +30,17 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
   } = props;
   // hooks
   const { asJson: estimatePoint } = useEstimatePoint(estimateId, estimatePointId);
+
+  // derived values
+  const inputFieldType =
+    estimateSystemSwitchType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateSystemSwitchType)
+      ? "number"
+      : "text";
+  const inputProps = {
+    type: inputFieldType,
+    pattern: inputFieldType === "number" ? "[0-9]*" : undefined,
+    maxlength: inputFieldType === "number" ? undefined : 24,
+  };
 
   if (!estimatePoint) return <></>;
   return (
@@ -43,12 +58,12 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
         )}
       >
         <input
-          type="text"
           value={currentEstimatePoint?.value}
           onChange={(e) => handleEstimatePoint(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           autoFocus
           placeholder="Enter estimate point value"
+          {...inputProps}
         />
         {estimatePointError?.message && (
           <>

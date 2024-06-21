@@ -186,7 +186,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           >
             <ChevronLeft className="w-4 h-4" />
           </div>
-          <div className="text-xl font-medium text-custom-text-200">Edit estimate system</div>
+          <div className="text-xl font-medium text-custom-text-200">Switch estimate system</div>
         </div>
       </div>
 
@@ -202,6 +202,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
             key={estimateObject?.id}
             estimateId={estimateId}
             estimatePointId={estimateObject?.id}
+            estimateSystemSwitchType={estimateSystemSwitchType}
             estimatePoint={estimateObject}
             handleEstimatePoint={(value: string) => handleEstimatePoints(index, value)}
             estimatePointError={estimatePointError?.[estimateObject.key] || undefined}
