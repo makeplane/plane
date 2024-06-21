@@ -1,2 +1,1 @@
-export * from "./editor";
-export * from "./extra-actions";
+export * from "ce/components/pages";
