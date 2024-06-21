@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // components
 import { IssueCommentToolbar } from "@/components/editor";
 // helpers

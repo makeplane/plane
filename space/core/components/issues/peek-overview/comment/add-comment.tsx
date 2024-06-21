@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // editor
-import { EditorRefApi } from "@plane/lite-text-editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components

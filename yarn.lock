@@ -1587,9 +1587,9 @@
     "@floating-ui/dom" "^1.0.0"
 
 "@floating-ui/react@^0.26.4":
-  version "0.26.16"
-  resolved "https://registry.yarnpkg.com/@floating-ui/react/-/react-0.26.16.tgz#3415a087f452165161c2d313d1d57e8142894679"
-  integrity sha512-HEf43zxZNAI/E781QIVpYSF3K2VH4TTYZpqecjdsFkjsaU1EbaWcM++kw0HXFffj7gDUcBFevX8s0rQGQpxkow==
+  version "0.26.17"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react/-/react-0.26.17.tgz#efa2e1a0dea3d9d308965c5ccd49756bb64a883d"
+  integrity sha512-ESD+jYWwqwVzaIgIhExrArdsCL1rOAzryG/Sjlu8yaD3Mtqi3uVyhbE2V7jD58Mo52qbzKz2eUY/Xgh5I86FCQ==
   dependencies:
     "@floating-ui/react-dom" "^2.1.0"
     "@floating-ui/utils" "^0.2.0"
@@ -3774,13 +3774,6 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.5.2.tgz#db7257d727c891905947bd1c1a99da20e03c2ebd"
   integrity sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==
 
-"@tippyjs/react@^4.2.6":
-  version "4.2.6"
-  resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.2.6.tgz#971677a599bf663f20bb1c60a62b9555b749cc71"
-  integrity sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==
-  dependencies:
-    tippy.js "^6.3.1"
-
 "@tiptap/core@^2.1.13", "@tiptap/core@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.4.0.tgz#6f8eee8beb5b89363582366b201ccc4798ac98a9"
@@ -3987,7 +3980,7 @@
     "@tiptap/extension-strike" "^2.4.0"
     "@tiptap/extension-text" "^2.4.0"
 
-"@tiptap/suggestion@^2.0.13", "@tiptap/suggestion@^2.1.13":
+"@tiptap/suggestion@^2.0.13":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@tiptap/suggestion/-/suggestion-2.4.0.tgz#1926cde5f197d116baf7794f55bd971245540e5c"
   integrity sha512-6dCkjbL8vIzcLWtS6RCBx0jlYPKf2Beuyq5nNLrDDZZuyJow5qJAY0eGu6Xomp9z0WDK/BYOxT4hHNoGMDkoAg==
@@ -12795,7 +12788,7 @@ tinyspy@^2.2.0:
   resolved "https://registry.yarnpkg.com/tinyspy/-/tinyspy-2.2.1.tgz#117b2342f1f38a0dbdcc73a50a454883adf861d1"
   integrity sha512-KYad6Vy5VDWV4GH3fjpseMQ/XU2BhIYP7Vzd0LG44qRWm/Yt2WCOTicFdvmgo6gWaqooMQCawTtILVQJupKu7A==
 
-tippy.js@^6.3.1, tippy.js@^6.3.7:
+tippy.js@^6.3.7:
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
   integrity sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==
@@ -13957,9 +13950,9 @@ y-indexeddb@^9.0.12:
     lib0 "^0.2.74"
 
 y-prosemirror@^1.2.5:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.6.tgz#a324991cc158a6ff3b3f5902111b3dbf8928e603"
-  integrity sha512-rGz8kX4v/uFJrLaqZvsezY1JGN/zTDSPMO76zRbNcpE63OEiw2PBCEQi9ZlfbEwgCMoeJLUT+otNyO/Oj73TGQ==
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.9.tgz#0202b5f6b164fa35d80bdbcdc876d81fe6da7ac2"
+  integrity sha512-fThGIVmSqrqnG/ckywEGlHM9ElfILC4TcMZd5zxWPe/i+UuP97TEr4swsopRKG3Y+KHBVt4Y/5NVBC3AAsUoUg==
   dependencies:
     lib0 "^0.2.42"
 
@@ -14014,9 +14007,9 @@ yargs@^17.0.0:
     yargs-parser "^21.1.1"
 
 yjs@^13.6.15:
-  version "13.6.15"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.15.tgz#5a2402632aabf83e5baf56342b4c82fe40859306"
-  integrity sha512-moFv4uNYhp8BFxIk3AkpoAnnjts7gwdpiG8RtyFiKbMtxKCS0zVZ5wPaaGpwC3V2N/K8TK8MwtSI3+WO9CHWjQ==
+  version "13.6.18"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.18.tgz#d1575203478bc99ad1b89c098e7d4bacb7f91c3b"
+  integrity sha512-GBTjO4QCmv2HFKFkYIJl7U77hIB1o22vSCSQD1Ge8ZxWbIbn8AltI4gyXbtL+g5/GJep67HCMq3Y5AmNwDSyEg==
   dependencies:
     lib0 "^0.2.86"
 

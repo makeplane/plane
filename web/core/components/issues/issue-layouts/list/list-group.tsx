@@ -4,7 +4,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor-core";
+import { cn } from "@plane/editor";
 // plane packages
 import {
   IGroupByColumn,
@@ -59,7 +59,7 @@ interface Props {
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
-};
+}
 
 export const ListGroup = observer((props: Props) => {
   const {

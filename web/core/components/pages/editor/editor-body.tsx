@@ -8,7 +8,7 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
-} from "@plane/document-editor";
+} from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components

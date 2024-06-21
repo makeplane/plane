@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
 // document editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // helpers

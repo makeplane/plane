@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
 // components
 import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // helpers

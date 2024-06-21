@@ -1,5 +1,5 @@
 // document editor
-import { IMarking } from "@plane/document-editor";
+import { IMarking } from "@plane/editor";
 
 type HeadingProps = {
   marking: IMarking;
