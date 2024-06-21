@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, Briefcase, X, ListFilter } from "lucide-react";
@@ -81,6 +81,10 @@ export const ProjectsListHeader = observer(() => {
       else setIsSearchOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
