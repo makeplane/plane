@@ -2,52 +2,52 @@ from django.urls import path
 
 
 from plane.app.views import (
-    InboxViewSet,
-    InboxIssueViewSet,
+    IntakeViewSet,
+    IntakeIssueViewSet,
 )
 
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
-        InboxViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/",
+        IntakeViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
             }
         ),
-        name="inbox",
+        name="intake",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
-        InboxViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/<uuid:pk>/",
+        IntakeViewSet.as_view(
             {
                 "get": "retrieve",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
         ),
-        name="inbox",
+        name="intake",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/",
-        InboxIssueViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/",
+        IntakeIssueViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
             }
         ),
-        name="inbox-issue",
+        name="intake-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:issue_id>/",
-        InboxIssueViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/",
+        IntakeIssueViewSet.as_view(
             {
                 "get": "retrieve",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
         ),
-        name="inbox-issue",
+        name="intake-issue",
     ),
 ]

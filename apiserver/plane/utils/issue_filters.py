@@ -430,23 +430,23 @@ def filter_module(params, filter, method, prefix=""):
     return filter
 
 
-def filter_inbox_status(params, filter, method, prefix=""):
+def filter_intake_status(params, filter, method, prefix=""):
     if method == "GET":
         status = [
             item
-            for item in params.get("inbox_status").split(",")
+            for item in params.get("intake_status").split(",")
             if item != "null"
         ]
         if len(status) and "" not in status:
-            filter[f"{prefix}issue_inbox__status__in"] = status
+            filter[f"{prefix}issue_intake__status__in"] = status
     else:
         if (
-            params.get("inbox_status", None)
-            and len(params.get("inbox_status"))
-            and params.get("inbox_status") != "null"
+            params.get("intake_status", None)
+            and len(params.get("intake_status"))
+            and params.get("intake_status") != "null"
         ):
-            filter[f"{prefix}issue_inbox__status__in"] = params.get(
-                "inbox_status"
+            filter[f"{prefix}issue_intake__status__in"] = params.get(
+                "intake_status"
             )
     return filter
 
@@ -518,7 +518,7 @@ def issue_filters(query_params, method, prefix=""):
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,
-        "inbox_status": filter_inbox_status,
+        "intake_status": filter_intake_status,
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,

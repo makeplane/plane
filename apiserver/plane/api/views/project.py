@@ -18,7 +18,7 @@ from plane.app.permissions import ProjectBasePermission
 # Module imports
 from plane.db.models import (
     Cycle,
-    Inbox,
+    Intake,
     IssueProperty,
     Module,
     Project,
@@ -298,9 +298,9 @@ class ProjectAPIEndpoint(BaseAPIView):
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["inbox_view"]:
-                    Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox",
+                if serializer.data["intake_view"]:
+                    Intake.objects.get_or_create(
+                        name=f"{project.name} Intake",
                         project=project,
                         is_default=True,
                     )
@@ -309,7 +309,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     State.objects.get_or_create(
                         name="Triage",
                         group="triage",
-                        description="Default state for managing all Inbox Issues",
+                        description="Default state for managing all Intake Issues",
                         project_id=pk,
                         color="#ff7700",
                         is_triage=True,

@@ -25,7 +25,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     IssueFlatSerializer,
     IssueSerializer,
-    IssueDetailSerializer
+    IssueDetailSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
@@ -164,10 +164,10 @@ class IssueArchiveViewSet(BaseViewSet):
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
                         count_filter=Q(
-                            Q(issue_inbox__status=1)
-                            | Q(issue_inbox__status=-1)
-                            | Q(issue_inbox__status=2)
-                            | Q(issue_inbox__isnull=True),
+                            Q(issue_intake__status=1)
+                            | Q(issue_intake__status=-1)
+                            | Q(issue_intake__status=2)
+                            | Q(issue_intake__isnull=True),
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
@@ -193,10 +193,10 @@ class IssueArchiveViewSet(BaseViewSet):
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
-                        Q(issue_inbox__status=1)
-                        | Q(issue_inbox__status=-1)
-                        | Q(issue_inbox__status=2)
-                        | Q(issue_inbox__isnull=True),
+                        Q(issue_intake__status=1)
+                        | Q(issue_intake__status=-1)
+                        | Q(issue_intake__status=2)
+                        | Q(issue_intake__isnull=True),
                         archived_at__isnull=True,
                         is_draft=False,
                     ),
@@ -342,7 +342,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
                 return Response(
                     {
                         "error_code": 4091,
-                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

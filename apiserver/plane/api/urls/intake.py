@@ -1,17 +1,17 @@
 from django.urls import path
 
-from plane.api.views import InboxIssueAPIEndpoint
+from plane.api.views import IntakeIssueAPIEndpoint
 
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/",
-        InboxIssueAPIEndpoint.as_view(),
+        IntakeIssueAPIEndpoint.as_view(),
         name="inbox-issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:issue_id>/",
-        InboxIssueAPIEndpoint.as_view(),
+        IntakeIssueAPIEndpoint.as_view(),
         name="inbox-issue",
     ),
 ]

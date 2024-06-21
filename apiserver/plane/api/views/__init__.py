@@ -24,4 +24,4 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .inbox import InboxIssueAPIEndpoint
+from .intake import IntakeIssueAPIEndpoint

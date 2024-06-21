@@ -459,10 +459,14 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
@@ -620,7 +624,7 @@ class IssueStateSerializer(DynamicBaseSerializer):
         fields = "__all__"
 
 
-class IssueInboxSerializer(DynamicBaseSerializer):
+class IssueIntakeSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(
         child=serializers.UUIDField(),
         required=False,
