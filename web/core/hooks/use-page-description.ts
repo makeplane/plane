@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 // editor
-import { applyUpdates, mergeUpdates, proseMirrorJSONToBinaryString } from "@plane/document-editor";
-import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
+import {
+  EditorRefApi,
+  applyUpdates,
+  generateJSONfromHTML,
+  mergeUpdates,
+  proseMirrorJSONToBinaryString,
+} from "@plane/editor";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { ProjectPageService } from "@/services/page";
+// store
 import { IPage } from "@/store/pages/page";
 const projectPageService = new ProjectPageService();
 

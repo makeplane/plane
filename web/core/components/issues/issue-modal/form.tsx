@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
-import { EditorRefApi } from "@plane/rich-text-editor";
+// editor
+import { EditorRefApi } from "@plane/editor";
+// types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 // hooks
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";

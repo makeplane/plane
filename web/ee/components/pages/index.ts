@@ -1,1 +1,1 @@
-export * from "./extra-actions";
+export * from "ce/components/pages";

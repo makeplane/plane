@@ -8,7 +8,7 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
-} from "@plane/document-editor";
+} from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
@@ -19,6 +19,8 @@ import { cn } from "@/helpers/common.helper";
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageDescription } from "@/hooks/use-page-description";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web components
+import { IssueEmbedCard } from "@/plane-web/components/pages";
 // services
 import { FileService } from "@/services/file.service";
 // store
@@ -138,6 +140,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 highlights: mentionHighlights,
                 suggestions: mentionSuggestions,
               }}
+              embedHandler={{
+                issue: {
+                  widgetCallback: () => <IssueEmbedCard />,
+                },
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -148,6 +155,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
+              }}
+              embedHandler={{
+                issue: {
+                  widgetCallback: () => <IssueEmbedCard />,
+                },
               }}
             />
           )}

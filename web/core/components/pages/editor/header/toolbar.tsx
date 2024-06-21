@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Check, ChevronDown } from "lucide-react";
 // editor
-import { EditorMenuItemNames, EditorRefApi } from "@plane/document-editor";
+import { EditorMenuItemNames, EditorRefApi } from "@plane/editor";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // constants

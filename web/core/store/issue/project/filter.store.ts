@@ -28,6 +28,7 @@ export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    projectId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -70,18 +71,27 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
 
   get issueFilters() {
     const projectId = this.rootIssueStore.projectId;
-    console.log("projectId", projectId);
     if (!projectId) return undefined;
 
+    return this.getIssueFilters(projectId);
+  }
+
+  get appliedFilters() {
+    const projectId = this.rootIssueStore.projectId;
+    if (!projectId) return undefined;
+
+    return this.getAppliedFilters(projectId);
+  }
+
+  getIssueFilters(projectId: string) {
     const displayFilters = this.filters[projectId] || undefined;
-    console.log("displayFilters", displayFilters);
     if (isEmpty(displayFilters)) return undefined;
 
     return this.computedIssueFilters(displayFilters);
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(projectId: string) {
+    const userFilters = this.getIssueFilters(projectId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
@@ -99,11 +109,12 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      projectId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(projectId);
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
     }
@@ -217,8 +228,9 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
+          if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+          }
 
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,

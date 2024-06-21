@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // editor
-import { EditorMenuItemNames, EditorRefApi } from "@plane/lite-text-editor";
+import { EditorMenuItemNames, EditorRefApi } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
