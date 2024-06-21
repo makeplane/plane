@@ -120,7 +120,7 @@ export const getFirstCharacters = (str: string) => {
  */
 
 export const sanitizeHTML = (htmlString: string) => {
-  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
+  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: ["mention-component"] }); // sanitize the string to remove all HTML tags
   return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
 };
 

@@ -8,6 +8,7 @@ import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucid
 import { Menu } from "@headlessui/react";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
+import { CommentMentionRenderer } from "@/components/notifications";
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
@@ -206,11 +207,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                     )
                   ) : (
                     <span>
-                      {`"`}
-                      {notification.data.issue_activity.new_value.length > 55
-                        ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
-                        : notification.data.issue_activity.issue_comment}
-                      {`"`}
+                      <CommentMentionRenderer content={notification.data.issue_activity.new_value ?? undefined} />
                     </span>
                   )
                 ) : (
