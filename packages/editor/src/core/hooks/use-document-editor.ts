@@ -4,9 +4,11 @@ import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 // extensions
-import { DragAndDrop, IssueWidget, SlashCommand } from "@/extensions";
+import { DragAndDrop, IssueWidget } from "@/extensions";
 // hooks
 import { TFileHandler, useEditor } from "@/hooks/use-editor";
+// plane editor extensions
+import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // plane editor provider
 import { CollaborationProvider } from "@/plane-editor/providers";
 // plane editor types
@@ -85,7 +87,6 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     forwardedRef,
     mentionHandler,
     extensions: [
-      SlashCommand(fileHandler.upload),
       DragAndDrop(setHideDragHandleFunction),
       embedHandler?.issue &&
         IssueWidget({
@@ -93,6 +94,10 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
         }),
       Collaboration.configure({
         document: provider.document,
+      }),
+      ...DocumentEditorAdditionalExtensions({
+        fileHandler,
+        issueEmbedConfig: embedHandler?.issue,
       }),
     ],
     placeholder,
