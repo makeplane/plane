@@ -587,9 +587,9 @@ class InboxIssueDescriptionViewSet(BaseViewSet):
         ProjectLitePermission,
     ]
 
-    def retrieve(self, request, slug, project_id, pk):
+    def retrieve(self, request, slug, project_id, issue_id):
         issue = Issue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=issue_id, workspace__slug=slug, project_id=project_id
         )
         binary_data = issue.description_binary
 
@@ -607,9 +607,9 @@ class InboxIssueDescriptionViewSet(BaseViewSet):
         )
         return response
 
-    def partial_update(self, request, slug, project_id, pk):
+    def partial_update(self, request, slug, project_id, issue_id):
         issue = Issue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=issue_id, workspace__slug=slug, project_id=project_id
         )
 
         base64_data = request.data.get("description_binary")
