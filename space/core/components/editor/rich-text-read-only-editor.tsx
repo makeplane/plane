@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

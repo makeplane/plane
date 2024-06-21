@@ -2,8 +2,11 @@
 
 import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
-import { EditorRefApi } from "@plane/rich-text-editor";
+// editor
+import { EditorRefApi } from "@plane/editor";
+// types
 import { TIssue } from "@plane/types";
+// ui
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";

@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components

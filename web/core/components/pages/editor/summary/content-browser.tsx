@@ -1,5 +1,5 @@
 // types
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
 import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
 
 type Props = {

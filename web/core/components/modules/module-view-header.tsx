@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
 // helpers
-import { cn } from "@plane/editor-core";
+import { cn } from "@plane/editor";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui
