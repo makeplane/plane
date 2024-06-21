@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { TIssue, TIssueDescription } from "@plane/types";
 import { usePathname } from "next/navigation";
@@ -16,11 +16,10 @@ import {
   IssueAttachmentRoot,
 } from "@/components/issues";
 // hooks
-import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useInboxIssues, useIssueDetail, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { useIssueDescription } from "@/hooks/use-issue-description";
 
 type Props = {
   workspaceSlug: string;
@@ -33,22 +32,13 @@ type Props = {
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const pathname = usePathname();
+
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // hooks
   const { data: currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
   const { loader } = useProjectInbox();
-
-  const { issueDescriptionYJS, handleDescriptionChange, isDescriptionReady } = useIssueDescription({
-    canUpdateDescription: isEditable,
-    isSubmitting,
-    issueId,
-    projectId,
-    setIsSubmitting,
-    updateIssueDescription: issueOperations.updateDescription,
-    workspaceSlug,
-  });
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -69,6 +59,13 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
       fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         return;
+      },
+      fetchDescription: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
+        try {
+          return await inboxIssue.fetchIssueDescription();
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
       remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
@@ -113,7 +110,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           setToast({
@@ -128,16 +125,17 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
         }
       },
     }),
-    [captureIssueEvent, inboxIssue, router.asPath]
+    [captureIssueEvent, inboxIssue, pathname]
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
 
+  // store hooks
   return (
     <>
       <div className="rounded-lg space-y-4 pl-3">
@@ -153,22 +151,18 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {loader === "issue-loading" ? (
-          <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
-            <Loader.Item width="100%" height="140px" />
-          </Loader>
-        ) : (
-          <IssueDescriptionInput
-            value={issueDescriptionYJS}
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            issueId={issue.id}
-            disabled={!isEditable}
-            issueOperations={issueOperations}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-            containerClassName="-ml-3 !mb-6 border-none"
-          />
-        )}
+        <IssueDescriptionInput
+          indexedDBPrefix={"inbox-issue-"}
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          disabled={!isEditable}
+          issueOperations={issueOperations}
+          issueDescriptionHTML={issue.description_html as string}
+          isSubmitting={isSubmitting}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          containerClassName="-ml-3 !mb-6 border-none"
+        />
 
         {currentUser && (
           <IssueReaction

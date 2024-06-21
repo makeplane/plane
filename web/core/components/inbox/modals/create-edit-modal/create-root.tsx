@@ -85,14 +85,14 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is still processing changes. Please wait before proceeding.",
-      });
-      return;
-    }
+    // if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+    //   setToast({
+    //     type: TOAST_TYPE.ERROR,
+    //     title: "Error!",
+    //     message: "Editor is still processing changes. Please wait before proceeding.",
+    //   });
+    //   return;
+    // }
 
     const payload: Partial<TIssue> = {
       name: formData.name || "",

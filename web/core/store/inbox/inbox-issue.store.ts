@@ -25,6 +25,7 @@ export interface IInboxIssueStore {
   updateInboxIssueSnoozeTill: (date: Date | undefined) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   updateIssueDescription: (issue: TIssueDescription) => Promise<void>; // updating the issue
+  fetchIssueDescription: () => Promise<string>; // fetching the issue description
   updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   fetchIssueActivity: () => Promise<void>; // fetching the issue activity
 }
@@ -185,6 +186,20 @@ export class InboxIssueStore implements IInboxIssueStore {
         this.issue.description_binary = inboxIssue.description_binary;
         this.issue.description_html = inboxIssue.description_html;
       });
+    }
+  };
+
+  fetchIssueDescription = async () => {
+    try {
+      if (!this.issue.id) return;
+      const issueDescriptionBinary = await this.inboxIssueService.fetchDescriptionBinary(
+        this.workspaceSlug,
+        this.projectId,
+        this.issue.id
+      );
+      return issueDescriptionBinary;
+    } catch {
+      console.error("Failed to fetch issue description");
     }
   };
 

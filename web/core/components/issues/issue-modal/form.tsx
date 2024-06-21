@@ -184,15 +184,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
-    // Check if the editor is ready to discard
-    if (!editorRef.current?.isEditorReadyToDiscard()) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is not ready to discard changes.",
-      });
-      return;
-    }
+    // // Check if the editor is ready to discard
+    // if (!editorRef.current?.isEditorReadyToDiscard()) {
+    //   setToast({
+    //     type: TOAST_TYPE.ERROR,
+    //     title: "Error!",
+    //     message: "Editor is not ready to discard changes.",
+    //   });
+    //   return;
+    // }
 
     const submitData = !data?.id
       ? formData
@@ -436,28 +436,28 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 </Loader>
               ) : (
                 <>
-                  <Controller
-                    name="description_html"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <RichTextEditor
-                        initialValue={value ?? ""}
-                        value={data.description_html}
-                        workspaceSlug={workspaceSlug?.toString() as string}
-                        workspaceId={workspaceId}
-                        projectId={projectId}
-                        onChange={(_description: object, description_html: string) => {
-                          onChange(description_html);
-                          handleFormChange();
-                        }}
-                        onEnterKeyPress={() => submitBtnRef?.current?.click()}
-                        ref={editorRef}
-                        tabIndex={getTabIndex("description_html")}
-                        placeholder={getDescriptionPlaceholder}
-                        containerClassName="pt-3 min-h-[150px] max-h-64 overflow-y-auto vertical-scrollbar scrollbar-sm"
-                      />
-                    )}
-                  />
+                  {/* <Controller */}
+                  {/*   name="description_html" */}
+                  {/*   control={control} */}
+                  {/*   render={({ field: { value, onChange } }) => ( */}
+                  {/*     <RichTextEditor */}
+                  {/*       // initialValue={value ?? ""} */}
+                  {/*       // value={data.description_html} */}
+                  {/*       workspaceSlug={workspaceSlug?.toString() as string} */}
+                  {/*       workspaceId={workspaceId} */}
+                  {/*       projectId={projectId} */}
+                  {/*       // onChange={(_description: object, description_html: string) => { */}
+                  {/*       //   onChange(description_html); */}
+                  {/*       //   handleFormChange(); */}
+                  {/*       // }} */}
+                  {/*       onEnterKeyPress={() => submitBtnRef?.current?.click()} */}
+                  {/*       ref={editorRef} */}
+                  {/*       tabIndex={getTabIndex("description_html")} */}
+                  {/*       placeholder={getDescriptionPlaceholder} */}
+                  {/*       containerClassName="pt-3 min-h-[150px] max-h-64 overflow-y-auto vertical-scrollbar scrollbar-sm" */}
+                  {/*     /> */}
+                  {/*   )} */}
+                  {/* /> */}
                   <div className="border-0.5 z-10 flex items-center justify-end gap-2 p-3">
                     {issueName && issueName.trim() !== "" && config?.has_openai_configured && (
                       <button
@@ -769,15 +769,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               variant="neutral-primary"
               size="sm"
               onClick={() => {
-                if (editorRef.current?.isEditorReadyToDiscard()) {
-                  onClose();
-                } else {
-                  setToast({
-                    type: TOAST_TYPE.ERROR,
-                    title: "Error!",
-                    message: "Editor is still processing changes. Please wait before proceeding.",
-                  });
-                }
+                // if (editorRef.current?.isEditorReadyToDiscard()) {
+                //   onClose();
+                // } else {
+                //   setToast({
+                //     type: TOAST_TYPE.ERROR,
+                //     title: "Error!",
+                //     message: "Editor is still processing changes. Please wait before proceeding.",
+                //   });
+                // }
               }}
               tabIndex={getTabIndex("discard_button")}
             >

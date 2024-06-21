@@ -12,7 +12,7 @@ import * as Y from "yjs";
 type DocumentEditorProps = {
   id: string;
   fileHandler: TFileHandler;
-  value: Uint8Array;
+  value: { descriptionYJS: Uint8Array; updateId: string };
   editorClassName: string;
   onChange: (update: Uint8Array, source?: string) => void;
   editorProps?: EditorProps;
@@ -26,6 +26,7 @@ type DocumentEditorProps = {
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
   dragDropEnabled?: boolean;
+  indexedDBPrefix: string;
 };
 
 export const useRichTextEditor = ({
@@ -42,12 +43,14 @@ export const useRichTextEditor = ({
   placeholder,
   setHideDragHandleFunction,
   dragDropEnabled,
+  indexedDBPrefix,
 }: DocumentEditorProps) => {
   const provider = useMemo(
     () =>
       new CollaborationProvider({
         name: id,
         onChange,
+        indexedDBPrefix,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [id]
@@ -57,10 +60,12 @@ export const useRichTextEditor = ({
 
   // update document on value change from server
   useEffect(() => {
-    if (value.length > 0) {
-      Y.applyUpdate(provider.document, value);
+    console.log("id in useEffect", provider.configuration.name === value.updateId);
+    if (value.descriptionYJS.length > 0) {
+      Y.applyUpdate(provider.document, value.descriptionYJS);
     }
-  }, [value, provider.document]);
+  }, [value, provider.document, id]);
+  // console.log("id out useEffect", id);
 
   // watch for indexedDb to complete syncing, only after which the editor is
   // rendered

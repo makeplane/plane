@@ -92,6 +92,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
+          indexedDBPrefix={"issue"}
+          issueDescriptionHTML={issue.description_html}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           isSubmitting={isSubmitting}

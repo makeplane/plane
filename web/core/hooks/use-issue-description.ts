@@ -6,10 +6,7 @@ import { EditorRefApi, generateJSONfromHTML } from "@plane/editor-core";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
-import { IssueService } from "@/services/issue";
-import { useIssueDetail } from "./store";
 import useAutoSave from "./use-auto-save";
-const issueService = new IssueService();
 
 type TIssueDescription = {
   description_binary: string;
@@ -22,48 +19,45 @@ type Props = {
   issueId: string | string[] | undefined;
   projectId: string | string[] | undefined;
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  issueDescriptionHTML: string;
   updateIssueDescription: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: TIssueDescription
   ) => Promise<void>;
+  fetchIssueDescription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<string | undefined>;
   workspaceSlug: string | string[] | undefined;
 };
 
 export const useIssueDescription = (props: Props) => {
   const {
+    indexedDBPrefix,
     canUpdateDescription,
     editorRef,
     isSubmitting,
     issueId,
     projectId,
     setIsSubmitting,
+    issueDescriptionHTML,
     updateIssueDescription,
+    fetchIssueDescription,
     workspaceSlug,
   } = props;
   // states
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   const [localDescriptionYJS, setLocalDescriptionYJS] = useState<Uint8Array>();
 
-  // store hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
-
-  // derived values
-  const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
-  const issueDescription = issueDetails?.description_html;
-
   const { data: issueDescriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DESCRIPTION_BINARY_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
       ? async () => {
-          const encodedDescription = await issueService.fetchDescriptionBinary(
+          const encodedDescription = await fetchIssueDescription(
             workspaceSlug.toString(),
             projectId.toString(),
             issueId.toString()
           );
+          // @ts-expect-error - TODO: fix this
           const decodedDescription = new Uint8Array(encodedDescription);
           return decodedDescription;
         }
@@ -94,17 +88,16 @@ export const useIssueDescription = (props: Props) => {
   useEffect(() => {
     const changeHTMLToBinary = async () => {
       if (!workspaceSlug || !projectId || !issueId) return;
-
-      if (!issueDescriptionYJS || !issueDescription) return;
+      if (!issueDescriptionYJS || !issueDescriptionHTML) return;
 
       if (issueDescriptionYJS.length === 0 && !isDescriptionReady) {
-        const { contentJSON, editorSchema } = generateJSONfromHTML(issueDescription ?? "<p></p>");
+        const { contentJSON, editorSchema } = generateJSONfromHTML(issueDescriptionHTML ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
 
         // TODO - make sure mobx is also taken care of
         await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
           description_binary: yDocBinaryString,
-          description_html: issueDescription ?? "<p></p>",
+          description_html: issueDescriptionHTML ?? "<p></p>",
         });
 
         await mutateDescriptionYJS();
@@ -116,7 +109,7 @@ export const useIssueDescription = (props: Props) => {
   }, [
     isDescriptionReady,
     mutateDescriptionYJS,
-    issueDescription,
+    issueDescriptionHTML,
     updateIssueDescription,
     issueDescriptionYJS,
     issueId,
@@ -148,7 +141,6 @@ export const useIssueDescription = (props: Props) => {
 
         const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-        console.log("combinedBinaryString", combinedBinaryString);
         await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
           description_binary: combinedBinaryString,
           description_html: descriptionHTML ?? "<p></p>",

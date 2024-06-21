@@ -37,6 +37,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       </Loader>
     );
 
+  return null;
   return (
     <RichTextEditor
       initialValue={!data?.description_html || data?.description_html === "" ? "<p></p>" : data?.description_html}

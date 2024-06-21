@@ -84,7 +84,6 @@ export class IssueService extends APIService {
     issueId: string,
     data: TIssueDescription
   ): Promise<any> {
-    console.log("chalaaa");
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, data)
       .then((response) => {
         console.log("response", response);

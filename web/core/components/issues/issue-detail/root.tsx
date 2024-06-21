@@ -25,6 +25,7 @@ import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  fetchDescription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<string>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   updateDescription: (
     workspaceSlug: string,
@@ -70,6 +71,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   const {
     issue: { getIssueById },
     fetchIssue,
+    fetchIssueDescription,
     updateIssue,
     updateIssueDescription,
     removeIssue,
@@ -97,6 +99,13 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await fetchIssue(workspaceSlug, projectId, issueId);
+        } catch (error) {
+          console.error("Error fetching the parent issue");
+        }
+      },
+      fetchDescription: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          return await fetchIssueDescription(workspaceSlug, projectId, issueId);
         } catch (error) {
           console.error("Error fetching the parent issue");
         }
@@ -132,7 +141,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       updateDescription: async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) => {
         try {
-          console.log("aaya in update description");
           await updateIssueDescription(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
@@ -141,7 +149,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
         } catch (error) {
           captureIssueEvent({
@@ -151,7 +159,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
             },
-            path: router.asPath,
+            path: pathname,
           });
           setToast({
             title: "Error!",
@@ -402,6 +410,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
 
   // issue details
   const issue = getIssueById(issueId);
+  console.log("=================issue", issue);
   // checking if issue is editable, based on user role
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

@@ -9,14 +9,13 @@ import {
   IMentionSuggestion,
   EditorRefApi,
   TFileHandler,
-  useConflictFreeEditor,
 } from "@plane/editor-core";
 // components
 import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 import { useRichTextEditor } from "src/hooks/use-rich-text-editor";
 
 export type IRichTextEditor = {
-  value: Uint8Array;
+  value: { descriptionYJS: Uint8Array; updateId: string };
   dragDropEnabled?: boolean;
   fileHandler: TFileHandler;
   handleEditorReady?: (value: boolean) => void;
@@ -33,6 +32,7 @@ export type IRichTextEditor = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   onEnterKeyPress?: (e?: any) => void;
+  indexedDBPrefix: string;
 };
 
 const RichTextEditor = (props: IRichTextEditor) => {
@@ -62,6 +62,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
   // use document editor
   const { editor, isIndexedDbSynced } = useRichTextEditor({
     id,
+    indexedDBPrefix,
     editorClassName,
     fileHandler,
     value,

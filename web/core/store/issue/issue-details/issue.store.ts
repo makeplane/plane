@@ -15,6 +15,11 @@ export interface IIssueStoreActions {
     issueId: string,
     issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED"
   ) => Promise<TIssue>;
+  fetchIssueDescription: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ) => Promise<TIssueDescription["description_binary"]>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   updateIssueDescription: (
     workspaceSlug: string,
@@ -158,6 +163,15 @@ export class IssueStore implements IIssueStore {
     }
   };
 
+  fetchIssueDescription = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const description = await this.issueService.fetchDescriptionBinary(workspaceSlug, projectId, issueId);
+      return description;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -174,7 +188,6 @@ export class IssueStore implements IIssueStore {
     issueId: string,
     data: TIssueDescription
   ) => {
-    console.log("in issue store");
     await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, data);
     this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssueDescription(
       workspaceSlug,

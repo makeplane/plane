@@ -18,6 +18,10 @@ export interface CompleteCollaboratorProviderConfiguration {
    * Whether connection to the database has been established and all available content has been loaded or not.
    */
   hasIndexedDBSynced: boolean;
+  /**
+   * The prefix to use for the indexedDB database values
+   */
+  indexedDBPrefix: string;
 }
 
 export type CollaborationProviderConfiguration = Required<Pick<CompleteCollaboratorProviderConfiguration, "name">> &
@@ -26,9 +30,11 @@ export type CollaborationProviderConfiguration = Required<Pick<CompleteCollabora
 export class CollaborationProvider {
   public configuration: CompleteCollaboratorProviderConfiguration = {
     name: "",
-    document: new Y.Doc(),
+    // @ts-expect-error cannot be undefined
+    document: undefined,
     onChange: () => {},
     hasIndexedDBSynced: false,
+    indexedDBPrefix: "",
   };
 
   unsyncedChanges = 0;
@@ -38,7 +44,11 @@ export class CollaborationProvider {
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
 
-    this.indexeddbProvider = new IndexeddbPersistence(`issue-${this.configuration.name}`, this.document);
+    this.configuration.document = configuration.document ?? new Y.Doc();
+    this.indexeddbProvider = new IndexeddbPersistence(
+      `${this.configuration.indexedDBPrefix}-${this.configuration.name}`,
+      this.document
+    );
     this.indexeddbProvider.on("synced", () => {
       this.configuration.hasIndexedDBSynced = true;
     });

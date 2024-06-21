@@ -5,6 +5,7 @@ import {
   TIssueAttachment,
   TIssueComment,
   TIssueCommentReaction,
+  TIssueDescription,
   TIssueLink,
   TIssueReaction,
   TIssueRelationTypes,
@@ -186,8 +187,12 @@ export class IssueDetail implements IIssueDetail {
     issueId: string,
     issueType: "DEFAULT" | "ARCHIVED" | "DRAFT" = "DEFAULT"
   ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueType);
+  fetchIssueDescription = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.issue.fetchIssueDescription(workspaceSlug, projectId, issueId);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
+  updateIssueDescription = async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) =>
+    this.issue.updateIssueDescription(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.removeIssue(workspaceSlug, projectId, issueId);
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

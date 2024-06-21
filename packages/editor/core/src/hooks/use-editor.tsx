@@ -58,42 +58,45 @@ export const useEditor = ({
   mentionHandler,
   placeholder,
 }: CustomEditorProps) => {
-  const editor = useCustomEditor({
-    editorProps: {
-      ...CoreEditorProps(editorClassName),
-      ...editorProps,
+  const editor = useCustomEditor(
+    {
+      editorProps: {
+        ...CoreEditorProps(editorClassName),
+        ...editorProps,
+      },
+      extensions: [
+        ...CoreEditorExtensions({
+          mentionConfig: {
+            mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
+            mentionHighlights: mentionHandler.highlights ?? [],
+          },
+          fileConfig: {
+            uploadFile: fileHandler.upload,
+            deleteFile: fileHandler.delete,
+            restoreFile: fileHandler.restore,
+            cancelUploadImage: fileHandler.cancel,
+          },
+          placeholder,
+          tabIndex,
+        }),
+        ...extensions,
+      ],
+      content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+      onCreate: async () => {
+        handleEditorReady?.(true);
+      },
+      onTransaction: async ({ editor }) => {
+        setSavedSelection(editor.state.selection);
+      },
+      onUpdate: async ({ editor }) => {
+        onChange?.(editor.getJSON(), editor.getHTML());
+      },
+      onDestroy: async () => {
+        handleEditorReady?.(false);
+      },
     },
-    extensions: [
-      ...CoreEditorExtensions({
-        mentionConfig: {
-          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights ?? [],
-        },
-        fileConfig: {
-          uploadFile: fileHandler.upload,
-          deleteFile: fileHandler.delete,
-          restoreFile: fileHandler.restore,
-          cancelUploadImage: fileHandler.cancel,
-        },
-        placeholder,
-        tabIndex,
-      }),
-      ...extensions,
-    ],
-    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
-    onCreate: async () => {
-      handleEditorReady?.(true);
-    },
-    onTransaction: async ({ editor }) => {
-      setSavedSelection(editor.state.selection);
-    },
-    onUpdate: async ({ editor }) => {
-      onChange?.(editor.getJSON(), editor.getHTML());
-    },
-    onDestroy: async () => {
-      handleEditorReady?.(false);
-    },
-  });
+    [id]
+  );
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
 

@@ -26,16 +26,20 @@ export type IssueDescriptionInputProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  issueDescriptionHTML: string;
+  indexedDBPrefix: string;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
+    indexedDBPrefix,
     containerClassName,
     workspaceSlug,
     projectId,
     issueId,
     disabled,
     issueOperations,
+    issueDescriptionHTML,
     isSubmitting,
     setIsSubmitting,
     placeholder,
@@ -47,9 +51,11 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const editorRef = useRef<EditorRefApi>(null);
 
   const { handleDescriptionChange, isDescriptionReady, issueDescriptionYJS } = useIssueDescription({
+    issueDescriptionHTML,
     editorRef,
     projectId,
     updateIssueDescription: issueOperations.updateDescription,
+    fetchIssueDescription: issueOperations.fetchDescription,
     issueId,
     setIsSubmitting,
     isSubmitting,
@@ -68,8 +74,10 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     <>
       {!disabled ? (
         <RichTextEditor
+          ref={editorRef}
           id={issueId}
-          value={issueDescriptionYJS}
+          value={{ descriptionYJS: issueDescriptionYJS, updateId: issueId }}
+          indexedDBPrefix={indexedDBPrefix}
           workspaceSlug={workspaceSlug}
           workspaceId={workspaceId}
           projectId={projectId}
