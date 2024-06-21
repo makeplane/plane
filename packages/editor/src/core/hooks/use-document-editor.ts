@@ -7,10 +7,10 @@ import * as Y from "yjs";
 import { DragAndDrop, IssueWidget, SlashCommand } from "@/extensions";
 // hooks
 import { TFileHandler, useEditor } from "@/hooks/use-editor";
-// plane editor extensions
-import { TEmbedConfig } from "@/plane-editor/extensions";
 // plane editor provider
-import { CollaborationProvider } from "@/plane-editor/providers/collaboration-provider";
+import { CollaborationProvider } from "@/plane-editor/providers";
+// plane editor types
+import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
 

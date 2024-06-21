@@ -1,1 +1,1 @@
-export * from "./issue-embed";
+export * from "src/ce/types";
