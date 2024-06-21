@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-// editor-core
-import { getEditorClassNames, EditorRefApi, IMentionHighlight, IMentionSuggestion, TFileHandler } from "@plane/editor";
 // components
 import { PageRenderer } from "@/components/editors";
+// helpers
+import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useDocumentEditor } from "@/hooks/use-document-editor";
-// plane web types
+import { TFileHandler } from "@/hooks/use-editor";
+// plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
+// types
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
 
 interface IDocumentEditor {
   containerClassName?: string;
