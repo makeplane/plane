@@ -149,6 +149,15 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
     } else handleEstimatePointError && handleEstimatePointError(estimateInputValue, "Estimate value cannot be empty.");
   };
 
+  // derived values
+  const inputFieldType =
+    estimateType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateType) ? "number" : "text";
+  const inputProps = {
+    type: inputFieldType,
+    pattern: inputFieldType === "number" ? "[0-9]*" : undefined,
+    maxlength: inputFieldType === "number" ? undefined : 24,
+  };
+
   return (
     <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base pr-2.5">
       <div
@@ -158,12 +167,12 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         )}
       >
         <input
-          type="text"
           value={estimateInputValue}
           onChange={(e) => handleEstimateInputValue(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           placeholder="Enter estimate point"
           autoFocus
+          {...inputProps}
         />
         {estimatePointError?.message && (
           <Tooltip
