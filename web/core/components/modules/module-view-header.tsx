@@ -84,7 +84,7 @@ export const ModuleViewHeader: FC = observer(() => {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [isSearchOpen, searchQuery]);
+  }, [searchQuery]);
 
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
 

@@ -33,7 +33,7 @@ export const PageSearchInput: FC<Props> = (props) => {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [isSearchOpen, searchQuery]);
+  }, [searchQuery]);
 
   return (
     <>

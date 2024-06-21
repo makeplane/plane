@@ -34,7 +34,7 @@ export const ViewListHeader = observer(() => {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [isSearchOpen, searchQuery]);
+  }, [searchQuery]);
 
   return (
     <div className="h-full flex items-center gap-2">

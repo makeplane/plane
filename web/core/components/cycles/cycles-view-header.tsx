@@ -65,7 +65,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [isSearchOpen, searchQuery]);
+  }, [searchQuery]);
 
   return (
     <div className="flex items-center gap-3">
