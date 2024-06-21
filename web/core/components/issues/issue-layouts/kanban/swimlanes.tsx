@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -196,9 +196,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     orderBy={orderBy}
                     isDropDisabled={_list.isDropDisabled}
                     dropErrorMessage={_list.dropErrorMessage}
-                    subGroupIssueHeaderCount={(groupByListId: string) =>
-                      getGroupIssueCount(groupByListId, _list.id, true) ?? 0
-                    }
                   />
                 </div>
               )}

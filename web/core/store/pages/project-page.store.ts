@@ -95,7 +95,7 @@ export class ProjectPageStore implements IProjectPageStore {
     if (!projectId) return undefined;
     // helps to filter pages based on the pageType
     let pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
-    pagesByType = pagesByType.filter((p) => p.project === projectId);
+    pagesByType = pagesByType.filter((p) => p.project_ids?.includes(projectId));
 
     const pages = (pagesByType.map((page) => page.id) as string[]) || undefined;
 
@@ -114,7 +114,7 @@ export class ProjectPageStore implements IProjectPageStore {
     const pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
     let filteredPages = pagesByType.filter(
       (p) =>
-        p.project === projectId &&
+        p.project_ids?.includes(projectId) &&
         getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );

@@ -4,13 +4,13 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { IWorkspace } from "@plane/types";
 // components
 import { CreateWorkspaceForm } from "@/components/workspace";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // images
@@ -19,7 +19,7 @@ import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue
 
 const CreateWorkspacePage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();

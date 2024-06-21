@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // types
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
@@ -10,11 +11,11 @@ import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useAppRouter, useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
+import { useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
 
 const ProjectsPage = observer(() => {
   // store
-  const { workspaceSlug } = useAppRouter();
+  const { workspaceSlug } = useParams();
   const { currentWorkspace } = useWorkspace();
   const { totalProjectIds, filteredProjectIds } = useProject();
   const {

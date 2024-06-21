@@ -20,6 +20,7 @@ import {
   IIssueFilterOptions,
   IIssueFilters,
   IProjectView,
+  TGroupedIssues,
 } from "@plane/types";
 // ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
@@ -297,7 +298,8 @@ export const getDisplayPropertiesCount = (
   }
 
   return count;
-}
+};
+
 /**
  * This Method finds the DOM element with elementId, scrolls to it and highlights the issue block
  * @param elementId
@@ -573,3 +575,20 @@ export const getAreFiltersEqual = (
   isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {}) &&
   isEqual(issueFilters?.displayFilters ?? {}, viewDetails?.display_filters ?? {}) &&
   isEqual(issueFilters?.displayProperties ?? {}, viewDetails?.display_properties ?? {});
+
+/**
+ * This Method returns if the the grouped values are subGrouped
+ * @param groupedIssueIds
+ * @returns
+ */
+export const isSubGrouped = (groupedIssueIds: TGroupedIssues) => {
+  if (!groupedIssueIds || Array.isArray(groupedIssueIds)) {
+    return false;
+  }
+
+  if (Array.isArray(groupedIssueIds[Object.keys(groupedIssueIds)[0]])) {
+    return false;
+  }
+
+  return true;
+};

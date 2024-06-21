@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { Loader, Avatar } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";

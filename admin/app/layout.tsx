@@ -16,10 +16,12 @@ import { UserProvider } from "@/lib/user-provider";
 // styles
 import "./globals.css";
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  // themes
+const ToastWithTheme = () => {
   const { resolvedTheme } = useTheme();
+  return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
+};
 
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -31,7 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className={`antialiased`}>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <Toast theme={resolveGeneralTheme(resolvedTheme)} />
+          <ToastWithTheme />
           <SWRConfig value={SWR_CONFIG}>
             <StoreProvider>
               <InstanceProvider>

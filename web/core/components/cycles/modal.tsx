@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 // types
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { CycleForm } from "@/components/cycles";
 // constants
 import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";

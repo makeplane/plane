@@ -86,17 +86,19 @@ export class CalendarStore implements ICalendarStore {
 
   getStartAndEndDate = computedFn((layout: "week" | "month") => {
     switch (layout) {
-      case "week":
+      case "week": {
         if (!this.allDaysOfActiveWeek) return;
         const dates = Object.keys(this.allDaysOfActiveWeek);
         return { startDate: dates[0], endDate: dates[dates.length - 1] };
-      case "month":
+      }
+      case "month": {
         if (!this.allWeeksOfActiveMonth) return;
         const weeks = Object.keys(this.allWeeksOfActiveMonth);
         const firstWeekDates = Object.keys(this.allWeeksOfActiveMonth[weeks[0]]);
         const lastWeekDates = Object.keys(this.allWeeksOfActiveMonth[weeks[weeks.length - 1]]);
 
         return { startDate: firstWeekDates[0], endDate: lastWeekDates[lastWeekDates.length - 1] };
+      }
     }
   });
 

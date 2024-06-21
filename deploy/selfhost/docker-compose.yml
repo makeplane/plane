@@ -147,7 +147,7 @@ services:
 
   plane-redis:
     <<: *app-env
-    image: redis:7.2.4-alpine
+    image: valkey/valkey:7.2.5-alpine
     pull_policy: if_not_present
     restart: unless-stopped
     volumes:

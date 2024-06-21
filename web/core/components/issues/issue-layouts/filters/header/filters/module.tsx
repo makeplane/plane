@@ -3,10 +3,11 @@
 import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // components
 import { Loader, DiceIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-import { useAppRouter, useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -18,14 +19,14 @@ type Props = {
 export const FilterModule: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // hooks
-  const { projectId } = useAppRouter();
+  const { projectId } = useParams();
   const { getModuleById, getProjectModuleIds } = useModule();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const moduleIds = projectId ? getProjectModuleIds(projectId) : undefined;
-  const modules = moduleIds?.map((projectId) => getModuleById(projectId)!) ?? null;
+  const moduleIds = projectId ? getProjectModuleIds(projectId.toString()) : undefined;
+  const modules = moduleIds?.map((moduleId) => getModuleById(moduleId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {

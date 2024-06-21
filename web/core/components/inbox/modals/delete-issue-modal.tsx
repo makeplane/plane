@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
-// components
-import { AlertModalCore } from "@/components/core";
+// ui
+import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store";
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // ui
@@ -14,12 +14,13 @@ import { IssueDetailRoot } from "@/components/issues";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // assets
+import { useAppRouter } from "@/hooks/use-app-router";
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
   // hooks
   const { resolvedTheme } = useTheme();

@@ -3,10 +3,11 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// types
+import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
+// ui
+import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/estimates";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
@@ -28,25 +29,59 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   // states
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
-  const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
-  const [estimatePointCreateError, setEstimatePointCreateError] = useState<number[]>([]);
+  const [estimatePointError, setEstimatePointError] = useState<TEstimateTypeError>(undefined);
   const [buttonLoader, setButtonLoader] = useState(false);
 
   const handleUpdatePoints = (newPoints: TEstimatePointsObject[] | undefined) => setEstimatePoints(newPoints);
+
+  const handleEstimatePointError = (
+    key: number,
+    oldValue: string,
+    newValue: string,
+    message: string | undefined,
+    mode: "add" | "delete" = "add"
+  ) => {
+    setEstimatePointError((prev) => {
+      if (mode === "add") {
+        return { ...prev, [key]: { oldValue, newValue, message } };
+      } else {
+        const newError = { ...prev };
+        delete newError[key];
+        return newError;
+      }
+    });
+  };
 
   useEffect(() => {
     if (isOpen) {
       setEstimateSystem(EEstimateSystem.POINTS);
       setEstimatePoints(undefined);
+      setEstimatePointError([]);
     }
   }, [isOpen]);
 
+  const validateEstimatePointError = () => {
+    let estimateError = false;
+    if (!estimatePointError) return estimateError;
+
+    Object.keys(estimatePointError || {}).forEach((key) => {
+      const currentKey = key as unknown as number;
+      if (
+        estimatePointError[currentKey]?.oldValue != estimatePointError[currentKey]?.newValue ||
+        estimatePointError[currentKey]?.newValue === "" ||
+        estimatePointError[currentKey]?.message
+      ) {
+        estimateError = true;
+      }
+    });
+
+    return estimateError;
+  };
+
   const handleCreateEstimate = async () => {
-    setEstimatePointCreateError([]);
-    if (estimatePointCreate === undefined || estimatePointCreate?.length === 0) {
+    if (!validateEstimatePointError()) {
       try {
         if (!workspaceSlug || !projectId || !estimatePoints) return;
-
         setButtonLoader(true);
         const payload: IEstimateFormData = {
           estimate: {
@@ -57,7 +92,6 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           estimate_points: estimatePoints,
         };
         await createEstimate(workspaceSlug, projectId, payload);
-
         setButtonLoader(false);
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -74,12 +108,32 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
         });
       }
     } else {
-      setEstimatePointCreateError(estimatePointCreate.map((point) => point.key));
+      setEstimatePointError((prev) => {
+        const newError = { ...prev };
+        Object.keys(newError || {}).forEach((key) => {
+          const currentKey = key as unknown as number;
+          if (
+            newError[currentKey]?.newValue != "" &&
+            newError[currentKey]?.oldValue === newError[currentKey]?.newValue
+          ) {
+            delete newError[currentKey];
+          } else {
+            newError[currentKey].message =
+              newError[currentKey].message ||
+              "Estimate point can't be empty. Enter a value in each field or remove those you don't have values for.";
+          }
+        });
+        return newError;
+      });
     }
   };
 
   // derived values
   const renderEstimateStepsCount = useMemo(() => (estimatePoints ? "2" : "1"), [estimatePoints]);
+  // const isEstimatePointError = useMemo(() => {
+  //   if (!estimatePointError) return false;
+  //   return Object.keys(estimatePointError).length > 0;
+  // }, [estimatePointError]);
 
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -122,20 +176,16 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
               estimateType={estimateSystem}
               estimatePoints={estimatePoints}
               setEstimatePoints={setEstimatePoints}
-              estimatePointCreate={estimatePointCreate}
-              setEstimatePointCreate={(value) => {
-                setEstimatePointCreateError([]);
-                setEstimatePointCreate(value);
-              }}
-              estimatePointCreateError={estimatePointCreateError}
+              estimatePointError={estimatePointError}
+              handleEstimatePointError={handleEstimatePointError}
             />
           )}
-          {estimatePointCreateError.length > 0 && (
+          {/* {isEstimatePointError && (
             <div className="pt-5 text-sm text-red-500">
               Estimate points can&apos;t be empty. Enter a value in each field or remove those you don&apos;t have
               values for.
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">

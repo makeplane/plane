@@ -7,7 +7,8 @@ import { useTheme } from "next-themes";
 import { setPromiseToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
-import { CustomThemeSelector, ThemeSwitch, PageHead, SidebarHamburgerToggle } from "@/components/core";
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
+import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
 // hooks
@@ -50,11 +51,8 @@ const ProfileAppearancePage = observer(() => {
     <>
       <PageHead title="Profile - Theme Prefrence" />
       {userProfile ? (
-        <div className="mx-auto mt-10 h-full w-full overflow-y-auto md:px-6 px-4 pb-8 md:mt-14 lg:px-20 vertical-scrollbar scrollbar-md">
-          <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
-            <SidebarHamburgerToggle />
-            <h3 className="text-xl font-medium">Appearance</h3>
-          </div>
+        <ProfileSettingContentWrapper>
+          <ProfileSettingContentHeader title="Appearance" />
           <div className="grid grid-cols-12 gap-4 py-6 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
@@ -65,7 +63,7 @@ const ProfileAppearancePage = observer(() => {
             </div>
           </div>
           {userProfile?.theme?.theme === "custom" && <CustomThemeSelector />}
-        </div>
+        </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
           <LogoSpinner />

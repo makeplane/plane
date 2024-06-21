@@ -1,18 +1,19 @@
 "use client";
 
 import React from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import type { IProject } from "@plane/types";
-// hooks
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { PROJECT_DELETED } from "@/constants/event-tracker";
-import { useEventTracker, useProject } from "@/hooks/store";
-// ui
 // types
+import type { IProject } from "@plane/types";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { PROJECT_DELETED } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -31,7 +32,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { captureProjectEvent } = useEventTracker();
   const { deleteProject } = useProject();
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // form info
   const {

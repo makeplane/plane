@@ -1,15 +1,17 @@
 import { FC, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
 // types
 import { TPage } from "@plane/types";
+// ui
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { PageForm } from "@/components/pages";
 // constants
 import { PAGE_CREATED } from "@/constants/event-tracker";
 import { EPageAccess } from "@/constants/page";
 // hooks
 import { useProjectPages, useEventTracker } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   workspaceSlug: string;
@@ -29,7 +31,7 @@ export const CreatePageModal: FC<Props> = (props) => {
     logo_props: undefined,
   });
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { createPage } = useProjectPages();
   const { capturePageEvent } = useEventTracker();

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // headless ui

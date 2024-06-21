@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
-import { LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
+import { FavoriteStar, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
@@ -20,6 +19,7 @@ import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
@@ -33,7 +33,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   // refs
   const parentRef = useRef(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const pathname = usePathname();

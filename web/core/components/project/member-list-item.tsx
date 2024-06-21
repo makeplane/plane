@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
@@ -16,6 +16,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { ROLE } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -27,7 +28,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {

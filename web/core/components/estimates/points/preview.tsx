@@ -1,9 +1,11 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
-import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
+import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 // components
-import { EstimatePointUpdate, EstimatePointDelete } from "@/components/estimates/points";
+import { EstimatePointUpdate } from "@/components/estimates/points";
+// plane web components
+import { EstimatePointDelete } from "@/plane-web/components/estimates";
 // plane web constants
 import { estimateCount } from "@/plane-web/constants/estimates";
 
@@ -17,6 +19,8 @@ type TEstimatePointItemPreview = {
   estimatePoints: TEstimatePointsObject[];
   handleEstimatePointValueUpdate?: (estimateValue: string) => void;
   handleEstimatePointValueRemove?: () => void;
+  estimatePointError?: TEstimateTypeErrorObject | undefined;
+  handleEstimatePointError?: (newValue: string, message: string | undefined) => void;
 };
 
 export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
@@ -30,6 +34,8 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
     estimatePoints,
     handleEstimatePointValueUpdate,
     handleEstimatePointValueRemove,
+    estimatePointError,
+    handleEstimatePointError,
   } = props;
   // state
   const [estimatePointEditToggle, setEstimatePointEditToggle] = useState(false);
@@ -45,7 +51,7 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="border border-custom-border-200 rounded relative flex items-center px-2.5 gap-2 text-base  my-1">
+        <div className="border border-custom-border-200 rounded relative flex items-center px-2.5 gap-2 text-base my-1">
           <div className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer">
             <GripVertical size={14} className="text-custom-text-200" />
           </div>
@@ -90,6 +96,8 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
             handleEstimatePointValueUpdate && handleEstimatePointValueUpdate(estimatePointValue)
           }
           closeCallBack={() => setEstimatePointEditToggle(false)}
+          estimatePointError={estimatePointError}
+          handleEstimatePointError={handleEstimatePointError}
         />
       )}
 
@@ -100,6 +108,8 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
           estimateId={estimateId}
           estimatePointId={estimatePointId}
           callback={() => estimateId && setEstimatePointDeleteToggle(false)}
+          estimatePointError={estimatePointError}
+          handleEstimatePointError={handleEstimatePointError}
         />
       )}
     </div>

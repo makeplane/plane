@@ -1,12 +1,13 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // constants
 import { ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
 // hooks
-import { useAppRouter, useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
@@ -17,7 +18,7 @@ type Props = {
 
 export const SelectYAxis: React.FC<Props> = observer(({ value, onChange }) => {
   // hooks
-  const { projectId } = useAppRouter();
+  const { projectId } = useParams();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
 
   const isEstimateEnabled = (analyticsOption: string) => {
@@ -25,7 +26,7 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange }) => {
       if (
         projectId &&
         currentActiveEstimateId &&
-        areEstimateEnabledByProjectId(projectId) &&
+        areEstimateEnabledByProjectId(projectId.toString()) &&
         estimateById(currentActiveEstimateId)?.type === EEstimateSystem.POINTS
       ) {
         return true;

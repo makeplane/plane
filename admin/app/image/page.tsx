@@ -1,10 +1,10 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
+import { PageHeader } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local

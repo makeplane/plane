@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { observer } from "mobx-react";
+import { useParams, usePathname } from "next/navigation";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
 // components
@@ -12,11 +12,12 @@ import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ProjectArchivesHeader: FC = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   const activeTab = pathname.split("/").pop();
@@ -24,7 +25,7 @@ export const ProjectArchivesHeader: FC = observer(() => {
   const {
     issuesFilter: { issueFilters },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
@@ -38,10 +39,10 @@ export const ProjectArchivesHeader: FC = observer(() => {
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];
 
   return (
-    <div className="relative z-10 flex h-14 w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={router.back}>
+          <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={

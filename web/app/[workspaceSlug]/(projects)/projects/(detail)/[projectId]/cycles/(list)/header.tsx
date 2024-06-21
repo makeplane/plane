@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
-import { useParams, useRouter } from "next/navigation";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // components
@@ -12,10 +12,11 @@ import { CyclesViewHeader } from "@/components/cycles";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const CyclesListHeader: FC = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
@@ -23,7 +24,7 @@ export const CyclesListHeader: FC = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, loader } = useProject();
 
   const canUserCreateCycle =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -32,7 +33,7 @@ export const CyclesListHeader: FC = observer(() => {
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs onBack={router.back}>
+          <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={

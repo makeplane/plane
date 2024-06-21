@@ -2,17 +2,16 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 // types
 import { ICycle } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { AlertModalCore } from "@/components/core";
+import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { CYCLE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useCycle } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 interface ICycleDelete {
   cycle: ICycle;
@@ -30,7 +29,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { captureCycleEvent } = useEventTracker();
   const { deleteCycle } = useCycle();
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { cycleId } = useParams();
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle");

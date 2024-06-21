@@ -3,14 +3,13 @@
 import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight } from "lucide-react";
 // types
 import type { TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
+import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast, FavoriteStar } from "@plane/ui";
 // components
-import { FavoriteStar } from "@/components/core";
 import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
@@ -21,6 +20,7 @@ import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/dat
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface ICyclesBoardCard {
@@ -34,7 +34,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   // refs
   const parentRef = useRef(null);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store

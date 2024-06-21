@@ -2,8 +2,8 @@
 
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+// types
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -12,8 +12,8 @@ import { WORKSPACE_CREATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useWorkspace } from "@/hooks/store";
-// ui
-// types
+import { useAppRouter } from "@/hooks/use-app-router";
+// services
 import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
@@ -48,7 +48,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();

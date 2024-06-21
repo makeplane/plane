@@ -2,18 +2,18 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // types
 import { IWorkspaceView } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EModalPosition, EModalWidth, ModalCore } from "@/components/core";
 import { WorkspaceViewForm } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 // store hooks
 import { useEventTracker, useGlobalView } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   data?: IWorkspaceView;
@@ -25,7 +25,7 @@ type Props = {
 export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data, preLoadedData } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();

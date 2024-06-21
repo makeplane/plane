@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // hooks
@@ -19,7 +20,6 @@ import {
   FilterIssueType,
 } from "@/components/issues";
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
-import { useAppRouter } from "@/hooks/store";
 // components
 // types
 // constants
@@ -51,7 +51,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     moduleViewDisabled = false,
   } = props;
   // hooks
-  const { moduleId, cycleId } = useAppRouter();
+  const { moduleId, cycleId } = useParams();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 

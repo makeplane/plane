@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 // types
 import { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { AlertModalCore } from "@/components/core";
+import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 

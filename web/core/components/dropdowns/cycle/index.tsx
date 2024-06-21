@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, ReactNode, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui

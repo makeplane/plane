@@ -1,10 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // icons
 import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
@@ -14,9 +14,10 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
-import { getPasswordStrength } from "@/helpers/password.helper";
+import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services
@@ -43,7 +44,7 @@ const authService = new AuthService();
 
 const SetPasswordPage = observer(() => {
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
@@ -78,7 +79,7 @@ const SetPasswordPage = observer(() => {
   const isButtonDisabled = useMemo(
     () =>
       !!passwordFormData.password &&
-      getPasswordStrength(passwordFormData.password) >= 3 &&
+      getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
       passwordFormData.password === passwordFormData.confirm_password
         ? false
         : true,
@@ -180,7 +181,7 @@ const SetPasswordPage = observer(() => {
                       />
                     )}
                   </div>
-                  {isPasswordInputFocused && <PasswordStrengthMeter password={passwordFormData.password} />}
+                  <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">

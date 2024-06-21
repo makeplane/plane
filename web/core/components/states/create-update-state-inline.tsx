@@ -107,9 +107,8 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "State could not be created. Please try again.",
+            message: error.data.error ?? "State could not be created. Please try again.",
           });
-
         captureProjectStateEvent({
           eventName: STATE_CREATED,
           payload: {
@@ -173,134 +172,139 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
+      className="flex flex-col w-full rounded-[10px] bg-custom-background-100 py-5"
     >
-      <div className="flex-shrink-0">
-        <Popover className="relative flex h-full w-full items-center justify-center">
-          {({ open }) => (
-            <>
-              <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
-              >
-                {watch("color") && watch("color") !== "" && (
-                  <span
-                    className="h-5 w-5 rounded"
-                    style={{
-                      backgroundColor: watch("color") ?? "black",
-                    }}
-                  />
-                )}
-              </Popover.Button>
-
-              <Transition
-                as={React.Fragment}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
-                  <Controller
-                    name="color"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
-                    )}
-                  />
-                </Popover.Panel>
-              </Transition>
-            </>
-          )}
-        </Popover>
-      </div>
-      <Controller
-        control={control}
-        name="name"
-        rules={{
-          required: true,
-        }}
-        render={({ field: { value, onChange, ref } }) => (
-          <Input
-            id="name"
-            name="name"
-            type="text"
-            value={value}
-            onChange={onChange}
-            ref={ref}
-            hasError={Boolean(errors.name)}
-            placeholder="Name"
-            className="w-full"
-            autoFocus
-          />
-        )}
-      />
-      {data && (
-        <Controller
-          name="group"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <Tooltip
-              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
-              isMobile={isMobile}
-            >
-              <div>
-                <CustomSelect
-                  disabled={groupLength === 1}
-                  value={value}
-                  onChange={onChange}
-                  label={
-                    Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
-                      ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
-                      : "Select group"
-                  }
-                  input
+      <div className="flex items-center gap-x-2 ">
+        <div className="flex-shrink-0">
+          <Popover className="relative flex h-full w-full items-center justify-center">
+            {({ open }) => (
+              <>
+                <Popover.Button
+                  className={`group inline-flex items-center text-base font-medium focus:outline-none ${open ? "text-custom-text-100" : "text-custom-text-200"
+                    }`}
                 >
-                  {Object.keys(GROUP_CHOICES).map((key) => (
-                    <CustomSelect.Option key={key} value={key}>
-                      {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              </div>
-            </Tooltip>
+                  {watch("color") && watch("color") !== "" && (
+                    <span
+                      className="h-5 w-5 rounded"
+                      style={{
+                        backgroundColor: watch("color") ?? "black",
+                      }}
+                    />
+                  )}
+                </Popover.Button>
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                    <Controller
+                      name="color"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
+                      )}
+                    />
+                  </Popover.Panel>
+                </Transition>
+              </>
+            )}
+          </Popover>
+        </div>
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            required: true,
+            maxLength: {
+              value: 255,
+              message: "State name should not exceed 255 characters",
+            },
+          }}
+          render={({ field: { value, onChange, ref } }) => (
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              value={value}
+              onChange={onChange}
+              ref={ref}
+              hasError={Boolean(errors.name)}
+              placeholder="Name"
+              className="w-full"
+              autoFocus
+            />
           )}
         />
-      )}
-      <Controller
-        control={control}
-        name="description"
-        render={({ field: { value, onChange, ref } }) => (
-          <Input
-            id="description"
-            name="description"
-            type="text"
-            value={value}
-            onChange={onChange}
-            ref={ref}
-            hasError={Boolean(errors.description)}
-            placeholder="Description"
-            className="w-full"
+        {data && (
+          <Controller
+            name="group"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Tooltip
+                tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
+                isMobile={isMobile}
+              >
+                <div>
+                  <CustomSelect
+                    disabled={groupLength === 1}
+                    value={value}
+                    onChange={onChange}
+                    label={
+                      Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
+                        ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
+                        : "Select group"
+                    }
+                    input
+                  >
+                    {Object.keys(GROUP_CHOICES).map((key) => (
+                      <CustomSelect.Option key={key} value={key}>
+                        {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                </div>
+              </Tooltip>
+            )}
           />
         )}
-      />
-      <Button variant="neutral-primary" onClick={handleClose} size="sm">
-        Cancel
-      </Button>
-      <Button
-        variant="primary"
-        type="submit"
-        loading={isSubmitting}
-        onClick={() => {
-          setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-        }}
-        size="sm"
-      >
-        {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
-      </Button>
+        <Controller
+          control={control}
+          name="description"
+          render={({ field: { value, onChange, ref } }) => (
+            <Input
+              id="description"
+              name="description"
+              type="text"
+              value={value}
+              onChange={onChange}
+              ref={ref}
+              hasError={Boolean(errors.description)}
+              placeholder="Description"
+              className="w-full"
+            />
+          )}
+        />
+        <Button variant="neutral-primary" onClick={handleClose} size="sm">
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          type="submit"
+          loading={isSubmitting}
+          onClick={() => {
+            setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+          }}
+          size="sm"
+        >
+          {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
+        </Button>
+      </div>
+      {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
     </form>
   );
 });

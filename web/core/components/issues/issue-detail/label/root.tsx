@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { IIssueLabel, TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";

@@ -1,13 +1,13 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
 import { IssuesNavbarRoot } from "@/components/issues";
 // hooks
-import { usePublish, usePublishList } from "@/hooks/store";
+import { useIssueFilter, usePublish, usePublishList } from "@/hooks/store";
 // assets
 import planeLogo from "@/public/plane-logo.svg";
 
@@ -25,8 +25,25 @@ const IssuesLayout = observer((props: Props) => {
   // store hooks
   const { fetchPublishSettings } = usePublishList();
   const publishSettings = usePublish(anchor);
+  const { updateLayoutOptions } = useIssueFilter();
   // fetch publish settings
-  useSWR(anchor ? `PUBLISH_SETTINGS_${anchor}` : null, anchor ? () => fetchPublishSettings(anchor) : null);
+  useSWR(
+    anchor ? `PUBLISH_SETTINGS_${anchor}` : null,
+    anchor
+      ? async () => {
+          const response = await fetchPublishSettings(anchor);
+          if (response.view_props) {
+            updateLayoutOptions({
+              list: !!response.view_props.list,
+              kanban: !!response.view_props.kanban,
+              calendar: !!response.view_props.calendar,
+              gantt: !!response.view_props.gantt,
+              spreadsheet: !!response.view_props.spreadsheet,
+            });
+          }
+        }
+      : null
+  );
 
   if (!publishSettings) return <LogoSpinner />;
 

@@ -162,6 +162,8 @@ def filter_parent(params, filter, method, prefix=""):
         parents = [
             item for item in params.get("parent").split(",") if item != "null"
         ]
+        if "None" in parents:
+            filter[f"{prefix}parent__isnull"] = True
         parents = filter_valid_uuids(parents)
         if len(parents) and "" not in parents:
             filter[f"{prefix}parent__in"] = parents
@@ -180,6 +182,8 @@ def filter_labels(params, filter, method, prefix=""):
         labels = [
             item for item in params.get("labels").split(",") if item != "null"
         ]
+        if "None" in labels:
+            filter[f"{prefix}labels__isnull"] = True
         labels = filter_valid_uuids(labels)
         if len(labels) and "" not in labels:
             filter[f"{prefix}labels__in"] = labels
@@ -200,6 +204,8 @@ def filter_assignees(params, filter, method, prefix=""):
             for item in params.get("assignees").split(",")
             if item != "null"
         ]
+        if "None" in assignees:
+            filter[f"{prefix}assignees__isnull"] = True
         assignees = filter_valid_uuids(assignees)
         if len(assignees) and "" not in assignees:
             filter[f"{prefix}assignees__in"] = assignees
@@ -242,6 +248,8 @@ def filter_created_by(params, filter, method, prefix=""):
             for item in params.get("created_by").split(",")
             if item != "null"
         ]
+        if "None" in created_bys:
+            filter[f"{prefix}created_by__isnull"] = True
         created_bys = filter_valid_uuids(created_bys)
         if len(created_bys) and "" not in created_bys:
             filter[f"{prefix}created_by__in"] = created_bys
@@ -385,6 +393,8 @@ def filter_cycle(params, filter, method, prefix=""):
         cycles = [
             item for item in params.get("cycle").split(",") if item != "null"
         ]
+        if "None" in cycles:
+            filter[f"{prefix}issue_cycle__cycle_id__isnull"] = True
         cycles = filter_valid_uuids(cycles)
         if len(cycles) and "" not in cycles:
             filter[f"{prefix}issue_cycle__cycle_id__in"] = cycles
@@ -403,6 +413,8 @@ def filter_module(params, filter, method, prefix=""):
         modules = [
             item for item in params.get("module").split(",") if item != "null"
         ]
+        if "None" in modules:
+            filter[f"{prefix}issue_module__module_id__isnull"] = True
         modules = filter_valid_uuids(modules)
         if len(modules) and "" not in modules:
             filter[f"{prefix}issue_module__module_id__in"] = modules
