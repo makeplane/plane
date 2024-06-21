@@ -270,21 +270,8 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   // Check for all available fields validation and if password field is available, then checks for password validation (strength + confirmation).
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
-  const isButtonDisabled = useMemo(() => {
-    if (!isSubmitting && isValid) {
-      if (isPasswordAlreadySetup) {
-        return false;
-      } else {
-        if (isValidPassword) {
-          return false;
-        } else {
-          return true;
-        }
-      }
-    } else {
-      return true;
-    }
-  }, [isSubmitting, isValid, isPasswordAlreadySetup, isValidPassword]);
+  const isButtonDisabled =
+    !isSubmitting && isValid ? (isPasswordAlreadySetup ? false : isValidPassword ? false : true) : true;
 
   const isCurrentStepUserPersonalization = profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION;
 
