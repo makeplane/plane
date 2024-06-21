@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
@@ -62,6 +62,10 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   };
 
   const isFiltersApplied = calculateTotalFilters(currentProjectFilters ?? {}) !== 0;
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   return (
     <div className="flex items-center gap-3">

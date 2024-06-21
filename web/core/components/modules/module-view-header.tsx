@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useCallback, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -26,13 +26,10 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 export const ModuleViewHeader: FC = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
-
   // router
   const { projectId } = useParams();
-
   // hooks
   const { isMobile } = usePlatformOS();
-
   // store hooks
   const {
     workspace: { workspaceMemberIds },
@@ -84,6 +81,10 @@ export const ModuleViewHeader: FC = observer(() => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
 
