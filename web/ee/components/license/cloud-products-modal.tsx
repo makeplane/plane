@@ -20,7 +20,7 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const MONTHLY_PLAN_ITEMS = [
+export const MONTHLY_PLAN_ITEMS = [
   "White-glove onboarding for your use-cases",
   "Bespoke implementation",
   "Priority integrations",
@@ -61,7 +61,6 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   );
   const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
   const proProductPrices = orderBy(proProduct?.prices || [], ["recurring"], ["asc"]);
-  console.log("proProductPrices", proProductPrices);
   // states
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
@@ -91,6 +90,7 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
       })
       .finally(() => {
         setLoading(false);
+        handleClose();
       });
   };
 
@@ -131,11 +131,11 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-custom-background-100 p-6 text-left align-middle shadow-xl transition-all border-[0.5px] border-custom-border-100">
-                <Dialog.Title as="h2" className="text-2xl font-bold leading-6 mt-4 flex justify-center items-center">
+                <Dialog.Title as="h2" className="text-2xl font-bold leading-6 mt-6 flex justify-center items-center">
                   Early-adopter pricing for believers
                 </Dialog.Title>
-                <div className="mt-2 mb-5">
-                  <p className="text-center text-sm mb-6 px-10 text-custom-text-200">
+                <div className="mt-3 mb-6">
+                  <p className="text-center text-sm mb-6 px-10 text-custom-text-100">
                     Build Plane to your specs. You decide what we prioritize and build for everyone. Also get tailored
                     onboarding + implementation and priority support.
                   </p>
@@ -178,7 +178,7 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
                             {price.recurring === "year" && "$5"}
                             <span className="text-sm ml-3 text-custom-text-300">/user/month</span>
                           </p>
-                          <ul>
+                          <ul className="px-2">
                             {getPlaneFeatureItems(price.recurring).map((item) => (
                               <li key={item} className="relative rounded-md p-3 flex">
                                 <p className="text-sm font-medium leading-5 flex items-center">
@@ -190,14 +190,14 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
                           </ul>
                           <div className="flex justify-center w-full">
                             <div className="relative inline-flex group mt-8">
-                              <div className="absolute transition-all duration-1000 opacity-50 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt" />
+                              <div className="absolute transition-all duration-1000 opacity-50 -inset-px bg-gradient-to-r from-[#3F76FF] to-[#3F76FF] rounded-xl blur-md group-hover:opacity-80 group-hover:-inset-1 group-hover:duration-200 animate-tilt" />
                               <button
                                 type="button"
-                                className="relative inline-flex items-center justify-center px-8 py-4 text-sm font-medium border-custom-border-100 border-[1.5px] transition-all duration-200 bg-custom-background-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-border-200"
+                                className="relative inline-flex items-center justify-center px-8 py-3 text-sm font-medium border-custom-border-100 border-[1.5px] transition-all duration-200 bg-custom-background-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-border-200"
                                 onClick={() => handlePaymentLink(price.id)}
                                 disabled={isLoading}
                               >
-                                Become Early Adopter
+                                {isLoading ? "Redirecting to Stripe..." : "Become Early Adopter"}
                               </button>
                             </div>
                           </div>

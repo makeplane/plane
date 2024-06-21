@@ -17,13 +17,13 @@ export class RootStore extends CoreRootStore {
     super();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceSubscription = new WorkspaceSubscriptionStore();
+    this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
   }
 
   resetOnSignOut() {
     super.resetOnSignOut();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceSubscription = new WorkspaceSubscriptionStore();
+    this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
   }
 }
