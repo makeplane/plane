@@ -1,1 +1,1 @@
-export * from "src/ee/extensions";
+export * from "./document-extensions";

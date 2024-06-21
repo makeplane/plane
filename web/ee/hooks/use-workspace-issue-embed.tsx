@@ -1,5 +1,5 @@
 // editor
-import { TEmbedItem } from "@plane/document-editor";
+import { TEmbedItem } from "@plane/editor";
 // types
 import { TPageEmbedResponse } from "@plane/types";
 // ui

@@ -94,7 +94,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
@@ -131,6 +131,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        projectId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId

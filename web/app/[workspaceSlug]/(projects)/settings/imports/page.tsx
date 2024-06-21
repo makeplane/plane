@@ -3,12 +3,13 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // components
-import { cn } from "@plane/editor-core";
 import { getButtonStyling } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import IntegrationGuide from "@/components/integration/guide";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser, useWorkspace, useInstance } from "@/hooks/store";
 
