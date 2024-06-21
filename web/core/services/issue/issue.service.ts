@@ -84,9 +84,14 @@ export class IssueService extends APIService {
     issueId: string,
     data: TIssueDescription
   ): Promise<any> {
+    console.log("chalaaa");
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        console.log("response", response);
+        return response?.data;
+      })
       .catch((error) => {
+        console.log("error", error);
         throw error?.response?.data;
       });
   }

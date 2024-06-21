@@ -9,7 +9,7 @@ export type TIssueDescription = {
 };
 
 // new issue structure types
-export type TIssue = TIssueDescription & {
+export type TBaseIssue = TIssueDescription & {
   id: string;
   sequence_id: number;
   name: string;
@@ -44,10 +44,9 @@ export type TIssue = TIssueDescription & {
 };
 
 export type TIssue = TBaseIssue & {
-  description_html?: string;
   is_subscribed?: boolean;
 
-  parent?: partial<TIssue>;
+  parent?: Partial<TIssue>;
 
   issue_reactions?: TIssueReaction[];
   issue_attachment?: TIssueAttachment[];
@@ -88,7 +87,7 @@ export type TIssuesResponse = {
   total_pages: number;
   extra_stats: null;
   results: TIssueResponseResults;
-}
+};
 
 export type TBulkIssueProperties = Pick<
   TIssue,

@@ -3,6 +3,7 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 
+import { EditorRefApi } from "@plane/rich-text-editor";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -12,10 +13,8 @@ import { TIssueOperations } from "@/components/issues/issue-detail";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-import { EditorRefApi } from "@plane/rich-text-editor";
 
 import { useIssueDescription } from "@/hooks/use-issue-description";
-import { PageContentLoader } from "../pages";
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -27,7 +26,6 @@ export type IssueDescriptionInputProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  value: Uint8Array;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
@@ -41,7 +39,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     isSubmitting,
     setIsSubmitting,
     placeholder,
-    value,
   } = props;
 
   const { getWorkspaceBySlug } = useWorkspace();
@@ -52,7 +49,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const { handleDescriptionChange, isDescriptionReady, issueDescriptionYJS } = useIssueDescription({
     editorRef,
     projectId,
-    updateIssueDescription: issueOperations.update,
+    updateIssueDescription: issueOperations.updateDescription,
     issueId,
     setIsSubmitting,
     isSubmitting,
@@ -69,17 +66,21 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
 
   return (
     <>
-      <RichTextEditor
-        id={issueId}
-        value={issueDescriptionYJS}
-        workspaceSlug={workspaceSlug}
-        workspaceId={workspaceId}
-        projectId={projectId}
-        dragDropEnabled
-        onChange={handleDescriptionChange}
-        placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
-        containerClassName={containerClassName}
-      />
+      {!disabled ? (
+        <RichTextEditor
+          id={issueId}
+          value={issueDescriptionYJS}
+          workspaceSlug={workspaceSlug}
+          workspaceId={workspaceId}
+          projectId={projectId}
+          dragDropEnabled
+          onChange={handleDescriptionChange}
+          placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
+          containerClassName={containerClassName}
+        />
+      ) : (
+        <RichTextReadOnlyEditor initialValue={""} containerClassName={containerClassName} />
+      )}
     </>
   );
 });

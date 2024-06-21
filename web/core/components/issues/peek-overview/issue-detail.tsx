@@ -72,18 +72,15 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         containerClassName="-ml-3"
       />
 
-      {/* <IssueDescriptionInput */}
-      {/*   workspaceSlug={workspaceSlug} */}
-      {/*   projectId={issue.project_id} */}
-      {/*   issueId={issue.id} */}
-      {/*   initialValue={issueDescription} */}
-      {/*   // for now peek overview doesn't have live syncing while tab changes */}
-      {/*   swrIssueDescription={issueDescription} */}
-      {/*   disabled={disabled} */}
-      {/*   issueOperations={issueOperations} */}
-      {/*   setIsSubmitting={(value) => setIsSubmitting(value)} */}
-      {/*   containerClassName="-ml-3 !mb-6 border-none" */}
-      {/* /> */}
+      <IssueDescriptionInput
+        workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issue.id}
+        disabled={disabled}
+        issueOperations={issueOperations}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
+        containerClassName="-ml-3 !mb-6 border-none"
+      />
 
       {currentUser && (
         <IssueReaction

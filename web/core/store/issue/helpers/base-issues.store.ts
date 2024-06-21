@@ -563,12 +563,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     data: TIssueDescription
   ) => {
     try {
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, data);
+      console.log("in base issues store");
+      this.updateIssue(workspaceSlug, projectId, issueId, data, false);
+      // await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   /**
    * Similar to Create Issue but for creating Draft issues

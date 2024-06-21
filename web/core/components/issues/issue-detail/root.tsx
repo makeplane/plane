@@ -80,9 +80,11 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     removeIssueFromModule,
     removeModulesFromIssue,
   } = useIssueDetail();
+
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
+
   const { captureIssueEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
@@ -129,6 +131,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       updateDescription: async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) => {
         try {
+          console.log("aaya in update description");
           await updateIssueDescription(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,

@@ -102,7 +102,7 @@ export const useIssueDescription = (props: Props) => {
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
 
         // TODO - make sure mobx is also taken care of
-        await issueService.updateDescriptionBinary(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
+        await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
           description_binary: yDocBinaryString,
           description_html: issueDescription ?? "<p></p>",
         });
@@ -148,16 +148,15 @@ export const useIssueDescription = (props: Props) => {
 
         const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-        await issueService
-          .updateDescriptionBinary(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
-            description_binary: combinedBinaryString,
-            description_html: descriptionHTML ?? "<p></p>",
-          })
-          .finally(() => {
-            editorRef.current?.setSynced();
-            setShowAlert(false);
-            setIsSubmitting("saved");
-          });
+        console.log("combinedBinaryString", combinedBinaryString);
+        await updateIssueDescription(workspaceSlug.toString(), projectId.toString(), issueId.toString(), {
+          description_binary: combinedBinaryString,
+          description_html: descriptionHTML ?? "<p></p>",
+        }).finally(() => {
+          editorRef.current?.setSynced();
+          setShowAlert(false);
+          setIsSubmitting("saved");
+        });
       };
 
       try {
@@ -175,6 +174,7 @@ export const useIssueDescription = (props: Props) => {
       localDescriptionYJS,
       setShowAlert,
       canUpdateDescription,
+      updateIssueDescription,
       editorRef,
       issueId,
       mutateDescriptionYJS,

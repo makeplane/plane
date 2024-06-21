@@ -92,7 +92,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
-          value={issue.description_binary}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           isSubmitting={isSubmitting}

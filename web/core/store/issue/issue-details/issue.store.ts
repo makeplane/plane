@@ -168,14 +168,21 @@ export class IssueStore implements IIssueStore {
    * @param {string} binaryString
    * @param {string} descriptionHTML
    */
-  updateIssueDescription = async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueDescription) =>
+  updateIssueDescription = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssueDescription
+  ) => {
+    console.log("in issue store");
+    await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, data);
     this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssueDescription(
       workspaceSlug,
       projectId,
       issueId,
       data
     );
-
+  };
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
