@@ -9,8 +9,6 @@ import { Menu } from "@headlessui/react";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { CommentMentionRenderer } from "@/components/notifications";
 // constants
 import {
   ISSUE_OPENED,
@@ -21,6 +19,7 @@ import {
 import { snoozeOptions } from "@/constants/notification";
 // helper
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
+import { mentionCommentStringValidator } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
@@ -207,7 +206,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                     )
                   ) : (
                     <span>
-                      <CommentMentionRenderer content={notification.data.issue_activity.new_value ?? undefined} />
+                      {mentionCommentStringValidator(notification.data.issue_activity.new_value ?? undefined)}
                     </span>
                   )
                 ) : (
