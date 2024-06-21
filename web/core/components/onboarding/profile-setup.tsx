@@ -250,9 +250,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   // derived values
   const isPasswordAlreadySetup = !user?.is_password_autoset;
+  const currentPassword = watch("password") || undefined;
+  const currentConfirmPassword = watch("confirm_password") || undefined;
+
   const isValidPassword = useMemo(() => {
-    const currentPassword = watch("password") || undefined;
-    const currentConfirmPassword = watch("confirm_password") || undefined;
     if (currentPassword) {
       if (
         currentPassword === currentConfirmPassword &&
@@ -265,14 +266,12 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     } else {
       return true;
     }
-  }, [watch]);
+  }, [currentPassword, currentConfirmPassword]);
 
   // Check for all available fields validation and if password field is available, then checks for password validation (strength + confirmation).
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
-  const isButtonDisabled = useMemo(
-    () => (!isSubmitting && isValid && (isPasswordAlreadySetup ? true : isValidPassword) ? false : true),
-    [isSubmitting, isValid, isPasswordAlreadySetup, isValidPassword]
-  );
+  const isButtonDisabled =
+    !isSubmitting && isValid ? (isPasswordAlreadySetup ? false : isValidPassword ? false : true) : true;
 
   const isCurrentStepUserPersonalization = profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION;
 
