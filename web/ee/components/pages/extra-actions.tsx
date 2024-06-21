@@ -53,7 +53,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
       )}
       {isCurrentUserOwner && (
         <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
-          Publish
+          {isDeployed ? "Unpublish" : "Publish"}
         </Button>
       )}
     </>

@@ -33,14 +33,14 @@ export const PublishPageModal: React.FC<Props> = observer((props) => {
 
   const handlePublish = async () => {
     setIsPublishing(true);
-    await publishPage({});
-    setIsPublishing(false);
+    await publishPage({}).finally(() => setIsPublishing(false));
   };
 
   const handleUnpublish = async () => {
     setIsUnpublishing(true);
-    await unpublishPage();
-    setIsUnpublishing(false);
+    await unpublishPage()
+      .then(() => handleClose())
+      .finally(() => setIsUnpublishing(false));
   };
 
   const publishLink = `${SPACE_BASE_URL}/pages/${pagePublishSettings?.anchor}`;
