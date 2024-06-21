@@ -9,8 +9,8 @@ import { useInstance } from "@/hooks/store";
 // ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
-import { AuthenticationMethodCard } from "../components";
+import { PageHeader } from "@/components/common";
+import { AuthenticationMethodCard } from "@/components/authentication";
 import { InstanceOIDCConfigForm } from "./form";
 // icons
 import OIDCLogo from "/public/logos/oidc-logo.png";
