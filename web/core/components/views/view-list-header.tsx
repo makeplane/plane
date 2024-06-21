@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Search, X } from "lucide-react";
@@ -11,10 +11,9 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 export const ViewListHeader = observer(() => {
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
-
+  // store hooks
   const { searchQuery, updateSearchQuery } = useProjectView();
 
   // handlers
@@ -32,6 +31,10 @@ export const ViewListHeader = observer(() => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   return (
     <div className="h-full flex items-center gap-2">

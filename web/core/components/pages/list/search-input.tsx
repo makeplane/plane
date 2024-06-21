@@ -1,4 +1,4 @@
-import { FC, useState, useRef } from "react";
+import { FC, useState, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -30,6 +30,10 @@ export const PageSearchInput: FC<Props> = (props) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   return (
     <>
