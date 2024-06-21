@@ -8,9 +8,9 @@ import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucid
 import { Menu } from "@headlessui/react";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
-import { CommentMentionRenderer } from "@/components/notifications";
-// ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { CommentMentionRenderer } from "@/components/notifications";
 // constants
 import {
   ISSUE_OPENED,
