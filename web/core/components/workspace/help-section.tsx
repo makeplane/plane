@@ -70,12 +70,14 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           }
         )}
       >
-        {!isCollapsed && (
-          <div className="w-1/2">
-            <WorkspaceEditionBadge />
-          </div>
-        )}
-        <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
+        <div
+          className={cn("w-3/5", {
+            hidden: isCollapsed,
+          })}
+        >
+          <WorkspaceEditionBadge />
+        </div>
+        <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-2/5 justify-evenly"}`}>
           <Tooltip tooltipContent="Shortcuts" isMobile={isMobile}>
             <button
               type="button"

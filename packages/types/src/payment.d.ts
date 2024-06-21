@@ -7,15 +7,17 @@ export type IPaymentProductPrice = {
   workspace_amount: number;
 };
 
+export type TProductSubscriptionType = "FREE" | "PRO" | "ULTIMATE";
+
 export type IPaymentProduct = {
   description: string;
   id: string;
   name: string;
-  type: "PRO" | "ULTIMATE";
+  type: Omit<TProductSubscriptionType, "FREE">;
   prices: IPaymentProductPrice[];
 };
 
 export type IWorkspaceProductSubscription = {
-  product: "FREE" | "PRO" | "ULTIMATE";
+  product: TProductSubscriptionType;
   expiry_date: string | null;
 };

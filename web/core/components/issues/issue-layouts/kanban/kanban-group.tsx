@@ -91,7 +91,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
   }, [loadMoreIssues, groupId, sub_group_id])
 
-  const isPaginating = !!getIssueLoader(groupId);
+  const isPaginating = !!getIssueLoader(groupId, sub_group_id);
 
   useIntersectionObserver(
     containerRef,

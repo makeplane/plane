@@ -116,7 +116,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, moduleId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params, {
         signal: this.controller.signal,
@@ -160,6 +160,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        moduleId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId

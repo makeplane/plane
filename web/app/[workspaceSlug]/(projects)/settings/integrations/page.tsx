@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { cn } from "@plane/editor-core";
 import { getButtonStyling } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { SingleIntegrationCard } from "@/components/integration";
@@ -12,6 +11,8 @@ import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser, useWorkspace, useInstance } from "@/hooks/store";
 // services

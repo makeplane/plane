@@ -30,6 +30,7 @@ export interface IProfileIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    userId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -77,6 +78,17 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     const userId = this.rootIssueStore.userId;
     if (!userId) return undefined;
 
+    return this.getIssueFilters(userId);
+  }
+
+  get appliedFilters() {
+    const userId = this.rootIssueStore.userId;
+    if (!userId) return undefined;
+
+    return this.getAppliedFilters(userId);
+  }
+
+  getIssueFilters(userId: string) {
     const displayFilters = this.filters[userId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
@@ -85,8 +97,8 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     return _filters;
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(userId: string) {
+    const userFilters = this.getIssueFilters(userId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "profile_issues");
@@ -104,11 +116,12 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      userId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(userId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;

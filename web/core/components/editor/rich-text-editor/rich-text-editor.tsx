@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 // editor
-import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // helpers

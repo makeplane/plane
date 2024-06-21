@@ -92,7 +92,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {
         signal: this.controller.signal,
@@ -128,8 +128,8 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
-        viewId,
         this.paginationOptions,
+        viewId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId

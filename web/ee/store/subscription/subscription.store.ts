@@ -1,36 +1,50 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { set } from "lodash";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
-import { IWorkspaceProductSubscription } from "@plane/types";
+import { IWorkspaceProductSubscription, TProductSubscriptionType } from "@plane/types";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 
 const paymentService = new PaymentService();
 
+type TWorkspaceSubscriptionMap = {
+  [workspaceSlug: string]: TProductSubscriptionType;
+};
+
 export interface IWorkspaceSubscriptionStore {
-  subscribedPlan: "FREE" | "PRO" | "ULTIMATE";
+  subscribedPlan: TWorkspaceSubscriptionMap;
+  currentWorkspaceSubscribedPlan: TProductSubscriptionType | undefined;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
 }
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
-  subscribedPlan: "FREE" | "PRO" | "ULTIMATE" = "FREE";
+  subscribedPlan: TWorkspaceSubscriptionMap = {};
 
-  constructor() {
+  constructor(private rootStore: RootStore) {
     makeObservable(this, {
-      subscribedPlan: observable.ref,
+      subscribedPlan: observable,
+      currentWorkspaceSubscribedPlan: computed,
       fetchWorkspaceSubscribedPlan: action,
     });
+  }
+
+  get currentWorkspaceSubscribedPlan() {
+    if (!this.rootStore.router.workspaceSlug) return undefined;
+    return this.subscribedPlan[this.rootStore.router.workspaceSlug] || undefined;
   }
 
   fetchWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
     try {
       const response = await paymentService.getWorkspaceCurrentPlane(workspaceSlug);
       runInAction(() => {
-        this.subscribedPlan = response?.product || "FREE";
+        set(this.subscribedPlan, workspaceSlug, response?.product || "FREE");
       });
       return response;
     } catch (error) {
       runInAction(() => {
-        this.subscribedPlan = "FREE";
+        set(this.subscribedPlan, workspaceSlug, "FREE");
       });
       throw error;
     }

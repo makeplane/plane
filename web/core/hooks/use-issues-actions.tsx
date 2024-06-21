@@ -459,16 +459,16 @@ const useProjectViewIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
-      if (!workspaceSlug || !projectId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options);
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
+      if (!workspaceSlug || !projectId || !viewId) return;
+      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), viewId, loadType, options);
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
   const fetchNextIssues = useCallback(
     async (groupId?: string, subGroupId?: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), viewId, groupId, subGroupId);
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );

@@ -41,8 +41,8 @@ export interface IWorkspaceIssuesFilter extends IBaseIssueFilterStore {
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
   getAppliedFilters: (viewId: string) => Partial<Record<TIssueParams, string | boolean>> | undefined;
   getFilterParams: (
-    viewId: string,
     options: IssuePaginationOptions,
+    viewId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -104,10 +104,20 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     return filteredRouteParams;
   };
 
+  get issueFilters() {
+    const viewId = this.rootIssueStore.globalViewId;
+    return this.getIssueFilters(viewId);
+  }
+
+  get appliedFilters() {
+    const viewId = this.rootIssueStore.globalViewId;
+    return this.getAppliedFilters(viewId);
+  }
+
   getFilterParams = computedFn(
     (
-      viewId: string,
       options: IssuePaginationOptions,
+      viewId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
@@ -118,16 +128,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       return paginationParams;
     }
   );
-
-  get issueFilters() {
-    const viewId = this.rootIssueStore.globalViewId;
-    return this.getIssueFilters(viewId);
-  }
-
-  get appliedFilters() {
-    const viewId = this.rootIssueStore.globalViewId;
-    return this.getAppliedFilters(viewId);
-  }
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
     try {

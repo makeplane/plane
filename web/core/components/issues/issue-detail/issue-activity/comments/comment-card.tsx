@@ -4,7 +4,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/lite-text-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { TIssueComment } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";

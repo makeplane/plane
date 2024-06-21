@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Lock, Sparkle } from "lucide-react";
 // editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon } from "@plane/ui";
 // components

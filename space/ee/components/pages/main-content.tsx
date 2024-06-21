@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { FileText } from "lucide-react";
 // editor
-import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/document-editor";
+import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
 // ui
 import { Logo } from "@plane/ui";
 // hooks

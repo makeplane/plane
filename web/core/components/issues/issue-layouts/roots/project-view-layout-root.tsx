@@ -19,7 +19,7 @@ import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // types
 
-const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) => {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ProjectViewListLayout />;
@@ -61,7 +61,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <ProjectViewAppliedFiltersRoot />
         <div className="relative h-full w-full overflow-auto">
-          <ProjectViewIssueLayout activeLayout={activeLayout} />
+          <ProjectViewIssueLayout activeLayout={activeLayout} viewId={viewId.toString()} />
         </div>
 
         {/* peek overview */}
