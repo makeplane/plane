@@ -22,9 +22,9 @@ class EstimatePointSerializer(BaseSerializer):
         if not data:
             raise serializers.ValidationError("Estimate points are required")
         value = data.get("value")
-        if value and len(value) > 20:
+        if value and len(value) > 24:
             raise serializers.ValidationError(
-                "Value can't be more than 20 characters"
+                "Value can't be more than 24 characters"
             )
         return data
 
