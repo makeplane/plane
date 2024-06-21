@@ -83,7 +83,7 @@ export const ProjectsListHeader = observer(() => {
   };
 
   useEffect(() => {
-    if (searchQuery.trim() !== "" && !isSearchOpen) setIsSearchOpen(true);
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [isSearchOpen, searchQuery]);
 
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;

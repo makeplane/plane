@@ -64,7 +64,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const isFiltersApplied = calculateTotalFilters(currentProjectFilters ?? {}) !== 0;
 
   useEffect(() => {
-    if (searchQuery.trim() !== "" && !isSearchOpen) setIsSearchOpen(true);
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [isSearchOpen, searchQuery]);
 
   return (
