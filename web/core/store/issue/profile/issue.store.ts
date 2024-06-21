@@ -119,7 +119,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       this.setViewId(view);
 
       // get params from pagination options
-      let params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      let params = this.issueFilterStore?.getFilterParams(options, userId, undefined, undefined, undefined);
       params = {
         ...params,
         assignees: undefined,
@@ -167,6 +167,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       // get params from stored pagination options
       let params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        userId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId

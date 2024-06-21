@@ -161,7 +161,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, cycleId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params, {
         signal: this.controller.signal,
@@ -205,6 +205,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        cycleId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
