@@ -1,9 +1,11 @@
+/* eslint-disable no-useless-catch */
+
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IEstimate, IEstimatePoint as IEstimatePointType } from "@plane/types";
-// services
-import estimateService from "@/services/project/estimate.service";
+// plane web services
+import estimateService from "@/plane-web/services/project/estimate.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 
