@@ -28,6 +28,7 @@ export interface IProjectViewIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    viewId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -73,6 +74,17 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     const viewId = this.rootIssueStore.viewId;
     if (!viewId) return undefined;
 
+    return this.getIssueFilters(viewId);
+  }
+
+  get appliedFilters() {
+    const viewId = this.rootIssueStore.viewId;
+    if (!viewId) return undefined;
+
+    return this.getAppliedFilters(viewId);
+  }
+
+  getIssueFilters(viewId: string) {
     const displayFilters = this.filters[viewId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
@@ -81,8 +93,8 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     return _filters;
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(viewId: string) {
+    const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
@@ -100,11 +112,12 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      viewId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(viewId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -180,6 +193,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
+            viewId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
           );
           break;
@@ -217,7 +231,14 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+          if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
+              workspaceSlug,
+              projectId,
+              viewId,
+              "mutation"
+            );
+          }
 
           await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
             display_filters: _filters.displayFilters,

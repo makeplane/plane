@@ -290,7 +290,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @param displayFilters
    * @returns
    */
-  requiresServerUpdate = (displayFilters: IIssueDisplayFilterOptions) => {
+  getShouldReFetchIssues = (displayFilters: IIssueDisplayFilterOptions) => {
     const NON_SERVER_DISPLAY_FILTERS = ["order_by", "sub_issue", "type"];
     const displayFilterKeys = Object.keys(displayFilters);
 
