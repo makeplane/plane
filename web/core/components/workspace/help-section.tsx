@@ -14,9 +14,8 @@ import { useAppTheme, useCommandPalette } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
+import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
-// assets
-import packageJson from "package.json";
 
 const HELP_OPTIONS = [
   {
@@ -162,7 +161,9 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                   </button>
                 )}
               </div>
-              <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{packageJson.version}</div>
+              <div className="px-2 pb-1 pt-2 text-[10px]">
+                <PlaneVersionNumber />
+              </div>
             </div>
           </Transition>
         </div>
