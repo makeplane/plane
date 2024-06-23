@@ -9,16 +9,18 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
-export const WorkspaceSidebarQuickAction = observer(() => {
+export const SidebarQuickActions = observer(() => {
+  // states
+  const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
-  // states
-  const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
   const { toggleCreateIssueModal, toggleCommandPaletteModal } = useCommandPalette();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
@@ -27,7 +29,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-
+  // local storage
   const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
 
   //useState control for displaying draft issue button instead of group hover
@@ -70,11 +72,10 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         onSubmit={() => removeWorkspaceDraftIssue()}
         isDraft
       />
-
       <div
-        className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
-          isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
-        }`}
+        className={cn(`flex w-full cursor-pointer items-center justify-between gap-2`, {
+          "flex-col gap-1": isSidebarCollapsed,
+        })}
       >
         {isAuthorizedUser && (
           <div

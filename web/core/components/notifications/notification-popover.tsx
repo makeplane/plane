@@ -93,10 +93,10 @@ export const NotificationPopover = observer(() => {
             isMobile={isMobile}
           >
             <button
-              className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
+              className={`group relative flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium leading-5 outline-none ${
                 isActive
                   ? "bg-custom-primary-100/10 text-custom-primary-100"
-                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90"
               } ${isSidebarCollapsed ? "justify-center" : ""}`}
               onClick={() => {
                 if (window.innerWidth < 768) toggleSidebar();
@@ -104,7 +104,7 @@ export const NotificationPopover = observer(() => {
                 setIsActive(!isActive);
               }}
             >
-              <Bell className="h-4 w-4" />
+              <Bell className="size-4" />
               {isSidebarCollapsed ? null : <span>Notifications</span>}
               {totalNotificationCount && totalNotificationCount > 0 ? (
                 isSidebarCollapsed ? (
