@@ -5,27 +5,36 @@ const AUTO_SAVE_TIME = 10000;
 
 const useAutoSave = (handleSaveDescription: () => void) => {
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const handleSaveDescriptionRef = useRef(handleSaveDescription);
 
+  // Update the ref to always point to the latest handleSaveDescription
   useEffect(() => {
-    intervalIdRef.current = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
+    handleSaveDescriptionRef.current = handleSaveDescription;
+  }, [handleSaveDescription]);
+
+  // Set up the interval to run every 10 seconds
+  useEffect(() => {
+    intervalIdRef.current = setInterval(() => {
+      handleSaveDescriptionRef.current();
+    }, AUTO_SAVE_TIME);
 
     return () => {
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
       }
     };
-  }, [handleSaveDescription]);
+  }, []);
 
+  // Debounced save function for manual save (Ctrl+S or Cmd+S)
   useEffect(() => {
-    // debounce the function so that excesive calls to handleSaveDescription don't cause multiple calls to the server
     const debouncedSave = debounce(() => {
-      handleSaveDescription();
+      handleSaveDescriptionRef.current();
 
       if (intervalIdRef.current) {
-        // clear the interval after saving manually
         clearInterval(intervalIdRef.current);
-        // then reset the interval for auto-save to keep working
-        intervalIdRef.current = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
+        intervalIdRef.current = setInterval(() => {
+          handleSaveDescriptionRef.current();
+        }, AUTO_SAVE_TIME);
       }
     }, 500);
 
@@ -45,7 +54,7 @@ const useAutoSave = (handleSaveDescription: () => void) => {
     return () => {
       window.removeEventListener("keydown", handleSave);
     };
-  }, [handleSaveDescription]);
+  }, []);
 };
 
 export default useAutoSave;
