@@ -6,4 +6,5 @@ use (
 	./lib/healthcheck
 	./lib/logger
 	./lib/api
+	./lib/router
 )

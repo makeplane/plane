@@ -46,7 +46,6 @@ var rootCmd = &cobra.Command{
 		} else {
 			MACHINE_SIGNATURE = machineSignature
 		}
-
 		return nil
 	},
 }
