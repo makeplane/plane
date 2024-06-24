@@ -1,13 +1,28 @@
 // services
-import type { CycleDateCheckData, ICycle, TIssuesResponse } from "@plane/types";
+import type { CycleDateCheckData, ICycle, TIssuesResponse, IWorkspaceActiveCyclesResponse } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
-// types
-// helpers
 
 export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async workspaceActiveCycles(
+    workspaceSlug: string,
+    cursor: string,
+    per_page: number
+  ): Promise<IWorkspaceActiveCyclesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/active-cycles/`, {
+      params: {
+        per_page,
+        cursor,
+      },
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 
   async getWorkspaceCycles(workspaceSlug: string): Promise<ICycle[]> {
