@@ -165,7 +165,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
           message: () => "Issue created successfully.",
           actionItems: (data) => (
             <CreateIssueToastActionItems
-              workspaceSlug={currentProjectDetails.workspace_detail.slug}
+              workspaceSlug={currentWorkspace.slug}
               projectId={currentProjectDetails.id}
               issueId={data.id}
             />
