@@ -29,6 +29,9 @@ export const AppSwitcher = () => {
 
   const isPagesApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
 
+  // Hide app switcher for now
+  if (true) return null;
+
   return (
     <div className="flex my-2 rounded-lg bg-custom-sidebar-background-90 w-full p-1">
       {APPS_LIST.map((app) => (
