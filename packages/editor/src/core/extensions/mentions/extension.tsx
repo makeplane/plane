@@ -52,11 +52,9 @@ export const CustomMention = ({
         },
       };
     },
-
     addNodeView() {
       return ReactNodeViewRenderer(MentionNodeView);
     },
-
     parseHTML() {
       return [
         {
@@ -67,12 +65,14 @@ export const CustomMention = ({
     renderHTML({ HTMLAttributes }) {
       return ["mention-component", mergeAttributes(HTMLAttributes)];
     },
+  }).configure({
     HTMLAttributes: {
       class: "mention",
     },
     readonly: readonly,
-    mentionHighlights: mentionHighlights,
+    mentionHighlights,
     suggestion: {
+      // @ts-expect-error - Tiptap types are incorrect
       render: () => {
         if (!mentionSuggestions) return;
         let component: ReactRenderer | null = null;
