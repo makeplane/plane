@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronUp, Crown, Settings } from "lucide-react";
+import { ChevronRight, Crown, Settings } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -58,9 +58,9 @@ export const SidebarWorkspaceMenu = observer(() => {
             onClick={() => setIsWorkspaceMenuOpen((prev) => !prev)}
           >
             <span>Workspace</span>
-            <ChevronUp
+            <ChevronRight
               className={cn("flex-shrink-0 size-3.5 transition-all", {
-                "rotate-180": isWorkspaceMenuOpen,
+                "rotate-90": isWorkspaceMenuOpen,
               })}
             />
           </Disclosure.Button>

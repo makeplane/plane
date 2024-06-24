@@ -20,7 +20,7 @@ import {
   LogOut,
   MoreHorizontal,
   Inbox,
-  ChevronUp,
+  ChevronRight,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
@@ -353,9 +353,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       }
                     )}
                   >
-                    <ChevronUp
-                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-[transform]", {
-                        "rotate-180": open,
+                    <ChevronRight
+                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                        "rotate-90": open,
                       })}
                     />
                   </Disclosure.Button>

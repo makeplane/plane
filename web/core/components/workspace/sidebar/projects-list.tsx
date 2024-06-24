@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronUp, Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
@@ -214,9 +214,9 @@ export const SidebarProjectsList: FC = observer(() => {
                       <span>{isCollapsed ? section.shortTitle : section.title}</span>
                     </Tooltip>
                     {!isCollapsed && (
-                      <ChevronUp
+                      <ChevronRight
                         className={cn("flex-shrink-0 size-3.5 transition-all", {
-                          "rotate-180": section.isOpen,
+                          "rotate-90": section.isOpen,
                         })}
                       />
                     )}
