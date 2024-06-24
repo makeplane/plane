@@ -8,6 +8,7 @@ import { PlusIcon } from "lucide-react";
 import { IProject, TIssue } from "@plane/types";
 // hooks
 import { setPromiseToast } from "@plane/ui";
+import { CreateIssueToastActionItems } from "@/components/issues";
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -113,6 +114,13 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
         success: {
           title: "Success!",
           message: () => "Issue created successfully.",
+          actionItems: (data) => (
+            <CreateIssueToastActionItems
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              issueId={data.id}
+            />
+          ),
         },
         error: {
           title: "Error!",

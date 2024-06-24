@@ -7,6 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 import type { TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -189,6 +190,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: `${is_draft_issue ? "Draft issue" : "Issue"} created successfully.`,
+        actionItems: !is_draft_issue && (
+          <CreateIssueToastActionItems
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            issueId={response.id}
+          />
+        ),
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
