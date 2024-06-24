@@ -19,6 +19,7 @@ class ProjectSerializer(BaseSerializer):
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     is_deployed = serializers.BooleanField(read_only=True)
+    inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
     class Meta:
         model = Project

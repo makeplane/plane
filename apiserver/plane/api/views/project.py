@@ -298,7 +298,9 @@ class ProjectAPIEndpoint(BaseAPIView):
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["intake_view"]:
+                if serializer.data["intake_view"] or request.data.get(
+                    "inbox_view"
+                ):
                     Intake.objects.get_or_create(
                         name=f"{project.name} Intake",
                         project=project,
