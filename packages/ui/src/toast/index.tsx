@@ -57,7 +57,7 @@ type ToastProps = {
 
 export const Toast = (props: ToastProps) => {
   const { theme } = props;
-  return <Toaster visibleToasts={5} gap={16} duration={2000000} position="bottom-right" theme={theme} />;
+  return <Toaster visibleToasts={5} gap={16} theme={theme} />;
 };
 
 export const setToast = (props: SetToastProps) => {
