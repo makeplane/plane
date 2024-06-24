@@ -1,3 +1,4 @@
+import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 
 export interface CompleteCollaboratorProviderConfiguration {
@@ -12,7 +13,7 @@ export interface CompleteCollaboratorProviderConfiguration {
   /**
    * onChange callback
    */
-  onChange: (updates: Uint8Array) => void;
+  onChange: (updates: Uint8Array, source?: string) => void;
   /**
    * Whether connection to the database has been established and all available content has been loaded or not.
    */
@@ -25,19 +26,27 @@ export type CollaborationProviderConfiguration = Required<Pick<CompleteCollabora
 export class CollaborationProvider {
   public configuration: CompleteCollaboratorProviderConfiguration = {
     name: "",
-    // @ts-expect-error cannot be undefined
-    document: undefined,
+    document: new Y.Doc(),
     onChange: () => {},
     hasIndexedDBSynced: false,
   };
 
+  unsyncedChanges = 0;
+
+  private initialSync = false;
+
   constructor(configuration: CollaborationProviderConfiguration) {
     this.setConfiguration(configuration);
 
-    this.configuration.document = configuration.document ?? new Y.Doc();
+    this.indexeddbProvider = new IndexeddbPersistence(`page-${this.configuration.name}`, this.document);
+    this.indexeddbProvider.on("synced", () => {
+      this.configuration.hasIndexedDBSynced = true;
+    });
     this.document.on("update", this.documentUpdateHandler.bind(this));
     this.document.on("destroy", this.documentDestroyHandler.bind(this));
   }
+
+  private indexeddbProvider: IndexeddbPersistence;
 
   public setConfiguration(configuration: Partial<CompleteCollaboratorProviderConfiguration> = {}): void {
     this.configuration = {
@@ -50,17 +59,49 @@ export class CollaborationProvider {
     return this.configuration.document;
   }
 
-  setHasIndexedDBSynced(hasIndexedDBSynced: boolean) {
-    this.configuration.hasIndexedDBSynced = hasIndexedDBSynced;
+  public hasUnsyncedChanges(): boolean {
+    return this.unsyncedChanges > 0;
   }
 
-  documentUpdateHandler(update: Uint8Array, origin: any) {
-    if (!this.configuration.hasIndexedDBSynced) return;
+  private resetUnsyncedChanges() {
+    this.unsyncedChanges = 0;
+  }
+
+  private incrementUnsyncedChanges() {
+    this.unsyncedChanges += 1;
+  }
+
+  public setSynced() {
+    this.resetUnsyncedChanges();
+  }
+
+  public async hasIndexedDBSynced() {
+    await this.indexeddbProvider.whenSynced;
+    return this.configuration.hasIndexedDBSynced;
+  }
+
+  async documentUpdateHandler(_update: Uint8Array, origin: any) {
+    await this.indexeddbProvider.whenSynced;
+
     // return if the update is from the provider itself
     if (origin === this) return;
 
     // call onChange with the update
-    this.configuration.onChange?.(update);
+    const stateVector = Y.encodeStateAsUpdate(this.document);
+
+    if (!this.initialSync) {
+      this.configuration.onChange?.(stateVector, "initialSync");
+      this.initialSync = true;
+      return;
+    }
+
+    this.configuration.onChange?.(stateVector);
+    this.incrementUnsyncedChanges();
+  }
+
+  getUpdateFromIndexedDB(): Uint8Array {
+    const update = Y.encodeStateAsUpdate(this.document);
+    return update;
   }
 
   documentDestroyHandler() {

@@ -21,6 +21,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { usePageDescription } from "@/hooks/use-page-description";
 
 const PageDetailsPage = observer(() => {
   // states
@@ -47,6 +48,16 @@ const PageDetailsPage = observer(() => {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+    }
+  );
+
+  // project-description
+  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS, handleSaveDescription } = usePageDescription(
+    {
+      editorRef,
+      page,
+      projectId,
+      workspaceSlug,
     }
   );
 
@@ -78,7 +89,7 @@ const PageDetailsPage = observer(() => {
   const handleDuplicatePage = async () => {
     const formData: Partial<TPage> = {
       name: "Copy of " + name,
-      description_html: description_html ?? "<p></p>",
+      description_html: editorRef.current?.getHTML() ?? description_html ?? "<p></p>",
       access,
     };
 
@@ -104,6 +115,7 @@ const PageDetailsPage = observer(() => {
             editorReady={editorReady}
             readOnlyEditorReady={readOnlyEditorReady}
             handleDuplicatePage={handleDuplicatePage}
+            handleSaveDescription={handleSaveDescription}
             markings={markings}
             page={page}
             sidePeekVisible={sidePeekVisible}
@@ -118,6 +130,9 @@ const PageDetailsPage = observer(() => {
             page={page}
             sidePeekVisible={sidePeekVisible}
             updateMarkings={updateMarkings}
+            handleDescriptionChange={handleDescriptionChange}
+            isDescriptionReady={isDescriptionReady}
+            pageDescriptionYJS={pageDescriptionYJS}
           />
           <IssuePeekOverview />
         </div>
