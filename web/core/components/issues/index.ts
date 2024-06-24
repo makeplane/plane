@@ -9,6 +9,7 @@ export * from "./parent-issues-list-modal";
 export * from "./label";
 export * from "./confirm-issue-discard";
 export * from "./issue-update-status";
+export * from "./create-issue-toast-action-items";
 
 // issue details
 export * from "./issue-detail";
