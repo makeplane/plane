@@ -48,28 +48,29 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
           "p-2": sidebarCollapsed,
         })}
       >
-        <div className="w-full pb-2">
-          <SidebarDropdown />
-        </div>
+        <SidebarDropdown />
+        <div className="flex-shrink-0 h-4" />
         <SidebarAppSwitcher />
-        <div className="w-full py-2">
-          <SidebarQuickActions />
-        </div>
-        {sidebarCollapsed && <hr className="border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto" />}
-        <div className="w-full py-2">
-          <SidebarUserMenu />
-        </div>
-        {sidebarCollapsed && <hr className="border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto" />}
-        <div className="w-full py-2">
-          <SidebarWorkspaceMenu />
-        </div>
-        {sidebarCollapsed && <hr className="border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto" />}
-        <div className="size-full py-2">
-          <SidebarProjectsList />
-        </div>
-        <div className="flex-shrink-0">
-          <SidebarHelpSection />
-        </div>
+        <SidebarQuickActions />
+        <hr
+          className={cn("flex-shrink-0 border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto my-2", {
+            "opacity-0": !sidebarCollapsed,
+          })}
+        />
+        <SidebarUserMenu />
+        <hr
+          className={cn("flex-shrink-0 border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto my-2", {
+            "opacity-0": !sidebarCollapsed,
+          })}
+        />
+        <SidebarWorkspaceMenu />
+        <hr
+          className={cn("flex-shrink-0 border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto my-2", {
+            "opacity-0": !sidebarCollapsed,
+          })}
+        />
+        <SidebarProjectsList />
+        <SidebarHelpSection />
       </div>
     </div>
   );
