@@ -30,14 +30,12 @@ from .project import (
     ProjectIdentifierSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
-    ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import (
-    GlobalViewSerializer,
     IssueViewSerializer,
 )
 
@@ -134,3 +132,5 @@ from .integration import (
     GithubCommentSyncSerializer,
     SlackProjectSyncSerializer,
 )
+
+from .deploy_board import DeployBoardSerializer

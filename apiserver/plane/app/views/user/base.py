@@ -35,6 +35,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class UserEndpoint(BaseViewSet):
@@ -159,6 +160,12 @@ class UserEndpoint(BaseViewSet):
             workspaces_to_deactivate, ["is_active"], batch_size=100
         )
 
+        # Sync workspace members
+        [
+            member_sync_task.delay(workspace.workspace.slug)
+            for workspace in workspaces_to_deactivate
+        ]
+
         # Delete all workspace invites
         WorkspaceMemberInvite.objects.filter(
             email=user.email,
@@ -250,6 +257,7 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
         ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
             on_results=lambda issue_activities: IssueActivitySerializer(

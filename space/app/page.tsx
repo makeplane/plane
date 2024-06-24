@@ -1,6 +1,6 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { UserLoggedIn } from "@/components/account";
 import { LogoSpinner } from "@/components/common";

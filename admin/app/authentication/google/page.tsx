@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
+import { AuthenticationMethodCard } from "@/components/authentication";
+import { PageHeader } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
 import GoogleLogo from "@/public/logos/google-logo.svg";
 // local components
-import { AuthenticationMethodCard } from "../components";
 import { InstanceGoogleConfigForm } from "./form";
 
 const InstanceGoogleAuthenticationPage = observer(() => {

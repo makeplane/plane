@@ -7,7 +7,12 @@
     "jsx": "preserve",
     "esModuleInterop": true,
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["core/*"],
+      "@/helpers/*": ["helpers/*"],
+      "@/public/*": ["public/*"],
+      "@/styles/*": ["styles/*"],
+      "@/plane-web/*": ["ee/*"],
+      "@/ce/*": ["ce/*"]
     },
     "plugins": [
       {

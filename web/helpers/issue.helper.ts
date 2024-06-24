@@ -5,7 +5,6 @@ import {
   TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
-  TIssueLayouts,
   TIssueOrderByOptions,
   TIssueParams,
   TStateGroups,
@@ -14,7 +13,7 @@ import {
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
@@ -93,7 +92,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 };
 
 export const handleIssueQueryParamsByLayout = (
-  layout: TIssueLayouts | undefined,
+  layout: EIssueLayoutTypes | undefined,
   viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues"
 ): TIssueParams[] | null => {
   const queryParams: TIssueParams[] = [];
@@ -169,17 +168,16 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is overdue, highlight the due date
   return targetDateDistance <= 0;
 };
-export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
-  blocks?.map((block) => ({
+export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
     data: block,
-    id: block.id,
-    sort_order: block.sort_order,
-    start_date: getDate(block.start_date),
-    target_date: getDate(block.target_date),
-  }));
+    id: block?.id,
+    sort_order: block?.sort_order,
+    start_date: getDate(block?.start_date),
+    target_date: getDate(block?.target_date),
+  });
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
-  const changedFields: Partial<TIssue> = {};
+  const changedFields = {} as any;
 
   const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
   for (const dirtyField of dirtyFieldKeys) {
@@ -188,7 +186,7 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
     }
   }
 
-  return changedFields;
+  return changedFields as Partial<TIssue>;
 }
 
 export const formatTextList = (TextArray: string[]): string => {
@@ -216,8 +214,8 @@ export const getDescriptionPlaceholder = (isFocused: boolean, description: strin
 };
 
 export const issueCountBasedOnFilters = (
-  issueIds: TUnGroupedIssues | TGroupedIssues | TSubGroupedIssues,
-  layout: TIssueLayouts,
+  issueIds: TGroupedIssues | TUnGroupedIssues | TSubGroupedIssues,
+  layout: EIssueLayoutTypes,
   groupBy: string | undefined,
   subGroupBy: string | undefined
 ): number => {

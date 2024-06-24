@@ -31,7 +31,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
-
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
 
 
@@ -243,6 +243,9 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     },
                 )
 
+                # sync workspace members
+                member_sync_task.delay(slug)
+
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
                     status=status.HTTP_200_OK,
@@ -314,6 +317,12 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             ],
             ignore_conflicts=True,
         )
+
+        # Sync workspace members
+        [
+            member_sync_task.delay(invitation.workspace.slug)
+            for invitation in workspace_invitations
+        ]
 
         # Delete joined workspace invites
         workspace_invitations.delete()

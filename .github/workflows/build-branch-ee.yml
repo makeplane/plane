@@ -34,6 +34,7 @@ jobs:
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
       build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
       build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
+      build_monitor: ${{ steps.changed_files.outputs.monitor_any_changed }}
       artifact_upload_to_s3: ${{ steps.set_env_variables.outputs.artifact_upload_to_s3 }}
       artifact_s3_suffix: ${{ steps.set_env_variables.outputs.artifact_s3_suffix }}
 
@@ -41,7 +42,7 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
+          if [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
@@ -103,6 +104,8 @@ jobs:
               - "yarn.lock"
               - "tsconfig.json"
               - "turbo.json"
+            monitor:
+              - monitor/**
 
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
@@ -429,6 +432,71 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  branch_build_push_monitor:
+    if: ${{ needs.branch_build_setup.outputs.build_monitor == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Monitor Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      MONITOR_TAG: makeplane/monitor-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Monitor Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=makeplane/monitor-enterprise:stable
+            TAG=${TAG},makeplane/monitor-enterprise:${{ github.event.release.tag_name }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:stable
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/monitor-enterprise:latest
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:latest
+          else
+            TAG=${{ env.MONITOR_TAG }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+          fi
+          echo "MONITOR_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to Harbor
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_TOKEN }}
+          registry: ${{ vars.HARBOR_REGISTRY }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Monitor to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: ./monitor
+          file: ./monitor/Dockerfile
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.MONITOR_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
@@ -464,3 +532,4 @@ jobs:
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
 
           rm -rf ~/${{ env.ARTIFACT_SUFFIX }}
+

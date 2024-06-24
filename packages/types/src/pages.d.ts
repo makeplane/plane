@@ -4,6 +4,7 @@ import { TIssuePriorities } from "./issues";
 
 export type TPage = {
   access: EPageAccess | undefined;
+  anchor?: string | null | undefined;
   archived_at: string | null | undefined;
   color: string | undefined;
   created_at: Date | undefined;
@@ -12,10 +13,10 @@ export type TPage = {
   id: string | undefined;
   is_favorite: boolean;
   is_locked: boolean;
-  labels: string[] | undefined;
+  label_ids: string[] | undefined;
   name: string | undefined;
   owned_by: string | undefined;
-  project: string | undefined;
+  project_ids: string[] | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
   workspace: string | undefined;

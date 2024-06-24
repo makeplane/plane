@@ -19,6 +19,12 @@ class ActiveCycleSerializer(BaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
+    
+    backlog_estimate_points = serializers.IntegerField(read_only=True)
+    unstarted_estimate_points = serializers.IntegerField(read_only=True)
+    started_estimate_points = serializers.IntegerField(read_only=True)
+    cancelled_estimate_points = serializers.IntegerField(read_only=True)
+    total_estimate_points = serializers.IntegerField(read_only=True)
 
     # active | draft | upcoming | completed
     status = serializers.CharField(read_only=True)
@@ -54,5 +60,11 @@ class ActiveCycleSerializer(BaseSerializer):
             "backlog_issues",
             "status",
             "project_detail",
+            "backlog_estimate_points",
+            "unstarted_estimate_points",
+            "started_estimate_points",
+            "cancelled_estimate_points",
+            "total_estimate_points",
+            
         ]
         read_only_fields = fields

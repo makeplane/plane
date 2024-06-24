@@ -1,3 +1,12 @@
+x-monitor-env: &monitor-env
+  environment:
+    - SERVICE_HTTP_WEB=web:3000
+    - SERVICE_HTTP_API=api:8000
+    - SERVICE_HTTP_PROXY=proxy:80
+    - SERVICE_HTTP_MINIO=plane-minio:9090
+    - SERVICE_TCP_REDIS=plane-redis:6379
+    - SERVICE_TCP_POSTGRES=plane-db:5432
+
 x-proxy-env: &proxy-env
   environment:
     - SITE_ADDRESS=${SITE_ADDRESS:-localhost:80}
@@ -66,6 +75,11 @@ services:
     depends_on:
       - api
       - worker
+
+  monitor:
+    <<: *monitor-env
+    image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
+    restart: unless-stopped
 
   space:
     <<: *app-env
@@ -137,7 +151,7 @@ services:
 
   plane-redis:
     <<: *app-env
-    image: registry.plane.tools/plane/redis:7.2.4-alpine
+    image: registry.plane.tools/plane/valkey:7.2.5-alpine
     restart: unless-stopped
     volumes:
       - ${INSTALL_DIR}/data/redis:/data

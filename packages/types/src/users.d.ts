@@ -5,7 +5,7 @@ import {
   TStateGroups,
 } from ".";
 
-type TLoginMediums = "email" | "magic-code" | "github" | "google";
+type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
 export interface IUser {
   id: string;
@@ -185,6 +185,8 @@ export interface IUserEmailNotificationSettings {
   mention: boolean;
   issue_completed: boolean;
 }
+
+export type TProfileViews = "assigned" | "created" | "subscribed";
 
 // export interface ICurrentUser {
 //   id: readonly string;

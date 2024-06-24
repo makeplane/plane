@@ -1,44 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
-import Image from "next/image";
-import { useTheme } from "next-themes";
+import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Mails, KeyRound } from "lucide-react";
 import { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
+import { PageHeader } from "@/components/common";
 // helpers
-import { cn, resolveGeneralTheme } from "@/helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+// hooks
 import { useInstance } from "@/hooks/store";
-// images
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GoogleLogo from "@/public/logos/google-logo.svg";
-// images - enterprise
-import OIDCLogo from "@/public/logos/oidc-logo.png";
-import SAMLLogo from "@/public/logos/saml-logo.svg";
-// local components
-import {
-  AuthenticationMethodCard,
-  EmailCodesConfiguration,
-  PasswordLoginConfiguration,
-  GithubConfiguration,
-  GoogleConfiguration,
-  // enterprise
-  OIDCConfiguration,
-  SAMLConfiguration,
-} from "./components";
-
-type TInstanceAuthenticationMethodCard = {
-  key: string;
-  name: string;
-  description: string;
-  icon: JSX.Element;
-  config: JSX.Element;
-};
+// plane admin components
+import { AuthenticationModes } from "@/plane-admin/components/authentication";
 
 const InstanceAuthenticationPage = observer(() => {
   // store
@@ -48,8 +22,6 @@ const InstanceAuthenticationPage = observer(() => {
 
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  // theme
-  const { resolvedTheme } = useTheme();
   // derived values
   const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
 
@@ -83,63 +55,6 @@ const InstanceAuthenticationPage = observer(() => {
         setIsSubmitting(false);
       });
   };
-
-  // Authentication methods
-  const authenticationMethodsCard: TInstanceAuthenticationMethodCard[] = [
-    {
-      key: "email-codes",
-      name: "Email codes",
-      description: "Login or sign up using codes sent via emails. You need to have email setup here and enabled.",
-      icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
-      config: <EmailCodesConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "password-login",
-      name: "Password based login",
-      description: "Allow members to create accounts with passwords for emails to sign in.",
-      icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
-      config: <PasswordLoginConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "google",
-      name: "Google",
-      description: "Allow members to login or sign up to plane with their Google accounts.",
-      icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
-      config: <GoogleConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "github",
-      name: "Github",
-      description: "Allow members to login or sign up to plane with their Github accounts.",
-      icon: (
-        <Image
-          src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
-          height={20}
-          width={20}
-          alt="GitHub Logo"
-        />
-      ),
-      config: <GithubConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-  ];
-
-  // Enterprise authentication methods
-  authenticationMethodsCard.push(
-    {
-      key: "oidc",
-      name: "OIDC",
-      description: "Authenticate your users via the OpenID connect protocol.",
-      icon: <Image src={OIDCLogo} height={20} width={20} alt="OIDC Logo" />,
-      config: <OIDCConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "saml",
-      name: "SAML",
-      description: "Authenticate your users via Security Assertion Markup Language protocol.",
-      icon: <Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pb-0.5 pl-0.5" />,
-      config: <SAMLConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    }
-  );
 
   return (
     <>
@@ -182,16 +97,7 @@ const InstanceAuthenticationPage = observer(() => {
                 </div>
               </div>
               <div className="text-lg font-medium pt-6">Authentication modes</div>
-              {authenticationMethodsCard.map((method) => (
-                <AuthenticationMethodCard
-                  key={method.key}
-                  name={method.name}
-                  description={method.description}
-                  icon={method.icon}
-                  config={method.config}
-                  disabled={isSubmitting}
-                />
-              ))}
+              <AuthenticationModes disabled={isSubmitting} updateConfig={updateConfig} />
             </div>
           ) : (
             <Loader className="space-y-10">

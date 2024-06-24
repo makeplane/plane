@@ -136,7 +136,7 @@ services:
 
   plane-redis:
     <<: *app-env
-    image: registry.plane.tools/plane/redis:7.2.4-alpine
+    image: registry.plane.tools/plane/valkey:7.2.5-alpine
     pull_policy: if_not_present
     restart: unless-stopped
     volumes:

@@ -4,7 +4,7 @@ from .project.base import (
     ProjectUserViewsEndpoint,
     ProjectFavoritesViewSet,
     ProjectPublicCoverImagesEndpoint,
-    ProjectDeployBoardViewSet,
+    DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
 )
 
@@ -80,8 +80,8 @@ from .workspace.cycle import (
 
 from .state.base import StateViewSet
 from .view.base import (
-    GlobalViewViewSet,
-    GlobalViewIssuesViewSet,
+    WorkspaceViewViewSet,
+    WorkspaceViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
 )
@@ -114,7 +114,7 @@ from .issue.activity import (
     IssueActivityEndpoint,
 )
 
-from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
+from .issue.archive import IssueArchiveViewSet
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
@@ -150,11 +150,7 @@ from .issue.sub_issue import (
 
 from .issue.subscriber import (
     IssueSubscriberViewSet,
-    BulkSubscribeIssuesEndpoint,
 )
-
-
-from .issue.bulk_operations import BulkIssueOperationsEndpoint
 
 from .module.base import (
     ModuleViewSet,
@@ -182,16 +178,27 @@ from .page.base import (
     PagesDescriptionViewSet,
 )
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
+from .search.base import (
+    GlobalSearchEndpoint,
+    SearchEndpoint,
+)
 
+from .search.base import GlobalSearchEndpoint
+from .search.issue import IssueSearchEndpoint
+from .search.workspace import (
+    WorkspaceSearchEndpoint,
+    WorkspaceEntitySearchEndpoint,
+)
 
 from .external.base import (
     GPTIntegrationEndpoint,
     UnsplashEndpoint,
+    WorkspaceGPTIntegrationEndpoint,
 )
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
+    EstimatePointEndpoint,
 )
 
 from .inbox.base import InboxViewSet, InboxIssueViewSet

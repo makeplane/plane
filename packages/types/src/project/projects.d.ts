@@ -32,7 +32,7 @@ export interface IProject {
   estimate: string | null;
   id: string;
   identifier: string;
-  is_deployed: boolean;
+  anchor: string | null;
   is_favorite: boolean;
   is_member: boolean;
   logo_props: TLogoProps;
@@ -51,6 +51,12 @@ export interface IProject {
   updated_by: string;
   workspace: IWorkspace | string;
   workspace_detail: IWorkspaceLite;
+  emoji: string | null;
+  icon_prop: {
+    name: string;
+    color: string;
+  } | null;
+  logo_props: TProjectLogoProps;
 }
 
 export interface IProjectLite {

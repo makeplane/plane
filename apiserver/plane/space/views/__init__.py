@@ -1,6 +1,7 @@
 from .project import (
-    ProjectDeployBoardPublicSettingsEndpoint,
+    DeployBoardPublicSettingsEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
+    WorkspaceProjectAnchorEndpoint,
 )
 
 from .issue import (

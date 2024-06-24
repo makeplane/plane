@@ -14,6 +14,10 @@ from .app.github import (
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
 )
+from .app.gitlab import (
+    GitLabCallbackEndpoint,
+    GitLabOauthInitiateEndpoint,
+)
 from .app.google import (
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
@@ -45,6 +49,11 @@ from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
 from .space.github import (
     GitHubCallbackSpaceEndpoint,
     GitHubOauthInitiateSpaceEndpoint,
+)
+
+from .space.gitlab import (
+    GitLabCallbackSpaceEndpoint,
+    GitLabOauthInitiateSpaceEndpoint,
 )
 
 from .space.google import (
