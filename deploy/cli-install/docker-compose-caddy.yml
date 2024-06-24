@@ -6,6 +6,7 @@ x-monitor-env: &monitor-env
     - SERVICE_HTTP_MINIO=plane-minio:9090
     - SERVICE_TCP_REDIS=plane-redis:6379
     - SERVICE_TCP_POSTGRES=plane-db:5432
+    - TRUSTED_PROXIES=${TRUSTED_PROXIES:-0.0.0.0/0}
 
 x-proxy-env: &proxy-env
   environment:
