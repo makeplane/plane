@@ -1,19 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
-// editor
-import {
-  EditorRefApi,
-  applyUpdates,
-  generateJSONfromHTML,
-  mergeUpdates,
-  proseMirrorJSONToBinaryString,
-} from "@plane/editor";
+
 // hooks
+import { EditorRefApi, generateJSONfromHTML, proseMirrorJSONToBinaryString, applyUpdates } from "@plane/editor";
+import useAutoSave from "@/hooks/use-auto-save";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+
 // services
 import { ProjectPageService } from "@/services/page";
-// store
 import { IPage } from "@/store/pages/page";
+
 const projectPageService = new ProjectPageService();
 
 type Props = {
@@ -23,22 +19,27 @@ type Props = {
   workspaceSlug: string | string[] | undefined;
 };
 
-const AUTO_SAVE_TIME = 10000;
-
 export const usePageDescription = (props: Props) => {
   const { editorRef, page, projectId, workspaceSlug } = props;
-  // states
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
-  const [descriptionUpdates, setDescriptionUpdates] = useState<Uint8Array[]>([]);
-  // derived values
+  const [localDescriptionYJS, setLocalDescriptionYJS] = useState<Uint8Array>();
   const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
+
   const pageDescription = page.description_html;
   const pageId = page.id;
 
-  const { data: descriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
+  const { data: pageDescriptionYJS, mutate: mutateDescriptionYJS } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DESCRIPTION_${workspaceSlug}_${projectId}_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => projectPageService.fetchDescriptionYJS(workspaceSlug.toString(), projectId.toString(), pageId.toString())
+      ? async () => {
+          const encodedDescription = await projectPageService.fetchDescriptionYJS(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId.toString()
+          );
+          const decodedDescription = new Uint8Array(encodedDescription);
+          return decodedDescription;
+        }
       : null,
     {
       revalidateOnFocus: false,
@@ -46,15 +47,19 @@ export const usePageDescription = (props: Props) => {
       revalidateIfStale: false,
     }
   );
-  // description in Uint8Array format
-  const pageDescriptionYJS = useMemo(
-    () => (descriptionYJS ? new Uint8Array(descriptionYJS) : undefined),
-    [descriptionYJS]
-  );
 
-  // push the new updates to the updates array
-  const handleDescriptionChange = useCallback((updates: Uint8Array) => {
-    setDescriptionUpdates((prev) => [...prev, updates]);
+  // set the merged local doc by the provider to the react local state
+  const handleDescriptionChange = useCallback((update: Uint8Array, source?: string) => {
+    setLocalDescriptionYJS(() => {
+      // handle the initial sync case where indexeddb gives extra update, in
+      // this case we need to save the update to the DB
+      if (source && source === "initialSync") {
+        handleSaveDescription(update);
+      }
+
+      return update;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // if description_binary field is empty, convert description_html to yDoc and update the DB
@@ -62,98 +67,89 @@ export const usePageDescription = (props: Props) => {
   useEffect(() => {
     const changeHTMLToBinary = async () => {
       if (!pageDescriptionYJS || !pageDescription) return;
-      if (pageDescriptionYJS.byteLength === 0) {
+      if (pageDescriptionYJS.length === 0) {
         const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
+
         await updateDescription(yDocBinaryString, pageDescription ?? "<p></p>");
+
         await mutateDescriptionYJS();
+
         setIsDescriptionReady(true);
       } else setIsDescriptionReady(true);
     };
     changeHTMLToBinary();
   }, [mutateDescriptionYJS, pageDescription, pageDescriptionYJS, updateDescription]);
 
-  const handleSaveDescription = useCallback(async () => {
-    if (!isContentEditable) return;
+  const { setShowAlert } = useReloadConfirmations(true);
 
-    const applyUpdatesAndSave = async (latestDescription: any, updates: Uint8Array) => {
-      if (!workspaceSlug || !projectId || !pageId || !latestDescription) return;
-      // convert description to Uint8Array
-      const descriptionArray = new Uint8Array(latestDescription);
-      // apply the updates to the description
-      const combinedBinaryString = applyUpdates(descriptionArray, updates);
-      // get the latest html content
-      const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-      // make a request to update the descriptions
-      await updateDescription(combinedBinaryString, descriptionHTML).finally(() => setIsSubmitting("saved"));
-    };
-
-    try {
-      setIsSubmitting("submitting");
-      // fetch the latest description
-      const latestDescription = await mutateDescriptionYJS();
-      // return if there are no updates
-      if (descriptionUpdates.length <= 0) {
-        setIsSubmitting("saved");
-        return;
-      }
-      // merge the updates array into one single update
-      const mergedUpdates = mergeUpdates(descriptionUpdates);
-      await applyUpdatesAndSave(latestDescription, mergedUpdates);
-      // reset the updates array to empty
-      setDescriptionUpdates([]);
-    } catch (error) {
-      setIsSubmitting("saved");
-      throw error;
+  useEffect(() => {
+    if (editorRef?.current?.hasUnsyncedChanges() || isSubmitting === "submitting") {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
     }
-  }, [
-    descriptionUpdates,
-    editorRef,
-    isContentEditable,
-    mutateDescriptionYJS,
-    pageId,
-    projectId,
-    setIsSubmitting,
-    updateDescription,
-    workspaceSlug,
-  ]);
+  }, [setShowAlert, isSubmitting, editorRef, localDescriptionYJS]);
 
-  // auto-save updates every 10 seconds
-  // handle ctrl/cmd + S to save the description
-  useEffect(() => {
-    const intervalId = setInterval(handleSaveDescription, AUTO_SAVE_TIME);
+  // merge the description from remote to local state and only save if there are local changes
+  const handleSaveDescription = useCallback(
+    async (initSyncVectorAsUpdate?: Uint8Array) => {
+      const update = localDescriptionYJS ?? initSyncVectorAsUpdate;
 
-    const handleSave = (e: KeyboardEvent) => {
-      const { ctrlKey, metaKey, key } = e;
-      const cmdClicked = ctrlKey || metaKey;
+      if (update == null) return;
 
-      if (cmdClicked && key.toLowerCase() === "s") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleSaveDescription();
+      if (!isContentEditable) return;
 
-        // reset interval timer
-        clearInterval(intervalId);
+      const applyUpdatesAndSave = async (latestDescription: Uint8Array, update: Uint8Array | undefined) => {
+        if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
+
+        console.log(editorRef.current?.hasUnsyncedChanges());
+        if (!editorRef.current?.hasUnsyncedChanges()) {
+          setIsSubmitting("saved");
+          return;
+        }
+
+        const combinedBinaryString = applyUpdates(latestDescription, update);
+        const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
+        console.log("aaaaaaaaaaaaaaaaaaaaay");
+        await updateDescription(combinedBinaryString, descriptionHTML).finally(() => {
+          editorRef.current?.setSynced();
+          setShowAlert(false);
+          setIsSubmitting("saved");
+        });
+      };
+
+      try {
+        setIsSubmitting("submitting");
+        const latestDescription = await mutateDescriptionYJS();
+        if (latestDescription) {
+          await applyUpdatesAndSave(latestDescription, update);
+        }
+      } catch (error) {
+        setIsSubmitting("saved");
+        throw error;
       }
-    };
-    window.addEventListener("keydown", handleSave);
+    },
+    [
+      localDescriptionYJS,
+      setShowAlert,
+      editorRef,
+      isContentEditable,
+      mutateDescriptionYJS,
+      pageId,
+      projectId,
+      setIsSubmitting,
+      updateDescription,
+      workspaceSlug,
+    ]
+  );
 
-    return () => {
-      clearInterval(intervalId);
-      window.removeEventListener("keydown", handleSave);
-    };
-  }, [handleSaveDescription]);
-
-  // show a confirm dialog if there are any unsaved changes, or saving is going on
-  const { setShowAlert } = useReloadConfirmations(descriptionUpdates.length > 0 || isSubmitting === "submitting");
-  useEffect(() => {
-    if (descriptionUpdates.length > 0 || isSubmitting === "submitting") setShowAlert(true);
-    else setShowAlert(false);
-  }, [descriptionUpdates, isSubmitting, setShowAlert]);
+  useAutoSave(handleSaveDescription);
 
   return {
     handleDescriptionChange,
     isDescriptionReady,
     pageDescriptionYJS,
+    handleSaveDescription,
   };
 };
