@@ -130,7 +130,7 @@ const SecurityPage = observer(() => {
 
   return (
     <>
-      <PageHead title="Profile - Change Password" />
+      <PageHead title="Profile - Security" />
       <ProfileSettingContentWrapper>
         <ProfileSettingContentHeader title="Change password" />
         <form onSubmit={handleSubmit(handleChangePassword)} className="flex flex-col gap-8 py-6">
