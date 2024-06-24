@@ -456,7 +456,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         ref={editorRef}
                         tabIndex={getTabIndex("description_html")}
                         placeholder={getDescriptionPlaceholder}
-                        containerClassName="pt-3 min-h-[150px] max-h-64 overflow-y-auto vertical-scrollbar scrollbar-sm"
+                        containerClassName="pt-3 min-h-[150px]"
                       />
                     )}
                   />
