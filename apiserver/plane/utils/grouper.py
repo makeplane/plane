@@ -101,7 +101,7 @@ def issue_on_results(issues, group_by, sub_group_by):
 def issue_group_values(field, slug, project_id=None, filters=dict):
     if field == "state_id":
         queryset = State.objects.filter(
-            ~Q(name="Triage"),
+            is_triage=False,
             workspace__slug=slug,
         ).values_list("id", flat=True)
         if project_id:
