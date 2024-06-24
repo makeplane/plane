@@ -43,34 +43,38 @@ export const SidebarUserMenu = observer(() => {
   };
 
   return (
-    <div className="w-full space-y-1">
+    <div
+      className={cn("w-full space-y-1", {
+        "space-y-0": sidebarCollapsed,
+      })}
+    >
       {SIDEBAR_USER_MENU_ITEMS.map(
         (link) =>
           workspaceMemberInfo >= link.access && (
             <Link key={link.key} href={`/${workspaceSlug}${link.href}`} onClick={() => handleLinkClick(link.key)}>
-              <span className="block w-full">
-                <Tooltip
-                  tooltipContent={link.label}
-                  position="right"
-                  className="ml-2"
-                  disabled={!sidebarCollapsed}
-                  isMobile={isMobile}
+              <Tooltip
+                tooltipContent={link.label}
+                position="right"
+                className="ml-2"
+                disabled={!sidebarCollapsed}
+                isMobile={isMobile}
+              >
+                <div
+                  className={cn(
+                    "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
+                    {
+                      "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10": link.highlight(
+                        pathname,
+                        `/${workspaceSlug}`
+                      ),
+                      "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
+                    }
+                  )}
                 >
-                  <div
-                    className={cn(
-                      "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
-                      {
-                        "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10":
-                          link.highlight(pathname, `/${workspaceSlug}`),
-                        "justify-center": sidebarCollapsed,
-                      }
-                    )}
-                  >
-                    {<link.Icon className="size-4" />}
-                    {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
-                  </div>
-                </Tooltip>
-              </span>
+                  {<link.Icon className="size-4" />}
+                  {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                </div>
+              </Tooltip>
             </Link>
           )
       )}

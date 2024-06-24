@@ -16,8 +16,6 @@ import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
-// plane web components
-import { AppSwitcher } from "@/plane-web/components/sidebar";
 import { WorkspaceLogo } from "../logo";
 
 // Static Data
@@ -103,35 +101,41 @@ export const SidebarDropdown = observer(() => {
   const workspacesList = Object.values(workspaces ?? {});
   // TODO: fix workspaces list scroll
   return (
-    <div className="flex items-center gap-x-3 gap-y-2">
-      <Menu as="div" className="relative h-full flex-grow truncate text-left">
+    <div className="flex items-center justify-center gap-x-3 gap-y-2">
+      <Menu
+        as="div"
+        className={cn("relative h-full truncate text-left flex-grow flex justify-stretch", {
+          "flex-grow-0 justify-center": sidebarCollapsed,
+        })}
+      >
         {({ open }) => (
           <>
-            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none">
-              <div
-                className={cn("flex items-center justify-between gap-x-2 truncate rounded p-1", {
-                  "justify-center": sidebarCollapsed,
-                })}
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
-                  {!sidebarCollapsed && (
-                    <h4 className="truncate text-base font-medium text-custom-text-100">
-                      {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
-                    </h4>
-                  )}
-                </div>
+            <Menu.Button
+              className={cn(
+                "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
+                {
+                  "flex-grow": !sidebarCollapsed,
+                }
+              )}
+            >
+              <div className="flex-grow flex items-center gap-2 truncate">
+                <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
                 {!sidebarCollapsed && (
-                  <ChevronDown
-                    className={cn(
-                      "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
-                      {
-                        "rotate-180": open,
-                      }
-                    )}
-                  />
+                  <h4 className="truncate text-base font-medium text-custom-text-100">
+                    {activeWorkspace?.name ?? "Loading..."}
+                  </h4>
                 )}
               </div>
+              {!sidebarCollapsed && (
+                <ChevronDown
+                  className={cn(
+                    "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
+                    {
+                      "rotate-180": open,
+                    }
+                  )}
+                />
+              )}
             </Menu.Button>
             <Transition
               as={Fragment}
@@ -148,7 +152,6 @@ export const SidebarDropdown = observer(() => {
                     <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
-                    <AppSwitcher />
                     {workspacesList ? (
                       <div className="size-full flex flex-col items-start justify-start gap-1.5">
                         {workspacesList.map((workspace) => (

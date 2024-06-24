@@ -14,6 +14,8 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// plane web components
+import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 
 export interface IAppSidebar {}
 
@@ -40,13 +42,34 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
         }
       )}
     >
-      <div ref={ref} className="size-full flex flex-col flex-1 gap-y-4 p-4 pb-0">
-        <SidebarDropdown />
-        <SidebarQuickActions />
-        <SidebarUserMenu />
-        <SidebarWorkspaceMenu />
-        <SidebarProjectsList />
-        <SidebarHelpSection />
+      <div
+        ref={ref}
+        className={cn("size-full flex flex-col flex-1 p-4 pb-0", {
+          "p-2": sidebarCollapsed,
+        })}
+      >
+        <div className="w-full pb-2">
+          <SidebarDropdown />
+        </div>
+        <SidebarAppSwitcher />
+        <div className="w-full py-2">
+          <SidebarQuickActions />
+        </div>
+        {sidebarCollapsed && <hr className="border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto" />}
+        <div className="w-full py-2">
+          <SidebarUserMenu />
+        </div>
+        {sidebarCollapsed && <hr className="border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto" />}
+        <div className="w-full py-2">
+          <SidebarWorkspaceMenu />
+        </div>
+        {sidebarCollapsed && <hr className="border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto" />}
+        <div className="size-full py-2">
+          <SidebarProjectsList />
+        </div>
+        <div className="flex-shrink-0">
+          <SidebarHelpSection />
+        </div>
       </div>
     </div>
   );
