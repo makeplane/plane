@@ -28,6 +28,7 @@ export interface IModuleIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    moduleId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -73,6 +74,17 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     const moduleId = this.rootIssueStore.moduleId;
     if (!moduleId) return undefined;
 
+    return this.getIssueFilters(moduleId);
+  }
+
+  get appliedFilters() {
+    const moduleId = this.rootIssueStore.moduleId;
+    if (!moduleId) return undefined;
+
+    return this.getAppliedFilters(moduleId);
+  }
+
+  getIssueFilters(moduleId: string) {
     const displayFilters = this.filters[moduleId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
@@ -81,8 +93,8 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     return _filters;
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(moduleId: string) {
+    const userFilters = this.getIssueFilters(moduleId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
@@ -102,11 +114,12 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      moduleId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(moduleId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -222,12 +235,14 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             });
           });
 
-          this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            "mutation",
-            moduleId
-          );
+          if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
+              workspaceSlug,
+              projectId,
+              "mutation",
+              moduleId
+            );
+          }
 
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             display_filters: _filters.displayFilters,

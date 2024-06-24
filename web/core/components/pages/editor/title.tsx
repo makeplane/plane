@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
-import { EditorRefApi } from "@plane/document-editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { TextArea } from "@plane/ui";
 // helpers

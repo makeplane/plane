@@ -28,6 +28,7 @@ export interface ICycleIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    cycleId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -73,6 +74,17 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     const cycleId = this.rootIssueStore.cycleId;
     if (!cycleId) return undefined;
 
+    return this.getIssueFilters(cycleId);
+  }
+
+  get appliedFilters() {
+    const cycleId = this.rootIssueStore.cycleId;
+    if (!cycleId) return undefined;
+
+    return this.getAppliedFilters(cycleId);
+  }
+
+  getIssueFilters(cycleId: string) {
     const displayFilters = this.filters[cycleId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
@@ -81,8 +93,8 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     return _filters;
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(cycleId: string) {
+    const userFilters = this.getIssueFilters(cycleId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
@@ -102,11 +114,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      cycleId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(cycleId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -223,12 +236,14 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            "mutation",
-            cycleId
-          );
+          if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
+              workspaceSlug,
+              projectId,
+              "mutation",
+              cycleId
+            );
+          }
 
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             display_filters: _filters.displayFilters,
