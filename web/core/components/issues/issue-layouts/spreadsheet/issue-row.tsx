@@ -242,7 +242,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       >
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
-          target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
             "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",

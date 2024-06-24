@@ -131,7 +131,6 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
             <ControlLink
               id={`issue-${issue.id}`}
               href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
-              target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
             >
