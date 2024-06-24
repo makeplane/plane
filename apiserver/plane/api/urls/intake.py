@@ -14,4 +14,14 @@ urlpatterns = [
         IntakeIssueAPIEndpoint.as_view(),
         name="inbox-issue",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/",
+        IntakeIssueAPIEndpoint.as_view(),
+        name="intake-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/",
+        IntakeIssueAPIEndpoint.as_view(),
+        name="intake-issue",
+    ),
 ]
