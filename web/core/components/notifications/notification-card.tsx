@@ -19,7 +19,7 @@ import {
 import { snoozeOptions } from "@/constants/notification";
 // helper
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
-import { mentionCommentStringValidator } from "@/helpers/notification.helper";
+import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
@@ -206,7 +206,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                     )
                   ) : (
                     <span>
-                      {mentionCommentStringValidator(notification.data.issue_activity.new_value ?? undefined)}
+                      {sanitizeCommentForNotification(notification.data.issue_activity.new_value ?? undefined)}
                     </span>
                   )
                 ) : (
