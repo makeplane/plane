@@ -82,11 +82,6 @@ const OnboardingPage = observer(() => {
       if (isCurrentWorkspaceValid >= 0) {
         redirectionRoute = `/${currentWorkspaceSlug}`;
       }
-    } else {
-      const firstWorkspace = Object.values(workspaces ?? {})?.[0];
-      if (firstWorkspace) {
-        redirectionRoute = `/${firstWorkspace.slug}`;
-      }
     }
 
     return redirectionRoute;
