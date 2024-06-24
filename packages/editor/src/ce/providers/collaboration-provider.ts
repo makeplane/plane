@@ -82,7 +82,6 @@ export class CollaborationProvider {
 
   async documentUpdateHandler(_update: Uint8Array, origin: any) {
     await this.indexeddbProvider.whenSynced;
-    console.log("arara", this.unsyncedChanges);
 
     // return if the update is from the provider itself
     if (origin === this) return;

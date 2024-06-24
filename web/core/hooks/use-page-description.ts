@@ -103,7 +103,6 @@ export const usePageDescription = (props: Props) => {
       const applyUpdatesAndSave = async (latestDescription: Uint8Array, update: Uint8Array | undefined) => {
         if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
 
-        console.log(editorRef.current?.hasUnsyncedChanges());
         if (!editorRef.current?.hasUnsyncedChanges()) {
           setIsSubmitting("saved");
           return;
@@ -111,7 +110,6 @@ export const usePageDescription = (props: Props) => {
 
         const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-        console.log("aaaaaaaaaaaaaaaaaaaaay");
         await updateDescription(combinedBinaryString, descriptionHTML).finally(() => {
           editorRef.current?.setSynced();
           setShowAlert(false);
