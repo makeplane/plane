@@ -20,7 +20,7 @@ export const ProjectArchivesHeader: FC = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
-  const activeTab = pathname.split("/").pop();
+  const activeTab = pathname.split("/")[pathname.split("/").length - 2];
   // store hooks
   const {
     issuesFilter: { issueFilters },
