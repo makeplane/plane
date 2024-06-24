@@ -1,6 +1,8 @@
 // types
 import { TEstimateSystems } from "@plane/types";
 
+export const maxEstimatePointInputLength = 20;
+
 export enum EEstimateSystem {
   POINTS = "points",
   CATEGORIES = "categories",
