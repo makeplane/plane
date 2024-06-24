@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
 // components
@@ -15,12 +15,15 @@ import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const ProjectArchivesHeader: FC = observer(() => {
+type TProps = {
+  activeTab: 'issues' | 'cycles' | 'modules';
+}
+
+export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
+  const { activeTab } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
-  const pathname = usePathname();
-  const activeTab = pathname.split("/").pop();
   // store hooks
   const {
     issuesFilter: { issueFilters },

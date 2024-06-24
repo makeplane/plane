@@ -49,7 +49,7 @@ const ProfileAppearancePage = observer(() => {
 
   return (
     <>
-      <PageHead title="Profile - Theme Prefrence" />
+      <PageHead title="Profile - Appearance" />
       {userProfile ? (
         <ProfileSettingContentWrapper>
           <ProfileSettingContentHeader title="Appearance" />

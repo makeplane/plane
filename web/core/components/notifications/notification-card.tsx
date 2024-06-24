@@ -8,7 +8,6 @@ import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucid
 import { Menu } from "@headlessui/react";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
-// ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import {
@@ -20,6 +19,7 @@ import {
 import { snoozeOptions } from "@/constants/notification";
 // helper
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
+import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
@@ -206,11 +206,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                     )
                   ) : (
                     <span>
-                      {`"`}
-                      {notification.data.issue_activity.new_value.length > 55
-                        ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
-                        : notification.data.issue_activity.issue_comment}
-                      {`"`}
+                      {sanitizeCommentForNotification(notification.data.issue_activity.new_value ?? undefined)}
                     </span>
                   )
                 ) : (
