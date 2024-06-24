@@ -10,7 +10,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
@@ -210,7 +210,9 @@ export const SidebarProjectsList: FC = observer(() => {
                     )}
                     onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
                   >
-                    {isCollapsed ? section.shortTitle : section.title}
+                    <Tooltip tooltipHeading={section.title} tooltipContent="">
+                      <span>{isCollapsed ? section.shortTitle : section.title}</span>
+                    </Tooltip>
                     {!isCollapsed && (
                       <ChevronUp
                         className={cn("flex-shrink-0 size-3.5 transition-all", {
@@ -220,16 +222,18 @@ export const SidebarProjectsList: FC = observer(() => {
                     )}
                   </Disclosure.Button>
                   {!isCollapsed && isAuthorizedUser && (
-                    <button
-                      className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                      onClick={() => {
-                        setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
-                        setIsFavoriteProjectCreate(section.key === "favorite");
-                        setIsProjectModalOpen(true);
-                      }}
-                    >
-                      <Plus className="size-3" />
-                    </button>
+                    <Tooltip tooltipHeading="Create project" tooltipContent="">
+                      <button
+                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                        onClick={() => {
+                          setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
+                          setIsFavoriteProjectCreate(section.key === "favorite");
+                          setIsProjectModalOpen(true);
+                        }}
+                      >
+                        <Plus className="size-3" />
+                      </button>
+                    </Tooltip>
                   )}
                 </div>
                 <Transition

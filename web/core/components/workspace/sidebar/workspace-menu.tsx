@@ -68,7 +68,9 @@ export const SidebarWorkspaceMenu = observer(() => {
             href={`/${workspaceSlug}/settings`}
             className="flex-shrink-0 hidden group-hover/workspace-button:block rounded p-0.5 hover:bg-custom-sidebar-background-80"
           >
-            <Settings className="size-3" />
+            <Tooltip tooltipHeading="Workspace settings" tooltipContent="">
+              <Settings className="size-3" />
+            </Tooltip>
           </Link>
         </div>
       )}
