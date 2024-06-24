@@ -4,17 +4,14 @@ Copyright © 2024 plane.so engineering@plane.so
 package cmd
 
 import (
-	"context"
-	"fmt"
-	"strings"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/go-co-op/gocron/v2"
-	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
-	prime_cron "github.com/makeplane/plane-ee/monitor/lib/cron"
-	"github.com/makeplane/plane-ee/monitor/lib/healthcheck"
 	"github.com/makeplane/plane-ee/monitor/pkg/constants/descriptors"
 	"github.com/makeplane/plane-ee/monitor/pkg/handlers"
+	"github.com/makeplane/plane-ee/monitor/pkg/types"
+	"github.com/makeplane/plane-ee/monitor/pkg/worker"
 	"github.com/spf13/cobra"
 )
 
@@ -23,80 +20,55 @@ var StartCmd = &cobra.Command{
 	Short: descriptors.CMD_START_USAGE_DESC,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		healthCheckInterval, err := cmd.Flags().GetInt(descriptors.FLAG_INTERVAL_HEALTHCHECK)
-
 		if err != nil {
 			return err
 		}
 
-		primeSchedulerHandler := handlers.NewPrimeScheduleHandler()
-		primeScheduler, err := prime_cron.NewPrimeScheduler(primeSchedulerHandler)
-		if err != nil {
-			return err
-		}
-		primeScheduler.RegisterNewHealthCheckJob(
-			context.Background(),
-			gocron.DurationJob(time.Duration(healthCheckInterval)*time.Minute),
-			func(statuses []*healthcheck.HealthCheckStatus, errors []*error) {
-				if len(errors) != 0 {
-					CmdLogger.Error(context.Background(), fmt.Sprintf("Health Check Job returned not nil error message (%v)", errors[0]))
-					return
-				}
-				statusMap := map[string]string{}
-				metaMap := map[string]prime_api.StatusMeta{}
-				msg := ""
+		// Establish signals for catching signal interrupts
+		sigs := make(chan os.Signal, 1)
+		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-				for _, status := range statuses {
-					normServiceName := "service_" + strings.ToLower(status.ServiceName)
-					// If the service status is inside the ok status range
-					if status.StatusCode >= 200 && status.StatusCode <= 227 {
-						statusMap[normServiceName] = descriptors.HEALTHY
-						msg = fmt.Sprintf("Recieved Service (%v) status code (%d)", status.ServiceName, status.StatusCode)
-						CmdLogger.Info(context.Background(), msg)
-					} else {
-						statusMap[normServiceName] = descriptors.UNHEALTHY
+		// Initializing cronhandler for cron tasks
+		cronHandler := handlers.NewCronHandler(types.Credentials{
+			LicenseKey:       LICENSE_KEY,
+			LicenseVersion:   LICENSE_VERSION,
+			Host:             HOST,
+			MachineSignature: MACHINE_SIGNATURE,
+		}, CmdLogger)
 
-						var code = prime_api.NotReachable
-						var statusCode = status.StatusCode
-						reachable := 1
+		// Initializing the http handler for addressing requests
+		httpHandler := handlers.NewHttpHandler(handlers.HTTPHandlerOptions{
+			Host:   "0.0.0.0",
+			Port:   "80",
+			Logger: *CmdLogger,
+		})
 
-						if status.Status == healthcheck.SERVICE_STATUS_REACHABLE {
-							code = prime_api.ReachableWithNotOkStatus
-							msg = fmt.Sprintf("Recieved Non Healthy Status Code (%d) from Service (%v), Unhealthy", status.StatusCode, status.ServiceName)
-							CmdLogger.Error(context.Background(), msg)
-						} else {
-							code = prime_api.NotReachable
-							reachable = 0
-							msg = fmt.Sprintf("Recieved Non Healthy Status Code (%d) from Service (%v), Not Reachable", status.StatusCode, status.ServiceName)
-							CmdLogger.Error(context.Background(), msg)
-						}
-						metaMap[normServiceName] = prime_api.StatusMeta{
-							Message:    msg,
-							Code:       code,
-							StatusCode: statusCode,
-							Reachable:  reachable,
-						}
-					}
-				}
+		cronHandler.ScheduleCronJobs(handlers.SchedulerOptions{
+			HealthCheckInterval: int64(healthCheckInterval),
+		})
 
-				monitorApi := prime_api.NewMonitorApi(HOST, LICENSE_KEY, LICENSE_VERSION, MACHINE_SIGNATURE)
-				errorCode := monitorApi.PostServiceStatus(prime_api.StatusPayload{
-					Status:  statusMap,
-					Meta:    metaMap,
-					Version: LICENSE_VERSION,
-				})
+		// Creating a new instance of the worker
+		worker := worker.NewPrimeWorker(CmdLogger)
 
-				if errorCode != 0 {
-					CmdLogger.Error(context.Background(), fmt.Sprintf("Recived Error while reporting health status, %v", errorCode))
-				}
-			},
-		)
-		primeScheduler.StartWithBlocker()
+		// Notify the channel on interrupt signals (Ctrl+C)
+		go func() {
+			<-sigs
+			worker.Shutdown()
+		}()
+
+		// Registering the Jobs to the cron handler
+		worker.RegisterJob("Prime Scheduler", cronHandler.Start)
+		worker.RegisterJob("Prime Monitor Router", httpHandler.StartHttpServer)
+
+		// Starting the Jobs in background
+		worker.StartJobsInBackground()
+		worker.Wait()
+
 		return nil
 	},
 }
 
 func init() {
-	// interval is used as healthcheck for added consistency
 	StartCmd.Flags().Int(descriptors.FLAG_INTERVAL_HEALTHCHECK, 5, descriptors.FLAG_INTERVAL_HEALTHCHECK_USE)
 	rootCmd.AddCommand(StartCmd)
 }

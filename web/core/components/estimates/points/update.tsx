@@ -11,7 +11,7 @@ import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useEstimatePoint } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/plane-web/constants/estimates";
 
 type TEstimatePointUpdate = {
   workspaceSlug: string;
@@ -163,7 +163,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   const inputProps = {
     type: inputFieldType,
     pattern: inputFieldType === "number" ? "[0-9]*" : undefined,
-    maxlength: inputFieldType === "number" ? undefined : 24,
+    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
   };
 
   return (

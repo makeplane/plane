@@ -17,13 +17,13 @@ func NewPrimeScheduleHandler() *PrimeScheduleHandler {
 }
 
 func (h *PrimeScheduleHandler) PreRun(id uuid.UUID, job string) {
-	primeLogger.Info(context.Background(), fmt.Sprintf("Started Job with UUID %v, and name %v", id, job))
+	primeLogger.Info(context.Background(), fmt.Sprintf("[SCHEDULER] Started Job with UUID %v, and name %v", id, job))
 }
 
 func (h *PrimeScheduleHandler) PostRunE(id uuid.UUID, job string, err error) {
-	primeLogger.Info(context.Background(), fmt.Sprintf("Job (%v, %v) finished with error %v", id, job, err))
+	primeLogger.Info(context.Background(), fmt.Sprintf("[SCHEDULER] Job (%v, %v) finished with error %v", id, job, err))
 }
 
 func (h *PrimeScheduleHandler) PostRun(id uuid.UUID, job string) {
-	primeLogger.Info(context.Background(), fmt.Sprintf("Job (%v, %v) finished successful execution", id, job))
+	primeLogger.Info(context.Background(), fmt.Sprintf("[SCHEDULER] Job (%v, %v) finished successful execution", id, job))
 }

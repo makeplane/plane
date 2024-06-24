@@ -9,6 +9,6 @@ build::
 	cd ./cli && go build
 
 test::
-	cd ./lib/healthcheck/ && go test . -v -cover
+	chmod +x run-tests.sh && ./run-tests.sh
 
 .PHONY: help, start-cron, test
