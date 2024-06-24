@@ -81,6 +81,11 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     },
   ];
 
+  // check if any of the menu items should render
+  const shouldRenderQuickAction = MENU_ITEMS.some((item) => item.shouldRender);
+
+  if (!shouldRenderQuickAction) return <></>;
+
   return (
     <>
       <DeleteIssueModal
