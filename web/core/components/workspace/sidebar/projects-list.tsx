@@ -5,14 +5,15 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
-import { CreateProjectModal, ProjectSidebarListItem } from "@/components/project";
+import { CreateProjectModal } from "@/components/project";
+import { SidebarProjectsListItem } from "@/components/workspace";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
@@ -22,7 +23,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 
-export const ProjectSidebarList: FC = observer(() => {
+export const SidebarProjectsList: FC = observer(() => {
   // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
   const isFavProjectsListOpenInLocalStorage = localStorage.getItem("isFavoriteProjectsListOpen");
   const isAllProjectsListOpenInLocalStorage = localStorage.getItem("isAllProjectsListOpen");
@@ -51,7 +52,7 @@ export const ProjectSidebarList: FC = observer(() => {
   } = useProject();
   // router params
   const { workspaceSlug } = useParams();
-
+  // auth
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleCopyText = (projectId: string) => {
@@ -141,126 +142,102 @@ export const ProjectSidebarList: FC = observer(() => {
     }
   };
 
+  const projectSections: {
+    key: "all" | "favorite";
+    type: "FAVORITES" | "JOINED";
+    title: string;
+    shortTitle: string;
+    projects: string[];
+    isOpen: boolean;
+  }[] = [
+    {
+      key: "favorite",
+      type: "FAVORITES",
+      title: "Favorites",
+      shortTitle: "FP",
+      projects: favoriteProjects,
+      isOpen: isFavoriteProjectsListOpen,
+    },
+    {
+      key: "all",
+      type: "JOINED",
+      title: "My projects",
+      shortTitle: "MP",
+      projects: joinedProjects,
+      isOpen: isAllProjectsListOpen,
+    },
+  ];
+
   return (
     <>
       {workspaceSlug && (
         <CreateProjectModal
           isOpen={isProjectModalOpen}
-          onClose={() => {
-            setIsProjectModalOpen(false);
-          }}
+          onClose={() => setIsProjectModalOpen(false)}
           setToFavorite={isFavoriteProjectCreate}
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
       <div
         ref={containerRef}
-        className={cn(
-          "vertical-scrollbar h-full space-y-2 !overflow-y-scroll pl-4",
-          isCollapsed ? "scrollbar-sm" : "scrollbar-md",
-          {
-            "border-t border-custom-sidebar-border-300": isScrolled,
-            "pr-1": !isCollapsed,
-          }
-        )}
+        className={cn("vertical-scrollbar h-full space-y-2 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+          "border-t border-custom-sidebar-border-300": isScrolled,
+        })}
       >
-        <div>
-          {favoriteProjects && favoriteProjects.length > 0 && (
-            <Disclosure as="div" className="flex flex-col" defaultOpen={isFavoriteProjectCreate}>
+        {projectSections.map((section) => {
+          if (!section.projects || section.projects.length === 0) return;
+
+          return (
+            <Disclosure key={section.title} as="div" className="flex flex-col" defaultOpen={section.isOpen}>
               <>
-                {!isCollapsed && (
-                  <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                    <Disclosure.Button
-                      as="button"
-                      type="button"
-                      className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
-                      onClick={() => toggleListDisclosure(!isFavoriteProjectsListOpen, "favorite")}
-                    >
-                      Favorites
-                      {isFavoriteProjectsListOpen ? (
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      ) : (
-                        <ChevronRight className="h-3.5 w-3.5" />
-                      )}
-                    </Disclosure.Button>
-                    {isAuthorizedUser && (
-                      <button
-                        className="opacity-0 group-hover:opacity-100"
-                        onClick={() => {
-                          setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
-                          setIsFavoriteProjectCreate(true);
-                          setIsProjectModalOpen(true);
-                        }}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                )}
-                <Transition
-                  show={isFavoriteProjectsListOpen}
-                  enter="transition duration-100 ease-out"
-                  enterFrom="transform scale-95 opacity-0"
-                  enterTo="transform scale-100 opacity-100"
-                  leave="transition duration-75 ease-out"
-                  leaveFrom="transform scale-100 opacity-100"
-                  leaveTo="transform scale-95 opacity-0"
-                >
-                  {isFavoriteProjectsListOpen && (
-                    <Disclosure.Panel as="div" static>
-                      {favoriteProjects.map((projectId, index) => (
-                        <ProjectSidebarListItem
-                          key={projectId}
-                          projectId={projectId}
-                          handleCopyText={() => handleCopyText(projectId)}
-                          projectListType="FAVORITES"
-                          disableDrag
-                          disableDrop
-                          isLastChild={index === favoriteProjects.length - 1}
-                        />
-                      ))}
-                    </Disclosure.Panel>
+                <div
+                  className={cn(
+                    "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                    {
+                      "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
+                        isCollapsed,
+                    }
                   )}
-                </Transition>
-              </>
-            </Disclosure>
-          )}
-        </div>
-        <div>
-          {joinedProjects && joinedProjects.length > 0 && (
-            <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-              <>
-                {!isCollapsed && (
-                  <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
-                    <Disclosure.Button
-                      as="button"
-                      type="button"
-                      className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
-                      onClick={() => toggleListDisclosure(!isAllProjectsListOpen, "all")}
-                    >
-                      Your projects
-                      {isAllProjectsListOpen ? (
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      ) : (
-                        <ChevronRight className="h-3.5 w-3.5" />
-                      )}
-                    </Disclosure.Button>
-                    {isAuthorizedUser && (
+                >
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className={cn(
+                      "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-medium text-custom-sidebar-text-400",
+                      {
+                        "!text-center w-8 px-2 py-0.5 justify-center": isCollapsed,
+                      }
+                    )}
+                    onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
+                  >
+                    <Tooltip tooltipHeading={section.title} tooltipContent="">
+                      <span>{isCollapsed ? section.shortTitle : section.title}</span>
+                    </Tooltip>
+                    {!isCollapsed && (
+                      <ChevronRight
+                        className={cn("flex-shrink-0 size-3.5 transition-all", {
+                          "rotate-90": section.isOpen,
+                        })}
+                      />
+                    )}
+                  </Disclosure.Button>
+                  {!isCollapsed && isAuthorizedUser && (
+                    <Tooltip tooltipHeading="Create project" tooltipContent="">
                       <button
-                        className="opacity-0 group-hover:opacity-100"
+                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                         onClick={() => {
-                          setTrackElement("Sidebar");
-                          setIsFavoriteProjectCreate(false);
+                          setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
+                          setIsFavoriteProjectCreate(section.key === "favorite");
                           setIsProjectModalOpen(true);
                         }}
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="size-3" />
                       </button>
-                    )}
-                  </div>
-                )}
+                    </Tooltip>
+                  )}
+                </div>
                 <Transition
-                  show={isAllProjectsListOpen}
+                  show={section.isOpen}
                   enter="transition duration-100 ease-out"
                   enterFrom="transform scale-95 opacity-0"
                   enterTo="transform scale-100 opacity-100"
@@ -268,15 +245,17 @@ export const ProjectSidebarList: FC = observer(() => {
                   leaveFrom="transform scale-100 opacity-100"
                   leaveTo="transform scale-95 opacity-0"
                 >
-                  {isAllProjectsListOpen && (
-                    <Disclosure.Panel as="div" static>
-                      {joinedProjects.map((projectId, index) => (
-                        <ProjectSidebarListItem
+                  {section.isOpen && (
+                    <Disclosure.Panel as="div" className="mt-3" static>
+                      {section.projects.map((projectId, index) => (
+                        <SidebarProjectsListItem
                           key={projectId}
                           projectId={projectId}
-                          projectListType="JOINED"
                           handleCopyText={() => handleCopyText(projectId)}
-                          isLastChild={index === joinedProjects.length - 1}
+                          projectListType={section.type}
+                          disableDrag={section.key === "favorite"}
+                          disableDrop={section.key === "favorite"}
+                          isLastChild={index === section.projects.length - 1}
                           handleOnProjectDrop={handleOnProjectDrop}
                         />
                       ))}
@@ -285,10 +264,9 @@ export const ProjectSidebarList: FC = observer(() => {
                 </Transition>
               </>
             </Disclosure>
-          )}
-        </div>
-
-        {isAuthorizedUser && joinedProjects && joinedProjects.length === 0 && (
+          );
+        })}
+        {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
@@ -297,7 +275,7 @@ export const ProjectSidebarList: FC = observer(() => {
               toggleCreateProjectModal(true);
             }}
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="size-5" />
             {!isCollapsed && "Add Project"}
           </button>
         )}

@@ -4,17 +4,18 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Bell } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-// hooks
-// icons
-// components
+// ui
 import { Tooltip } from "@plane/ui";
+// components
 import { EmptyState } from "@/components/empty-state";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "@/components/notifications";
 import { NotificationsLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
+// hooks
 import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -93,18 +94,23 @@ export const NotificationPopover = observer(() => {
             isMobile={isMobile}
           >
             <button
-              className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                isActive
-                  ? "bg-custom-primary-100/10 text-custom-primary-100"
-                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-              } ${isSidebarCollapsed ? "justify-center" : ""}`}
+              className={cn(
+                `group relative flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium leading-5 outline-none ${
+                  isActive
+                    ? "bg-custom-primary-100/10 text-custom-primary-100"
+                    : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90"
+                }`,
+                {
+                  "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
+                }
+              )}
               onClick={() => {
                 if (window.innerWidth < 768) toggleSidebar();
                 if (!isActive) setFetchNotifications(true);
                 setIsActive(!isActive);
               }}
             >
-              <Bell className="h-4 w-4" />
+              <Bell className="size-4" />
               {isSidebarCollapsed ? null : <span>Notifications</span>}
               {totalNotificationCount && totalNotificationCount > 0 ? (
                 isSidebarCollapsed ? (
