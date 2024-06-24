@@ -1,4 +1,10 @@
-import { EEstimateSystem, EEstimateUpdateStages, estimateCount, ESTIMATE_SYSTEMS } from "ce/constants/estimates";
+import {
+  MAX_ESTIMATE_POINT_INPUT_LENGTH,
+  EEstimateSystem,
+  EEstimateUpdateStages,
+  estimateCount,
+  ESTIMATE_SYSTEMS,
+} from "ce/constants/estimates";
 
 estimateCount.max = 12;
 
@@ -23,7 +29,7 @@ ESTIMATE_SYSTEMS.points.templates.squares.values = [
   { id: undefined, key: 9, value: "81" },
 ];
 
-export { EEstimateSystem, EEstimateUpdateStages, estimateCount, ESTIMATE_SYSTEMS };
+export { MAX_ESTIMATE_POINT_INPUT_LENGTH, EEstimateSystem, EEstimateUpdateStages, estimateCount, ESTIMATE_SYSTEMS };
 
 export const ESTIMATE_OPTIONS_STAGE_ONE: Partial<
   Record<EEstimateUpdateStages, { title: string; description: string }>

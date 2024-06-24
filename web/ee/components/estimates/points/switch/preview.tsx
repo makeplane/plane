@@ -8,7 +8,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimatePoint } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { MAX_ESTIMATE_POINT_INPUT_LENGTH, EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type TEstimatePointItemSwitchPreview = {
   estimateId: string;
@@ -31,6 +31,12 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
   // hooks
   const { asJson: estimatePoint } = useEstimatePoint(estimateId, estimatePointId);
 
+  const handleEstimatePointUpdate = (value: string) => {
+    if (value.length <= MAX_ESTIMATE_POINT_INPUT_LENGTH) {
+      handleEstimatePoint(value);
+    }
+  };
+
   // derived values
   const inputFieldType =
     estimateSystemSwitchType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateSystemSwitchType)
@@ -39,7 +45,7 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
   const inputProps = {
     type: inputFieldType,
     pattern: inputFieldType === "number" ? "[0-9]*" : undefined,
-    maxlength: inputFieldType === "number" ? undefined : 24,
+    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
   };
 
   if (!estimatePoint) return <></>;
@@ -59,7 +65,7 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
       >
         <input
           value={currentEstimatePoint?.value}
-          onChange={(e) => handleEstimatePoint(e.target.value)}
+          onChange={(e) => handleEstimatePointUpdate(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           autoFocus
           placeholder="Enter estimate point value"
