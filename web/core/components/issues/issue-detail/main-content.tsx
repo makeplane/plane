@@ -7,18 +7,19 @@ import { TIssue } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // components
-import { IssueAttachmentRoot, IssueUpdateStatus } from "@/components/issues";
+import {
+  CentralPane,
+  IssueActivity,
+  IssueDescriptionInput,
+  IssueParentDetail,
+  IssueReaction,
+  IssueTitleInput,
+  IssueUpdateStatus,
+  TIssueOperations,
+} from "@/components/issues";
 // hooks
 import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// components
-import { IssueDescriptionInput } from "../description-input";
-import { SubIssuesRoot } from "../sub-issues";
-import { IssueTitleInput } from "../title-input";
-import { IssueActivity } from "./issue-activity";
-import { IssueParentDetail } from "./parent";
-import { IssueReaction } from "./reactions";
-import { TIssueOperations } from "./root";
 
 type Props = {
   workspaceSlug: string;
@@ -113,25 +114,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             disabled={isArchived}
           />
         )}
-
-        {currentUser && (
-          <SubIssuesRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssueId={issueId}
-            currentUser={currentUser}
-            disabled={!isEditable}
-          />
-        )}
       </div>
-
       <div className="pl-3">
-        <IssueAttachmentRoot
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={!isEditable}
-        />
+        <CentralPane workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
       </div>
 
       <div className="pl-3">
