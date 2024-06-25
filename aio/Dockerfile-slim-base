@@ -1,6 +1,6 @@
 FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
-FROM debian:12-slim
+FROM python:3.12-slim
 
 # Set environment variables to non-interactive for apt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -13,29 +13,18 @@ RUN apt-get update && \
     gnupg2 curl ca-certificates lsb-release software-properties-common \
     build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils \
-    tk-dev libffi-dev liblzma-dev supervisor nginx nano vim ncdu
+    tk-dev libffi-dev liblzma-dev supervisor nginx nano vim ncdu \
+    sudo lsof net-tools libpq-dev procps gettext
 
 # Install Node.js 18
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
-# Install Python 3.12 from source
-RUN cd /usr/src && \
-    wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
-    tar xzf Python-3.12.0.tgz && \
-    cd Python-3.12.0 && \
-    ./configure --enable-optimizations && \
-    make altinstall && \
-    rm -f /usr/src/Python-3.12.0.tgz
+RUN python -m pip install --upgrade pip
 
-RUN python3.12 -m pip install --upgrade pip
-
-RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
-    echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
-    
 # Clean up
 RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /usr/src/Python-3.12.0
+    rm -rf /var/lib/apt/lists/*
     
 WORKDIR /app
 
@@ -46,13 +35,6 @@ RUN mkdir -p /app/{data,logs} && \
 
 # Create Supervisor configuration file
 COPY supervisord-slim-base /app/supervisord.conf
-
-RUN apt-get update && \
-    apt-get install -y sudo lsof net-tools libpq-dev procps gettext && \
-    apt-get clean
-
-RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
-    echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
 
 # Expose ports for Redis, PostgreSQL, and MinIO
 EXPOSE 80 443
