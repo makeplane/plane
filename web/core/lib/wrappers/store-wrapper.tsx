@@ -14,7 +14,7 @@ type TStoreWrapper = {
 const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   const { children } = props;
   // theme
-  const { setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   // router
   const params = useParams();
   // store hooks
@@ -32,13 +32,13 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
     const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
 
     if (localValue && sidebarCollapsed === undefined) toggleSidebar(localBoolValue);
-  }, [sidebarCollapsed, toggleSidebar]);
+  }, [sidebarCollapsed, setTheme, toggleSidebar]);
 
   /**
    * Setting up the theme of the user by fetching it from local storage
    */
   useEffect(() => {
-    setTheme(userProfile?.theme?.theme || "system");
+    setTheme(userProfile?.theme?.theme || resolvedTheme || "system");
     if (!userProfile?.theme?.theme) return;
 
     if (userProfile?.theme?.theme === "custom" && userProfile?.theme?.palette) {
@@ -50,7 +50,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
         dom
       );
     } else unsetCustomCssVariables();
-  }, [userProfile, userProfile?.theme, userProfile?.theme?.palette, setTheme, dom]);
+  }, [userProfile, userProfile?.theme, userProfile?.theme?.palette, setTheme, dom, resolvedTheme]);
 
   useEffect(() => {
     if (dom) return;
