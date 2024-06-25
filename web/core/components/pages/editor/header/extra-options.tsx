@@ -22,7 +22,7 @@ type Props = {
   handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleSaveDescription: (initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
+  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {

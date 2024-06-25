@@ -26,6 +26,7 @@ export const usePageDescription = (props: Props) => {
   const [isDescriptionReady, setIsDescriptionReady] = useState(false);
   const [localDescriptionYJS, setLocalDescriptionYJS] = useState<Uint8Array>();
   const { isContentEditable, isSubmitting, updateDescription, setIsSubmitting } = page;
+  const [hasShownOfflineToast, setHasShownOfflineToast] = useState(false);
 
   const pageDescription = page.description_html;
   const pageId = page.id;
@@ -117,25 +118,35 @@ export const usePageDescription = (props: Props) => {
         const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
         await updateDescription(combinedBinaryString, descriptionHTML)
+          .then(() => {
+            editorRef.current?.setSynced();
+            setHasShownOfflineToast(false);
+          })
           .catch((e) => {
-            console.log("error", e);
+            if (e.message === "Network Error" && !hasShownOfflineToast) {
+              setToast({
+                type: TOAST_TYPE.INFO,
+                title: "Info!",
+                message: "You seem to be offline, your changes will remain saved on this device",
+              });
+              setHasShownOfflineToast(true);
+            }
             if (e.response?.status === 471) {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",
-                message: "Failed to update page description, the page was locked",
+                message: "Failed to save your changes, the page was locked, your changes will be lost",
               });
             }
             if (e.response?.status === 472) {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",
-                message: "Failed to update page description, the page was archived",
+                message: "Failed to save your changes, the page was archived, your changes will be lost",
               });
             }
           })
           .finally(() => {
-            editorRef.current?.setSynced();
             setShowAlert(false);
             setIsSubmitting("saved");
           });
@@ -156,6 +167,7 @@ export const usePageDescription = (props: Props) => {
       localDescriptionYJS,
       setShowAlert,
       editorRef,
+      hasShownOfflineToast,
       isContentEditable,
       mutateDescriptionYJS,
       pageId,

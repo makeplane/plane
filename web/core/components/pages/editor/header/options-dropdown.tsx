@@ -18,7 +18,7 @@ type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
-  handleSaveDescription: (initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
+  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
