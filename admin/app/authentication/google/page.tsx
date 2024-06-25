@@ -57,7 +57,7 @@ const InstanceGoogleAuthenticationPage = observer(() => {
   };
   return (
     <>
-      <PageHeader title="Authentication - God Mode" />
+      <PageHeader title="Google Authentication - Plane Web" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard

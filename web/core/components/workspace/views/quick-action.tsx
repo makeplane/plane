@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, LinkIcon, Pencil, Trash2, Lock } from "lucide-react";
 // types
 import { IWorkspaceView } from "@plane/types";
 // ui
@@ -12,6 +12,7 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -78,6 +79,34 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
     },
   ];
 
+  const isSelected = viewId === globalViewId;
+  const isPrivateView = view.access === EViewAccess.PRIVATE;
+
+  let customButton = (
+    <div
+      className={`flex gap-1 items-center flex-shrink-0 whitespace-nowrap border-b-2 p-3  text-sm font-medium outline-none ${
+        isSelected
+          ? "border-custom-primary-100 text-custom-primary-100"
+          : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+      } ${isPrivateView ? "pr-2" : ""}`}
+    >
+      <span className={`flex min-w-min flex-shrink-0 whitespace-nowrap text-sm font-medium outline-none`}>
+        {view.name}
+      </span>
+      {isPrivateView && (
+        <Lock className={`${isSelected ? "text-custom-primary-100" : "text-custom-text-400"} h-4 w-4`} />
+      )}
+    </div>
+  );
+
+  if (!isSelected) {
+    customButton = (
+      <Link key={viewId} id={`global-view-${viewId}`} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
+        {customButton}
+      </Link>
+    );
+  }
+
   return (
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
@@ -85,38 +114,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
 
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
 
-      <CustomMenu
-        customButton={
-          <>
-            {viewId === globalViewId ? (
-              <span
-                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                  viewId === globalViewId
-                    ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-                }`}
-              >
-                {view.name}
-              </span>
-            ) : (
-              <Link key={viewId} id={`global-view-${viewId}`} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
-                <span
-                  className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                    viewId === globalViewId
-                      ? "border-custom-primary-100 text-custom-primary-100"
-                      : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-                  }`}
-                >
-                  {view.name}
-                </span>
-              </Link>
-            )}
-          </>
-        }
-        placement="bottom-end"
-        menuItemsClassName="z-20"
-        closeOnSelect
-      >
+      <CustomMenu customButton={customButton} placement="bottom-end" menuItemsClassName="z-20" closeOnSelect>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

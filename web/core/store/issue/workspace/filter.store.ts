@@ -249,11 +249,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               display_filters: _filters.displayFilters,
             });
-          else
-            await this.issueFilterService.updateView(workspaceSlug, viewId, {
-              display_filters: _filters.displayFilters,
-            });
-
           break;
         }
         case EIssueFilterType.DISPLAY_PROPERTIES: {
@@ -268,15 +263,11 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
                 updatedDisplayProperties[_key as keyof IIssueDisplayProperties]
               );
             });
+            if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
+              this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
+                display_properties: _filters.displayProperties,
+              });
           });
-          if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
-              display_properties: _filters.displayProperties,
-            });
-          else
-            await this.issueFilterService.updateView(workspaceSlug, viewId, {
-              display_properties: _filters.displayProperties,
-            });
           break;
         }
 

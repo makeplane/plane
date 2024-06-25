@@ -68,7 +68,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
       </ControlLink>
       {actionableItems && (
         <div className="absolute right-5 bottom-4 flex items-center gap-1.5">
-          <div className="relative flex items-center gap-4 sm:w-auto sm:flex-shrink-0 sm:justify-end">
+          <div className="relative flex items-center gap-4 sm:w-auto sm:flex-shrink-0 sm:justify-end items-center">
             {actionableItems}
           </div>
         </div>
