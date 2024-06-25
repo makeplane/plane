@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, Plus } from "lucide-react";
+import { Briefcase, ChevronRight, LucideIcon, Plus, Star } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
@@ -146,7 +146,7 @@ export const SidebarProjectsList: FC = observer(() => {
     key: "all" | "favorite";
     type: "FAVORITES" | "JOINED";
     title: string;
-    shortTitle: string;
+    icon: LucideIcon;
     projects: string[];
     isOpen: boolean;
   }[] = [
@@ -154,7 +154,7 @@ export const SidebarProjectsList: FC = observer(() => {
       key: "favorite",
       type: "FAVORITES",
       title: "Favorites",
-      shortTitle: "FP",
+      icon: Star,
       projects: favoriteProjects,
       isOpen: isFavoriteProjectsListOpen,
     },
@@ -162,7 +162,7 @@ export const SidebarProjectsList: FC = observer(() => {
       key: "all",
       type: "JOINED",
       title: "My projects",
-      shortTitle: "MP",
+      icon: Briefcase,
       projects: joinedProjects,
       isOpen: isAllProjectsListOpen,
     },
@@ -180,90 +180,117 @@ export const SidebarProjectsList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={cn("vertical-scrollbar h-full space-y-2 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+        className={cn("vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
           "border-t border-custom-sidebar-border-300": isScrolled,
         })}
       >
-        {projectSections.map((section) => {
+        {projectSections.map((section, index) => {
           if (!section.projects || section.projects.length === 0) return;
 
           return (
-            <Disclosure key={section.title} as="div" className="flex flex-col" defaultOpen={section.isOpen}>
-              <>
-                <div
-                  className={cn(
-                    "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
-                    {
-                      "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
-                        isCollapsed,
-                    }
-                  )}
-                >
-                  <Disclosure.Button
-                    as="button"
-                    type="button"
+            <>
+              <Disclosure key={section.title} as="div" className="flex flex-col" defaultOpen={section.isOpen}>
+                <>
+                  <div
                     className={cn(
-                      "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-medium text-custom-sidebar-text-400",
+                      "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
                       {
-                        "!text-center w-8 px-2 py-0.5 justify-center": isCollapsed,
+                        "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
+                          isCollapsed,
                       }
                     )}
-                    onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
                   >
-                    <Tooltip tooltipHeading={section.title} tooltipContent="">
-                      <span>{isCollapsed ? section.shortTitle : section.title}</span>
-                    </Tooltip>
-                    {!isCollapsed && (
-                      <ChevronRight
-                        className={cn("flex-shrink-0 size-3.5 transition-all", {
-                          "rotate-90": section.isOpen,
-                        })}
-                      />
-                    )}
-                  </Disclosure.Button>
-                  {!isCollapsed && isAuthorizedUser && (
-                    <Tooltip tooltipHeading="Create project" tooltipContent="">
-                      <button
-                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                        onClick={() => {
-                          setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
-                          setIsFavoriteProjectCreate(section.key === "favorite");
-                          setIsProjectModalOpen(true);
-                        }}
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className={cn(
+                        "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+                        {
+                          "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
+                        }
+                      )}
+                      onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
+                    >
+                      <Tooltip
+                        tooltipHeading={section.title}
+                        tooltipContent=""
+                        position="right"
+                        disabled={!isCollapsed}
                       >
-                        <Plus className="size-3" />
-                      </button>
-                    </Tooltip>
-                  )}
-                </div>
-                <Transition
-                  show={section.isOpen}
-                  enter="transition duration-100 ease-out"
-                  enterFrom="transform scale-95 opacity-0"
-                  enterTo="transform scale-100 opacity-100"
-                  leave="transition duration-75 ease-out"
-                  leaveFrom="transform scale-100 opacity-100"
-                  leaveTo="transform scale-95 opacity-0"
-                >
-                  {section.isOpen && (
-                    <Disclosure.Panel as="div" className="mt-3" static>
-                      {section.projects.map((projectId, index) => (
-                        <SidebarProjectsListItem
-                          key={projectId}
-                          projectId={projectId}
-                          handleCopyText={() => handleCopyText(projectId)}
-                          projectListType={section.type}
-                          disableDrag={section.key === "favorite"}
-                          disableDrop={section.key === "favorite"}
-                          isLastChild={index === section.projects.length - 1}
-                          handleOnProjectDrop={handleOnProjectDrop}
-                        />
-                      ))}
-                    </Disclosure.Panel>
-                  )}
-                </Transition>
-              </>
-            </Disclosure>
+                        <span>{isCollapsed ? <section.icon className="flex-shrink-0 size-3" /> : section.title}</span>
+                      </Tooltip>
+                    </Disclosure.Button>
+                    {!isCollapsed && isAuthorizedUser && (
+                      <div className="flex items-center opacity-0 group-hover:opacity-100">
+                        <Tooltip tooltipHeading="Create project" tooltipContent="">
+                          <button
+                            type="button"
+                            className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                            onClick={() => {
+                              setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
+                              setIsFavoriteProjectCreate(section.key === "favorite");
+                              setIsProjectModalOpen(true);
+                            }}
+                          >
+                            <Plus className="size-3" />
+                          </button>
+                        </Tooltip>
+                        <Disclosure.Button
+                          as="button"
+                          type="button"
+                          className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                          onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
+                        >
+                          <ChevronRight
+                            className={cn("flex-shrink-0 size-3.5 transition-all", {
+                              "rotate-90": section.isOpen,
+                            })}
+                          />
+                        </Disclosure.Button>
+                      </div>
+                    )}
+                  </div>
+                  <Transition
+                    show={section.isOpen}
+                    enter="transition duration-100 ease-out"
+                    enterFrom="transform scale-95 opacity-0"
+                    enterTo="transform scale-100 opacity-100"
+                    leave="transition duration-75 ease-out"
+                    leaveFrom="transform scale-100 opacity-100"
+                    leaveTo="transform scale-95 opacity-0"
+                  >
+                    {section.isOpen && (
+                      <Disclosure.Panel
+                        as="div"
+                        className={cn("mt-2 ml-1 space-y-1", {
+                          "space-y-0 ml-0": isCollapsed,
+                        })}
+                        static
+                      >
+                        {section.projects.map((projectId, index) => (
+                          <SidebarProjectsListItem
+                            key={projectId}
+                            projectId={projectId}
+                            handleCopyText={() => handleCopyText(projectId)}
+                            projectListType={section.type}
+                            disableDrag={section.key === "favorite"}
+                            disableDrop={section.key === "favorite"}
+                            isLastChild={index === section.projects.length - 1}
+                            handleOnProjectDrop={handleOnProjectDrop}
+                          />
+                        ))}
+                      </Disclosure.Panel>
+                    )}
+                  </Transition>
+                </>
+              </Disclosure>
+              <hr
+                className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
+                  "opacity-0": !sidebarCollapsed,
+                  hidden: index === projectSections.length - 1,
+                })}
+              />
+            </>
           );
         })}
         {isAuthorizedUser && joinedProjects?.length === 0 && (

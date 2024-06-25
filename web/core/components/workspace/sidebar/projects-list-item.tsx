@@ -288,7 +288,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
                 {
                   "bg-custom-sidebar-background-90": isMenuActive,
-                  "p-0 size-7 aspect-square justify-center mx-auto": isSidebarCollapsed,
+                  "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
                 }
               )}
             >
@@ -317,7 +317,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
               {isSidebarCollapsed ? (
-                <Disclosure.Button as="button" className="grid place-items-center">
+                <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     <Logo logo={project.logo_props} size={16} />
                   </div>
@@ -344,21 +344,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       )}
                     </Link>
                   </Tooltip>
-                  <Disclosure.Button
-                    as="button"
-                    className={cn(
-                      "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                      {
-                        "inline-block": isMenuActive,
-                      }
-                    )}
-                  >
-                    <ChevronRight
-                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                        "rotate-90": open,
-                      })}
-                    />
-                  </Disclosure.Button>
                   <CustomMenu
                     customButton={
                       <span
@@ -448,6 +433,22 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </CustomMenu.MenuItem>
                     )}
                   </CustomMenu>
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className={cn(
+                      "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
+                      {
+                        "inline-block": isMenuActive,
+                      }
+                    )}
+                  >
+                    <ChevronRight
+                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                        "rotate-90": open,
+                      })}
+                    />
+                  </Disclosure.Button>
                 </>
               )}
             </div>
@@ -482,7 +483,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       >
                         <div
                           className={cn(
-                            "flex items-center gap-1.5 rounded-md pl-[30px] pr-2 py-1.5 outline-none text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
+                            "flex items-center gap-1.5 rounded-md pl-[18px] pr-2 py-1.5 outline-none text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
                             {
                               "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10":
                                 pathname.includes(item.href),

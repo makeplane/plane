@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronRight, Crown, Settings } from "lucide-react";
+import { ChevronRight, Crown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -51,28 +51,24 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className="group/workspace-button flex items-center justify-between text-custom-sidebar-text-400 px-2 py-0.5 hover:bg-custom-sidebar-background-90 rounded">
-          <Disclosure.Button
-            as="button"
-            className="flex-grow flex items-center gap-1 text-sm font-medium"
-            onClick={() => setIsWorkspaceMenuOpen((prev) => !prev)}
-          >
-            <span>Workspace</span>
-            <ChevronRight
-              className={cn("flex-shrink-0 size-3.5 transition-all", {
-                "rotate-90": isWorkspaceMenuOpen,
-              })}
-            />
-          </Disclosure.Button>
-          <Link
-            href={`/${workspaceSlug}/settings`}
-            className="flex-shrink-0 hidden group-hover/workspace-button:block rounded p-0.5 hover:bg-custom-sidebar-background-80"
-          >
-            <Tooltip tooltipHeading="Workspace settings" tooltipContent="">
-              <Settings className="size-3" />
-            </Tooltip>
-          </Link>
-        </div>
+        <Disclosure.Button
+          as="button"
+          className="group/workspace-button w-full px-2 py-0.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold"
+          onClick={() => setIsWorkspaceMenuOpen((prev) => !prev)}
+        >
+          {({ open }) => (
+            <>
+              <span>Workspace</span>
+              <span className="flex-shrink-0 hidden group-hover/workspace-button:inline-block rounded p-0.5 hover:bg-custom-sidebar-background-80">
+                <ChevronRight
+                  className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                    "rotate-90": open,
+                  })}
+                />
+              </span>
+            </>
+          )}
+        </Disclosure.Button>
       )}
       <Transition
         show={isWorkspaceMenuOpen}
@@ -86,8 +82,8 @@ export const SidebarWorkspaceMenu = observer(() => {
         {isWorkspaceMenuOpen && (
           <Disclosure.Panel
             as="div"
-            className={cn("mt-3 space-y-1", {
-              "space-y-0 mt-0": sidebarCollapsed,
+            className={cn("mt-2 ml-1 space-y-1", {
+              "space-y-0 mt-0 ml-0": sidebarCollapsed,
             })}
             static
           >
@@ -117,13 +113,13 @@ export const SidebarWorkspaceMenu = observer(() => {
                           }
                         )}
                       >
-                        {
+                        <span className="flex-shrink-0 size-4 grid place-items-center">
                           <link.Icon
                             className={cn("size-4", {
                               "rotate-180": link.key === "active-cycles",
                             })}
                           />
-                        }
+                        </span>
                         {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
                         {!sidebarCollapsed && link.key === "active-cycles" && (
                           <Crown className="size-3.5 text-amber-400" />
