@@ -288,7 +288,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
                 {
                   "bg-custom-sidebar-background-90": isMenuActive,
-                  "p-0 size-7 aspect-square justify-center mx-auto": isSidebarCollapsed,
+                  "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
                 }
               )}
             >
@@ -317,7 +317,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
               {isSidebarCollapsed ? (
-                <Disclosure.Button as="button" className="grid place-items-center">
+                <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     <Logo logo={project.logo_props} size={16} />
                   </div>

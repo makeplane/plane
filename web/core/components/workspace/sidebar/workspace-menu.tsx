@@ -54,7 +54,7 @@ export const SidebarWorkspaceMenu = observer(() => {
         <div className="group/workspace-button flex items-center justify-between text-custom-sidebar-text-400 px-2 py-0.5 hover:bg-custom-sidebar-background-90 rounded">
           <Disclosure.Button
             as="button"
-            className="flex-grow flex items-center gap-1 text-sm font-medium"
+            className="flex-grow flex items-center gap-1 text-sm font-semibold"
             onClick={() => setIsWorkspaceMenuOpen((prev) => !prev)}
           >
             <span>Workspace</span>

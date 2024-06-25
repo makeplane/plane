@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, Plus } from "lucide-react";
+import { Briefcase, ChevronRight, LucideIcon, Plus, Star } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
@@ -146,7 +146,7 @@ export const SidebarProjectsList: FC = observer(() => {
     key: "all" | "favorite";
     type: "FAVORITES" | "JOINED";
     title: string;
-    shortTitle: string;
+    icon: LucideIcon;
     projects: string[];
     isOpen: boolean;
   }[] = [
@@ -154,7 +154,7 @@ export const SidebarProjectsList: FC = observer(() => {
       key: "favorite",
       type: "FAVORITES",
       title: "Favorites",
-      shortTitle: "FP",
+      icon: Star,
       projects: favoriteProjects,
       isOpen: isFavoriteProjectsListOpen,
     },
@@ -162,7 +162,7 @@ export const SidebarProjectsList: FC = observer(() => {
       key: "all",
       type: "JOINED",
       title: "My projects",
-      shortTitle: "MP",
+      icon: Briefcase,
       projects: joinedProjects,
       isOpen: isAllProjectsListOpen,
     },
@@ -180,7 +180,7 @@ export const SidebarProjectsList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={cn("vertical-scrollbar h-full space-y-2 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+        className={cn("vertical-scrollbar h-full space-y-4 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
           "border-t border-custom-sidebar-border-300": isScrolled,
         })}
       >
@@ -203,15 +203,15 @@ export const SidebarProjectsList: FC = observer(() => {
                     as="button"
                     type="button"
                     className={cn(
-                      "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-medium text-custom-sidebar-text-400",
+                      "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
                       {
-                        "!text-center w-8 px-2 py-0.5 justify-center": isCollapsed,
+                        "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
                       }
                     )}
                     onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
                   >
-                    <Tooltip tooltipHeading={section.title} tooltipContent="">
-                      <span>{isCollapsed ? section.shortTitle : section.title}</span>
+                    <Tooltip tooltipHeading={section.title} tooltipContent="" position="right" disabled={!isCollapsed}>
+                      <span>{isCollapsed ? <section.icon className="flex-shrink-0 size-3" /> : section.title}</span>
                     </Tooltip>
                     {!isCollapsed && (
                       <ChevronRight
@@ -246,7 +246,13 @@ export const SidebarProjectsList: FC = observer(() => {
                   leaveTo="transform scale-95 opacity-0"
                 >
                   {section.isOpen && (
-                    <Disclosure.Panel as="div" className="mt-3" static>
+                    <Disclosure.Panel
+                      as="div"
+                      className={cn("mt-3 space-y-1", {
+                        "space-y-0": isCollapsed,
+                      })}
+                      static
+                    >
                       {section.projects.map((projectId, index) => (
                         <SidebarProjectsListItem
                           key={projectId}
