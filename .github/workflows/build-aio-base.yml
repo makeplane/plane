@@ -78,7 +78,7 @@ jobs:
         uses: docker/build-push-action@v5.1.0
         with:
           context: ./aio
-          file: ./aio/Dockerfile-full-base
+          file: ./aio/Dockerfile-base-full
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.BASE_IMG_TAG }}
           push: true
@@ -118,7 +118,7 @@ jobs:
         uses: docker/build-push-action@v5.1.0
         with:
           context: ./aio
-          file: ./aio/Dockerfile-slim-base
+          file: ./aio/Dockerfile-base-slim
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.BASE_IMG_TAG }}
           push: true

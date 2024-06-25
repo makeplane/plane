@@ -55,7 +55,7 @@ RUN yarn turbo run build
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
 # FROM makeplane/plane-aio-base AS runner
-FROM makeplane/plane-aio-slim-base:develop AS runner
+FROM makeplane/plane-aio-base-slim:develop AS runner
 
 WORKDIR /app
 
