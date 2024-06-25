@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 
-// hooks
 import { EditorRefApi, generateJSONfromHTML, proseMirrorJSONToBinaryString, applyUpdates } from "@plane/editor";
+
+// hooks
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import useAutoSave from "@/hooks/use-auto-save";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 
@@ -54,7 +56,6 @@ export const usePageDescription = (props: Props) => {
       // handle the initial sync case where indexeddb gives extra update, in
       // this case we need to save the update to the DB
       if (source && source === "initialSync") {
-        console.log("initialSync ran");
         handleSaveDescription(true, update);
       }
 
@@ -72,7 +73,11 @@ export const usePageDescription = (props: Props) => {
         const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
 
-        await updateDescription(yDocBinaryString, pageDescription ?? "<p></p>");
+        try {
+          await updateDescription(yDocBinaryString, pageDescription ?? "<p></p>");
+        } catch (error) {
+          console.log("error", error);
+        }
 
         await mutateDescriptionYJS();
 
@@ -111,16 +116,33 @@ export const usePageDescription = (props: Props) => {
 
         const combinedBinaryString = applyUpdates(latestDescription, update);
         const descriptionHTML = editorRef.current?.getHTML() ?? "<p></p>";
-        await updateDescription(combinedBinaryString, descriptionHTML).finally(() => {
-          editorRef.current?.setSynced();
-          setShowAlert(false);
-          setIsSubmitting("saved");
-        });
+        await updateDescription(combinedBinaryString, descriptionHTML)
+          .catch((e) => {
+            console.log("error", e);
+            if (e.response?.status === 471) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: "Error!",
+                message: "Failed to update page description, the page was locked",
+              });
+            }
+            if (e.response?.status === 472) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: "Error!",
+                message: "Failed to update page description, the page was archived",
+              });
+            }
+          })
+          .finally(() => {
+            editorRef.current?.setSynced();
+            setShowAlert(false);
+            setIsSubmitting("saved");
+          });
       };
 
       try {
         setIsSubmitting("submitting");
-        console.log("aeeeh");
         const latestDescription = await mutateDescriptionYJS();
         if (latestDescription) {
           await applyUpdatesAndSave(latestDescription, update);
