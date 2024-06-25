@@ -47,7 +47,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
               options?.map((option) => (
                 <Combobox.Option
                   key={keyExtractor(option)}
-                  value={option.value}
+                  value={keyExtractor(option)}
                   className={({ active, selected }) =>
                     cn(
                       "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
@@ -64,7 +64,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
                   {({ selected }) => (
                     <>
                       {renderItem ? (
-                        <>{renderItem({ value: option.value, selected })}</>
+                        <>{renderItem({ value: keyExtractor(option), selected })}</>
                       ) : (
                         <>
                           <span className="flex-grow truncate">{option.value}</span>
