@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { Home, LucideIcon } from "lucide-react";
+import { Home, LucideIcon, Settings } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // constants
@@ -28,6 +28,14 @@ export const SIDEBAR_MENU_ITEMS: {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: Home,
   },
+  {
+    key: "settings",
+    label: "Settings",
+    href: `/settings`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
+    Icon: Settings,
+  },
 ];
 
 export const PagesAppSidebarMenu = observer(() => {
@@ -43,7 +51,7 @@ export const PagesAppSidebarMenu = observer(() => {
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-1">
       {SIDEBAR_MENU_ITEMS.map((link) => {
         if (currentWorkspaceRole && currentWorkspaceRole < link.access) return null;
 
@@ -60,10 +68,8 @@ export const PagesAppSidebarMenu = observer(() => {
                 className={cn(
                   "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
                   {
-                    "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10": link.highlight(
-                      pathname,
-                      `/${workspaceSlug}/pages`
-                    ),
+                    "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 focus:bg-custom-primary-100/10":
+                      link.highlight(pathname, `/${workspaceSlug}${link.href}/`),
                     "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
                   }
                 )}

@@ -17,7 +17,7 @@ type TConfirmPageDeletionProps = {
   pageId: string;
 };
 
-export const PagesAppDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+export const WorkspacePageDeleteModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
   const { pageId, isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -77,7 +77,7 @@ export const PagesAppDeletePageModal: React.FC<TConfirmPageDeletionProps> = obse
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete Page"
+      title="Delete page"
       content={
         <>
           Are you sure you want to delete page-{" "}
