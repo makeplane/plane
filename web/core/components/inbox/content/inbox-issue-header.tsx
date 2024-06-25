@@ -301,6 +301,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   onClick={() =>
                     router.push(`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`)
                   }
+                  target="_self"
                 >
                   <Button variant="neutral-primary" prependIcon={<ExternalLink className="h-2.5 w-2.5" />} size="sm">
                     Open issue

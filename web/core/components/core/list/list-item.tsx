@@ -45,7 +45,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
 
   return (
     <div ref={parentRef} className="relative">
-      <ControlLink href={itemLink} onClick={handleControlLinkClick} disabled={disableLink}>
+      <ControlLink href={itemLink} target="_self" onClick={handleControlLinkClick} disabled={disableLink}>
         <div
           className={cn(
             "group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row",
