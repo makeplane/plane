@@ -112,7 +112,7 @@ jobs:
           if [ "${{ github.event_name }}" == "release" ]; then 
             ssh-keygen -t ed25519 -m PEM -f monitor/prime.key -N ""
           else
-            echo ${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}  > monitor/prime.key
+            echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}"  > monitor/prime.key
           fi
           
           echo "-----------------"
