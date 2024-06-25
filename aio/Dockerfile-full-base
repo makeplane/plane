@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM tonistiigi/binfmt as binfmt
+FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
 FROM debian:12-slim
 
@@ -73,7 +73,7 @@ RUN mkdir -p /app/{data,logs} && \
     mkdir -p /etc/supervisor/conf.d
 
 # Create Supervisor configuration file
-COPY supervisord.base /app/supervisord.conf
+COPY supervisord-full-base /app/supervisord.conf
 
 RUN apt-get update && \
     apt-get install -y sudo lsof net-tools libpq-dev procps gettext && \
@@ -86,7 +86,7 @@ RUN echo "alias python=/usr/local/bin/python3.12" >> ~/.bashrc && \
     echo "alias pip=/usr/local/bin/pip3.12" >> ~/.bashrc
 
 # Expose ports for Redis, PostgreSQL, and MinIO
-EXPOSE 6379 5432 9000 80
+EXPOSE 6379 5432 9000 80 443
 
 # Start Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
