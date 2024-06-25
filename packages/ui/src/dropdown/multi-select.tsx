@@ -90,10 +90,12 @@ export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
   const sortedOptions = useMemo(() => {
     if (!options) return undefined;
 
-    const filteredOptions = (options || []).filter((options) => {
-      const queryString = queryArray.map((query) => options.data[query]).join(" ");
-      return queryString.toLowerCase().includes(query.toLowerCase());
-    });
+    const filteredOptions = queryArray
+      ? (options || []).filter((options) => {
+          const queryString = queryArray.map((query) => options.data[query]).join(" ");
+          return queryString.toLowerCase().includes(query.toLowerCase());
+        })
+      : options;
 
     if (disableSorting) return filteredOptions;
 
