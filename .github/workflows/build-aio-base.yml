@@ -47,18 +47,6 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
 
-      - name: Get changed files
-        id: changed_files
-        uses: tj-actions/changed-files@v42
-        with:
-          files_yaml: |
-            full_base: 
-              - aio/Dockerfile-full-base
-              - aio/supervisord-full-base
-            slim_base:
-              - aio/Dockerfile-slim-base
-              - aio/supervisord-slim-base
-
   full_base_build_push:
     runs-on: ubuntu-latest
     needs: [base_build_setup]
