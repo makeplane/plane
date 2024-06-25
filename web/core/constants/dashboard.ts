@@ -2,7 +2,7 @@
 
 import { linearGradientDef } from "@nivo/core";
 // icons
-import { BarChart2, Briefcase, CheckCircle, Home } from "lucide-react";
+import { BarChart2, Briefcase, CheckCircle, Home, Settings } from "lucide-react";
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // ui
@@ -290,6 +290,14 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     access: EUserWorkspaceRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
     Icon: BarChart2,
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    href: `/settings`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
+    Icon: Settings,
   },
 ];
 

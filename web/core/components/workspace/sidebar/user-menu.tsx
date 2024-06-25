@@ -71,7 +71,9 @@ export const SidebarUserMenu = observer(() => {
                     }
                   )}
                 >
-                  {<link.Icon className="size-4" />}
+                  <span className="flex-shrink-0 size-4 grid place-items-center">
+                    <link.Icon className="size-4" />
+                  </span>
                   {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
                 </div>
               </Tooltip>
