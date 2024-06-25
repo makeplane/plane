@@ -1,7 +1,7 @@
 "use client";
 
 // components
-import { AppHeader } from "@/components/core";
+import { AppHeader, ContentWrapper } from "@/components/core";
 // layout
 import { PageDetailsHeader } from "./header";
 
@@ -9,7 +9,7 @@ export default function PageDetailsLayout({ children }: { children: React.ReactN
   return (
     <>
       <AppHeader header={<PageDetailsHeader />} />
-      {children}
+      <ContentWrapper>{children}</ContentWrapper>
     </>
   );
 }
