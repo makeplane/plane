@@ -24,7 +24,7 @@ RUN echo "deb http://deb.debian.org/debian $(lsb_release -cs)-backports main" > 
     apt-get install -y redis-server
 
 # Install PostgreSQL 15
-ENV POSTGRES_VERSION 15
+ENV POSTGRES_VERSION=15
 RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/pgdg-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/pgdg-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
