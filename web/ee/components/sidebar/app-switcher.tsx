@@ -37,41 +37,43 @@ export const SidebarAppSwitcher = observer(() => {
 
   return (
     <div
-      className={cn("flex items-center rounded-md p-0.5 bg-custom-sidebar-background-90 mb-4", {
+      className={cn("flex items-center gap-0.5 rounded-md p-0.5 bg-custom-sidebar-background-80/50 mb-4", {
         "flex-col w-[34px] mx-auto": sidebarCollapsed,
       })}
     >
-      {APPS_LIST.map((app) => (
-        <Tooltip
-          key={app.key}
-          tooltipHeading={app.label}
-          tooltipContent=""
-          position="right"
-          disabled={!sidebarCollapsed}
-        >
-          <Link
-            href={`/${workspaceSlug}/${app.href}`}
-            className={cn(
-              "w-1/2 rounded flex items-center justify-center gap-2 text-sm font-medium text-center py-2 px-6",
-              {
-                "p-0 size-8 aspect-square": sidebarCollapsed,
-                "shadow-[-2px_0_8px_rgba(167,169,174,0.15)]": isPagesApp,
-                "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": !isPagesApp,
-                "bg-custom-sidebar-background-100":
-                  (app.key === "pages" && isPagesApp) || (app.key === "projects" && !isPagesApp),
-              }
-            )}
+      {APPS_LIST.map((app) => {
+        const isSelected = (app.key === "pages" && isPagesApp) || (app.key === "projects" && !isPagesApp);
+
+        return (
+          <Tooltip
+            key={app.key}
+            tooltipHeading={app.label}
+            tooltipContent=""
+            position="right"
+            disabled={!sidebarCollapsed}
           >
-            <app.icon
-              className="flex-shrink-0 size-4"
-              style={{
-                color: app.color,
-              }}
-            />
-            {!sidebarCollapsed && <span>{app.label}</span>}
-          </Link>
-        </Tooltip>
-      ))}
+            <Link
+              href={`/${workspaceSlug}/${app.href}`}
+              className={cn(
+                "w-1/2 rounded flex items-center justify-center gap-2 text-sm font-medium text-center py-2 px-6",
+                {
+                  "p-0 size-8 aspect-square": sidebarCollapsed,
+                  "bg-custom-sidebar-background-100 border-[0.5px] border-custom-border-300": isSelected,
+                  "hover:bg-custom-sidebar-background-80": !isSelected,
+                }
+              )}
+            >
+              <app.icon
+                className="flex-shrink-0 size-4"
+                style={{
+                  color: app.color,
+                }}
+              />
+              {!sidebarCollapsed && <span>{app.label}</span>}
+            </Link>
+          </Tooltip>
+        );
+      })}
     </div>
   );
 });
