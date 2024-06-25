@@ -1,13 +1,10 @@
 import { FC, Fragment, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { ICycle, TCyclePlotType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-// hooks
-import { useProjectEstimates } from "@/hooks/store";
-// plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 export type ActiveCycleProductivityProps = {
   cycle: ICycle;
@@ -20,16 +17,9 @@ const cycleBurnDownChartOptions = [
 
 export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { cycle } = props;
-  // hooks
-  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
   // state
   const [plotType, setPlotType] = useState<TCyclePlotType>("burndown");
-
-  const isCurrentProjectEstimateEnabled =
-    cycle?.project_id && areEstimateEnabledByProjectId(cycle?.project_id) ? true : false;
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
+  const isCurrentEstimateTypeIsPoints = !isEmpty(cycle?.estimate_distribution);
 
   // derived values
   const chartDistributionData = plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;

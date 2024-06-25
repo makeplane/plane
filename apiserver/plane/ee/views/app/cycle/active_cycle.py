@@ -10,18 +10,15 @@ from django.db.models import (
     Q,
     Value,
     When,
+    Sum,
+    IntegerField
 )
+from django.db.models.functions import Cast
 from django.utils import timezone
 
 
 # Module imports
-from plane.db.models import (
-    Cycle,
-    CycleFavorite,
-    Issue,
-    Label,
-    User,
-)
+from plane.db.models import Cycle, CycleFavorite, Issue, Label, User, Project
 from plane.utils.analytics_plot import burndown_plot
 # ee imports
 from plane.ee.views.base import BaseAPIView
@@ -38,8 +35,109 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
         WorkspaceUserPermission,
     ]
 
-    def get_results_controller(self, results, plot_type, active_cycles=None):
+    def get_results_controller(self, results, active_cycles=None):
         for cycle in results:
+            estimate_type = Project.objects.filter(
+                workspace__slug=self.kwargs.get("slug"),
+                pk=cycle["project_id"],
+                estimate__isnull=False,
+                estimate__type="points",
+            ).exists()
+
+            cycle["estimate_distribution"] = {}
+            if estimate_type:
+                assignee_distribution = (
+                    Issue.issue_objects.filter(
+                        issue_cycle__cycle_id=cycle["id"],
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=cycle["project_id"],
+                    )
+                    .annotate(display_name=F("assignees__display_name"))
+                    .annotate(assignee_id=F("assignees__id"))
+                    .annotate(avatar=F("assignees__avatar"))
+                    .values("display_name", "assignee_id", "avatar")
+                    .annotate(
+                        total_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField())
+                        )
+                    )
+                    .annotate(
+                        completed_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=False,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=True,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .order_by("display_name")
+                )
+
+                label_distribution = (
+                    Issue.issue_objects.filter(
+                        issue_cycle__cycle_id=cycle["id"],
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=cycle["project_id"],
+                    )
+                    .annotate(label_name=F("labels__name"))
+                    .annotate(color=F("labels__color"))
+                    .annotate(label_id=F("labels__id"))
+                    .values("label_name", "color", "label_id")
+                    .annotate(
+                        total_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField())
+                        )
+                    )
+                    .annotate(
+                        completed_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=False,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=True,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .order_by("label_name")
+                )
+                cycle["estimate_distribution"] = {
+                    "assignees": assignee_distribution,
+                    "labels": label_distribution,
+                    "completion_chart": {},
+                }
+
+                if cycle["start_date"] and cycle["end_date"]:
+                    cycle["estimate_distribution"]["completion_chart"] = (
+                        burndown_plot(
+                            queryset=active_cycles.get(pk=cycle["id"]),
+                            slug=self.kwargs.get("slug"),
+                            project_id=cycle["project_id"],
+                            plot_type="points",
+                            cycle_id=cycle["id"],
+                        )
+                    )
+
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle["id"],
@@ -128,12 +226,11 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
                     slug=self.kwargs.get("slug"),
                     project_id=cycle["project_id"],
                     cycle_id=cycle["id"],
-                    plot_type=plot_type
+                    plot_type="issues"
                 )
         return results
 
     def get(self, request, slug):
-        plot_type = request.GET.get("plot_type", "issues")
         subquery = CycleFavorite.objects.filter(
             user=self.request.user,
             cycle_id=OuterRef("pk"),
@@ -256,7 +353,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
                 active_cycles, many=True
             ).data,
             controller=lambda results: self.get_results_controller(
-                results,plot_type, active_cycles
+                results, active_cycles
             ),
             default_per_page=int(request.GET.get("per_page", 3)),
         )
