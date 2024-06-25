@@ -10,11 +10,11 @@ import { getButtonStyling } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
+import { PageRoot } from "@/components/pages/editor/page-root";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePage, useProjectPages } from "@/hooks/store";
-import { PageRoot } from "./page-root";
 
 const PageDetailsPage = observer(() => {
   const { workspaceSlug, projectId, pageId } = useParams();
