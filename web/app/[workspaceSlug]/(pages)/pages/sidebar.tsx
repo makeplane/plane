@@ -63,13 +63,13 @@ export const PagesAppSidebar = observer(() => {
         <SidebarAppSwitcher />
         <PagesAppSidebarQuickActions />
         <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto my-2", {
+          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
             "opacity-0": !sidebarCollapsed,
           })}
         />
         <PagesAppSidebarMenu />
         <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-200 h-[0.5px] w-3/5 mx-auto my-2", {
+          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
             "opacity-0": !sidebarCollapsed,
           })}
         />

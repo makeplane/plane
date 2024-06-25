@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { PenSquare, Search } from "lucide-react";
+import { FilePlus2, Search } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -21,9 +21,9 @@ export const PagesAppSidebarQuickActions = observer(() => {
       <button
         type="button"
         className={cn(
-          "flex-grow text-custom-text-300 text-sm font-medium border-[0.5px] border-custom-sidebar-border-300 text-left rounded h-full hover:bg-custom-sidebar-background-90 px-2 flex items-center gap-2",
+          "flex-grow text-custom-text-300 text-sm font-medium border-[0.5px] border-custom-sidebar-border-300 text-left rounded h-8 hover:bg-custom-sidebar-background-90 px-3 flex items-center gap-2",
           {
-            "flex-shrink-0 size-8 grid place-items-center border-none": isSidebarCollapsed,
+            "flex-shrink-0 p-0 size-8 grid place-items-center border-none": isSidebarCollapsed,
           }
         )}
         onClick={() =>
@@ -32,28 +32,20 @@ export const PagesAppSidebarQuickActions = observer(() => {
           })
         }
       >
-        <PenSquare
-          className={cn("size-3.5", {
-            "size-4": isSidebarCollapsed,
-          })}
-        />
+        <FilePlus2 className="size-4" />
         {!isSidebarCollapsed && "New page"}
       </button>
       <button
         type="button"
         className={cn(
-          "flex-shrink-0 grid place-items-center h-full aspect-square border-[0.5px] border-custom-sidebar-border-300 rounded hover:bg-custom-sidebar-background-90",
+          "flex-shrink-0 grid place-items-center h-8 aspect-square border-[0.5px] border-custom-sidebar-border-300 rounded hover:bg-custom-sidebar-background-90",
           {
             "size-8 border-none": isSidebarCollapsed,
           }
         )}
         onClick={() => toggleCommandPaletteModal(true)}
       >
-        <Search
-          className={cn("size-3.5 text-custom-text-300", {
-            "size-4": isSidebarCollapsed,
-          })}
-        />
+        <Search className="size-4 text-custom-text-300" />
       </button>
     </div>
   );

@@ -21,18 +21,12 @@ import { cn, GOD_MODE_URL } from "@/helpers/common.helper";
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 
 // Static Data
-const userLinks = (workspaceSlug: string) => [
+const USER_LINKS = [
   {
     key: "workspace_invites",
     name: "Workspace invites",
     href: "/invitations",
     icon: Mails,
-  },
-  {
-    key: "settings",
-    name: "Workspace settings",
-    href: `/${workspaceSlug}/settings`,
-    icon: Settings,
   },
 ];
 
@@ -215,7 +209,7 @@ export const PagesAppSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "").map((link, index) => (
+                    {USER_LINKS.map((link, index) => (
                       <Link
                         key={link.key}
                         href={link.href}
