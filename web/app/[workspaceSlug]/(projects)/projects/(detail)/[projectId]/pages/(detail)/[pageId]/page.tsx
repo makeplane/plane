@@ -10,7 +10,7 @@ import { getButtonStyling } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
-import { PageRoot } from "@/components/pages/editor/page-root";
+import { PageRoot } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
