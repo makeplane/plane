@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -97,15 +98,9 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   };
 
   const viewFilters = {
-    filters: {
-      ...(appliedFilters ?? {}),
-    },
-    display_filters: {
-      ...issueFilters?.displayFilters,
-    },
-    display_properties: {
-      ...issueFilters?.displayProperties,
-    },
+    filters: cloneDeep(appliedFilters ?? {}),
+    display_filters: cloneDeep(issueFilters?.displayFilters),
+    display_properties: cloneDeep(issueFilters?.displayProperties),
   };
   const handleUpdateView = () => {
     if (!workspaceSlug || !globalViewId) return;

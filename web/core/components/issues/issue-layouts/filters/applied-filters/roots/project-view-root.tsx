@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -90,15 +91,9 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
 
   const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
   const viewFilters = {
-    filters: {
-      ...(appliedFilters ?? {}),
-    },
-    display_filters: {
-      ...issueFilters?.displayFilters,
-    },
-    display_properties: {
-      ...issueFilters?.displayProperties,
-    },
+    filters: cloneDeep(appliedFilters ?? {}),
+    display_filters: cloneDeep(issueFilters?.displayFilters),
+    display_properties: cloneDeep(issueFilters?.displayProperties),
   };
   // return if no filters are applied
   if (isEmpty(appliedFilters) && areFiltersEqual) return null;
