@@ -4,6 +4,7 @@ import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tre
 import clone from "lodash/clone";
 import concat from "lodash/concat";
 import isEqual from "lodash/isEqual";
+import isNil from "lodash/isNil";
 import pull from "lodash/pull";
 import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
@@ -21,6 +22,7 @@ import {
   IIssueFilters,
   IProjectView,
   TGroupedIssues,
+  IWorkspaceView,
 } from "@plane/types";
 // ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
@@ -570,11 +572,24 @@ export const handleGroupDragDrop = async (
 export const getAreFiltersEqual = (
   appliedFilters: IIssueFilterOptions | undefined,
   issueFilters: IIssueFilters | undefined,
-  viewDetails: IProjectView | null
-) =>
-  isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {}) &&
-  isEqual(issueFilters?.displayFilters ?? {}, viewDetails?.display_filters ?? {}) &&
-  isEqual(issueFilters?.displayProperties ?? {}, viewDetails?.display_properties ?? {});
+  viewDetails: IProjectView | IWorkspaceView | null
+) => {
+  if (isNil(appliedFilters) || isNil(issueFilters) || isNil(viewDetails)) return true;
+
+  return (
+    isEqual(appliedFilters, viewDetails.filters) &&
+    isEqual(issueFilters.displayFilters, viewDetails.display_filters) &&
+    isEqual(removeNillKeys(issueFilters.displayProperties), removeNillKeys(viewDetails.display_properties))
+  );
+};
+
+/**
+ * method that removes Null or undefined Keys from object
+ * @param obj
+ * @returns
+ */
+export const removeNillKeys = <T,>(obj: T) =>
+  Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
  * This Method returns if the the grouped values are subGrouped

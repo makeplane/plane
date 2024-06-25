@@ -1,3 +1,4 @@
+import { EViewAccess } from "@/constants/views";
 import {
   IWorkspaceViewProps,
   IIssueDisplayFilterOptions,
@@ -7,7 +8,7 @@ import {
 
 export interface IWorkspaceView {
   id: string;
-  access: string;
+  access: EViewAccess;
   created_at: Date;
   updated_at: Date;
   is_favorite: boolean;
@@ -22,6 +23,8 @@ export interface IWorkspaceView {
   query_data: IWorkspaceViewProps;
   project: string;
   workspace: string;
+  is_locked: boolean;
+  owned_by: string;
   workspace_detail?: {
     id: string;
     name: string;
