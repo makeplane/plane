@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
-import { debounce } from "lodash"; // You can use lodash or implement your own debounce function
+import { debounce } from "lodash";
 
 const AUTO_SAVE_TIME = 10000;
 
-const useAutoSave = (handleSaveDescription: () => void) => {
+const useAutoSave = (handleSaveDescription: (forceSync?: boolean, yjsAsUpdate?: Uint8Array) => void) => {
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const handleSaveDescriptionRef = useRef(handleSaveDescription);
 
@@ -15,7 +15,11 @@ const useAutoSave = (handleSaveDescription: () => void) => {
   // Set up the interval to run every 10 seconds
   useEffect(() => {
     intervalIdRef.current = setInterval(() => {
-      handleSaveDescriptionRef.current();
+      try {
+        handleSaveDescriptionRef.current(true);
+      } catch (error) {
+        console.error("Autosave before manual save failed:", error);
+      }
     }, AUTO_SAVE_TIME);
 
     return () => {
@@ -25,15 +29,24 @@ const useAutoSave = (handleSaveDescription: () => void) => {
     };
   }, []);
 
-  // Debounced save function for manual save (Ctrl+S or Cmd+S)
+  // Debounced save function for manual save (Ctrl+S or Cmd+S) and clearing the
+  // interval for auto save and setting up the interval again
   useEffect(() => {
     const debouncedSave = debounce(() => {
-      handleSaveDescriptionRef.current();
+      try {
+        handleSaveDescriptionRef.current();
+      } catch (error) {
+        console.error("Manual save failed:", error);
+      }
 
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
         intervalIdRef.current = setInterval(() => {
-          handleSaveDescriptionRef.current();
+          try {
+            handleSaveDescriptionRef.current(true);
+          } catch (error) {
+            console.error("Autosave after manual save failed:", error);
+          }
         }, AUTO_SAVE_TIME);
       }
     }, 500);

@@ -19,7 +19,7 @@ type Props = {
   setSidePeekVisible: (sidePeekState: boolean) => void;
   editorReady: boolean;
   readOnlyEditorReady: boolean;
-  handleSaveDescription: (initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
+  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {

@@ -54,7 +54,8 @@ export const usePageDescription = (props: Props) => {
       // handle the initial sync case where indexeddb gives extra update, in
       // this case we need to save the update to the DB
       if (source && source === "initialSync") {
-        handleSaveDescription(update);
+        console.log("initialSync ran");
+        handleSaveDescription(true, update);
       }
 
       return update;
@@ -93,7 +94,7 @@ export const usePageDescription = (props: Props) => {
 
   // merge the description from remote to local state and only save if there are local changes
   const handleSaveDescription = useCallback(
-    async (initSyncVectorAsUpdate?: Uint8Array) => {
+    async (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array) => {
       const update = localDescriptionYJS ?? initSyncVectorAsUpdate;
 
       if (update == null) return;
@@ -103,7 +104,7 @@ export const usePageDescription = (props: Props) => {
       const applyUpdatesAndSave = async (latestDescription: Uint8Array, update: Uint8Array | undefined) => {
         if (!workspaceSlug || !projectId || !pageId || !latestDescription || !update) return;
 
-        if (!editorRef.current?.hasUnsyncedChanges()) {
+        if (!forceSync && !editorRef.current?.hasUnsyncedChanges()) {
           setIsSubmitting("saved");
           return;
         }
@@ -119,6 +120,7 @@ export const usePageDescription = (props: Props) => {
 
       try {
         setIsSubmitting("submitting");
+        console.log("aeeeh");
         const latestDescription = await mutateDescriptionYJS();
         if (latestDescription) {
           await applyUpdatesAndSave(latestDescription, update);
