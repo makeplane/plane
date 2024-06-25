@@ -16,8 +16,6 @@ jobs:
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
-      full_base: ${{ steps.changed_files.outputs.full_base_any_changed }}
-      slim_base: ${{ steps.changed_files.outputs.slim_base_any_changed }}
       image_tag: ${{ steps.set_env_variables.outputs.IMAGE_TAG }}
 
     steps:
@@ -62,7 +60,6 @@ jobs:
               - aio/supervisord-slim-base
 
   full_base_build_push:
-    if: ${{ needs.base_build_setup.outputs.full_base == 'true' || needs.base_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-latest
     needs: [base_build_setup]
     env:
@@ -103,7 +100,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   slim_base_build_push:
-    if: ${{ needs.base_build_setup.outputs.slim_base == 'true' || needs.base_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-latest
     needs: [base_build_setup]
     env:
