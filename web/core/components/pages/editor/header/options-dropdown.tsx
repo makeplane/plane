@@ -18,10 +18,11 @@ type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
+  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page } = props;
+  const { editorRef, handleDuplicatePage, page, handleSaveDescription } = props;
   // store values
   const {
     archived_at,
@@ -75,6 +76,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       })
     );
 
+  const saveDescriptionYJSAndPerformAction = (action: () => void) => async () => {
+    await handleSaveDescription();
+    action();
+  };
+
   // menu items list
   const MENU_ITEMS: {
     key: string;
@@ -116,21 +122,21 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "make-a-copy",
-      action: handleDuplicatePage,
+      action: saveDescriptionYJSAndPerformAction(handleDuplicatePage),
       label: "Make a copy",
       icon: Copy,
       shouldRender: canCurrentUserDuplicatePage,
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : handleLockPage,
+      action: is_locked ? handleUnlockPage : saveDescriptionYJSAndPerformAction(handleLockPage),
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : handleArchivePage,
+      action: archived_at ? handleRestorePage : saveDescriptionYJSAndPerformAction(handleArchivePage),
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

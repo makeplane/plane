@@ -17,6 +17,7 @@ type Props = {
   setSidePeekVisible: (sidePeekState: boolean) => void;
   editorReady: boolean;
   readOnlyEditorReady: boolean;
+  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
@@ -30,6 +31,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
     page,
     sidePeekVisible,
     setSidePeekVisible,
+    handleSaveDescription,
   } = props;
   // derived values
   const { isContentEditable } = page;
@@ -52,6 +54,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
         </div>
         <PageExtraOptions
           editorRef={editorRef}
+          handleSaveDescription={handleSaveDescription}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
           readOnlyEditorRef={readOnlyEditorRef}

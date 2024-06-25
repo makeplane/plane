@@ -117,7 +117,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   return (
     <>
-      {isBannerMessage && (
+      {isBannerMessage && mode === EAuthModes.SIGN_UP && (
         <div className="relative flex items-center p-2 rounded-md gap-2 border border-red-500/50 bg-red-500/10">
           <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
             <Info size={16} className="text-red-500" />

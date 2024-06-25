@@ -1,7 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import Collaboration from "@tiptap/extension-collaboration";
 import { EditorProps } from "@tiptap/pm/view";
-import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 // extensions
 import { DragAndDrop, IssueWidget } from "@/extensions";
@@ -62,21 +61,27 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     [id]
   );
 
-  // update document on value change
-  useEffect(() => {
-    if (value.byteLength > 0) Y.applyUpdate(provider.document, value);
-  }, [value, provider.document]);
+  const [isIndexedDbSynced, setIndexedDbIsSynced] = useState(false);
 
-  // indexedDB provider
+  // update document on value change from server
   useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(id, provider.document);
-    localProvider.on("synced", () => {
-      provider.setHasIndexedDBSynced(true);
-    });
+    if (value.length > 0) {
+      Y.applyUpdate(provider.document, value);
+    }
+  }, [value, provider.document, id]);
+
+  // watch for indexedDb to complete syncing, only after which the editor is
+  // rendered
+  useLayoutEffect(() => {
+    async function checkIndexDbSynced() {
+      const hasSynced = await provider.hasIndexedDBSynced();
+      setIndexedDbIsSynced(hasSynced);
+    }
+    checkIndexDbSynced();
     return () => {
-      localProvider?.destroy();
+      setIndexedDbIsSynced(false);
     };
-  }, [provider, id]);
+  }, [provider]);
 
   const editor = useEditor({
     id,
@@ -101,8 +106,9 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
       }),
     ],
     placeholder,
+    provider,
     tabIndex,
   });
 
-  return editor;
+  return { editor, isIndexedDbSynced };
 };
