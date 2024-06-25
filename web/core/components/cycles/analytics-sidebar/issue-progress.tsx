@@ -258,7 +258,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                       distribution={chartDistributionData}
                       groupedIssues={groupedIssues}
                       totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                      isEditable={Boolean(peekCycle)}
+                      isEditable={Boolean(!peekCycle)}
                       size="xs"
                       roundedTab={false}
                       noBackground={false}

@@ -229,8 +229,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               id={`issue-${issue.id}`}
               href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
                 issue.id
-              }`}
-              target="_blank"
+                }`}
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
