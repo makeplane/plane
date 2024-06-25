@@ -39,30 +39,30 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
   resolvedTheme,
 }) => [
     {
-      key: "email-codes",
-      name: "Email codes",
-      description: "Login or sign up using codes sent via emails. You need to have email setup here and enabled.",
+    key: "unique-codes",
+    name: "Unique codes",
+    description: "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
       icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
       config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },
     {
-      key: "password-login",
-      name: "Password based login",
-      description: "Allow members to create accounts with passwords for emails to sign in.",
+      key: "passwords-login",
+      name: "Passwords",
+      description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
       icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
       config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },
     {
       key: "google",
       name: "Google",
-      description: "Allow members to login or sign up to plane with their Google accounts.",
+      description: "Allow members to log in or sign up for Plane with their Google accounts.",
       icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
       config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },
     {
       key: "github",
-      name: "Github",
-      description: "Allow members to login or sign up to plane with their Github accounts.",
+      name: "GitHub",
+      description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
       icon: (
         <Image
           src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
