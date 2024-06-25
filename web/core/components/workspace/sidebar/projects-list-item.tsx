@@ -10,9 +10,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
-// icons
 import {
-  MoreVertical,
   PenSquare,
   LinkIcon,
   Star,
@@ -20,11 +18,10 @@ import {
   Settings,
   Share2,
   LogOut,
-  ChevronDown,
   MoreHorizontal,
   Inbox,
+  ChevronRight,
 } from "lucide-react";
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import {
@@ -37,6 +34,7 @@ import {
   LayersIcon,
   setPromiseToast,
   DropIndicator,
+  DragHandle,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -49,10 +47,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useEventTracker, useProject } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../issues/issue-layouts/utils";
-// helpers
-
-// components
+// constants
+import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
   projectId: string;
@@ -106,12 +102,11 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   },
 ];
 
-export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop, projectListType } =
     props;
   // store hooks
-  const { sidebarCollapsed: isSideBarCollapsed, toggleSidebar } = useAppTheme();
+  const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -175,10 +170,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     setLeaveProjectModal(true);
   };
 
-  const handleLeaveProjectModalClose = () => {
-    setLeaveProjectModal(false);
-  };
-
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
@@ -194,7 +185,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        canDrag: () => !disableDrag && !isSideBarCollapsed,
+        canDrag: () => !disableDrag && !isSidebarCollapsed,
         dragHandle: dragHandleElement ?? undefined,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
@@ -282,20 +273,22 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
-      <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
+      <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
       <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={URLProjectId === project.id}>
         {({ open }) => (
           <div
             id={`sidebar-${projectId}-${projectListType}`}
-            className={cn("rounded relative", { "bg-custom-sidebar-background-80 opacity-60": isDragging })}
+            className={cn("relative", {
+              "bg-custom-sidebar-background-80 opacity-60": isDragging,
+            })}
           >
             <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
             <div
               className={cn(
-                "h-9 group relative flex w-full px-3 py-2 items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80",
+                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
                 {
-                  "bg-custom-sidebar-background-80": isMenuActive,
-                  "pr-0": !isSideBarCollapsed,
+                  "bg-custom-sidebar-background-90": isMenuActive,
+                  "p-0 size-7 aspect-square justify-center mx-auto": isSidebarCollapsed,
                 }
               )}
             >
@@ -309,148 +302,153 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   <button
                     type="button"
                     className={cn(
-                      "absolute -left-[18px] flex opacity-0 rounded text-custom-sidebar-text-400 ml-2 cursor-grab",
+                      "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                       {
-                        "group-hover:opacity-100": !isSideBarCollapsed,
                         "cursor-not-allowed opacity-60": project.sort_order === null,
                         "cursor-grabbing": isDragging,
                         flex: isMenuActive,
-                        hidden: isSideBarCollapsed,
+                        "!hidden": isSidebarCollapsed,
                       }
                     )}
                     ref={dragHandleRef}
                   >
-                    <MoreVertical className="-ml-3 h-3.5" />
-                    <MoreVertical className="-ml-5 h-3.5" />
+                    <DragHandle className="bg-transparent" />
                   </button>
                 </Tooltip>
               )}
-              <Tooltip
-                tooltipContent={`${project.name}`}
-                position="right"
-                disabled={!isSideBarCollapsed}
-                isMobile={isMobile}
-              >
-                <Disclosure.Button
-                  as="div"
-                  className={cn(
-                    "flex flex-grow cursor-pointer select-none items-center justify-between truncate text-left text-sm font-medium",
-                    {
-                      "justify-center": isSideBarCollapsed,
-                    }
-                  )}
-                >
-                  <div
-                    className={cn("flex w-full flex-grow items-center gap-2.5 truncate", {
-                      "justify-center": isSideBarCollapsed,
-                    })}
-                  >
-                    <div className="size-5 grid place-items-center flex-shrink-0">
-                      <Logo logo={project.logo_props} />
-                    </div>
-                    {!isSideBarCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
+              {isSidebarCollapsed ? (
+                <Disclosure.Button as="button" className="grid place-items-center">
+                  <div className="size-4 grid place-items-center flex-shrink-0">
+                    <Logo logo={project.logo_props} size={16} />
                   </div>
-                  {!isSideBarCollapsed && (
-                    <ChevronDown
-                      className={cn(
-                        "hidden h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300 group-hover:block",
-                        {
-                          "rotate-180": open,
-                          block: isMenuActive,
-                        }
-                      )}
-                    />
-                  )}
                 </Disclosure.Button>
-              </Tooltip>
-
-              {!isSideBarCollapsed && (
-                <CustomMenu
-                  customButton={
-                    <div
-                      ref={actionSectionRef}
-                      className="size-5 flex items-center justify-center cursor-pointer px-1 text-custom-sidebar-text-400 duration-300"
-                      onClick={() => setIsMenuActive(!isMenuActive)}
+              ) : (
+                <>
+                  <Tooltip
+                    tooltipContent={`${project.name}`}
+                    position="right"
+                    disabled={!isSidebarCollapsed}
+                    isMobile={isMobile}
+                  >
+                    <Link
+                      href={`/${workspaceSlug}/projects/${project.id}/issues`}
+                      className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
+                        "justify-center": isSidebarCollapsed,
+                      })}
                     >
-                      <MoreHorizontal className="h-3.5 w-3.5" />
-                    </div>
-                  }
-                  className={cn("hidden flex-shrink-0 mr-1 group-hover:block", {
-                    "!block": isMenuActive,
-                  })}
-                  buttonClassName="!text-custom-sidebar-text-400"
-                  placement="bottom-start"
-                >
-                  {!project.is_favorite && (
-                    <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                      <span className="flex items-center justify-start gap-2">
-                        <Star className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Add to favorites</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  )}
-                  {project.is_favorite && (
-                    <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                      <span className="flex items-center justify-start gap-2">
-                        <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
-                        <span>Remove from favorites</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  )}
-                  {/* publish project settings */}
-                  {isAdmin && (
-                    <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
-                      <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
-                          <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
-                        </div>
-                        <div>{project.anchor ? "Publish settings" : "Publish"}</div>
+                      <div className="size-4 grid place-items-center flex-shrink-0">
+                        <Logo logo={project.logo_props} size={16} />
                       </div>
-                    </CustomMenu.MenuItem>
-                  )}
-                  <CustomMenu.MenuItem>
-                    <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
-                      <div className="flex items-center justify-start gap-2">
-                        <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                        <span>Draft issues</span>
-                      </div>
+                      {!isSidebarCollapsed && (
+                        <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
+                      )}
                     </Link>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>Copy link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-
-                  {!isViewerOrGuest && (
+                  </Tooltip>
+                  <Disclosure.Button
+                    as="button"
+                    className={cn(
+                      "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
+                      {
+                        "inline-block": isMenuActive,
+                      }
+                    )}
+                  >
+                    <ChevronRight
+                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                        "rotate-90": open,
+                      })}
+                    />
+                  </Disclosure.Button>
+                  <CustomMenu
+                    customButton={
+                      <span
+                        ref={actionSectionRef}
+                        className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                        onClick={() => setIsMenuActive(!isMenuActive)}
+                      >
+                        <MoreHorizontal className="size-4" />
+                      </span>
+                    }
+                    className={cn(
+                      "opacity-0 pointer-events-none flex-shrink-0 mr-1 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                      {
+                        "opacity-100 pointer-events-auto": isMenuActive,
+                      }
+                    )}
+                    customButtonClassName="grid place-items-center"
+                    placement="bottom-start"
+                  >
+                    {!project.is_favorite && (
+                      <CustomMenu.MenuItem onClick={handleAddToFavorites}>
+                        <span className="flex items-center justify-start gap-2">
+                          <Star className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Add to favorites</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {project.is_favorite && (
+                      <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
+                        <span className="flex items-center justify-start gap-2">
+                          <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
+                          <span>Remove from favorites</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {/* publish project settings */}
+                    {isAdmin && (
+                      <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
+                        <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
+                          <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
+                            <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
+                          </div>
+                          <div>{project.anchor ? "Publish settings" : "Publish"}</div>
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
                     <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                         <div className="flex items-center justify-start gap-2">
-                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archives</span>
+                          <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                          <span>Draft issues</span>
                         </div>
                       </Link>
                     </CustomMenu.MenuItem>
-                  )}
-                  <CustomMenu.MenuItem>
-                    <Link href={`/${workspaceSlug}/projects/${project?.id}/settings`}>
-                      <div className="flex items-center justify-start gap-2">
-                        <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Settings</span>
-                      </div>
-                    </Link>
-                  </CustomMenu.MenuItem>
-                  {/* leave project */}
-                  {isViewerOrGuest && (
-                    <CustomMenu.MenuItem onClick={handleLeaveProject}>
-                      <div className="flex items-center justify-start gap-2">
-                        <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Leave project</span>
-                      </div>
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <span className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>Copy link</span>
+                      </span>
                     </CustomMenu.MenuItem>
-                  )}
-                </CustomMenu>
+
+                    {!isViewerOrGuest && (
+                      <CustomMenu.MenuItem>
+                        <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
+                          <div className="flex items-center justify-start gap-2">
+                            <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                            <span>Archives</span>
+                          </div>
+                        </Link>
+                      </CustomMenu.MenuItem>
+                    )}
+                    <CustomMenu.MenuItem>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/settings`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Settings</span>
+                        </div>
+                      </Link>
+                    </CustomMenu.MenuItem>
+                    {/* leave project */}
+                    {isViewerOrGuest && (
+                      <CustomMenu.MenuItem onClick={handleLeaveProject}>
+                        <div className="flex items-center justify-start gap-2">
+                          <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Leave project</span>
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                  </CustomMenu>
+                </>
               )}
             </div>
 
@@ -462,8 +460,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className={`mt-1 space-y-1 ${isSideBarCollapsed ? "" : "ml-[1.25rem]"}`}>
-                {navigation(workspaceSlug as string, project?.id).map((item) => {
+              <Disclosure.Panel as="div" className="mt-1 space-y-1">
+                {navigation(workspaceSlug?.toString(), project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||
                     (item.name === "Modules" && !project.module_view) ||
@@ -475,26 +473,27 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
                   return (
                     <Link key={item.name} href={item.href} onClick={handleProjectClick}>
-                      <span className="block w-full">
-                        <Tooltip
-                          isMobile={isMobile}
-                          tooltipContent={`${project?.name}: ${item.name}`}
-                          position="right"
-                          className="ml-2"
-                          disabled={!isSideBarCollapsed}
+                      <Tooltip
+                        isMobile={isMobile}
+                        tooltipContent={`${project?.name}: ${item.name}`}
+                        position="right"
+                        className="ml-2"
+                        disabled={!isSidebarCollapsed}
+                      >
+                        <div
+                          className={cn(
+                            "flex items-center gap-1.5 rounded-md pl-[30px] pr-2 py-1.5 outline-none text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
+                            {
+                              "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10":
+                                pathname.includes(item.href),
+                              "p-0 size-7 justify-center mx-auto": isSidebarCollapsed,
+                            }
+                          )}
                         >
-                          <div
-                            className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
-                              pathname.includes(item.href)
-                                ? "bg-custom-primary-100/10 text-custom-primary-100"
-                                : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                            } ${isSideBarCollapsed ? "justify-center" : ""}`}
-                          >
-                            <item.Icon className="h-4 w-4 stroke-[1.5]" />
-                            {!isSideBarCollapsed && item.name}
-                          </div>
-                        </Tooltip>
-                      </span>
+                          <item.Icon className="flex-shrink-0 size-4 stroke-[1.5]" />
+                          {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
+                        </div>
+                      </Tooltip>
                     </Link>
                   );
                 })}

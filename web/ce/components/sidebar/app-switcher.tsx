@@ -1,1 +1,1 @@
-export const AppSwitcher = () => null;
+export const SidebarAppSwitcher = () => null;

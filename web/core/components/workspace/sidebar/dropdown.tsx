@@ -13,12 +13,10 @@ import { Menu, Transition } from "@headlessui/react";
 import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
-import { GOD_MODE_URL } from "@/helpers/common.helper";
+import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
-// plane web components
-import { AppSwitcher } from "@/plane-web/components/sidebar";
-import { WorkspaceLogo } from "./logo";
+import { WorkspaceLogo } from "../logo";
 
 // Static Data
 const userLinks = (workspaceSlug: string) => [
@@ -35,6 +33,7 @@ const userLinks = (workspaceSlug: string) => [
     icon: Settings,
   },
 ];
+
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "My activity",
@@ -47,7 +46,8 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
     link: "/profile",
   },
 ];
-export const WorkspaceSidebarDropdown = observer(() => {
+
+export const SidebarDropdown = observer(() => {
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -77,10 +77,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
       },
     ],
   });
+
   const handleWorkspaceNavigation = (workspace: IWorkspace) =>
     updateUserProfile({
       last_workspace_id: workspace?.id,
     });
+
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -90,6 +92,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       })
     );
   };
+
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
@@ -98,32 +101,41 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const workspacesList = Object.values(workspaces ?? {});
   // TODO: fix workspaces list scroll
   return (
-    <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
-      <Menu as="div" className="relative h-full flex-grow truncate text-left">
+    <div className="flex items-center justify-center gap-x-3 gap-y-2">
+      <Menu
+        as="div"
+        className={cn("relative h-full truncate text-left flex-grow flex justify-stretch", {
+          "flex-grow-0 justify-center": sidebarCollapsed,
+        })}
+      >
         {({ open }) => (
           <>
-            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none">
-              <div
-                className={`flex items-center  gap-x-2 truncate rounded p-1 ${
-                  sidebarCollapsed ? "justify-center" : "justify-between"
-                }`}
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
-                  {!sidebarCollapsed && (
-                    <h4 className="truncate text-base font-medium text-custom-text-100">
-                      {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
-                    </h4>
-                  )}
-                </div>
+            <Menu.Button
+              className={cn(
+                "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
+                {
+                  "flex-grow": !sidebarCollapsed,
+                }
+              )}
+            >
+              <div className="flex-grow flex items-center gap-2 truncate">
+                <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
                 {!sidebarCollapsed && (
-                  <ChevronDown
-                    className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${
-                      open ? "rotate-180" : ""
-                    } text-custom-sidebar-text-400 duration-300`}
-                  />
+                  <h4 className="truncate text-base font-medium text-custom-text-100">
+                    {activeWorkspace?.name ?? "Loading..."}
+                  </h4>
                 )}
               </div>
+              {!sidebarCollapsed && (
+                <ChevronDown
+                  className={cn(
+                    "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
+                    {
+                      "rotate-180": open,
+                    }
+                  )}
+                />
+              )}
             </Menu.Button>
             <Transition
               as={Fragment}
@@ -135,61 +147,59 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
+                <div className="fixed top-12 left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
                   <div className="vertical-scrollbar scrollbar-sm mb-2 flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll px-4">
                     <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
-                    <AppSwitcher />
                     {workspacesList ? (
-                      <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
-                        {workspacesList.length > 0 &&
-                          workspacesList.map((workspace) => (
-                            <Link
-                              key={workspace.id}
-                              href={`/${workspace.slug}`}
-                              onClick={() => {
-                                handleWorkspaceNavigation(workspace);
-                                handleItemClick();
-                              }}
-                              className="w-full"
+                      <div className="size-full flex flex-col items-start justify-start gap-1.5">
+                        {workspacesList.map((workspace) => (
+                          <Link
+                            key={workspace.id}
+                            href={`/${workspace.slug}`}
+                            onClick={() => {
+                              handleWorkspaceNavigation(workspace);
+                              handleItemClick();
+                            }}
+                            className="w-full"
+                          >
+                            <Menu.Item
+                              as="div"
+                              className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
                             >
-                              <Menu.Item
-                                as="div"
-                                className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
-                              >
-                                <div className="flex items-center justify-start gap-2.5 truncate">
-                                  <span
-                                    className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                                      !workspace?.logo && "rounded bg-custom-primary-500 text-white"
-                                    }`}
-                                  >
-                                    {workspace?.logo && workspace.logo !== "" ? (
-                                      <img
-                                        src={workspace.logo}
-                                        className="absolute left-0 top-0 h-full w-full rounded object-cover"
-                                        alt="Workspace Logo"
-                                      />
-                                    ) : (
-                                      workspace?.name?.charAt(0) ?? "..."
-                                    )}
-                                  </span>
-                                  <h5
-                                    className={`truncate text-sm font-medium ${
-                                      workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
-                                    }`}
-                                  >
-                                    {workspace.name}
-                                  </h5>
-                                </div>
-                                {workspace.id === activeWorkspace?.id && (
-                                  <span className="flex-shrink-0 p-1">
-                                    <Check className="h-5 w-5 text-custom-sidebar-text-100" />
-                                  </span>
-                                )}
-                              </Menu.Item>
-                            </Link>
-                          ))}
+                              <div className="flex items-center justify-start gap-2.5 truncate">
+                                <span
+                                  className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
+                                    !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                                  }`}
+                                >
+                                  {workspace?.logo && workspace.logo !== "" ? (
+                                    <img
+                                      src={workspace.logo}
+                                      className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                                      alt="Workspace Logo"
+                                    />
+                                  ) : (
+                                    workspace?.name?.charAt(0) ?? "..."
+                                  )}
+                                </span>
+                                <h5
+                                  className={`truncate text-sm font-medium ${
+                                    workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
+                                  }`}
+                                >
+                                  {workspace.name}
+                                </h5>
+                              </div>
+                              {workspace.id === activeWorkspace?.id && (
+                                <span className="flex-shrink-0 p-1">
+                                  <Check className="h-5 w-5 text-custom-sidebar-text-100" />
+                                </span>
+                              )}
+                            </Menu.Item>
+                          </Link>
+                        ))}
                       </div>
                     ) : (
                       <div className="w-full">
@@ -200,7 +210,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       </div>
                     )}
                   </div>
-                  <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
+                  <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
                     <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
@@ -236,7 +246,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm font-medium text-red-600 hover:bg-custom-sidebar-background-80"
                       onClick={handleSignOut}
                     >
-                      <LogOut className="h-4 w-4 flex-shrink-0" />
+                      <LogOut className="size-4 flex-shrink-0" />
                       Sign out
                     </Menu.Item>
                   </div>
@@ -299,7 +309,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <LogOut className="h-4 w-4 stroke-[1.5]" />
+                  <LogOut className="size-4 stroke-[1.5]" />
                   Sign out
                 </Menu.Item>
               </div>
