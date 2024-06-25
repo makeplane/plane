@@ -251,7 +251,49 @@ export const CREATED_ISSUES_EMPTY_STATES = {
   },
 };
 
-export const SIDEBAR_MENU_ITEMS: {
+export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
+  key: string;
+  label: string;
+  href: string;
+  access: EUserWorkspaceRoles;
+  highlight: (pathname: string, baseUrl: string) => boolean;
+  Icon: React.FC<Props>;
+}[] = [
+  {
+    key: "all-issues",
+    label: "All Issues",
+    href: `/workspace-views/all-issues`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
+    Icon: CheckCircle,
+  },
+  {
+    key: "projects",
+    label: "Projects",
+    href: `/projects`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
+    Icon: Briefcase,
+  },
+  {
+    key: "active-cycles",
+    label: "Active Cycles",
+    href: `/active-cycles`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
+    Icon: ContrastIcon,
+  },
+  {
+    key: "analytics",
+    label: "Analytics",
+    href: `/analytics`,
+    access: EUserWorkspaceRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
+    Icon: BarChart2,
+  },
+];
+
+export const SIDEBAR_USER_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
@@ -266,37 +308,5 @@ export const SIDEBAR_MENU_ITEMS: {
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
     Icon: Home,
-  },
-  {
-    key: "analytics",
-    label: "Analytics",
-    href: `/analytics`,
-    access: EUserWorkspaceRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
-    Icon: BarChart2,
-  },
-  {
-    key: "projects",
-    label: "Projects",
-    href: `/projects`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
-    Icon: Briefcase,
-  },
-  {
-    key: "all-issues",
-    label: "All Issues",
-    href: `/workspace-views/all-issues`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
-    Icon: CheckCircle,
-  },
-  {
-    key: "active-cycles",
-    label: "Active Cycles",
-    href: `/active-cycles`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
-    Icon: ContrastIcon,
   },
 ];

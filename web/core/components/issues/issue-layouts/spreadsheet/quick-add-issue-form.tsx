@@ -8,6 +8,7 @@ import { PlusIcon } from "lucide-react";
 import { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { CreateIssueToastActionItems } from "@/components/issues";
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { createIssuePayload } from "@/helpers/issue.helper";
 import { useEventTracker, useProject, useWorkspace } from "@/hooks/store";
@@ -162,6 +163,13 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         success: {
           title: "Success!",
           message: () => "Issue created successfully.",
+          actionItems: (data) => (
+            <CreateIssueToastActionItems
+              workspaceSlug={currentWorkspace.slug}
+              projectId={currentProjectDetails.id}
+              issueId={data.id}
+            />
+          ),
         },
         error: {
           title: "Error!",

@@ -222,7 +222,7 @@ const ProfileSettingsPage = observer(() => {
             </Link> */}
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:px-8 lg:grid-cols-2 2xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 md:px-8 lg:grid-cols-2 2xl:grid-cols-3 pb-8">
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
                   First name<span className="text-red-500">*</span>

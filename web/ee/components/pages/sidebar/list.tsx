@@ -60,19 +60,22 @@ export const PagesAppSidebarList = observer(() => {
   };
 
   return (
-    <div
-      className={cn("vertical-scrollbar h-full space-y-2 !overflow-y-scroll pl-4 scrollbar-md", {
-        "scrollbar-sm": isCollapsed,
-      })}
-    >
+    <div className="vertical-scrollbar h-full space-y-2 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4">
       {Object.values(sectionsList).map((section) => (
         <Disclosure key={section.key} as="div" className="flex flex-col" defaultOpen={section.key === "public"}>
           <>
-            <div className="group w-full flex items-center justify-between rounded py-1.5 px-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
-              <Tooltip tooltipHeading={section.label} tooltipContent="" disabled={!isCollapsed}>
+            <div
+              className={cn(
+                "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                {
+                  "p-0 size-8 justify-center mx-auto": isCollapsed,
+                }
+              )}
+            >
+              <Tooltip tooltipHeading={section.label} tooltipContent="" position="right" disabled={!isCollapsed}>
                 <Link
                   href={`/${workspaceSlug}/pages/${section.key}`}
-                  className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400", {
+                  className={cn("flex-grow text-sm font-medium text-custom-sidebar-text-400", {
                     "flex justify-center": isCollapsed,
                   })}
                 >
@@ -81,6 +84,19 @@ export const PagesAppSidebarList = observer(() => {
               </Tooltip>
               {!isCollapsed && (
                 <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+                  >
+                    {({ open }) => (
+                      <ChevronRight
+                        className={cn("size-3.5 transition-all", {
+                          "rotate-90": open,
+                        })}
+                      />
+                    )}
+                  </Disclosure.Button>
                   {section.key !== "archived" && (
                     <button
                       className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
@@ -92,22 +108,9 @@ export const PagesAppSidebarList = observer(() => {
                         });
                       }}
                     >
-                      <Plus className="size-4" />
+                      <Plus className="size-3.5" />
                     </button>
                   )}
-                  <Disclosure.Button
-                    as="button"
-                    type="button"
-                    className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
-                  >
-                    {({ open }) => (
-                      <ChevronRight
-                        className={cn("size-4 transition-all", {
-                          "rotate-90": open,
-                        })}
-                      />
-                    )}
-                  </Disclosure.Button>
                 </div>
               )}
             </div>

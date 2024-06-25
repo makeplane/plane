@@ -23,7 +23,7 @@ export default function ProfileNotificationPage() {
 
   return (
     <>
-      <PageHead title="Profile - Email Preference" />
+      <PageHead title="Profile - Notifications" />
       <ProfileSettingContentWrapper>
         <ProfileSettingContentHeader
           title="Email notifications"

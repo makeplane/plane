@@ -99,7 +99,6 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails?.id}`}
-      target="_blank"
       onClick={handleIssuePeekOverview}
       className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
       disabled={!!issueDetails?.tempId}

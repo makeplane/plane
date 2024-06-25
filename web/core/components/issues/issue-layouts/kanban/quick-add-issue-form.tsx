@@ -8,6 +8,7 @@ import { PlusIcon } from "lucide-react";
 import { TIssue } from "@plane/types";
 // hooks
 import { setPromiseToast } from "@plane/ui";
+import { CreateIssueToastActionItems } from "@/components/issues";
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { createIssuePayload } from "@/helpers/issue.helper";
 import { useEventTracker, useProject } from "@/hooks/store";
@@ -102,6 +103,13 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
         success: {
           title: "Success!",
           message: () => "Issue created successfully.",
+          actionItems: (data) => (
+            <CreateIssueToastActionItems
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              issueId={data.id}
+            />
+          ),
         },
         error: {
           title: "Error!",

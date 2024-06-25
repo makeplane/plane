@@ -63,8 +63,10 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   };
 
   const handleEstimateInputValue = (value: string) => {
-    handleEstimatePointError && handleEstimatePointError(value, undefined);
-    setEstimateInputValue(() => value);
+    if (value.length <= MAX_ESTIMATE_POINT_INPUT_LENGTH) {
+      setEstimateInputValue(() => value);
+      handleEstimatePointError && handleEstimatePointError(value, undefined);
+    }
   };
 
   const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
