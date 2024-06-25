@@ -2,7 +2,10 @@ from django.urls import path
 
 
 from plane.app.views import UnsplashEndpoint
-from plane.app.views import GPTIntegrationEndpoint, WorkspaceGPTIntegrationEndpoint
+from plane.app.views import (
+    GPTIntegrationEndpoint,
+    WorkspaceGPTIntegrationEndpoint,
+)
 
 
 urlpatterns = [
@@ -12,11 +15,11 @@ urlpatterns = [
         name="unsplash",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
+        "workspaces/<str:slug>/projects/<str:project_id>/ai-assistant/",
         GPTIntegrationEndpoint.as_view(),
         name="importer",
     ),
-   path(
+    path(
         "workspaces/<str:slug>/ai-assistant/",
         WorkspaceGPTIntegrationEndpoint.as_view(),
         name="importer",

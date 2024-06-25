@@ -11,7 +11,7 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
+        "workspaces/<str:slug>/projects/<str:project_id>/views/",
         IssueViewViewSet.as_view(
             {
                 "get": "list",
@@ -21,7 +21,7 @@ urlpatterns = [
         name="project-view",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/views/<uuid:pk>/",
         IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
@@ -64,7 +64,7 @@ urlpatterns = [
         name="global-view-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
+        "workspaces/<str:slug>/projects/<str:project_id>/user-favorite-views/",
         IssueViewFavoriteViewSet.as_view(
             {
                 "get": "list",
@@ -74,7 +74,7 @@ urlpatterns = [
         name="user-favorite-view",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/user-favorite-views/<uuid:view_id>/",
         IssueViewFavoriteViewSet.as_view(
             {
                 "delete": "destroy",

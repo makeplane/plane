@@ -6,7 +6,7 @@ from plane.app.views import StateViewSet
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/states/",
+        "workspaces/<str:slug>/projects/<str:project_id>/states/",
         StateViewSet.as_view(
             {
                 "get": "list",
@@ -16,7 +16,7 @@ urlpatterns = [
         name="project-states",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/states/<uuid:pk>/",
         StateViewSet.as_view(
             {
                 "get": "retrieve",
@@ -27,7 +27,7 @@ urlpatterns = [
         name="project-state",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/mark-default/",
+        "workspaces/<str:slug>/projects/<str:project_id>/states/<uuid:pk>/mark-default/",
         StateViewSet.as_view(
             {
                 "post": "mark_as_default",

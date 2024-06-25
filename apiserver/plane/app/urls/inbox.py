@@ -9,7 +9,7 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
+        "workspaces/<str:slug>/projects/<str:project_id>/inboxes/",
         InboxViewSet.as_view(
             {
                 "get": "list",
@@ -19,7 +19,7 @@ urlpatterns = [
         name="inbox",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/inboxes/<uuid:pk>/",
         InboxViewSet.as_view(
             {
                 "get": "retrieve",
@@ -30,7 +30,7 @@ urlpatterns = [
         name="inbox",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/",
+        "workspaces/<str:slug>/projects/<str:project_id>/inbox-issues/",
         InboxIssueViewSet.as_view(
             {
                 "get": "list",
@@ -40,7 +40,7 @@ urlpatterns = [
         name="inbox-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:issue_id>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/inbox-issues/<uuid:issue_id>/",
         InboxIssueViewSet.as_view(
             {
                 "get": "retrieve",

@@ -8,7 +8,10 @@ DEBUG = True
 
 # Debug Toolbar settings
 INSTALLED_APPS += ("debug_toolbar",)  # noqa
-MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
+MIDDLEWARE += (  # noqa
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "kolo.middleware.KoloMiddleware",
+)
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 

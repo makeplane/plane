@@ -44,12 +44,16 @@ class ProjectSerializer(BaseSerializer):
                 detail="Project Identifier is taken"
             )
         project = Project.objects.create(
-            **validated_data, workspace_id=self.context["workspace_id"]
+            **validated_data,
+            workspace_id=self.context["workspace_id"],
         )
         _ = ProjectIdentifier.objects.create(
             name=project.identifier,
             project=project,
             workspace_id=self.context["workspace_id"],
+            created_by_id=project.created_by_id,
+            updated_by_id=project.updated_by_id,
+            current_active=project.identifier,
         )
         return project
 
@@ -61,29 +65,38 @@ class ProjectSerializer(BaseSerializer):
             project = super().update(instance, validated_data)
             return project
 
-        # If no Project Identifier is found create it
-        project_identifier = ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=instance.workspace_id
-        ).first()
-        if project_identifier is None:
-            project = super().update(instance, validated_data)
-            project_identifier = ProjectIdentifier.objects.filter(
-                project=project
-            ).first()
-            if project_identifier is not None:
-                project_identifier.name = identifier
-                project_identifier.save()
-            return project
-        # If found check if the project_id to be updated and identifier project id is same
-        if project_identifier.project_id == instance.id:
-            # If same pass update
+        # When updating check if the project identifier is different
+        if instance.identifier == identifier:
             project = super().update(instance, validated_data)
             return project
 
-        # If not same fail update
-        raise serializers.ValidationError(
-            detail="Project Identifier is already taken"
+        # Check if this project identifier is already taken in the current workspace
+        if ProjectIdentifier.objects.filter(
+            name=identifier,
+            workspace_id=instance.workspace_id,
+        ).exists():
+            raise serializers.ValidationError(
+                detail="Project Identifier is already taken"
+            )
+
+        # Update the project identifier
+        project = super().update(instance, validated_data)
+        # If no Project Identifier is found create it and deactivate the old ones
+        ProjectIdentifier.objects.filter(
+            project_id=instance.id,
+            workspace_id=instance.workspace_id,
+        ).update(current_active=identifier)
+        # Create new project identifier
+        ProjectIdentifier.objects.create(
+            name=identifier,
+            project=instance,
+            workspace_id=instance.workspace_id,
+            created_by_id=project.created_by_id,
+            updated_by_id=project.updated_by_id,
+            current_active=identifier,
         )
+        # Return the updated project
+        return project
 
 
 class ProjectLiteSerializer(BaseSerializer):

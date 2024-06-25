@@ -1,12 +1,12 @@
 # Python imports
 import traceback
-
+import uuid
 import zoneinfo
+
+# Django imports
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
-
-# Django imports
 from django.urls import resolve
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
@@ -24,6 +24,7 @@ from rest_framework.viewsets import ModelViewSet
 from plane.authentication.session import BaseSessionAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.db.models import ProjectIdentifier
 
 
 class TimezoneMixin:
@@ -59,6 +60,38 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     filterset_fields = []
 
     search_fields = []
+
+    def is_uuid(self, value):
+        try:
+            # Check if the value is a valid UUID
+            uuid.UUID(str(value))
+            return True
+        except ValueError:
+            return False
+
+    def get_project_id(self, project_id):
+        # If the project_id is present and is not a UUID then get the project_id from the project_identifier
+        if project_id and not self.is_uuid(project_id):
+            project_identifier = (
+                ProjectIdentifier.objects.filter(
+                    workspace__slug=self.workspace_slug, name=project_id
+                )
+                .values("project_id")
+                .first()
+            )
+            # If the project_identifier is not present then raise ObjectDoesNotExist
+            if not project_identifier:
+                raise ObjectDoesNotExist
+
+            # Update the project_id in the kwargs
+            return project_identifier.get("project_id")
+        return project_id
+
+    def get_issue_id(self, issue_id):
+        # If the issue_id is present and is not a UUID then get the issue_id from the issue_identifier
+        if issue_id and not self.is_uuid(issue_id):
+            pass
+        return issue_id
 
     def get_queryset(self):
         try:
@@ -116,8 +149,18 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
     def dispatch(self, request, *args, **kwargs):
         try:
+            # Write identifier to the uuid
+            project_id = self.kwargs.get("project_id", None)
+            if project_id:
+                self.kwargs["project_id"] = self.get_project_id(project_id)
+            # Check issue_id is present in the kwargs
+            issue_id = self.kwargs.get("issue_id", None)
+            if issue_id:
+                self.kwargs["issue_id"] = self.get_issue_id(issue_id)
+            # If the project_id is not present then get the project_id from the project_identifier
             response = super().dispatch(request, *args, **kwargs)
 
+            # Print the number of queries if the debug is enabled
             if settings.DEBUG:
                 from django.db import connection
 
@@ -125,6 +168,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )
 
+            # Return the response
             return response
         except Exception as exc:
             response = self.handle_exception(exc)

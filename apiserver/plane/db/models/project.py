@@ -206,7 +206,6 @@ class ProjectMember(ProjectBaseModel):
         return f"{self.member.email} <{self.project.name}>"
 
 
-# TODO: Remove workspace relation later
 class ProjectIdentifier(AuditModel):
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -214,10 +213,11 @@ class ProjectIdentifier(AuditModel):
         related_name="project_identifiers",
         null=True,
     )
-    project = models.OneToOneField(
+    project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
     )
-    name = models.CharField(max_length=12)
+    name = models.CharField(max_length=12, db_index=True)
+    current_active = models.CharField(max_length=12, db_index=True, null=True)
 
     class Meta:
         unique_together = ["name", "workspace"]

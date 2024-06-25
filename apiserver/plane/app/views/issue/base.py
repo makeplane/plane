@@ -58,8 +58,7 @@ from plane.utils.paginator import (
 )
 from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
-
-# Module imports
+from plane.utils.valid_int_uuid import is_int_or_uuid
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -410,9 +409,10 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
+        type, value = is_int_or_uuid(pk)
+
         issue = (
             self.get_queryset()
-            .filter(pk=pk)
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
@@ -470,7 +470,18 @@ class IssueViewSet(BaseViewSet):
                     )
                 )
             )
-        ).first()
+        )
+        if type == "int":
+            issue = issue.filter(sequence_id=pk)
+        elif type == "uuid":
+            issue = issue.filter(pk=pk)
+        else:
+            return Response(
+                {"error": "Invalid issue id"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issue = issue.first()
         if not issue:
             return Response(
                 {"error": "The required object does not exist."},

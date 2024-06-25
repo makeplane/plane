@@ -61,6 +61,21 @@ class ProjectViewSet(BaseViewSet):
         ProjectBasePermission,
     ]
 
+    def dispatch(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk and not self.is_uuid(pk):
+            project = (
+                ProjectIdentifier.objects.filter(
+                    name=pk, workspace__slug=kwargs.get("slug")
+                )
+                .values("project")
+                .first()
+            )
+            if project:
+                kwargs["pk"] = project["project"]
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(
             member=self.request.user,
@@ -484,32 +499,39 @@ class ProjectIdentifierEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
+        # Get the identifier name
         name = request.GET.get("name", "").strip().upper()
 
+        # Check if the name is passed
         if name == "":
             return Response(
                 {"error": "Name is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Check if the identifier exists
         exists = ProjectIdentifier.objects.filter(
             name=name, workspace__slug=slug
         ).values("id", "name", "project")
 
+        # Return the response
         return Response(
             {"exists": len(exists), "identifiers": exists},
             status=status.HTTP_200_OK,
         )
 
     def delete(self, request, slug):
+        # Get the identifier name
         name = request.data.get("name", "").strip().upper()
 
+        # Check if the name is passed
         if name == "":
             return Response(
                 {"error": "Name is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Check if the identifier is used in any project
         if Project.objects.filter(
             identifier=name, workspace__slug=slug
         ).exists():
@@ -520,10 +542,12 @@ class ProjectIdentifierEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Delete the identifier
         ProjectIdentifier.objects.filter(
             name=name, workspace__slug=slug
         ).delete()
 
+        # Return success
         return Response(
             status=status.HTTP_204_NO_CONTENT,
         )
