@@ -2,10 +2,9 @@
 
 import { observer } from "mobx-react";
 // ui
-import { Crown } from "lucide-react";
 import { Breadcrumbs, ContrastIcon } from "@plane/ui";
+// components
 import { BreadcrumbLink } from "@/components/common";
-// icons
 
 export const WorkspaceActiveCycleHeader = observer(() => (
   <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -22,7 +21,9 @@ export const WorkspaceActiveCycleHeader = observer(() => (
             }
           />
         </Breadcrumbs>
-        <Crown className="h-3.5 w-3.5 text-amber-400" />
+        <span className="flex items-center justify-center px-3.5 py-0.5 text-xs leading-4 rounded-xl text-orange-500 bg-orange-500/20">
+          Beta
+        </span>
       </div>
     </div>
   </div>
