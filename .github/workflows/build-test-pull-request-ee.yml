@@ -2,13 +2,12 @@ name: Build and Lint on Pull Request EE
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: ["opened", "synchronize", "ready_for_review"]
-    branches: ["preview", "master"]
+  issue_comment:
+    types: [created]
 
 jobs:
   get-changed-files:
-    if: github.event.pull_request.draft == false
+    if: github.event.issue.pull_request != '' && github.event.comment.body == 'build-test-pr'
     runs-on: ubuntu-latest
     outputs:
       apiserver_changed: ${{ steps.changed-files.outputs.apiserver_any_changed }}

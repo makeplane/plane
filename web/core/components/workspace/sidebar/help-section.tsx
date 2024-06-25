@@ -39,7 +39,7 @@ export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
+export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { toggleShortcutModal } = useCommandPalette();
@@ -63,7 +63,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
     <>
       <div
         className={cn(
-          "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 h-14 flex-shrink-0",
+          "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-14 flex-shrink-0",
           {
             "flex-col h-auto py-1.5": isCollapsed,
           }

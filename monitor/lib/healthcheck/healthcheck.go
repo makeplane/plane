@@ -49,6 +49,7 @@ type ServiceData struct {
 
 // ------------------ Controller Methods ----------------------
 
+// Performs Health Check and returns the status of the services as channels
 func (h *HealthCheckHandler) PerformHealthCheck(ctx context.Context, options HealthCheckOptions) (chan *HealthCheckStatus, chan *error) {
 	select {
 	// return the function in case the context is cancelled
@@ -102,63 +103,134 @@ func (h *HealthCheckHandler) PerformHealthCheck(ctx context.Context, options Hea
 	}
 }
 
+type AccHealthCheckStatus struct {
+	Statuses []*HealthCheckStatus
+	Errors   []*error
+}
+
+// Uses the Perform Health Check to get the status of the services, accumilates
+// them and return to the consumer as a list of HealthCheckStatus
+func (h *HealthCheckHandler) GetAccumilatedHealthCheck(ctx context.Context, options HealthCheckOptions) AccHealthCheckStatus {
+
+	accStatusChan := make(chan AccHealthCheckStatus)
+	defer close(accStatusChan)
+
+	go func(ctx context.Context) {
+		statusChannel, errorChannel := h.PerformHealthCheck(ctx, options)
+
+		statuses := make([]*HealthCheckStatus, 0)
+		errors := make([]*error, 0)
+		for {
+			select {
+			case status, ok := <-statusChannel:
+				if !ok {
+					statusChannel = nil
+				} else {
+					statuses = append(statuses, status)
+				}
+			case err, ok := <-errorChannel:
+				if !ok {
+					errorChannel = nil
+				} else {
+					errors = append(errors, err)
+				}
+			}
+			if statusChannel == nil && errorChannel == nil {
+				break
+			}
+		}
+
+		// Pass the accumilated status and errors to the channels
+		accStatusChan <- AccHealthCheckStatus{
+			Statuses: statuses,
+			Errors:   errors,
+		}
+	}(ctx)
+
+	select {
+	case <-ctx.Done():
+		return AccHealthCheckStatus{
+			Statuses: []*HealthCheckStatus{},
+			Errors:   nil,
+		}
+	case statuses := <-accStatusChan:
+		return statuses
+	}
+}
+
 func (h *HealthCheckHandler) ExecuteHealthCheckWithRetries(
 	ctx context.Context,
 	testMethod HealthCheckMethod,
 	options HealthCheckMethodOptions,
 	wg *sync.WaitGroup, statusChannel chan *HealthCheckStatus, errorChannel chan *error) {
-	healthy := false
-	defer wg.Done()
 
-	// channels for recieving the frequent updates from the healthcheck channels,
-	// we will run the operations over these channels, and decide weather we
-	// should send a final status to user or not
-	methodStatusChannel := make(chan *HealthCheckStatus)
-	methodErrorChannel := make(chan *error)
+	done := make(chan bool)
 
-	options.StatusChannel = methodStatusChannel
-	options.ErrorChannel = methodErrorChannel
+	// Perform the health check method and return the status to the status channel
+	go func() {
+		healthy := false
+		defer wg.Done()
 
-	failureStatus := 0
+		// channels for recieving the frequent updates from the healthcheck channels,
+		// we will run the operations over these channels, and decide weather we
+		// should send a final status to user or not
+		methodStatusChannel := make(chan *HealthCheckStatus)
+		methodErrorChannel := make(chan *error)
 
-	for retry := 0; retry < options.MaxRetries; retry++ {
-		testResults := make([]bool, 0)
-		// iterating through a boolean array b
-		for b := 0; b < options.ConfirmTries; b++ {
-			go testMethod(ctx, options)
-			select {
-			case status := <-methodStatusChannel:
-				testResults = append(testResults, status.Status == SERVICE_STATUS_REACHABLE)
-				if status.Status != SERVICE_STATUS_REACHABLE {
-					failureStatus = status.StatusCode
+		options.StatusChannel = methodStatusChannel
+		options.ErrorChannel = methodErrorChannel
+
+		failureStatus := 0
+
+		for retry := 0; retry < options.MaxRetries; retry++ {
+			testResults := make([]bool, 0)
+			// iterating through a boolean array b
+			for b := 0; b < options.ConfirmTries; b++ {
+				go testMethod(ctx, options)
+				select {
+				case status := <-methodStatusChannel:
+					testResults = append(testResults, status.Status == SERVICE_STATUS_REACHABLE)
+					if status.Status != SERVICE_STATUS_REACHABLE {
+						failureStatus = status.StatusCode
+					}
+				case <-methodErrorChannel:
+					testResults = append(testResults, false)
 				}
-			case <-methodErrorChannel:
-				testResults = append(testResults, false)
+				time.Sleep(options.RetryDuration)
 			}
-			time.Sleep(options.RetryDuration)
+
+			healthy = !ShouldRetry(testResults)
+			if healthy {
+				break
+			}
 		}
 
-		healthy = !ShouldRetry(testResults)
 		if healthy {
-			break
+			statusChannel <- &HealthCheckStatus{
+				ServiceName: options.ServiceName,
+				Status:      SERVICE_STATUS_REACHABLE,
+				StatusCode:  200,
+			}
+		} else {
+			if failureStatus == 0 {
+				failureStatus = 500
+			}
+			statusChannel <- &HealthCheckStatus{
+				ServiceName: options.ServiceName,
+				Status:      SERVICE_STATUS_NOT_REACHABLE,
+				StatusCode:  500,
+			}
 		}
-	}
 
-	if healthy {
-		statusChannel <- &HealthCheckStatus{
-			ServiceName: options.ServiceName,
-			Status:      SERVICE_STATUS_REACHABLE,
-			StatusCode:  200,
-		}
-	} else {
-		if failureStatus == 0 {
-			failureStatus = 500
-		}
-		statusChannel <- &HealthCheckStatus{
-			ServiceName: options.ServiceName,
-			Status:      SERVICE_STATUS_NOT_REACHABLE,
-			StatusCode:  500,
-		}
+		done <- true
+	}()
+
+	// Handle the context cancellation and the done channel
+	select {
+	case <-ctx.Done():
+		return
+	case <-done:
+		return
 	}
 }
 

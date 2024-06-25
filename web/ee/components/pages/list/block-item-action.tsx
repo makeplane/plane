@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
 import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// components
-import { PageQuickActions } from "@/components/pages/dropdowns";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useMember } from "@/hooks/store";
+// plane web components
+import { WorkspacePageQuickActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { useWorkspacePageDetails } from "@/plane-web/hooks/store";
 
@@ -84,7 +84,7 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
       />
 
       {/* quick actions dropdown */}
-      <PageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${pageId}`} />
+      <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${pageId}`} />
     </>
   );
 });

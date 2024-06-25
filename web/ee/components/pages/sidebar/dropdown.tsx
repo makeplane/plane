@@ -15,25 +15,18 @@ import { IWorkspace } from "@plane/types";
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { WorkspaceLogo } from "@/components/workspace";
-import { GOD_MODE_URL } from "@/helpers/common.helper";
+// helpers
+import { cn, GOD_MODE_URL } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
-// plane web components
-import { AppSwitcher } from "@/plane-web/components/sidebar";
 
 // Static Data
-const userLinks = (workspaceSlug: string) => [
+const USER_LINKS = [
   {
     key: "workspace_invites",
     name: "Workspace invites",
     href: "/invitations",
     icon: Mails,
-  },
-  {
-    key: "settings",
-    name: "Workspace settings",
-    href: `/${workspaceSlug}/settings`,
-    icon: Settings,
   },
 ];
 
@@ -96,32 +89,41 @@ export const PagesAppSidebarDropdown = observer(() => {
   const workspacesList = Object.values(workspaces ?? {});
   // TODO: fix workspaces list scroll
   return (
-    <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
-      <Menu as="div" className="relative h-full flex-grow truncate text-left">
+    <div className="flex items-center justify-center gap-x-3 gap-y-2">
+      <Menu
+        as="div"
+        className={cn("relative h-full truncate text-left flex-grow flex justify-stretch", {
+          "flex-grow-0 justify-center": sidebarCollapsed,
+        })}
+      >
         {({ open }) => (
           <>
-            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:outline-none">
-              <div
-                className={`flex items-center  gap-x-2 truncate rounded p-1 ${
-                  sidebarCollapsed ? "justify-center" : "justify-between"
-                }`}
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
-                  {!sidebarCollapsed && (
-                    <h4 className="truncate text-base font-medium text-custom-text-100">
-                      {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
-                    </h4>
-                  )}
-                </div>
+            <Menu.Button
+              className={cn(
+                "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
+                {
+                  "flex-grow": !sidebarCollapsed,
+                }
+              )}
+            >
+              <div className="flex-grow flex items-center gap-2 truncate">
+                <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
                 {!sidebarCollapsed && (
-                  <ChevronDown
-                    className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${
-                      open ? "rotate-180" : ""
-                    } text-custom-sidebar-text-400 duration-300`}
-                  />
+                  <h4 className="truncate text-base font-medium text-custom-text-100">
+                    {activeWorkspace?.name ?? "Loading..."}
+                  </h4>
                 )}
               </div>
+              {!sidebarCollapsed && (
+                <ChevronDown
+                  className={cn(
+                    "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
+                    {
+                      "rotate-180": open,
+                    }
+                  )}
+                />
+              )}
             </Menu.Button>
             <Transition
               as={Fragment}
@@ -133,12 +135,11 @@ export const PagesAppSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
+                <div className="fixed top-12 left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
                   <div className="vertical-scrollbar scrollbar-sm mb-2 flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll px-4">
                     <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
-                    <AppSwitcher />
                     {workspacesList ? (
                       <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                         {workspacesList.length > 0 &&
@@ -208,7 +209,7 @@ export const PagesAppSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "").map((link, index) => (
+                    {USER_LINKS.map((link, index) => (
                       <Link
                         key={link.key}
                         href={link.href}

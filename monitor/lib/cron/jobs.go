@@ -17,40 +17,16 @@ type HealthCheckCallback func(serviceStatuses []*healthcheck.HealthCheckStatus, 
 func (s *PrimeScheduler) RegisterNewHealthCheckJob(ctx context.Context, defination gocron.JobDefinition, healthCheckCallback HealthCheckCallback) {
 	healthCheckTask := gocron.NewTask(func() {
 		healthCheckHandler := healthcheck.NewHealthCheckHandler()
-
 		healthCheckCtx, cancel := context.WithCancel(ctx)
 		defer cancel()
-
-		statusChannel, errorChannel := healthCheckHandler.PerformHealthCheck(healthCheckCtx, healthcheck.HealthCheckOptions{
+		options := healthcheck.HealthCheckOptions{
 			MaxRetries:      5,
 			ConfirmTries:    3,
 			TimeoutDuration: 5 * time.Second,
 			RetryDuration:   2 * time.Second,
-		})
-
-		statuses := make([]*healthcheck.HealthCheckStatus, 0)
-		errors := make([]*error, 0)
-		for {
-			select {
-			case status, ok := <-statusChannel:
-				if !ok {
-					statusChannel = nil
-				} else {
-					statuses = append(statuses, status)
-				}
-			case err, ok := <-errorChannel:
-				if !ok {
-					errorChannel = nil
-				} else {
-					cancel()
-					errors = append(errors, err)
-				}
-			}
-			if statusChannel == nil && errorChannel == nil {
-				break
-			}
 		}
-		healthCheckCallback(statuses, errors)
+		accStatus := healthCheckHandler.GetAccumilatedHealthCheck(healthCheckCtx, options)
+		healthCheckCallback(accStatus.Statuses, accStatus.Errors)
 	})
 
 	s.RegisterJob(defination, healthCheckTask, gocron.WithName("Service Health Check"))

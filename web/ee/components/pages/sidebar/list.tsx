@@ -61,15 +61,22 @@ export const PagesAppSidebarList = observer(() => {
 
   return (
     <div
-      className={cn("vertical-scrollbar h-full space-y-2 !overflow-y-scroll pl-4 scrollbar-md", {
-        "scrollbar-sm": isCollapsed,
+      className={cn("vertical-scrollbar h-full space-y-4 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+        "space-y-0": isCollapsed,
       })}
     >
       {Object.values(sectionsList).map((section) => (
         <Disclosure key={section.key} as="div" className="flex flex-col" defaultOpen={section.key === "public"}>
           <>
-            <div className="group w-full flex items-center justify-between rounded py-1.5 px-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
-              <Tooltip tooltipHeading={section.label} tooltipContent="" disabled={!isCollapsed}>
+            <div
+              className={cn(
+                "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                {
+                  "p-0 size-8 justify-center mx-auto": isCollapsed,
+                }
+              )}
+            >
+              <Tooltip tooltipHeading={section.label} tooltipContent="" position="right" disabled={!isCollapsed}>
                 <Link
                   href={`/${workspaceSlug}/pages/${section.key}`}
                   className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400", {
@@ -92,7 +99,7 @@ export const PagesAppSidebarList = observer(() => {
                         });
                       }}
                     >
-                      <Plus className="size-4" />
+                      <Plus className="size-3.5" />
                     </button>
                   )}
                   <Disclosure.Button
@@ -102,7 +109,7 @@ export const PagesAppSidebarList = observer(() => {
                   >
                     {({ open }) => (
                       <ChevronRight
-                        className={cn("size-4 transition-all", {
+                        className={cn("size-3.5 transition-all", {
                           "rotate-90": open,
                         })}
                       />
@@ -121,14 +128,16 @@ export const PagesAppSidebarList = observer(() => {
             >
               <Disclosure.Panel
                 as="div"
-                className={cn("ml-1", {
+                className={cn("ml-1 mt-2", {
                   hidden: isCollapsed,
                 })}
               >
                 {section.pageIds && section.pageIds.length > 0 ? (
                   section.pageIds.map((pageId) => <PagesAppSidebarListItem key={pageId} pageId={pageId} />)
                 ) : (
-                  <p className="text-custom-text-400 text-xs font-medium ml-1">No {section.key} pages</p>
+                  <p className="text-custom-text-400 text-xs text-center font-medium ml-1 mt-2">
+                    No {section.key} pages
+                  </p>
                 )}
               </Disclosure.Panel>
             </Transition>

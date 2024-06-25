@@ -17,7 +17,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
+import { useLabel, useMember, useUser, useIssues, useGlobalView } from "@/hooks/store";
 
 export const GlobalIssuesHeader = observer(() => {
   // states
@@ -28,6 +28,7 @@ export const GlobalIssuesHeader = observer(() => {
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
+  const { getViewDetailsById } = useGlobalView();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -37,6 +38,8 @@ export const GlobalIssuesHeader = observer(() => {
   } = useMember();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
+
+  const viewDetails = getViewDetailsById(globalViewId.toString());
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -96,6 +99,7 @@ export const GlobalIssuesHeader = observer(() => {
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const isLocked = viewDetails?.is_locked;
 
   return (
     <>
@@ -112,28 +116,30 @@ export const GlobalIssuesHeader = observer(() => {
           </Breadcrumbs>
         </div>
         <div className="flex items-center gap-2">
-          <>
-            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
-              <FilterSelection
-                layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                labels={workspaceLabels ?? undefined}
-                memberIds={workspaceMemberIds ?? undefined}
-              />
-            </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-              />
-            </FiltersDropdown>
-          </>
+          {!isLocked && (
+            <>
+              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+                <FilterSelection
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  filters={issueFilters?.filters ?? {}}
+                  handleFiltersUpdate={handleFiltersUpdate}
+                  displayFilters={issueFilters?.displayFilters ?? {}}
+                  handleDisplayFiltersUpdate={handleDisplayFilters}
+                  labels={workspaceLabels ?? undefined}
+                  memberIds={workspaceMemberIds ?? undefined}
+                />
+              </FiltersDropdown>
+              <FiltersDropdown title="Display" placement="bottom-end">
+                <DisplayFiltersSelection
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  displayFilters={issueFilters?.displayFilters ?? {}}
+                  handleDisplayFiltersUpdate={handleDisplayFilters}
+                  displayProperties={issueFilters?.displayProperties ?? {}}
+                  handleDisplayPropertiesUpdate={handleDisplayProperties}
+                />
+              </FiltersDropdown>
+            </>
+          )}
           {isAuthorizedUser && (
             <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
               Add View

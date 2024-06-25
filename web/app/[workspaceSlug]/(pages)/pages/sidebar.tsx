@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { WorkspaceHelpSection } from "@/components/workspace";
+import { SidebarHelpSection } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -16,6 +16,7 @@ import {
   PagesAppSidebarMenu,
   PagesAppSidebarQuickActions,
 } from "@/plane-web/components/pages";
+import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 // plane web hooks
 import { useWorkspacePages } from "@/plane-web/hooks/store";
 
@@ -51,12 +52,29 @@ export const PagesAppSidebar = observer(() => {
         }
       )}
     >
-      <div ref={ref} className="size-full flex flex-1 flex-col space-y-4">
+      <div
+        ref={ref}
+        className={cn("size-full flex flex-1 flex-col p-4 pb-0", {
+          "p-2 pb-0": sidebarCollapsed,
+        })}
+      >
         <PagesAppSidebarDropdown />
+        <div className="flex-shrink-0 h-4" />
+        <SidebarAppSwitcher />
         <PagesAppSidebarQuickActions />
+        <hr
+          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
+            "opacity-0": !sidebarCollapsed,
+          })}
+        />
         <PagesAppSidebarMenu />
+        <hr
+          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
+            "opacity-0": !sidebarCollapsed,
+          })}
+        />
         <PagesAppSidebarList />
-        <WorkspaceHelpSection />
+        <SidebarHelpSection />
       </div>
     </div>
   );

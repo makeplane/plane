@@ -168,7 +168,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       const pages = await this.pageService.fetchAll(workspaceSlug);
       runInAction(() => {
-        for (const page of pages) if (page?.id) set(this.data, [page.id], new WorkspacePageDetails(this.store, page));
+        for (const page of pages)
+          if (page?.id) {
+            const pageInstance = page;
+            set(page, "description_html", this.data?.[page.id]?.description_html);
+            set(this.data, [page.id], new WorkspacePageDetails(this.store, pageInstance));
+          }
         this.loader = undefined;
       });
 

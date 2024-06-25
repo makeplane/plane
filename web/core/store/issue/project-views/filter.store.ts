@@ -240,10 +240,6 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             );
           }
 
-          await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
-            display_filters: _filters.displayFilters,
-          });
-
           break;
         }
         case EIssueFilterType.DISPLAY_PROPERTIES: {
@@ -260,9 +256,6 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
-            display_properties: _filters.displayProperties,
-          });
           break;
         }
         case EIssueFilterType.KANBAN_FILTERS: {

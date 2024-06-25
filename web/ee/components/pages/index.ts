@@ -4,3 +4,4 @@ export * from "./list";
 export * from "./modals";
 export * from "./sidebar";
 export * from "./extra-actions";
+export * from "./quick-actions";

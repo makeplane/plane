@@ -138,17 +138,34 @@ export const ISSUE_EXTRA_OPTIONS: {
   { key: "show_empty_groups", title: "Show empty groups" }, // filter on front-end
 ];
 
+export const ISSUE_LAYOUT_MAP = {
+  [EIssueLayoutTypes.LIST]: { key: EIssueLayoutTypes.LIST, title: "List Layout", label: "List", icon: List },
+  [EIssueLayoutTypes.KANBAN]: { key: EIssueLayoutTypes.KANBAN, title: "Kanban Layout", label: "Kanban", icon: Kanban },
+  [EIssueLayoutTypes.CALENDAR]: {
+    key: EIssueLayoutTypes.CALENDAR,
+    title: "Calendar Layout",
+    label: "Calendar",
+    icon: Calendar,
+  },
+  [EIssueLayoutTypes.SPREADSHEET]: {
+    key: EIssueLayoutTypes.SPREADSHEET,
+    title: "Spreadsheet Layout",
+    label: "Spreadsheet",
+    icon: Sheet,
+  },
+  [EIssueLayoutTypes.GANTT]: {
+    key: EIssueLayoutTypes.GANTT,
+    title: "Gantt Chart Layout",
+    label: "Gantt",
+    icon: GanttChartSquare,
+  },
+};
+
 export const ISSUE_LAYOUTS: {
   key: EIssueLayoutTypes;
   title: string;
   icon: any;
-}[] = [
-  { key: EIssueLayoutTypes.LIST, title: "List Layout", icon: List },
-  { key: EIssueLayoutTypes.KANBAN, title: "Kanban Layout", icon: Kanban },
-  { key: EIssueLayoutTypes.CALENDAR, title: "Calendar Layout", icon: Calendar },
-  { key: EIssueLayoutTypes.SPREADSHEET, title: "Spreadsheet Layout", icon: Sheet },
-  { key: EIssueLayoutTypes.GANTT, title: "Gantt Chart Layout", icon: GanttChartSquare },
-];
+}[] = Object.values(ISSUE_LAYOUT_MAP);
 
 export interface ILayoutDisplayFiltersOptions {
   filters: (keyof IIssueFilterOptions)[];

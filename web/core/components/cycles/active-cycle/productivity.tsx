@@ -9,6 +9,8 @@ import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle, useProjectEstimates } from "@/hooks/store";
+// plane web constants
+import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 export type ActiveCycleProductivityProps = {
   workspaceSlug: string;
@@ -25,7 +27,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   const { workspaceSlug, projectId, cycle } = props;
   // hooks
   const { getPlotTypeByCycleId, setPlotType, fetchCycleDetails } = useCycle();
-  const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
   // state
   const [loader, setLoader] = useState(false);
   // derived values
@@ -44,6 +46,11 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     }
   };
 
+  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
+  const estimateDetails =
+    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
+  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
+
   const chartDistributionData = plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
@@ -53,7 +60,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
-        {areEstimateEnabledByProjectId(projectId) && (
+        {isCurrentEstimateTypeIsPoints && (
           <div className="relative flex items-center gap-2">
             <CustomSelect
               value={plotType}

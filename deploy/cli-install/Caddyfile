@@ -23,6 +23,7 @@
 	servers {
 		max_header_size 5MB
 		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
 	}
 }
 

@@ -189,6 +189,56 @@ func TestExecuteHealthCheckWithRetries(t *testing.T) {
 	}
 }
 
+func TestAccumilatedHealthCheck(t *testing.T) {
+	handler := &HealthCheckHandler{
+		TestIdStringMap: T_TestIdStringMap,
+		TestIdMethodMap: T_TestIdMethodMap,
+	}
+
+	ctx := context.Background()
+	t.Setenv("SERVICE_TEST_WEB", "web:9000")
+	t.Setenv("SERVICE_TESTF_API", "web:9000")
+
+	expoectedAccStatus := AccHealthCheckStatus{
+		Statuses: []*HealthCheckStatus{
+			{
+				ServiceName: "WEB",
+				Status:      SERVICE_STATUS_REACHABLE,
+				StatusCode:  200,
+			},
+			{
+				ServiceName: "API",
+				Status:      SERVICE_STATUS_NOT_REACHABLE,
+				StatusCode:  500,
+			},
+		},
+		Errors: []*error{},
+	}
+
+	options := HealthCheckOptions{
+		ConfirmTries:    3,
+		MaxRetries:      1,
+		TimeoutDuration: 5 * time.Second,
+		RetryDuration:   1 * time.Second,
+	}
+
+	accStatus := handler.GetAccumilatedHealthCheck(ctx, options)
+
+	if len(accStatus.Statuses) != 2 {
+		t.Fatalf("Expected 2 statuses, got %d", len(accStatus.Statuses))
+	}
+
+	if len(accStatus.Errors) != 0 {
+		t.Fatalf("Expected 0 errors, got %d", len(accStatus.Errors))
+	}
+
+	for i, status := range accStatus.Statuses {
+		if status.StatusCode != expoectedAccStatus.Statuses[i].StatusCode || status.ServiceName != expoectedAccStatus.Statuses[i].ServiceName || status.Status != expoectedAccStatus.Statuses[i].Status {
+			t.Fatalf("Expected %v, got %v", expoectedAccStatus.Statuses[i], status)
+		}
+	}
+}
+
 // ------------- Test Helper Functions ---------------
 
 func TestGetServiceFromEnvironment(t *testing.T) {

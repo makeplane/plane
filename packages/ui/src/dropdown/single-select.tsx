@@ -90,12 +90,14 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
   const sortedOptions = useMemo(() => {
     if (!options) return undefined;
 
-    const filteredOptions = (options || []).filter((options) => {
-      const queryString = queryArray.map((query) => options.data[query]).join(" ");
-      return queryString.toLowerCase().includes(query.toLowerCase());
-    });
+    const filteredOptions = queryArray
+      ? (options || []).filter((options) => {
+          const queryString = queryArray.map((query) => options.data[query]).join(" ");
+          return queryString.toLowerCase().includes(query.toLowerCase());
+        })
+      : options;
 
-    if (disableSorting) return filteredOptions;
+    if (disableSorting || !sortByKey) return filteredOptions;
 
     return sortBy(filteredOptions, [
       (option) => firstItem && firstItem(option.data[option.value]),
@@ -136,7 +138,7 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
         <Combobox.Options className="fixed z-10" static>
           <div
             className={cn(
-              "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none",
+              "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none",
               optionsContainerClassName
             )}
             ref={setPopperElement}
@@ -157,6 +159,7 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
               value={value}
               renderItem={renderItem}
               loader={loader}
+              handleClose={handleClose}
             />
           </div>
         </Combobox.Options>

@@ -1,4 +1,6 @@
 import { FC, Fragment, useState } from "react";
+import isEmpty from "lodash/isEmpty";
+import { observer } from "mobx-react";
 import { ICycle, TCyclePlotType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // components
@@ -13,10 +15,12 @@ const cycleBurnDownChartOptions = [
   { value: "points", label: "Points" },
 ];
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props) => {
+export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { cycle } = props;
   // state
   const [plotType, setPlotType] = useState<TCyclePlotType>("burndown");
+  const isCurrentEstimateTypeIsPoints = !isEmpty(cycle?.estimate_distribution);
+
   // derived values
   const chartDistributionData = plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
@@ -25,20 +29,22 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
     <div className="flex flex-col gap-4 p-4 min-h-52 border border-custom-border-200 rounded-lg">
       <div className="flex items-center justify-between gap-4">
         <h3 className="text-lg text-custom-text-300 font-medium">Issue burndown</h3>
-        <div className="flex items-center gap-2">
-          <CustomSelect
-            value={plotType}
-            label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
-            onChange={(value: TCyclePlotType) => setPlotType(value)}
-            maxHeight="lg"
-          >
-            {cycleBurnDownChartOptions.map((item) => (
-              <CustomSelect.Option key={item.value} value={item.value}>
-                {item.label}
-              </CustomSelect.Option>
-            ))}
-          </CustomSelect>
-        </div>
+        {isCurrentEstimateTypeIsPoints && (
+          <div className="flex items-center gap-2">
+            <CustomSelect
+              value={plotType}
+              label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
+              onChange={(value: TCyclePlotType) => setPlotType(value)}
+              maxHeight="lg"
+            >
+              {cycleBurnDownChartOptions.map((item) => (
+                <CustomSelect.Option key={item.value} value={item.value}>
+                  {item.label}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          </div>
+        )}
       </div>
 
       <div className="h-full w-full">
@@ -85,4 +91,4 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = (props)
       </div>
     </div>
   );
-};
+});
