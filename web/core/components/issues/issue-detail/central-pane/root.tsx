@@ -1,7 +1,13 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { SubIssuesHeader, SubIssuesAccordion } from "@/components/issues/issue-detail/central-pane";
+import {
+  SubIssuesHeader,
+  SubIssuesAccordion,
+  RelationsHeader,
+  AttachmentsHeader,
+  LinksHeader,
+} from "@/components/issues/issue-detail/central-pane";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 
@@ -29,6 +35,9 @@ export const CentralPane: FC<TCentralPane> = observer((props) => {
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-2">
         <SubIssuesHeader workspaceSlug={workspaceSlug} projectId={projectId} parentIssueId={issueId} />
+        <RelationsHeader />
+        <LinksHeader />
+        <AttachmentsHeader />
       </div>
       <div className="flex flex-col">
         {shouldRenderSubIssues && (
