@@ -55,7 +55,8 @@ RUN yarn turbo run build
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
 # FROM makeplane/plane-aio-base AS runner
-FROM makeplane/plane-aio-base-slim:develop AS runner
+ARG BASE_TAG=develop
+FROM makeplane/plane-aio-base-slim:$BASE_TAG AS runner
 
 WORKDIR /app
 
@@ -70,10 +71,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 COPY apiserver/requirements.txt ./api/
 COPY apiserver/requirements ./api/requirements
 
-RUN python3.12 -m venv /app/venv && \
-    source /app/venv/bin/activate && \
-    /app/venv/bin/pip install --upgrade pip && \
-    /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
+RUN pip install -r ./api/requirements.txt --compile --no-cache-dir
 
 # Add in Django deps and generate Django's static files
 COPY apiserver/manage.py ./api/manage.py
@@ -127,7 +125,10 @@ ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV TURBO_TELEMETRY_DISABLED 1
 
-COPY aio/supervisord.conf /app/supervisord.conf
+COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
+COPY aio/supervisord-app /app/supervisord-app
+RUN cat /app/supervisord-app >> /app/supervisord.conf && \
+    rm /app/supervisord-app
 
 COPY aio/aio.sh /app/aio.sh
 RUN chmod +x /app/aio.sh
@@ -138,12 +139,6 @@ RUN chmod +x /app/pg-setup.sh
 COPY deploy/selfhost/variables.env /app/plane.env
 
 # NGINX Conf Copy
-COPY ./aio/nginx.conf.aio /etc/nginx/nginx.conf.template
-COPY ./nginx/env.sh /app/nginx-start.sh
-RUN chmod +x /app/nginx-start.sh
-
-RUN  ./pg-setup.sh
-
-VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]
+COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

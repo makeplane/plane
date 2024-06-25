@@ -63,6 +63,9 @@ RUN mkdir -p /app/{data,logs} && \
 
 # Create Supervisor configuration file
 COPY supervisord-full-base /app/supervisord.conf
+COPY nginx.conf /etc/nginx/nginx.conf.template
+COPY ./nginx/env.sh /app/nginx-start.sh
+RUN chmod +x /app/nginx-start.sh
 
 RUN sudo -u postgres /usr/lib/postgresql/$POSTGRES_VERSION/bin/initdb -D /var/lib/postgresql/data
 COPY postgresql.conf /etc/postgresql/postgresql.conf

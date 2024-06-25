@@ -35,6 +35,9 @@ RUN mkdir -p /app/{data,logs} && \
 
 # Create Supervisor configuration file
 COPY supervisord-slim-base /app/supervisord.conf
+COPY nginx.conf /etc/nginx/nginx.conf.template
+COPY ./nginx/env.sh /app/nginx-start.sh
+RUN chmod +x /app/nginx-start.sh
 
 # Expose ports for Redis, PostgreSQL, and MinIO
 EXPOSE 80 443
