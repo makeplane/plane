@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core";
-import { WorkspaceActiveCyclesUpgrade } from "@/components/workspace";
+import { WorkspaceActiveCyclesList } from "@/components/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
@@ -15,7 +15,7 @@ const WorkspaceActiveCyclesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <WorkspaceActiveCyclesUpgrade />
+      <WorkspaceActiveCyclesList />
     </>
   );
 });

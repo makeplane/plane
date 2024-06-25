@@ -137,6 +137,7 @@ def burndown_plot(
         estimate__isnull=False,
         estimate__type="points",
     ).exists()
+    total_estimate_points = 0
     if estimate_type and plot_type == "points":
         issue_estimates = Issue.objects.filter(
             workspace__slug=slug,
