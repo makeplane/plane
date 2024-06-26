@@ -61,6 +61,7 @@ export class ProjectPageStore implements IProjectPageStore {
       updateFilters: action,
       clearAllFilters: action,
       // actions
+      handlePageInstanceCreation: action,
       getAllPages: action,
       getPageById: action,
       createPage: action,
@@ -146,6 +147,21 @@ export class ProjectPageStore implements IProjectPageStore {
     });
 
   /**
+   * @description if the page instance is present, update the page properties
+   * @description if the page instance is not present, create a new instance of the page
+   * @param {TPage} page
+   */
+  handlePageInstanceCreation = (page: TPage) => {
+    if (!page.id) return;
+    const pageInstance = this.data?.[page?.id];
+    if (pageInstance) {
+      pageInstance.updatePageProperties(page ?? {});
+    } else {
+      set(this.data, [page.id], new Page(this.store, page));
+    }
+  };
+
+  /**
    * @description fetch all the pages
    */
   getAllPages = async (pageType: TPageNavigationTabs) => {
@@ -161,7 +177,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
       runInAction(() => {
-        for (const page of pages) if (page?.id) set(this.data, [page.id], new Page(this.store, page));
+        for (const page of pages) if (page?.id) this.handlePageInstanceCreation(page);
         this.loader = undefined;
       });
 
@@ -195,7 +211,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new Page(this.store, page));
+        if (page?.id) this.handlePageInstanceCreation(page);
         this.loader = undefined;
       });
 
@@ -228,7 +244,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const page = await this.service.create(workspaceSlug, projectId, pageData);
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new Page(this.store, page));
+        if (page?.id) this.handlePageInstanceCreation(page);
         this.loader = undefined;
       });
 

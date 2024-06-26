@@ -33,6 +33,7 @@ export interface IPage extends TPage {
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (binaryString: string, descriptionHTML: string) => Promise<void>;
+  updatePageProperties: (page: TPage) => void;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
@@ -137,6 +138,7 @@ export class Page implements IPage {
       update: action,
       updateTitle: action,
       updateDescription: action,
+      updatePageProperties: action,
       makePublic: action,
       makePrivate: action,
       lock: action,
@@ -284,6 +286,22 @@ export class Page implements IPage {
   cleanup = () => {
     this.disposers.forEach((disposer) => {
       disposer();
+    });
+  };
+
+  /**
+   * @description update the page property observables
+   * @param {TPage} page
+   */
+  updatePageProperties = (page: TPage) => {
+    const properties = this.asJSON;
+    Object.keys(properties).forEach((key) => {
+      const currentPropertyKey = key as keyof TPage;
+      set(
+        this,
+        [currentPropertyKey],
+        page?.[currentPropertyKey] === undefined ? this?.[currentPropertyKey] : page?.[currentPropertyKey]
+      );
     });
   };
 
