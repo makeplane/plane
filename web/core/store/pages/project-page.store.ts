@@ -36,7 +36,7 @@ export interface IProjectPageStore {
     projectId: string,
     pageType: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  getPageById: (pageId: string) => Promise<TPage | undefined>;
+  getPageById: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
 }
@@ -185,9 +185,8 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  getPageById = async (pageId: string) => {
+  getPageById = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       const currentPageId = this.pageById(pageId);
