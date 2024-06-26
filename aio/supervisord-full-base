@@ -14,7 +14,7 @@ stdout_logfile=/app/logs/access/redis.log
 
 [program:postgresql]
 user=postgres
-command=/usr/lib/postgresql/15/bin/postgres --config-file=/etc/postgresql/15/main/postgresql.conf
+command=/usr/lib/postgresql/15/bin/postgres --config-file=/etc/postgresql/postgresql.conf
 autostart=true
 autorestart=true
 stderr_logfile=/app/logs/error/postgresql.err.log

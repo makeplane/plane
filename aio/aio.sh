@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+set -o allexport
+source plane.env set
+set +o allexport
+
+export REDIS_URL="redis://$REDIS_HOST:$REDIS_PORT"
+
 if [ "$1" = 'api' ]; then
     cd /app/api
     exec ./bin/docker-entrypoint-api.sh

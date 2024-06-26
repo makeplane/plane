@@ -1,5 +1,9 @@
 #!/bin/sh
 
+set -o allexport
+source /app/plane.env set
+set +o allexport
+
 export dollar="$"
 export http_upgrade="http_upgrade"
 export scheme="scheme"

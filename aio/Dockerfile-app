@@ -144,6 +144,10 @@ RUN sed -i 's/PGHOST/POSTGRES_HOST/g' /app/plane.env && \
     sed -i 's/plane-redis/localhost/g' /app/plane.env && \
     sed -i 's/plane-minio/localhost/g' /app/plane.env
 
+RUN set -o allexport && \
+    source /app/plane.env set && \
+    set +o allexport
+
 COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 
 # if build type is full, run the below copy pg-setup.sh

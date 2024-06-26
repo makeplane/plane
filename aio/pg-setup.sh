@@ -4,7 +4,7 @@ if [ "$BUILD_TYPE" == "full" ]; then
 
     # Variables
     set -o allexport
-    source plane.env set
+    source /app/plane.env set
     set +o allexport
 
     export PGHOST=localhost
