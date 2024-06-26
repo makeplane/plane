@@ -38,7 +38,9 @@ jobs:
 
             if [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
               echo "TARGET_BRANCH=preview" >> $GITHUB_OUTPUT
+              echo "IMAGE_TAG=preview" >> $GITHUB_OUTPUT
             else
+              echo "TARGET_BRANCH=develop" >> $GITHUB_OUTPUT
               echo "IMAGE_TAG=develop" >> $GITHUB_OUTPUT
             fi
           fi
