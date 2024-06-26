@@ -55,6 +55,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
         capture_pageleave: true,
+        disable_session_recording: true,
       });
     }
   }, []);
