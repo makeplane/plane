@@ -7,9 +7,8 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
+from django.db import transaction
 
 # Module imports
 from plane.utils.html_processor import strip_tags
@@ -174,6 +173,8 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        # is the model being saved for the first time?
+        is_new = self._state.adding
         # This means that the model isn't saved to the database yet
         if self.state is None:
             try:
@@ -205,32 +206,43 @@ class Issue(ProjectBaseModel):
                     self.completed_at = None
             except ImportError:
                 pass
+        # Atomic transaction to ensure that the sequence is created only if the issue is created
+        with transaction.atomic():
+            if is_new:
+                # Get the maximum display_id value from the database
+                last_id = IssueSequence.objects.filter(
+                    project=self.project
+                ).aggregate(largest=models.Max("sequence"))["largest"]
+                # aggregate can return None! Check it first.
+                # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
+                if last_id:
+                    self.sequence_id = last_id + 1
+                else:
+                    self.sequence_id = 1
 
-        if self._state.adding:
-            # Get the maximum display_id value from the database
-            last_id = IssueSequence.objects.filter(
-                project=self.project
-            ).aggregate(largest=models.Max("sequence"))["largest"]
-            # aggregate can return None! Check it first.
-            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id:
-                self.sequence_id = last_id + 1
-            else:
-                self.sequence_id = 1
+                largest_sort_order = Issue.objects.filter(
+                    project=self.project, state=self.state
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+                if largest_sort_order is not None:
+                    self.sort_order = largest_sort_order + 10000
 
-            largest_sort_order = Issue.objects.filter(
-                project=self.project, state=self.state
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
-            if largest_sort_order is not None:
-                self.sort_order = largest_sort_order + 10000
-
-        # Strip the html tags using html parser
-        self.description_stripped = (
-            None
-            if (self.description_html == "" or self.description_html is None)
-            else strip_tags(self.description_html)
-        )
-        super(Issue, self).save(*args, **kwargs)
+            # Strip the html tags using html parser
+            self.description_stripped = (
+                None
+                if (
+                    self.description_html == ""
+                    or self.description_html is None
+                )
+                else strip_tags(self.description_html)
+            )
+            super(Issue, self).save(*args, **kwargs)
+            # Create a sequence for the issue
+            if is_new:
+                IssueSequence.objects.create(
+                    issue=self,
+                    sequence=self.sequence_id,
+                    project=self.project,
+                )
 
     def __str__(self):
         """Return name of the issue"""
@@ -667,14 +679,3 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
-
-
-# TODO: Find a better method to save the model
-@receiver(post_save, sender=Issue)
-def create_issue_sequence(sender, instance, created, **kwargs):
-    if created:
-        IssueSequence.objects.create(
-            issue=instance,
-            sequence=instance.sequence_id,
-            project=instance.project,
-        )

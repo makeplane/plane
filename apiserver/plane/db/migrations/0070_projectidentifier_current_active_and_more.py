@@ -38,4 +38,21 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunPython(migrate_current_active),
+        migrations.AlterField(
+            model_name="issue",
+            name="sequence_id",
+            field=models.IntegerField(
+                db_index=True, default=1, verbose_name="Issue Sequence ID"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="issuesequence",
+            name="issue",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="issue_sequence",
+                to="db.issue",
+            ),
+        ),
     ]

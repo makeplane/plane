@@ -50,6 +50,7 @@ from plane.db.models import (
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.valid_int_uuid import is_uuid
 
 
 class ProjectViewSet(BaseViewSet):
@@ -63,7 +64,9 @@ class ProjectViewSet(BaseViewSet):
 
     def dispatch(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
-        if pk and not self.is_uuid(pk):
+        # Check if the project identifier is a UUID
+        if pk and not is_uuid(pk):
+            # Check if the project identifier is a name
             project = (
                 ProjectIdentifier.objects.filter(
                     name=pk, workspace__slug=kwargs.get("slug")
@@ -72,8 +75,10 @@ class ProjectViewSet(BaseViewSet):
                 .first()
             )
             if project:
+                # Update the project identifier with the UUID
                 kwargs["pk"] = project["project"]
 
+        # Call the parent dispatch method
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):

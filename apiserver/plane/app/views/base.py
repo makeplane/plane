@@ -24,7 +24,8 @@ from rest_framework.viewsets import ModelViewSet
 from plane.authentication.session import BaseSessionAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
-from plane.db.models import ProjectIdentifier
+from plane.db.models import ProjectIdentifier, IssueSequence
+from plane.utils.valid_int_uuid import is_uuid, is_int_or_uuid
 
 
 class TimezoneMixin:
@@ -61,17 +62,9 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
     search_fields = []
 
-    def is_uuid(self, value):
-        try:
-            # Check if the value is a valid UUID
-            uuid.UUID(str(value))
-            return True
-        except ValueError:
-            return False
-
     def get_project_id(self, project_id):
         # If the project_id is present and is not a UUID then get the project_id from the project_identifier
-        if project_id and not self.is_uuid(project_id):
+        if project_id and not is_uuid(project_id):
             project_identifier = (
                 ProjectIdentifier.objects.filter(
                     workspace__slug=self.workspace_slug, name=project_id
@@ -87,10 +80,24 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return project_identifier.get("project_id")
         return project_id
 
-    def get_issue_id(self, issue_id):
+    def get_issue_id(self, issue_id, project_id):
         # If the issue_id is present and is not a UUID then get the issue_id from the issue_identifier
-        if issue_id and not self.is_uuid(issue_id):
-            pass
+        if issue_id:
+            type, value = is_int_or_uuid(issue_id)
+            if type == "int":
+                issue_identifier = (
+                    IssueSequence.objects.filter(
+                        project_id=project_id, sequence=value
+                    )
+                    .values("issue_id")
+                    .first()
+                )
+            # If the issue_identifier is not present then raise ObjectDoesNotExist
+            if not issue_identifier:
+                raise ObjectDoesNotExist
+
+            # Update the issue_id in the kwargs
+            return issue_identifier.get("issue_id")
         return issue_id
 
     def get_queryset(self):
@@ -150,13 +157,17 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     def dispatch(self, request, *args, **kwargs):
         try:
             # Write identifier to the uuid
-            project_id = self.kwargs.get("project_id", None)
+            project_id = kwargs.get("project_id", None)
             if project_id:
-                self.kwargs["project_id"] = self.get_project_id(project_id)
+                kwargs["project_id"] = self.get_project_id(project_id)
+
             # Check issue_id is present in the kwargs
-            issue_id = self.kwargs.get("issue_id", None)
+            issue_id = kwargs.get("issue_id", None)
             if issue_id:
-                self.kwargs["issue_id"] = self.get_issue_id(issue_id)
+                kwargs["issue_id"] = self.get_issue_id(
+                    issue_id, kwargs["project_id"]
+                )
+
             # If the project_id is not present then get the project_id from the project_identifier
             response = super().dispatch(request, *args, **kwargs)
 
@@ -182,7 +193,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     def project_id(self):
         project_id = self.kwargs.get("project_id", None)
         if project_id:
-            return project_id
+            return self.get_project_id(project_id)
 
         if resolve(self.request.path_info).url_name == "project":
             return self.kwargs.get("pk", None)

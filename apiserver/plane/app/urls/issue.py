@@ -90,12 +90,12 @@ urlpatterns = [
     ),
     ##
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/sub-issues/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),
         name="sub-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-links/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-links/",
         IssueLinkViewSet.as_view(
             {
                 "get": "list",
@@ -105,7 +105,7 @@ urlpatterns = [
         name="project-issue-links",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-links/<uuid:pk>/",
         IssueLinkViewSet.as_view(
             {
                 "get": "retrieve",
@@ -117,12 +117,12 @@ urlpatterns = [
         name="project-issue-links",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-attachments/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-attachments/",
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
     ),
@@ -134,14 +134,14 @@ urlpatterns = [
     ## End Issues
     ## Issue Activity
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/history/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/history/",
         IssueActivityEndpoint.as_view(),
         name="project-issue-history",
     ),
     ## Issue Activity
     ## IssueComments
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/comments/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/comments/",
         IssueCommentViewSet.as_view(
             {
                 "get": "list",
@@ -151,7 +151,7 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/comments/<uuid:pk>/",
         IssueCommentViewSet.as_view(
             {
                 "get": "retrieve",
@@ -165,7 +165,7 @@ urlpatterns = [
     ## End IssueComments
     # Issue Subscribers
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-subscribers/",
         IssueSubscriberViewSet.as_view(
             {
                 "get": "list",
@@ -175,12 +175,12 @@ urlpatterns = [
         name="project-issue-subscribers",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-subscribers/<uuid:subscriber_id>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-subscribers/<uuid:subscriber_id>/",
         IssueSubscriberViewSet.as_view({"delete": "destroy"}),
         name="project-issue-subscribers",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/subscribe/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/subscribe/",
         IssueSubscriberViewSet.as_view(
             {
                 "get": "subscription_status",
@@ -193,7 +193,7 @@ urlpatterns = [
     ## End Issue Subscribers
     # Issue Reactions
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/reactions/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/reactions/",
         IssueReactionViewSet.as_view(
             {
                 "get": "list",
@@ -203,7 +203,7 @@ urlpatterns = [
         name="project-issue-reactions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/reactions/<str:reaction_code>/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/reactions/<str:reaction_code>/",
         IssueReactionViewSet.as_view(
             {
                 "delete": "destroy",
@@ -264,7 +264,7 @@ urlpatterns = [
     ## End Issue Archives
     ## Issue Relation
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-relation/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/issue-relation/",
         IssueRelationViewSet.as_view(
             {
                 "get": "list",
@@ -274,7 +274,7 @@ urlpatterns = [
         name="issue-relation",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/remove-relation/",
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/<str:issue_id>/remove-relation/",
         IssueRelationViewSet.as_view(
             {
                 "post": "remove_relation",

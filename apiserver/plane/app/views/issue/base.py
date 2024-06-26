@@ -44,6 +44,7 @@ from plane.db.models import (
     IssueReaction,
     IssueSubscriber,
     Project,
+    IssueSequence,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -195,6 +196,23 @@ class IssueViewSet(BaseViewSet):
         "assignees__id",
         "workspace__id",
     ]
+
+    def process_issue_id(self, issue_id, project_id):
+        # Check if the pk is an integer or a UUID
+        type, value = is_int_or_uuid(issue_id)
+        if type == "int":
+            # Get the issue_id from the sequence_id
+            sequence = (
+                IssueSequence.objects.filter(
+                    sequence=value,
+                    project_id=project_id,
+                )
+                .values("issue_id")
+                .first()
+            )
+            # Call the parent dispatch method
+            return sequence.get("issue_id")
+        return issue_id
 
     def get_queryset(self):
         return (
@@ -409,79 +427,76 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        type, value = is_int_or_uuid(pk)
-
+        pk = self.process_issue_id(pk, project_id)
         issue = (
-            self.get_queryset()
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+            (
+                self.get_queryset()
+                .annotate(
+                    label_ids=Coalesce(
+                        ArrayAgg(
+                            "labels__id",
+                            distinct=True,
+                            filter=~Q(labels__id__isnull=True),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
                     ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                    assignee_ids=Coalesce(
+                        ArrayAgg(
+                            "assignees__id",
+                            distinct=True,
+                            filter=~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
                     ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related(
-                        "issue", "actor"
+                    module_ids=Coalesce(
+                        ArrayAgg(
+                            "issue_module__module_id",
+                            distinct=True,
+                            filter=~Q(issue_module__module_id__isnull=True),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
                     ),
                 )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related(
+                            "issue", "actor"
+                        ),
+                    )
                 )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_link",
-                    queryset=IssueLink.objects.select_related("created_by"),
+                .prefetch_related(
+                    Prefetch(
+                        "issue_attachment",
+                        queryset=IssueAttachment.objects.select_related(
+                            "issue"
+                        ),
+                    )
                 )
-            )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        issue_id=OuterRef("pk"),
-                        subscriber=request.user,
+                .prefetch_related(
+                    Prefetch(
+                        "issue_link",
+                        queryset=IssueLink.objects.select_related(
+                            "created_by"
+                        ),
+                    )
+                )
+                .annotate(
+                    is_subscribed=Exists(
+                        IssueSubscriber.objects.filter(
+                            workspace__slug=slug,
+                            project_id=project_id,
+                            issue_id=OuterRef("pk"),
+                            subscriber=request.user,
+                        )
                     )
                 )
             )
+            .filter(pk=pk)
+            .first()
         )
-        if type == "int":
-            issue = issue.filter(sequence_id=pk)
-        elif type == "uuid":
-            issue = issue.filter(pk=pk)
-        else:
-            return Response(
-                {"error": "Invalid issue id"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
-        issue = issue.first()
         if not issue:
             return Response(
                 {"error": "The required object does not exist."},
@@ -492,6 +507,7 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
+        pk = self.process_issue_id(pk, project_id)
         issue = self.get_queryset().filter(pk=pk).first()
 
         if not issue:
@@ -526,8 +542,11 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, pk=None):
+        pk = self.process_issue_id(pk, project_id)
         issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
         )
         issue.delete()
         issue_activity.delay(

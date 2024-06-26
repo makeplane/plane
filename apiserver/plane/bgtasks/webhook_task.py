@@ -442,47 +442,53 @@ def model_activity(
     slug,
     origin=None,
 ):
-    """Function takes in two json and computes differences between keys of both the json"""
-    if current_instance is None:
-        webhook_activity.delay(
-            event=model_name,
-            verb="created",
-            field=None,
-            old_value=None,
-            new_value=None,
-            actor_id=actor_id,
-            slug=slug,
-            current_site=origin,
-            event_id=model_id,
-            old_identifier=None,
-            new_identifier=None,
+    try:
+        """Function takes in two json and computes differences between keys of both the json"""
+        if current_instance is None:
+            webhook_activity.delay(
+                event=model_name,
+                verb="created",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=actor_id,
+                slug=slug,
+                current_site=origin,
+                event_id=model_id,
+                old_identifier=None,
+                new_identifier=None,
+            )
+            return
+
+        # Load the current instance
+        current_instance = (
+            json.loads(current_instance)
+            if current_instance is not None
+            else None
         )
+
+        # Loop through all keys in requested data and check the current value and requested value
+        for key in requested_data:
+            # Check if key is present in current instance or not
+            if key in current_instance:
+                current_value = current_instance.get(key, None)
+                requested_value = requested_data.get(key, None)
+                if current_value != requested_value:
+                    webhook_activity.delay(
+                        event=model_name,
+                        verb="updated",
+                        field=key,
+                        old_value=current_value,
+                        new_value=requested_value,
+                        actor_id=actor_id,
+                        slug=slug,
+                        current_site=origin,
+                        event_id=model_id,
+                        old_identifier=None,
+                        new_identifier=None,
+                    )
+
         return
-
-    # Load the current instance
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
-
-    # Loop through all keys in requested data and check the current value and requested value
-    for key in requested_data:
-        # Check if key is present in current instance or not
-        if key in current_instance:
-            current_value = current_instance.get(key, None)
-            requested_value = requested_data.get(key, None)
-            if current_value != requested_value:
-                webhook_activity.delay(
-                    event=model_name,
-                    verb="updated",
-                    field=key,
-                    old_value=current_value,
-                    new_value=requested_value,
-                    actor_id=actor_id,
-                    slug=slug,
-                    current_site=origin,
-                    event_id=model_id,
-                    old_identifier=None,
-                    new_identifier=None,
-                )
-
-    return
+    except Exception as e:
+        log_exception(e)
+        return
