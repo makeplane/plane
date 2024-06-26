@@ -1,6 +1,9 @@
 name: Branch Build AIO
 
 on:
+  push:
+    branches:
+      - chore-aio
   workflow_dispatch:
   release:
     types: [released, prereleased]
