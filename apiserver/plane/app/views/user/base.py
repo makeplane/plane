@@ -35,6 +35,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
+from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 
 
 class UserEndpoint(BaseViewSet):
@@ -191,6 +192,9 @@ class UserEndpoint(BaseViewSet):
         user.last_logout_ip = user_ip(request=request)
         user.last_logout_time = timezone.now()
         user.save()
+
+        # Send an email to the user
+        user_deactivation_email.delay(user.id)
 
         # Logout the user
         logout(request)

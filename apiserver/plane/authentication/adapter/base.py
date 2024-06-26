@@ -18,6 +18,7 @@ from plane.db.models import (
 )
 from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
+from plane.bgtasks.user_activation_email_task import user_activation_email
 
 
 class Adapter:
@@ -120,6 +121,11 @@ class Adapter:
         user.last_login_ip = self.request.META.get("REMOTE_ADDR")
         user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
+        # If user is not active, send the activation email and set the user as active
+        if not user.is_active:
+            user_activation_email.delay(user.id)
+        # Set user as active
+        user.is_active = True
         user.save()
         return user
 
@@ -167,12 +173,6 @@ class Adapter:
 
             # Create profile
             Profile.objects.create(user=user)
-
-        if not user.is_active:
-            raise AuthenticationException(
-                AUTHENTICATION_ERROR_CODES["USER_ACCOUNT_DEACTIVATED"],
-                error_message="USER_ACCOUNT_DEACTIVATED",
-            )
 
         # Save user data
         user = self.save_user_data(user=user)
