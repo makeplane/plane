@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
@@ -10,7 +11,7 @@ import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@pla
 import { E_ONBOARDING, WORKSPACE_CREATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -24,15 +25,15 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspace: React.FC<Props> = (props) => {
+export const CreateWorkspace: React.FC<Props> = observer((props) => {
   const { stepChange, user, invitedWorkspaces, handleCurrentViewChange } = props;
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
   // store hooks
   const { updateUserProfile } = useUserProfile();
-
-  const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
+  const { createWorkspace, fetchWorkspaces } = useWorkspace();
   const { captureWorkspaceEvent } = useEventTracker();
   // form info
   const {
@@ -59,7 +60,7 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
           setSlugError(false);
 
           await createWorkspace(formData)
-            .then(async (res) => {
+            .then(async (workspaceResponse) => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
                 title: "Success!",
@@ -68,14 +69,14 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
               captureWorkspaceEvent({
                 eventName: WORKSPACE_CREATED,
                 payload: {
-                  ...res,
+                  ...workspaceResponse,
                   state: "SUCCESS",
                   first_time: true,
                   element: E_ONBOARDING,
                 },
               });
               await fetchWorkspaces();
-              await completeStep();
+              await completeStep(workspaceResponse.id);
             })
             .catch(() => {
               captureWorkspaceEvent({
@@ -103,11 +104,8 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
       );
   };
 
-  const completeStep = async () => {
-    if (!user || !workspaces) return;
-
-    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
-
+  const completeStep = async (workspaceId: string) => {
+    if (!user) return;
     const payload: Partial<TOnboardingSteps> = {
       workspace_create: true,
       workspace_join: true,
@@ -115,8 +113,9 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
 
     await stepChange(payload);
     await updateUserProfile({
-      last_workspace_id: firstWorkspace?.id,
+      last_workspace_id: workspaceId,
     });
+    await fetchCurrentUserSettings();
   };
 
   const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
@@ -286,4 +285,4 @@ export const CreateWorkspace: React.FC<Props> = (props) => {
       </form>
     </div>
   );
-};
+});

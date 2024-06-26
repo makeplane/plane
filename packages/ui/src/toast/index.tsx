@@ -25,13 +25,16 @@ type SetToastProps =
       type: Exclude<TOAST_TYPE, TOAST_TYPE.LOADING>;
       title: string;
       message?: string;
+      actionItems?: React.ReactNode;
     };
 
 type PromiseToastCallback<ToastData> = (data: ToastData) => string;
+type ActionItemsPromiseToastCallback<ToastData> = (data: ToastData) => JSX.Element;
 
 type PromiseToastData<ToastData> = {
   title: string;
   message?: PromiseToastCallback<ToastData>;
+  actionItems?: ActionItemsPromiseToastCallback<ToastData>;
 };
 
 type PromiseToastOptions<ToastData> = {
@@ -54,7 +57,7 @@ type ToastProps = {
 
 export const Toast = (props: ToastProps) => {
   const { theme } = props;
-  return <Toaster visibleToasts={5} gap={20} theme={theme} />;
+  return <Toaster visibleToasts={5} gap={16} theme={theme} />;
 };
 
 export const setToast = (props: SetToastProps) => {
@@ -66,29 +69,27 @@ export const setToast = (props: SetToastProps) => {
     borderColorClassName,
   }: ToastContentProps) =>
     props.type === TOAST_TYPE.LOADING ? (
-      <div
-        onMouseDown={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-        }}
-        className={cn(
-          "w-[350px] h-[67.3px] rounded-lg border shadow-sm p-2",
-          backgroundColorClassName,
-          borderColorClassName
-        )}
-      >
-        <div className="w-full h-full flex items-center justify-center px-4 py-2">
-          {icon && <div className="flex items-center justify-center">{icon}</div>}
-          <div className={cn("w-full flex items-center gap-0.5 pr-1", icon ? "pl-4" : "pl-1")}>
-            <div className={cn("grow text-sm font-semibold", textColorClassName)}>{props.title ?? "Loading..."}</div>
-            <div className="flex-shrink-0">
-              <X
-                className="text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
-                strokeWidth={1.5}
-                width={14}
-                height={14}
-                onClick={() => toast.dismiss(toastId)}
-              />
+      <div className="flex items-center h-[98px] w-[350px]">
+        <div
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          className={cn("w-full rounded-lg border shadow-sm p-2", backgroundColorClassName, borderColorClassName)}
+        >
+          <div className="w-full h-full flex items-center justify-center px-4 py-2">
+            {icon && <div className="flex items-center justify-center">{icon}</div>}
+            <div className={cn("w-full flex items-center gap-0.5 pr-1", icon ? "pl-4" : "pl-1")}>
+              <div className={cn("grow text-sm font-semibold", textColorClassName)}>{props.title ?? "Loading..."}</div>
+              <div className="flex-shrink-0">
+                <X
+                  className="text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
+                  strokeWidth={1.5}
+                  width={14}
+                  height={14}
+                  onClick={() => toast.dismiss(toastId)}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -100,7 +101,7 @@ export const setToast = (props: SetToastProps) => {
           e.preventDefault();
         }}
         className={cn(
-          "relative flex flex-col w-[350px] rounded-lg border shadow-sm p-2",
+          "relative group flex flex-col w-[350px] rounded-lg border shadow-sm p-2",
           backgroundColorClassName,
           borderColorClassName
         )}
@@ -112,12 +113,15 @@ export const setToast = (props: SetToastProps) => {
           height={14}
           onClick={() => toast.dismiss(toastId)}
         />
-        <div className="w-full flex items-center px-4 py-2">
-          {icon && <div className="flex items-center justify-center">{icon}</div>}
-          <div className={cn("flex flex-col gap-0.5 pr-1", icon ? "pl-6" : "pl-1")}>
-            <div className={cn("text-sm font-semibold", textColorClassName)}>{props.title}</div>
-            {props.message && <div className="text-toast-text-secondary text-xs font-medium">{props.message}</div>}
+        <div className="w-full flex flex-col gap-2 p-2">
+          <div className="flex items-center w-full">
+            {icon && <div className="flex items-center justify-center">{icon}</div>}
+            <div className={cn("flex flex-col gap-0.5 pr-1", icon ? "pl-4" : "pl-1")}>
+              <div className={cn("text-sm font-semibold", textColorClassName)}>{props.title}</div>
+              {props.message && <div className="text-toast-text-secondary text-xs font-medium">{props.message}</div>}
+            </div>
           </div>
+          {props.actionItems && <div className="flex items-center pl-[32px]">{props.actionItems}</div>}
         </div>
       </div>
     );
@@ -128,7 +132,7 @@ export const setToast = (props: SetToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            icon: <CheckCircle2 width={28} height={28} strokeWidth={1.5} className="text-toast-text-success" />,
+            icon: <CheckCircle2 width={24} height={24} strokeWidth={1.5} className="text-toast-text-success" />,
             textColorClassName: "text-toast-text-success",
             backgroundColorClassName: "bg-toast-background-success",
             borderColorClassName: "border-toast-border-success",
@@ -140,7 +144,7 @@ export const setToast = (props: SetToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            icon: <XCircle width={28} height={28} strokeWidth={1.5} className="text-toast-text-error" />,
+            icon: <XCircle width={24} height={24} strokeWidth={1.5} className="text-toast-text-error" />,
             textColorClassName: "text-toast-text-error",
             backgroundColorClassName: "bg-toast-background-error",
             borderColorClassName: "border-toast-border-error",
@@ -152,7 +156,7 @@ export const setToast = (props: SetToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            icon: <AlertTriangle width={28} height={28} strokeWidth={1.5} className="text-toast-text-warning" />,
+            icon: <AlertTriangle width={24} height={24} strokeWidth={1.5} className="text-toast-text-warning" />,
             textColorClassName: "text-toast-text-warning",
             backgroundColorClassName: "bg-toast-background-warning",
             borderColorClassName: "border-toast-border-warning",
@@ -197,6 +201,7 @@ export const setPromiseToast = <ToastData,>(
         id: tId,
         title: options.success.title,
         message: options.success.message?.(data),
+        actionItems: options.success.actionItems?.(data),
       });
     })
     .catch((data: ToastData) => {
@@ -205,6 +210,7 @@ export const setPromiseToast = <ToastData,>(
         id: tId,
         title: options.error.title,
         message: options.error.message?.(data),
+        actionItems: options.error.actionItems?.(data),
       });
     });
 };

@@ -1,21 +1,25 @@
 "use client";
 
+import { useState } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// types
+import { cn } from "@plane/editor";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
-// hooks
 //ui
-import { Button } from "@plane/ui";
 // components
 import { AppliedFiltersList } from "@/components/issues";
-// types
+import { UpdateViewComponent } from "@/components/views/update-view-component";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
+// constants
 import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
-// constants
+// hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "@/hooks/store";
+import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {
   globalViewId: string;
@@ -33,11 +37,15 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const { globalViewMap, updateGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
   const {
+    data,
     membership: { currentWorkspaceRole },
   } = useUser();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // derived values
-  const userFilters = filters?.[globalViewId]?.filters;
+  const issueFilters = filters?.[globalViewId];
+  const userFilters = issueFilters?.filters;
   const viewDetails = globalViewMap[globalViewId];
 
   // filters whose value not null or empty array
@@ -89,14 +97,15 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     );
   };
 
+  const viewFilters = {
+    filters: cloneDeep(appliedFilters ?? {}),
+    display_filters: cloneDeep(issueFilters?.displayFilters),
+    display_properties: cloneDeep(issueFilters?.displayProperties),
+  };
   const handleUpdateView = () => {
     if (!workspaceSlug || !globalViewId) return;
 
-    updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), {
-      filters: {
-        ...(appliedFilters ?? {}),
-      },
-    }).then((res) => {
+    updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), viewFilters).then((res) => {
       if (res)
         captureEvent(GLOBAL_VIEW_UPDATED, {
           view_id: res.id,
@@ -107,34 +116,56 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     });
   };
 
-  const areFiltersEqual = isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {});
+  const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 
+  const isLocked = viewDetails?.is_locked;
+  const isOwner = viewDetails?.owned_by === data?.id;
+  const areAppliedFiltersEmpty = isEmpty(appliedFilters);
+
   // return if no filters are applied
 
-  if (isEmpty(appliedFilters) && areFiltersEqual) return null;
+  if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
-    <div className="flex items-start justify-between gap-4 p-4">
-      <AppliedFiltersList
-        labels={workspaceLabels ?? undefined}
-        appliedFilters={appliedFilters ?? {}}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        alwaysAllowEditing
+    <>
+      <CreateUpdateWorkspaceViewModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        preLoadedData={{
+          name: `${viewDetails?.name} 2`,
+          description: viewDetails?.description,
+          ...viewFilters,
+        }}
       />
+      <div
+        className={cn("flex items-start justify-between gap-4 p-4", {
+          "justify-end": areAppliedFiltersEmpty,
+        })}
+      >
+        <AppliedFiltersList
+          labels={workspaceLabels ?? undefined}
+          appliedFilters={appliedFilters ?? {}}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          disableEditing={isLocked}
+          alwaysAllowEditing
+        />
 
-      {!isDefaultView && !areFiltersEqual && isAuthorizedUser && (
-        <>
-          <div />
-          <Button variant="primary" onClick={handleUpdateView}>
-            Update view
-          </Button>
-        </>
-      )}
-    </div>
+        {!isDefaultView && (
+          <UpdateViewComponent
+            isLocked={isLocked}
+            areFiltersEqual={!!areFiltersEqual}
+            isOwner={isOwner}
+            isAuthorizedUser={isAuthorizedUser}
+            setIsModalOpen={setIsModalOpen}
+            handleUpdateView={handleUpdateView}
+          />
+        )}
+      </div>
+    </>
   );
 });

@@ -242,7 +242,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       distribution={chartDistributionData}
                       groupedIssues={groupedIssues}
                       totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                      isEditable={Boolean(peekModule)}
+                      isEditable={Boolean(!peekModule)}
                       size="xs"
                       roundedTab={false}
                       noBackground={false}

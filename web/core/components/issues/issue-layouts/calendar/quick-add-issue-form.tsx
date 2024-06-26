@@ -12,6 +12,7 @@ import { ISearchIssueResponse, TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast, CustomMenu } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
+import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 // helpers
@@ -135,6 +136,13 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
         success: {
           title: "Success!",
           message: () => "Issue created successfully.",
+          actionItems: (data) => (
+            <CreateIssueToastActionItems
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              issueId={data.id}
+            />
+          ),
         },
         error: {
           title: "Error!",

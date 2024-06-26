@@ -14,7 +14,7 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
+import { useUser, useWorkspace, useUserProfile, useEventTracker, useUserSettings } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -39,6 +39,7 @@ const OnboardingPage = observer(() => {
   const { captureEvent } = useEventTracker();
   const { isLoading: userLoader, data: user, updateCurrentUser } = useUser();
   const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
+  const { data: currentUserSettings } = useUserSettings();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
   // computed values
@@ -63,6 +64,27 @@ const OnboardingPage = observer(() => {
     };
 
     await updateUserProfile(payload);
+  };
+
+  const getWorkspaceRedirectionUrl = (): string => {
+    let redirectionRoute = "/profile";
+
+    // validate the last and fallback workspace_slug
+    const currentWorkspaceSlug =
+      currentUserSettings?.workspace?.last_workspace_slug ||
+      currentUserSettings?.workspace?.fallback_workspace_slug ||
+      undefined;
+
+    if (currentWorkspaceSlug) {
+      const isCurrentWorkspaceValid = Object.values(workspaces || {}).findIndex(
+        (workspace) => workspace.slug === currentWorkspaceSlug
+      );
+      if (isCurrentWorkspaceValid >= 0) {
+        redirectionRoute = `/${currentWorkspaceSlug}`;
+      }
+    }
+
+    return redirectionRoute;
   };
 
   // complete onboarding
@@ -95,7 +117,7 @@ const OnboardingPage = observer(() => {
         console.log("Failed to update onboarding status");
       });
 
-    router.replace(`/${firstWorkspace?.slug}`);
+    router.replace(`${getWorkspaceRedirectionUrl()}`);
   };
 
   useEffect(() => {

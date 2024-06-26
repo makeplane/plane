@@ -173,6 +173,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
                   onClick={() => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/issues/${duplicateIssueDetails?.id}`);
                   }}
+                  target="_self"
                 >
                   <Tooltip tooltipContent={`${duplicateIssueDetails?.name}`}>
                     <span className="flex items-center gap-1 cursor-pointer text-xs rounded px-1.5 py-1 pb-0.5 bg-custom-background-80 text-custom-text-200">

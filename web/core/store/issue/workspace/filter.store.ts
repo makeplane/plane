@@ -92,7 +92,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "my_issues");
+    const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.SPREADSHEET, "my_issues");
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -155,7 +155,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       } else {
         const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
         filters = this.computedFilters(_filters?.filters);
-        displayFilters = this.computedDisplayFilters(_filters?.display_filters);
+        displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+          layout: EIssueLayoutTypes.SPREADSHEET,
+        });
         displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       }
 
@@ -247,11 +249,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               display_filters: _filters.displayFilters,
             });
-          else
-            await this.issueFilterService.updateView(workspaceSlug, viewId, {
-              display_filters: _filters.displayFilters,
-            });
-
           break;
         }
         case EIssueFilterType.DISPLAY_PROPERTIES: {
@@ -266,15 +263,11 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
                 updatedDisplayProperties[_key as keyof IIssueDisplayProperties]
               );
             });
+            if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
+              this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
+                display_properties: _filters.displayProperties,
+              });
           });
-          if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
-              display_properties: _filters.displayProperties,
-            });
-          else
-            await this.issueFilterService.updateView(workspaceSlug, viewId, {
-              display_properties: _filters.displayProperties,
-            });
           break;
         }
 

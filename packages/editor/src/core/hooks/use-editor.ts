@@ -13,6 +13,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreEditorProps } from "@/props";
 // types
 import { DeleteImage, EditorRefApi, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
+import { CollaborationProvider } from "@/plane-editor/providers";
 
 export type TFileHandler = {
   cancel: () => void;
@@ -29,6 +30,7 @@ export interface CustomEditorProps {
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
+  provider?: CollaborationProvider;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -54,6 +56,7 @@ export const useEditor = ({
   forwardedRef,
   tabIndex,
   handleEditorReady,
+  provider,
   mentionHandler,
   placeholder,
 }: CustomEditorProps) => {
@@ -186,6 +189,18 @@ export const useEditor = ({
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
+      },
+      setSynced: () => {
+        if (provider) {
+          provider.setSynced();
+        }
+      },
+      hasUnsyncedChanges: () => {
+        if (provider) {
+          return provider.hasUnsyncedChanges();
+        } else {
+          return false;
+        }
       },
       isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
