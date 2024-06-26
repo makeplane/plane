@@ -431,8 +431,12 @@ class PagesDescriptionViewSet(BaseViewSet):
     ]
 
     def retrieve(self, request, slug, project_id, pk):
-        page = Page.objects.get(
-            pk=pk, workspace__slug=slug, projects__id=project_id
+        page = (
+            Page.objects.filter(
+                pk=pk, workspace__slug=slug, projects__id=project_id
+            )
+            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .first()
         )
         binary_data = page.description_binary
 
@@ -451,9 +455,25 @@ class PagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, pk):
-        page = Page.objects.get(
-            pk=pk, workspace__slug=slug, projects__id=project_id
+        page = (
+            Page.objects.filter(
+                pk=pk, workspace__slug=slug, projects__id=project_id
+            )
+            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .first()
         )
+
+        if page.is_locked:
+            return Response(
+                {"error": "Page is locked"},
+                status=471,
+            )
+
+        if page.archived_at:
+            return Response(
+                {"error": "Page is archived"},
+                status=472,
+            )
 
         base64_data = request.data.get("description_binary")
 

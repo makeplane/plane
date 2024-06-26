@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Lock, Sparkle } from "lucide-react";
+import { Sparkle } from "lucide-react";
 // editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";
+import { LockedComponent } from "@/components/icons/locked-component";
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -22,10 +23,11 @@ type Props = {
   handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
+  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef, handleSaveDescription } = props;
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
@@ -40,12 +42,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex flex-grow items-center justify-end gap-3">
-      {is_locked && (
-        <div className="flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
-          <Lock className="h-3 w-3" />
-          <span>Locked</span>
-        </div>
-      )}
+      {is_locked && <LockedComponent />}
       {archived_at && (
         <div className="flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
           <ArchiveIcon className="h-3 w-3" />
@@ -80,6 +77,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
         editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
         handleDuplicatePage={handleDuplicatePage}
         page={page}
+        handleSaveDescription={handleSaveDescription}
       />
     </div>
   );

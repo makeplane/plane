@@ -11,7 +11,7 @@ export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((props, ref) => {
-  const { href, onClick, children, target = "_self", disabled = false, className, draggable = false, ...rest } = props;
+  const { href, onClick, children, target = "_blank", disabled = false, className, draggable = false, ...rest } = props;
   const LEFT_CLICK_EVENT_CODE = 0;
 
   const handleOnClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {

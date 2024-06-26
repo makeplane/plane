@@ -217,7 +217,6 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
             { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
-          target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
           disabled={!!issue?.tempId || isMobile}
         >

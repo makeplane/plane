@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
-import { PageHeader } from "@/components/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -34,7 +33,7 @@ const InstanceAuthenticationPage = observer(() => {
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration...",
+      loading: "Saving configuration",
       success: {
         title: "Success",
         message: () => "Configuration saved successfully",
@@ -57,10 +56,9 @@ const InstanceAuthenticationPage = observer(() => {
 
   return (
     <>
-      <PageHeader title="Authentication - God Mode" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
-          <div className="text-xl font-medium text-custom-text-100">Manage authentication for your instance</div>
+          <div className="text-xl font-medium text-custom-text-100">Manage authentication modes for your instance</div>
           <div className="text-sm font-normal text-custom-text-300">
             Configure authentication modes for your team and restrict sign ups to be invite only.
           </div>
@@ -68,15 +66,12 @@ const InstanceAuthenticationPage = observer(() => {
         <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <div className="space-y-3">
-              <div className="text-lg font-medium pb-1">Sign-up configuration</div>
               <div className={cn("w-full flex items-center gap-14 rounded")}>
                 <div className="flex grow items-center gap-4">
                   <div className="grow">
-                    <div className={cn("font-medium leading-5 text-custom-text-100 text-sm")}>
-                      Allow anyone to sign up without invite
-                    </div>
+                    <div className="text-lg font-medium pb-1">Allow anyone to sign up even without an invite</div>
                     <div className={cn("font-normal leading-5 text-custom-text-300 text-xs")}>
-                      Toggling this off will disable self sign ups.
+                      Toggling this off will only let users sign up when they are invited.
                     </div>
                   </div>
                 </div>
