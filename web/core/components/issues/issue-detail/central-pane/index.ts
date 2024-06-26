@@ -4,3 +4,4 @@ export * from "./sub-issues";
 export * from "./relations";
 export * from "./links";
 export * from "./attachments";
+export * from "./relations";

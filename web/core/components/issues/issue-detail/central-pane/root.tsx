@@ -10,6 +10,7 @@ import {
 } from "@/components/issues/issue-detail/central-pane";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { RelationsAccordion } from "./relations/accordion";
 
 type TCentralPane = {
   workspaceSlug: string;
@@ -35,7 +36,7 @@ export const CentralPane: FC<TCentralPane> = observer((props) => {
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-2">
         <SubIssuesHeader workspaceSlug={workspaceSlug} projectId={projectId} parentIssueId={issueId} />
-        <RelationsHeader />
+        <RelationsHeader workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
         <LinksHeader />
         <AttachmentsHeader />
       </div>
@@ -48,6 +49,7 @@ export const CentralPane: FC<TCentralPane> = observer((props) => {
             disabled={disabled}
           />
         )}
+        <RelationsAccordion workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
       </div>
     </div>
   );
