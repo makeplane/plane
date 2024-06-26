@@ -18,11 +18,6 @@ module.exports = {
             position: "after",
           },
           {
-            pattern: "@headlessui/**",
-            group: "external",
-            position: "after",
-          },
-          {
             pattern: "@plane/**",
             group: "external",
             position: "after",
