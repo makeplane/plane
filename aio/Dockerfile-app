@@ -1,3 +1,5 @@
+ARG BASE_TAG=develop
+ARG BUILD_TYPE=full
 # *****************************************************************************
 # STAGE 1: Build the project
 # *****************************************************************************
@@ -5,7 +7,6 @@ FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
-ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 
 RUN yarn global add turbo
 COPY . .
@@ -46,17 +47,18 @@ ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
 ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
 ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-RUN yarn turbo run build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
+
+RUN yarn turbo run build --filter=web --filter=space --filter=admin
 
 # *****************************************************************************
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
-# FROM makeplane/plane-aio-base AS runner
-ARG BASE_TAG=develop
-FROM makeplane/plane-aio-base-full:$BASE_TAG AS runner
+FROM makeplane/plane-aio-base-${BUILD_TYPE}:${BASE_TAG} AS runner
 
 WORKDIR /app
 
@@ -64,8 +66,8 @@ SHELL [ "/bin/bash", "-c" ]
 
 # PYTHON APPLICATION SETUP
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
 
 COPY apiserver/requirements.txt ./api/
@@ -85,7 +87,6 @@ RUN chmod +x ./api/bin/*
 RUN chmod -R 777 ./api/
 
 # NEXTJS BUILDS
-
 COPY --from=installer /app/web/next.config.js ./web/
 COPY --from=installer /app/web/package.json ./web/
 COPY --from=installer /app/web/.next/standalone ./web
@@ -122,10 +123,13 @@ ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 ARG NEXT_PUBLIC_WEB_BASE_URL=""
 ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
-COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
+ARG BUILD_TYPE=full
+ENV BUILD_TYPE=$BUILD_TYPE
+
+COPY aio/supervisord-${BUILD_TYPE}-base /app/supervisord.conf
 COPY aio/supervisord-app /app/supervisord-app
 RUN cat /app/supervisord-app >> /app/supervisord.conf && \
     rm /app/supervisord-app
@@ -133,14 +137,13 @@ RUN cat /app/supervisord-app >> /app/supervisord.conf && \
 COPY aio/aio.sh /app/aio.sh
 RUN chmod +x /app/aio.sh
 
-COPY aio/pg-setup.sh /app/pg-setup.sh
-RUN chmod +x /app/pg-setup.sh 
-
 COPY deploy/selfhost/variables.env /app/plane.env
 
-# NGINX Conf Copy
 COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 
+# if build type is full, run the below copy pg-setup.sh
+COPY aio/pg-setup.sh /app/pg-setup.sh
+RUN chmod +x /app/pg-setup.sh 
 RUN  ./pg-setup.sh
 
 VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]

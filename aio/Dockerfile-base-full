@@ -70,6 +70,7 @@ RUN chmod +x /app/nginx-start.sh
 RUN sudo -u postgres /usr/lib/postgresql/$POSTGRES_VERSION/bin/initdb -D /var/lib/postgresql/data
 COPY postgresql.conf /etc/postgresql/postgresql.conf
 
+ENV BUILD_TYPE=full
 # Expose ports for Redis, PostgreSQL, and MinIO
 EXPOSE 6379 5432 9000 80 443
 

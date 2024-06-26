@@ -39,6 +39,8 @@ COPY nginx.conf /etc/nginx/nginx.conf.template
 COPY env.sh /app/nginx-start.sh
 RUN chmod +x /app/nginx-start.sh
 
+ENV BUILD_TYPE=slim
+
 # Expose ports for Redis, PostgreSQL, and MinIO
 EXPOSE 80 443
 
