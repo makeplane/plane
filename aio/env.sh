@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -o allexport
 source /app/plane.env set
