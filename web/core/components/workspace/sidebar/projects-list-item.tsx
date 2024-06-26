@@ -351,11 +351,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
                         onClick={() => setIsMenuActive(!isMenuActive)}
                       >
-                        <MoreHorizontal className="size-4" />
+                        <MoreHorizontal className="size-3.5" />
                       </span>
                     }
                     className={cn(
-                      "opacity-0 pointer-events-none flex-shrink-0 mr-1 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                      "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
                       {
                         "opacity-100 pointer-events-auto": isMenuActive,
                       }
@@ -404,7 +404,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <span>Copy link</span>
                       </span>
                     </CustomMenu.MenuItem>
-
                     {!isViewerOrGuest && (
                       <CustomMenu.MenuItem>
                         <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
