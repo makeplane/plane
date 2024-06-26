@@ -5,11 +5,24 @@ on:
     branches:
       - chore-aio
   workflow_dispatch:
+    inputs:
+      full:
+        description: 'Run full build'
+        type: boolean
+        required: false
+        default: false
+      slim:
+        description: 'Run slim build'
+        type: boolean
+        required: false
+        default: false
   release:
     types: [released, prereleased]
 
 env:
   TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  FULL_BUILD_INPUT: ${{ github.event.inputs.full }}
+  SLIM_BUILD_INPUT: ${{ github.event.inputs.slim }}
 
 jobs:
   branch_build_setup:
@@ -22,6 +35,8 @@ jobs:
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
       aio_base_tag: ${{ steps.set_env_variables.outputs.AIO_BASE_TAG }}
+      do_full_build: ${{ steps.set_env_variables.outputs.DO_FULL_BUILD }}
+      do_slim_build: ${{ steps.set_env_variables.outputs.DO_SLIM_BUILD }}
 
     steps:
       - id: set_env_variables
@@ -48,11 +63,24 @@ jobs:
           fi
           echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
 
+          if [ "${{ env.FULL_BUILD_INPUT }}" == "true" ] || [ "${{github.event_name}}" == "push" ] || [ "${{github.event_name}}" == "release" ]; then
+            echo "DO_FULL_BUILD=true" >> $GITHUB_OUTPUT
+          else
+            echo "DO_FULL_BUILD=false" >> $GITHUB_OUTPUT
+          fi
+
+          if [ "${{ env.SLIM_BUILD_INPUT }}" == "true" ] || [ "${{github.event_name}}" == "push" ] || [ "${{github.event_name}}" == "release" ]; then
+            echo "DO_SLIM_BUILD=true" >> $GITHUB_OUTPUT
+          else
+            echo "DO_SLIM_BUILD=false" >> $GITHUB_OUTPUT
+          fi
+
       - id: checkout_files
         name: Checkout Files
         uses: actions/checkout@v4
 
   full_build_push:
+    if: ${{ needs.branch_build_setup.outputs.do_full_build == 'true' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -110,6 +138,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   slim_build_push:
+    if: ${{ needs.branch_build_setup.outputs.do_slim_build == 'true' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
