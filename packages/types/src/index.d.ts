@@ -28,3 +28,4 @@ export * from "./workspace-views";
 export * from "./common";
 export * from "./pragmatic";
 export * from "./publish";
+export * from "./notification";

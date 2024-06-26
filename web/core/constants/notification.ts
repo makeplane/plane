@@ -1,3 +1,27 @@
+export enum ENotificationLoader {
+  INIT_LOADER = "init-loader",
+  MUTATION_LOADER = "mutation-loader",
+  PAGINATION_LOADER = "pagination-loader",
+}
+
+export enum ENotificationTab {
+  ALL = "all",
+  MENTIONS = "mentions",
+}
+
+export type TNotificationTab = ENotificationTab.ALL | ENotificationTab.MENTIONS;
+
+export const NOTIFICATION_TABS = [
+  {
+    label: "All",
+    value: ENotificationTab.ALL,
+  },
+  {
+    label: "Mentions",
+    value: ENotificationTab.MENTIONS,
+  },
+];
+
 export const snoozeOptions = [
   {
     label: "1 day",
