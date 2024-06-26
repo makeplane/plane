@@ -139,9 +139,15 @@ RUN chmod +x /app/aio.sh
 
 COPY deploy/selfhost/variables.env /app/plane.env
 
+RUN sed -i 's/PGHOST/POSTGRES_HOST/g' /app/plane.env && \
+    sed -i 's/plane-db/localhost/g' /app/plane.env && \
+    sed -i 's/plane-redis/localhost/g' /app/plane.env && \
+    sed -i 's/plane-minio/localhost/g' /app/plane.env
+
 COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 
 # if build type is full, run the below copy pg-setup.sh
+COPY aio/postgresql.conf /etc/postgresql/postgresql.conf
 COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
 RUN  ./pg-setup.sh
