@@ -27,7 +27,7 @@ const PageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
-    pageId ? () => getPageById(pageId.toString()) : null,
+    pageId ? () => getPageById(workspaceSlug?.toString(), projectId?.toString(), pageId.toString()) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
