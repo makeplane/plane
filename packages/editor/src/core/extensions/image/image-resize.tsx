@@ -1,5 +1,5 @@
-import { Editor } from "@tiptap/react";
 import { useState } from "react";
+import { Editor } from "@tiptap/react";
 import Moveable from "react-moveable";
 
 export const ImageResizer = ({ editor }: { editor: Editor }) => {

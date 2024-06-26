@@ -1,6 +1,7 @@
 import ImageExt from "@tiptap/extension-image";
-import { insertLineBelowImageAction } from "./utilities/insert-line-below-image";
+// helpers
 import { insertLineAboveImageAction } from "./utilities/insert-line-above-image";
+import { insertLineBelowImageAction } from "./utilities/insert-line-below-image";
 
 export const ImageExtensionWithoutProps = () =>
   ImageExt.extend({

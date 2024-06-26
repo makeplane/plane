@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
-import { common, createLowlight } from "lowlight";
-import ts from "highlight.js/lib/languages/typescript";
-import { CopyIcon, CheckIcon } from "lucide-react";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
+import ts from "highlight.js/lib/languages/typescript";
+import { common, createLowlight } from "lowlight";
+import { CopyIcon, CheckIcon } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers

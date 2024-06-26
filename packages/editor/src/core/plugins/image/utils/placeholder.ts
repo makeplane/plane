@@ -1,7 +1,8 @@
 import { Editor } from "@tiptap/core";
 import { EditorState } from "@tiptap/pm/state";
 import { DecorationSet, EditorView } from "@tiptap/pm/view";
-import { uploadKey } from "src/core/plugins/image/constants";
+// plugins
+import { uploadKey } from "@/plugins/image";
 
 export function findPlaceholder(state: EditorState, id: string): number | null {
   const decos = uploadKey.getState(state) as DecorationSet;
