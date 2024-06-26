@@ -146,6 +146,6 @@ COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
 RUN  ./pg-setup.sh
 
-VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]
+# VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
