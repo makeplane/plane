@@ -20,7 +20,7 @@ import {
   oneQuarter,
   threeQuarters,
   impliesArrowRight,
-} from "src/core/extensions/typography/inputRules";
+} from "./inputRules";
 
 export const CustomTypographyExtension = Extension.create<TypographyOptions>({
   name: "typography",

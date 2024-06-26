@@ -1,11 +1,9 @@
-import StarterKit from "@tiptap/starter-kit";
-import TiptapUnderline from "@tiptap/extension-underline";
-import TextStyle from "@tiptap/extension-text-style";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import TextStyle from "@tiptap/extension-text-style";
+import TiptapUnderline from "@tiptap/extension-underline";
+import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
-// helpers
-import { isValidHttpUrl } from "@/helpers/common";
 // extensions
 import {
   CustomQuoteExtension,
@@ -21,6 +19,8 @@ import {
   Table,
   CustomMention,
 } from "@/extensions";
+// helpers
+import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight } from "@/types";
 
