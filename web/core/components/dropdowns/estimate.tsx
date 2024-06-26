@@ -81,10 +81,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { currentActiveEstimateId, getProjectEstimates } = useProjectEstimates();
+  const { currentActiveEstimateIdByProjectId, getProjectEstimates } = useProjectEstimates();
   const { estimatePointIds, estimatePointById } = useEstimate(
-    currentActiveEstimateId ? currentActiveEstimateId : undefined
+    projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined
   );
+
+  const currentActiveEstimateId = projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined;
 
   const options: DropdownOptions = (estimatePointIds ?? [])
     ?.map((estimatePoint) => {
@@ -216,25 +218,39 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
-              {filteredOptions ? (
-                filteredOptions.length > 0 ? (
-                  filteredOptions.map((option) => (
-                    <Combobox.Option key={option.value} value={option.value}>
-                      {({ active, selected }) => (
-                        <div
-                          className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${active ? `!hover:bg-custom-background-80` : ``} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`}
-                        >
-                          <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                        </div>
-                      )}
-                    </Combobox.Option>
-                  ))
-                ) : (
-                  <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
-                )
+              {currentActiveEstimateId === undefined ? (
+                <div
+                  className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`}
+                >
+                  {/* NOTE: This condition renders when estimates are not enabled for the project */}
+                  <div className="flex-grow flex items-center gap-2">
+                    <Triangle className="h-3 w-3 flex-shrink-0" />
+                    <span className="flex-grow truncate">No estimate</span>
+                  </div>
+                </div>
               ) : (
-                <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
+                <>
+                  {filteredOptions ? (
+                    filteredOptions.length > 0 ? (
+                      filteredOptions.map((option) => (
+                        <Combobox.Option key={option.value} value={option.value}>
+                          {({ active, selected }) => (
+                            <div
+                              className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${active ? `!hover:bg-custom-background-80` : ``} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`}
+                            >
+                              <span className="flex-grow truncate">{option.content}</span>
+                              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                            </div>
+                          )}
+                        </Combobox.Option>
+                      ))
+                    ) : (
+                      <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
+                    )
+                  ) : (
+                    <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
+                  )}
+                </>
               )}
             </div>
           </div>

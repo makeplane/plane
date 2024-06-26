@@ -23,7 +23,6 @@ import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
-import { useWorkspacePageDescription } from "@/plane-web/hooks/use-workspace-page-description";
 // store
 import { IWorkspacePageDetails } from "@/plane-web/store/pages/page";
 // services
@@ -37,12 +36,15 @@ type Props = {
   markings: IMarking[];
   page: IWorkspacePageDetails;
   sidePeekVisible: boolean;
+  handleDescriptionChange: (update: Uint8Array, source?: string | undefined) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
   updateMarkings: (description_html: string) => void;
+  isDescriptionReady: boolean;
+  pageDescriptionYJS: Uint8Array | undefined;
 };
 
-export const PagesAppEditorBody: React.FC<Props> = observer((props) => {
+export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   const {
     handleReadOnlyEditorReady,
     handleEditorReady,
@@ -52,6 +54,9 @@ export const PagesAppEditorBody: React.FC<Props> = observer((props) => {
     page,
     sidePeekVisible,
     updateMarkings,
+    handleDescriptionChange,
+    isDescriptionReady,
+    pageDescriptionYJS,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -69,12 +74,6 @@ export const PagesAppEditorBody: React.FC<Props> = observer((props) => {
   const pageDescription = page?.description_html;
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // project-description
-  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS } = useWorkspacePageDescription({
-    editorRef,
-    page,
-    workspaceSlug,
-  });
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useWorkspaceMention({
     workspaceSlug: workspaceSlug.toString(),

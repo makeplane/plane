@@ -35,6 +35,8 @@ export const SidebarAppSwitcher = observer(() => {
 
   const isPagesApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
 
+  if (true) return null;
+
   return (
     <div
       className={cn("flex items-center gap-0.5 rounded-md p-0.5 bg-custom-sidebar-background-80/50 mb-4", {
@@ -53,7 +55,7 @@ export const SidebarAppSwitcher = observer(() => {
             disabled={!sidebarCollapsed}
           >
             <Link
-              href={`/${workspaceSlug}/${app.href}`}
+              href={`/${workspaceSlug}${app.href}`}
               className={cn(
                 "w-1/2 rounded flex items-center justify-center gap-2 text-sm font-medium text-center py-2 px-6",
                 {
