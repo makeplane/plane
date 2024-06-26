@@ -33,7 +33,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
 )
-
+from plane.utils.error_codes import ERROR_CODES
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 
@@ -465,14 +465,20 @@ class PagesDescriptionViewSet(BaseViewSet):
 
         if page.is_locked:
             return Response(
-                {"error": "Page is locked"},
-                status=471,
+                {
+                    "error_code": ERROR_CODES["PAGE_LOCKED"],
+                    "error_message": "PAGE_LOCKED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         if page.archived_at:
             return Response(
-                {"error": "Page is archived"},
-                status=472,
+                {
+                    "error_code": ERROR_CODES["PAGE_ARCHIVED"],
+                    "error_message": "PAGE_ARCHIVED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         base64_data = request.data.get("description_binary")
