@@ -36,7 +36,7 @@ export const NotificationList: FC<TNotificationList> = observer((props) => {
       ))}
 
       {/* fetch next page notifications */}
-      {paginationInfo && notificationIds && paginationInfo?.total_count != notificationIds.length && (
+      {paginationInfo && paginationInfo?.next_page_results && (
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
             <div className="py-4 flex justify-center items-center text-sm font-medium">

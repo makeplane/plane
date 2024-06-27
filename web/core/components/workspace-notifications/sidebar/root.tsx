@@ -13,9 +13,12 @@ import {
 } from "@/components/workspace-notifications";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { ENotificationTab, NOTIFICATION_TABS } from "@/constants/notification";
+import {
+  ENotificationTab,
+  // NOTIFICATION_TABS
+} from "@/constants/notification";
 // helpers
-import { cn } from "@/helpers/common.helper";
+// import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotification } from "@/hooks/store";
 
@@ -23,8 +26,13 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { paginationInfo, currentNotificationTab, setCurrentNotificationTab, loader, notificationIdsByWorkspaceId } =
-    useWorkspaceNotification();
+  const {
+    paginationInfo,
+    // currentNotificationTab,
+    // setCurrentNotificationTab,
+    loader,
+    notificationIdsByWorkspaceId,
+  } = useWorkspaceNotification();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
@@ -33,15 +41,16 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   const currentTabEmptyState = ENotificationTab.ALL
     ? EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE
     : EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE;
+  const totalNotificationCount = paginationInfo?.total_count || 0;
 
   if (!workspaceSlug || !workspace) return <></>;
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       <div className="border-b border-custom-border-200">
-        <SidebarHeader />
+        <SidebarHeader workspaceSlug={workspaceSlug.toString()} notificationsCount={totalNotificationCount} />
       </div>
 
-      <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
+      {/* <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
         {NOTIFICATION_TABS.map((tab) => (
           <div
             key={tab.value}
@@ -57,14 +66,14 @@ export const NotificationsSidebarRoot: FC = observer(() => {
               )}
             >
               <div className="font-medium">{tab.label}</div>
-              {notificationIds && notificationIds.length > 0 && paginationInfo?.total_count && (
+              {totalNotificationCount > 0 && (
                 <div
                   className={cn(
                     `rounded-full text-xs px-1.5 py-0.5`,
                     currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
                   )}
                 >
-                  {notificationIds.length}/{paginationInfo?.total_count}
+                  {totalNotificationCount >= 100 ? `99+` : paginationInfo?.total_count}
                 </div>
               )}
             </div>
@@ -73,7 +82,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
             )}
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* applied filters */}
       <div className="flex-shrink-0">

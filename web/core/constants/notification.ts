@@ -14,6 +14,7 @@ export enum ENotificationLoader {
   MUTATION_LOADER = "mutation-loader",
   PAGINATION_LOADER = "pagination-loader",
   REFRESH = "refresh",
+  MARK_ALL_AS_READY = "mark-all-as-read",
 }
 
 export enum ENotificationQueryParamType {

@@ -185,7 +185,7 @@ export class Notification implements INotification {
     const currentNotificationReadAt = this.read_at;
     try {
       const payload: Partial<TNotification> = {
-        read_at: new Date().toUTCString(),
+        read_at: new Date().toISOString(),
       };
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.markNotificationAsRead(workspaceSlug, this.id);
@@ -235,7 +235,7 @@ export class Notification implements INotification {
     const currentNotificationArchivedAt = this.archived_at;
     try {
       const payload: Partial<TNotification> = {
-        archived_at: new Date().toUTCString(),
+        archived_at: new Date().toISOString(),
       };
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.markNotificationAsArchived(workspaceSlug, this.id);
@@ -286,7 +286,7 @@ export class Notification implements INotification {
     const currentNotificationSnoozeTill = this.snoozed_till;
     try {
       const payload: Partial<TNotification> = {
-        snoozed_till: snoozeTill.toUTCString(),
+        snoozed_till: snoozeTill.toISOString(),
       };
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.updateNotificationById(workspaceSlug, this.id, payload);

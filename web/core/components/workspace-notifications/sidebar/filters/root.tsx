@@ -2,10 +2,9 @@
 
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
-import { Check, Clock, ListFilter } from "lucide-react";
+import { Check, ListFilter } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-import { TNotificationFilter } from "@plane/types";
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // constants
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
 // helpers
@@ -14,19 +13,16 @@ import { cn } from "@/helpers/common.helper";
 import { useWorkspaceNotification } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const NotificationFilter: FC = observer((props) => {
-  const {} = props;
+export const NotificationFilter: FC = observer(() => {
   // hooks
   const { isMobile } = usePlatformOS();
-  const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotification();
+  const { filters, updateFilters } = useWorkspaceNotification();
 
   const handleFilterTypeChange = (filterType: ENotificationFilterType, filterValue: boolean) =>
     updateFilters("type", {
       ...filters.type,
       [filterType]: filterValue,
     });
-
-  const handleBulkFilterChange = (filter: Partial<TNotificationFilter>) => updateBulkFilters(filter);
 
   return (
     <Popover className="relative">
@@ -51,101 +47,31 @@ export const NotificationFilter: FC = observer((props) => {
         leaveTo="opacity-0 translate-y-1"
       >
         <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44">
-          <div className="py-3 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
-            <div className="px-3 space-y-1">
-              <div className="text-xs text-custom-text-300 font-medium whitespace-nowrap">
-                Filter issue notifications
-              </div>
-              <div>
-                {FILTER_TYPE_OPTIONS.map((filter) => {
-                  const isSelected = filters?.type?.[filter?.value] || false;
-                  return (
-                    <div
-                      key={filter.value}
-                      className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                      onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
-                    >
-                      <div
-                        className={cn(
-                          "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all",
-                          isSelected ? "bg-custom-primary-100" : "bg-custom-background-90"
-                        )}
-                      >
-                        {isSelected && <Check className="h-2 w-2" />}
-                      </div>
-                      <div
-                        className={cn(
-                          "whitespace-nowrap",
-                          isSelected ? "text-custom-text-100" : "text-custom-text-200"
-                        )}
-                      >
-                        {filter.label}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="border-b border-custom-border-200 " />
-
-            <div className="px-3">
-              <div
-                className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() => {
-                  handleBulkFilterChange({
-                    archived: !filters?.archived,
-                    snoozed: false,
-                  });
-                }}
-              >
+          <div className="p-2 rounded-md border border-custom-border-200 bg-custom-background-100">
+            {FILTER_TYPE_OPTIONS.map((filter) => {
+              const isSelected = filters?.type?.[filter?.value] || false;
+              return (
                 <div
-                  className={cn(
-                    "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-full transition-all",
-                    filters?.archived ? "bg-custom-primary-100" : "bg-custom-background-90"
-                  )}
+                  key={filter.value}
+                  className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+                  onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
                 >
-                  {filters?.archived && <Check className="h-2 w-2" />}
+                  <div
+                    className={cn(
+                      "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all",
+                      isSelected ? "bg-custom-primary-100" : "bg-custom-background-90"
+                    )}
+                  >
+                    {isSelected && <Check className="h-2 w-2" />}
+                  </div>
+                  <div
+                    className={cn("whitespace-nowrap", isSelected ? "text-custom-text-100" : "text-custom-text-200")}
+                  >
+                    {filter.label}
+                  </div>
                 </div>
-                <ArchiveIcon className="flex-shrink-0 h-3 w-3" />
-                <div
-                  className={cn(
-                    "whitespace-nowrap",
-                    filters?.archived ? "text-custom-text-100" : "text-custom-text-200"
-                  )}
-                >
-                  Show Archived
-                </div>
-              </div>
-
-              <div
-                className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() => {
-                  handleBulkFilterChange({
-                    snoozed: !filters?.snoozed,
-                    archived: false,
-                  });
-                }}
-              >
-                <div
-                  className={cn(
-                    "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-full transition-all",
-                    filters?.snoozed ? "bg-custom-primary-100" : "bg-custom-background-90"
-                  )}
-                >
-                  {filters?.snoozed && <Check className="h-2 w-2" />}
-                </div>
-                <Clock className="flex-shrink-0 h-3 w-3" />
-                <div
-                  className={cn(
-                    "whitespace-nowrap",
-                    filters?.snoozed ? "text-custom-text-100" : "text-custom-text-200"
-                  )}
-                >
-                  Show Snoozed
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </Popover.Panel>
       </Transition>

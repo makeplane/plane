@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { ArchiveRestore, MessageSquare } from "lucide-react";
+import { ArchiveRestore, Clock, MessageSquare } from "lucide-react";
 import { ArchiveIcon, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
 import { NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED } from "@/constants/event-tracker";
@@ -27,6 +27,8 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
     markNotificationAsUnRead,
     archiveNotification,
     unArchiveNotification,
+    snoozeNotification,
+    unSnoozeNotification,
   } = useNotification(notificationId);
 
   const options = [
@@ -80,6 +82,22 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
     },
   ];
 
+  const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
+    if (snoozeTill) {
+      try {
+        await snoozeNotification(workspaceSlug, snoozeTill);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      try {
+        await unSnoozeNotification(workspaceSlug);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
   return (
     <div className="relative flex justify-center items-center gap-2">
       {options.map((item) => (
@@ -100,6 +118,21 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
       ))}
 
       {/* snooze notification */}
+      <Tooltip tooltipContent={notification.snoozed_till ? `Un snooze` : `Snooze`} isMobile={isMobile}>
+        <button
+          type="button"
+          className="relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            notification.snoozed_till
+              ? handleNotificationSnoozeDate(undefined)
+              : handleNotificationSnoozeDate(new Date());
+          }}
+        >
+          <Clock className="h-3 w-3 text-custom-text-300" />
+        </button>
+      </Tooltip>
     </div>
   );
 });

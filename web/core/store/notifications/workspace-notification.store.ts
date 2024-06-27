@@ -79,6 +79,11 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       paginationInfo: observable,
       filters: observable,
       // computed
+      // helper actions
+      setCurrentNotificationTab: action,
+      mutateNotifications: action,
+      updateFilters: action,
+      updateBulkFilters: action,
       // actions
       getNotifications: action,
       getNotificationById: action,
@@ -98,11 +103,66 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     if (!workspaceId || isEmpty(this.notifications)) return undefined;
     const workspaceNotificationIds = Object.values(this.notifications || {})
       .filter((n) => n.workspace === workspaceId)
+      .filter((n) => {
+        if (!this.filters.archived && !this.filters.snoozed) {
+          if (n.archived_at) {
+            return false;
+          } else if (n.snoozed_till) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          if (this.filters.snoozed) {
+            return n.snoozed_till ? true : false;
+          } else if (this.filters.archived) {
+            return n.archived_at ? true : false;
+          } else {
+            return true;
+          }
+        }
+      })
+      .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
       .map((n) => n.id) as string[];
     return workspaceNotificationIds ?? undefined;
   });
 
   // helper functions
+  /**
+   * @description generate notification query params
+   * @returns { object }
+   */
+  generateNotificationQueryParams = (paramType: TNotificationQueryParamType): TNotificationPaginatedInfoQueryParams => {
+    const queryParamsType =
+      Object.entries(this.filters.type)
+        .filter(([, value]) => value)
+        .map(([key]) => key)
+        .join(",") || undefined;
+
+    const currentPage = this.paginationInfo ? Number(this.paginationInfo?.prev_cursor?.split(":")[1] || 0) + 1 : 0;
+
+    const queryCursorNext =
+      paramType === ENotificationQueryParamType.INIT
+        ? `${this.paginatedCount}:0:0`
+        : paramType === ENotificationQueryParamType.CURRENT
+          ? `${this.paginatedCount}:${currentPage}:0`
+          : paramType === ENotificationQueryParamType.NEXT && this.paginationInfo
+            ? this.paginationInfo?.next_cursor
+            : `${this.paginatedCount}:${currentPage}:0`;
+
+    const queryParams = {
+      type: queryParamsType,
+      snoozed: this.filters.snoozed || false,
+      archived: this.filters.archived || false,
+      read: this.filters.read || false,
+      per_page: this.paginatedCount,
+      cursor: queryCursorNext,
+    };
+
+    return queryParams;
+  };
+
+  // helper actions
   /**
    * @description mutate and validate current existing and new notifications
    * @param { TNotification[] } notifications
@@ -148,40 +208,6 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     this.getNotifications(workspaceSlug, ENotificationLoader.INIT_LOADER, ENotificationQueryParamType.INIT);
   };
 
-  /**
-   * @description generate notification query params
-   * @returns { object }
-   */
-  generateNotificationQueryParams = (paramType: TNotificationQueryParamType): TNotificationPaginatedInfoQueryParams => {
-    const queryParamsType =
-      Object.entries(this.filters.type)
-        .filter(([, value]) => value)
-        .map(([key]) => key)
-        .join(",") || undefined;
-
-    const currentPage = this.paginationInfo ? Number(this.paginationInfo?.prev_cursor?.split(":")[1] || 0) + 1 : 0;
-
-    const queryCursorNext =
-      paramType === ENotificationQueryParamType.INIT
-        ? `${this.paginatedCount}:0:0`
-        : paramType === ENotificationQueryParamType.CURRENT
-          ? `${this.paginatedCount}:${currentPage}:0`
-          : paramType === ENotificationQueryParamType.NEXT && this.paginationInfo
-            ? this.paginationInfo?.next_cursor
-            : `${this.paginatedCount}:${currentPage}:0`;
-
-    const queryParams = {
-      type: queryParamsType,
-      snoozed: this.filters.snoozed || false,
-      archived: this.filters.archived || false,
-      read: this.filters.read || false,
-      per_page: this.paginatedCount,
-      cursor: queryCursorNext,
-    };
-
-    return queryParams;
-  };
-
   // actions
   /**
    * @description set notification tab
@@ -220,7 +246,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       console.error("WorkspaceNotificationStore -> getNotifications -> error", error);
       throw error;
     } finally {
-      this.loader = undefined;
+      runInAction(() => (this.loader = undefined));
     }
   };
 
@@ -268,6 +294,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   markAllNotificationsAsRead = async (workspaceSlug: string): Promise<void> => {
     try {
+      this.loader = ENotificationLoader.MARK_ALL_AS_READY;
       const queryParams = this.generateNotificationQueryParams(ENotificationQueryParamType.INIT);
       const params = {
         type: queryParams.type,
@@ -286,6 +313,8 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     } catch (error) {
       console.error("WorkspaceNotificationStore -> markAllNotificationsAsRead -> error", error);
       throw error;
+    } finally {
+      runInAction(() => (this.loader = undefined));
     }
   };
 }

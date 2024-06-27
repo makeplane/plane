@@ -2,7 +2,6 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Bell } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // components
@@ -10,8 +9,13 @@ import { BreadcrumbLink } from "@/components/common";
 import { SidebarHamburgerToggle } from "@/components/core";
 import { SidebarOptions } from "@/components/workspace-notifications";
 
-export const SidebarHeader: FC = observer(() => {
-  const { workspaceSlug } = useParams();
+type TSidebarHeader = {
+  workspaceSlug: string;
+  notificationsCount: number;
+};
+
+export const SidebarHeader: FC<TSidebarHeader> = observer((props) => {
+  const { workspaceSlug, notificationsCount } = props;
 
   if (!workspaceSlug) return <></>;
   return (
@@ -23,7 +27,20 @@ export const SidebarHeader: FC = observer(() => {
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            link={<BreadcrumbLink label="Notifications" icon={<Bell className="h-4 w-4 text-custom-text-300" />} />}
+            link={
+              <BreadcrumbLink
+                label={
+                  <div className="flex items-center gap-2">
+                    <div className="font-medium">Notifications</div>
+                    <div className="rounded-full text-xs px-1.5 py-0.5 bg-custom-primary-100/20">
+                      {notificationsCount}
+                    </div>
+                  </div>
+                }
+                icon={<Bell className="h-4 w-4 text-custom-text-300" />}
+                disableTooltip
+              />
+            }
           />
         </Breadcrumbs>
       </div>
