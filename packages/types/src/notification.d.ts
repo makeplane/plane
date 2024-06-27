@@ -76,7 +76,7 @@ export type TNotificationPaginatedInfo = {
   total_pages: number | undefined;
   extra_stats: string | undefined;
   count: number | undefined; // current paginated results count
-  total_count: string | undefined; // total available results count
+  total_count: number | undefined; // total available results count
   results: TNotification[] | undefined;
   grouped_by: string | undefined;
   sub_grouped_by: string | undefined;

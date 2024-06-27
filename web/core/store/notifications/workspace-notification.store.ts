@@ -10,7 +10,12 @@ import {
   TNotificationPaginatedInfoQueryParams,
 } from "@plane/types";
 // constants
-import { ENotificationLoader, ENotificationTab, TNotificationTab } from "@/constants/notification";
+import {
+  ENotificationLoader,
+  ENotificationQueryParamType,
+  ENotificationTab,
+  TNotificationTab,
+} from "@/constants/notification";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
@@ -18,6 +23,7 @@ import { Notification, INotification } from "@/store/notifications/notification.
 import { CoreRootStore } from "@/store/root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
+type TNotificationQueryParamType = ENotificationQueryParamType;
 
 export interface IWorkspaceNotificationStore {
   // observables
@@ -37,7 +43,8 @@ export interface IWorkspaceNotificationStore {
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
   getNotifications: (
     workspaceSlug: string,
-    loader?: TNotificationLoader
+    loader?: TNotificationLoader,
+    queryCursorType?: TNotificationQueryParamType
   ) => Promise<TNotificationPaginatedInfo | undefined>;
   getNotificationById: (workspaceId: string, notificationId: string) => Promise<TNotification | undefined>;
   deleteNotificationById: (workspaceId: string, notificationId: string) => Promise<void>;
@@ -45,7 +52,7 @@ export interface IWorkspaceNotificationStore {
 
 export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   // constants
-  paginatedCount = 30;
+  paginatedCount = 2;
   // observables
   loader: TNotificationLoader = undefined;
   notifications: Record<string, INotification> = {};
@@ -121,19 +128,36 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @param { T extends keyof TNotificationFilter } key
    * @param { TNotificationFilter[T] } value
    */
-  updateFilters = <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) =>
+  updateFilters = <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) => {
     set(this.filters, key, value);
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    set(this, "notifications", {});
+    this.getNotifications(workspaceSlug, ENotificationLoader.INIT_LOADER, ENotificationQueryParamType.INIT);
+  };
 
   /**
    * @description generate notification query params
    * @returns { object }
    */
-  generateNotificationQueryParams = (): TNotificationPaginatedInfoQueryParams => {
+  generateNotificationQueryParams = (paramType: TNotificationQueryParamType): TNotificationPaginatedInfoQueryParams => {
     const queryParamsType =
       Object.entries(this.filters.type)
         .filter(([, value]) => value)
         .map(([key]) => key)
         .join(",") || undefined;
+
+    const currentPage = this.paginationInfo ? Number(this.paginationInfo?.prev_cursor?.split(":")[1] || 0) + 1 : 0;
+
+    const queryCursorNext =
+      paramType === ENotificationQueryParamType.INIT
+        ? `${this.paginatedCount}:0:0`
+        : paramType === ENotificationQueryParamType.CURRENT
+          ? `${this.paginatedCount}:${currentPage}:0`
+          : paramType === ENotificationQueryParamType.NEXT && this.paginationInfo
+            ? this.paginationInfo?.next_cursor
+            : `${this.paginatedCount}:${currentPage}:0`;
 
     const queryParams = {
       type: queryParamsType,
@@ -141,7 +165,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       archived: this.filters.archived || false,
       read: this.filters.read || false,
       per_page: this.paginatedCount,
-      cursor: this.paginationInfo ? this.paginationInfo?.next_cursor : `${this.paginatedCount}:0:0`,
+      cursor: queryCursorNext,
     };
 
     return queryParams;
@@ -164,11 +188,12 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   getNotifications = async (
     workspaceSlug: string,
-    loader: TNotificationLoader = ENotificationLoader.INIT_LOADER
+    loader: TNotificationLoader = ENotificationLoader.INIT_LOADER,
+    queryParamType: TNotificationQueryParamType = ENotificationQueryParamType.INIT
   ): Promise<TNotificationPaginatedInfo | undefined> => {
     this.loader = loader;
     try {
-      const queryParams = this.generateNotificationQueryParams();
+      const queryParams = this.generateNotificationQueryParams(queryParamType);
       const notificationResponse = await workspaceNotificationService.fetchNotifications(workspaceSlug, queryParams);
       if (notificationResponse) {
         const { results, ...paginationInfo } = notificationResponse;

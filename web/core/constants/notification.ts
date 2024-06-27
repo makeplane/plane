@@ -16,6 +16,12 @@ export enum ENotificationLoader {
   REFRESH = "refresh",
 }
 
+export enum ENotificationQueryParamType {
+  INIT = "init",
+  CURRENT = "current",
+  NEXT = "next",
+}
+
 export type TNotificationTab = ENotificationTab.ALL | ENotificationTab.MENTIONS;
 
 export const NOTIFICATION_TABS = [

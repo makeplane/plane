@@ -38,7 +38,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
   return (
     <div
-      className="relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all hover:bg-custom-background-80/50 group"
+      className="relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group"
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
@@ -117,7 +117,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
               )}
             </div>
             <div className="flex-shrink-0 hidden group-hover:block text-sm">
-              <NotificationOption notificationId={notification?.id} />
+              <NotificationOption workspaceSlug={workspaceSlug} notificationId={notification?.id} />
             </div>
           </div>
 

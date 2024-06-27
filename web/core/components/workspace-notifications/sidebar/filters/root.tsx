@@ -48,8 +48,8 @@ export const NotificationFilter: FC = observer((props) => {
         leaveTo="opacity-0 translate-y-1"
       >
         <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44">
-          <div className="py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
-            <div className="px-2 space-y-1">
+          <div className="py-3 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
+            <div className="px-3 space-y-1">
               <div className="text-xs text-custom-text-300 font-medium whitespace-nowrap">
                 Filter issue notifications
               </div>
@@ -72,7 +72,7 @@ export const NotificationFilter: FC = observer((props) => {
                       </div>
                       <div
                         className={cn(
-                          "whitespace-nowrap font-medium",
+                          "whitespace-nowrap",
                           isSelected ? "text-custom-text-100" : "text-custom-text-200"
                         )}
                       >
@@ -86,7 +86,7 @@ export const NotificationFilter: FC = observer((props) => {
 
             <div className="border-b border-custom-border-200 " />
 
-            <div className="px-2">
+            <div className="px-3">
               <div
                 className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
                 onClick={() => handleFilterChange("archived", !filters?.archived)}
@@ -94,7 +94,7 @@ export const NotificationFilter: FC = observer((props) => {
                 <ArchiveIcon className="flex-shrink-0 h-3 w-3" />
                 <div
                   className={cn(
-                    "whitespace-nowrap font-medium",
+                    "whitespace-nowrap",
                     filters?.archived ? "text-custom-text-100" : "text-custom-text-200"
                   )}
                 >
@@ -114,7 +114,7 @@ export const NotificationFilter: FC = observer((props) => {
                 <Clock className="flex-shrink-0 h-3 w-3" />
                 <div
                   className={cn(
-                    "whitespace-nowrap font-medium",
+                    "whitespace-nowrap",
                     filters?.snoozed ? "text-custom-text-100" : "text-custom-text-200"
                   )}
                 >

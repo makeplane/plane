@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
 // constants
-import { ENotificationLoader } from "@/constants/notification";
+import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useWorkspace, useWorkspaceNotification } from "@/hooks/store";
 
@@ -26,7 +26,10 @@ const WorkspaceDashboardPage = observer(() => {
             currentWorkspace?.slug,
             notificationIdsByWorkspaceId(currentWorkspace.id)
               ? ENotificationLoader.MUTATION_LOADER
-              : ENotificationLoader.INIT_LOADER
+              : ENotificationLoader.INIT_LOADER,
+            notificationIdsByWorkspaceId(currentWorkspace.id)
+              ? ENotificationQueryParamType.CURRENT
+              : ENotificationQueryParamType.INIT
           )
       : null
   );
