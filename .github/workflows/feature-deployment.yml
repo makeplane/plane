@@ -90,9 +90,6 @@ jobs:
     name: Feature Deploy
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
       KUBE_CONFIG_FILE: ${{ secrets.FEATURE_PREVIEW_KUBE_CONFIG }}
       DEPLOYMENT_NAME: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
