@@ -47,7 +47,7 @@ export const ProjectViewsHeader = observer(() => {
 
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
 
-  const canUserCreateIssue =
+  const canUserCreateView =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
@@ -83,7 +83,7 @@ export const ProjectViewsHeader = observer(() => {
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <ViewListHeader />
-          {canUserCreateIssue && (
+          {canUserCreateView && (
             <div>
               <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
                 Add View
