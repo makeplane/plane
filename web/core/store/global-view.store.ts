@@ -277,7 +277,6 @@ export class GlobalViewStore implements IGlobalViewStore {
     const currentView = this.getViewDetailsById(viewId);
     const currentAccess = currentView?.access;
     try {
-      if (currentAccess === access) return;
       runInAction(() => {
         set(this.globalViewMap, [viewId, "access"], access);
       });
