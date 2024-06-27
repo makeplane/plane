@@ -3,7 +3,12 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TNotification, TNotificationPaginatedInfo, TNotificationPaginatedInfoQueryParams } from "@plane/types";
+import {
+  TNotification,
+  TNotificationFilter,
+  TNotificationPaginatedInfo,
+  TNotificationPaginatedInfoQueryParams,
+} from "@plane/types";
 // constants
 import { ENotificationLoader, ENotificationTab, TNotificationTab } from "@/constants/notification";
 // services
@@ -20,12 +25,14 @@ export interface IWorkspaceNotificationStore {
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined;
+  filters: TNotificationFilter;
   // computed
   notificationIds: string[] | undefined;
   // computed functions
   notificationIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
   // helper actions
   mutateNotifications: (notifications: TNotification[]) => void;
+  updateFilters: <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
   getNotifications: (
@@ -44,6 +51,16 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined = undefined;
+  filters: TNotificationFilter = {
+    type: {
+      assigned: false,
+      created: false,
+      subscribed: false,
+    },
+    snoozed: false,
+    archived: false,
+    read: false,
+  };
 
   constructor(private store: CoreRootStore) {
     makeObservable(this, {
@@ -52,6 +69,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       notifications: observable,
       currentNotificationTab: observable.ref,
       paginationInfo: observable,
+      filters: observable,
       // computed
       notificationIds: computed,
       // actions
@@ -99,17 +117,35 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   };
 
   /**
+   * @description update filters
+   * @param { T extends keyof TNotificationFilter } key
+   * @param { TNotificationFilter[T] } value
+   */
+  updateFilters = <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) =>
+    set(this.filters, key, value);
+
+  /**
    * @description generate notification query params
    * @returns { object }
    */
-  generateNotificationQueryParams = (): TNotificationPaginatedInfoQueryParams => ({
-    type: undefined,
-    snoozed: false,
-    archived: false,
-    read: undefined,
-    per_page: this.paginatedCount,
-    cursor: this.paginationInfo ? this.paginationInfo?.next_cursor : `${this.paginatedCount}:0:0`,
-  });
+  generateNotificationQueryParams = (): TNotificationPaginatedInfoQueryParams => {
+    const queryParamsType =
+      Object.entries(this.filters.type)
+        .filter(([, value]) => value)
+        .map(([key]) => key)
+        .join(",") || undefined;
+
+    const queryParams = {
+      type: queryParamsType,
+      snoozed: this.filters.snoozed || false,
+      archived: this.filters.archived || false,
+      read: this.filters.read || false,
+      per_page: this.paginatedCount,
+      cursor: this.paginationInfo ? this.paginationInfo?.next_cursor : `${this.paginatedCount}:0:0`,
+    };
+
+    return queryParams;
+  };
 
   // actions
   /**
@@ -154,13 +190,13 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
 
   /**
    * @description get notification by id
-   * @param { string } workspaceId,
+   * @param { string } workspaceSlug,
    * @param { string } notificationId,
    * @returns { TNotification | undefined }
    */
-  getNotificationById = async (workspaceId: string, notificationId: string): Promise<TNotification | undefined> => {
+  getNotificationById = async (workspaceSlug: string, notificationId: string): Promise<TNotification | undefined> => {
     try {
-      const notification = await workspaceNotificationService.fetchNotificationById(workspaceId, notificationId);
+      const notification = await workspaceNotificationService.fetchNotificationById(workspaceSlug, notificationId);
       if (notification) {
         runInAction(() => {
           this.mutateNotifications([notification]);
@@ -175,13 +211,13 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
 
   /**
    * @description delete notification by id
-   * @param { string } workspaceId,
+   * @param { string } workspaceSlug,
    * @param { string } notificationId,
    * @returns { void }
    */
-  deleteNotificationById = async (workspaceId: string, notificationId: string): Promise<void> => {
+  deleteNotificationById = async (workspaceSlug: string, notificationId: string): Promise<void> => {
     try {
-      await workspaceNotificationService.deleteNotificationById(workspaceId, notificationId);
+      await workspaceNotificationService.deleteNotificationById(workspaceSlug, notificationId);
       runInAction(() => notificationId && unset(this.notifications, [notificationId]));
     } catch (error) {
       console.error("WorkspaceNotificationStore -> deleteNotificationById -> error", error);

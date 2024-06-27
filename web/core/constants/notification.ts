@@ -1,12 +1,19 @@
+export enum ENotificationTab {
+  ALL = "all",
+  MENTIONS = "mentions",
+}
+
+export enum ENotificationFilterType {
+  CREATED = "created",
+  ASSIGNED = "assigned",
+  SUBSCRIBED = "subscribed",
+}
+
 export enum ENotificationLoader {
   INIT_LOADER = "init-loader",
   MUTATION_LOADER = "mutation-loader",
   PAGINATION_LOADER = "pagination-loader",
-}
-
-export enum ENotificationTab {
-  ALL = "all",
-  MENTIONS = "mentions",
+  REFRESH = "refresh",
 }
 
 export type TNotificationTab = ENotificationTab.ALL | ENotificationTab.MENTIONS;
@@ -19,6 +26,21 @@ export const NOTIFICATION_TABS = [
   {
     label: "Mentions",
     value: ENotificationTab.MENTIONS,
+  },
+];
+
+export const FILTER_TYPE_OPTIONS = [
+  {
+    label: "Assigned to me",
+    value: ENotificationFilterType.ASSIGNED,
+  },
+  {
+    label: "Created by me",
+    value: ENotificationFilterType.CREATED,
+  },
+  {
+    label: "Subscribed by me",
+    value: ENotificationFilterType.SUBSCRIBED,
   },
 ];
 

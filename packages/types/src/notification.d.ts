@@ -1,6 +1,17 @@
 import type { IUserLite } from "./users";
-import { ENotificationType } from "./enums";
+import { ENotificationFilterType } from "./enums";
 
+// filters
+export type TNotificationFilter = {
+  type: {
+    [key in ENotificationFilterType]: boolean;
+  };
+  snoozed: boolean;
+  archived: boolean;
+  read: boolean;
+};
+
+// notification payload
 export type TNotificationIssueLite = {
   id: string | undefined;
   sequence_id: number | undefined;
@@ -47,8 +58,9 @@ export type TNotification = {
   updated_by: string | undefined;
 };
 
+// notification paginated information
 export type TNotificationPaginatedInfoQueryParams = {
-  type?: TNotificationType;
+  type?: string | undefined;
   snoozed?: boolean;
   archived?: boolean;
   read?: boolean;
@@ -70,21 +82,9 @@ export type TNotificationPaginatedInfo = {
   sub_grouped_by: string | undefined;
 };
 
-export type TNotificationType =
-  | ENotificationType.ALL
-  | ENotificationType.ASSIGNED
-  | ENotificationType.CREATED
-  | ENotificationType.WATCHING;
-
-export type TNotificationQueryParams = {
-  type?: TNotificationType;
-  snoozed?: boolean;
-  archived?: boolean;
-  read?: boolean;
-};
-
+// notification count
 export type TNotificationCount = {
   created_issues: number | undefined;
   my_issues: number | undefined;
-  watching_issues: number | undefined;
+  subscribed_issues: number | undefined;
 };

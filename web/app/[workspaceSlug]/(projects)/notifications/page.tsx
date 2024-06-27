@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { PageHead } from "@/components/core";
+import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ENotificationLoader } from "@/constants/notification";
 // hooks
@@ -33,7 +34,9 @@ const WorkspaceDashboardPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-ful h-full overflow-hidden overflow-y-auto">Issue Container</div>
+      <div className="w-ful h-full overflow-hidden overflow-y-auto">
+        <IssuePeekOverview />
+      </div>
     </>
   );
 });

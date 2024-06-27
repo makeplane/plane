@@ -39,9 +39,8 @@ export enum EEstimateUpdateStages {
 }
 
 // workspace notifications
-export enum ENotificationType {
+export enum ENotificationFilterType {
   CREATED = "created",
   ASSIGNED = "assigned",
-  WATCHING = "watching",
-  ALL = "all",
+  SUBSCRIBED = "subscribed",
 }

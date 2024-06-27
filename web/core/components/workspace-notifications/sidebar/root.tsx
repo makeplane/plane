@@ -5,7 +5,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { EmptyState } from "@/components/empty-state";
-import { NotificationsLoader, NotificationList } from "@/components/workspace-notifications";
+import {
+  SidebarOptions,
+  AppliedFilters,
+  NotificationsLoader,
+  NotificationList,
+} from "@/components/workspace-notifications";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationTab, NOTIFICATION_TABS } from "@/constants/notification";
@@ -30,7 +35,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   if (!workspaceSlug || !workspace) return <></>;
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
-      <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex gap-2">
+      <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
         {NOTIFICATION_TABS.map((tab) => (
           <div
             key={tab.value}
@@ -62,8 +67,17 @@ export const NotificationsSidebarRoot: FC = observer(() => {
             )}
           </div>
         ))}
+        <div className="ml-auto">
+          <SidebarOptions workspaceSlug={workspaceSlug.toString()} />
+        </div>
       </div>
 
+      {/* applied filters */}
+      <div className="flex-shrink-0">
+        <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
+      </div>
+
+      {/* rendering notifications */}
       {loader === "init-loader" ? (
         <div className="relative w-full h-full overflow-hidden p-5">
           <NotificationsLoader />

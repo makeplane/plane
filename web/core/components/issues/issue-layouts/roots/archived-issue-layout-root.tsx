@@ -4,11 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
-import {
-  ArchivedIssueListLayout,
-  ArchivedIssueAppliedFiltersRoot,
-  IssuePeekOverview,
-} from "@/components/issues";
+import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 // ui
 import { useIssues } from "@/hooks/store";
