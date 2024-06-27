@@ -43,12 +43,24 @@ const OnboardingPage = observer(() => {
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
-    shouldRetryOnError: false,
-  });
+  const { isLoading: workspaceListLoader } = useSWR(
+    USER_WORKSPACES_LIST,
+    () => {
+      user?.id && fetchWorkspaces();
+    },
+    {
+      shouldRetryOnError: false,
+    }
+  );
   // fetching user workspace invitations
-  const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
-    workspaceService.userWorkspaceInvitations()
+  const { data: invitations } = useSWR(
+    "USER_WORKSPACE_INVITATIONS_LIST",
+    () => {
+      user?.id && workspaceService.userWorkspaceInvitations();
+    },
+    {
+      shouldRetryOnError: false,
+    }
   );
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {

@@ -111,14 +111,19 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    */
   fetchWorkspaces = async () => {
     this.loader = true;
-    const workspaceResponse = await this.workspaceService.userWorkspaces();
-    runInAction(() => {
-      workspaceResponse.forEach((workspace) => {
-        set(this.workspaces, [workspace.id], workspace);
+    try {
+      const workspaceResponse = await this.workspaceService.userWorkspaces();
+      runInAction(() => {
+        workspaceResponse.forEach((workspace) => {
+          set(this.workspaces, [workspace.id], workspace);
+        });
       });
-    });
-    this.loader = false;
-    return workspaceResponse;
+      return workspaceResponse;
+    } catch (e) {
+      throw e;
+    } finally {
+      this.loader = false;
+    }
   };
 
   /**
