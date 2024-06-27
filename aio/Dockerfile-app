@@ -162,7 +162,11 @@ ENV POSTGRES_DB="plane"
 ENV POSTGRES_HOST="localhost"
 ENV POSTGRES_PORT="5432"
 ENV DATABASE_URL="postgresql://plane:plane@localhost:5432/plane"
+
+ENV REDIS_HOST="localhost"
+ENV REDIS_PORT="6379"
 ENV REDIS_URL="redis://localhost:6379"
+
 ENV USE_MINIO="1"
 ENV AWS_REGION=""
 ENV AWS_ACCESS_KEY_ID="access-key"
@@ -173,23 +177,6 @@ ENV MINIO_ROOT_USER="access-key"
 ENV MINIO_ROOT_PASSWORD="secret-key"
 ENV BUCKET_NAME="uploads"
 ENV FILE_SIZE_LIMIT="5242880"
-
-RUN if [ "$BUILD_TYPE" = "slim" ]; then \
-        POSTGRES_USER=""; \
-        POSTGRES_PASSWORD=""; \
-        POSTGRES_HOST=""; \
-        DATABASE_URL=""; \
-        REDIS_URL=""; \
-        USE_MINIO="0"; \
-        AWS_REGION=""; \
-        AWS_ACCESS_KEY_ID=""; \
-        AWS_SECRET_ACCESS_KEY=""; \
-        AWS_S3_ENDPOINT_URL=""; \
-        AWS_S3_BUCKET_NAME=""; \
-        BUCKET_NAME=""; \
-        MINIO_ROOT_USER=""; \
-        MINIO_ROOT_PASSWORD=""; \
-    fi
 
 # *****************************************************************************
 
