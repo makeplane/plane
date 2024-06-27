@@ -1,7 +1,6 @@
 name: Feature Preview
 
 on:
-  push:
   workflow_dispatch:
 
 env:
