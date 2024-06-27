@@ -14,7 +14,7 @@ import { ROLE } from "@/constants/workspace";
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 
@@ -32,6 +32,7 @@ export const Invitations: React.FC<Props> = (props) => {
   // store hooks
   const { captureEvent } = useEventTracker();
   const { fetchWorkspaces } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
 
   const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () => workspaceService.userWorkspaceInvitations());
 
@@ -61,6 +62,7 @@ export const Invitations: React.FC<Props> = (props) => {
         element: "Workspace invitations page",
       });
       await fetchWorkspaces();
+      await fetchCurrentUserSettings();
       await handleNextStep();
     } catch (error) {
       console.error(error);

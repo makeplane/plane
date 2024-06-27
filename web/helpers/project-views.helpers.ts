@@ -54,8 +54,8 @@ export const shouldFilterView = (view: IProjectView, filters: TViewFilterProps |
       });
     }
 
-    if (filterKey === "accessTypes" && filters?.accessTypes && filters?.accessTypes?.length > 0) {
-      fallsInFilters = filters.accessTypes.includes(view.access);
+    if (filterKey === "view_type" && filters?.view_type && filters?.view_type?.length > 0) {
+      fallsInFilters = filters.view_type.includes(view.access);
     }
   });
 
