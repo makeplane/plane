@@ -137,7 +137,11 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
         onSubmit={(event) => {
           event.preventDefault(); // Prevent form from submitting by default
-          if (getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID) {
+          const isPasswordValid =
+            mode === EAuthModes.SIGN_UP
+              ? getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID
+              : true;
+          if (isPasswordValid) {
             setIsSubmitting(true);
             captureEvent(mode === EAuthModes.SIGN_IN ? SIGN_IN_WITH_PASSWORD : SIGN_UP_WITH_PASSWORD);
             event.currentTarget.submit(); // Manually submit the form if the condition is met

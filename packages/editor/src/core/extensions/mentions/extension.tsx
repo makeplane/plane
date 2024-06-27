@@ -1,6 +1,6 @@
+import { Editor, mergeAttributes } from "@tiptap/core";
 import Mention, { MentionOptions } from "@tiptap/extension-mention";
 import { ReactNodeViewRenderer, ReactRenderer } from "@tiptap/react";
-import { Editor, mergeAttributes } from "@tiptap/core";
 import tippy from "tippy.js";
 // extensions
 import { MentionList, MentionNodeView } from "@/extensions";

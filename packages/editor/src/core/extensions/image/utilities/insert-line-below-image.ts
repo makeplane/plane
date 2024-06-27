@@ -1,5 +1,5 @@
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { KeyboardShortcutCommand } from "@tiptap/core";
+import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 
 export const insertLineBelowImageAction: KeyboardShortcutCommand = ({ editor }) => {
   try {
