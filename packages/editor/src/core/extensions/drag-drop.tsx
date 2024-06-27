@@ -69,19 +69,25 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
     "p:not(:first-child)",
     ".code-block",
     "blockquote",
-    "h1, h2, h3",
+    "img",
+    "h1, h2, h3, h4, h5, h6",
     ".table-wrapper",
     "[data-type=horizontalRule]",
   ].join(", ");
 
   for (const elem of elements) {
+    if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
+      return elem;
+    }
+
     // if the element is a <p> tag that is the first child of a td or th
     if (
       (elem.matches("td > p:first-child") || elem.matches("th > p:first-child")) &&
       elem?.textContent?.trim() !== ""
     ) {
-      return elem; // Return only if p tag is not empty
+      return elem; // Return only if p tag is not empty in td or th
     }
+
     // apply general selector
     if (elem.matches(generalSelectors)) {
       return elem;
@@ -316,12 +322,24 @@ function DragHandle(options: DragHandleOptions) {
           rect.top += (lineHeight - 20) / 2;
           rect.top += paddingTop;
 
-          // Li markers
-          if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
-            rect.left -= 18;
+          if (node.parentElement?.parentElement?.matches("td") || node.parentElement?.parentElement?.matches("th")) {
+            if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
+              rect.left -= 5;
+            }
+          } else {
+            // Li markers
+            if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
+              rect.left -= 18;
+            }
           }
+
           if (node.matches(".table-wrapper")) {
             rect.top += 8;
+            rect.left -= 8;
+          }
+
+          if (node.parentElement?.matches("td") || node.parentElement?.matches("th")) {
+            rect.left += 8;
           }
 
           rect.width = options.dragHandleWidth;
@@ -356,6 +374,7 @@ function DragHandle(options: DragHandleOptions) {
           if (view.state.selection instanceof NodeSelection) {
             droppedNode = view.state.selection.node;
           }
+
           if (!droppedNode) return;
 
           const resolvedPos = view.state.doc.resolve(dropPos.pos);

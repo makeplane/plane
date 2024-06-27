@@ -11,6 +11,8 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+// helpers
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 
@@ -24,6 +26,8 @@ type Props = {
 const defaultValues: Partial<IWorkspaceView> = {
   name: "",
   description: "",
+  display_properties: getComputedDisplayProperties(),
+  display_filters: getComputedDisplayFilters(),
 };
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {

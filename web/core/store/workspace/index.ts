@@ -3,7 +3,7 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 // types
 import { IWorkspace } from "@plane/types";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // sub-stores

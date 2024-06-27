@@ -19,8 +19,8 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
+import { WorkspaceService } from "@/plane-web/services";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
 
 enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",

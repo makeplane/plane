@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { TPageFilterProps } from "@plane/types";
+import { TViewFilterProps } from "@plane/types";
 // components
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // helpers
@@ -7,16 +7,16 @@ import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types
 
 type Props = {
-  appliedFilters: TPageFilterProps;
+  appliedFilters: TViewFilterProps;
   handleClearAllFilters: () => void;
-  handleRemoveFilter: (key: keyof TPageFilterProps, value: string | null) => void;
+  handleRemoveFilter: (key: keyof TViewFilterProps, value: string | null) => void;
   alwaysAllowEditing?: boolean;
 };
 
-const MEMBERS_FILTERS = ["created_by"];
+const MEMBERS_FILTERS = ["owned_by"];
 const DATE_FILTERS = ["created_at"];
 
-export const PageAppliedFiltersList: React.FC<Props> = (props) => {
+export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
 
   if (!appliedFilters) return null;
@@ -27,7 +27,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
       {Object.entries(appliedFilters).map(([key, value]) => {
-        const filterKey = key as keyof TPageFilterProps;
+        const filterKey = key as keyof TViewFilterProps;
 
         if (!value) return;
         if (Array.isArray(value) && value.length === 0) return;
@@ -43,14 +43,14 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
                 <AppliedDateFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  values={Array.isArray(value) ? value : []}
+                  values={Array.isArray(value) ? (value as string[]) : []}
                 />
               )}
               {MEMBERS_FILTERS.includes(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  values={Array.isArray(value) ? value : []}
+                  values={Array.isArray(value) ? (value as string[]) : []}
                 />
               )}
               {isEditingAllowed && (

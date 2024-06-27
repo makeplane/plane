@@ -15,7 +15,7 @@ import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useIssues, useLabel, useProjectView, useUser } from "@/hooks/store";
+import { useIssues, useLabel, useProjectState, useProjectView, useUser } from "@/hooks/store";
 import { getAreFiltersEqual } from "../../../utils";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
@@ -26,6 +26,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { projectLabels } = useLabel();
+  const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
   const {
     data,
@@ -129,6 +130,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
+          states={projectStates}
           disableEditing={isLocked}
         />
       </div>

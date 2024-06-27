@@ -1,16 +1,21 @@
 "use client";
 
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { TViewFilterProps } from "@plane/types";
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
+import { ViewAppliedFiltersList } from "@/components/views/filters/applied-filters";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useCommandPalette, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useProject, useProjectView, useUser } from "@/hooks/store";
 
 export const ProjectViewsHeader = observer(() => {
   // router
@@ -21,8 +26,28 @@ export const ProjectViewsHeader = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails, loader } = useProject();
+  const { filters, updateFilters, clearAllFilters } = useProjectView();
 
-  const canUserCreateIssue =
+  const handleRemoveFilter = useCallback(
+    (key: keyof TViewFilterProps, value: string | null) => {
+      let newValues = filters.filters?.[key];
+
+      if (key === "favorites") {
+        newValues = !!value;
+      }
+      if (Array.isArray(newValues)) {
+        if (!value) newValues = [];
+        else newValues = newValues.filter((val) => val !== value) as string[];
+      }
+
+      updateFilters("filters", { [key]: newValues });
+    },
+    [filters.filters, updateFilters]
+  );
+
+  const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
+
+  const canUserCreateView =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
@@ -56,17 +81,27 @@ export const ProjectViewsHeader = observer(() => {
             </Breadcrumbs>
           </div>
         </div>
-        {canUserCreateIssue && (
-          <div className="flex flex-shrink-0 items-center gap-2">
-            <ViewListHeader />
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <ViewListHeader />
+          {canUserCreateView && (
             <div>
               <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
                 Add View
               </Button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+      {isFiltersApplied && (
+        <div className="border-t border-custom-border-200 px-5 py-3">
+          <ViewAppliedFiltersList
+            appliedFilters={filters.filters ?? {}}
+            handleClearAllFilters={clearAllFilters}
+            handleRemoveFilter={handleRemoveFilter}
+            alwaysAllowEditing
+          />
+        </div>
+      )}
     </>
   );
 });
