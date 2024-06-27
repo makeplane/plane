@@ -1,4 +1,3 @@
-import { TPaginationInfo } from "./common";
 import type { IUserLite } from "./users";
 import { ENotificationType } from "./enums";
 
@@ -37,26 +36,38 @@ export type TNotification = {
   receiver: string | undefined;
   triggered_by: string | undefined;
   triggered_by_details: IUserLite | undefined;
-  read_at: Date | undefined;
+  read_at: string | undefined;
   archived_at: string | undefined;
-  snoozed_till: Date | undefined;
+  snoozed_till: string | undefined;
   workspace: string | undefined;
   project: string | undefined;
-  created_at: Date | undefined;
-  updated_at: Date | undefined;
+  created_at: string | undefined;
+  updated_at: string | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
 };
 
-export type TPaginatedNotification = {
+export type TNotificationPaginatedInfoQueryParams = {
+  type?: TNotificationType;
+  snoozed?: boolean;
+  archived?: boolean;
+  read?: boolean;
+  per_page?: number;
+  cursor?: string;
+};
+
+export type TNotificationPaginatedInfo = {
   next_cursor: string | undefined;
   prev_cursor: string | undefined;
   next_page_results: boolean | undefined;
   prev_page_results: boolean | undefined;
-  count: number | undefined;
   total_pages: number | undefined;
-  extra_stats: undefined;
+  extra_stats: string | undefined;
+  count: number | undefined; // current paginated results count
+  total_count: string | undefined; // total available results count
   results: TNotification[] | undefined;
+  grouped_by: string | undefined;
+  sub_grouped_by: string | undefined;
 };
 
 export type TNotificationType =
@@ -66,8 +77,8 @@ export type TNotificationType =
   | ENotificationType.WATCHING;
 
 export type TNotificationQueryParams = {
-  snoozed?: boolean;
   type?: TNotificationType;
+  snoozed?: boolean;
   archived?: boolean;
   read?: boolean;
 };
@@ -76,26 +87,4 @@ export type TNotificationCount = {
   created_issues: number | undefined;
   my_issues: number | undefined;
   watching_issues: number | undefined;
-};
-
-export type TNotificationPaginationInfo = TPaginationInfo & {
-  count: number | undefined;
-  extra_stats: string | undefined;
-  next_cursor: string | undefined;
-  next_page_results: boolean | undefined;
-  prev_cursor: string | undefined;
-  prev_page_results: boolean | undefined;
-  total_pages: number | undefined;
-  per_page?: number | undefined;
-  results: TNotification[] | undefined;
-  grouped_by: string | undefined;
-  sub_grouped_by: string | undefined;
-  total_count: string | undefined;
-};
-
-export type TPaginatedNotificationQueryParams = {
-  snoozed?: boolean;
-  type?: TNotificationType;
-  archived?: boolean;
-  read?: boolean;
 };

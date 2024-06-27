@@ -1,7 +1,9 @@
 /* eslint-disable no-useless-catch */
 import set from "lodash/set";
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { IUserLite, TNotification, TNotificationData } from "@plane/types";
+// services
+import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
 import { CoreRootStore } from "../root.store";
 
@@ -10,13 +12,16 @@ export interface INotification extends TNotification {
   // computed
   asJson: TNotification;
   // computed functions
+  // helper functions
+  mutateNotification: (notification: Partial<TNotification>) => void;
   // actions
-  updateNotification: (notification: Partial<TNotification>) => void;
-  markNotificationAsRead: () => Promise<void>;
-  markNotificationAsUnRead: () => Promise<void>;
-  archiveNotification: () => Promise<void>;
-  unArchiveNotification: () => Promise<void>;
-  snoozeNotification: (snoozeTill: Date) => Promise<void>;
+  updateNotification: (payload: Partial<TNotification>) => Promise<TNotification | undefined>;
+  markNotificationAsRead: () => Promise<TNotification | undefined>;
+  markNotificationAsUnRead: () => Promise<TNotification | undefined>;
+  archiveNotification: () => Promise<TNotification | undefined>;
+  unArchiveNotification: () => Promise<TNotification | undefined>;
+  snoozeNotification: (snoozeTill: Date) => Promise<TNotification | undefined>;
+  unSnoozeNotification: () => Promise<TNotification | undefined>;
 }
 
 export class Notification implements INotification {
@@ -33,13 +38,13 @@ export class Notification implements INotification {
   receiver: string | undefined = undefined;
   triggered_by: string | undefined = undefined;
   triggered_by_details: IUserLite | undefined = undefined;
-  read_at: Date | undefined = undefined;
+  read_at: string | undefined = undefined;
   archived_at: string | undefined = undefined;
-  snoozed_till: Date | undefined = undefined;
+  snoozed_till: string | undefined = undefined;
   workspace: string | undefined = undefined;
   project: string | undefined = undefined;
-  created_at: Date | undefined = undefined;
-  updated_at: Date | undefined = undefined;
+  created_at: string | undefined = undefined;
+  updated_at: string | undefined = undefined;
   created_by: string | undefined = undefined;
   updated_by: string | undefined = undefined;
 
@@ -73,11 +78,13 @@ export class Notification implements INotification {
       // computed
       asJson: computed,
       // actions
+      updateNotification: action,
       markNotificationAsRead: action,
       markNotificationAsUnRead: action,
       archiveNotification: action,
       unArchiveNotification: action,
       snoozeNotification: action,
+      unSnoozeNotification: action,
     });
     this.id = this.notification.id;
     this.title = this.notification.title;
@@ -101,15 +108,6 @@ export class Notification implements INotification {
     this.created_by = this.notification.created_by;
     this.updated_by = this.notification.updated_by;
   }
-
-  // helper functions
-  updateNotification = (notification: Partial<TNotification>) => {
-    Object.entries(notification).forEach(([key, value]) => {
-      if (key in this) {
-        set(this, key, value);
-      }
-    });
-  };
 
   // computed
   /**
@@ -143,47 +141,127 @@ export class Notification implements INotification {
 
   // computed functions
 
+  // helper functions
+  mutateNotification = (notification: Partial<TNotification>) => {
+    Object.entries(notification).forEach(([key, value]) => {
+      if (key in this) {
+        set(this, key, value);
+      }
+    });
+  };
+
   // actions
   /**
-   * @description mark notification as read
-   * @returns { void }
+   * @description update notification
+   * @param { Partial<TNotification> } payload
+   * @returns { TNotification | undefined }
    */
-  markNotificationAsRead = async () => {
+  updateNotification = async (payload: Partial<TNotification>): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
     try {
+      const notification = await workspaceNotificationService.updateNotificationById(this.workspace, this.id, payload);
+      if (notification) {
+        runInAction(() => this.mutateNotification(notification));
+      }
+      return notification;
     } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * @description mark notification as read
+   * @returns { TNotification | undefined }
+   */
+  markNotificationAsRead = async (): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
+    const currentNotificationReadAt = this.read_at;
+    try {
+      const payload: Partial<TNotification> = {
+        read_at: new Date().toUTCString(),
+      };
+      runInAction(() => this.updateNotification(payload));
+      const notification = await workspaceNotificationService.markNotificationAsRead(this.workspace, this.id);
+      if (notification) {
+        runInAction(() => this.updateNotification(notification));
+      }
+      return notification;
+    } catch (error) {
+      runInAction(() => this.mutateNotification({ read_at: currentNotificationReadAt }));
       throw error;
     }
   };
 
   /**
    * @description mark notification as unread
-   * @returns { void }
+   * @returns { TNotification | undefined }
    */
-  markNotificationAsUnRead = async () => {
+  markNotificationAsUnRead = async (): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
+    const currentNotificationReadAt = this.read_at;
     try {
+      const payload: Partial<TNotification> = {
+        read_at: undefined,
+      };
+      runInAction(() => this.updateNotification(payload));
+      const notification = await workspaceNotificationService.markNotificationAsArchived(this.workspace, this.id);
+      if (notification) {
+        runInAction(() => this.updateNotification(notification));
+      }
+      return notification;
     } catch (error) {
+      runInAction(() => this.mutateNotification({ read_at: currentNotificationReadAt }));
       throw error;
     }
   };
 
   /**
    * @description archive notification
-   * @returns { void }
+   * @returns { TNotification | undefined }
    */
-  archiveNotification = async () => {
+  archiveNotification = async (): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
+    const currentNotificationArchivedAt = this.archived_at;
     try {
+      const payload: Partial<TNotification> = {
+        archived_at: new Date().toUTCString(),
+      };
+      runInAction(() => this.updateNotification(payload));
+      const notification = await workspaceNotificationService.markNotificationAsArchived(this.workspace, this.id);
+      if (notification) {
+        runInAction(() => this.updateNotification(notification));
+      }
+      return notification;
     } catch (error) {
+      runInAction(() => this.mutateNotification({ archived_at: currentNotificationArchivedAt }));
       throw error;
     }
   };
 
   /**
    * @description unarchive notification
-   * @returns { void }
+   * @returns { TNotification | undefined }
    */
-  unArchiveNotification = async () => {
+  unArchiveNotification = async (): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
+    const currentNotificationArchivedAt = this.archived_at;
     try {
+      const payload: Partial<TNotification> = {
+        archived_at: undefined,
+      };
+      runInAction(() => this.updateNotification(payload));
+      const notification = await workspaceNotificationService.markNotificationAsUnArchived(this.workspace, this.id);
+      if (notification) {
+        runInAction(() => this.updateNotification(notification));
+      }
+      return notification;
     } catch (error) {
+      runInAction(() => this.mutateNotification({ archived_at: currentNotificationArchivedAt }));
       throw error;
     }
   };
@@ -191,12 +269,42 @@ export class Notification implements INotification {
   /**
    * @description snooze notification
    * @param { Date } snoozeTill
-   * @returns { void }
+   * @returns { TNotification | undefined }
    */
-  snoozeNotification = async (snoozeTill: Date) => {
+  snoozeNotification = async (snoozeTill: Date): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
+    const currentNotificationSnoozeTill = this.snoozed_till;
     try {
-      console.log("snoozeTill", snoozeTill);
+      const payload: Partial<TNotification> = {
+        snoozed_till: snoozeTill.toUTCString(),
+      };
+      runInAction(() => this.mutateNotification(payload));
+      const notification = await workspaceNotificationService.updateNotificationById(this.workspace, this.id, payload);
+      return notification;
     } catch (error) {
+      runInAction(() => this.mutateNotification({ snoozed_till: currentNotificationSnoozeTill }));
+      throw error;
+    }
+  };
+
+  /**
+   * @description un snooze notification
+   * @returns { TNotification | undefined }
+   */
+  unSnoozeNotification = async (): Promise<TNotification | undefined> => {
+    if (!this.workspace || !this.id) return undefined;
+
+    const currentNotificationSnoozeTill = this.snoozed_till;
+    try {
+      const payload: Partial<TNotification> = {
+        snoozed_till: undefined,
+      };
+      runInAction(() => this.mutateNotification(payload));
+      const notification = await workspaceNotificationService.updateNotificationById(this.workspace, this.id, payload);
+      return notification;
+    } catch (error) {
+      runInAction(() => this.mutateNotification({ snoozed_till: currentNotificationSnoozeTill }));
       throw error;
     }
   };

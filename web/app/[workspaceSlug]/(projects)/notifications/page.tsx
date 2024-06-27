@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { PageHead } from "@/components/core";
+// constants
+import { ENotificationLoader } from "@/constants/notification";
 // hooks
 import { useWorkspace, useWorkspaceNotification } from "@/hooks/store";
 
@@ -21,7 +23,9 @@ const WorkspaceDashboardPage = observer(() => {
       ? async () =>
           getNotifications(
             currentWorkspace?.slug,
-            notificationIdsByWorkspaceId(currentWorkspace.id) ? `mutation-loader` : `init-loader`
+            notificationIdsByWorkspaceId(currentWorkspace.id)
+              ? ENotificationLoader.MUTATION_LOADER
+              : ENotificationLoader.INIT_LOADER
           )
       : null
   );
