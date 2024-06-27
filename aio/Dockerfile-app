@@ -145,13 +145,20 @@ RUN /app/pg-setup.sh
 # *****************************************************************************
 #  APPLICATION ENVIRONMENT SETTINGS
 # *****************************************************************************
-ENV WEB_URL=http://localhost
+ENV APP_DOMAIN=localhost
+ENV WEB_URL=http://${APP_DOMAIN}
 ENV DEBUG=0
 ENV SENTRY_DSN=
 ENV SENTRY_ENVIRONMENT=production
-ENV CORS_ALLOWED_ORIGINS=
+ENV CORS_ALLOWED_ORIGINS=http://${APP_DOMAIN},https://${APP_DOMAIN}
 
-ENV DATABASE_URL=postgresql://plane:plane@localhost:5432/plane
+ENV POSTGRES_USER=plane
+ENV POSTGRES_PASSWORD=plane
+ENV POSTGRES_DB=plane
+ENV POSTGRES_HOST=localhost
+ENV POSTGRES_PORT=5432
+ENV DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+
 ENV REDIS_URL=redis://localhost:6379
 
 # Secret Key
