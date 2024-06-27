@@ -2,11 +2,6 @@
 
 if [ "$BUILD_TYPE" == "full" ]; then 
 
-    # Variables
-    set -o allexport
-    source /app/plane.env set
-    set +o allexport
-
     export PGHOST=localhost
 
     sudo -u postgres "/usr/lib/postgresql/${POSTGRES_VERSION}/bin/pg_ctl" -D /var/lib/postgresql/data start
