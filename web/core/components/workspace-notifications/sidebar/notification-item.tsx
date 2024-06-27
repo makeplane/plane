@@ -10,6 +10,7 @@ import { NotificationOption } from "@/components/workspace-notifications";
 import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useNotification } from "@/hooks/store";
 
@@ -38,7 +39,10 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
   return (
     <div
-      className="relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group"
+      className={cn(
+        "relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
+        notification.read_at === null ? "bg-custom-primary-100/10" : ""
+      )}
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
