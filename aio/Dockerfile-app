@@ -193,6 +193,8 @@ RUN if [ "${BUILD_TYPE}" == "full" ]; then \
         echo "FILE_SIZE_LIMIT=" >> /etc/environment; \
     fi
 
+RUN export $(grep -v '^#' /etc/environment | xargs)
+
 ENV POSTGRES_USER=$POSTGRES_USER
 ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 ENV POSTGRES_DB=$POSTGRES_DB
