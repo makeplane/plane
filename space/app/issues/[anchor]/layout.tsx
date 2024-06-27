@@ -63,7 +63,7 @@ const IssuesLayout = observer((props: Props) => {
           <Image src={planeLogo} alt="Plane logo" className="h-6 w-6" height="24" width="24" />
         </div>
         <div className="text-xs">
-          Powered by <span className="font-semibold">Plane Deploy</span>
+          Powered by <span className="font-semibold">Plane Pubish</span>
         </div>
       </a>
     </div>
