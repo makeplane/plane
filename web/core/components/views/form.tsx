@@ -14,6 +14,7 @@ import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/componen
 import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { LayoutDropDown } from "../dropdowns/layout";
@@ -28,6 +29,8 @@ type Props = {
 const defaultValues: Partial<IProjectView> = {
   name: "",
   description: "",
+  display_properties: getComputedDisplayProperties(),
+  display_filters: getComputedDisplayFilters(),
 };
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {

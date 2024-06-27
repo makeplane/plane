@@ -16,7 +16,7 @@ import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useWorkspace } from "@/hooks/store";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 
 type Props = {
   handleNextStep: () => Promise<void>;

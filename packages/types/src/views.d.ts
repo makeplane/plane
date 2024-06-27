@@ -27,3 +27,21 @@ export interface IProjectView {
   is_locked: boolean;
   owned_by: string;
 }
+
+export type TViewFiltersSortKey = "name" | "created_at" | "updated_at";
+
+export type TViewFiltersSortBy = "asc" | "desc";
+
+export type TViewFilterProps = {
+  created_at?: string[] | null;
+  owned_by?: string[] | null;
+  favorites?: boolean;
+  accessTypes?: EViewAccess[];
+};
+
+export type TViewFilters = {
+  searchQuery: string;
+  sortKey: TViewFiltersSortKey;
+  sortBy: TViewFiltersSortBy;
+  filters?: TViewFilterProps;
+};

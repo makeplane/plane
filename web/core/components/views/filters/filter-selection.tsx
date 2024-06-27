@@ -1,42 +1,45 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
-import { TPageFilterProps, TPageFilters } from "@plane/types";
+import { TViewFilterProps, TViewFilters } from "@plane/types";
 // components
 import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
 import { FilterOption } from "@/components/issues";
+// constants
+import { EViewAccess } from "@/constants/views";
 
 type Props = {
-  filters: TPageFilters;
-  handleFiltersUpdate: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
+  filters: TViewFilters;
+  handleFiltersUpdate: <T extends keyof TViewFilters>(filterKey: T, filterValue: TViewFilters[T]) => void;
   memberIds?: string[] | undefined;
 };
 
-export const PageFiltersSelection: React.FC<Props> = observer((props) => {
+export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
-  const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
-    const newValues = filters.filters?.[key] ?? [];
+  // handles filter update
+  const handleFilters = (key: keyof TViewFilterProps, value: boolean | string | EViewAccess | string[]) => {
+    const currValues = (filters.filters?.[key] ?? []) as (string | EViewAccess)[];
 
-    if (typeof newValues === "boolean" && typeof value === "boolean") return;
+    if (typeof currValues === "boolean" && typeof value === "boolean") return;
 
-    if (Array.isArray(newValues)) {
-      if (Array.isArray(value))
+    if (Array.isArray(currValues)) {
+      if (Array.isArray(value)) {
         value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
+          if (!currValues.includes(val)) currValues.push(val);
+          else currValues.splice(currValues.indexOf(val), 1);
         });
-      else if (typeof value === "string") {
-        if (newValues?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
+      } else if (typeof value !== "boolean") {
+        if (currValues?.includes(value)) currValues.splice(currValues.indexOf(value), 1);
+        else currValues.push(value);
       }
     }
 
     handleFiltersUpdate("filters", {
       ...filters.filters,
-      [key]: newValues,
+      [key]: currValues,
     });
   };
 
@@ -78,7 +81,7 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
         <div className="py-2">
           <FilterCreatedDate
             appliedFilters={filters.filters?.created_at ?? null}
-            handleUpdate={(val) => handleFilters("created_at", val)}
+            handleUpdate={(val: string | string[]) => handleFilters("created_at", val)}
             searchQuery={filtersSearchQuery}
           />
         </div>
@@ -86,8 +89,8 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
         {/* created by */}
         <div className="py-2">
           <FilterCreatedBy
-            appliedFilters={filters.filters?.created_by ?? null}
-            handleUpdate={(val) => handleFilters("created_by", val)}
+            appliedFilters={filters.filters?.owned_by ?? null}
+            handleUpdate={(val) => handleFilters("owned_by", val)}
             searchQuery={filtersSearchQuery}
             memberIds={memberIds}
           />
