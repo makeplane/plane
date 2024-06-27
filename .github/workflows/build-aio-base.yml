@@ -84,6 +84,8 @@ jobs:
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.BASE_IMG_TAG }}
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -124,6 +126,8 @@ jobs:
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.BASE_IMG_TAG }}
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
