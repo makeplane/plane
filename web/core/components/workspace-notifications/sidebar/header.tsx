@@ -45,7 +45,7 @@ export const SidebarHeader: FC<TSidebarHeader> = observer((props) => {
         </Breadcrumbs>
       </div>
 
-      <SidebarOptions workspaceSlug={workspaceSlug.toString()} />
+      <SidebarOptions workspaceSlug={workspaceSlug} />
     </div>
   );
 });
