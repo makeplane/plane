@@ -7,10 +7,10 @@ import { Clock, User2 } from "lucide-react";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useNotification } from "@/hooks/store";
 
