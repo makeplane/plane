@@ -213,7 +213,7 @@ export class Notification implements INotification {
         read_at: undefined,
       };
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.markNotificationAsArchived(workspaceSlug, this.id);
+      const notification = await workspaceNotificationService.markNotificationAsUnread(workspaceSlug, this.id);
       if (notification) {
         runInAction(() => this.mutateNotification(notification));
       }
