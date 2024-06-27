@@ -99,7 +99,7 @@ export class ProjectViewStore implements IProjectViewStore {
     if (!this.fetchedMap[projectId]) return undefined;
 
     const ViewsList = Object.values(this.viewMap ?? {});
-    // helps to filter pages based on the pageType
+    // helps to filter views based on the projectId
     let filteredViews = ViewsList.filter((view) => view?.project === projectId);
     filteredViews = orderViews(filteredViews, this.filters.sortKey, this.filters.sortBy);
 
@@ -112,7 +112,7 @@ export class ProjectViewStore implements IProjectViewStore {
     if (!this.fetchedMap[projectId]) return undefined;
 
     const ViewsList = Object.values(this.viewMap ?? {});
-    // helps to filter pages based on the pageType
+    // helps to filter views based on the projectId, searchQuery and filters
     let filteredViews = ViewsList.filter(
       (view) =>
         view?.project === projectId &&
