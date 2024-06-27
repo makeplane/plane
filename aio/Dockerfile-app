@@ -145,6 +145,7 @@ RUN chmod +x /app/pg-setup.sh
 #  APPLICATION ENVIRONMENT SETTINGS
 # *****************************************************************************
 ENV APP_DOMAIN=localhost
+
 ENV WEB_URL=http://${APP_DOMAIN}
 ENV DEBUG=0
 ENV SENTRY_DSN=
@@ -156,62 +157,62 @@ ENV SECRET_KEY=60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5
 ENV GUNICORN_WORKERS=1
 
 RUN if [ "${BUILD_TYPE}" == "full" ]; then \
-        echo "POSTGRES_USER=plane" >> /etc/environment; \
-        echo "POSTGRES_PASSWORD=plane" >> /etc/environment; \
-        echo "POSTGRES_DB=plane" >> /etc/environment; \
-        echo "POSTGRES_HOST=localhost" >> /etc/environment; \
-        echo "POSTGRES_PORT=5432" >> /etc/environment; \
-        echo "DATABASE_URL=postgresql://plane:plane@localhost:5432/plane" >> /etc/environment; \
-        echo "REDIS_URL=redis://localhost:6379" >> /etc/environment; \
-        echo "USE_MINIO=1" >> /etc/environment; \
-        echo "AWS_REGION=" >> /etc/environment; \
-        echo "AWS_ACCESS_KEY_ID=access-key" >> /etc/environment; \
-        echo "AWS_SECRET_ACCESS_KEY=secret-key" >> /etc/environment; \
-        echo "AWS_S3_ENDPOINT_URL=http://localhost:9000" >> /etc/environment; \
-        echo "AWS_S3_BUCKET_NAME=uploads" >> /etc/environment; \
-        echo "MINIO_ROOT_USER=access-key" >> /etc/environment; \
-        echo "MINIO_ROOT_PASSWORD=secret-key" >> /etc/environment; \
-        echo "BUCKET_NAME=uploads" >> /etc/environment; \
-        echo "FILE_SIZE_LIMIT=5242880" >> /etc/environment; \
+        echo "TMP_POSTGRES_USER=plane" >> /app/env.txt; \
+        echo "TMP_POSTGRES_PASSWORD=plane" >> /app/env.txt; \
+        echo "TMP_POSTGRES_DB=plane" >> /app/env.txt; \
+        echo "TMP_POSTGRES_HOST=localhost" >> /app/env.txt; \
+        echo "TMP_POSTGRES_PORT=5432" >> /app/env.txt; \
+        echo "TMP_DATABASE_URL=postgresql://plane:plane@localhost:5432/plane" >> /app/env.txt; \
+        echo "TMP_REDIS_URL=redis://localhost:6379" >> /app/env.txt; \
+        echo "TMP_USE_MINIO=1" >> /app/env.txt; \
+        echo "TMP_AWS_REGION=" >> /app/env.txt; \
+        echo "TMP_AWS_ACCESS_KEY_ID=access-key" >> /app/env.txt; \
+        echo "TMP_AWS_SECRET_ACCESS_KEY=secret-key" >> /app/env.txt; \
+        echo "TMP_AWS_S3_ENDPOINT_URL=http://localhost:9000" >> /app/env.txt; \
+        echo "TMP_AWS_S3_BUCKET_NAME=uploads" >> /app/env.txt; \
+        echo "TMP_MINIO_ROOT_USER=access-key" >> /app/env.txt; \
+        echo "TMP_MINIO_ROOT_PASSWORD=secret-key" >> /app/env.txt; \
+        echo "TMP_BUCKET_NAME=uploads" >> /app/env.txt; \
+        echo "TMP_FILE_SIZE_LIMIT=5242880" >> /app/env.txt; \
     else \
-        echo "POSTGRES_USER=" >> /etc/environment; \
-        echo "POSTGRES_PASSWORD=" >> /etc/environment; \
-        echo "POSTGRES_DB=" >> /etc/environment; \
-        echo "POSTGRES_HOST=" >> /etc/environment; \
-        echo "POSTGRES_PORT=" >> /etc/environment; \
-        echo "DATABASE_URL=" >> /etc/environment; \
-        echo "REDIS_URL=" >> /etc/environment; \
-        echo "USE_MINIO=" >> /etc/environment; \
-        echo "AWS_REGION=" >> /etc/environment; \
-        echo "AWS_ACCESS_KEY_ID=" >> /etc/environment; \
-        echo "AWS_SECRET_ACCESS_KEY=" >> /etc/environment; \
-        echo "AWS_S3_ENDPOINT_URL=" >> /etc/environment; \
-        echo "AWS_S3_BUCKET_NAME=" >> /etc/environment; \
-        echo "MINIO_ROOT_USER=" >> /etc/environment; \
-        echo "MINIO_ROOT_PASSWORD=" >> /etc/environment; \
-        echo "BUCKET_NAME=" >> /etc/environment; \
-        echo "FILE_SIZE_LIMIT=" >> /etc/environment; \
+        echo "TMP_POSTGRES_USER=" >> /app/env.txt; \
+        echo "TMP_POSTGRES_PASSWORD=" >> /app/env.txt; \
+        echo "TMP_POSTGRES_DB=" >> /app/env.txt; \
+        echo "TMP_POSTGRES_HOST=" >> /app/env.txt; \
+        echo "TMP_POSTGRES_PORT=" >> /app/env.txt; \
+        echo "TMP_DATABASE_URL=" >> /app/env.txt; \
+        echo "TMP_REDIS_URL=" >> /app/env.txt; \
+        echo "TMP_USE_MINIO=" >> /app/env.txt; \
+        echo "TMP_AWS_REGION=" >> /app/env.txt; \
+        echo "TMP_AWS_ACCESS_KEY_ID=" >> /app/env.txt; \
+        echo "TMP_AWS_SECRET_ACCESS_KEY=" >> /app/env.txt; \
+        echo "TMP_AWS_S3_ENDPOINT_URL=" >> /app/env.txt; \
+        echo "TMP_AWS_S3_BUCKET_NAME=" >> /app/env.txt; \
+        echo "TMP_MINIO_ROOT_USER=" >> /app/env.txt; \
+        echo "TMP_MINIO_ROOT_PASSWORD=" >> /app/env.txt; \
+        echo "TMP_BUCKET_NAME=" >> /app/env.txt; \
+        echo "TMP_FILE_SIZE_LIMIT=" >> /app/env.txt; \
     fi
 
-RUN export $(grep -v '^#' /etc/environment | xargs)
+RUN export $(grep -v '^#' /app/env.txt | xargs)
 
-ENV POSTGRES_USER=$POSTGRES_USER
-ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-ENV POSTGRES_DB=$POSTGRES_DB
-ENV POSTGRES_HOST=$POSTGRES_HOST
-ENV POSTGRES_PORT=$POSTGRES_PORT
-ENV DATABASE_URL=$DATABASE_URL
-ENV REDIS_URL=$REDIS_URL
-ENV USE_MINIO=$USE_MINIO
-ENV AWS_REGION=$AWS_REGION
-ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-ENV AWS_S3_ENDPOINT_URL=$AWS_S3_ENDPOINT_URL
-ENV AWS_S3_BUCKET_NAME=$AWS_S3_BUCKET_NAME
-ENV MINIO_ROOT_USER=$MINIO_ROOT_USER
-ENV MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
-ENV BUCKET_NAME=$BUCKET_NAME
-ENV FILE_SIZE_LIMIT=$FILE_SIZE_LIMIT
+ENV POSTGRES_USER=$TMP_POSTGRES_USER
+ENV POSTGRES_PASSWORD=$TMP_POSTGRES_PASSWORD
+ENV POSTGRES_DB=$TMP_POSTGRES_DB
+ENV POSTGRES_HOST=$TMP_POSTGRES_HOST
+ENV POSTGRES_PORT=$TMP_POSTGRES_PORT
+ENV DATABASE_URL=$TMP_DATABASE_URL
+ENV REDIS_URL=$TMP_REDIS_URL
+ENV USE_MINIO=$TMP_USE_MINIO
+ENV AWS_REGION=$TMP_AWS_REGION
+ENV AWS_ACCESS_KEY_ID=$TMP_AWS_ACCESS_KEY_ID
+ENV AWS_SECRET_ACCESS_KEY=$TMP_AWS_SECRET_ACCESS_KEY
+ENV AWS_S3_ENDPOINT_URL=$TMP_AWS_S3_ENDPOINT_URL
+ENV AWS_S3_BUCKET_NAME=$TMP_AWS_S3_BUCKET_NAME
+ENV MINIO_ROOT_USER=$TMP_MINIO_ROOT_USER
+ENV MINIO_ROOT_PASSWORD=$TMP_MINIO_ROOT_PASSWORD
+ENV BUCKET_NAME=$TMP_BUCKET_NAME
+ENV FILE_SIZE_LIMIT=$TMP_FILE_SIZE_LIMIT
 
 # *****************************************************************************
 
