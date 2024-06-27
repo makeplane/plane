@@ -85,61 +85,65 @@ jobs:
     outputs:
       AIO_IMAGE_TAGS: ${{ env.AIO_IMAGE_TAGS }}
 
-  # feature-deploy:
-  #   needs: [branch_build_setup, full_build_push]
-  #   name: Feature Deploy
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
-  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-  #     AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
-  #     KUBE_CONFIG_FILE: ${{ secrets.FEATURE_PREVIEW_KUBE_CONFIG }}
-  #   steps:
-  #     - name: Install AWS cli
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get install -y python3-pip
-  #         pip3 install awscli
-  #     - name: Tailscale
-  #       uses: tailscale/github-action@v2
-  #       with:
-  #         oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-  #         oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
-  #         tags: tag:ci
-  #     - name: Kubectl Setup
-  #       run: |
-  #         curl -LO "https://dl.k8s.io/release/${{ vars.FEATURE_PREVIEW_KUBE_VERSION }}/bin/linux/amd64/kubectl"
-  #         chmod +x kubectl
+  feature-deploy:
+    needs: [branch_build_setup, full_build_push]
+    name: Feature Deploy
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
+      KUBE_CONFIG_FILE: ${{ secrets.FEATURE_PREVIEW_KUBE_CONFIG }}
+      DEPLOYMENT_NAME: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+    steps:
+      - name: Install AWS cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install awscli
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      - name: Kubectl Setup
+        run: |
+          curl -LO "https://dl.k8s.io/release/${{ vars.FEATURE_PREVIEW_KUBE_VERSION }}/bin/linux/amd64/kubectl"
+          chmod +x kubectl
 
-  #         mkdir -p ~/.kube
-  #         echo "$KUBE_CONFIG_FILE" > ~/.kube/config
-  #         chmod 600 ~/.kube/config
-  #     - name: HELM Setup
-  #       run: |
-  #         curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-  #         chmod 700 get_helm.sh
-  #         ./get_helm.sh
-  #     - name: App Deploy
-  #       run: |
-  #         helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG_FILE" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - name: HELM Setup
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+      - name: App Deploy
+        run: |
+          helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
 
-  #         APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
+          APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
 
-  #         METADATA=$(helm --kube-insecure-skip-tls-verify install feature-preview/${{ vars.FEATURE_PREVIEW_HELM_CHART_NAME }} \
-  #             --generate-name \
-  #             --namespace $APP_NAMESPACE \
-  #             --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
-  #             --set web.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
-  #             --output json \
-  #             --timeout 1000s)
+          METADATA=$(helm --kube-insecure-skip-tls-verify upgrade \
+              --install=true \
+              --namespace $APP_NAMESPACE \
+              --set dockerhub.loginid=${{ secrets.DOCKERHUB_USERNAME }} \
+              --set dockerhub.password=${{ secrets.DOCKERHUB_TOKEN_RO}} \
+              --set config.feature_branch=${{ env.DEPLOYMENT_NAME }} \
+              --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
+              --output json \
+              --timeout 1000s \
+              ${{ env.DEPLOYMENT_NAME }}  feature-preview/${{ vars.FEATURE_PREVIEW_HELM_CHART_NAME }} )
 
-  #         APP_NAME=$(echo $METADATA | jq -r '.name')
+          APP_NAME=$(echo $METADATA | jq -r '.name')
 
-  #         INGRESS_HOSTNAME=$(kubectl get ingress -n feature-builds --insecure-skip-tls-verify \
-  #             -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
-  #             jq -r '.spec.rules[0].host')
+          INGRESS_HOSTNAME=$(kubectl get ingress -n $APP_NAMESPACE --insecure-skip-tls-verify \
+              -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
+              jq -r '.spec.rules[0].host')
 
-  #         echo "****************************************"
-  #         echo "APP NAME ::: $APP_NAME"
-  #         echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
-  #         echo "****************************************"
+          echo "****************************************"
+          echo "APP NAME ::: $APP_NAME"
+          echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
+          echo "****************************************"
