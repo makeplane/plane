@@ -134,15 +134,6 @@ COPY aio/supervisord-app /app/supervisord-app
 RUN cat /app/supervisord-app >> /app/supervisord.conf && \
     rm /app/supervisord-app
 
-RUN sed -i 's/PGHOST/POSTGRES_HOST/g' /app/plane.env && \
-    sed -i 's/plane-db/localhost/g' /app/plane.env && \
-    sed -i 's/plane-redis/localhost/g' /app/plane.env && \
-    sed -i 's/plane-minio/localhost/g' /app/plane.env
-
-RUN set -o allexport && \
-    source /app/plane.env set && \
-    set +o allexport
-
 COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 
 # if build type is full, run the below copy pg-setup.sh
@@ -151,8 +142,9 @@ COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
 RUN  ./pg-setup.sh
 
-
+# *****************************************************************************
 #  APPLICATION ENVIRONMENT SETTINGS
+# *****************************************************************************
 ENV WEB_URL=http://localhost
 ENV DEBUG=0
 ENV SENTRY_DSN=
@@ -179,5 +171,6 @@ ENV FILE_SIZE_LIMIT=5242880
 
 # Gunicorn Workers
 ENV GUNICORN_WORKERS=1
+# *****************************************************************************
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
