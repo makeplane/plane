@@ -20,7 +20,6 @@ export const SidebarHeader: FC = observer(() => {
         <div className="block bg-custom-sidebar-background-100 md:hidden">
           <SidebarHamburgerToggle />
         </div>
-
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"

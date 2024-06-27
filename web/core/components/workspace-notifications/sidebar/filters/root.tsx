@@ -5,18 +5,20 @@ import { observer } from "mobx-react";
 import { Check, Clock, ListFilter } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 import { TNotificationFilter } from "@plane/types";
-import { ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon, Tooltip } from "@plane/ui";
 // constants
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceNotification } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const NotificationFilter: FC = observer((props) => {
   const {} = props;
   // hooks
-  const { filters, updateFilters } = useWorkspaceNotification();
+  const { isMobile } = usePlatformOS();
+  const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotification();
 
   const handleFilterTypeChange = (filterType: ENotificationFilterType, filterValue: boolean) =>
     updateFilters("type", {
@@ -24,19 +26,20 @@ export const NotificationFilter: FC = observer((props) => {
       [filterType]: filterValue,
     });
 
-  const handleFilterChange = (filterType: keyof TNotificationFilter, filterValue: boolean) =>
-    updateFilters(filterType, filterValue);
+  const handleBulkFilterChange = (filter: Partial<TNotificationFilter>) => updateBulkFilters(filter);
 
   return (
     <Popover className="relative">
-      <Popover.Button
-        className={cn(
-          "flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none",
-          ({ open }: { open: boolean }) => (open ? "bg-custom-background-80" : "")
-        )}
-      >
-        <ListFilter className="h-3 w-3" />
-      </Popover.Button>
+      <Tooltip tooltipContent="Notification Filters" isMobile={isMobile} position="bottom">
+        <Popover.Button
+          className={cn(
+            "flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none",
+            ({ open }: { open: boolean }) => (open ? "bg-custom-background-80" : "")
+          )}
+        >
+          <ListFilter className="h-3 w-3" />
+        </Popover.Button>
+      </Tooltip>
 
       <Transition
         as={Fragment}
@@ -89,8 +92,21 @@ export const NotificationFilter: FC = observer((props) => {
             <div className="px-3">
               <div
                 className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() => handleFilterChange("archived", !filters?.archived)}
+                onClick={() => {
+                  handleBulkFilterChange({
+                    archived: !filters?.archived,
+                    snoozed: false,
+                  });
+                }}
               >
+                <div
+                  className={cn(
+                    "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-full transition-all",
+                    filters?.archived ? "bg-custom-primary-100" : "bg-custom-background-90"
+                  )}
+                >
+                  {filters?.archived && <Check className="h-2 w-2" />}
+                </div>
                 <ArchiveIcon className="flex-shrink-0 h-3 w-3" />
                 <div
                   className={cn(
@@ -100,17 +116,25 @@ export const NotificationFilter: FC = observer((props) => {
                 >
                   Show Archived
                 </div>
-                {filters?.archived && (
-                  <div className="ml-auto flex-shrink-0">
-                    <Check className="h-3 w-3" />
-                  </div>
-                )}
               </div>
 
               <div
                 className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() => handleFilterChange("snoozed", !filters?.snoozed)}
+                onClick={() => {
+                  handleBulkFilterChange({
+                    snoozed: !filters?.snoozed,
+                    archived: false,
+                  });
+                }}
               >
+                <div
+                  className={cn(
+                    "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-full transition-all",
+                    filters?.snoozed ? "bg-custom-primary-100" : "bg-custom-background-90"
+                  )}
+                >
+                  {filters?.snoozed && <Check className="h-2 w-2" />}
+                </div>
                 <Clock className="flex-shrink-0 h-3 w-3" />
                 <div
                   className={cn(
@@ -120,11 +144,6 @@ export const NotificationFilter: FC = observer((props) => {
                 >
                   Show Snoozed
                 </div>
-                {filters?.snoozed && (
-                  <div className="ml-auto flex-shrink-0">
-                    <Check className="h-3 w-3" />
-                  </div>
-                )}
               </div>
             </div>
           </div>

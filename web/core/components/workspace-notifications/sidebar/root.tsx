@@ -23,10 +23,11 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { paginationInfo, currentNotificationTab, setCurrentNotificationTab, loader, notificationIds } =
+  const { paginationInfo, currentNotificationTab, setCurrentNotificationTab, loader, notificationIdsByWorkspaceId } =
     useWorkspaceNotification();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
+  const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
 
   // derived values
   const currentTabEmptyState = ENotificationTab.ALL

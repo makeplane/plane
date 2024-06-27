@@ -9,4 +9,4 @@ export * from "./options";
 
 export * from "./notification-list";
 export * from "./notification-item";
-export * from "./notification-options";
+export * from "./notification-item-options";

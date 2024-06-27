@@ -102,6 +102,18 @@ export class WorkspaceNotificationService extends APIService {
       throw error;
     }
   }
+
+  async markAllNotificationsAsRead(
+    workspaceSlug: string,
+    payload: TNotificationPaginatedInfoQueryParams
+  ): Promise<TNotification | undefined> {
+    try {
+      const { data } = await this.post(`/api/workspaces/${workspaceSlug}/users/notifications/mark-all-read/`, payload);
+      return data || undefined;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const workspaceNotificationService = new WorkspaceNotificationService();

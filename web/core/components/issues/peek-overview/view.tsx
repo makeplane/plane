@@ -29,11 +29,21 @@ interface IIssueView {
   isLoading?: boolean;
   is_archived: boolean;
   disabled?: boolean;
+  embedIssue?: boolean;
   issueOperations: TIssueOperations;
 }
 
 export const IssueView: FC<IIssueView> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, isLoading, is_archived, disabled = false, issueOperations } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    isLoading,
+    is_archived,
+    disabled = false,
+    embedIssue = false,
+    issueOperations,
+  } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -114,12 +124,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           <div
             ref={issuePeekOverviewRef}
             className={cn(
-              "fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300",
-              {
-                "bottom-0 right-0 top-0 w-full md:w-[50%]": peekMode === "side-peek",
-                "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
-                "inset-0 m-4": peekMode === "full-screen",
-              }
+              embedIssue
+                ? ``
+                : "fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300",
+              embedIssue
+                ? ``
+                : {
+                    "bottom-0 right-0 top-0 w-full md:w-[50%]": peekMode === "side-peek",
+                    "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
+                    "inset-0 m-4": peekMode === "full-screen",
+                  }
             )}
             style={{
               boxShadow:
@@ -140,6 +154,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               projectId={projectId}
               isSubmitting={isSubmitting}
               disabled={disabled}
+              embedIssue={embedIssue}
             />
             {/* content */}
             <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">

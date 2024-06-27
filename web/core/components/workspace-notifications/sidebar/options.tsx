@@ -6,9 +6,10 @@ import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
 // components
 import { NotificationFilter } from "@/components/workspace-notifications";
 // constants
+import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useWorkspaceNotification } from "@/hooks/store";
+import { useEventTracker, useWorkspaceNotification } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TSidebarOptions = {
@@ -18,13 +19,23 @@ type TSidebarOptions = {
 export const SidebarOptions: FC<TSidebarOptions> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
+  const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
-  const { filters, updateFilters, loader, getNotifications } = useWorkspaceNotification();
+  const { filters, updateFilters, loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotification();
 
   const refreshNotifications = async () => {
     if (loader) return;
     try {
       await getNotifications(workspaceSlug, ENotificationLoader.MUTATION_LOADER, ENotificationQueryParamType.CURRENT);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleMarkAllNotificationsAsRead = async () => {
+    if (loader) return;
+    try {
+      await markAllNotificationsAsRead(workspaceSlug);
     } catch (error) {
       console.error(error);
     }
@@ -36,17 +47,23 @@ export const SidebarOptions: FC<TSidebarOptions> = observer((props) => {
   return (
     <div className="relative flex justify-center items-center gap-2 text-sm">
       {/* showing read adn unread notifications */}
-      <Tooltip tooltipContent="Refresh" isMobile={isMobile}>
-        <ToggleSwitch
-          value={filters?.read}
-          onChange={() => handleFilterChange("read", !filters?.read)}
-          size="sm"
-          disabled={loader === ENotificationLoader.INIT_LOADER ? true : false}
-        />
+      <Tooltip
+        tooltipContent={filters?.read ? `Unread Notifications` : `Read Notifications`}
+        isMobile={isMobile}
+        position="bottom"
+      >
+        <div>
+          <ToggleSwitch
+            value={filters?.read}
+            onChange={() => handleFilterChange("read", !filters?.read)}
+            size="sm"
+            disabled={loader === ENotificationLoader.INIT_LOADER ? true : false}
+          />
+        </div>
       </Tooltip>
 
       {/* refetch current notifications */}
-      <Tooltip tooltipContent="Refresh" isMobile={isMobile}>
+      <Tooltip tooltipContent="Refresh" isMobile={isMobile} position="bottom">
         <div
           className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
           onClick={refreshNotifications}
@@ -69,8 +86,8 @@ export const SidebarOptions: FC<TSidebarOptions> = observer((props) => {
       >
         <CustomMenu.MenuItem
           onClick={() => {
-            // markAllNotificationsAsRead();
-            // captureEvent(NOTIFICATIONS_READ);
+            handleMarkAllNotificationsAsRead();
+            captureEvent(NOTIFICATIONS_READ);
           }}
         >
           <div className="flex items-center gap-2">

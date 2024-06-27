@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import unset from "lodash/unset";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
   TNotification,
@@ -33,12 +33,12 @@ export interface IWorkspaceNotificationStore {
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined;
   filters: TNotificationFilter;
   // computed
-  notificationIds: string[] | undefined;
   // computed functions
   notificationIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
   // helper actions
   mutateNotifications: (notifications: TNotification[]) => void;
   updateFilters: <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) => void;
+  updateBulkFilters: (filters: Partial<TNotificationFilter>) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
   getNotifications: (
@@ -48,11 +48,12 @@ export interface IWorkspaceNotificationStore {
   ) => Promise<TNotificationPaginatedInfo | undefined>;
   getNotificationById: (workspaceId: string, notificationId: string) => Promise<TNotification | undefined>;
   deleteNotificationById: (workspaceId: string, notificationId: string) => Promise<void>;
+  markAllNotificationsAsRead: (workspaceId: string) => Promise<void>;
 }
 
 export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   // constants
-  paginatedCount = 2;
+  paginatedCount = 30;
   // observables
   loader: TNotificationLoader = undefined;
   notifications: Record<string, INotification> = {};
@@ -78,21 +79,15 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       paginationInfo: observable,
       filters: observable,
       // computed
-      notificationIds: computed,
       // actions
       getNotifications: action,
       getNotificationById: action,
       deleteNotificationById: action,
+      markAllNotificationsAsRead: action,
     });
   }
 
   // computed
-  /**
-   * @description get notification ids
-   */
-  get notificationIds() {
-    return !isEmpty(this.notifications) ? Object.keys(this.notifications) : undefined;
-  }
 
   // computed functions
   /**
@@ -130,6 +125,22 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   updateFilters = <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) => {
     set(this.filters, key, value);
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    set(this, "notifications", {});
+    this.getNotifications(workspaceSlug, ENotificationLoader.INIT_LOADER, ENotificationQueryParamType.INIT);
+  };
+
+  /**
+   * @description update bulk filters
+   * @param { Partial<TNotificationFilter> } filters
+   */
+  updateBulkFilters = (filters: Partial<TNotificationFilter>) => {
+    Object.entries(filters).forEach(([key, value]) => {
+      set(this.filters, key, value);
+    });
+
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return;
 
@@ -246,6 +257,34 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       runInAction(() => notificationId && unset(this.notifications, [notificationId]));
     } catch (error) {
       console.error("WorkspaceNotificationStore -> deleteNotificationById -> error", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description mark all notifications as read
+   * @param { string } workspaceSlug,
+   * @returns { void }
+   */
+  markAllNotificationsAsRead = async (workspaceSlug: string): Promise<void> => {
+    try {
+      const queryParams = this.generateNotificationQueryParams(ENotificationQueryParamType.INIT);
+      const params = {
+        type: queryParams.type,
+        snoozed: queryParams.snoozed,
+        archived: queryParams.archived,
+        read: queryParams.read,
+      };
+      await workspaceNotificationService.markAllNotificationsAsRead(workspaceSlug, params);
+      runInAction(() => {
+        Object.values(this.notifications).forEach((notification) =>
+          notification.mutateNotification({
+            read_at: new Date().toUTCString(),
+          })
+        );
+      });
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> markAllNotificationsAsRead -> error", error);
       throw error;
     }
   };
