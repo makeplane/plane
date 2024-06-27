@@ -134,11 +134,6 @@ COPY aio/supervisord-app /app/supervisord-app
 RUN cat /app/supervisord-app >> /app/supervisord.conf && \
     rm /app/supervisord-app
 
-COPY aio/aio.sh /app/aio.sh
-RUN chmod +x /app/aio.sh
-
-COPY deploy/selfhost/variables.env /app/plane.env
-
 RUN sed -i 's/PGHOST/POSTGRES_HOST/g' /app/plane.env && \
     sed -i 's/plane-db/localhost/g' /app/plane.env && \
     sed -i 's/plane-redis/localhost/g' /app/plane.env && \
@@ -156,6 +151,33 @@ COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
 RUN  ./pg-setup.sh
 
-# VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]
+
+#  APPLICATION ENVIRONMENT SETTINGS
+ENV WEB_URL=http://localhost
+ENV DEBUG=0
+ENV SENTRY_DSN=
+ENV SENTRY_ENVIRONMENT=production
+ENV CORS_ALLOWED_ORIGINS=
+
+ENV DATABASE_URL=postgresql://plane:plane@localhost:5432/plane
+ENV REDIS_URL=redis://localhost:6379
+
+# Secret Key
+ENV SECRET_KEY=60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5
+
+# DATA STORE SETTINGS
+ENV USE_MINIO=1
+ENV AWS_REGION=
+ENV AWS_ACCESS_KEY_ID=access-key
+ENV AWS_SECRET_ACCESS_KEY=secret-key
+ENV AWS_S3_ENDPOINT_URL=http://localhost:9000
+ENV AWS_S3_BUCKET_NAME=uploads
+ENV MINIO_ROOT_USER=access-key
+ENV MINIO_ROOT_PASSWORD=secret-key
+ENV BUCKET_NAME=uploads
+ENV FILE_SIZE_LIMIT=5242880
+
+# Gunicorn Workers
+ENV GUNICORN_WORKERS=1
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

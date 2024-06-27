@@ -30,7 +30,8 @@ stderr_logfile_maxbytes=0
 environment=PORT=3003,HOSTNAME=0.0.0.0
 
 [program:migrator]
-command=/app/aio.sh migrator
+directory=/app/api
+command=sh -c "./bin/docker-entrypoint-migrator.sh"
 autostart=true
 autorestart=false
 stdout_logfile=/dev/stdout
@@ -39,7 +40,8 @@ stderr_logfile=/dev/stdout
 stderr_logfile_maxbytes=0
 
 [program:api]
-command=/app/aio.sh api
+directory=/app/api
+command=sh -c "./bin/docker-entrypoint-api.sh"
 autostart=true
 autorestart=true
 stdout_logfile=/dev/stdout
@@ -48,7 +50,8 @@ stderr_logfile=/dev/stdout
 stderr_logfile_maxbytes=0
 
 [program:worker]
-command=/app/aio.sh worker
+directory=/app/api
+command=sh -c "./bin/docker-entrypoint-worker.sh"
 autostart=true
 autorestart=true
 stdout_logfile=/dev/stdout
@@ -57,7 +60,8 @@ stderr_logfile=/dev/stdout
 stderr_logfile_maxbytes=0
 
 [program:beat]
-command=/app/aio.sh beat
+directory=/app/api
+command=sh -c "./bin/docker-entrypoint-beat.sh"
 autostart=true
 autorestart=true
 stdout_logfile=/dev/stdout
