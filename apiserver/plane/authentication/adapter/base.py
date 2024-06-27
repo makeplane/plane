@@ -19,6 +19,7 @@ from plane.db.models import (
 from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
+from plane.authentication.utils.host import base_host
 
 
 class Adapter:
@@ -123,7 +124,9 @@ class Adapter:
         user.token_updated_at = timezone.now()
         # If user is not active, send the activation email and set the user as active
         if not user.is_active:
-            user_activation_email.delay(user.id)
+            user_activation_email.delay(
+                base_host(request=self.request), user.id
+            )
         # Set user as active
         user.is_active = True
         user.save()

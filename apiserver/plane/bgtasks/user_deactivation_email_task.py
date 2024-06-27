@@ -16,7 +16,7 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def user_deactivation_email(user_id):
+def user_deactivation_email(current_site, user_id):
     try:
         # Send email to user when account is deactivated
         user = User.objects.get(id=user_id)
@@ -24,8 +24,7 @@ def user_deactivation_email(user_id):
 
         context = {
             "email": str(user.email),
-            "first_name": user.first_name,
-            "deactivation_timestamp": str(user.last_logout_time),
+            "login_url": current_site + "/login",
         }
 
         # Send email to user
@@ -54,6 +53,7 @@ def user_deactivation_email(user_id):
             use_ssl=EMAIL_USE_SSL == "1",
         )
 
+        # Send email
         msg = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
@@ -62,6 +62,7 @@ def user_deactivation_email(user_id):
             connection=connection,
         )
 
+        # Attach HTML content
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         logging.getLogger("plane").info("Email sent successfully.")

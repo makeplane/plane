@@ -16,7 +16,7 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def user_activation_email(user_id):
+def user_activation_email(current_site, user_id):
     try:
         # Send email to user when account is activated
         user = User.objects.get(id=user_id)
@@ -24,8 +24,7 @@ def user_activation_email(user_id):
 
         context = {
             "email": str(user.email),
-            "first_name": user.first_name,
-            "activation_timestamp": str(user.last_logout_time),
+            "profile_url": current_site + "/profile",
         }
 
         # Send email to user
