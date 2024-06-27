@@ -313,7 +313,6 @@ export class ProjectViewStore implements IProjectViewStore {
     const currentView = this.getViewById(viewId);
     const currentAccess = currentView?.access;
     try {
-      if (currentAccess === access) return;
       runInAction(() => {
         set(this.viewMap, [viewId, "access"], access);
       });

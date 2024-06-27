@@ -2,19 +2,23 @@ import { X } from "lucide-react";
 import { TViewFilterProps } from "@plane/types";
 // components
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
+// constants
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { AppliedAccessFilters } from "./access";
 // types
 
 type Props = {
   appliedFilters: TViewFilterProps;
   handleClearAllFilters: () => void;
-  handleRemoveFilter: (key: keyof TViewFilterProps, value: string | null) => void;
+  handleRemoveFilter: (key: keyof TViewFilterProps, value: string | EViewAccess | null) => void;
   alwaysAllowEditing?: boolean;
 };
 
 const MEMBERS_FILTERS = ["owned_by"];
 const DATE_FILTERS = ["created_at"];
+const VIEW_ACCESS_FILTERS = ["view_type"];
 
 export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
@@ -39,6 +43,13 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
           >
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              {VIEW_ACCESS_FILTERS.includes(filterKey) && (
+                <AppliedAccessFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  values={Array.isArray(value) ? (value as EViewAccess[]) : []}
+                />
+              )}
               {DATE_FILTERS.includes(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}

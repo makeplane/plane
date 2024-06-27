@@ -9,9 +9,10 @@ import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
-import { ViewAppliedFiltersList } from "@/components/views/filters/applied-filters";
+import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -29,7 +30,7 @@ export const ProjectViewsHeader = observer(() => {
   const { filters, updateFilters, clearAllFilters } = useProjectView();
 
   const handleRemoveFilter = useCallback(
-    (key: keyof TViewFilterProps, value: string | null) => {
+    (key: keyof TViewFilterProps, value: string | EViewAccess | null) => {
       let newValues = filters.filters?.[key];
 
       if (key === "favorites") {
