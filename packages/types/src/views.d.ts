@@ -36,7 +36,7 @@ export type TViewFilterProps = {
   created_at?: string[] | null;
   owned_by?: string[] | null;
   favorites?: boolean;
-  accessTypes?: EViewAccess[];
+  view_type?: EViewAccess[];
 };
 
 export type TViewFilters = {
