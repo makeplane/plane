@@ -193,6 +193,6 @@ RUN if [ "$BUILD_TYPE" = "slim" ]; then \
 
 # *****************************************************************************
 
-# RUN /app/pg-setup.sh
+RUN /app/pg-setup.sh
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
