@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -16,11 +16,10 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const SidebarWorkspaceMenu = observer(() => {
-  // states
-  const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(true);
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
@@ -32,7 +31,11 @@ export const SidebarWorkspaceMenu = observer(() => {
   const { workspaceSlug } = useParams();
   // pathname
   const pathname = usePathname();
-  // computed
+  // local storage
+  const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
+  // derived values
+  const isWorkspaceMenuOpen = !!storedValue;
+  // auth
   const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
 
   const handleLinkClick = (itemKey: string) => {
@@ -45,8 +48,8 @@ export const SidebarWorkspaceMenu = observer(() => {
   };
 
   useEffect(() => {
-    if (sidebarCollapsed) setIsWorkspaceMenuOpen(true);
-  }, [sidebarCollapsed]);
+    if (sidebarCollapsed) toggleWorkspaceMenu(true);
+  }, [sidebarCollapsed, toggleWorkspaceMenu]);
 
   return (
     <Disclosure as="div" defaultOpen>
@@ -54,20 +57,16 @@ export const SidebarWorkspaceMenu = observer(() => {
         <Disclosure.Button
           as="button"
           className="group/workspace-button w-full px-2 py-0.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold"
-          onClick={() => setIsWorkspaceMenuOpen((prev) => !prev)}
+          onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
         >
-          {({ open }) => (
-            <>
-              <span>Workspace</span>
-              <span className="flex-shrink-0 hidden group-hover/workspace-button:inline-block rounded p-0.5 hover:bg-custom-sidebar-background-80">
-                <ChevronRight
-                  className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                    "rotate-90": open,
-                  })}
-                />
-              </span>
-            </>
-          )}
+          <span>Workspace</span>
+          <span className="flex-shrink-0 hidden group-hover/workspace-button:inline-block rounded p-0.5 hover:bg-custom-sidebar-background-80">
+            <ChevronRight
+              className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                "rotate-90": isWorkspaceMenuOpen,
+              })}
+            />
+          </span>
         </Disclosure.Button>
       )}
       <Transition

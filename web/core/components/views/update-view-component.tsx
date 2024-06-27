@@ -51,14 +51,14 @@ export const UpdateViewComponent = (props: Props) => {
   );
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 h-fit">
       {isLocked ? (
         <LockedComponent toolTipContent={lockedTooltipContent} />
       ) : (
         !areFiltersEqual &&
         isAuthorizedUser && (
           <>
-            <Button variant="outline-primary" size="sm" className="flex-shrink-0" onClick={() => setIsModalOpen(true)}>
+            <Button variant="outline-primary" size="md" className="flex-shrink-0" onClick={() => setIsModalOpen(true)}>
               Save as
             </Button>
             {isOwner && <>{updateButton}</>}

@@ -30,8 +30,9 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 import { IssueService } from "@/services/issue";
-import { WorkspaceService } from "@/services/workspace.service";
+
 // ui
 // components
 // types

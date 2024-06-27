@@ -1,7 +1,10 @@
-// types
+// components
 import { EditorMenuItemNames } from "@/components/menus";
+// helpers
 import { IMarking } from "@/helpers/scroll-to-node";
+// hooks
 import { TFileHandler } from "@/hooks/use-editor";
+// types
 import { IMentionHighlight, IMentionSuggestion } from "@/types";
 
 export type EditorReadOnlyRefApi = {

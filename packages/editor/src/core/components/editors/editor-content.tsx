@@ -1,6 +1,7 @@
-import { Editor, EditorContent } from "@tiptap/react";
 import { FC, ReactNode } from "react";
-import { ImageResizer } from "src/core/extensions/image/image-resize";
+import { Editor, EditorContent } from "@tiptap/react";
+// extensions
+import { ImageResizer } from "@/extensions/image";
 
 interface EditorContentProps {
   editor: Editor | null;

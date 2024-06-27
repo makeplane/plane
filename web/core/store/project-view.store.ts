@@ -2,9 +2,13 @@ import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IProjectView } from "@plane/types";
+import { IProjectView, TViewFilters } from "@plane/types";
+// constants
+import { EViewAccess } from "@/constants/views";
+// helpers
+import { getViewName, orderViews, shouldFilterView } from "@/helpers/project-views.helpers";
 // services
-import { ViewService } from "@/services/view.service";
+import { ViewService } from "@/plane-web/services";
 // store
 import { CoreRootStore } from "./root.store";
 
@@ -13,13 +17,14 @@ export interface IProjectViewStore {
   loader: boolean;
   fetchedMap: Record<string, boolean>;
   // observables
-  searchQuery: string;
   viewMap: Record<string, IProjectView>;
+  filters: TViewFilters;
   // computed
   projectViewIds: string[] | null;
   // computed actions
+  getProjectViews: (projectId: string) => IProjectView[] | undefined;
+  getFilteredProjectViews: (projectId: string) => IProjectView[] | undefined;
   getViewById: (viewId: string) => IProjectView;
-  updateSearchQuery: (query: string) => void;
   // fetch actions
   fetchViews: (workspaceSlug: string, projectId: string) => Promise<undefined | IProjectView[]>;
   fetchViewDetails: (workspaceSlug: string, projectId: string, viewId: string) => Promise<IProjectView>;
@@ -32,6 +37,8 @@ export interface IProjectViewStore {
     data: Partial<IProjectView>
   ) => Promise<IProjectView>;
   deleteView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
+  updateFilters: <T extends keyof TViewFilters>(filterKey: T, filterValue: TViewFilters[T]) => void;
+  clearAllFilters: () => void;
   // favorites actions
   addViewToFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
   removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
@@ -41,9 +48,9 @@ export class ProjectViewStore implements IProjectViewStore {
   // observables
   loader: boolean = false;
   viewMap: Record<string, IProjectView> = {};
-  searchQuery: string = "";
   //loaders
   fetchedMap: Record<string, boolean> = {};
+  filters: TViewFilters = { searchQuery: "", sortBy: "asc", sortKey: "created_at" };
   // root store
   rootStore;
   // services
@@ -55,7 +62,7 @@ export class ProjectViewStore implements IProjectViewStore {
       loader: observable.ref,
       viewMap: observable,
       fetchedMap: observable,
-      searchQuery: observable.ref,
+      filters: observable,
       // computed
       projectViewIds: computed,
       // fetch actions
@@ -66,7 +73,8 @@ export class ProjectViewStore implements IProjectViewStore {
       updateView: action,
       deleteView: action,
       // actions
-      updateSearchQuery: action,
+      updateFilters: action,
+      clearAllFilters: action,
       // favorites actions
       addViewToFavorites: action,
       removeViewFromFavorites: action,
@@ -87,16 +95,58 @@ export class ProjectViewStore implements IProjectViewStore {
     return viewIds;
   }
 
+  getProjectViews = computedFn((projectId: string) => {
+    if (!this.fetchedMap[projectId]) return undefined;
+
+    const ViewsList = Object.values(this.viewMap ?? {});
+    // helps to filter views based on the projectId
+    let filteredViews = ViewsList.filter((view) => view?.project === projectId);
+    filteredViews = orderViews(filteredViews, this.filters.sortKey, this.filters.sortBy);
+
+    return filteredViews ?? undefined;
+  });
+  /**
+   * returns viewsIds of issues
+   */
+  getFilteredProjectViews = computedFn((projectId: string) => {
+    if (!this.fetchedMap[projectId]) return undefined;
+
+    const ViewsList = Object.values(this.viewMap ?? {});
+    // helps to filter views based on the projectId, searchQuery and filters
+    let filteredViews = ViewsList.filter(
+      (view) =>
+        view?.project === projectId &&
+        getViewName(view.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterView(view, this.filters.filters)
+    );
+    filteredViews = orderViews(filteredViews, this.filters.sortKey, this.filters.sortBy);
+
+    return filteredViews ?? undefined;
+  });
+
   /**
    * Returns view details by id
    */
   getViewById = computedFn((viewId: string) => this.viewMap?.[viewId] ?? null);
 
   /**
-   * @description update search query
-   * @param {string} query
+   * Updates the filter
+   * @param filterKey
+   * @param filterValue
    */
-  updateSearchQuery = (query: string) => (this.searchQuery = query);
+  updateFilters = <T extends keyof TViewFilters>(filterKey: T, filterValue: TViewFilters[T]) => {
+    runInAction(() => {
+      set(this.filters, [filterKey], filterValue);
+    });
+  };
+
+  /**
+   * @description clears all the filters
+   */
+  clearAllFilters = () =>
+    runInAction(() => {
+      set(this.filters, ["filters"], {});
+    });
 
   /**
    * Fetches views for current project
@@ -145,13 +195,19 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param data
    * @returns Promise<IProjectView>
    */
-  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> =>
-    await this.viewService.createView(workspaceSlug, projectId, data).then((response) => {
-      runInAction(() => {
-        set(this.viewMap, [response.id], response);
-      });
-      return response;
+  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> => {
+    const response = await this.viewService.createView(workspaceSlug, projectId, data);
+
+    runInAction(() => {
+      set(this.viewMap, [response.id], response);
     });
+
+    if (data.access === EViewAccess.PRIVATE) {
+      await this.updateViewAccess(workspaceSlug, projectId, response.id, EViewAccess.PRIVATE);
+    }
+
+    return response;
+  };
 
   /**
    * Updates a view details of specific view and updates it in the store
@@ -168,12 +224,21 @@ export class ProjectViewStore implements IProjectViewStore {
     data: Partial<IProjectView>
   ): Promise<IProjectView> => {
     const currentView = this.getViewById(viewId);
-    return await this.viewService.patchView(workspaceSlug, projectId, viewId, data).then((response) => {
-      runInAction(() => {
-        set(this.viewMap, [viewId], { ...currentView, ...data });
-      });
-      return response;
+
+    const promiseRequests = [];
+    promiseRequests.push(this.viewService.patchView(workspaceSlug, projectId, viewId, data));
+
+    runInAction(() => {
+      set(this.viewMap, [viewId], { ...currentView, ...data });
     });
+
+    if (data.access !== undefined && data.access !== currentView.access) {
+      promiseRequests.push(this.updateViewAccess(workspaceSlug, projectId, viewId, data.access));
+    }
+
+    const [response] = await Promise.all(promiseRequests);
+
+    return response;
   };
 
   /**
@@ -189,6 +254,76 @@ export class ProjectViewStore implements IProjectViewStore {
         delete this.viewMap[viewId];
       });
     });
+  };
+
+  /** Locks view
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
+  lockView = async (workspaceSlug: string, projectId: string, viewId: string) => {
+    try {
+      const currentView = this.getViewById(viewId);
+      if (currentView?.is_locked) return;
+      runInAction(() => {
+        set(this.viewMap, [viewId, "is_locked"], true);
+      });
+      await this.viewService.lockView(workspaceSlug, projectId, viewId);
+    } catch (error) {
+      console.error("Failed to lock the view in view store", error);
+      runInAction(() => {
+        set(this.viewMap, [viewId, "is_locked"], false);
+      });
+    }
+  };
+
+  /**
+   * unlocks View
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
+  unLockView = async (workspaceSlug: string, projectId: string, viewId: string) => {
+    try {
+      const currentView = this.getViewById(viewId);
+      if (!currentView?.is_locked) return;
+      runInAction(() => {
+        set(this.viewMap, [viewId, "is_locked"], false);
+      });
+      await this.viewService.unLockView(workspaceSlug, projectId, viewId);
+    } catch (error) {
+      console.error("Failed to unlock view in view store", error);
+      runInAction(() => {
+        set(this.viewMap, [viewId, "is_locked"], true);
+      });
+    }
+  };
+
+  /**
+   * Updates View access
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @param access
+   * @returns
+   */
+  updateViewAccess = async (workspaceSlug: string, projectId: string, viewId: string, access: EViewAccess) => {
+    const currentView = this.getViewById(viewId);
+    const currentAccess = currentView?.access;
+    try {
+      if (currentAccess === access) return;
+      runInAction(() => {
+        set(this.viewMap, [viewId, "access"], access);
+      });
+      await this.viewService.updateViewAccess(workspaceSlug, projectId, viewId, access);
+    } catch (error) {
+      console.error("Failed to update Access for view", error);
+      runInAction(() => {
+        set(this.viewMap, [viewId, "access"], currentAccess);
+      });
+    }
   };
 
   /**

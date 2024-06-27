@@ -4,7 +4,7 @@ import { debounce } from "lodash";
 const AUTO_SAVE_TIME = 10000;
 
 const useAutoSave = (handleSaveDescription: (forceSync?: boolean, yjsAsUpdate?: Uint8Array) => void) => {
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalIdRef = useRef<any>(null);
   const handleSaveDescriptionRef = useRef(handleSaveDescription);
 
   // Update the ref to always point to the latest handleSaveDescription

@@ -1,5 +1,5 @@
-import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
 import { findParentNode } from "@tiptap/core";
+import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
 import { DecorationSet, Decoration } from "@tiptap/pm/view";
 
 const key = new PluginKey("tableControls");

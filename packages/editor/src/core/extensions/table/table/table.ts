@@ -1,6 +1,5 @@
-import { TextSelection } from "@tiptap/pm/state";
-
 import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
+import { TextSelection } from "@tiptap/pm/state";
 import {
   addColumnAfter,
   addColumnBefore,
@@ -21,12 +20,12 @@ import {
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
 
-import { tableControls } from "src/core/extensions/table/table/table-controls";
-import { TableView } from "src/core/extensions/table/table/table-view";
-import { createTable } from "src/core/extensions/table/table/utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "src/core/extensions/table/table/utilities/delete-table-when-all-cells-selected";
-import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
+import { tableControls } from "@/extensions/table/table/table-controls";
+import { TableView } from "@/extensions/table/table/table-view";
+import { createTable } from "@/extensions/table/table/utilities/create-table";
+import { deleteTableWhenAllCellsSelected } from "@/extensions/table/table/utilities/delete-table-when-all-cells-selected";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
+import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 
 export interface TableOptions {
   HTMLAttributes: Record<string, any>;

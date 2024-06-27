@@ -11,7 +11,7 @@ import { MarkdownRenderer } from "@/components/ui";
 // icons
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 
 type Props = {
   isOpen: boolean;
