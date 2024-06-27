@@ -120,7 +120,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Build and Push Frontend to Docker Container Registry
+      - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v5.1.0
         with:
           context: .
@@ -178,7 +178,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Build and Push Frontend to Docker Container Registry
+      - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v5.1.0
         with:
           context: .

@@ -140,7 +140,7 @@ COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 COPY aio/postgresql.conf /etc/postgresql/postgresql.conf
 COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
-RUN  ./pg-setup.sh
+RUN /app/pg-setup.sh
 
 # *****************************************************************************
 #  APPLICATION ENVIRONMENT SETTINGS
