@@ -140,7 +140,6 @@ COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
 COPY aio/postgresql.conf /etc/postgresql/postgresql.conf
 COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
-# RUN /app/pg-setup.sh
 
 # *****************************************************************************
 #  APPLICATION ENVIRONMENT SETTINGS
@@ -179,5 +178,7 @@ ENV FILE_SIZE_LIMIT=5242880
 # Gunicorn Workers
 ENV GUNICORN_WORKERS=1
 # *****************************************************************************
+
+RUN /app/pg-setup.sh
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]
