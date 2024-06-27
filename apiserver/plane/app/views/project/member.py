@@ -25,6 +25,7 @@ from plane.db.models import (
     IssueProperty,
 )
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
+from plane.utils.host import base_host
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -159,7 +160,11 @@ class ProjectMemberViewSet(BaseViewSet):
         )
         # Send emails to notify the users
         [
-            project_add_user_email.delay(project_member.id, request.user.id)
+            project_add_user_email.delay(
+                base_host(request=request, is_app=True),
+                project_member.id,
+                request.user.id,
+            )
             for project_member in project_members
         ]
         # Serialize the project members

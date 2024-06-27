@@ -16,36 +16,27 @@ from plane.utils.exception_logger import log_exception
 from plane.db.models import ProjectMember
 from plane.db.models import User
 
-ROLE_MAPPER = {
-    20: "Admin",
-    15: "Member",
-    10: "Viewer",
-    5: "Guest",
-}
-
 
 @shared_task
-def project_add_user_email(project_member_id, invitor_id):
+def project_add_user_email(current_site, project_member_id, invitor_id):
     try:
         # Get the invitor
         invitor = User.objects.get(pk=invitor_id)
-        invitor_name = invitor.first_name + " " + invitor.last_name
+        inviter_first_name = invitor.first_name
         # Get the project member
         project_member = ProjectMember.objects.get(pk=project_member_id)
         # Get the project member details
         project_name = project_member.project.name
         workspace_name = project_member.workspace.name
-        member_name = project_member.member.first_name
         member_email = project_member.member.email
-        role = ROLE_MAPPER[project_member.role]
+        project_url = f"{current_site}/{project_member.workspace.slug}/projects/{project_member.project_id}/issues"
         # set the context
         context = {
             "project_name": project_name,
             "workspace_name": workspace_name,
-            "member_name": member_name,
             "email": member_email,
-            "role": role,
-            "invitor_name": invitor_name,
+            "inviter_first_name": inviter_first_name,
+            "project_url": project_url,
         }
 
         # Get the email configuration
@@ -60,7 +51,7 @@ def project_add_user_email(project_member_id, invitor_id):
         ) = get_email_configuration()
 
         # Set the subject
-        subject = f"You have been added to {project_name} in {workspace_name}"
+        subject = "You have been invited to a Plane project"
 
         # Render the email template
         html_content = render_to_string(
