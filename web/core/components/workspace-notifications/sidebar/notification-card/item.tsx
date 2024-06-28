@@ -75,11 +75,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
           {notificationTriggeredBy && (
             <Avatar
               name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
-              src={
-                notificationTriggeredBy?.avatar && notificationTriggeredBy?.avatar !== ""
-                  ? notificationTriggeredBy.avatar
-                  : undefined
-              }
+              src={notificationTriggeredBy.avatar ?? undefined}
               size={42}
               shape="circle"
               className="!text-base !bg-custom-background-80"
