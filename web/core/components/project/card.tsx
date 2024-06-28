@@ -100,7 +100,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: TOAST_TYPE.INFO,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       })
@@ -189,6 +189,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
+        data-prevent-nprogress={!project.is_member || isArchived}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
@@ -220,7 +221,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             </div>
 
             {!isArchived && (
-              <div className="flex h-full flex-shrink-0 items-center gap-2">
+              <div data-prevent-nprogress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
                   className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                   onClick={(e) => {
