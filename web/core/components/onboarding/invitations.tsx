@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import useSWR from "swr";;
+import useSWR from "swr";
 // types
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // ui

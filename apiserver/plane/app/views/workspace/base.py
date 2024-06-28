@@ -44,6 +44,7 @@ from plane.db.models import (
     WorkspaceTheme,
 )
 from plane.utils.cache import cache_response, invalidate_cache
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -127,6 +128,9 @@ class WorkSpaceViewSet(BaseViewSet):
                     role=20,
                     company_role=request.data.get("company_role", ""),
                 )
+
+                # Sync workspace members
+                member_sync_task.delay(slug)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
