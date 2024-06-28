@@ -219,7 +219,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               <span className="semi-bold">{notification.message}</span>
             </div>
           )}
-          <div className="flex items-start md:hidden">
+          <div data-prevent-nprogress className="flex items-start md:hidden">
             <Menu as="div" className={" w-min text-left"}>
               {({ open }) => (
                 <>
@@ -319,7 +319,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           )}
         </div>
       </div>
-      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 group-hover:flex">
+      <div data-prevent-nprogress className="absolute right-3 top-3 hidden gap-x-3 py-1 group-hover:flex">
         {[
           {
             id: 1,

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { usePathname, useSearchParams, useRouter as useNextRouter } from "next/navigation";
 import NProgress from "nprogress";
-import { getAnchorProperty } from "./utils/getAnchorProperty";
+import { getAnchorProperty, hasPreventProgressAttribute } from "./utils/getAnchorProperty";
 import { isSameURL, isSameURLWithoutSearch } from "./utils/sameURL";
 import { ProgressBarProps, RouterNProgressOptions } from ".";
 
@@ -145,9 +145,9 @@ export const AppProgressBar = React.memo(
 
         const anchorElement = event.currentTarget as HTMLAnchorElement | SVGAElement;
         const target = event.target as HTMLElement | Element;
+        // Check if the target or any of its parents have the attribute
         const preventProgress =
-          target?.getAttribute("data-prevent-nprogress") === "true" ||
-          anchorElement?.getAttribute("data-prevent-nprogress") === "true";
+          hasPreventProgressAttribute(target) || anchorElement?.getAttribute("data-prevent-nprogress") === "true";
 
         if (preventProgress) return;
 
