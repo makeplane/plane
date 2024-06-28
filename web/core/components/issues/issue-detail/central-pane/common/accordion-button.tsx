@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -18,9 +18,9 @@ export const AccordionButton: FC<Props> = (props) => {
       <div className="flex items-center gap-3.5">
         <div className="flex items-center gap-3">
           {!hideChevron && (
-            <ChevronDown
+            <ChevronRight
               className={cn("size-4 text-custom-text-300 hover:text-custom-text-400 duration-300", {
-                "-rotate-180 ": isOpen,
+                "rotate-90 ": isOpen,
               })}
             />
           )}
