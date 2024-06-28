@@ -1,3 +1,5 @@
+// TODO: fix all warnings
+
 /* eslint-disable react/display-name */
 // @ts-nocheck
 import { useEffect, useState } from "react";

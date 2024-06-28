@@ -31,7 +31,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   useEffect(() => {
     if (!inboxAccessible || !workspaceSlug || !projectId) return;
     if (navigationTab && navigationTab !== currentTab) {
-      handleCurrentTab(navigationTab);
+      handleCurrentTab(workspaceSlug, projectId, navigationTab);
     } else {
       fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
     }

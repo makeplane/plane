@@ -54,7 +54,7 @@ export interface IProjectInboxStore {
   ) => Partial<Record<keyof TInboxIssueFilter, string>>;
   createOrUpdateInboxIssue: (inboxIssues: TInboxIssue[], workspaceSlug: string, projectId: string) => void;
   // actions
-  handleCurrentTab: (tab: TInboxIssueCurrentTab) => void;
+  handleCurrentTab: (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   fetchInboxIssues: (workspaceSlug: string, projectId: string, loadingType?: TLoader) => Promise<void>;
@@ -216,7 +216,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   // actions
-  handleCurrentTab = (tab: TInboxIssueCurrentTab) => {
+  handleCurrentTab = (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => {
     runInAction(() => {
       set(this, "currentTab", tab);
       set(this, "inboxFilters", undefined);
@@ -227,7 +227,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
       if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 1, 2]);
       else set(this, ["inboxFilters", "status"], [-2]);
     });
-    const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 

@@ -1,6 +1,6 @@
+import { mergeAttributes } from "@tiptap/core";
 import Mention from "@tiptap/extension-mention";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import { mergeAttributes } from "@tiptap/core";
 // extensions
 import { CustomMentionOptions, MentionNodeView } from "@/extensions";
 

@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
-// helpers
+// constants
 import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
+// helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
-// constants
 
 type Props = {
   editable: boolean | undefined;

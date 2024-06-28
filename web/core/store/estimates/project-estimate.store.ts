@@ -29,6 +29,7 @@ export interface IProjectEstimateStore {
   archivedEstimateIds: string[] | undefined;
   areEstimateEnabledByProjectId: (projectId: string) => boolean;
   estimateIdsByProjectId: (projectId: string) => string[] | undefined;
+  currentActiveEstimateIdByProjectId: (projectId: string) => string | undefined;
   estimateById: (estimateId: string) => IEstimate | undefined;
   // actions
   getWorkspaceEstimates: (workspaceSlug: string, loader?: TEstimateLoader) => Promise<IEstimateType[] | undefined>;
@@ -121,6 +122,18 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       .filter((p) => p.project === projectId)
       .map((p) => p.id) as string[];
     return projectEstimatesIds ?? undefined;
+  });
+
+  /**
+   * @description get current active estimate id for a project
+   * @returns { string | undefined }
+   */
+  currentActiveEstimateIdByProjectId = computedFn((projectId: string): string | undefined => {
+    if (!projectId) return undefined;
+    const currentActiveEstimateId = Object.values(this.estimates || {}).find(
+      (p) => p.project === projectId && p.last_used
+    );
+    return currentActiveEstimateId?.id ?? undefined;
   });
 
   /**

@@ -3,7 +3,7 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 // types
 import { IWorkspace } from "@plane/types";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // sub-stores
@@ -111,14 +111,19 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    */
   fetchWorkspaces = async () => {
     this.loader = true;
-    const workspaceResponse = await this.workspaceService.userWorkspaces();
-    runInAction(() => {
-      workspaceResponse.forEach((workspace) => {
-        set(this.workspaces, [workspace.id], workspace);
+    try {
+      const workspaceResponse = await this.workspaceService.userWorkspaces();
+      runInAction(() => {
+        workspaceResponse.forEach((workspace) => {
+          set(this.workspaces, [workspace.id], workspace);
+        });
       });
-    });
-    this.loader = false;
-    return workspaceResponse;
+      return workspaceResponse;
+    } catch (e) {
+      throw e;
+    } finally {
+      this.loader = false;
+    }
   };
 
   /**
