@@ -19,23 +19,23 @@ type TNotificationItemArchiveOption = {
 };
 
 export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> = observer((props) => {
-  const { workspaceSlug, notification: notificationStore } = props;
+  const { workspaceSlug, notification } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
-  const { asJson: notification, archiveNotification, unArchiveNotification } = notificationStore;
+  const { asJson: data, archiveNotification, unArchiveNotification } = notification;
 
   const handleNotificationUpdate = async () => {
     try {
-      const request = notification.archived_at ? unArchiveNotification : archiveNotification;
+      const request = data.archived_at ? unArchiveNotification : archiveNotification;
       await request(workspaceSlug);
       captureEvent(NOTIFICATION_ARCHIVED, {
-        issue_id: notification?.data?.issue?.id,
+        issue_id: data?.data?.issue?.id,
         tab: currentNotificationTab,
         state: "SUCCESS",
       });
       setToast({
-        title: notification.archived_at ? "Notification un-archived" : "Notification archived",
+        title: data.archived_at ? "Notification un-archived" : "Notification archived",
         type: TOAST_TYPE.SUCCESS,
       });
     } catch (e) {
@@ -45,10 +45,10 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
 
   return (
     <NotificationItemOptionButton
-      tooltipContent={notification.read_at ? "Mark as unread" : "Mark as read"}
+      tooltipContent={data.read_at ? "Mark as unread" : "Mark as read"}
       callBack={handleNotificationUpdate}
     >
-      {notification.archived_at ? (
+      {data.archived_at ? (
         <ArchiveRestore className="h-3 w-3 text-custom-text-300" />
       ) : (
         <ArchiveIcon className="h-3 w-3 text-custom-text-300" />

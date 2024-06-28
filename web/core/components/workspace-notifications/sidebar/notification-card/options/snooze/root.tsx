@@ -25,17 +25,11 @@ type TNotificationItemSnoozeOption = {
 };
 
 export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
-  const {
-    workspaceSlug,
-    notification: notificationStore,
-    setIsSnoozeStateModalOpen,
-    customSnoozeModal,
-    setCustomSnoozeModal,
-  } = props;
+  const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   const {} = useWorkspaceNotifications();
-  const { asJson: notification, snoozeNotification, unSnoozeNotification } = notificationStore;
+  const { asJson: data, snoozeNotification, unSnoozeNotification } = notification;
 
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
     if (snoozeTill) {
@@ -94,7 +88,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
 
           return (
             <>
-              <Tooltip tooltipContent={notification.snoozed_till ? `Un snooze` : `Snooze`} isMobile={isMobile}>
+              <Tooltip tooltipContent={data.snoozed_till ? `Un snooze` : `Snooze`} isMobile={isMobile}>
                 <Popover.Button
                   className={cn(
                     "relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90",
@@ -116,7 +110,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
               >
                 <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44 select-none">
                   <div className="p-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
-                    {notification.snoozed_till && (
+                    {data.snoozed_till && (
                       <button
                         className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"
                         onClick={(e) => {

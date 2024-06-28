@@ -2,7 +2,7 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { Clock, User2 } from "lucide-react";
+import { Clock } from "lucide-react";
 import { Avatar } from "@plane/ui";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
@@ -72,30 +72,24 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
       <div className="relative w-full flex gap-2">
         <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-custom-background-80 rounded-full">
-          {notificationTriggeredBy?.avatar && notificationTriggeredBy?.avatar !== "" ? (
+          {notificationTriggeredBy && (
             <Avatar
-              name={notificationTriggeredBy.display_name}
-              src={notificationTriggeredBy.avatar ?? undefined}
-              size={48}
-              shape="square"
-              className="!text-base"
+              name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
+              src={
+                notificationTriggeredBy?.avatar && notificationTriggeredBy?.avatar !== ""
+                  ? notificationTriggeredBy.avatar
+                  : undefined
+              }
+              size={42}
+              shape="circle"
+              className="!text-base !bg-custom-background-80"
             />
-          ) : (
-            <span className="text-lg font-medium text-custom-text-100">
-              {notificationTriggeredBy?.is_bot ? (
-                notificationTriggeredBy?.first_name?.[0]?.toUpperCase()
-              ) : notificationTriggeredBy?.display_name?.[0] ? (
-                notificationTriggeredBy.display_name?.[0]?.toUpperCase()
-              ) : (
-                <User2 className="h-4 w-4" />
-              )}
-            </span>
           )}
         </div>
 
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1 text-base text-custom-text-100">
+            <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1 text-sm text-custom-text-100">
               {!notification.message ? (
                 <>
                   <span className="font-semibold">

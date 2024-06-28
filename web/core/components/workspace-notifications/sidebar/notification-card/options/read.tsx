@@ -19,23 +19,23 @@ type TNotificationItemReadOption = {
 };
 
 export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
-  const { workspaceSlug, notification: notificationStore } = props;
+  const { workspaceSlug, notification } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
-  const { asJson: notification, markNotificationAsRead, markNotificationAsUnRead } = notificationStore;
+  const { asJson: data, markNotificationAsRead, markNotificationAsUnRead } = notification;
 
   const handleNotificationUpdate = async () => {
     try {
-      const request = notification.read_at ? markNotificationAsUnRead : markNotificationAsRead;
+      const request = data.read_at ? markNotificationAsUnRead : markNotificationAsRead;
       await request(workspaceSlug);
       captureEvent(NOTIFICATIONS_READ, {
-        issue_id: notification?.data?.issue?.id,
+        issue_id: data?.data?.issue?.id,
         tab: currentNotificationTab,
         state: "SUCCESS",
       });
       setToast({
-        title: notification.read_at ? "Notification marked as unread" : "Notification marked as read",
+        title: data.read_at ? "Notification marked as unread" : "Notification marked as read",
         type: TOAST_TYPE.SUCCESS,
       });
     } catch (e) {
@@ -45,7 +45,7 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
 
   return (
     <NotificationItemOptionButton
-      tooltipContent={notification.read_at ? "Mark as unread" : "Mark as read"}
+      tooltipContent={data.read_at ? "Mark as unread" : "Mark as read"}
       callBack={handleNotificationUpdate}
     >
       <MessageSquare className="h-3 w-3 text-custom-text-300" />
