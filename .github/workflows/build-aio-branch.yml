@@ -1,7 +1,6 @@
 name: Branch Build AIO
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       full:
