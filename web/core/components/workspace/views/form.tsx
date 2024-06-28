@@ -11,10 +11,12 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
+import { AccessController } from "@/plane-web/components/views/access-controller";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -26,6 +28,7 @@ type Props = {
 const defaultValues: Partial<IWorkspaceView> = {
   name: "",
   description: "",
+  access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
   display_filters: getComputedDisplayFilters(),
 };
@@ -150,7 +153,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          <div>
+          <div className="flex gap-2">
+            <AccessController control={control} />
             <Controller
               control={control}
               name="filters"

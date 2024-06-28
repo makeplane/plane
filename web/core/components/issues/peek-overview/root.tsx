@@ -17,6 +17,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
 
 interface IIssuePeekOverview {
+  embedIssue?: boolean;
   is_archived?: boolean;
   is_draft?: boolean;
 }
@@ -45,7 +46,7 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, is_draft = false } = props;
+  const { embedIssue = false, is_archived = false, is_draft = false } = props;
   // router
   const pathname = usePathname();
   const {
@@ -406,6 +407,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       isLoading={isLoading}
       is_archived={is_archived}
       disabled={!isEditable}
+      embedIssue={embedIssue}
       issueOperations={issueOperations}
     />
   );

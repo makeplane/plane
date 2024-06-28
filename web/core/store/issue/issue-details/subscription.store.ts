@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { NotificationService } from "@/services/notification.service";
+import { IssueService } from "@/services/issue/issue.service";
 // types
 import { IIssueDetail } from "./root.store";
 
@@ -25,7 +25,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
   // root store
   rootIssueDetail: IIssueDetail;
   // services
-  notificationService;
+  issueService;
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {
@@ -40,7 +40,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
     // root store
     this.rootIssueDetail = rootStore;
     // services
-    this.notificationService = new NotificationService();
+    this.issueService = new IssueService();
   }
 
   // helper methods
@@ -62,7 +62,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
 
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const subscription = await this.notificationService.getIssueNotificationSubscriptionStatus(
+      const subscription = await this.issueService.getIssueNotificationSubscriptionStatus(
         workspaceSlug,
         projectId,
         issueId
@@ -85,7 +85,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
         set(this.subscriptionMap, [issueId, currentUserId], true);
       });
 
-      await this.notificationService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
+      await this.issueService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
     } catch (error) {
       this.fetchSubscriptions(workspaceSlug, projectId, issueId);
       throw error;
@@ -101,7 +101,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
         set(this.subscriptionMap, [issueId, currentUserId], false);
       });
 
-      await this.notificationService.unsubscribeFromIssueNotifications(workspaceSlug, projectId, issueId);
+      await this.issueService.unsubscribeFromIssueNotifications(workspaceSlug, projectId, issueId);
     } catch (error) {
       this.fetchSubscriptions(workspaceSlug, projectId, issueId);
       throw error;

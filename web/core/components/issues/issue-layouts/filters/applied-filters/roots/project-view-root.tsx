@@ -13,6 +13,7 @@ import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EViewAccess } from "@/constants/views";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useIssues, useLabel, useProjectState, useProjectView, useUser } from "@/hooks/store";
@@ -121,6 +122,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           name: `${viewDetails?.name} 2`,
           description: viewDetails?.description,
           logo_props: viewDetails?.logo_props,
+          access: viewDetails?.access ?? EViewAccess.PUBLIC,
           ...viewFilters,
         }}
       />

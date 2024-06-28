@@ -12,9 +12,14 @@ from plane.ee.views.app.page import (
     WorkspacePageViewSet,
     WorkspacePagesDescriptionViewSet,
 )
+from plane.ee.views.app.views import (
+    IssueViewEEViewSet,
+    WorkspaceViewEEViewSet,
+)
 
 # Space imports
 from plane.ee.views.space.page import (
     PagePublicEndpoint,
     PagePublicIssuesEndpoint,
 )
+from plane.ee.views.space.views import ViewsPublicEndpoint
