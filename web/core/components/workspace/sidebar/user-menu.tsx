@@ -6,8 +6,6 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // ui
 import { Tooltip } from "@plane/ui";
-// components
-import { NotificationPopover } from "@/components/notifications";
 // constants
 import { SIDEBAR_USER_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
@@ -80,7 +78,6 @@ export const SidebarUserMenu = observer(() => {
             </Link>
           )
       )}
-      <NotificationPopover />
     </div>
   );
 });

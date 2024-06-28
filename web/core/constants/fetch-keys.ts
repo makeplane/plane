@@ -1,5 +1,4 @@
-import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "@plane/types";
-import { objToQueryParams } from "@/helpers/string.helper";
+import { IAnalyticsParams, IJiraMetadata } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
@@ -245,41 +244,6 @@ export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
   }_${params.project?.toString()}`;
 export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
   `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${params?.cycle}_${params?.module}`;
-
-// notifications
-export const USER_WORKSPACE_NOTIFICATIONS = (workspaceSlug: string, params: INotificationParams) => {
-  const { type, snoozed, archived, read } = params;
-
-  return `USER_WORKSPACE_NOTIFICATIONS_${workspaceSlug?.toUpperCase()}_TYPE_${(
-    type ?? "assigned"
-  )?.toUpperCase()}_SNOOZED_${snoozed}_ARCHIVED_${archived}_READ_${read}`;
-};
-
-export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (workspaceSlug: string, notificationId: string) =>
-  `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug?.toUpperCase()}_${notificationId?.toUpperCase()}`;
-
-export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
-  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug?.toUpperCase()}`;
-
-export const getPaginatedNotificationKey = (index: number, prevData: any, workspaceSlug: string, params: any) => {
-  if (prevData && !prevData?.results?.length) return null;
-
-  if (index === 0)
-    return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
-      ...params,
-      cursor: "30:0:0",
-    })}`;
-
-  const cursor = prevData?.next_cursor;
-  const nextPageResults = prevData?.next_page_results;
-
-  if (!nextPageResults) return null;
-
-  return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
-    ...params,
-    cursor,
-  })}`;
-};
 
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>
