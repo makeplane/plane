@@ -1,3 +1,5 @@
+ARG BASE_TAG=develop
+ARG BUILD_TYPE=full
 # *****************************************************************************
 # STAGE 1: Build the project
 # *****************************************************************************
@@ -5,7 +7,6 @@ FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
-ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 
 RUN yarn global add turbo
 COPY . .
@@ -46,16 +47,18 @@ ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
 ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
 ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-RUN yarn turbo run build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
+
+RUN yarn turbo run build --filter=web --filter=space --filter=admin
 
 # *****************************************************************************
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
-# FROM makeplane/plane-aio-base AS runner
-FROM makeplane/plane-aio-base:develop AS runner
+FROM makeplane/plane-aio-base:${BUILD_TYPE}-${BASE_TAG} AS runner
 
 WORKDIR /app
 
@@ -63,17 +66,14 @@ SHELL [ "/bin/bash", "-c" ]
 
 # PYTHON APPLICATION SETUP
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
 
 COPY apiserver/requirements.txt ./api/
 COPY apiserver/requirements ./api/requirements
 
-RUN python3.12 -m venv /app/venv && \
-    source /app/venv/bin/activate && \
-    /app/venv/bin/pip install --upgrade pip && \
-    /app/venv/bin/pip install -r ./api/requirements.txt --compile --no-cache-dir
+RUN pip install -r ./api/requirements.txt --compile --no-cache-dir
 
 # Add in Django deps and generate Django's static files
 COPY apiserver/manage.py ./api/manage.py
@@ -87,7 +87,6 @@ RUN chmod +x ./api/bin/*
 RUN chmod -R 777 ./api/
 
 # NEXTJS BUILDS
-
 COPY --from=installer /app/web/next.config.js ./web/
 COPY --from=installer /app/web/package.json ./web/
 COPY --from=installer /app/web/.next/standalone ./web
@@ -124,26 +123,63 @@ ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 ARG NEXT_PUBLIC_WEB_BASE_URL=""
 ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
-COPY aio/supervisord.conf /app/supervisord.conf
+ARG BUILD_TYPE=full
+ENV BUILD_TYPE=$BUILD_TYPE
 
-COPY aio/aio.sh /app/aio.sh
-RUN chmod +x /app/aio.sh
+COPY aio/supervisord-${BUILD_TYPE}-base /app/supervisord.conf
+COPY aio/supervisord-app /app/supervisord-app
+RUN cat /app/supervisord-app >> /app/supervisord.conf && \
+    rm /app/supervisord-app
 
+COPY ./aio/nginx.conf /etc/nginx/nginx.conf.template
+
+# if build type is full, run the below copy pg-setup.sh
+COPY aio/postgresql.conf /etc/postgresql/postgresql.conf
 COPY aio/pg-setup.sh /app/pg-setup.sh
 RUN chmod +x /app/pg-setup.sh 
 
-COPY deploy/selfhost/variables.env /app/plane.env
+# *****************************************************************************
+#  APPLICATION ENVIRONMENT SETTINGS
+# *****************************************************************************
+ENV APP_DOMAIN=localhost
 
-# NGINX Conf Copy
-COPY ./aio/nginx.conf.aio /etc/nginx/nginx.conf.template
-COPY ./nginx/env.sh /app/nginx-start.sh
-RUN chmod +x /app/nginx-start.sh
+ENV WEB_URL=http://${APP_DOMAIN}
+ENV DEBUG=0
+ENV SENTRY_DSN=
+ENV SENTRY_ENVIRONMENT=production
+ENV CORS_ALLOWED_ORIGINS=http://${APP_DOMAIN},https://${APP_DOMAIN}
+# Secret Key
+ENV SECRET_KEY=60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5
+# Gunicorn Workers
+ENV GUNICORN_WORKERS=1
 
-RUN  ./pg-setup.sh
+ENV POSTGRES_USER="plane"
+ENV POSTGRES_PASSWORD="plane"
+ENV POSTGRES_DB="plane"
+ENV POSTGRES_HOST="localhost"
+ENV POSTGRES_PORT="5432"
+ENV DATABASE_URL="postgresql://plane:plane@localhost:5432/plane"
 
-VOLUME [ "/app/data/minio/uploads", "/var/lib/postgresql/data" ]
+ENV REDIS_HOST="localhost"
+ENV REDIS_PORT="6379"
+ENV REDIS_URL="redis://localhost:6379"
+
+ENV USE_MINIO="1"
+ENV AWS_REGION=""
+ENV AWS_ACCESS_KEY_ID="access-key"
+ENV AWS_SECRET_ACCESS_KEY="secret-key"
+ENV AWS_S3_ENDPOINT_URL="http://localhost:9000"
+ENV AWS_S3_BUCKET_NAME="uploads"
+ENV MINIO_ROOT_USER="access-key"
+ENV MINIO_ROOT_PASSWORD="secret-key"
+ENV BUCKET_NAME="uploads"
+ENV FILE_SIZE_LIMIT="5242880"
+
+# *****************************************************************************
+
+RUN /app/pg-setup.sh
 
 CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

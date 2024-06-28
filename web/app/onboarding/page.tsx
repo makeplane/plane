@@ -43,25 +43,13 @@ const OnboardingPage = observer(() => {
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  const { isLoading: workspaceListLoader } = useSWR(
-    USER_WORKSPACES_LIST,
-    () => {
-      user?.id && fetchWorkspaces();
-    },
-    {
-      shouldRetryOnError: false,
-    }
-  );
+  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => {
+    user?.id && fetchWorkspaces();
+  });
   // fetching user workspace invitations
-  const { data: invitations } = useSWR(
-    "USER_WORKSPACE_INVITATIONS_LIST",
-    () => {
-      user?.id && workspaceService.userWorkspaceInvitations();
-    },
-    {
-      shouldRetryOnError: false,
-    }
-  );
+  const { isLoading: invitationsLoader, data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () => {
+    if (user?.id) return workspaceService.userWorkspaceInvitations();
+  });
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
     if (!user) return;
@@ -144,7 +132,7 @@ const OnboardingPage = observer(() => {
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
-      {user && totalSteps && step !== null && invitations ? (
+      {user && totalSteps && step !== null && !invitationsLoader ? (
         <div className={`flex h-full w-full flex-col`}>
           {step === EOnboardingSteps.PROFILE_SETUP ? (
             <ProfileSetup
@@ -155,7 +143,7 @@ const OnboardingPage = observer(() => {
             />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
             <CreateOrJoinWorkspaces
-              invitations={invitations}
+                invitations={invitations ?? []}
               totalSteps={totalSteps}
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}
