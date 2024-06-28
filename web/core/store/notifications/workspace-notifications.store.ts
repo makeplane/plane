@@ -119,7 +119,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       })
       // .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
       .map((n) => n.id) as string[];
-    return workspaceNotificationIds ?? undefined;
+    return workspaceNotificationIds;
   });
 
   // helper functions

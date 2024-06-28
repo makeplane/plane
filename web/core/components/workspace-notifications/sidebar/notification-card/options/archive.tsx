@@ -8,21 +8,22 @@ import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATION_ARCHIVED } from "@/constants/event-tracker";
-
 // hooks
-import { useEventTracker, useNotification, useWorkspaceNotifications } from "@/hooks/store";
+import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
+// store
+import { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemArchiveOption = {
   workspaceSlug: string;
-  notificationId: string;
+  notification: INotification;
 };
 
 export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> = observer((props) => {
-  const { workspaceSlug, notificationId } = props;
+  const { workspaceSlug, notification: notificationStore } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
-  const { asJson: notification, archiveNotification, unArchiveNotification } = useNotification(notificationId);
+  const { asJson: notification, archiveNotification, unArchiveNotification } = notificationStore;
 
   const handleNotificationUpdate = async () => {
     try {

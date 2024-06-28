@@ -9,19 +9,21 @@ import { NotificationItemOptionButton } from "@/components/workspace-notificatio
 // constants
 import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useNotification, useWorkspaceNotifications } from "@/hooks/store";
+import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
+// store
+import { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemReadOption = {
   workspaceSlug: string;
-  notificationId: string;
+  notification: INotification;
 };
 
 export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
-  const { workspaceSlug, notificationId } = props;
+  const { workspaceSlug, notification: notificationStore } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
-  const { asJson: notification, markNotificationAsRead, markNotificationAsUnRead } = useNotification(notificationId);
+  const { asJson: notification, markNotificationAsRead, markNotificationAsUnRead } = notificationStore;
 
   const handleNotificationUpdate = async () => {
     try {

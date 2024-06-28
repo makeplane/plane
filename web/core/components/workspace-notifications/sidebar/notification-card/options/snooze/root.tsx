@@ -11,23 +11,31 @@ import { NotificationSnoozeModal } from "@/components/workspace-notifications";
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useNotification, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// store
+import { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemSnoozeOption = {
   workspaceSlug: string;
-  notificationId: string;
+  notification: INotification;
   setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
   customSnoozeModal: boolean;
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
 export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
-  const { workspaceSlug, notificationId, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
+  const {
+    workspaceSlug,
+    notification: notificationStore,
+    setIsSnoozeStateModalOpen,
+    customSnoozeModal,
+    setCustomSnoozeModal,
+  } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   const {} = useWorkspaceNotifications();
-  const { asJson: notification, snoozeNotification, unSnoozeNotification } = useNotification(notificationId);
+  const { asJson: notification, snoozeNotification, unSnoozeNotification } = notificationStore;
 
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
     if (snoozeTill) {

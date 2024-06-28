@@ -2,8 +2,8 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { Clock, User2 } from "lucide-react";
+import { Avatar } from "@plane/ui";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
@@ -73,12 +73,12 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       <div className="relative w-full flex gap-2">
         <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-custom-background-80 rounded-full">
           {notificationTriggeredBy?.avatar && notificationTriggeredBy?.avatar !== "" ? (
-            <Image
-              src={notificationTriggeredBy.avatar}
-              alt="Profile Image"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-full"
+            <Avatar
+              name={notificationTriggeredBy.display_name}
+              src={notificationTriggeredBy.avatar ?? undefined}
+              size={48}
+              shape="square"
+              className="!text-base"
             />
           ) : (
             <span className="text-lg font-medium text-custom-text-100">

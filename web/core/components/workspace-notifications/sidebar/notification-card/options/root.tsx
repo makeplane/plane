@@ -10,6 +10,8 @@ import {
 } from "@/components/workspace-notifications";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useNotification } from "@/hooks/store";
 
 type TNotificationOption = {
   workspaceSlug: string;
@@ -30,20 +32,21 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
     setCustomSnoozeModal,
   } = props;
   // hooks
+  const notification = useNotification(notificationId);
 
   return (
     <div className={cn("flex-shrink-0 hidden group-hover:block text-sm", isSnoozeStateModalOpen ? `!block` : ``)}>
       <div className="relative flex justify-center items-center gap-2">
         {/* read */}
-        <NotificationItemReadOption workspaceSlug={workspaceSlug} notificationId={notificationId} />
+        <NotificationItemReadOption workspaceSlug={workspaceSlug} notification={notification} />
 
         {/* archive */}
-        <NotificationItemArchiveOption workspaceSlug={workspaceSlug} notificationId={notificationId} />
+        <NotificationItemArchiveOption workspaceSlug={workspaceSlug} notification={notification} />
 
         {/* snooze notification */}
         <NotificationItemSnoozeOption
           workspaceSlug={workspaceSlug}
-          notificationId={notificationId}
+          notification={notification}
           setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
           customSnoozeModal={customSnoozeModal}
           setCustomSnoozeModal={setCustomSnoozeModal}
