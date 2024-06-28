@@ -220,21 +220,23 @@ export const SidebarProjectsList: FC = observer(() => {
                         <span>{isCollapsed ? <section.icon className="flex-shrink-0 size-3" /> : section.title}</span>
                       </Tooltip>
                     </Disclosure.Button>
-                    {!isCollapsed && isAuthorizedUser && (
+                    {!isCollapsed && (
                       <div className="flex items-center opacity-0 group-hover:opacity-100">
-                        <Tooltip tooltipHeading="Create project" tooltipContent="">
-                          <button
-                            type="button"
-                            className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                            onClick={() => {
-                              setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
-                              setIsFavoriteProjectCreate(section.key === "favorite");
-                              setIsProjectModalOpen(true);
-                            }}
-                          >
-                            <Plus className="size-3" />
-                          </button>
-                        </Tooltip>
+                        {isAuthorizedUser && (
+                          <Tooltip tooltipHeading="Create project" tooltipContent="">
+                            <button
+                              type="button"
+                              className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                              onClick={() => {
+                                setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
+                                setIsFavoriteProjectCreate(section.key === "favorite");
+                                setIsProjectModalOpen(true);
+                              }}
+                            >
+                              <Plus className="size-3" />
+                            </button>
+                          </Tooltip>
+                        )}
                         <Disclosure.Button
                           as="button"
                           type="button"
@@ -296,14 +298,14 @@ export const SidebarProjectsList: FC = observer(() => {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
+            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md"
             onClick={() => {
               setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >
-            <Plus className="size-5" />
-            {!isCollapsed && "Add Project"}
+            <Plus className="flex-shrink-0 size-4" />
+            {!isCollapsed && "Add project"}
           </button>
         )}
       </div>

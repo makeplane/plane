@@ -1,7 +1,7 @@
 import { Extension } from "@tiptap/core";
+import { NodeType } from "@tiptap/pm/model";
 import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import { canJoin } from "@tiptap/pm/transform";
-import { NodeType } from "@tiptap/pm/model";
 
 declare module "@tiptap/core" {
   // eslint-disable-next-line no-unused-vars

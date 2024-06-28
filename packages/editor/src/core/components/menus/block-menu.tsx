@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
-import tippy, { Instance } from "tippy.js";
 import { Editor } from "@tiptap/react";
+import tippy, { Instance } from "tippy.js";
+import { Copy, LucideIcon, Trash2 } from "lucide-react";
 
 interface BlockMenuProps {
   editor: Editor;

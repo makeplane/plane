@@ -101,18 +101,6 @@ class MagicSignInSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         # Active User
-        if not existing_user.is_active:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "USER_ACCOUNT_DEACTIVATED"
-                ],
-                error_message="USER_ACCOUNT_DEACTIVATED",
-            )
-            params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
-            return HttpResponseRedirect(url)
         try:
             provider = MagicCodeProvider(
                 request=request, key=f"magic_{email}", code=code

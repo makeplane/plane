@@ -1,6 +1,6 @@
+import { MutableRefObject } from "react";
 import { Selection } from "@tiptap/pm/state";
 import { Editor } from "@tiptap/react";
-import { MutableRefObject } from "react";
 
 export const insertContentAtSavedSelection = (
   editorRef: MutableRefObject<Editor | null>,

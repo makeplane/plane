@@ -17,8 +17,9 @@ import {
   EIssuesStoreType,
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
-  EIssueLayoutTypes,
 } from "@/constants/issue";
+// helpers
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
 import { storage } from "@/lib/local-storage";
 
@@ -181,46 +182,15 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   computedDisplayFilters = (
     displayFilters: IIssueDisplayFilterOptions,
     defaultValues?: IIssueDisplayFilterOptions
-  ): IIssueDisplayFilterOptions => {
-    const filters = displayFilters || defaultValues;
-
-    return {
-      calendar: {
-        show_weekends: filters?.calendar?.show_weekends || false,
-        layout: filters?.calendar?.layout || "month",
-      },
-      layout: filters?.layout || EIssueLayoutTypes.LIST,
-      order_by: filters?.order_by || "sort_order",
-      group_by: filters?.group_by || null,
-      sub_group_by: filters?.sub_group_by || null,
-      type: filters?.type || null,
-      sub_issue: filters?.sub_issue || false,
-      show_empty_groups: filters?.show_empty_groups || false,
-    };
-  };
+  ): IIssueDisplayFilterOptions => getComputedDisplayFilters(displayFilters, defaultValues);
 
   /**
    * @description This method is used to apply the display properties on the issues
    * @param {IIssueDisplayProperties} displayProperties
    * @returns {IIssueDisplayProperties}
    */
-  computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties => ({
-    assignee: displayProperties?.assignee ?? true,
-    start_date: displayProperties?.start_date ?? true,
-    due_date: displayProperties?.due_date ?? true,
-    labels: displayProperties?.labels ?? true,
-    priority: displayProperties?.priority ?? true,
-    state: displayProperties?.state ?? true,
-    sub_issue_count: displayProperties?.sub_issue_count ?? true,
-    attachment_count: displayProperties?.attachment_count ?? true,
-    link: displayProperties?.link ?? true,
-    estimate: displayProperties?.estimate ?? true,
-    key: displayProperties?.key ?? true,
-    created_on: displayProperties?.created_on ?? true,
-    updated_on: displayProperties?.updated_on ?? true,
-    modules: displayProperties?.modules ?? true,
-    cycle: displayProperties?.cycle ?? true,
-  });
+  computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties =>
+    getComputedDisplayProperties(displayProperties);
 
   handleIssuesLocalFilters = {
     fetchFiltersFromStorage: () => {

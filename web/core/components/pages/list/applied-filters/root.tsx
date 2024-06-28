@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { TPageFilterProps } from "@plane/types";
 // components
-import { AppliedDateFilters, AppliedMembersFilters } from "@/components/pages";
+import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types

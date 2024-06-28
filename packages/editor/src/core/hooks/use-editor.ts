@@ -1,7 +1,7 @@
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
-import { EditorProps } from "@tiptap/pm/view";
 import { Selection } from "@tiptap/pm/state";
+import { EditorProps } from "@tiptap/pm/view";
+import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 // components
 import { EditorMenuItemNames, getEditorMenuItems } from "@/components/menus";
 // extensions
@@ -9,11 +9,12 @@ import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
+// plane editor providers
+import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
 import { DeleteImage, EditorRefApi, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
-import { CollaborationProvider } from "@/plane-editor/providers";
 
 export type TFileHandler = {
   cancel: () => void;

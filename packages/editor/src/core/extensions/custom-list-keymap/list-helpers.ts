@@ -1,6 +1,6 @@
-import { EditorState } from "@tiptap/pm/state";
 import { Editor, getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
 import { Node, NodeType } from "@tiptap/pm/model";
+import { EditorState } from "@tiptap/pm/state";
 
 const findListItemPos = (typeOrName: string | NodeType, state: EditorState) => {
   const { $from } = state.selection;
