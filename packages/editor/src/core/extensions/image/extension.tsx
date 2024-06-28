@@ -1,4 +1,6 @@
 import ImageExt from "@tiptap/extension-image";
+// helpers
+import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
 import {
   IMAGE_NODE_TYPE,
@@ -9,16 +11,13 @@ import {
 } from "@/plugins/image";
 // types
 import { DeleteImage, RestoreImage } from "@/types";
-// helpers
-import { insertLineAboveImageAction } from "./utilities/insert-line-above-image";
-import { insertLineBelowImageAction } from "./utilities/insert-line-below-image";
 
 export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreImage, cancelUploadImage?: () => void) =>
   ImageExt.extend<any, ImageExtensionStorage>({
     addKeyboardShortcuts() {
       return {
-        ArrowDown: insertLineBelowImageAction,
-        ArrowUp: insertLineAboveImageAction,
+        ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", "image"),
+        ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", "image"),
       };
     },
     addProseMirrorPlugins() {
