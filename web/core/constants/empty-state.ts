@@ -80,6 +80,8 @@ export enum EmptyStateType {
   ISSUE_RELATION_EMPTY_STATE = "issue-relation-empty-state",
   ISSUE_COMMENT_EMPTY_STATE = "issue-comment-empty-state",
 
+  NOTIFICATION_ALL_EMPTY_STATE = "notification-all-empty-state",
+  NOTIFICATION_MENTIONS_EMPTY_STATE = "notification-mentions-empty-state",
   NOTIFICATION_MY_ISSUE_EMPTY_STATE = "notification-my-issues-empty-state",
   NOTIFICATION_CREATED_EMPTY_STATE = "notification-created-empty-state",
   NOTIFICATION_SUBSCRIBED_EMPTY_STATE = "notification-subscribed-empty-state",
@@ -593,13 +595,24 @@ const emptyStateDetails = {
     path: "/empty-state/search/comments",
   },
 
+  [EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE,
+    title: "No issues assigned",
+    description: "Updates for issues assigned to you can be \n seen here",
+    path: "/empty-state/search/notification",
+  },
+  [EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE]: {
+    key: EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE,
+    title: "No issues assigned",
+    description: "Updates for issues assigned to you can be \n seen here",
+    path: "/empty-state/search/notification",
+  },
   [EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE]: {
     key: EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE,
     title: "No issues assigned",
     description: "Updates for issues assigned to you can be \n seen here",
     path: "/empty-state/search/notification",
   },
-
   [EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE]: {
     key: EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE,
     title: "No updates to issues",
@@ -630,6 +643,7 @@ const emptyStateDetails = {
     description: "Any notification you archive will be \n available here to help you focus",
     path: "/empty-state/search/archive",
   },
+
   [EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE]: {
     key: EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE,
     title: "Add issues to the cycle to view it's \n progress",
