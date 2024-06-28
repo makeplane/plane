@@ -1,5 +1,13 @@
 // types
-import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity, TIssuesResponse, TBulkOperationsPayload } from "@plane/types";
+import type {
+  TIssue,
+  IIssueDisplayProperties,
+  TIssueLink,
+  TIssueSubIssues,
+  TIssueActivity,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -267,6 +275,37 @@ export class IssueService extends APIService {
     archived_at: string;
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // issue subscriptions
+  async getIssueNotificationSubscriptionStatus(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<{
+    subscribed: boolean;
+  }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/subscribe/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async unsubscribeFromIssueNotifications(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/subscribe/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async subscribeToIssueNotifications(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/subscribe/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

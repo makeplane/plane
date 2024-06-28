@@ -5,40 +5,37 @@ import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
-import type { IUserNotification } from "@plane/types";
-import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { TNotification } from "@plane/types";
+import { Button, CustomSelect } from "@plane/ui";
+// components
 import { DateDropdown } from "@/components/dropdowns";
 // constants
 import { allTimeIn30MinutesInterval12HoursFormat } from "@/constants/notification";
-// ui
-// types
 // helpers
-import { getDate } from "helpers/date-time.helper";
+import { getDate } from "@/helpers/date-time.helper";
 
-type SnoozeModalProps = {
+type TNotificationSnoozeModal = {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
-  notification: IUserNotification | null;
-  onSubmit: (notificationId: string, dateTime?: Date | undefined) => Promise<void>;
+  onSubmit: (dateTime?: Date | undefined) => Promise<TNotification | undefined>;
 };
 
 type FormValues = {
-  time: string | null;
-  date: Date | null;
+  time: string | undefined;
+  date: Date | undefined;
   period: "AM" | "PM";
 };
 
 const defaultValues: FormValues = {
-  time: null,
-  date: null,
+  time: undefined,
+  date: undefined,
   period: "AM",
 };
 
 const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
-export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
-  const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;
+export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => {
+  const { isOpen, onClose, onSubmit: handleSubmitSnooze } = props;
 
   const { workspaceSlug } = useParams();
 
@@ -52,6 +49,19 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   } = useForm({
     defaultValues,
   });
+
+  const handleClose = () => {
+    // This is a workaround to fix the issue of the Notification popover modal close on closing this modal
+    const closeTimeout = setTimeout(() => {
+      onClose();
+      clearTimeout(closeTimeout);
+    }, 50);
+
+    const timeout = setTimeout(() => {
+      reset({ ...defaultValues });
+      clearTimeout(timeout);
+    }, 500);
+  };
 
   const getTimeStamp = () => {
     const today = new Date();
@@ -82,7 +92,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   };
 
   const onSubmit = async (formData: FormValues) => {
-    if (!workspaceSlug || !notification || !formData.date || !formData.time) return;
+    if (!workspaceSlug || !formData.date || !formData.time) return;
 
     const period = formData.period;
 
@@ -96,28 +106,9 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     dateTime?.setHours(hours);
     dateTime?.setMinutes(minutes);
 
-    await handleSubmitSnooze(notification.id, dateTime).then(() => {
+    await handleSubmitSnooze(dateTime).then(() => {
       handleClose();
-      onSuccess();
-      setToast({
-        title: "Success!",
-        message: "Notification snoozed successfully",
-        type: TOAST_TYPE.SUCCESS,
-      });
     });
-  };
-
-  const handleClose = () => {
-    // This is a workaround to fix the issue of the Notification popover modal close on closing this modal
-    const closeTimeout = setTimeout(() => {
-      onClose();
-      clearTimeout(closeTimeout);
-    }, 50);
-
-    const timeout = setTimeout(() => {
-      reset({ ...defaultValues });
-      clearTimeout(timeout);
-    }, 500);
   };
 
   return (
@@ -169,10 +160,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                         rules={{ required: "Please select a date" }}
                         render={({ field: { value, onChange } }) => (
                           <DateDropdown
-                            value={value}
+                            value={value || null}
                             placeholder="Select date"
                             onChange={(val) => {
-                              setValue("time", null);
+                              setValue("time", undefined);
                               onChange(val);
                             }}
                             minDate={new Date()}

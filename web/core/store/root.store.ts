@@ -15,6 +15,7 @@ import { IMemberRootStore, MemberRootStore } from "./member";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
 import { IMultipleSelectStore, MultipleSelectStore } from "./multiple_select.store";
+import { IWorkspaceNotificationStore, WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
 import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
@@ -50,6 +51,7 @@ export class CoreRootStore {
   projectInbox: IProjectInboxStore;
   projectEstimate: IProjectEstimateStore;
   multipleSelect: IMultipleSelectStore;
+  workspaceNotification: IWorkspaceNotificationStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -75,6 +77,7 @@ export class CoreRootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.projectEstimate = new ProjectEstimateStore(this);
+    this.workspaceNotification = new WorkspaceNotificationStore(this);
   }
 
   resetOnSignOut() {
@@ -103,5 +106,6 @@ export class CoreRootStore {
     this.projectPages = new ProjectPageStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
+    this.workspaceNotification = new WorkspaceNotificationStore(this);
   }
 }
