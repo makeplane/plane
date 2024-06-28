@@ -7,30 +7,34 @@ import {
   RelationsHeader,
   AttachmentsHeader,
   LinksHeader,
+  RelationsAccordion,
 } from "@/components/issues/issue-detail/central-pane";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-import { RelationsAccordion } from "./relations/accordion";
 
-type TCentralPane = {
+type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   disabled: boolean;
 };
 
-export const CentralPane: FC<TCentralPane> = observer((props) => {
+export const CentralPane: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled } = props;
 
   // store hooks
   const {
     subIssues: { subIssuesByIssueId },
+    relation: { getRelationsByIssueId },
   } = useIssueDetail();
 
   // derived values
   const subIssues = subIssuesByIssueId(issueId);
+  const issueRelations = getRelationsByIssueId(issueId);
 
+  // render conditions
   const shouldRenderSubIssues = subIssues && subIssues.length > 0;
+  const shouldRenderRelations = Object.values(issueRelations ?? {}).some((relation) => relation.length > 0);
 
   return (
     <div className="flex flex-col gap-5">
@@ -49,7 +53,14 @@ export const CentralPane: FC<TCentralPane> = observer((props) => {
             disabled={disabled}
           />
         )}
-        <RelationsAccordion workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
+        {shouldRenderRelations && (
+          <RelationsAccordion
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
+          />
+        )}
       </div>
     </div>
   );

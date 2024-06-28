@@ -3,14 +3,14 @@ import { Accordion } from "@plane/ui";
 // components
 import { RelationsAccordionContent, RelationsAccordionTitle } from "@/components/issues/issue-detail/central-pane";
 
-type TRelationsAccordionProps = {
+type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   disabled?: boolean;
 };
 
-export const RelationsAccordion: FC<TRelationsAccordionProps> = (props) => {
+export const RelationsAccordion: FC<Props> = (props) => {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // state
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,7 +29,12 @@ export const RelationsAccordion: FC<TRelationsAccordionProps> = (props) => {
         />
       }
     >
-      <RelationsAccordionContent />
+      <RelationsAccordionContent
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        disabled={disabled}
+      />
     </Accordion>
   );
 };
