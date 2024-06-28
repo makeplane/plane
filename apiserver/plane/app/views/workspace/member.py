@@ -35,7 +35,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.cache import cache_response, invalidate_cache
-
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
 
 
@@ -221,6 +221,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Sync workspace members
+        member_sync_task.delay(slug)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
@@ -288,6 +292,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # # Sync workspace members
+        member_sync_task.delay(slug)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

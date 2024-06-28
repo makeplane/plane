@@ -7,3 +7,6 @@ export * from "./delete-workspace-modal";
 export * from "./logo";
 export * from "./send-workspace-invitation-modal";
 export * from "./workspace-active-cycles-upgrade";
+
+// ee imports
+export * from "./workspace-active-cycles-list";
