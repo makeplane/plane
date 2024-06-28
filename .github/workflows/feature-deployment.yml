@@ -79,8 +79,8 @@ jobs:
           build-args: 
             BUILD_TAG=${{ env.AIO_BASE_TAG }}
             BUILD_TYPE=${{env.BUILD_TYPE}}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
