@@ -12,7 +12,7 @@ import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/he
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail, useNotification } from "@/hooks/store";
+import { useIssueDetail, useNotification, useWorkspaceNotification } from "@/hooks/store";
 
 type TNotificationItem = {
   workspaceSlug: string;
@@ -22,17 +22,30 @@ type TNotificationItem = {
 export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const { workspaceSlug, notificationId } = props;
   // hooks
-  const { asJson: notification } = useNotification(notificationId);
+  const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
+  const { updateFilters } = useWorkspaceNotification();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+
+  // derived values
+  const projectId = notification?.project || undefined;
+  const issueId = notification?.data?.issue?.id || undefined;
 
   const notificationField = notification?.data?.issue_activity.field || undefined;
   const notificationTriggeredBy = notification.triggered_by_details || undefined;
 
-  const handleNotificationIssuePeekOverview = () => {
-    const projectId = notification?.project || undefined;
-    const issueId = notification?.data?.issue?.id || undefined;
-    if (workspaceSlug && projectId && issueId && !getIsIssuePeeked(issueId))
+  const handleNotificationIssuePeekOverview = async () => {
+    if (workspaceSlug && projectId && issueId && !getIsIssuePeeked(issueId)) {
       setPeekIssue({ workspaceSlug, projectId, issueId });
+      // make the notification as read
+      if (notification.read_at === null)
+        try {
+          await markNotificationAsRead(workspaceSlug);
+          // update the filters
+          updateFilters("read", true);
+        } catch (error) {
+          console.error(error);
+        }
+    }
   };
 
   if (!workspaceSlug || !notificationId || !notification?.id || !notificationField) return <></>;
@@ -42,6 +55,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       className={cn(
         "relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
         notification.read_at === null ? "bg-custom-primary-100/10" : ""
+        // peekIssue && peekIssue?.issueId === issueId ? "bg-custom-background-80" : "
       )}
       onClick={handleNotificationIssuePeekOverview}
     >

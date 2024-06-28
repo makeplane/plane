@@ -13,12 +13,7 @@ import {
 } from "@/components/workspace-notifications";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import {
-  ENotificationTab,
-  // NOTIFICATION_TABS
-} from "@/constants/notification";
-// helpers
-// import { cn } from "@/helpers/common.helper";
+import { ENotificationTab } from "@/constants/notification";
 // hooks
 import { useWorkspace, useWorkspaceNotification } from "@/hooks/store";
 
@@ -26,13 +21,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    paginationInfo,
-    // currentNotificationTab,
-    // setCurrentNotificationTab,
-    loader,
-    notificationIdsByWorkspaceId,
-  } = useWorkspaceNotification();
+  const { paginationInfo, loader, notificationIdsByWorkspaceId } = useWorkspaceNotification();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
@@ -49,40 +38,6 @@ export const NotificationsSidebarRoot: FC = observer(() => {
       <div className="border-b border-custom-border-200">
         <SidebarHeader workspaceSlug={workspaceSlug.toString()} notificationsCount={totalNotificationCount} />
       </div>
-
-      {/* <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
-        {NOTIFICATION_TABS.map((tab) => (
-          <div
-            key={tab.value}
-            className="h-full px-3 relative flex flex-col cursor-pointer"
-            onClick={() => setCurrentNotificationTab(tab.value)}
-          >
-            <div
-              className={cn(
-                `relative h-full flex justify-center items-center gap-1 text-sm transition-all`,
-                currentNotificationTab === tab.value
-                  ? "text-custom-primary-100"
-                  : "text-custom-text-100 hover:text-custom-text-200"
-              )}
-            >
-              <div className="font-medium">{tab.label}</div>
-              {totalNotificationCount > 0 && (
-                <div
-                  className={cn(
-                    `rounded-full text-xs px-1.5 py-0.5`,
-                    currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
-                  )}
-                >
-                  {totalNotificationCount >= 100 ? `99+` : paginationInfo?.total_count}
-                </div>
-              )}
-            </div>
-            {currentNotificationTab === tab.value && (
-              <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
-            )}
-          </div>
-        ))}
-      </div> */}
 
       {/* applied filters */}
       <div className="flex-shrink-0">
