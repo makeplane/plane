@@ -11,10 +11,10 @@ import { NotificationSnoozeModal } from "@/components/workspace-notifications";
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useNotification, useWorkspaceNotification } from "@/hooks/store";
+import { useNotification, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-type TNotificationSnoozeDropdown = {
+type TNotificationItemSnoozeOption = {
   workspaceSlug: string;
   notificationId: string;
   setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -22,11 +22,11 @@ type TNotificationSnoozeDropdown = {
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
-export const NotificationSnoozeDropdown: FC<TNotificationSnoozeDropdown> = observer((props) => {
+export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
   const { workspaceSlug, notificationId, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const {} = useWorkspaceNotification();
+  const {} = useWorkspaceNotifications();
   const { asJson: notification, snoozeNotification, unSnoozeNotification } = useNotification(notificationId);
 
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
@@ -123,12 +123,12 @@ export const NotificationSnoozeDropdown: FC<TNotificationSnoozeDropdown> = obser
 
                     {NOTIFICATION_SNOOZE_OPTIONS.map((option) => (
                       <button
-                        key={option?.value?.toISOString()}
+                        key={option.key}
                         className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleDropdownSelect(option?.value);
+                          handleDropdownSelect(option.value != undefined ? option.value() : option.value);
                         }}
                       >
                         <div>{option?.label}</div>

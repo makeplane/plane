@@ -25,15 +25,6 @@ export class WorkspaceNotificationService extends APIService {
     }
   }
 
-  async fetchNotificationById(workspaceSlug: string, notificationId: string): Promise<TNotification | undefined> {
-    try {
-      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/`);
-      return data || undefined;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async updateNotificationById(
     workspaceSlug: string,
     notificationId: string,
@@ -45,14 +36,6 @@ export class WorkspaceNotificationService extends APIService {
         payload
       );
       return data || undefined;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async deleteNotificationById(workspaceSlug: string, notificationId: string): Promise<void> {
-    try {
-      await this.delete(`/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/`);
     } catch (error) {
       throw error;
     }

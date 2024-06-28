@@ -7,14 +7,14 @@ import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { SidebarHamburgerToggle } from "@/components/core";
-import { SidebarOptions } from "@/components/workspace-notifications";
+import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
 
-type TSidebarHeader = {
+type TNotificationSidebarHeader = {
   workspaceSlug: string;
   notificationsCount: number;
 };
 
-export const SidebarHeader: FC<TSidebarHeader> = observer((props) => {
+export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
   const { workspaceSlug, notificationsCount } = props;
 
   if (!workspaceSlug) return <></>;
@@ -45,7 +45,7 @@ export const SidebarHeader: FC<TSidebarHeader> = observer((props) => {
         </Breadcrumbs>
       </div>
 
-      <SidebarOptions workspaceSlug={workspaceSlug} />
+      <NotificationSidebarHeaderOptions workspaceSlug={workspaceSlug} />
     </div>
   );
 });

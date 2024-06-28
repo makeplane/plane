@@ -7,17 +7,17 @@ import { NotificationItem } from "@/components/workspace-notifications";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useWorkspaceNotification } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store";
 
-type TNotificationList = {
+type TNotificationCardListRoot = {
   workspaceSlug: string;
   workspaceId: string;
 };
 
-export const NotificationList: FC<TNotificationList> = observer((props) => {
+export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
   const { workspaceSlug, workspaceId } = props;
   // hooks
-  const { loader, paginationInfo, getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotification();
+  const { loader, paginationInfo, getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
   const notificationIds = notificationIdsByWorkspaceId(workspaceId);
 
   const getNextNotifications = async () => {

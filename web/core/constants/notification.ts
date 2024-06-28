@@ -53,26 +53,47 @@ export const FILTER_TYPE_OPTIONS = [
 
 export const NOTIFICATION_SNOOZE_OPTIONS = [
   {
+    key: "1_day",
     label: "1 day",
-    value: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    value: () => {
+      const date = new Date();
+      return new Date(date.getTime() + 24 * 60 * 60 * 1000);
+    },
   },
   {
+    key: "3_days",
     label: "3 days",
-    value: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
+    value: () => {
+      const date = new Date();
+      return new Date(date.getTime() + 3 * 24 * 60 * 60 * 1000);
+    },
   },
   {
+    key: "5_days",
     label: "5 days",
-    value: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
+    value: () => {
+      const date = new Date();
+      return new Date(date.getTime() + 5 * 24 * 60 * 60 * 1000);
+    },
   },
   {
+    key: "1_week",
     label: "1 week",
-    value: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    value: () => {
+      const date = new Date();
+      return new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+    },
   },
   {
+    key: "2_weeks",
     label: "2 weeks",
-    value: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000),
+    value: () => {
+      const date = new Date();
+      return new Date(date.getTime() + 14 * 24 * 60 * 60 * 1000);
+    },
   },
   {
+    key: "custom",
     label: "Custom",
     value: undefined,
   },

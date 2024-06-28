@@ -10,13 +10,13 @@ import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notifi
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useWorkspaceNotification } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const NotificationFilter: FC = observer(() => {
   // hooks
   const { isMobile } = usePlatformOS();
-  const { filters, updateFilters } = useWorkspaceNotification();
+  const { filters, updateFilters } = useWorkspaceNotifications();
 
   const handleFilterTypeChange = (filterType: ENotificationFilterType, filterValue: boolean) =>
     updateFilters("type", {

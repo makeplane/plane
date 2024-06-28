@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 // constants
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
 // hooks
-import { useWorkspaceNotification } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store";
 
 type TAppliedFilters = {
   workspaceSlug: string;
@@ -15,7 +15,7 @@ type TAppliedFilters = {
 export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
-  const { filters, updateFilters } = useWorkspaceNotification();
+  const { filters, updateFilters } = useWorkspaceNotifications();
   // derived values
   const isFiltersEnabled = Object.entries(filters.type || {}).some(([, value]) => value);
 

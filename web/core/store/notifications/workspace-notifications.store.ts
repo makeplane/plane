@@ -1,6 +1,5 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
-import unset from "lodash/unset";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
@@ -46,8 +45,6 @@ export interface IWorkspaceNotificationStore {
     loader?: TNotificationLoader,
     queryCursorType?: TNotificationQueryParamType
   ) => Promise<TNotificationPaginatedInfo | undefined>;
-  getNotificationById: (workspaceId: string, notificationId: string) => Promise<TNotification | undefined>;
-  deleteNotificationById: (workspaceId: string, notificationId: string) => Promise<void>;
   markAllNotificationsAsRead: (workspaceId: string) => Promise<void>;
 }
 
@@ -86,8 +83,6 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       updateBulkFilters: action,
       // actions
       getNotifications: action,
-      getNotificationById: action,
-      deleteNotificationById: action,
       markAllNotificationsAsRead: action,
     });
   }
@@ -250,43 +245,6 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       throw error;
     } finally {
       runInAction(() => (this.loader = undefined));
-    }
-  };
-
-  /**
-   * @description get notification by id
-   * @param { string } workspaceSlug,
-   * @param { string } notificationId,
-   * @returns { TNotification | undefined }
-   */
-  getNotificationById = async (workspaceSlug: string, notificationId: string): Promise<TNotification | undefined> => {
-    try {
-      const notification = await workspaceNotificationService.fetchNotificationById(workspaceSlug, notificationId);
-      if (notification) {
-        runInAction(() => {
-          this.mutateNotifications([notification]);
-        });
-      }
-      return notification;
-    } catch (error) {
-      console.error("WorkspaceNotificationStore -> getNotificationById -> error", error);
-      throw error;
-    }
-  };
-
-  /**
-   * @description delete notification by id
-   * @param { string } workspaceSlug,
-   * @param { string } notificationId,
-   * @returns { void }
-   */
-  deleteNotificationById = async (workspaceSlug: string, notificationId: string): Promise<void> => {
-    try {
-      await workspaceNotificationService.deleteNotificationById(workspaceSlug, notificationId);
-      runInAction(() => notificationId && unset(this.notifications, [notificationId]));
-    } catch (error) {
-      console.error("WorkspaceNotificationStore -> deleteNotificationById -> error", error);
-      throw error;
     }
   };
 

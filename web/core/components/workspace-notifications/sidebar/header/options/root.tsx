@@ -3,22 +3,22 @@ import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 // components
-import { NotificationFilter, NotificationMenuOptions } from "@/components/workspace-notifications";
+import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/workspace-notifications";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useWorkspaceNotification } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-type TSidebarOptions = {
+type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
 };
 
-export const SidebarOptions: FC<TSidebarOptions> = observer((props) => {
+export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOptions> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const { loader, getNotifications } = useWorkspaceNotification();
+  const { loader, getNotifications } = useWorkspaceNotifications();
 
   const refreshNotifications = async () => {
     if (loader) return;
@@ -45,7 +45,7 @@ export const SidebarOptions: FC<TSidebarOptions> = observer((props) => {
       <NotificationFilter />
 
       {/* notification menu options */}
-      <NotificationMenuOptions workspaceSlug={workspaceSlug} />
+      <NotificationHeaderMenuOption workspaceSlug={workspaceSlug} />
     </div>
   );
 });

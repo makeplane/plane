@@ -8,12 +8,12 @@ import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useWorkspace, useWorkspaceNotification } from "@/hooks/store";
+import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
 const WorkspaceDashboardPage = observer(() => {
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { notificationIdsByWorkspaceId, getNotifications } = useWorkspaceNotification();
+  const { notificationIdsByWorkspaceId, getNotifications } = useWorkspaceNotifications();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
 

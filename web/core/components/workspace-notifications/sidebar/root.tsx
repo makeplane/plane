@@ -6,22 +6,22 @@ import { useParams } from "next/navigation";
 // components
 import { EmptyState } from "@/components/empty-state";
 import {
-  SidebarHeader,
+  NotificationSidebarHeader,
   AppliedFilters,
   NotificationsLoader,
-  NotificationList,
+  NotificationCardListRoot,
 } from "@/components/workspace-notifications";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationTab } from "@/constants/notification";
 // hooks
-import { useWorkspace, useWorkspaceNotification } from "@/hooks/store";
+import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebar: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { paginationInfo, loader, notificationIdsByWorkspaceId } = useWorkspaceNotification();
+  const { paginationInfo, loader, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
@@ -36,7 +36,10 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       <div className="border-b border-custom-border-200">
-        <SidebarHeader workspaceSlug={workspaceSlug.toString()} notificationsCount={totalNotificationCount} />
+        <NotificationSidebarHeader
+          workspaceSlug={workspaceSlug.toString()}
+          notificationsCount={totalNotificationCount}
+        />
       </div>
 
       {/* applied filters */}
@@ -53,7 +56,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
         <>
           {notificationIds && notificationIds.length > 0 ? (
             <div className="relative w-full h-full overflow-hidden overflow-y-auto">
-              <NotificationList workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
+              <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
             </div>
           ) : (
             <div className="relative w-full h-full flex justify-center items-center">

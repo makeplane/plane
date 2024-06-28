@@ -15,7 +15,7 @@ import { IMemberRootStore, MemberRootStore } from "./member";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
 import { IMultipleSelectStore, MultipleSelectStore } from "./multiple_select.store";
-import { IWorkspaceNotificationStore, WorkspaceNotificationStore } from "./notifications/workspace-notification.store";
+import { IWorkspaceNotificationStore, WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
 import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";

@@ -11,19 +11,19 @@ import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 import { ENotificationLoader } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useEventTracker, useWorkspaceNotification } from "@/hooks/store";
+import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-type TNotificationMenuOptions = {
+type TNotificationHeaderMenuOption = {
   workspaceSlug: string;
 };
 
-export const NotificationMenuOptions: FC<TNotificationMenuOptions> = observer((props) => {
+export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
-  const { loader, filters, updateFilters, updateBulkFilters, markAllNotificationsAsRead } = useWorkspaceNotification();
+  const { loader, filters, updateFilters, updateBulkFilters, markAllNotificationsAsRead } = useWorkspaceNotifications();
 
   const handleFilterChange = (filterType: keyof TNotificationFilter, filterValue: boolean) =>
     updateFilters(filterType, filterValue);
