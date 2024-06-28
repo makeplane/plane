@@ -2,7 +2,6 @@
 
 import { FC, ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { AppProgressBar } from "next-nprogress-bar";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
 // ui
@@ -11,6 +10,8 @@ import { Toast } from "@plane/ui";
 import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
+// nprogress
+import { AppProgressBar } from "@/lib/n-progress";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
