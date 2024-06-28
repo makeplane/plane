@@ -94,6 +94,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     removeRoutePeekId();
   };
 
+  const peekOverviewIssueClassName = cn(
+    !embedIssue &&
+      "fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300",
+    !embedIssue && {
+      "bottom-0 right-0 top-0 w-full md:w-[50%]": peekMode === "side-peek",
+      "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
+      "inset-0 m-4": peekMode === "full-screen",
+    }
+  );
+
   return (
     <>
       {issue && !is_archived && (
@@ -123,18 +133,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         {issueId && (
           <div
             ref={issuePeekOverviewRef}
-            className={cn(
-              embedIssue
-                ? ``
-                : "fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300",
-              embedIssue
-                ? ``
-                : {
-                    "bottom-0 right-0 top-0 w-full md:w-[50%]": peekMode === "side-peek",
-                    "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
-                    "inset-0 m-4": peekMode === "full-screen",
-                  }
-            )}
+            className={peekOverviewIssueClassName}
             style={{
               boxShadow:
                 "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",

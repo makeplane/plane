@@ -31,6 +31,7 @@ export const NotificationMenuOptions: FC<TNotificationMenuOptions> = observer((p
   const handleBulkFilterChange = (filter: Partial<TNotificationFilter>) => updateBulkFilters(filter);
 
   const handleMarkAllNotificationsAsRead = async () => {
+    // NOTE: We are using loader to prevent continues request when we are making all the notification to read
     if (loader) return;
     try {
       await markAllNotificationsAsRead(workspaceSlug);

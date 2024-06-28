@@ -18,19 +18,18 @@ const WorkspaceDashboardPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
 
   // fetch workspace notifications
+  const notificationMutation =
+    currentWorkspace && notificationIdsByWorkspaceId(currentWorkspace.id)
+      ? ENotificationLoader.MUTATION_LOADER
+      : ENotificationLoader.INIT_LOADER;
+  const notificationLoader =
+    currentWorkspace && notificationIdsByWorkspaceId(currentWorkspace.id)
+      ? ENotificationQueryParamType.CURRENT
+      : ENotificationQueryParamType.INIT;
   useSWR(
     currentWorkspace?.slug ? `WORKSPACE_NOTIFICATION` : null,
     currentWorkspace?.slug
-      ? async () =>
-          getNotifications(
-            currentWorkspace?.slug,
-            notificationIdsByWorkspaceId(currentWorkspace.id)
-              ? ENotificationLoader.MUTATION_LOADER
-              : ENotificationLoader.INIT_LOADER,
-            notificationIdsByWorkspaceId(currentWorkspace.id)
-              ? ENotificationQueryParamType.CURRENT
-              : ENotificationQueryParamType.INIT
-          )
+      ? async () => getNotifications(currentWorkspace?.slug, notificationMutation, notificationLoader)
       : null
   );
 

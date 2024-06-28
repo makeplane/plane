@@ -19,7 +19,7 @@ import {
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
-import { Notification, INotification } from "@/store/notifications/notification.store";
+import { Notification, INotification } from "@/store/notifications/notification";
 import { CoreRootStore } from "@/store/root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
