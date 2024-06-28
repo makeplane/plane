@@ -92,7 +92,7 @@ export const NotificationMenuOptions: FC<TNotificationMenuOptions> = observer((p
                 <div
                   className={cn("whitespace-nowrap", filters?.read ? "text-custom-text-100" : "text-custom-text-200")}
                 >
-                  Show read
+                  Show unread
                 </div>
                 {filters?.read && (
                   <div className="ml-auto">

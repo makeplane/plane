@@ -122,7 +122,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
           }
         }
       })
-      .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
+      // .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
       .map((n) => n.id) as string[];
     return workspaceNotificationIds ?? undefined;
   });
@@ -150,14 +150,17 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
             ? this.paginationInfo?.next_cursor
             : `${this.paginatedCount}:${currentPage}:0`;
 
-    const queryParams = {
+    const queryParams: TNotificationPaginatedInfoQueryParams = {
       type: queryParamsType,
       snoozed: this.filters.snoozed || false,
       archived: this.filters.archived || false,
-      read: this.filters.read || false,
+      read: undefined,
       per_page: this.paginatedCount,
       cursor: queryCursorNext,
     };
+
+    // NOTE: This validation is required to show all the read and unread notifications in a single place it may change in future.
+    queryParams.read = this.filters.read === true ? false : undefined;
 
     return queryParams;
   };

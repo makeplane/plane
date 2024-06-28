@@ -12,7 +12,7 @@ import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/he
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail, useNotification, useWorkspaceNotification } from "@/hooks/store";
+import { useIssueDetail, useNotification } from "@/hooks/store";
 
 type TNotificationItem = {
   workspaceSlug: string;
@@ -23,7 +23,6 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const { workspaceSlug, notificationId } = props;
   // hooks
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
-  const { updateFilters } = useWorkspaceNotification();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   // derived values
@@ -40,8 +39,6 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       if (notification.read_at === null)
         try {
           await markNotificationAsRead(workspaceSlug);
-          // update the filters
-          updateFilters("read", true);
         } catch (error) {
           console.error(error);
         }
