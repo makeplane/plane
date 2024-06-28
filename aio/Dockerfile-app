@@ -58,7 +58,7 @@ RUN yarn turbo run build --filter=web --filter=space --filter=admin
 # *****************************************************************************
 # STAGE 3: Copy the project and start it
 # *****************************************************************************
-FROM makeplane/plane-aio-base-${BUILD_TYPE}:${BASE_TAG} AS runner
+FROM makeplane/plane-aio-base:${BUILD_TYPE}-${BASE_TAG} AS runner
 
 WORKDIR /app
 
