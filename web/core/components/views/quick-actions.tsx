@@ -32,9 +32,11 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     membership: { currentProjectRole },
+    data,
   } = useUser();
   // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isOwner = view?.owned_by === data?.id;
+  const isAdmin = !!currentProjectRole && currentProjectRole == EUserProjectRoles.ADMIN;
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
   const handleCopyText = () =>
@@ -53,7 +55,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       action: () => setCreateUpdateViewModal(true),
       title: "Edit",
       icon: Pencil,
-      shouldRender: isEditingAllowed,
+      shouldRender: isOwner,
     },
     {
       key: "open-new-tab",
@@ -72,7 +74,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       action: () => setDeleteViewModal(true),
       title: "Delete",
       icon: Trash2,
-      shouldRender: isEditingAllowed,
+      shouldRender: isOwner || isAdmin,
     },
   ];
 
