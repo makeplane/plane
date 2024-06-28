@@ -10,6 +10,7 @@ import {
   LinksHeader,
   RelationsAccordion,
   LinksAccordion,
+  AttachmentsAccordion,
 } from "@/components/issues/issue-detail/central-pane";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
@@ -37,37 +38,57 @@ export const CentralPane: FC<Props> = observer((props) => {
   const issueRelations = getRelationsByIssueId(issueId);
 
   // render conditions
-  const shouldRenderSubIssues = subIssues && subIssues.length > 0;
+  const shouldRenderSubIssues = !!subIssues && subIssues.length > 0;
   const shouldRenderRelations = Object.values(issueRelations ?? {}).some((relation) => relation.length > 0);
-  const shouldRenderLinks = issue?.link_count && issue?.link_count > 0;
+  const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0;
+  const shouldRenderAttachments = !!issue?.attachment_count && issue?.attachment_count > 0;
+
+  const headerComponents = [SubIssuesHeader, RelationsHeader, LinksHeader, AttachmentsHeader];
+
+  const accordionComponents = [
+    {
+      shouldRender: shouldRenderSubIssues,
+      component: SubIssuesAccordion,
+    },
+    {
+      shouldRender: shouldRenderRelations,
+      component: RelationsAccordion,
+    },
+    {
+      shouldRender: shouldRenderLinks,
+      component: LinksAccordion,
+    },
+    {
+      shouldRender: shouldRenderAttachments,
+      component: AttachmentsAccordion,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-2">
-        <SubIssuesHeader workspaceSlug={workspaceSlug} projectId={projectId} parentIssueId={issueId} />
-        <RelationsHeader workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
-        <LinksHeader workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
-        <AttachmentsHeader />
-      </div>
-      <div className="flex flex-col">
-        {shouldRenderSubIssues && (
-          <SubIssuesAccordion
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssueId={issueId}
-            disabled={disabled}
-          />
-        )}
-        {shouldRenderRelations && (
-          <RelationsAccordion
+        {headerComponents.map((HeaderComponent, index) => (
+          <HeaderComponent
+            key={index}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={issueId}
             disabled={disabled}
           />
-        )}
-        {shouldRenderLinks && (
-          <LinksAccordion workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
+        ))}
+      </div>
+      <div className="flex flex-col">
+        {accordionComponents.map(
+          ({ shouldRender, component: AccordionComponent }, index) =>
+            shouldRender && (
+              <AccordionComponent
+                key={index}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                disabled={disabled}
+              />
+            )
         )}
       </div>
     </div>

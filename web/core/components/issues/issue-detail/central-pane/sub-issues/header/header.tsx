@@ -10,23 +10,25 @@ import { useIssueDetail } from "@/hooks/store";
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  parentIssueId: string;
+  issueId: string;
+  disabled?: boolean;
 };
 
 export const SubIssuesHeader: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, parentIssueId } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // store hooks
   const {
     subIssues: { subIssuesByIssueId },
   } = useIssueDetail();
 
-  const subIssues = subIssuesByIssueId(parentIssueId);
+  const subIssues = subIssuesByIssueId(issueId);
 
   return (
     <SubIssuesActionButton
       workspaceSlug={workspaceSlug}
       projectId={projectId}
-      parentIssueId={parentIssueId}
+      parentIssueId={issueId}
+      disabled={disabled}
       customButton={
         <CentralPaneHeaderActionButton
           title={subIssues && subIssues.length > 0 ? `${subIssues.length}` : "Sub-issues"}

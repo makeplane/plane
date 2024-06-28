@@ -6,12 +6,12 @@ import { SubIssuesAccordionContent, SubIssuesAccordionTitle } from "@/components
 type TSubIssuesAccordionProps = {
   workspaceSlug: string;
   projectId: string;
-  parentIssueId: string;
+  issueId: string;
   disabled?: boolean;
 };
 
 export const SubIssuesAccordion: FC<TSubIssuesAccordionProps> = (props) => {
-  const { workspaceSlug, projectId, parentIssueId, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // state
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -24,7 +24,7 @@ export const SubIssuesAccordion: FC<TSubIssuesAccordionProps> = (props) => {
           isOpen={isOpen}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
-          parentIssueId={parentIssueId}
+          parentIssueId={issueId}
           disabled={disabled}
         />
       }
@@ -32,7 +32,7 @@ export const SubIssuesAccordion: FC<TSubIssuesAccordionProps> = (props) => {
       <SubIssuesAccordionContent
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        parentIssueId={parentIssueId}
+        parentIssueId={issueId}
         disabled={disabled}
       />
     </Accordion>
