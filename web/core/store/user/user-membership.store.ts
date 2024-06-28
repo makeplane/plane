@@ -6,9 +6,9 @@ import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/ty
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 import { ProjectMemberService } from "@/services/project";
 import { UserService } from "@/services/user.service";
-import { WorkspaceService } from "@/services/workspace.service";
 // plane web store
 import { CoreRootStore } from "../root.store";
 

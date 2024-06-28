@@ -20,7 +20,7 @@
 .table-wrapper table th {
   min-width: 1em;
   border: 1px solid rgba(var(--color-border-200));
-  padding: 10px 15px;
+  padding: 10px 20px;
   vertical-align: top;
   box-sizing: border-box;
   position: relative;
@@ -82,6 +82,7 @@
 .table-wrapper .table-controls .rows-control {
   width: 20px;
   transform: translateX(-50%);
+  left: -8px;
 }
 
 .table-wrapper .table-controls .rows-control .rows-control-div {
@@ -114,3 +115,4 @@
   opacity: 0;
   pointer-events: none;
 }
+

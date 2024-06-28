@@ -8,7 +8,7 @@ import { IJiraImporterForm } from "@plane/types";
 // services
 import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 // ui
 // types
 // fetch keys

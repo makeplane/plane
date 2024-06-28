@@ -16,8 +16,9 @@ import {
   IssuePaginationOptions,
 } from "@plane/types";
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+// services
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
