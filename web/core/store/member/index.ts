@@ -27,8 +27,6 @@ export class MemberRootStore implements IMemberRootStore {
     makeObservable(this, {
       // observables
       memberMap: observable,
-      // computed actions
-      getUserDetails: action,
     });
     // sub-stores
     this.workspace = new WorkspaceMemberStore(this, _rootStore);

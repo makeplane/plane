@@ -56,7 +56,7 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
     removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
-  const createdByDetails = view.created_by ? getUserDetails(view.created_by) : undefined;
+  const ownedByDetails = view.owned_by ? getUserDetails(view.owned_by) : undefined;
 
   return (
     <>
@@ -81,7 +81,7 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
       </div>
 
       {/* created by */}
-      {<ButtonAvatars showTooltip={false} userIds={createdByDetails?.id ?? []} />}
+      {<ButtonAvatars showTooltip={false} userIds={ownedByDetails?.id ?? []} />}
 
       {isEditingAllowed && (
         <FavoriteStar
