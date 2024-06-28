@@ -1,12 +1,14 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleDot, CopyPlus, Plus, XCircle } from "lucide-react";
+import { Plus } from "lucide-react";
 import { ISearchIssueResponse, TIssueRelationTypes } from "@plane/types";
-import { CustomMenu, RelatedIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+// helper
+import { ISSUE_RELATION_OPTIONS } from "./helper";
 
 type Props = {
   workspaceSlug: string;
@@ -56,37 +58,13 @@ export const RelationActionButton: FC<Props> = observer((props) => {
     toggleRelationModal(null, null);
   };
 
-  // options
-  const optionItems = [
-    {
-      key: "blocked_by",
-      label: "Blocked by",
-      icon: <CircleDot className="h-3 w-3" />,
-    },
-    {
-      key: "blocking",
-      label: "Blocking",
-      icon: <XCircle className="h-3 w-3" />,
-    },
-    {
-      key: "relates_to",
-      label: "Relates to",
-      icon: <RelatedIcon className="h-3 w-3" />,
-    },
-    {
-      key: "duplicate",
-      label: "Duplicate of",
-      icon: <CopyPlus className="h-3 w-3" />,
-    },
-  ];
-
   // button element
   const customButtonElement = customButton ? <>{customButton}</> : <Plus className="h-4 w-4" />;
 
   return (
     <>
       <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>
-        {optionItems.map((item, index) => (
+        {ISSUE_RELATION_OPTIONS.map((item, index) => (
           <CustomMenu.MenuItem
             key={index}
             onClick={(e) => {
@@ -96,7 +74,7 @@ export const RelationActionButton: FC<Props> = observer((props) => {
             }}
           >
             <div className="flex items-center gap-2">
-              {item.icon}
+              {item.icon(12)}
               <span>{item.label}</span>
             </div>
           </CustomMenu.MenuItem>

@@ -29,9 +29,8 @@ export const SubIssuesHeader: FC<Props> = observer((props) => {
       parentIssueId={parentIssueId}
       customButton={
         <CentralPaneHeaderActionButton
-          title="Sub-issues"
+          title={subIssues && subIssues.length > 0 ? `${subIssues.length}` : "Sub-issues"}
           icon={<Layers className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" strokeWidth={2} />}
-          value={subIssues && subIssues.length > 0 ? `${subIssues.length}` : undefined}
         />
       }
     />
