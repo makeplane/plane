@@ -140,6 +140,7 @@ jobs:
               --set dockerhub.password=${{ secrets.DOCKERHUB_TOKEN_RO}} \
               --set config.feature_branch=${{ env.DEPLOYMENT_NAME }} \
               --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
+              --set ingress.tls_secret=${{vars.FEATURE_PREVIEW_INGRESS_TLS_SECRET || '' }} \
               --output json \
               --timeout 10m0s \
               --wait \
