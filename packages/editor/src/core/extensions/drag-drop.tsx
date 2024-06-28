@@ -71,8 +71,8 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
     "blockquote",
     "img",
     "h1, h2, h3, h4, h5, h6",
-    ".table-wrapper",
     "[data-type=horizontalRule]",
+    ".table-wrapper",
   ].join(", ");
 
   for (const elem of elements) {
@@ -120,7 +120,7 @@ function calcNodePos(pos: number, view: EditorView, node: Element) {
   const $pos = view.state.doc.resolve(safePos);
 
   if ($pos.depth > 1) {
-    if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
+    if (node.matches("ul li, ol li")) {
       // only for nested lists
       const newPos = $pos.before($pos.depth);
       return Math.max(0, Math.min(newPos, maxPos));
