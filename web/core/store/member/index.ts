@@ -1,5 +1,6 @@
-import { action, makeObservable, observable } from "mobx";
-// types
+import { makeObservable, observable } from "mobx";
+import { computedFn } from "mobx-utils";
+// type
 import { IUserLite } from "@plane/types";
 // store
 import { CoreRootStore } from "../root.store";
@@ -37,5 +38,5 @@ export class MemberRootStore implements IMemberRootStore {
    * @description get user details rom userId
    * @param userId
    */
-  getUserDetails = (userId: string): IUserLite | undefined => this.memberMap?.[userId] ?? undefined;
+  getUserDetails = computedFn((userId: string): IUserLite | undefined => this.memberMap?.[userId] ?? undefined);
 }
