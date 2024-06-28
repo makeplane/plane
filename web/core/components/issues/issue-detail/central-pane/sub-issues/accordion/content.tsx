@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 import { TSubIssueOperations } from "@/components/issues/sub-issues";
 import { IssueList } from "@/components/issues/sub-issues/issues-list";
 // helpers
@@ -58,6 +60,8 @@ export const SubIssuesAccordionContent: FC<Props> = observer((props) => {
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
     fetchSubIssues,
     createSubIssues,
+    toggleCreateIssueModal,
+    toggleDeleteIssueModal,
     updateSubIssue,
     removeSubIssue,
     deleteSubIssue,
@@ -268,6 +272,53 @@ export const SubIssuesAccordionContent: FC<Props> = observer((props) => {
           handleIssueCrudState={handleIssueCrudState}
           subIssueOperations={subIssueOperations}
         />
+      )}
+
+      {issueCrudState?.delete?.toggle &&
+        issueCrudState?.delete?.issue &&
+        issueCrudState.delete.parentIssueId &&
+        issueCrudState.delete.issue.id && (
+          <DeleteIssueModal
+            isOpen={issueCrudState?.delete?.toggle}
+            handleClose={() => {
+              handleIssueCrudState("delete", null, null);
+              toggleDeleteIssueModal(null);
+            }}
+            data={issueCrudState?.delete?.issue as TIssue}
+            onSubmit={async () =>
+              await subIssueOperations.deleteSubIssue(
+                workspaceSlug,
+                projectId,
+                issueCrudState?.delete?.parentIssueId as string,
+                issueCrudState?.delete?.issue?.id as string
+              )
+            }
+            isSubIssue
+          />
+        )}
+
+      {issueCrudState?.update?.toggle && issueCrudState?.update?.issue && (
+        <>
+          <CreateUpdateIssueModal
+            isOpen={issueCrudState?.update?.toggle}
+            onClose={() => {
+              handleIssueCrudState("update", null, null);
+              toggleCreateIssueModal(false);
+            }}
+            data={issueCrudState?.update?.issue ?? undefined}
+            onSubmit={async (_issue: TIssue) => {
+              await subIssueOperations.updateSubIssue(
+                workspaceSlug,
+                projectId,
+                parentIssueId,
+                _issue.id,
+                _issue,
+                issueCrudState?.update?.issue,
+                true
+              );
+            }}
+          />
+        </>
       )}
     </>
   );
