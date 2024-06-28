@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Clock, User2 } from "lucide-react";
@@ -24,6 +24,9 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   // hooks
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  // states
+  const [isSnoozeStateModalOpen, setIsSnoozeStateModalOpen] = useState(false);
+  const [customSnoozeModal, setCustomSnoozeModal] = useState(false);
 
   // derived values
   const projectId = notification?.project || undefined;
@@ -33,7 +36,14 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const notificationTriggeredBy = notification.triggered_by_details || undefined;
 
   const handleNotificationIssuePeekOverview = async () => {
-    if (workspaceSlug && projectId && issueId && !getIsIssuePeeked(issueId)) {
+    if (
+      workspaceSlug &&
+      projectId &&
+      issueId &&
+      !getIsIssuePeeked(issueId) &&
+      !isSnoozeStateModalOpen &&
+      !customSnoozeModal
+    ) {
       setPeekIssue({ workspaceSlug, projectId, issueId });
       // make the notification as read
       if (notification.read_at === null)
@@ -51,7 +61,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
     <div
       className={cn(
         "relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
-        notification.read_at === null ? "bg-custom-primary-100/10" : ""
+        notification.read_at === null ? "bg-custom-primary-100/5" : ""
         // peekIssue && peekIssue?.issueId === issueId ? "bg-custom-background-80" : "
       )}
       onClick={handleNotificationIssuePeekOverview}
@@ -131,9 +141,14 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                 <span className="semi-bold">{notification.message}</span>
               )}
             </div>
-            <div className="flex-shrink-0 hidden group-hover:block text-sm">
-              <NotificationOption workspaceSlug={workspaceSlug} notificationId={notification?.id} />
-            </div>
+            <NotificationOption
+              workspaceSlug={workspaceSlug}
+              notificationId={notification?.id}
+              isSnoozeStateModalOpen={isSnoozeStateModalOpen}
+              setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
+              customSnoozeModal={customSnoozeModal}
+              setCustomSnoozeModal={setCustomSnoozeModal}
+            />
           </div>
 
           <div className="relative flex items-center gap-3 text-xs text-custom-text-200">

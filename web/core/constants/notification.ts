@@ -51,7 +51,7 @@ export const FILTER_TYPE_OPTIONS = [
   },
 ];
 
-export const snoozeOptions = [
+export const NOTIFICATION_SNOOZE_OPTIONS = [
   {
     label: "1 day",
     value: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
@@ -74,7 +74,7 @@ export const snoozeOptions = [
   },
   {
     label: "Custom",
-    value: null,
+    value: undefined,
   },
 ];
 

@@ -1,11 +1,15 @@
 "use client";
 
-import { FC } from "react";
+import { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
-import { ArchiveRestore, Clock, MessageSquare } from "lucide-react";
+import { ArchiveRestore, MessageSquare } from "lucide-react";
 import { ArchiveIcon, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// components
+import { NotificationSnoozeDropdown } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED } from "@/constants/event-tracker";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useNotification, useWorkspaceNotification } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -13,10 +17,21 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type TNotificationOption = {
   workspaceSlug: string;
   notificationId: string;
+  isSnoozeStateModalOpen: boolean;
+  setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
+  customSnoozeModal: boolean;
+  setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
 export const NotificationOption: FC<TNotificationOption> = observer((props) => {
-  const { workspaceSlug, notificationId } = props;
+  const {
+    workspaceSlug,
+    notificationId,
+    isSnoozeStateModalOpen,
+    setIsSnoozeStateModalOpen,
+    customSnoozeModal,
+    setCustomSnoozeModal,
+  } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
@@ -27,8 +42,6 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
     markNotificationAsUnRead,
     archiveNotification,
     unArchiveNotification,
-    snoozeNotification,
-    unSnoozeNotification,
   } = useNotification(notificationId);
 
   const options = [
@@ -82,57 +95,35 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
     },
   ];
 
-  const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
-    if (snoozeTill) {
-      try {
-        await snoozeNotification(workspaceSlug, snoozeTill);
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      try {
-        await unSnoozeNotification(workspaceSlug);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
-
   return (
-    <div className="relative flex justify-center items-center gap-2">
-      {options.map((item) => (
-        <Tooltip tooltipContent={item.name} key={item.id} isMobile={isMobile}>
-          <button
-            key={item.id}
-            type="button"
-            className="relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              item.onClick();
-            }}
-          >
-            {item.icon}
-          </button>
-        </Tooltip>
-      ))}
+    <div className={cn("flex-shrink-0 hidden group-hover:block text-sm", isSnoozeStateModalOpen ? `!block` : ``)}>
+      <div className="relative flex justify-center items-center gap-2">
+        {options.map((item) => (
+          <Tooltip tooltipContent={item.name} key={item.id} isMobile={isMobile}>
+            <button
+              key={item.id}
+              type="button"
+              className="relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                item.onClick();
+              }}
+            >
+              {item.icon}
+            </button>
+          </Tooltip>
+        ))}
 
-      {/* snooze notification */}
-      <Tooltip tooltipContent={notification.snoozed_till ? `Un snooze` : `Snooze`} isMobile={isMobile}>
-        <button
-          type="button"
-          className="relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90"
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            notification.snoozed_till
-              ? handleNotificationSnoozeDate(undefined)
-              : handleNotificationSnoozeDate(new Date());
-          }}
-        >
-          <Clock className="h-3 w-3 text-custom-text-300" />
-        </button>
-      </Tooltip>
+        {/* snooze notification */}
+        <NotificationSnoozeDropdown
+          workspaceSlug={workspaceSlug}
+          notificationId={notificationId}
+          setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
+          customSnoozeModal={customSnoozeModal}
+          setCustomSnoozeModal={setCustomSnoozeModal}
+        />
+      </div>
     </div>
   );
 });
