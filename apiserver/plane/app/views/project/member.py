@@ -24,6 +24,8 @@ from plane.db.models import (
     TeamMember,
     IssueProperty,
 )
+from plane.bgtasks.project_add_user_email_task import project_add_user_email
+from plane.utils.host import base_host
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -64,33 +66,29 @@ class ProjectMemberViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
+        # Get the list of members to be added to the project and their roles i.e. the user_id and the role
         members = request.data.get("members", [])
 
         # get the project
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
+        # Check if the members array is empty
         if not len(members):
             return Response(
                 {"error": "Atleast one member is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Initialize the bulk arrays
         bulk_project_members = []
         bulk_issue_props = []
 
-        project_members = (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                member_id__in=[member.get("member_id") for member in members],
-            )
-            .values("member_id", "sort_order")
-            .order_by("sort_order")
-        )
-
-        bulk_project_members = []
+        # Create a dictionary of the member_id and their roles
         member_roles = {
             member.get("member_id"): member.get("role") for member in members
         }
-        # Update roles in the members array based on the member_roles dictionary
+
+        # Update roles in the members array based on the member_roles dictionary and set is_active to True
         for project_member in ProjectMember.objects.filter(
             project_id=project_id,
             member_id__in=[member.get("member_id") for member in members],
@@ -104,13 +102,27 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_project_members, ["is_active", "role"], batch_size=100
         )
 
+        # Get the list of project members of the requested workspace with the given slug
+        project_members = (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member_id__in=[member.get("member_id") for member in members],
+            )
+            .values("member_id", "sort_order")
+            .order_by("sort_order")
+        )
+
+        # Loop through requested members
         for member in members:
+
+            # Get the sort orders of the member
             sort_order = [
                 project_member.get("sort_order")
                 for project_member in project_members
                 if str(project_member.get("member_id"))
                 == str(member.get("member_id"))
             ]
+            # Create a new project member
             bulk_project_members.append(
                 ProjectMember(
                     member_id=member.get("member_id"),
@@ -122,6 +134,7 @@ class ProjectMemberViewSet(BaseViewSet):
                     ),
                 )
             )
+            # Create a new issue property
             bulk_issue_props.append(
                 IssueProperty(
                     user_id=member.get("member_id"),
@@ -130,6 +143,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 )
             )
 
+        # Bulk create the project members and issue properties
         project_members = ProjectMember.objects.bulk_create(
             bulk_project_members,
             batch_size=10,
@@ -144,7 +158,18 @@ class ProjectMemberViewSet(BaseViewSet):
             project_id=project_id,
             member_id__in=[member.get("member_id") for member in members],
         )
+        # Send emails to notify the users
+        [
+            project_add_user_email.delay(
+                base_host(request=request, is_app=True),
+                project_member.id,
+                request.user.id,
+            )
+            for project_member in project_members
+        ]
+        # Serialize the project members
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
+        # Return the serialized data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, slug, project_id):
