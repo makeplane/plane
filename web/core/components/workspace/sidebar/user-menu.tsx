@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // ui
 import { Tooltip } from "@plane/ui";
+// components
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // constants
 import { SIDEBAR_USER_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
@@ -59,7 +61,7 @@ export const SidebarUserMenu = observer(() => {
               >
                 <div
                   className={cn(
-                    "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
+                    "relative group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
                     {
                       "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10": link.highlight(
                         pathname,
@@ -73,6 +75,12 @@ export const SidebarUserMenu = observer(() => {
                     <link.Icon className="size-4" />
                   </span>
                   {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                  {link.key === "notifications" && (
+                    <NotificationAppSidebarOption
+                      workspaceSlug={workspaceSlug.toString()}
+                      isSidebarCollapsed={sidebarCollapsed ?? false}
+                    />
+                  )}
                 </div>
               </Tooltip>
             </Link>

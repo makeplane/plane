@@ -1,12 +1,13 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
   TNotification,
   TNotificationFilter,
   TNotificationPaginatedInfo,
   TNotificationPaginatedInfoQueryParams,
+  TUnreadNotificationsCount,
 } from "@plane/types";
 // constants
 import {
@@ -27,11 +28,13 @@ type TNotificationQueryParamType = ENotificationQueryParamType;
 export interface IWorkspaceNotificationStore {
   // observables
   loader: TNotificationLoader;
+  unreadNotificationsCount: TUnreadNotificationsCount | undefined;
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined;
   filters: TNotificationFilter;
   // computed
+  totalUnreadNotificationsCount: number;
   // computed functions
   notificationIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
   // helper actions
@@ -40,6 +43,7 @@ export interface IWorkspaceNotificationStore {
   updateBulkFilters: (filters: Partial<TNotificationFilter>) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
+  getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
     workspaceSlug: string,
     loader?: TNotificationLoader,
@@ -53,6 +57,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   paginatedCount = 30;
   // observables
   loader: TNotificationLoader = undefined;
+  unreadNotificationsCount: TUnreadNotificationsCount | undefined = undefined;
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined = undefined;
@@ -71,23 +76,35 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     makeObservable(this, {
       // observables
       loader: observable.ref,
+      unreadNotificationsCount: observable.ref,
       notifications: observable,
       currentNotificationTab: observable.ref,
       paginationInfo: observable,
       filters: observable,
       // computed
+      totalUnreadNotificationsCount: computed,
       // helper actions
       setCurrentNotificationTab: action,
       mutateNotifications: action,
       updateFilters: action,
       updateBulkFilters: action,
       // actions
+      getUnreadNotificationsCount: action,
       getNotifications: action,
       markAllNotificationsAsRead: action,
     });
   }
 
   // computed
+  get totalUnreadNotificationsCount() {
+    let count: number = 0;
+    if (!this.unreadNotificationsCount) return count;
+
+    Object.values(this.unreadNotificationsCount).forEach((value) => {
+      count += value || 0;
+    });
+    return count;
+  }
 
   // computed functions
   /**
@@ -216,6 +233,26 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   };
 
   /**
+   * @description get unread notifications count
+   * @param { string } workspaceSlug,
+   * @param { TNotificationQueryParamType } queryCursorType,
+   * @returns { number | undefined }
+   */
+  getUnreadNotificationsCount = async (workspaceSlug: string): Promise<TUnreadNotificationsCount | undefined> => {
+    try {
+      const unreadNotificationCount = await workspaceNotificationService.fetchUnreadNotificationsCount(workspaceSlug);
+      if (unreadNotificationCount)
+        runInAction(() => {
+          set(this, "unreadNotificationsCount", unreadNotificationCount);
+        });
+      return unreadNotificationCount || undefined;
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> getUnreadNotificationsCount -> error", error);
+      throw error;
+    }
+  };
+
+  /**
    * @description get all workspace notification
    * @param { string } workspaceSlug,
    * @param { TNotificationLoader } loader,
@@ -229,6 +266,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     this.loader = loader;
     try {
       const queryParams = this.generateNotificationQueryParams(queryParamType);
+      await this.getUnreadNotificationsCount(workspaceSlug);
       const notificationResponse = await workspaceNotificationService.fetchNotifications(workspaceSlug, queryParams);
       if (notificationResponse) {
         const { results, ...paginationInfo } = notificationResponse;
