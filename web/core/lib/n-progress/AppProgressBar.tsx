@@ -105,6 +105,7 @@ export const AppProgressBar = React.memo(
 
     NProgress.configure(options || {});
 
+    // eslint-disable-next-line no-undef
     let progressDoneTimer: NodeJS.Timeout;
 
     const pathname = usePathname();
@@ -123,6 +124,7 @@ export const AppProgressBar = React.memo(
         return;
       }
 
+      // eslint-disable-next-line no-undef
       let timer: NodeJS.Timeout;
 
       const startProgress = () => {
@@ -139,7 +141,7 @@ export const AppProgressBar = React.memo(
         }, stopDelay);
       };
 
-      const handleAnchorClick = (event: MouseEvent) => {
+      const handleAnchorClick: any = (event: MouseEvent) => {
         // Skip preventDefault
         if (event.defaultPrevented) return;
 
@@ -168,6 +170,7 @@ export const AppProgressBar = React.memo(
         startProgress();
       };
 
+      // eslint-disable-next-line no-undef
       const handleMutation: MutationCallback = () => {
         const anchorElements = Array.from(document.querySelectorAll("a")) as (HTMLAnchorElement | SVGAElement)[];
 
@@ -184,9 +187,7 @@ export const AppProgressBar = React.memo(
           return !isNProgressDisabled && isNotTelOrMailto && getAnchorProperty(anchor, "target") !== "_blank";
         });
 
-        validAnchorElements.forEach((anchor) => {
-          anchor.addEventListener("click", handleAnchorClick);
-        });
+        validAnchorElements.forEach((anchor) => anchor.addEventListener("click", handleAnchorClick));
         elementsWithAttachedHandlers.current = validAnchorElements;
       };
 
@@ -194,6 +195,7 @@ export const AppProgressBar = React.memo(
       mutationObserver.observe(document, { childList: true, subtree: true });
 
       const originalWindowHistoryPushState = window.history.pushState;
+      // eslint-disable-next-line no-undef
       window.history.pushState = new Proxy(window.history.pushState, {
         apply: (target, thisArg, argArray: PushStateInput) => {
           stopProgress();
