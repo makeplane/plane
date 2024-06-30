@@ -101,3 +101,5 @@ from .webhook import Webhook, WebhookLog
 from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
+
+from .issue_type import IssueType
