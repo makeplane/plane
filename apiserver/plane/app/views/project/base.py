@@ -346,7 +346,7 @@ class ProjectViewSet(BaseViewSet):
                 # Create the issue type
                 IssueType.objects.create(
                     name="Task",
-                    decription="A task that needs to be done",
+                    description="A task that needs to be done",
                     project_id=project.id,
                 )
 
