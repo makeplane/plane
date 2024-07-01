@@ -3,8 +3,11 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import Q, OuterRef, F, Func
+from django.db.models import Q, OuterRef, F, Func, UUIDField, Value
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 
 # Third Party imports
 from rest_framework.response import Response
@@ -125,6 +128,25 @@ class IssueRelationViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         ).distinct()
 
         # Fields
@@ -133,27 +155,15 @@ class IssueRelationViewSet(BaseViewSet):
             "name",
             "state_id",
             "sort_order",
-            "completed_at",
-            "estimate_point",
             "priority",
-            "start_date",
-            "target_date",
             "sequence_id",
             "project_id",
-            "parent_id",
-            "cycle_id",
-            "module_ids",
             "label_ids",
             "assignee_ids",
-            "sub_issues_count",
             "created_at",
             "updated_at",
             "created_by",
             "updated_by",
-            "attachment_count",
-            "link_count",
-            "is_draft",
-            "archived_at",
         ]
 
         response_data = {
