@@ -2,10 +2,10 @@
 from django.db import models
 
 # Module imports
-from .project import ProjectBaseModel
+from .workspace import WorkspaceBaseModel
 
 
-class IssueType(ProjectBaseModel):
+class IssueType(WorkspaceBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
