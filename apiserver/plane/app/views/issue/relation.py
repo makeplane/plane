@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import Q, OuterRef, F, Func, UUIDField, Value
+from django.db.models import Q, OuterRef, F, Func, UUIDField, Value, CharField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -164,25 +164,52 @@ class IssueRelationViewSet(BaseViewSet):
             "updated_at",
             "created_by",
             "updated_by",
+            "relation_type",
         ]
 
         response_data = {
-            "blocking": queryset.filter(pk__in=blocking_issues).values(
-                *fields
-            ),
-            "blocked_by": queryset.filter(pk__in=blocked_by_issues).values(
-                *fields
-            ),
-            "duplicate": queryset.filter(pk__in=duplicate_issues).values(
-                *fields
+            "blocking": queryset.filter(pk__in=blocking_issues)
+            .annotate(
+                relation_type=Value("blocking", output_field=CharField())
             )
-            | queryset.filter(pk__in=duplicate_issues_related).values(*fields),
-            "relates_to": queryset.filter(pk__in=relates_to_issues).values(
-                *fields
+            .values(*fields),
+            "blocked_by": queryset.filter(pk__in=blocked_by_issues)
+            .annotate(
+                relation_type=Value("blocked_by", output_field=CharField())
             )
-            | queryset.filter(pk__in=relates_to_issues_related).values(
-                *fields
-            ),
+            .values(*fields),
+            "duplicate": queryset.filter(pk__in=duplicate_issues)
+            .annotate(
+                relation_type=Value(
+                    "duplicate",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields)
+            | queryset.filter(pk__in=duplicate_issues_related)
+            .annotate(
+                relation_type=Value(
+                    "duplicate",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields),
+            "relates_to": queryset.filter(pk__in=relates_to_issues)
+            .annotate(
+                relation_type=Value(
+                    "relates_to",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields)
+            | queryset.filter(pk__in=relates_to_issues_related)
+            .annotate(
+                relation_type=Value(
+                    "relates_to",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
