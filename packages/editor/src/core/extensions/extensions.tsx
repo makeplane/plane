@@ -70,6 +70,7 @@ export const CoreEditorExtensions = ({
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
+    history: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
       width: 1,
