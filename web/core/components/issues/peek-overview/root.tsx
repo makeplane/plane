@@ -77,13 +77,19 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
+          setLoader(true);
+          setError(false);
           await fetchIssue(
             workspaceSlug,
             projectId,
             issueId,
             is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
           );
+          setLoader(false);
+          setError(false);
         } catch (error) {
+          setLoader(false);
+          setError(true);
           console.error("Error fetching the parent issue");
         }
       },
@@ -382,17 +388,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   useEffect(() => {
     if (peekIssue) {
-      setLoader(true);
-      setError(false);
-      issueOperations
-        .fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId)
-        .catch((error) => {
-          console.error("Error fetching the issue", error);
-          setError(true);
-        })
-        .finally(() => {
-          setLoader(false);
-        });
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
     }
   }, [peekIssue, issueOperations]);
 
