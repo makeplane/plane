@@ -1,16 +1,14 @@
 "use client";
 
 import { FC, useState } from "react";
-// hooks
-// ui
 import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
-import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-// icons
-// types
+// ui
+import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateTimeAgoShort } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
-import { useIssueDetail, useMember } from "@/hooks/store";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 
@@ -28,7 +26,6 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     link: { getLinkById },
   } = useIssueDetail();
-  const { getUserDetails } = useMember();
 
   // state
   const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
@@ -40,91 +37,80 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
-  const createdByDetails = getUserDetails(linkDetail.created_by_id);
-
   return (
-    <div key={linkId}>
+    <>
       <IssueLinkCreateUpdateModal
         isModalOpen={isIssueLinkModalOpen}
         handleModal={toggleIssueLinkModal}
         linkOperations={linkOperations}
         preloadedData={linkDetail}
       />
-
-      <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
-        <div
-          className="flex w-full cursor-pointer items-start justify-between gap-2"
-          onClick={() => {
-            copyTextToClipboard(linkDetail.url);
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Link copied!",
-              message: "Link copied to clipboard",
-            });
-          }}
-        >
-          <div className="flex items-start gap-2 truncate">
-            <span className="py-1">
-              <LinkIcon className="h-3 w-3 flex-shrink-0" />
-            </span>
-            <Tooltip
-              tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              isMobile={isMobile}
+      <div
+        key={linkId}
+        className="col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-8 flex-shrink-0 px-3 bg-custom-background-90 border-[0.5px] border-custom-border-200 rounded"
+      >
+        <div className="flex items-center gap-2.5 truncate">
+          <LinkIcon className="h-3 w-3 flex-shrink-0" />
+          <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
+            <span
+              className="truncate text-xs cursor-pointer"
+              onClick={() => {
+                copyTextToClipboard(linkDetail.url);
+                setToast({
+                  type: TOAST_TYPE.SUCCESS,
+                  title: "Link copied!",
+                  message: "Link copied to clipboard",
+                });
+              }}
             >
-              <span className="truncate text-xs">
-                {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              </span>
-            </Tooltip>
-          </div>
-
-          {!isNotAllowed && (
-            <div className="z-[1] flex flex-shrink-0 items-center gap-2">
-              <button
-                type="button"
-                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleIssueLinkModal(true);
-                }}
-              >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
-              </button>
-              <a
-                href={linkDetail.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
-              >
-                <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
-              </a>
-              <button
-                type="button"
-                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  linkOperations.remove(linkDetail.id);
-                }}
-              >
-                <Trash2 className="h-3 w-3" />
-              </button>
-            </div>
-          )}
+              {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+            </span>
+          </Tooltip>
         </div>
-
-        <div className="px-5">
-          <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
-            Added {calculateTimeAgo(linkDetail.created_at)}
-            <br />
-            {createdByDetails && (
-              <>
-                by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}
-              </>
-            )}
+        <div className="flex items-center gap-1">
+          <p className="p-1 text-xs align-bottom leading-5 text-custom-text-300">
+            {calculateTimeAgoShort(linkDetail.created_at)}
           </p>
+          <a
+            href={linkDetail.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative grid place-items-center rounded p-1 text-custom-text-300 outline-none hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
+          >
+            <ExternalLink className="h-3.5 w-3.5 stroke-[1.5]" />
+          </a>
+          <CustomMenu
+            ellipsis
+            buttonClassName="text-custom-text-300 hover:text-custom-text-200"
+            placement="bottom-end"
+            closeOnSelect
+            disabled={isNotAllowed}
+          >
+            <CustomMenu.MenuItem
+              className="flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleIssueLinkModal(true);
+              }}
+            >
+              <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              Edit
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              className="flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                linkOperations.remove(linkDetail.id);
+              }}
+            >
+              <Trash2 className="h-3 w-3" />
+              Delete
+            </CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
       </div>
-    </div>
+    </>
   );
 };
