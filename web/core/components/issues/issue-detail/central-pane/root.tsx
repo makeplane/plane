@@ -66,7 +66,7 @@ export const CentralPane: FC<Props> = observer((props) => {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center flex-wrap gap-2">
         {headerComponents.map((HeaderComponent, index) => (
           <HeaderComponent
             key={index}

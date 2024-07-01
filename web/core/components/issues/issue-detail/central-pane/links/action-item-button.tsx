@@ -108,22 +108,9 @@ export const IssueLinksActionButton: FC<Props> = observer((props) => {
         handleModal={toggleIssueLinkModal}
         linkOperations={handleLinkOperations}
       />
-      {customButton ? (
-        <button onClick={handleOnClick} disabled={disabled}>
-          {customButton}
-        </button>
-      ) : (
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
-            disabled ? "cursor-not-allowed" : "cursor-pointer"
-          }`}
-          onClick={handleOnClick}
-          disabled={disabled}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
-      )}
+      <button type="button" onClick={handleOnClick} disabled={disabled}>
+        {customButton ? customButton : <Plus className="h-4 w-4" />}
+      </button>
     </>
   );
 });
