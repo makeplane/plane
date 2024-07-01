@@ -1,6 +1,7 @@
 import uuid
 
 from django.conf import settings
+from django.utils import timezone
 
 # Django imports
 from django.db import models
@@ -66,6 +67,15 @@ class Page(BaseModel):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"
 
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(Page, self).save(*args, **kwargs)
+
 
 class PageLog(BaseModel):
     TYPE_CHOICES = (
@@ -93,7 +103,9 @@ class PageLog(BaseModel):
         verbose_name="Transaction Type",
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_page_log",
     )
 
     class Meta:
@@ -246,4 +258,27 @@ class TeamPage(BaseModel):
         verbose_name = "Team Page"
         verbose_name_plural = "Team Pages"
         db_table = "team_pages"
+        ordering = ("-created_at",)
+
+
+class PageVersion(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    page = models.ForeignKey(
+        "db.Page",
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    description_binary = models.BinaryField(null=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Page Version"
+        verbose_name_plural = "Page Versions"
+        db_table = "page_versions"
         ordering = ("-created_at",)
