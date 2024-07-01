@@ -84,6 +84,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           "group selected-issue-row": isIssueSelected,
           "border-[0.5px] border-custom-border-400": isIssueActive,
         })}
+        verticalOffset={100}
       >
         <IssueRowDetails
           issueId={issueId}
