@@ -50,7 +50,7 @@ export class ProjectViewStore implements IProjectViewStore {
   viewMap: Record<string, IProjectView> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
-  filters: TViewFilters = { searchQuery: "", sortBy: "asc", sortKey: "created_at" };
+  filters: TViewFilters = { searchQuery: "", sortBy: "desc", sortKey: "updated_at" };
   // root store
   rootStore;
   // services
