@@ -75,6 +75,37 @@
   border-radius: 4px;
 }
 
+/* for targetting the taks list items */
+li.ProseMirror-selectednode:not(.dragging)[data-checked]::after {
+  margin-left: -5px;
+}
+
+/* for targetting the unordered list items */
+ul > li.ProseMirror-selectednode:not(.dragging)::after {
+  margin-left: -10px; /* Adjust as needed */
+}
+
+/* Initialize a counter for the ordered list */
+ol {
+  counter-reset: item;
+}
+
+/* for targetting the ordered list items */
+ol > li.ProseMirror-selectednode:not(.dragging)::after {
+  counter-increment: item;
+  margin-left: -18px;
+}
+
+/* for targetting the ordered list items after the 9th item */
+ol > li:nth-child(n + 10).ProseMirror-selectednode:not(.dragging)::after {
+  margin-left: -25px;
+}
+
+/* for targetting the ordered list items after the 99th item */
+ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
+  margin-left: -35px;
+}
+
 .ProseMirror img {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;

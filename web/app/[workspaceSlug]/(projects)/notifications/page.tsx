@@ -36,7 +36,7 @@ const WorkspaceDashboardPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-ful h-full overflow-hidden overflow-y-auto">
+      <div className="w-full h-full overflow-hidden overflow-y-auto">
         <IssuePeekOverview embedIssue />
       </div>
     </>
