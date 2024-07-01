@@ -166,6 +166,33 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 </CustomMenu.MenuItem>
               )}
 
+              <CustomMenu.MenuItem
+                onClick={() =>
+                  subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`)
+                }
+              >
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <span>Copy issue link</span>
+                </div>
+              </CustomMenu.MenuItem>
+
+              {disabled && (
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    issue.project_id &&
+                      subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <X className="h-3.5 w-3.5" strokeWidth={2} />
+                    <span>Remove parent issue</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
+
+              <hr className="border-custom-border-300" />
+
               {disabled && (
                 <CustomMenu.MenuItem
                   onClick={() => {
@@ -179,39 +206,8 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
               )}
-
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`)
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                  <span>Copy issue link</span>
-                </div>
-              </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
-
-          {disabled && (
-            <>
-              {subIssueHelpers.issue_loader.includes(issue.id) ? (
-                <div className="flex size-5 flex-shrink-0 cursor-not-allowed items-center justify-center overflow-hidden rounded-sm transition-all">
-                  <Loader width={14} strokeWidth={2} className="animate-spin" />
-                </div>
-              ) : (
-                <div
-                  className="invisible flex size-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
-                  onClick={() => {
-                    issue.project_id &&
-                      subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
-                  }}
-                >
-                  <X width={14} strokeWidth={2} />
-                </div>
-              )}
-            </>
-          )}
         </div>
       )}
 

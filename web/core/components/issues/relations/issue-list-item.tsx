@@ -89,7 +89,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   return (
     <div key={relationIssueId}>
       {issue && (
-        <div className="group relative flex min-h-11 h-full w-full items-center gap-3 pr-2 py-1 transition-all hover:bg-custom-background-90">
+        <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
           <span className="size-5 flex-shrink-0" />
           <div className="flex w-full cursor-pointer items-center gap-2">
             <div
@@ -132,6 +132,23 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 </CustomMenu.MenuItem>
               )}
 
+              <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <span>Copy issue link</span>
+                </div>
+              </CustomMenu.MenuItem>
+
+              {!disabled && (
+                <CustomMenu.MenuItem onClick={handleRemoveRelation}>
+                  <div className="flex items-center gap-2">
+                    <X className="h-3.5 w-3.5" strokeWidth={2} />
+                    <span>Remove relation</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
+              <hr className="border-custom-border-300" />
+
               {!disabled && (
                 <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                   <div className="flex items-center gap-2">
@@ -140,23 +157,8 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
               )}
-
-              <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                  <span>Copy issue link</span>
-                </div>
-              </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
-          {!disabled && (
-            <button
-              className="invisible flex size-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
-              onClick={handleRemoveRelation}
-            >
-              <X width={14} strokeWidth={2} />
-            </button>
-          )}
         </div>
       )}
     </div>
