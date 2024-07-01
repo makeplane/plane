@@ -132,7 +132,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
 
-      <div className="w-full h-full !text-base">
+      <div className="w-full !text-base">
         {issueId && (
           <div
             ref={issuePeekOverviewRef}
