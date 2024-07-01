@@ -12,7 +12,7 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   executeCommand: (commandName: EditorMenuItemNames) => void;
-  handleSubmit: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  handleSubmit: () => void;
   isCommentEmpty: boolean;
   isSubmitting: boolean;
   showSubmitButton: boolean;
@@ -95,7 +95,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
         {showSubmitButton && (
           <div className="sticky right-1">
             <Button
-              type="submit"
+              type="button"
               variant="primary"
               className="px-2.5 py-1.5 text-xs"
               onClick={handleSubmit}
