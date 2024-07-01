@@ -13,6 +13,10 @@ on:
         type: boolean
         required: false
         default: false
+      base_tag_name:
+        description: 'Base Tag Name'
+        required: false
+        default: ''
   release:
     types: [released, prereleased]
 
@@ -52,7 +56,9 @@ jobs:
             echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
 
-            if [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
+            if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+              echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
+            elif [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
               echo "AIO_BASE_TAG=preview" >> $GITHUB_OUTPUT
             else
               echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT

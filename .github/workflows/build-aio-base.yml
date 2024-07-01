@@ -5,7 +5,7 @@ on:
     inputs:
       base_tag_name:
         description: 'Base Tag Name'
-        required: true
+        required: false
         default: ''
 
 env:
