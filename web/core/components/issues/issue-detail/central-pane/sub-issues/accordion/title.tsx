@@ -35,7 +35,7 @@ export const SubIssuesAccordionTitle: FC<Props> = observer((props) => {
 
   // indicator element
   const indicatorElement = (
-    <div className="flex items-center gap-1.5 text-custom-text-300 text-xs">
+    <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
       <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
       <span>
         {completedCount}/{totalCount} Done

@@ -2,7 +2,7 @@ import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
-import { IssueAttachmentsList, TAttachmentOperations } from "@/components/issues/attachment";
+import { IssueAttachmentItemList, TAttachmentOperations } from "@/components/issues/attachment";
 // hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
 
@@ -93,7 +93,8 @@ export const IssueAttachmentsAccordionContent: FC<Props> = observer((props) => {
     [captureIssueEvent, workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
   );
   return (
-    <IssueAttachmentsList
+    <IssueAttachmentItemList
+      workspaceSlug={workspaceSlug}
       issueId={issueId}
       disabled={disabled}
       handleAttachmentOperations={handleAttachmentOperations}
