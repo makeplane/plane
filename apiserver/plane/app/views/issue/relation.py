@@ -176,11 +176,11 @@ class IssueRelationViewSet(BaseViewSet):
             "duplicate": queryset.filter(pk__in=duplicate_issues).values(
                 *fields
             )
-            + queryset.filter(pk__in=duplicate_issues_related).values(*fields),
+            | queryset.filter(pk__in=duplicate_issues_related).values(*fields),
             "relates_to": queryset.filter(pk__in=relates_to_issues).values(
                 *fields
             )
-            + queryset.filter(pk__in=relates_to_issues_related).values(
+            | queryset.filter(pk__in=relates_to_issues_related).values(
                 *fields
             ),
         }
