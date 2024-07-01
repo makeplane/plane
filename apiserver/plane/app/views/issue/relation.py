@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, OuterRef, F, Func
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -20,6 +20,9 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     Project,
     IssueRelation,
+    Issue,
+    IssueAttachment,
+    IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 
@@ -61,56 +64,115 @@ class IssueRelationViewSet(BaseViewSet):
             .order_by("-created_at")
             .distinct()
         )
-
+        # get all blocking issues
         blocking_issues = issue_relations.filter(
             relation_type="blocked_by", related_issue_id=issue_id
-        )
+        ).values_list("issue_id", flat=True)
+
+        # get all blocked by issues
         blocked_by_issues = issue_relations.filter(
             relation_type="blocked_by", issue_id=issue_id
-        )
+        ).values_list("related_issue_id", flat=True)
+
+        # get all duplicate issues
         duplicate_issues = issue_relations.filter(
             issue_id=issue_id, relation_type="duplicate"
-        )
+        ).values_list("related_issue_id", flat=True)
+
+        # get all relates to issues
         duplicate_issues_related = issue_relations.filter(
             related_issue_id=issue_id, relation_type="duplicate"
-        )
+        ).values_list("issue_id", flat=True)
+
+        # get all relates to issues
         relates_to_issues = issue_relations.filter(
             issue_id=issue_id, relation_type="relates_to"
-        )
+        ).values_list("related_issue_id", flat=True)
+
+        # get all relates to issues
         relates_to_issues_related = issue_relations.filter(
             related_issue_id=issue_id, relation_type="relates_to"
-        )
+        ).values_list("issue_id", flat=True)
 
-        blocked_by_issues_serialized = IssueRelationSerializer(
-            blocked_by_issues, many=True
-        ).data
-        duplicate_issues_serialized = IssueRelationSerializer(
-            duplicate_issues, many=True
-        ).data
-        relates_to_issues_serialized = IssueRelationSerializer(
-            relates_to_issues, many=True
-        ).data
+        queryset = (
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        ).distinct()
 
-        # revere relation for blocked by issues
-        blocking_issues_serialized = RelatedIssueSerializer(
-            blocking_issues, many=True
-        ).data
-        # reverse relation for duplicate issues
-        duplicate_issues_related_serialized = RelatedIssueSerializer(
-            duplicate_issues_related, many=True
-        ).data
-        # reverse relation for related issues
-        relates_to_issues_related_serialized = RelatedIssueSerializer(
-            relates_to_issues_related, many=True
-        ).data
+        # Fields
+        fields = [
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "sub_issues_count",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "attachment_count",
+            "link_count",
+            "is_draft",
+            "archived_at",
+        ]
 
         response_data = {
-            "blocking": blocking_issues_serialized,
-            "blocked_by": blocked_by_issues_serialized,
-            "duplicate": duplicate_issues_serialized
-            + duplicate_issues_related_serialized,
-            "relates_to": relates_to_issues_serialized
-            + relates_to_issues_related_serialized,
+            "blocking": queryset.filter(pk__in=blocking_issues).values(
+                *fields
+            ),
+            "blocked_by": queryset.filter(pk__in=blocked_by_issues).values(
+                *fields
+            ),
+            "duplicate": queryset.filter(pk__in=duplicate_issues).values(
+                *fields
+            )
+            + queryset.filter(pk__in=duplicate_issues_related).values(*fields),
+            "relates_to": queryset.filter(pk__in=relates_to_issues).values(
+                *fields
+            )
+            + queryset.filter(pk__in=relates_to_issues_related).values(
+                *fields
+            ),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
