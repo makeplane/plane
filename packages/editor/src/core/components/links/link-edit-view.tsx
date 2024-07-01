@@ -51,21 +51,6 @@ export const LinkEditView = ({
     return text;
   };
 
-  const isValidUrl = (urlString: string) => {
-    const urlPattern = new RegExp(
-      "^(https?:\\/\\/)?" + // validate protocol
-        "([\\w-]+\\.)+[\\w-]{2,}" + // validate domain name
-        "|((\\d{1,3}\\.){3}\\d{1,3})" + // validate IP (v4) address
-        "(\\:\\d+)?(\\/[-\\w.%]+)*" + // validate port and path
-        "(\\?[;&\\w.%=-]*)?" + // validate query string
-        "(\\#[-\\w]*)?$", // validate fragment locator
-      "i"
-    );
-    const regexTest = urlPattern.test(urlString);
-    const urlTest = isValidHttpUrl(urlString); // Ensure you have defined isValidHttpUrl
-    return regexTest && urlTest;
-  };
-
   const handleUpdateLink = (url: string) => {
     setLocalUrl(url);
   };
@@ -74,7 +59,7 @@ export const LinkEditView = ({
     () => () => {
       if (linkRemoved.current) return;
 
-      const url = isValidUrl(localUrl) ? localUrl : viewProps.url;
+      const url = isValidHttpUrl(localUrl) ? localUrl : viewProps.url;
 
       if (to >= editor.state.doc.content.size) return;
 
