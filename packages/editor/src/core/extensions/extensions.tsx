@@ -125,6 +125,7 @@ export const CoreEditorExtensions = ({
   Markdown.configure({
     html: true,
     transformPastedText: true,
+    breaks: true,
   }),
   Table,
   TableHeader,
