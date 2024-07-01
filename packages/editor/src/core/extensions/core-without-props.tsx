@@ -1,4 +1,3 @@
-import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -46,10 +45,7 @@ export const CoreEditorExtensionsWithoutProps = () => [
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
-    dropcursor: {
-      color: "rgba(var(--color-text-100))",
-      width: 1,
-    },
+    dropcursor: false,
   }),
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
@@ -58,7 +54,6 @@ export const CoreEditorExtensionsWithoutProps = () => [
     },
   }),
   CustomKeymap,
-  // ListKeymap,
   CustomLinkExtension.configure({
     openOnClick: true,
     autolink: true,
@@ -105,16 +100,4 @@ export const CoreEditorExtensionsWithoutProps = () => [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
-  Placeholder.configure({
-    placeholder: ({ editor, node }) => {
-      if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
-
-      const shouldHidePlaceholder =
-        editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");
-      if (shouldHidePlaceholder) return "";
-
-      return "Press '/' for commands...";
-    },
-    includeChildren: true,
-  }),
 ];

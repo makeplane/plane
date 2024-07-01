@@ -30,6 +30,8 @@ export const CloudEditionBadge = observer(() => {
       : null,
     {
       errorRetryCount: 2,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
     }
   );
 

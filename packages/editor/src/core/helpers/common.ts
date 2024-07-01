@@ -61,20 +61,3 @@ export const isValidHttpUrl = (string: string): boolean => {
 
   return url.protocol === "http:" || url.protocol === "https:";
 };
-
-/**
- * @description return an object with contentJSON and editorSchema
- * @description contentJSON- ProseMirror JSON from HTML content
- * @description editorSchema- editor schema from extensions
- * @param {string} html
- * @returns {object} {contentJSON, editorSchema}
- */
-export const generateJSONfromHTML = (html: string) => {
-  const extensions = CoreEditorExtensionsWithoutProps();
-  const contentJSON = generateJSON(html ?? "<p></p>", extensions as Extensions);
-  const editorSchema = getSchema(extensions as Extensions);
-  return {
-    contentJSON,
-    editorSchema,
-  };
-};
