@@ -142,141 +142,133 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",
             }}
           >
-            {isLoading ? (
-              <IssuePeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />
-            ) : (
+            {isLoading && <IssuePeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />}
+            {isError && (
+              <div className="relative h-full w-full overflow-hidden">
+                <IssuePeekOverviewError removeRoutePeekId={removeRoutePeekId} />
+              </div>
+            )}
+            {!isLoading && !isError && issue && (
               <>
-                {isError ? (
-                  <div className="relative h-full w-full overflow-hidden">
-                    <IssuePeekOverviewError removeRoutePeekId={removeRoutePeekId} />
-                  </div>
-                ) : (
-                  <>
-                    {/* header */}
-                    <IssuePeekOverviewHeader
-                      peekMode={peekMode}
-                      setPeekMode={(value) => setPeekMode(value)}
-                      removeRoutePeekId={removeRoutePeekId}
-                      toggleDeleteIssueModal={toggleDeleteIssueModal}
-                      toggleArchiveIssueModal={toggleArchiveIssueModal}
-                      handleRestoreIssue={handleRestore}
-                      isArchived={is_archived}
-                      issueId={issueId}
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      isSubmitting={isSubmitting}
-                      disabled={disabled}
-                      embedIssue={embedIssue}
-                    />
-                    {/* content */}
-                    <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
-                      {issue && (
-                        <>
-                          {["side-peek", "modal"].includes(peekMode) ? (
-                            <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
-                              <PeekOverviewIssueDetails
-                                workspaceSlug={workspaceSlug}
-                                projectId={projectId}
-                                issueId={issueId}
-                                issueOperations={issueOperations}
-                                disabled={disabled || is_archived}
-                                isArchived={is_archived}
-                                isSubmitting={isSubmitting}
-                                setIsSubmitting={(value) => setIsSubmitting(value)}
-                              />
+                {/* header */}
+                <IssuePeekOverviewHeader
+                  peekMode={peekMode}
+                  setPeekMode={(value) => setPeekMode(value)}
+                  removeRoutePeekId={removeRoutePeekId}
+                  toggleDeleteIssueModal={toggleDeleteIssueModal}
+                  toggleArchiveIssueModal={toggleArchiveIssueModal}
+                  handleRestoreIssue={handleRestore}
+                  isArchived={is_archived}
+                  issueId={issueId}
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  isSubmitting={isSubmitting}
+                  disabled={disabled}
+                  embedIssue={embedIssue}
+                />
+                {/* content */}
+                <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
+                  {["side-peek", "modal"].includes(peekMode) ? (
+                    <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
+                      <PeekOverviewIssueDetails
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        issueOperations={issueOperations}
+                        disabled={disabled || is_archived}
+                        isArchived={is_archived}
+                        isSubmitting={isSubmitting}
+                        setIsSubmitting={(value) => setIsSubmitting(value)}
+                      />
 
-                              {currentUser && (
-                                <SubIssuesRoot
-                                  workspaceSlug={workspaceSlug}
-                                  projectId={projectId}
-                                  parentIssueId={issueId}
-                                  currentUser={currentUser}
-                                  disabled={disabled || is_archived}
-                                />
-                              )}
-
-                              <PeekOverviewIssueAttachments
-                                disabled={disabled || is_archived}
-                                issueId={issueId}
-                                projectId={projectId}
-                                workspaceSlug={workspaceSlug}
-                              />
-
-                              <PeekOverviewProperties
-                                workspaceSlug={workspaceSlug}
-                                projectId={projectId}
-                                issueId={issueId}
-                                issueOperations={issueOperations}
-                                disabled={disabled || is_archived}
-                              />
-
-                              <IssueActivity
-                                workspaceSlug={workspaceSlug}
-                                projectId={projectId}
-                                issueId={issueId}
-                                disabled={is_archived}
-                              />
-                            </div>
-                          ) : (
-                            <div className="vertical-scrollbar flex h-full w-full overflow-auto">
-                              <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
-                                <div className="space-y-3">
-                                  <PeekOverviewIssueDetails
-                                    workspaceSlug={workspaceSlug}
-                                    projectId={projectId}
-                                    issueId={issueId}
-                                    issueOperations={issueOperations}
-                                    disabled={disabled || is_archived}
-                                    isArchived={is_archived}
-                                    isSubmitting={isSubmitting}
-                                    setIsSubmitting={(value) => setIsSubmitting(value)}
-                                  />
-
-                                  {currentUser && (
-                                    <SubIssuesRoot
-                                      workspaceSlug={workspaceSlug}
-                                      projectId={projectId}
-                                      parentIssueId={issueId}
-                                      currentUser={currentUser}
-                                      disabled={disabled || is_archived}
-                                    />
-                                  )}
-
-                                  <PeekOverviewIssueAttachments
-                                    disabled={disabled || is_archived}
-                                    issueId={issueId}
-                                    projectId={projectId}
-                                    workspaceSlug={workspaceSlug}
-                                  />
-
-                                  <IssueActivity
-                                    workspaceSlug={workspaceSlug}
-                                    projectId={projectId}
-                                    issueId={issueId}
-                                    disabled={is_archived}
-                                  />
-                                </div>
-                              </div>
-                              <div
-                                className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 ${
-                                  is_archived ? "pointer-events-none" : ""
-                                }`}
-                              >
-                                <PeekOverviewProperties
-                                  workspaceSlug={workspaceSlug}
-                                  projectId={projectId}
-                                  issueId={issueId}
-                                  issueOperations={issueOperations}
-                                  disabled={disabled || is_archived}
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </>
+                      {currentUser && (
+                        <SubIssuesRoot
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          parentIssueId={issueId}
+                          currentUser={currentUser}
+                          disabled={disabled || is_archived}
+                        />
                       )}
+
+                      <PeekOverviewIssueAttachments
+                        disabled={disabled || is_archived}
+                        issueId={issueId}
+                        projectId={projectId}
+                        workspaceSlug={workspaceSlug}
+                      />
+
+                      <PeekOverviewProperties
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        issueOperations={issueOperations}
+                        disabled={disabled || is_archived}
+                      />
+
+                      <IssueActivity
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        disabled={is_archived}
+                      />
                     </div>
-                  </>
-                )}
+                  ) : (
+                    <div className="vertical-scrollbar flex h-full w-full overflow-auto">
+                      <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
+                        <div className="space-y-3">
+                          <PeekOverviewIssueDetails
+                            workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            issueId={issueId}
+                            issueOperations={issueOperations}
+                            disabled={disabled || is_archived}
+                            isArchived={is_archived}
+                            isSubmitting={isSubmitting}
+                            setIsSubmitting={(value) => setIsSubmitting(value)}
+                          />
+
+                          {currentUser && (
+                            <SubIssuesRoot
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              parentIssueId={issueId}
+                              currentUser={currentUser}
+                              disabled={disabled || is_archived}
+                            />
+                          )}
+
+                          <PeekOverviewIssueAttachments
+                            disabled={disabled || is_archived}
+                            issueId={issueId}
+                            projectId={projectId}
+                            workspaceSlug={workspaceSlug}
+                          />
+
+                          <IssueActivity
+                            workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            issueId={issueId}
+                            disabled={is_archived}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 ${
+                          is_archived ? "pointer-events-none" : ""
+                        }`}
+                      >
+                        <PeekOverviewProperties
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          issueOperations={issueOperations}
+                          disabled={disabled || is_archived}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>
