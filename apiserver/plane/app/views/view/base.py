@@ -32,6 +32,8 @@ from plane.db.models import (
     IssueLink,
     IssueView,
     Workspace,
+    WorkspaceMember,
+    ProjectMember,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -92,7 +94,9 @@ class WorkspaceViewViewSet(BaseViewSet):
             # Only update the view if owner is updating
             if workspace_view.owned_by_id != request.user.id:
                 return Response(
-                    {"error": "Only the owner of the view can update the view"},
+                    {
+                        "error": "Only the owner of the view can update the view"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -103,7 +107,32 @@ class WorkspaceViewViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, slug, pk):
+        workspace_view = IssueView.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+        )
+        workspace_member = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member=request.user,
+            role=20,
+            is_active=True,
+        )
+        if (
+            workspace_member.exists()
+            or workspace_view.owned_by == request.user
+        ):
+            workspace_view.delete()
+        else:
+            return Response(
+                {"error": "Only admin or owner can delete the view"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
@@ -360,7 +389,9 @@ class IssueViewViewSet(BaseViewSet):
             # Only update the view if owner is updating
             if issue_view.owned_by_id != request.user.id:
                 return Response(
-                    {"error": "Only the owner of the view can update the view"},
+                    {
+                        "error": "Only the owner of the view can update the view"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -371,7 +402,31 @@ class IssueViewViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, slug, project_id, pk):
+        project_view = IssueView.objects.get(
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+        project_member = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=20,
+            is_active=True,
+        )
+        if project_member.exists() or project_view.owned_by == request.user:
+            project_view.delete()
+        else:
+            return Response(
+                {"error": "Only admin or owner can delete the view"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
