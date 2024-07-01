@@ -1,7 +1,7 @@
 import { Fragment, Node as ProsemirrorNode, Schema } from "@tiptap/pm/model";
-
-import { createCell } from "src/core/extensions/table/table/utilities/create-cell";
-import { getTableNodeTypes } from "src/core/extensions/table/table/utilities/get-table-node-types";
+// extensions
+import { createCell } from "@/extensions/table/table/utilities/create-cell";
+import { getTableNodeTypes } from "@/extensions/table/table/utilities/get-table-node-types";
 
 export function createTable(
   schema: Schema,

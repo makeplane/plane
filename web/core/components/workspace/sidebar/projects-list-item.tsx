@@ -355,7 +355,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </span>
                     }
                     className={cn(
-                      "opacity-0 pointer-events-none flex-shrink-0 mr-1 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                      "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
                       {
                         "opacity-100 pointer-events-auto": isMenuActive,
                       }
@@ -404,7 +404,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <span>Copy link</span>
                       </span>
                     </CustomMenu.MenuItem>
-
                     {!isViewerOrGuest && (
                       <CustomMenu.MenuItem>
                         <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
@@ -444,7 +443,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     )}
                   >
                     <ChevronRight
-                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                      className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                         "rotate-90": open,
                       })}
                     />

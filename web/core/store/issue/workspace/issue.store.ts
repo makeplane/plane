@@ -1,8 +1,15 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { IssuePaginationOptions, TBulkOperationsPayload, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
-import { WorkspaceService } from "@/services/workspace.service";
+import {
+  IssuePaginationOptions,
+  TBulkOperationsPayload,
+  TIssue,
+  TIssuesResponse,
+  TLoader,
+  ViewFlags,
+} from "@plane/types";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 // types
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { IIssueRootStore } from "../root.store";

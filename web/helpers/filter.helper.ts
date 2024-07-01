@@ -30,12 +30,13 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   const [value, operator, from] = filter.split(";");
 
   const dateValue = getDate(value);
+  const differenceInDays = differenceInCalendarDays(date, new Date());
 
   if (operator === "custom" && from === "custom") {
-    if (value === "today") return differenceInCalendarDays(date, new Date()) === 0;
-    if (value === "yesterday") return differenceInCalendarDays(date, new Date()) === -1;
-    if (value === "last_7_days") return differenceInCalendarDays(date, new Date()) >= -7;
-    if (value === "last_30_days") return differenceInCalendarDays(date, new Date()) >= -30;
+    if (value === "today") return differenceInDays === 0;
+    if (value === "yesterday") return differenceInDays === -1;
+    if (value === "last_7_days") return differenceInDays >= -7;
+    if (value === "last_30_days") return differenceInDays >= -30;
   }
 
   if (!from && dateValue) {
@@ -45,16 +46,16 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
 
   if (from === "fromnow") {
     if (operator === "before") {
-      if (value === "1_weeks") return differenceInCalendarDays(date, new Date()) <= -7;
-      if (value === "2_weeks") return differenceInCalendarDays(date, new Date()) <= -14;
-      if (value === "1_months") return differenceInCalendarDays(date, new Date()) <= -30;
+      if (value === "1_weeks") return differenceInDays <= -7;
+      if (value === "2_weeks") return differenceInDays <= -14;
+      if (value === "1_months") return differenceInDays <= -30;
     }
 
     if (operator === "after") {
-      if (value === "1_weeks") return differenceInCalendarDays(date, new Date()) >= 7;
-      if (value === "2_weeks") return differenceInCalendarDays(date, new Date()) >= 14;
-      if (value === "1_months") return differenceInCalendarDays(date, new Date()) >= 30;
-      if (value === "2_months") return differenceInCalendarDays(date, new Date()) >= 60;
+      if (value === "1_weeks") return differenceInDays >= 7;
+      if (value === "2_weeks") return differenceInDays >= 14;
+      if (value === "1_months") return differenceInDays >= 30;
+      if (value === "2_months") return differenceInDays >= 60;
     }
   }
 

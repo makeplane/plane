@@ -16,6 +16,7 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EViewAccess } from "@/constants/views";
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "@/hooks/store";
@@ -138,6 +139,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         preLoadedData={{
           name: `${viewDetails?.name} 2`,
           description: viewDetails?.description,
+          access: viewDetails?.access ?? EViewAccess.PUBLIC,
           ...viewFilters,
         }}
       />

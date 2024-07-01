@@ -20,7 +20,8 @@ export abstract class APIService {
       (response) => response,
       (error) => {
         if (error.response && error.response.status === 401) {
-          window.location.reload();
+          const currentPath = window.location.pathname;
+          window.location.replace(`/${currentPath ? `?next_path=${currentPath}` : ``}`);
         }
         return Promise.reject(error);
       }

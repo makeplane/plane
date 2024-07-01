@@ -83,6 +83,8 @@ class OauthAdapter(Adapter):
                 code = "GITHUB_OAUTH_PROVIDER_ERROR"
             elif self.provider == "gitlab":
                 code = "GITLAB_OAUTH_PROVIDER_ERROR"
+            elif self.provider == "oidc":
+                code = "OIDC_PROVIDER_ERROR"
             else:
                 code = "OAUTH_NOT_CONFIGURED"
 

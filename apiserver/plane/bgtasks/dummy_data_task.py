@@ -28,6 +28,7 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     Page,
+    ProjectPage,
     PageLabel,
     Inbox,
     InboxIssue,
@@ -253,8 +254,20 @@ def create_pages(workspace, project, user_id, pages_count):
                 is_locked=False,
             )
         )
-
-    return Page.objects.bulk_create(pages, ignore_conflicts=True)
+    # Bulk create pages
+    pages = Page.objects.bulk_create(pages, ignore_conflicts=True)
+    # Add Page to project
+    ProjectPage.objects.bulk_create(
+        [
+            ProjectPage(
+                page=page,
+                project=project,
+                workspace=workspace,
+            )
+            for page in pages
+        ],
+        batch_size=1000,
+    )
 
 
 def create_page_labels(workspace, project, user_id, pages_count):
@@ -262,7 +275,9 @@ def create_page_labels(workspace, project, user_id, pages_count):
     labels = Label.objects.filter(project=project).values_list("id", flat=True)
     pages = random.sample(
         list(
-            Page.objects.filter(project=project).values_list("id", flat=True)
+            Page.objects.filter(projects__id=project.id).values_list(
+                "id", flat=True
+            )
         ),
         int(pages_count / 2),
     )
