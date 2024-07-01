@@ -80,6 +80,14 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (openOnHover) openDropdown();
   };
 
+  const handleMouseLeave = () => {
+    if (openOnHover && isOpen) {
+      setTimeout(() => {
+        closeDropdown();
+      }, 500);
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
@@ -117,6 +125,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       onKeyDownCapture={handleKeyDown}
       onClick={handleOnClick}
       onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {({ open }) => (
         <>
