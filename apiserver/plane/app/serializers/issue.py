@@ -509,7 +509,7 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
             "attributes",
             "issue_id",
             "updated_at",
-            "updated_by_id",
+            "updated_by",
         ]
         read_only_fields = fields
 
