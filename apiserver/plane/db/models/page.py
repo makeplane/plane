@@ -273,6 +273,11 @@ class PageVersion(BaseModel):
         related_name="page_versions",
     )
     last_saved_at = models.DateTimeField(default=timezone.now)
+    ownned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
@@ -282,3 +287,12 @@ class PageVersion(BaseModel):
         verbose_name_plural = "Page Versions"
         db_table = "page_versions"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(PageVersion, self).save(*args, **kwargs)
