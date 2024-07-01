@@ -11,8 +11,8 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 import { EViewAccess } from "@/constants/views";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -35,9 +35,11 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     membership: { currentWorkspaceRole },
+    data,
   } = useUser();
   // auth
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserProjectRoles.MEMBER;
+  const isOwner = view?.owned_by === data?.id;
+  const isAdmin = !!currentWorkspaceRole && currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.id}`;
   const handleCopyText = () =>
@@ -56,7 +58,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
       action: () => setUpdateViewModal(true),
       title: "Edit",
       icon: Pencil,
-      shouldRender: isEditingAllowed,
+      shouldRender: isOwner,
     },
     {
       key: "open-new-tab",
@@ -75,7 +77,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
       action: () => setDeleteViewModal(true),
       title: "Delete",
       icon: Trash2,
-      shouldRender: isEditingAllowed,
+      shouldRender: isOwner || isAdmin,
     },
   ];
 
