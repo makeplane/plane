@@ -132,7 +132,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
 
-      <div className="w-full h-full !text-base">
+      <div className="w-full !text-base">
         {issueId && (
           <div
             ref={issuePeekOverviewRef}
@@ -144,7 +144,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           >
             {isLoading && <IssuePeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />}
             {isError && (
-              <div className="relative h-full w-full overflow-hidden">
+              <div className="relative h-screen w-full overflow-hidden">
                 <IssuePeekOverviewError removeRoutePeekId={removeRoutePeekId} />
               </div>
             )}
