@@ -80,6 +80,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
     try {
       if (issue?.archived_at) await removeArchivedIssue(workspaceSlug, projectId, issueId);
       else await removeIssue(workspaceSlug, projectId, issueId);
+      router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
       setToast({
         title: "Success!",
         type: TOAST_TYPE.SUCCESS,
