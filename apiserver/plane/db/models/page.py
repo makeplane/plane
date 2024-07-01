@@ -93,7 +93,9 @@ class PageLog(BaseModel):
         verbose_name="Transaction Type",
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_page_log",
     )
 
     class Meta:
