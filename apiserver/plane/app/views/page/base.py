@@ -215,8 +215,15 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
         else:
+            issue_ids = PageLog.objects.filter(
+                page_id=pk, entity_name="issue"
+            ).values_list("entity_identifier", flat=True)
             return Response(
-                PageDetailSerializer(page).data, status=status.HTTP_200_OK
+                {
+                    "page": PageDetailSerializer(page).data,
+                    "issue_ids": issue_ids,
+                },
+                status=status.HTTP_200_OK,
             )
 
     def lock(self, request, slug, project_id, pk):
