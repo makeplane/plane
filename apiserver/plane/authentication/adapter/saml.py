@@ -151,9 +151,7 @@ class SAMLAdapter(Adapter):
         if errors:
             if not self.auth.is_authenticated():
                 # Log the errors
-                log_exception(
-                    AuthenticationException("Response not authenticated")
-                )
+                log_exception(Exception(errors))
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES[
                         "SAML_PROVIDER_ERROR"
@@ -161,7 +159,7 @@ class SAMLAdapter(Adapter):
                     error_message="SAML_PROVIDER_ERROR",
                 )
             # Log the errors
-            log_exception(AuthenticationException(errors))
+            log_exception(Exception(errors))
             raise AuthenticationException(
                 error_message=AUTHENTICATION_ERROR_CODES[
                     "SAML_PROVIDER_ERROR"
