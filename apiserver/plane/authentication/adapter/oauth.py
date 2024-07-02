@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.utils import timezone
@@ -57,7 +58,10 @@ class OauthAdapter(Adapter):
         try:
             headers = headers or {}
             response = requests.post(
-                self.get_token_url(), data=data, headers=headers
+                self.get_token_url(),
+                data=data,
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
             )
             response.raise_for_status()
             return response.json()
@@ -73,7 +77,11 @@ class OauthAdapter(Adapter):
             headers = {
                 "Authorization": f"Bearer {self.token_data.get('access_token')}"
             }
-            response = requests.get(self.get_user_info_url(), headers=headers)
+            response = requests.get(
+                self.get_user_info_url(),
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
