@@ -1,8 +1,10 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import update from "lodash/update";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
+  TCurrentSelectedNotification,
   TNotification,
   TNotificationFilter,
   TNotificationPaginatedInfo,
@@ -28,13 +30,13 @@ type TNotificationQueryParamType = ENotificationQueryParamType;
 export interface IWorkspaceNotificationStore {
   // observables
   loader: TNotificationLoader;
-  unreadNotificationsCount: TUnreadNotificationsCount | undefined;
+  unreadNotificationsCount: TUnreadNotificationsCount;
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
+  currentSelectedNotification: TCurrentSelectedNotification;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined;
   filters: TNotificationFilter;
   // computed
-  totalUnreadNotificationsCount: number;
   // computed functions
   notificationIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
   // helper actions
@@ -43,6 +45,8 @@ export interface IWorkspaceNotificationStore {
   updateBulkFilters: (filters: Partial<TNotificationFilter>) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
+  setCurrentSelectedNotification: (notification: TCurrentSelectedNotification) => void;
+  setUnreadNotificationsCount: (type: "increment" | "decrement") => void;
   getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
     workspaceSlug: string,
@@ -57,9 +61,18 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   paginatedCount = 30;
   // observables
   loader: TNotificationLoader = undefined;
-  unreadNotificationsCount: TUnreadNotificationsCount | undefined = undefined;
+  unreadNotificationsCount: TUnreadNotificationsCount = {
+    total_unread_notifications_count: 0,
+  };
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
+  currentSelectedNotification: TCurrentSelectedNotification = {
+    workspace_slug: undefined,
+    project_id: undefined,
+    notification_id: undefined,
+    issue_id: undefined,
+    is_inbox_issue: false,
+  };
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined = undefined;
   filters: TNotificationFilter = {
     type: {
@@ -76,15 +89,17 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     makeObservable(this, {
       // observables
       loader: observable.ref,
-      unreadNotificationsCount: observable.ref,
+      unreadNotificationsCount: observable,
       notifications: observable,
       currentNotificationTab: observable.ref,
+      currentSelectedNotification: observable,
       paginationInfo: observable,
       filters: observable,
       // computed
-      totalUnreadNotificationsCount: computed,
       // helper actions
       setCurrentNotificationTab: action,
+      setCurrentSelectedNotification: action,
+      setUnreadNotificationsCount: action,
       mutateNotifications: action,
       updateFilters: action,
       updateBulkFilters: action,
@@ -96,15 +111,6 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   }
 
   // computed
-  get totalUnreadNotificationsCount() {
-    let count: number = 0;
-    if (!this.unreadNotificationsCount) return count;
-
-    Object.values(this.unreadNotificationsCount).forEach((value) => {
-      count += value || 0;
-    });
-    return count;
-  }
 
   // computed functions
   /**
@@ -151,16 +157,14 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
         .map(([key]) => key)
         .join(",") || undefined;
 
-    const currentPage = this.paginationInfo ? Number(this.paginationInfo?.prev_cursor?.split(":")[1] || 0) + 1 : 0;
-
     const queryCursorNext =
       paramType === ENotificationQueryParamType.INIT
         ? `${this.paginatedCount}:0:0`
         : paramType === ENotificationQueryParamType.CURRENT
-          ? `${this.paginatedCount}:${currentPage}:0`
+          ? `${this.paginatedCount}:${0}:0`
           : paramType === ENotificationQueryParamType.NEXT && this.paginationInfo
             ? this.paginationInfo?.next_cursor
-            : `${this.paginatedCount}:${currentPage}:0`;
+            : `${this.paginatedCount}:${0}:0`;
 
     const queryParams: TNotificationPaginatedInfoQueryParams = {
       type: queryParamsType,
@@ -231,6 +235,27 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   setCurrentNotificationTab = (tab: TNotificationTab): void => {
     set(this, "currentNotificationTab", tab);
   };
+
+  /**
+   * @description set current selected notification
+   * @param { TCurrentSelectedNotification } notification
+   * @returns { void }
+   */
+  setCurrentSelectedNotification = (notification: TCurrentSelectedNotification): void => {
+    set(this, "currentSelectedNotification", notification);
+  };
+
+  /**
+   * @description set unread notifications count
+   * @param { "increment" | "decrement" } type
+   * @returns { void }
+   */
+  setUnreadNotificationsCount = (type: "increment" | "decrement"): void =>
+    runInAction(() => {
+      update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
+        type === "increment" ? count + 1 : count - 1
+      );
+    });
 
   /**
    * @description get unread notifications count

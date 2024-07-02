@@ -32,9 +32,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
                 label={
                   <div className="flex items-center gap-2">
                     <div className="font-medium">Notifications</div>
-                    <div className="rounded-full text-xs px-1.5 py-0.5 bg-custom-primary-100/20">
-                      {notificationsCount}
-                    </div>
+                    <div className="rounded-full text-xs px-1.5 py-0.5 bg-custom-primary-100">{notificationsCount}</div>
                   </div>
                 }
                 icon={<Bell className="h-4 w-4 text-custom-text-300" />}
