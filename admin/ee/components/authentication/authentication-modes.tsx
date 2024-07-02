@@ -1,6 +1,3 @@
-// base components
-import { getAuthenticationModes as getBaseAuthenticationModes } from "ce/components/authentication";
-
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -12,9 +9,12 @@ import {
 } from "@plane/types";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication";
+// helpers
+import { getBaseAuthenticationModes } from "@/helpers/authentication.helper";
+// plane admin components
 import { OIDCConfiguration, SAMLConfiguration } from "@/plane-admin/components/authentication";
 // images
-import OIDCLogo from "@/public/logos/oidc-logo.png";
+import OIDCLogo from "@/public/logos/oidc-logo.svg";
 import SAMLLogo from "@/public/logos/saml-logo.svg";
 
 type TInstanceAuthenticationMethodKeys = TBaseAuthenticationMethods | TInstanceEnterpriseAuthenticationMethodKeys;
@@ -41,14 +41,14 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
       key: "oidc",
       name: "OIDC",
       description: "Authenticate your users via the OpenID Connect protocol.",
-      icon: <Image src={OIDCLogo} height={20} width={20} alt="OIDC Logo" />,
+      icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
       config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },
     {
       key: "saml",
       name: "SAML",
       description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-      icon: <Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pb-0.5 pl-0.5" />,
+      icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
       config: <SAMLConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },
   ];
@@ -68,6 +68,7 @@ export const AuthenticationModes: React.FC<TAuthenticationModeProps> = observer(
           icon={method.icon}
           config={method.config}
           disabled={disabled}
+          unavailable={method.unavailable}
         />
       ))}
     </>

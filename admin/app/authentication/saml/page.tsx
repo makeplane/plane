@@ -64,7 +64,7 @@ const InstanceSAMLAuthenticationPage = observer(() => {
             name="SAML"
             description="Authenticate your users via Security Assertion Markup Language
           protocol."
-            icon={<Image src={SAMLLogo} height={26} width={26} alt="SAML Logo" className="pb-1 pl-0.5" />}
+            icon={<Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pl-0.5" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableSAMLConfig))}
@@ -81,7 +81,7 @@ const InstanceSAMLAuthenticationPage = observer(() => {
             withBorder={false}
           />
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md p-4">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceSAMLConfigForm config={formattedConfig} />
           ) : (

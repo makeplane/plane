@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/common";
 import { AuthenticationMethodCard } from "@/components/authentication";
 import { InstanceOIDCConfigForm } from "./form";
 // icons
-import OIDCLogo from "/public/logos/oidc-logo.png";
+import OIDCLogo from "/public/logos/oidc-logo.svg";
 
 const InstanceOIDCAuthenticationPage = observer(() => {
   // store
@@ -80,7 +80,7 @@ const InstanceOIDCAuthenticationPage = observer(() => {
             withBorder={false}
           />
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md p-4">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceOIDCConfigForm config={formattedConfig} />
           ) : (
