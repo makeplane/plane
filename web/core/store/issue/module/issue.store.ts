@@ -252,4 +252,6 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
   };
 
   archiveBulkIssues = this.bulkArchiveIssues;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

@@ -210,4 +210,6 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = undefined;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

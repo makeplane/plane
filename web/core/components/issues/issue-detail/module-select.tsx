@@ -47,11 +47,8 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         modulesToAdd.push(moduleId);
       }
     }
-    if (modulesToRemove.length > 0)
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, modulesToRemove);
 
-    if (modulesToAdd.length > 0)
-      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, modulesToAdd);
+    await issueOperations.changeModulesInIssue?.(workspaceSlug, projectId, issueId, modulesToAdd, modulesToRemove);
 
     setIsUpdating(false);
   };
