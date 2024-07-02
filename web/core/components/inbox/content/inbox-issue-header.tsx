@@ -101,7 +101,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   };
 
   const handleRedirection = (nextOrPreviousIssueId: string | undefined) => {
-    if (isNotificationEmbed === false) {
+    if (!isNotificationEmbed) {
       if (nextOrPreviousIssueId)
         router.push(
           `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
@@ -138,7 +138,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
-      if (isNotificationEmbed === false) router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
+      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });
   };
 
@@ -191,9 +191,9 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   );
 
   useEffect(() => {
-    if (isNotificationEmbed === false) document.addEventListener("keydown", onKeyDown);
+    if (!isNotificationEmbed) document.addEventListener("keydown", onKeyDown);
     return () => {
-      if (isNotificationEmbed === false) document.removeEventListener("keydown", onKeyDown);
+      if (!isNotificationEmbed) document.removeEventListener("keydown", onKeyDown);
     };
   }, [onKeyDown, isNotificationEmbed]);
 
