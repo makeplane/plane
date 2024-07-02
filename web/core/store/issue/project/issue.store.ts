@@ -167,4 +167,6 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
 
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

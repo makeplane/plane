@@ -169,4 +169,6 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = undefined;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

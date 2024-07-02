@@ -175,4 +175,6 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
 
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

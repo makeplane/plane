@@ -37,6 +37,7 @@ export interface IDraftIssues extends IBaseIssuesStore {
 
   archiveBulkIssues: undefined;
   quickAddIssue: undefined;
+  archiveIssue: undefined;
 }
 
 export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
@@ -169,4 +170,5 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
 
   archiveBulkIssues = undefined;
   quickAddIssue = undefined;
+  archiveIssue = undefined;
 }
