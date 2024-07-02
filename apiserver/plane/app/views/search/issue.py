@@ -1,5 +1,4 @@
 # Python imports
-import re
 
 # Django imports
 from django.db.models import Q
@@ -11,13 +10,7 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.db.models import (
-    Workspace,
-    Project,
     Issue,
-    Cycle,
-    Module,
-    Page,
-    IssueView,
 )
 from plane.utils.issue_search import search_issues
 

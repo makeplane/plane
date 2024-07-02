@@ -179,6 +179,7 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint
 from .search.issue import IssueSearchEndpoint

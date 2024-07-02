@@ -50,7 +50,14 @@ from .notification import (
     Notification,
     UserNotificationPreference,
 )
-from .page import Page, PageFavorite, PageLabel, PageLog, ProjectPage
+from .page import (
+    Page,
+    PageFavorite,
+    PageLabel,
+    PageLog,
+    ProjectPage,
+    PageVersion,
+)
 from .project import (
     Project,
     ProjectBaseModel,
@@ -101,3 +108,5 @@ from .webhook import Webhook, WebhookLog
 from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
+
+from .issue_type import IssueType
