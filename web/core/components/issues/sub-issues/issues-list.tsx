@@ -42,31 +42,24 @@ export const IssueList: FC<IIssueList> = observer((props) => {
   const subIssueIds = subIssuesByIssueId(parentIssueId);
 
   return (
-    <>
-      <div className="relative">
-        {subIssueIds &&
-          subIssueIds.length > 0 &&
-          subIssueIds.map((issueId) => (
-            <Fragment key={issueId}>
-              <IssueListItem
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                parentIssueId={parentIssueId}
-                rootIssueId={rootIssueId}
-                issueId={issueId}
-                spacingLeft={spacingLeft}
-                disabled={disabled}
-                handleIssueCrudState={handleIssueCrudState}
-                subIssueOperations={subIssueOperations}
-              />
-            </Fragment>
-          ))}
-
-        <div
-          className={`absolute bottom-0 top-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
-          style={{ left: `${spacingLeft - 12}px` }}
-        />
-      </div>
-    </>
+    <div className="relative">
+      {subIssueIds &&
+        subIssueIds.length > 0 &&
+        subIssueIds.map((issueId) => (
+          <Fragment key={issueId}>
+            <IssueListItem
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              parentIssueId={parentIssueId}
+              rootIssueId={rootIssueId}
+              issueId={issueId}
+              spacingLeft={spacingLeft}
+              disabled={disabled}
+              handleIssueCrudState={handleIssueCrudState}
+              subIssueOperations={subIssueOperations}
+            />
+          </Fragment>
+        ))}
+    </div>
   );
 });

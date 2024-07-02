@@ -10,6 +10,7 @@ export * from "./label";
 export * from "./confirm-issue-discard";
 export * from "./issue-update-status";
 export * from "./create-issue-toast-action-items";
+export * from "./relations";
 
 // issue details
 export * from "./issue-detail";

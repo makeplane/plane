@@ -12,3 +12,4 @@ export * from "./root";
 export * from "./sidebar";
 export * from "./subscription";
 export * from "./issue-detail-quick-actions";
+export * from "./central-pane";
