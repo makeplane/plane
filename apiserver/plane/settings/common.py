@@ -46,8 +46,10 @@ INSTALLED_APPS = [
     "plane.api",
     "plane.authentication",
     "plane.ee",
+    "plane.graphql",
     "plane.payment",
     # Third-party things
+    "strawberry.django",
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
