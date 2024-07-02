@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
+import { LogoSpinner } from "@/components/common";
 import {
   IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
@@ -42,7 +43,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
@@ -55,6 +56,14 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
+
+  if (isLoading) {
+    return (
+      <div className="relative flex h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
+  }
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
