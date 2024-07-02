@@ -34,6 +34,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     onMenuClose,
     tabIndex,
     closeOnSelect,
+    openOnHover = false,
   } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
@@ -68,12 +69,24 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (closeOnSelect) closeDropdown();
   };
 
-  const handleMenuButtonClick = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>)=>{
+  const handleMenuButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
-    e.preventDefault()
+    e.preventDefault();
     isOpen ? closeDropdown() : openDropdown();
     if (menuButtonOnClick) menuButtonOnClick();
-  }
+  };
+
+  const handleMouseEnter = () => {
+    if (openOnHover) openDropdown();
+  };
+
+  const handleMouseLeave = () => {
+    if (openOnHover && isOpen) {
+      setTimeout(() => {
+        closeDropdown();
+      }, 500);
+    }
+  };
 
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
@@ -111,6 +124,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       className={cn("relative w-min text-left", className)}
       onKeyDownCapture={handleKeyDown}
       onClick={handleOnClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {({ open }) => (
         <>
