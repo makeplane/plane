@@ -190,6 +190,7 @@ export class Notification implements INotification {
       const payload: Partial<TNotification> = {
         read_at: new Date().toISOString(),
       };
+      this.store.workspaceNotification.setUnreadNotificationsCount("decrement");
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.markNotificationAsRead(workspaceSlug, this.id);
       if (notification) {
@@ -198,6 +199,7 @@ export class Notification implements INotification {
       return notification;
     } catch (error) {
       runInAction(() => this.mutateNotification({ read_at: currentNotificationReadAt }));
+      this.store.workspaceNotification.setUnreadNotificationsCount("increment");
       throw error;
     }
   };
@@ -215,6 +217,7 @@ export class Notification implements INotification {
       const payload: Partial<TNotification> = {
         read_at: undefined,
       };
+      this.store.workspaceNotification.setUnreadNotificationsCount("increment");
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.markNotificationAsUnread(workspaceSlug, this.id);
       if (notification) {
@@ -222,6 +225,7 @@ export class Notification implements INotification {
       }
       return notification;
     } catch (error) {
+      this.store.workspaceNotification.setUnreadNotificationsCount("decrement");
       runInAction(() => this.mutateNotification({ read_at: currentNotificationReadAt }));
       throw error;
     }

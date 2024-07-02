@@ -85,9 +85,7 @@ export type TNotificationPaginatedInfo = {
 
 // notification count
 export type TUnreadNotificationsCount = {
-  created_issues: number | undefined;
-  my_issues: number | undefined;
-  subscribed_issues: number | undefined;
+  total_unread_notifications_count: number;
 };
 
 export type TCurrentSelectedNotification = {
