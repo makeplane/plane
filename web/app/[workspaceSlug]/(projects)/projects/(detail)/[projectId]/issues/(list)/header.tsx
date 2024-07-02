@@ -22,7 +22,7 @@ import {
 } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
-import { SPACE_BASE_URL } from "@/helpers/common.helper";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import {
@@ -107,8 +107,8 @@ export const ProjectIssuesHeader = observer(() => {
     },
     [workspaceSlug, projectId, updateFilters]
   );
-
-  const publishedURL = `${SPACE_BASE_URL}/issues/${currentProjectDetails?.anchor}`;
+  const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
+  const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
