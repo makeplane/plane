@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
+import { EmptyState } from "@/components/common";
 import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui";
@@ -20,17 +21,25 @@ import {
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useGlobalView, useIssues, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
+import emptyView from "@/public/empty-state/view.svg";
 import { IssuePeekOverview } from "../../peek-overview";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { TRenderQuickActions } from "../list/list-view-types";
 
-export const AllIssueLayoutRoot: React.FC = observer(() => {
+type Props = {
+  isDefaultView: boolean;
+};
+
+export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
+  const { isDefaultView } = props;
   // router
   const { workspaceSlug, globalViewId } = useParams();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const routeFilters: {
     [key: string]: string;
@@ -50,7 +59,9 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
-  const { fetchAllGlobalViews } = useGlobalView();
+  const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
+
+  const viewDetails = getViewDetailsById(globalViewId?.toString());
   // filter init from the query params
 
   const routerFilterParams = () => {
@@ -86,7 +97,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     if (workspaceSlug && globalViewId) fetchNextIssues(workspaceSlug.toString(), globalViewId.toString());
   }, [fetchNextIssues, workspaceSlug, globalViewId]);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
     async () => {
       if (workspaceSlug) {
@@ -161,6 +172,21 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     ),
     [canEditProperties, removeIssue, updateIssue, archiveIssue]
   );
+
+  // when the call is not loading and the view does not exist and the view is not a default view, show empty state
+  if (!isLoading && !viewDetails && !isDefaultView) {
+    return (
+      <EmptyState
+        image={emptyView}
+        title="View does not exist"
+        description="The view you are looking for does not exist or you don't have permission to view it."
+        primaryButton={{
+          text: "Go to All Issues",
+          onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
+        }}
+      />
+    );
+  }
 
   if (getIssueLoader() === "init-loader" || !globalViewId || !groupedIssueIds) {
     return <SpreadsheetLayoutLoader />;
