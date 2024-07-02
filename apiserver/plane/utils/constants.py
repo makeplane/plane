@@ -25,4 +25,6 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "calendar",
     "drive",
     "channels",
+    "upgrade",
+    "billing",
 ]
