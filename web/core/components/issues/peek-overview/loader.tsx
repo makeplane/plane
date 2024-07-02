@@ -16,7 +16,7 @@ export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => 
   const { isMobile } = usePlatformOS();
 
   return (
-    <Loader className="w-full h-full overflow-hidden p-5 space-y-6">
+    <Loader className="w-full h-screen overflow-hidden p-5 space-y-6">
       <div className="flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>

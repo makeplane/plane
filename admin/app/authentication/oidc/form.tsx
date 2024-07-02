@@ -12,6 +12,7 @@ import {
   TControllerInputFormField,
   CopyField,
   TCopyField,
+  CodeBlock,
 } from "@/components/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -73,7 +74,12 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_AUTHORIZE_URL",
       type: "text",
       label: "Authorize URL",
-      description: "The URL that brings up your IdP's authentication screen when your users click `Sign in with <name of IdP>`",
+      description: (
+        <>
+          The URL that brings up your IdP{"'"}s authentication screen when your users click the{" "}
+          <CodeBlock>{"Continue with"}</CodeBlock>
+        </>
+      ),
       placeholder: "https://example.com/",
       error: Boolean(errors.OIDC_AUTHORIZE_URL),
       required: true,
@@ -109,7 +115,11 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "OIDC_PROVIDER_NAME",
       type: "text",
       label: "IdP's name",
-      description: "Optional field for the name that your users see on the `Sign in with` button",
+      description: (
+        <>
+          Optional field for the name that your users see on the <CodeBlock>Continue with</CodeBlock> button
+        </>
+      ),
       placeholder: "Okta",
       error: Boolean(errors.OIDC_PROVIDER_NAME),
       required: false,
@@ -121,20 +131,32 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "Origin_URI",
       label: "Origin URI",
       url: `${originURL}/auth/oidc/`,
-      description: "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
+      description:
+        "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
     },
     {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/oidc/callback/`,
-      description:
-        "We will generate this for you. Add this in the `Sign-in redirect URI` field of your IdP.",
+      description: (
+        <>
+          We will generate this for you.Add this in the{" "}
+          <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field of
+          your IdP.
+        </>
+      ),
     },
     {
       key: "Logout_URI",
       label: "Logout URI",
       url: `${originURL}/auth/oidc/logout/`,
-      description: "We will generate this for you. Add this in the `Logout redirect URI` field of your IdP.",
+      description: (
+        <>
+          We will generate this for you. Add this in the{" "}
+          <CodeBlock darkerShade>Logout redirect URI</CodeBlock> field of
+          your IdP.
+        </>
+      ),
     },
   ];
 
@@ -177,8 +199,8 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       />
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
-            <div className="pt-2 text-xl font-medium">IdP-provided details for Plane</div>
+          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+            <div className="pt-2.5 text-xl font-medium">IdP-provided details for Plane</div>
             {OIDC_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -208,7 +230,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 py-4 my-2 bg-custom-background-80/60 rounded-lg">
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
               <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
               {OIDC_SERVICE_DETAILS.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />

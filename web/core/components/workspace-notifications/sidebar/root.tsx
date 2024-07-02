@@ -21,7 +21,7 @@ export const NotificationsSidebar: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { paginationInfo, loader, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
+  const { unreadNotificationsCount, loader, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
@@ -30,7 +30,7 @@ export const NotificationsSidebar: FC = observer(() => {
   const currentTabEmptyState = ENotificationTab.ALL
     ? EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE
     : EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE;
-  const totalNotificationCount = paginationInfo?.total_count || 0;
+  const totalNotificationCount = unreadNotificationsCount.total_unread_notifications_count;
 
   if (!workspaceSlug || !workspace) return <></>;
   return (

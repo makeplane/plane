@@ -3,6 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
+import { TCurrentSelectedNotification } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
@@ -12,7 +13,7 @@ import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/he
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail, useNotification } from "@/hooks/store";
+import { useIssueDetail, useNotification, useWorkspaceNotifications } from "@/hooks/store";
 
 type TNotificationItem = {
   workspaceSlug: string;
@@ -22,6 +23,7 @@ type TNotificationItem = {
 export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const { workspaceSlug, notificationId } = props;
   // hooks
+  const { currentSelectedNotification, setCurrentSelectedNotification } = useWorkspaceNotifications();
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   // states
@@ -44,14 +46,28 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       !isSnoozeStateModalOpen &&
       !customSnoozeModal
     ) {
-      setPeekIssue({ workspaceSlug, projectId, issueId });
+      const currentSelectedNotificationPayload: TCurrentSelectedNotification = {
+        workspace_slug: workspaceSlug,
+        project_id: projectId,
+        issue_id: issueId,
+        notification_id: notification?.id,
+        is_inbox_issue: notification?.is_inbox_issue || false,
+      };
+      setCurrentSelectedNotification(currentSelectedNotificationPayload);
+
       // make the notification as read
-      if (notification.read_at === null)
+      if (notification.read_at === null) {
         try {
           await markNotificationAsRead(workspaceSlug);
         } catch (error) {
           console.error(error);
         }
+      }
+
+      if (notification?.is_inbox_issue === false) {
+        setPeekIssue({ workspaceSlug, projectId, issueId });
+      } else {
+      }
     }
   };
 
@@ -61,8 +77,10 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
     <div
       className={cn(
         "relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
+        currentSelectedNotification && currentSelectedNotification?.notification_id === notification?.id
+          ? "bg-custom-background-80/30"
+          : "",
         notification.read_at === null ? "bg-custom-primary-100/5" : ""
-        // peekIssue && peekIssue?.issueId === issueId ? "bg-custom-background-80" : "
       )}
       onClick={handleNotificationIssuePeekOverview}
     >

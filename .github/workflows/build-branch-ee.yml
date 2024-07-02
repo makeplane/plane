@@ -18,6 +18,7 @@ on:
 env:
   TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
   ARM64_BUILD: ${{ github.event.inputs.arm64 }}
+  IS_PRERELEASE: ${{ github.event.release.prerelease }}
 
 jobs:
   branch_build_setup:
@@ -42,7 +43,7 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ github.event_name }}" == "release" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] ; then
+          if [ "${{ env.ARM64_BUILD }}" == "true" ] || ([ "${{ github.event_name }}" == "release" ] && [ "${{ env.IS_PRERELEASE }}" != "true" ]); then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT

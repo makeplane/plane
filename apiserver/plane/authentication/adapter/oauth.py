@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.utils import timezone
@@ -39,6 +40,18 @@ class OauthAdapter(Adapter):
         self.client_secret = client_secret
         self.code = code
 
+    def authentication_error_code(self):
+        if self.provider == "google":
+            return "GOOGLE_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "github":
+            return "GITHUB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "gitlab":
+            return "GITLAB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "oidc":
+            return "OIDC_PROVIDER_ERROR"
+        else:
+            return "OAUTH_NOT_CONFIGURED"
+
     def get_auth_url(self):
         return self.auth_url
 
@@ -57,12 +70,15 @@ class OauthAdapter(Adapter):
         try:
             headers = headers or {}
             response = requests.post(
-                self.get_token_url(), data=data, headers=headers
+                self.get_token_url(),
+                data=data,
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
             )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
-            code = self._provider_error_code()
+            code = self.authentication_error_code()
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[code],
                 error_message=str(code),
@@ -73,21 +89,15 @@ class OauthAdapter(Adapter):
             headers = {
                 "Authorization": f"Bearer {self.token_data.get('access_token')}"
             }
-            response = requests.get(self.get_user_info_url(), headers=headers)
+            response = requests.get(
+                self.get_user_info_url(),
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
-            if self.provider == "google":
-                code = "GOOGLE_OAUTH_PROVIDER_ERROR"
-            elif self.provider == "github":
-                code = "GITHUB_OAUTH_PROVIDER_ERROR"
-            elif self.provider == "gitlab":
-                code = "GITLAB_OAUTH_PROVIDER_ERROR"
-            elif self.provider == "oidc":
-                code = "OIDC_PROVIDER_ERROR"
-            else:
-                code = "OAUTH_NOT_CONFIGURED"
-
+            code = self.authentication_error_code()
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[code],
                 error_message=str(code),
