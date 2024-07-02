@@ -2,19 +2,19 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useIssueDetail } from "@/hooks/store";
-import { IssueLinkDetail } from "./link-detail";
+import { IssueLinkItem } from "./link-item";
 // hooks
 import { TLinkOperations } from "./root";
 
-export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
+type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 
-export type TIssueLinkList = {
+type TLinkList = {
   issueId: string;
   linkOperations: TLinkOperationsModal;
   disabled?: boolean;
 };
 
-export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
+export const LinkList: FC<TLinkList> = observer((props) => {
   // props
   const { issueId, linkOperations, disabled = false } = props;
   // hooks
@@ -31,7 +31,7 @@ export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
       {issueLinks &&
         issueLinks.length > 0 &&
         issueLinks.map((linkId) => (
-          <IssueLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} isNotAllowed={disabled} />
+          <IssueLinkItem key={linkId} linkId={linkId} linkOperations={linkOperations} isNotAllowed={disabled} />
         ))}
     </div>
   );

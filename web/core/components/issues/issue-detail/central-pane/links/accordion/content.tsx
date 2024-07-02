@@ -4,7 +4,7 @@ import { TIssueLink } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-import { IssueLinkList, TLinkOperations } from "../../../links";
+import { LinkList, TLinkOperations } from "../../../links";
 
 type Props = {
   workspaceSlug: string;
@@ -80,5 +80,5 @@ export const IssueLinksAccordionContent: FC<Props> = observer((props) => {
     [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink]
   );
 
-  return <IssueLinkList issueId={issueId} linkOperations={handleLinkOperations} />;
+  return <LinkList issueId={issueId} linkOperations={handleLinkOperations} disabled={disabled} />;
 });
