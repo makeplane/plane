@@ -16,7 +16,7 @@ import {
   VideoIcon,
 } from "@/components/icons/attachment";
 
-export const getFileIcon = (fileType: string, size: number) => {
+export const getFileIcon = (fileType: string, size: number = 28) => {
   switch (fileType) {
     case "pdf":
       return <PdfIcon height={size} width={size} />;
