@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useCallback } from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 
-export type TAccordionProps = {
+export type TCollapsibleProps = {
   title: string | React.ReactNode;
   children: React.ReactNode;
   buttonClassName?: string;
@@ -10,7 +10,7 @@ export type TAccordionProps = {
   defaultOpen?: boolean;
 };
 
-export const Accordion: FC<TAccordionProps> = (props) => {
+export const Collapsible: FC<TCollapsibleProps> = (props) => {
   const { title, children, buttonClassName, isOpen, handleToggle, defaultOpen } = props;
   // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(isOpen || defaultOpen ? true : false);
