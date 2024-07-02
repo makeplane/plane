@@ -65,3 +65,5 @@ pytz==2024.1
 PyJWT==2.8.0
 # SAML
 python3-saml==1.16.0
+# graphql
+strawberry-graphql-django==0.43.0

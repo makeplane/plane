@@ -58,7 +58,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
       <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm">
         <Link href={attachment.asset} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7">{getFileIcon(getFileExtension(attachment.asset))}</div>
+            <div className="h-7 w-7">{getFileIcon(getFileExtension(attachment.asset), 28)}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <Tooltip tooltipContent={getFileName(attachment.attributes.name)} isMobile={isMobile}>

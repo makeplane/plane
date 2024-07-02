@@ -13,7 +13,7 @@ import { AuthenticationMethodCard } from "@/components/authentication";
 import { UpgradeButton } from "@/components/common/upgrade-button";
 import { getBaseAuthenticationModes } from "@/helpers/authentication.helper";
 // images
-import OIDCLogo from "@/public/logos/oidc-logo.png";
+import OIDCLogo from "@/public/logos/oidc-logo.svg";
 import SAMLLogo from "@/public/logos/saml-logo.svg";
 
 export type TAuthenticationModeProps = {
@@ -32,7 +32,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
       key: "oidc",
       name: "OIDC",
       description: "Authenticate your users via the OpenID Connect protocol.",
-      icon: <Image src={OIDCLogo} height={20} width={20} alt="OIDC Logo" />,
+      icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
       config: <UpgradeButton />,
       unavailable: true,
     },
@@ -40,7 +40,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
       key: "saml",
       name: "SAML",
       description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-      icon: <Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pb-0.5 pl-0.5" />,
+      icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
       config: <UpgradeButton />,
       unavailable: true,
     },
