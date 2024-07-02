@@ -44,10 +44,19 @@ type TInboxIssueActionsHeader = {
   isSubmitting: "submitting" | "submitted" | "saved";
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
+  isNotificationEmbed: boolean;
 };
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssue, isSubmitting, isMobileSidebar, setIsMobileSidebar } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    inboxIssue,
+    isSubmitting,
+    isMobileSidebar,
+    setIsMobileSidebar,
+    isNotificationEmbed = false,
+  } = props;
   // states
   const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
@@ -58,7 +67,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
   const {
-    membership: { currentProjectRole },
+    membership: { currentProjectRoleByProjectId },
   } = useUser();
 
   const router = useAppRouter();
@@ -66,6 +75,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const issue = inboxIssue?.issue;
   // derived values
+  const currentProjectRole = currentProjectRoleByProjectId(projectId) || undefined;
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
   const canMarkAsDuplicate = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
@@ -240,22 +250,24 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-x-2">
-            <button
-              type="button"
-              className="rounded border border-custom-border-200 p-1.5"
-              onClick={() => handleInboxIssueNavigation("prev")}
-            >
-              <ChevronUp size={14} strokeWidth={2} />
-            </button>
-            <button
-              type="button"
-              className="rounded border border-custom-border-200 p-1.5"
-              onClick={() => handleInboxIssueNavigation("next")}
-            >
-              <ChevronDown size={14} strokeWidth={2} />
-            </button>
-          </div>
+          {!isNotificationEmbed && (
+            <div className="flex items-center gap-x-2">
+              <button
+                type="button"
+                className="rounded border border-custom-border-200 p-1.5"
+                onClick={() => handleInboxIssueNavigation("prev")}
+              >
+                <ChevronUp size={14} strokeWidth={2} />
+              </button>
+              <button
+                type="button"
+                className="rounded border border-custom-border-200 p-1.5"
+                onClick={() => handleInboxIssueNavigation("next")}
+              >
+                <ChevronDown size={14} strokeWidth={2} />
+              </button>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
@@ -313,12 +325,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 {isAllowed && (
                   <CustomMenu verticalEllipsis placement="bottom-start">
                     {canMarkAsAccepted && (
-                        <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
+                      <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
                         <div className="flex items-center gap-2">
                           <Clock size={14} strokeWidth={2} />
-                            {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
-                              ? "Un-snooze"
-                              : "Snooze"}
+                          {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
+                            ? "Un-snooze"
+                            : "Snooze"}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
