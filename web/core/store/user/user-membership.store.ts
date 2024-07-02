@@ -34,6 +34,9 @@ export interface IUserMembershipStore {
   currentWorkspaceRole: EUserWorkspaceRoles | undefined;
   currentWorkspaceAllProjectsRole: IUserProjectsRole | undefined;
 
+  // computed functions
+  currentProjectRoleByProjectId: (projectId: string) => EUserProjectRoles | undefined;
+
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;
   // fetch actions
@@ -156,6 +159,14 @@ export class UserMembershipStore implements IUserMembershipStore {
     return this.hasPermissionToProject[this.router.projectId];
   }
 
+  // computed functions
+  /**
+   * Returns the current project role by project id
+   * @param projectId
+   * @returns EUserProjectRoles
+   */
+  currentProjectRoleByProjectId = (projectId: string) => this.projectMemberInfo[projectId]?.role || undefined;
+
   /**
    * Fetches the current user workspace info
    * @param workspaceSlug
@@ -178,6 +189,7 @@ export class UserMembershipStore implements IUserMembershipStore {
    */
   fetchUserProjectInfo = async (workspaceSlug: string, projectId: string) =>
     await this.projectMemberService.projectMemberMe(workspaceSlug, projectId).then((response) => {
+      console.log("response", response);
       runInAction(() => {
         this.projectMemberInfo = {
           ...this.projectMemberInfo,

@@ -50,6 +50,7 @@ export type TNotification = {
   read_at: string | undefined;
   archived_at: string | undefined;
   snoozed_till: string | undefined;
+  is_inbox_issue: boolean | undefined;
   workspace: string | undefined;
   project: string | undefined;
   created_at: string | undefined;
@@ -87,4 +88,12 @@ export type TUnreadNotificationsCount = {
   created_issues: number | undefined;
   my_issues: number | undefined;
   subscribed_issues: number | undefined;
+};
+
+export type TCurrentSelectedNotification = {
+  workspace_slug: string | undefined;
+  project_id: string | undefined;
+  notification_id: string | undefined;
+  issue_id: string | undefined;
+  is_inbox_issue: boolean | undefined;
 };

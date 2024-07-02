@@ -4,18 +4,23 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { PageHead } from "@/components/core";
+import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
 const WorkspaceDashboardPage = observer(() => {
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { notificationIdsByWorkspaceId, getNotifications } = useWorkspaceNotifications();
+  const { currentSelectedNotification, notificationIdsByWorkspaceId, getNotifications } = useWorkspaceNotifications();
+  const {
+    membership: { fetchUserProjectInfo },
+  } = useUser();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
+  const { workspace_slug, project_id, issue_id, is_inbox_issue } = currentSelectedNotification;
 
   // fetch workspace notifications
   const notificationMutation =
@@ -29,15 +34,40 @@ const WorkspaceDashboardPage = observer(() => {
   useSWR(
     currentWorkspace?.slug ? `WORKSPACE_NOTIFICATION` : null,
     currentWorkspace?.slug
-      ? async () => getNotifications(currentWorkspace?.slug, notificationMutation, notificationLoader)
+      ? () => getNotifications(currentWorkspace?.slug, notificationMutation, notificationLoader)
       : null
+  );
+
+  // fetching user project member info
+  const { isLoading: projectMemberInfoLoader } = useSWR(
+    workspace_slug && project_id && is_inbox_issue
+      ? `PROJECT_MEMBER_PERMISSION_INFO_${workspace_slug}_${project_id}`
+      : null,
+    workspace_slug && project_id && is_inbox_issue ? () => fetchUserProjectInfo(workspace_slug, project_id) : null
   );
 
   return (
     <>
       <PageHead title={pageTitle} />
       <div className="w-full h-full overflow-hidden overflow-y-auto">
-        <IssuePeekOverview embedIssue />
+        {is_inbox_issue === true && workspace_slug && project_id && issue_id ? (
+          <>
+            {projectMemberInfoLoader ? (
+              <>Loading...</>
+            ) : (
+              <InboxContentRoot
+                setIsMobileSidebar={() => {}}
+                isMobileSidebar={false}
+                workspaceSlug={workspace_slug}
+                projectId={project_id}
+                inboxIssueId={issue_id}
+                isNotificationEmbed
+              />
+            )}
+          </>
+        ) : (
+          <IssuePeekOverview embedIssue />
+        )}
       </div>
     </>
   );

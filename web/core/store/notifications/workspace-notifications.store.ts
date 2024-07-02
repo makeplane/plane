@@ -3,6 +3,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
+  TCurrentSelectedNotification,
   TNotification,
   TNotificationFilter,
   TNotificationPaginatedInfo,
@@ -31,6 +32,7 @@ export interface IWorkspaceNotificationStore {
   unreadNotificationsCount: TUnreadNotificationsCount | undefined;
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
+  currentSelectedNotification: TCurrentSelectedNotification;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined;
   filters: TNotificationFilter;
   // computed
@@ -43,6 +45,7 @@ export interface IWorkspaceNotificationStore {
   updateBulkFilters: (filters: Partial<TNotificationFilter>) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
+  setCurrentSelectedNotification: (notification: TCurrentSelectedNotification) => void;
   getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
     workspaceSlug: string,
@@ -60,6 +63,13 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   unreadNotificationsCount: TUnreadNotificationsCount | undefined = undefined;
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
+  currentSelectedNotification: TCurrentSelectedNotification = {
+    workspace_slug: undefined,
+    project_id: undefined,
+    notification_id: undefined,
+    issue_id: undefined,
+    is_inbox_issue: false,
+  };
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined = undefined;
   filters: TNotificationFilter = {
     type: {
@@ -79,12 +89,14 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       unreadNotificationsCount: observable.ref,
       notifications: observable,
       currentNotificationTab: observable.ref,
+      currentSelectedNotification: observable,
       paginationInfo: observable,
       filters: observable,
       // computed
       totalUnreadNotificationsCount: computed,
       // helper actions
       setCurrentNotificationTab: action,
+      setCurrentSelectedNotification: action,
       mutateNotifications: action,
       updateFilters: action,
       updateBulkFilters: action,
@@ -151,16 +163,14 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
         .map(([key]) => key)
         .join(",") || undefined;
 
-    const currentPage = this.paginationInfo ? Number(this.paginationInfo?.prev_cursor?.split(":")[1] || 0) + 1 : 0;
-
     const queryCursorNext =
       paramType === ENotificationQueryParamType.INIT
         ? `${this.paginatedCount}:0:0`
         : paramType === ENotificationQueryParamType.CURRENT
-          ? `${this.paginatedCount}:${currentPage}:0`
+          ? `${this.paginatedCount}:${0}:0`
           : paramType === ENotificationQueryParamType.NEXT && this.paginationInfo
             ? this.paginationInfo?.next_cursor
-            : `${this.paginatedCount}:${currentPage}:0`;
+            : `${this.paginatedCount}:${0}:0`;
 
     const queryParams: TNotificationPaginatedInfoQueryParams = {
       type: queryParamsType,
@@ -230,6 +240,15 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   setCurrentNotificationTab = (tab: TNotificationTab): void => {
     set(this, "currentNotificationTab", tab);
+  };
+
+  /**
+   * @description set current selected notification
+   * @param { TCurrentSelectedNotification } notification
+   * @returns { void }
+   */
+  setCurrentSelectedNotification = (notification: TCurrentSelectedNotification): void => {
+    set(this, "currentSelectedNotification", notification);
   };
 
   /**
