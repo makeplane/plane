@@ -15,10 +15,18 @@ type TInboxContentRoot = {
   inboxIssueId: string;
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
+  isNotificationEmbed?: boolean;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxIssueId, isMobileSidebar, setIsMobileSidebar } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    inboxIssueId,
+    isMobileSidebar,
+    setIsMobileSidebar,
+    isNotificationEmbed = false,
+  } = props;
   /// router
   const router = useAppRouter();
   // states
@@ -33,11 +41,11 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   const isIssueAvailable = getIsIssueAvailable(inboxIssueId?.toString() || "");
 
   useEffect(() => {
-    if (!isIssueAvailable && inboxIssueId) {
+    if (!isIssueAvailable && inboxIssueId && !isNotificationEmbed) {
       router.replace(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isIssueAvailable]);
+  }, [isIssueAvailable, isNotificationEmbed]);
 
   useSWR(
     workspaceSlug && projectId && inboxIssueId
@@ -69,6 +77,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             projectId={projectId}
             inboxIssue={inboxIssue}
             isSubmitting={isSubmitting}
+            isNotificationEmbed={isNotificationEmbed || false}
           />
         </div>
         <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5 vertical-scrollbar scrollbar-md">

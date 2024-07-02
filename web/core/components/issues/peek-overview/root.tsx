@@ -3,9 +3,7 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// types
 import { TIssue } from "@plane/types";
-// ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView } from "@/components/issues";
@@ -60,7 +58,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     updateIssue,
     removeIssue,
     archiveIssue,
-    issue: { getIssueById, fetchIssue },
+    issue: { fetchIssue },
   } = useIssueDetail();
   const {
     addCycleToIssue,
@@ -72,19 +70,26 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
   // state
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const [error, setError] = useState(false);
 
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
+          setLoader(true);
+          setError(false);
           await fetchIssue(
             workspaceSlug,
             projectId,
             issueId,
             is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
           );
+          setLoader(false);
+          setError(false);
         } catch (error) {
+          setLoader(false);
+          setError(true);
           console.error("Error fetching the parent issue");
         }
       },
@@ -383,28 +388,23 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   useEffect(() => {
     if (peekIssue) {
-      setLoader(true);
-      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
-        setLoader(false);
-      });
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
     }
   }, [peekIssue, issueOperations]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
-  const issue = getIssueById(peekIssue.issueId) || undefined;
-
   const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const isLoading = !issue || loader ? true : false;
 
   return (
     <IssueView
       workspaceSlug={peekIssue.workspaceSlug}
       projectId={peekIssue.projectId}
       issueId={peekIssue.issueId}
-      isLoading={isLoading}
+      isLoading={loader}
+      isError={error}
       is_archived={is_archived}
       disabled={!isEditable}
       embedIssue={embedIssue}

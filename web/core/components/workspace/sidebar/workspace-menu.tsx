@@ -56,13 +56,13 @@ export const SidebarWorkspaceMenu = observer(() => {
       {!sidebarCollapsed && (
         <Disclosure.Button
           as="button"
-          className="group/workspace-button w-full px-2 py-0.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold"
+          className="group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold"
           onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
         >
           <span>Workspace</span>
-          <span className="flex-shrink-0 hidden group-hover/workspace-button:inline-block rounded p-0.5 hover:bg-custom-sidebar-background-80">
+          <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 hover:bg-custom-sidebar-background-80">
             <ChevronRight
-              className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+              className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                 "rotate-90": isWorkspaceMenuOpen,
               })}
             />

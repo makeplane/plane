@@ -45,7 +45,7 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
 
   return (
     <NotificationItemOptionButton
-      tooltipContent={data.read_at ? "Mark as unread" : "Mark as read"}
+      tooltipContent={data.archived_at ? "Un archive" : "Archive"}
       callBack={handleNotificationUpdate}
     >
       {data.archived_at ? (

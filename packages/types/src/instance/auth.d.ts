@@ -4,6 +4,7 @@ export type TInstanceAuthenticationModes = {
   description: string;
   icon: JSX.Element;
   config: JSX.Element;
+  unavailable?: boolean;
 };
 
 export type TInstanceAuthenticationMethodKeys =
@@ -35,3 +36,9 @@ type TInstanceAuthenticationConfigurationKeys =
 export type TInstanceAuthenticationKeys =
   | TInstanceAuthenticationMethodKeys
   | TInstanceAuthenticationConfigurationKeys;
+
+export type TGetBaseAuthenticationModeProps = {
+  disabled: boolean;
+  updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
+  resolvedTheme: string | undefined;
+};

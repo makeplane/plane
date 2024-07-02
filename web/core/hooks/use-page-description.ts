@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 
-import { EditorRefApi, generateJSONfromHTML, proseMirrorJSONToBinaryString, applyUpdates } from "@plane/editor";
+import {
+  EditorRefApi,
+  proseMirrorJSONToBinaryString,
+  applyUpdates,
+  generateJSONfromHTMLForDocumentEditor,
+} from "@plane/editor";
 
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -71,7 +76,7 @@ export const usePageDescription = (props: Props) => {
     const changeHTMLToBinary = async () => {
       if (!pageDescriptionYJS || !pageDescription) return;
       if (pageDescriptionYJS.length === 0) {
-        const { contentJSON, editorSchema } = generateJSONfromHTML(pageDescription ?? "<p></p>");
+        const { contentJSON, editorSchema } = generateJSONfromHTMLForDocumentEditor(pageDescription ?? "<p></p>");
         const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
 
         try {

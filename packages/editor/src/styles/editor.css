@@ -17,6 +17,11 @@
   height: 0;
 }
 
+.ProseMirror li blockquote {
+  margin-top: 10px;
+  padding-inline-start: 1em;
+}
+
 /* block quotes */
 .ProseMirror blockquote {
   font-style: normal;

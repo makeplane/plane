@@ -34,7 +34,7 @@ const GlobalViewIssuesPage = observer(() => {
         <div className="flex h-full w-full flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
           {globalViewId && <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId.toString()} />}
-          <AllIssueLayoutRoot />
+          <AllIssueLayoutRoot isDefaultView={!!defaultView} />
         </div>
       </div>
     </>
