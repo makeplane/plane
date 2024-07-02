@@ -47,10 +47,18 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         type = request.GET.get("type", "all")
         q_filters = Q()
 
+        inbox_issue = Issue.objects.filter(
+            pk=OuterRef("entity_identifier"),
+            issue_inbox__status__in=[1, -1, 2],
+            workspace__slug=self.kwargs.get("slug"),
+        )
+
         notifications = (
             Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
             )
+            .filter(entity_name="issue")
+            .annotate(is_inbox_issue=Exists(inbox_issue))
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
         )
