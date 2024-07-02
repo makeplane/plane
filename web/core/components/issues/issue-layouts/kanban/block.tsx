@@ -224,7 +224,8 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             classNames="space-y-2 px-3 py-2"
             root={scrollableContainerRef}
             defaultHeight="100px"
-            horizontalOffset={50}
+            horizontalOffset={100}
+            verticalOffset={200}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}
