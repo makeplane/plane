@@ -6,12 +6,12 @@ export type TCollapsibleProps = {
   children: React.ReactNode;
   buttonClassName?: string;
   isOpen?: boolean;
-  handleToggle?: () => void;
+  onToggle?: () => void;
   defaultOpen?: boolean;
 };
 
 export const Collapsible: FC<TCollapsibleProps> = (props) => {
-  const { title, children, buttonClassName, isOpen, handleToggle, defaultOpen } = props;
+  const { title, children, buttonClassName, isOpen, onToggle, defaultOpen } = props;
   // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(isOpen || defaultOpen ? true : false);
 
@@ -23,9 +23,12 @@ export const Collapsible: FC<TCollapsibleProps> = (props) => {
 
   // handlers
   const handleOnClick = useCallback(() => {
-    setLocalIsOpen((prev) => !prev);
-    if (handleToggle) handleToggle();
-  }, [handleToggle]);
+    if (isOpen !== undefined) {
+      if (onToggle) onToggle();
+    } else {
+      setLocalIsOpen((prev) => !prev);
+    }
+  }, [isOpen, onToggle]);
 
   return (
     <Disclosure>
