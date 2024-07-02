@@ -3,11 +3,15 @@ from .base import BaseSerializer
 from .user import UserLiteSerializer
 from plane.db.models import Notification, UserNotificationPreference
 
+# Third Party imports
+from rest_framework import serializers
+
 
 class NotificationSerializer(BaseSerializer):
     triggered_by_details = UserLiteSerializer(
         read_only=True, source="triggered_by"
     )
+    is_inbox_issue = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Notification
