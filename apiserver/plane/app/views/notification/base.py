@@ -49,7 +49,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         inbox_issue = Issue.objects.filter(
             pk=OuterRef("entity_identifier"),
-            issue_inbox__status__in=[1, -1, 2],
+            issue_inbox__status__in=[0, 2, -2],
             workspace__slug=self.kwargs.get("slug"),
         )
 
