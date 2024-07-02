@@ -52,6 +52,15 @@ services:
       - plane-db
       - plane-redis
 
+  mongodb:
+    image: "mongo"
+    restart: unless-stopped
+    volumes:
+      - "mongodb_data:/data/db"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-plane}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-plane}
+
   worker:
     container_name: bgworker
     build:
@@ -154,3 +163,4 @@ volumes:
   pgdata:
   redisdata:
   uploads:
+  mongodb_data:
