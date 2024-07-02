@@ -189,7 +189,6 @@ export class UserMembershipStore implements IUserMembershipStore {
    */
   fetchUserProjectInfo = async (workspaceSlug: string, projectId: string) =>
     await this.projectMemberService.projectMemberMe(workspaceSlug, projectId).then((response) => {
-      console.log("response", response);
       runInAction(() => {
         this.projectMemberInfo = {
           ...this.projectMemberInfo,

@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";
@@ -53,7 +54,9 @@ const WorkspaceDashboardPage = observer(() => {
         {is_inbox_issue === true && workspace_slug && project_id && issue_id ? (
           <>
             {projectMemberInfoLoader ? (
-              <>Loading...</>
+              <div className="w-full h-full flex justify-center items-center">
+                <LogoSpinner />
+              </div>
             ) : (
               <InboxContentRoot
                 setIsMobileSidebar={() => {}}
