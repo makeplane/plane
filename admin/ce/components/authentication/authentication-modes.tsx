@@ -32,7 +32,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
       key: "oidc",
       name: "OIDC",
       description: "Authenticate your users via the OpenID Connect protocol.",
-      icon: <Image src={OIDCLogo} height={26} width={26} alt="OIDC Logo" />,
+      icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
       config: <UpgradeButton />,
       unavailable: true,
     },
