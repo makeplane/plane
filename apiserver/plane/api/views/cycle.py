@@ -856,7 +856,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         if estimate_type:
             assignee_estimate_data = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -910,7 +910,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             ]
 
             label_distribution_data = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -971,7 +971,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         # Get the assignee distribution
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -1028,7 +1028,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         # Get the label distribution
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
                 workspace__slug=slug,
                 project_id=project_id,

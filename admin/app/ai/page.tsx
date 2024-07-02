@@ -3,8 +3,6 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
-// components
-import { PageHeader } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
@@ -18,7 +16,6 @@ const InstanceAIPage = observer(() => {
 
   return (
     <>
-      <PageHeader title="Artificial Intelligence - God Mode" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">AI features for all your workspaces</div>

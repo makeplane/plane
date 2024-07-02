@@ -4,10 +4,11 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Earth, Lock } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
@@ -19,6 +20,7 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
@@ -205,54 +207,64 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             }
           />
         </Breadcrumbs>
+
+        <div className="cursor-default text-custom-text-300">
+          <Tooltip tooltipContent={viewDetails?.access === EViewAccess.PUBLIC ? "Public" : "Private"}>
+            {viewDetails?.access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          </Tooltip>
+        </div>
       </div>
       <div className="flex items-center gap-2">
-        <LayoutSelection
-          layouts={[
-            EIssueLayoutTypes.LIST,
-            EIssueLayoutTypes.KANBAN,
-            EIssueLayoutTypes.CALENDAR,
-            EIssueLayoutTypes.SPREADSHEET,
-            EIssueLayoutTypes.GANTT,
-          ]}
-          onChange={(layout) => handleLayoutChange(layout)}
-          selectedLayout={activeLayout}
-        />
+        {!viewDetails?.is_locked && (
+          <>
+            <LayoutSelection
+              layouts={[
+                EIssueLayoutTypes.LIST,
+                EIssueLayoutTypes.KANBAN,
+                EIssueLayoutTypes.CALENDAR,
+                EIssueLayoutTypes.SPREADSHEET,
+                EIssueLayoutTypes.GANTT,
+              ]}
+              onChange={(layout) => handleLayoutChange(layout)}
+              selectedLayout={activeLayout}
+            />
 
-        <FiltersDropdown
-          title="Filters"
-          placement="bottom-end"
-          disabled={!canUserCreateIssue}
-          isFiltersApplied={isFiltersApplied}
-        >
-          <FilterSelection
-            filters={issueFilters?.filters ?? {}}
-            handleFiltersUpdate={handleFiltersUpdate}
-            displayFilters={issueFilters?.displayFilters ?? {}}
-            handleDisplayFiltersUpdate={handleDisplayFilters}
-            layoutDisplayFiltersOptions={
-              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-            }
-            labels={projectLabels}
-            memberIds={projectMemberIds ?? undefined}
-            states={projectStates}
-            cycleViewDisabled={!currentProjectDetails?.cycle_view}
-            moduleViewDisabled={!currentProjectDetails?.module_view}
-          />
-        </FiltersDropdown>
-        <FiltersDropdown title="Display" placement="bottom-end">
-          <DisplayFiltersSelection
-            layoutDisplayFiltersOptions={
-              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-            }
-            displayFilters={issueFilters?.displayFilters ?? {}}
-            handleDisplayFiltersUpdate={handleDisplayFilters}
-            displayProperties={issueFilters?.displayProperties ?? {}}
-            handleDisplayPropertiesUpdate={handleDisplayProperties}
-            cycleViewDisabled={!currentProjectDetails?.cycle_view}
-            moduleViewDisabled={!currentProjectDetails?.module_view}
-          />
-        </FiltersDropdown>
+            <FiltersDropdown
+              title="Filters"
+              placement="bottom-end"
+              disabled={!canUserCreateIssue}
+              isFiltersApplied={isFiltersApplied}
+            >
+              <FilterSelection
+                filters={issueFilters?.filters ?? {}}
+                handleFiltersUpdate={handleFiltersUpdate}
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                }
+                labels={projectLabels}
+                memberIds={projectMemberIds ?? undefined}
+                states={projectStates}
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
+              />
+            </FiltersDropdown>
+            <FiltersDropdown title="Display" placement="bottom-end">
+              <DisplayFiltersSelection
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                }
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                displayProperties={issueFilters?.displayProperties ?? {}}
+                handleDisplayPropertiesUpdate={handleDisplayProperties}
+                cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                moduleViewDisabled={!currentProjectDetails?.module_view}
+              />
+            </FiltersDropdown>
+          </>
+        )}
         {canUserCreateIssue && (
           <Button
             onClick={() => {

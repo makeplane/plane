@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
+import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
 import { FilterOption } from "@/components/issues";
-import { FilterCreatedBy, FilterCreatedDate } from "@/components/pages";
 
 type Props = {
   filters: TPageFilters;

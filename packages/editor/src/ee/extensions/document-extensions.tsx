@@ -1,4 +1,6 @@
-import { LayersIcon } from "lucide-react";
+// ui
+import { LayersIcon } from "@plane/ui";
+// extensions
 import { SlashCommand } from "@/extensions";
 // hooks
 import { TFileHandler } from "@/hooks/use-editor";
@@ -23,7 +25,7 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
       title: "Issue embed",
       description: "Embed an issue from the project.",
       searchTerms: ["issue", "link", "embed"],
-      icon: <LayersIcon className="h-3.5 w-3.5" />,
+      icon: <LayersIcon className="size-3.5" />,
       command: ({ editor, range }) => {
         editor
           .chain()

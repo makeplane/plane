@@ -11,11 +11,15 @@ import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, PhotoFilterIcon, 
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { AccessController } from "@/plane-web/components/views/access-controller";
+import { LayoutDropDown } from "../dropdowns/layout";
 
 type Props = {
   data?: IProjectView | null;
@@ -27,6 +31,9 @@ type Props = {
 const defaultValues: Partial<IProjectView> = {
   name: "",
   description: "",
+  access: EViewAccess.PUBLIC,
+  display_properties: getComputedDisplayProperties(),
+  display_filters: getComputedDisplayFilters(),
 };
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
@@ -98,6 +105,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       filters: formData.filters,
       display_filters: formData.display_filters,
       display_properties: formData.display_properties,
+      access: formData.access,
     } as IProjectView);
 
     reset({
@@ -190,7 +198,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   />
                 )}
               />
-              <span className="text-xs text-red-500">{errors?.name?.message}</span>
+              <span className="text-xs text-red-500">{errors?.name?.message?.toString()}</span>
             </div>
           </div>
           <div>
@@ -211,7 +219,18 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          <div>
+          <div className="flex gap-2">
+            <AccessController control={control} />
+            <Controller
+              control={control}
+              name="display_filters.layout"
+              render={({ field: { onChange, value } }) => (
+                <LayoutDropDown
+                  onChange={(selectedValue: EIssueLayoutTypes) => onChange(selectedValue)}
+                  value={value}
+                />
+              )}
+            />
             <Controller
               control={control}
               name="filters"

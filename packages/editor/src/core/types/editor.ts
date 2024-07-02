@@ -1,7 +1,10 @@
-// types
+// components
 import { EditorMenuItemNames } from "@/components/menus";
+// helpers
 import { IMarking } from "@/helpers/scroll-to-node";
+// hooks
 import { TFileHandler } from "@/hooks/use-editor";
+// types
 import { IMentionHighlight, IMentionSuggestion } from "@/types";
 
 export type EditorReadOnlyRefApi = {
@@ -19,6 +22,8 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
+  setSynced: () => void;
+  hasUnsyncedChanges: () => boolean;
 }
 
 export interface IEditorProps {
@@ -33,7 +38,7 @@ export interface IEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
-  onEnterKeyPress?: (e?: any) => void;
+  onEnterKeyPress?: (descriptionHTML: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;

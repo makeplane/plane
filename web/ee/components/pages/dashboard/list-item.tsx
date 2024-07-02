@@ -38,7 +38,7 @@ export const PagesAppDashboardListItem: React.FC<Props> = (props) => {
       </Link>
       {/* quick actions dropdown */}
       <div className="opacity-0 pointer-events-none group-hover/list-item:opacity-100 group-hover/list-item:pointer-events-auto">
-        <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages`} />
+        <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${page.id}`} />
       </div>
     </div>
   );

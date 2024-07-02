@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
@@ -14,12 +16,11 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser, useWorkspace, useUserProfile, useEventTracker, useUserSettings } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
+import { WorkspaceService } from "@/plane-web/services";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
 
 enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",
@@ -33,25 +34,22 @@ const OnboardingPage = observer(() => {
   // states
   const [step, setStep] = useState<EOnboardingSteps | null>(null);
   const [totalSteps, setTotalSteps] = useState<number | null>(null);
-  // router
-  const router = useAppRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
   const { isLoading: userLoader, data: user, updateCurrentUser } = useUser();
-  const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
-  const { data: currentUserSettings } = useUserSettings();
+  const { data: profile, updateUserProfile, finishUserOnboarding } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
-    shouldRetryOnError: false,
+  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => {
+    user?.id && fetchWorkspaces();
   });
   // fetching user workspace invitations
-  const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
-    workspaceService.userWorkspaceInvitations()
-  );
+  const { isLoading: invitationsLoader, data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () => {
+    if (user?.id) return workspaceService.userWorkspaceInvitations();
+  });
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
     if (!user) return;
@@ -66,45 +64,11 @@ const OnboardingPage = observer(() => {
     await updateUserProfile(payload);
   };
 
-  const getWorkspaceRedirectionUrl = (): string => {
-    let redirectionRoute = "/profile";
-
-    // validate the last and fallback workspace_slug
-    const currentWorkspaceSlug =
-      currentUserSettings?.workspace?.last_workspace_slug ||
-      currentUserSettings?.workspace?.fallback_workspace_slug ||
-      undefined;
-
-    if (currentWorkspaceSlug) {
-      const isCurrentWorkspaceValid = Object.values(workspaces || {}).findIndex(
-        (workspace) => workspace.slug === currentWorkspaceSlug
-      );
-      if (isCurrentWorkspaceValid >= 0) {
-        redirectionRoute = `/${currentWorkspaceSlug}`;
-      }
-    }
-
-    return redirectionRoute;
-  };
-
   // complete onboarding
   const finishOnboarding = async () => {
-    if (!user || !workspaces) return;
+    if (!user) return;
 
-    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
-
-    await Promise.all([
-      updateUserProfile({
-        onboarding_step: {
-          profile_complete: true,
-          workspace_join: true,
-          workspace_create: true,
-          workspace_invite: true,
-        },
-        last_workspace_id: firstWorkspace?.id,
-      }),
-      updateUserOnBoard(),
-    ])
+    await finishUserOnboarding()
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
           // user_role: user.role,
@@ -114,10 +78,12 @@ const OnboardingPage = observer(() => {
         });
       })
       .catch(() => {
-        console.log("Failed to update onboarding status");
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Failed",
+          message: "Failed to finish onboarding, Please try again later.",
+        });
       });
-
-    router.replace(`${getWorkspaceRedirectionUrl()}`);
   };
 
   useEffect(() => {
@@ -166,7 +132,7 @@ const OnboardingPage = observer(() => {
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
-      {user && totalSteps && step !== null && invitations ? (
+      {user && totalSteps && step !== null && !invitationsLoader ? (
         <div className={`flex h-full w-full flex-col`}>
           {step === EOnboardingSteps.PROFILE_SETUP ? (
             <ProfileSetup
@@ -177,7 +143,7 @@ const OnboardingPage = observer(() => {
             />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
             <CreateOrJoinWorkspaces
-              invitations={invitations}
+                invitations={invitations ?? []}
               totalSteps={totalSteps}
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}

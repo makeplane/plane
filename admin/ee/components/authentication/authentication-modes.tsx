@@ -40,14 +40,14 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
     {
       key: "oidc",
       name: "OIDC",
-      description: "Authenticate your users via the OpenID connect protocol.",
+      description: "Authenticate your users via the OpenID Connect protocol.",
       icon: <Image src={OIDCLogo} height={20} width={20} alt="OIDC Logo" />,
       config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },
     {
       key: "saml",
       name: "SAML",
-      description: "Authenticate your users via Security Assertion Markup Language protocol.",
+      description: "Authenticate your users via the Security Assertion Markup Language protocol.",
       icon: <Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pb-0.5 pl-0.5" />,
       config: <SAMLConfiguration disabled={disabled} updateConfig={updateConfig} />,
     },

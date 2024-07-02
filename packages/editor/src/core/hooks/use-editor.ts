@@ -1,7 +1,7 @@
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
-import { EditorProps } from "@tiptap/pm/view";
 import { Selection } from "@tiptap/pm/state";
+import { EditorProps } from "@tiptap/pm/view";
+import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 // components
 import { EditorMenuItemNames, getEditorMenuItems } from "@/components/menus";
 // extensions
@@ -9,6 +9,8 @@ import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
+// plane editor providers
+import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
@@ -29,6 +31,7 @@ export interface CustomEditorProps {
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
+  provider?: CollaborationProvider;
   onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -54,6 +57,7 @@ export const useEditor = ({
   forwardedRef,
   tabIndex,
   handleEditorReady,
+  provider,
   mentionHandler,
   placeholder,
 }: CustomEditorProps) => {
@@ -186,6 +190,18 @@ export const useEditor = ({
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
+      },
+      setSynced: () => {
+        if (provider) {
+          provider.setSynced();
+        }
+      },
+      hasUnsyncedChanges: () => {
+        if (provider) {
+          return provider.hasUnsyncedChanges();
+        } else {
+          return false;
+        }
       },
       isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {

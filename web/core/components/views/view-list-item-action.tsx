@@ -1,14 +1,16 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Earth, Lock } from "lucide-react";
 // types
 import { IProjectView } from "@plane/types";
 // ui
-import { FavoriteStar } from "@plane/ui";
+import { Tooltip, FavoriteStar } from "@plane/ui";
 // components
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -39,6 +41,8 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
 
   const totalFilters = calculateTotalFilters(view.filters ?? {});
 
+  const access = view.access;
+
   // handlers
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
@@ -52,7 +56,7 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
     removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
   };
 
-  const createdByDetails = view.created_by ? getUserDetails(view.created_by) : undefined;
+  const ownedByDetails = view.owned_by ? getUserDetails(view.owned_by) : undefined;
 
   return (
     <>
@@ -70,8 +74,14 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
         {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
       </p>
 
+      <div className="cursor-default text-custom-text-300">
+        <Tooltip tooltipContent={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
+          {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+        </Tooltip>
+      </div>
+
       {/* created by */}
-      {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
+      {<ButtonAvatars showTooltip={false} userIds={ownedByDetails?.id ?? []} />}
 
       {isEditingAllowed && (
         <FavoriteStar

@@ -103,7 +103,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
+        router.replace(currentRedirectRoute);
         return <></>;
       } else return <>{children}</>;
     }

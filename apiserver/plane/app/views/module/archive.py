@@ -233,7 +233,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
 
             if estimate_type:
                 label_distribution = (
-                    Issue.objects.filter(
+                    Issue.issue_objects.filter(
                         issue_module__module_id=pk,
                         workspace__slug=slug,
                         project_id=project_id,
@@ -279,7 +279,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 )
 
                 assignee_distribution = (
-                    Issue.objects.filter(
+                    Issue.issue_objects.filter(
                         issue_module__module_id=pk,
                         workspace__slug=slug,
                         project_id=project_id,
@@ -329,7 +329,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         )
                     )
             assignee_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -379,7 +379,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
 
             label_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,

@@ -14,6 +14,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+from plane.utils.exception_logger import log_exception
 
 
 class SAMLAdapter(Adapter):
@@ -149,12 +150,18 @@ class SAMLAdapter(Adapter):
         errors = self.auth.get_errors()
         if errors:
             if not self.auth.is_authenticated():
+                # Log the errors
+                log_exception(
+                    AuthenticationException("Response not authenticated")
+                )
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES[
                         "SAML_PROVIDER_ERROR"
                     ],
                     error_message="SAML_PROVIDER_ERROR",
                 )
+            # Log the errors
+            log_exception(AuthenticationException(errors))
             raise AuthenticationException(
                 error_message=AUTHENTICATION_ERROR_CODES[
                     "SAML_PROVIDER_ERROR"

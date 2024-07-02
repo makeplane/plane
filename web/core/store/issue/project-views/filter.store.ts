@@ -16,13 +16,13 @@ import {
 } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
-import { ViewService } from "@/services/view.service";
+// services
+import { ViewService } from "@/plane-web/services";
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
 // constants
-// services
 
 export interface IProjectViewIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
@@ -240,10 +240,6 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             );
           }
 
-          await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
-            display_filters: _filters.displayFilters,
-          });
-
           break;
         }
         case EIssueFilterType.DISPLAY_PROPERTIES: {
@@ -260,9 +256,6 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
-            display_properties: _filters.displayProperties,
-          });
           break;
         }
         case EIssueFilterType.KANBAN_FILTERS: {

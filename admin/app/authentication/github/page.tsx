@@ -63,7 +63,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
   };
   return (
     <>
-      <PageHeader title="Authentication - God Mode" />
+      <PageHeader title="GitHub Authentication - Plane Web" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
@@ -93,7 +93,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
             withBorder={false}
           />
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md p-4">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceGithubConfigForm config={formattedConfig} />
           ) : (

@@ -9,3 +9,4 @@ from .app.page import WorkspacePageSerializer, WorkspacePageDetailSerializer
 
 # Space imports
 from .space.page import PagePublicSerializer
+from .space.views import ViewsPublicSerializer

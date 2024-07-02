@@ -7,7 +7,7 @@ import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitat
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 // types
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
