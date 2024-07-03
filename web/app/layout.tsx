@@ -38,12 +38,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest.json" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
-        {/* prefetching */}
-        <link rel="prefetch" href={`${API_BASE_URL}/api/instances/`} type="fetch" />
-        <link rel="prefetch" href={`${API_BASE_URL}/api/users/me/ `} type="fetch" />
-        <link rel="prefetch" href={`${API_BASE_URL}/api/users/me/profile/ `} type="fetch" />
-        <link rel="prefetch" href={`${API_BASE_URL}/api/users/me/settings/ `} type="fetch" />
-        <link rel="prefetch" href={`${API_BASE_URL}/api/users/me/workspaces/`} type="fetch" />
+        {/* preloading */}
+        <link rel="preload" href={`${API_BASE_URL}/api/instances/`} as="fetch" crossOrigin="use-credentials" />
+        <link rel="preload" href={`${API_BASE_URL}/api/users/me/ `} as="fetch" crossOrigin="use-credentials" />
+        <link rel="preload" href={`${API_BASE_URL}/api/users/me/profile/ `} as="fetch" crossOrigin="use-credentials" />
+        <link rel="preload" href={`${API_BASE_URL}/api/users/me/settings/ `} as="fetch" crossOrigin="use-credentials" />
+        <link
+          rel="preload"
+          href={`${API_BASE_URL}/api/users/me/workspaces/`}
+          as="fetch"
+          crossOrigin="use-credentials"
+        />
       </head>
       <body>
         <div id="context-menu-portal" />
