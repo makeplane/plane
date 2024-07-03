@@ -244,7 +244,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 "total_unread_notifications_count": int(
                     unread_notifications_count
                 ),
-                "mention_notifications_count": int(
+                "mention_unread_notifications_count": int(
                     mention_notifications_count
                 ),
             },

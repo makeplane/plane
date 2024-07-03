@@ -87,6 +87,7 @@ export type TNotificationPaginatedInfo = {
 // notification count
 export type TUnreadNotificationsCount = {
   total_unread_notifications_count: number;
+  mention_unread_notifications_count: number;
 };
 
 export type TCurrentSelectedNotification = {

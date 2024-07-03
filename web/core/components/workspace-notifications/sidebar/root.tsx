@@ -39,7 +39,6 @@ export const NotificationsSidebar: FC = observer(() => {
   const currentTabEmptyState = ENotificationTab.ALL
     ? EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE
     : EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE;
-  const totalNotificationCount = unreadNotificationsCount.total_unread_notifications_count;
 
   if (!workspaceSlug || !workspace) return <></>;
   return (
@@ -64,16 +63,14 @@ export const NotificationsSidebar: FC = observer(() => {
               )}
             >
               <div className="font-medium">{tab.label}</div>
-              {totalNotificationCount > 0 && (
-                <div
-                  className={cn(
-                    `rounded-full text-xs px-1.5 py-0.5`,
-                    currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
-                  )}
-                >
-                  {getNumberCount(totalNotificationCount)}
-                </div>
-              )}
+              <div
+                className={cn(
+                  `rounded-full text-xs px-1.5 py-0.5`,
+                  currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
+                )}
+              >
+                {getNumberCount(tab.count(unreadNotificationsCount))}
+              </div>
             </div>
             {currentNotificationTab === tab.value && (
               <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />

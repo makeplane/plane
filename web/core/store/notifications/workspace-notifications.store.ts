@@ -63,6 +63,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   loader: TNotificationLoader = undefined;
   unreadNotificationsCount: TUnreadNotificationsCount = {
     total_unread_notifications_count: 0,
+    mention_unread_notifications_count: 0,
   };
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
@@ -240,6 +241,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return;
 
+    set(this, "notifications", {});
     this.getNotifications(workspaceSlug, ENotificationLoader.INIT_LOADER, ENotificationQueryParamType.INIT);
   };
 
@@ -257,12 +259,22 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @param { "increment" | "decrement" } type
    * @returns { void }
    */
-  setUnreadNotificationsCount = (type: "increment" | "decrement"): void =>
-    runInAction(() => {
-      update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
-        type === "increment" ? count + 1 : count - 1
-      );
-    });
+  setUnreadNotificationsCount = (type: "increment" | "decrement"): void => {
+    switch (this.currentNotificationTab) {
+      case ENotificationTab.ALL:
+        update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
+          type === "increment" ? count + 1 : count - 1
+        );
+        break;
+      case ENotificationTab.MENTIONS:
+        update(this.unreadNotificationsCount, "mention_unread_notifications_count", (count: 0) =>
+          type === "increment" ? count + 1 : count - 1
+        );
+        break;
+      default:
+        break;
+    }
+  };
 
   /**
    * @description get unread notifications count
