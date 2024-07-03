@@ -2,6 +2,11 @@ name: Build AIO Base Image
 
 on:
   workflow_dispatch:
+    inputs:
+      base_tag_name:
+        description: 'Base Tag Name'
+        required: false
+        default: ''
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -22,27 +27,29 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
+          echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+
+          if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+            echo "IMAGE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
+          elif [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
+              echo "IMAGE_TAG=preview" >> $GITHUB_OUTPUT
+          else
+            echo "IMAGE_TAG=develop" >> $GITHUB_OUTPUT
+          fi
+
+
           if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
-            echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
-
-            echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
           else
             echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
-
-            if [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
-              echo "TARGET_BRANCH=preview" >> $GITHUB_OUTPUT
-              echo "IMAGE_TAG=preview" >> $GITHUB_OUTPUT
-            else
-              echo "TARGET_BRANCH=develop" >> $GITHUB_OUTPUT
-              echo "IMAGE_TAG=develop" >> $GITHUB_OUTPUT
-            fi
           fi
 
       - id: checkout_files
@@ -54,7 +61,6 @@ jobs:
     needs: [base_build_setup]
     env:
       BASE_IMG_TAG: makeplane/plane-aio-base:full-${{ needs.base_build_setup.outputs.image_tag }}
-      TARGET_BRANCH: ${{ needs.base_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.base_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.base_build_setup.outputs.gh_buildx_version }}
       BUILDX_PLATFORMS: ${{ needs.base_build_setup.outputs.gh_buildx_platforms }}
@@ -96,7 +102,6 @@ jobs:
     needs: [base_build_setup]
     env:
       BASE_IMG_TAG: makeplane/plane-aio-base:slim-${{ needs.base_build_setup.outputs.image_tag }}
-      TARGET_BRANCH: ${{ needs.base_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.base_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.base_build_setup.outputs.gh_buildx_version }}
       BUILDX_PLATFORMS: ${{ needs.base_build_setup.outputs.gh_buildx_platforms }}

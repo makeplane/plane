@@ -24,7 +24,7 @@ import {
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -152,7 +152,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
@@ -248,7 +247,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
-            <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+            <FiltersDropdown
+              title="Filters"
+              placement="bottom-end"
+              isFiltersApplied={isIssueFilterActive(issueFilters)}
+            >
               <FilterSelection
                 filters={issueFilters?.filters ?? {}}
                 handleFiltersUpdate={handleFiltersUpdate}
