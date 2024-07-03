@@ -46,6 +46,7 @@ from plane.db.models import (
 from plane.utils.cache import cache_response, invalidate_cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -173,7 +174,8 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     @cache_response(60 * 60 * 2)
-    @method_decorator(cache_control(max_age=30))
+    @method_decorator(cache_control(max_age=15))
+    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [
             field
