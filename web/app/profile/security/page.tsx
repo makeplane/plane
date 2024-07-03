@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
@@ -8,15 +8,11 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
-import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
-// hooks
-import { useUser } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -44,13 +40,9 @@ const defaultShowPassword = {
 
 const SecurityPage = observer(() => {
   // states
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(defaultShowPassword);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
-  // router
-  const router = useAppRouter();
-  const { data: currentUser } = useUser();
   // use form
   const {
     control,
@@ -98,14 +90,6 @@ const SecurityPage = observer(() => {
     }
   };
 
-  // if the user doesn't have a password set, redirect to the profile page
-  useEffect(() => {
-    if (!currentUser) return;
-
-    if (currentUser.is_password_autoset) router.push("/profile");
-    else setIsPageLoading(false);
-  }, [currentUser, router]);
-
   const isButtonDisabled =
     getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID ||
     oldPassword.trim() === "" ||
@@ -117,13 +101,6 @@ const SecurityPage = observer(() => {
   const passwordSupport = password.length > 0 &&
     getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
       <PasswordStrengthMeter password={password} isFocused={isPasswordInputFocused} />
-    );
-
-  if (isPageLoading)
-    return (
-      <div className="grid h-screen w-full place-items-center">
-        <LogoSpinner />
-      </div>
     );
 
   const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;

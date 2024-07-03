@@ -6,7 +6,7 @@ import { IProjectView, TViewFilters } from "@plane/types";
 // constants
 import { EViewAccess } from "@/constants/views";
 // helpers
-import { getViewName, orderViews, shouldFilterView } from "@/helpers/project-views.helpers";
+import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@/helpers/project-views.helpers";
 // services
 import { ViewService } from "@/plane-web/services";
 // store
@@ -50,7 +50,7 @@ export class ProjectViewStore implements IProjectViewStore {
   viewMap: Record<string, IProjectView> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
-  filters: TViewFilters = { searchQuery: "", sortBy: "asc", sortKey: "created_at" };
+  filters: TViewFilters = { searchQuery: "", sortBy: "desc", sortKey: "updated_at" };
   // root store
   rootStore;
   // services
@@ -196,7 +196,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * @returns Promise<IProjectView>
    */
   createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> => {
-    const response = await this.viewService.createView(workspaceSlug, projectId, data);
+    const response = await this.viewService.createView(workspaceSlug, projectId, getValidatedViewFilters(data));
 
     runInAction(() => {
       set(this.viewMap, [response.id], response);

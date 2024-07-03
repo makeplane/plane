@@ -12,9 +12,15 @@ import { CustomMenu } from "@plane/ui";
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_LAYOUTS,
+} from "@/constants/issue";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
 
@@ -109,8 +115,6 @@ export const CycleIssuesMobileHeader = () => {
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
-
   return (
     <>
       <ProjectAnalyticsModal
@@ -150,7 +154,7 @@ export const CycleIssuesMobileHeader = () => {
                 <ChevronDown className="text-custom-text-200  h-4 w-4 ml-2" />
               </span>
             }
-            isFiltersApplied={isFiltersApplied}
+            isFiltersApplied={isIssueFilterActive(issueFilters)}
           >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}

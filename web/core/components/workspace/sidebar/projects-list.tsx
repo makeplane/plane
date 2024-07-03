@@ -193,7 +193,7 @@ export const SidebarProjectsList: FC = observer(() => {
                 <>
                   <div
                     className={cn(
-                      "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                      "group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
                       {
                         "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
                           isCollapsed,
@@ -221,7 +221,7 @@ export const SidebarProjectsList: FC = observer(() => {
                       </Tooltip>
                     </Disclosure.Button>
                     {!isCollapsed && (
-                      <div className="flex items-center opacity-0 group-hover:opacity-100">
+                      <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                         {isAuthorizedUser && (
                           <Tooltip tooltipHeading="Create project" tooltipContent="">
                             <button
@@ -244,7 +244,7 @@ export const SidebarProjectsList: FC = observer(() => {
                           onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
                         >
                           <ChevronRight
-                            className={cn("flex-shrink-0 size-3.5 transition-all", {
+                            className={cn("flex-shrink-0 size-4 transition-all", {
                               "rotate-90": section.isOpen,
                             })}
                           />

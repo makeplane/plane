@@ -125,6 +125,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         defaultHeight="3rem"
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
+        verticalOffset={100}
       >
         <IssueBlock
           issueId={issueId}

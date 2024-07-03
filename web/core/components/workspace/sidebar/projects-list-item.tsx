@@ -351,7 +351,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
                         onClick={() => setIsMenuActive(!isMenuActive)}
                       >
-                        <MoreHorizontal className="size-3.5" />
+                        <MoreHorizontal className="size-4" />
                       </span>
                     }
                     className={cn(
@@ -443,7 +443,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     )}
                   >
                     <ChevronRight
-                      className={cn("size-3.5 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                      className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                         "rotate-90": open,
                       })}
                     />

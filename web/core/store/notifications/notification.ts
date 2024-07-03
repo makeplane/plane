@@ -41,6 +41,7 @@ export class Notification implements INotification {
   read_at: string | undefined = undefined;
   archived_at: string | undefined = undefined;
   snoozed_till: string | undefined = undefined;
+  is_inbox_issue: boolean | undefined = undefined;
   workspace: string | undefined = undefined;
   project: string | undefined = undefined;
   created_at: string | undefined = undefined;
@@ -102,6 +103,7 @@ export class Notification implements INotification {
     this.archived_at = this.notification.archived_at;
     this.snoozed_till = this.notification.snoozed_till;
     this.workspace = this.notification.workspace;
+    this.is_inbox_issue = this.notification.is_inbox_issue;
     this.project = this.notification.project;
     this.created_at = this.notification.created_at;
     this.updated_at = this.notification.updated_at;
@@ -131,6 +133,7 @@ export class Notification implements INotification {
       archived_at: this.archived_at,
       snoozed_till: this.snoozed_till,
       workspace: this.workspace,
+      is_inbox_issue: this.is_inbox_issue,
       project: this.project,
       created_at: this.created_at,
       updated_at: this.updated_at,
@@ -187,6 +190,7 @@ export class Notification implements INotification {
       const payload: Partial<TNotification> = {
         read_at: new Date().toISOString(),
       };
+      this.store.workspaceNotification.setUnreadNotificationsCount("decrement");
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.markNotificationAsRead(workspaceSlug, this.id);
       if (notification) {
@@ -195,6 +199,7 @@ export class Notification implements INotification {
       return notification;
     } catch (error) {
       runInAction(() => this.mutateNotification({ read_at: currentNotificationReadAt }));
+      this.store.workspaceNotification.setUnreadNotificationsCount("increment");
       throw error;
     }
   };
@@ -212,6 +217,7 @@ export class Notification implements INotification {
       const payload: Partial<TNotification> = {
         read_at: undefined,
       };
+      this.store.workspaceNotification.setUnreadNotificationsCount("increment");
       runInAction(() => this.mutateNotification(payload));
       const notification = await workspaceNotificationService.markNotificationAsUnread(workspaceSlug, this.id);
       if (notification) {
@@ -219,6 +225,7 @@ export class Notification implements INotification {
       }
       return notification;
     } catch (error) {
+      this.store.workspaceNotification.setUnreadNotificationsCount("decrement");
       runInAction(() => this.mutateNotification({ read_at: currentNotificationReadAt }));
       throw error;
     }

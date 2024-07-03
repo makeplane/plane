@@ -5,7 +5,7 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IEstimate as IEstimateType, IEstimateFormData } from "@plane/types";
+import { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys } from "@plane/types";
 // plane web services
 import estimateService from "@/plane-web/services/project/estimate.service";
 // plane web store
@@ -163,7 +163,12 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
-            if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+            if (estimate.id)
+              set(
+                this.estimates,
+                [estimate.id],
+                new Estimate(this.store, { ...estimate, type: estimate.type?.toLowerCase() as TEstimateSystemKeys })
+              );
           });
         });
       }
@@ -198,7 +203,12 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
-            if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+            if (estimate.id)
+              set(
+                this.estimates,
+                [estimate.id],
+                new Estimate(this.store, { ...estimate, type: estimate.type?.toLowerCase() as TEstimateSystemKeys })
+              );
           });
         });
       }
@@ -235,7 +245,11 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
           if (estimate.id)
             update(this.estimates, [estimate.id], (estimateStore) => {
               if (estimateStore) estimateStore.updateEstimate(estimate);
-              else return new Estimate(this.store, estimate);
+              else
+                return new Estimate(this.store, {
+                  ...estimate,
+                  type: estimate.type?.toLowerCase() as TEstimateSystemKeys,
+                });
             });
         });
       }
@@ -272,7 +286,12 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         //   estimate: estimate.id,
         // });
         runInAction(() => {
-          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+          if (estimate.id)
+            set(
+              this.estimates,
+              [estimate.id],
+              new Estimate(this.store, { ...estimate, type: estimate.type?.toLowerCase() as TEstimateSystemKeys })
+            );
         });
       }
 

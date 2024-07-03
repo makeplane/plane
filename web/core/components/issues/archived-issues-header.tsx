@@ -9,7 +9,7 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/com
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
@@ -63,8 +63,6 @@ export const ArchivedIssuesHeader: FC = observer(() => {
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
   };
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
-
   return (
     <div className="group relative flex border-b border-custom-border-200">
       <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
@@ -72,7 +70,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
       </div>
       {/* filter options */}
       <div className="flex items-center gap-2 px-8">
-        <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+        <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
           <FilterSelection
             filters={issueFilters?.filters || {}}
             handleFiltersUpdate={handleFiltersUpdate}
