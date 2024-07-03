@@ -15,7 +15,7 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useUser, useIssues, useGlobalView } from "@/hooks/store";
 
@@ -98,7 +98,7 @@ export const GlobalIssuesHeader = observer(() => {
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
   const isLocked = viewDetails?.is_locked;
 
   return (

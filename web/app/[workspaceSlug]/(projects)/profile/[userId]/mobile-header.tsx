@@ -20,7 +20,7 @@ import {
   ISSUE_LAYOUTS,
 } from "@/constants/issue";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 
@@ -108,7 +108,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
     [workspaceSlug, updateFilters, userId]
   );
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
 
   return (
     <div className="flex justify-evenly border-b border-custom-border-200 py-2 md:hidden">

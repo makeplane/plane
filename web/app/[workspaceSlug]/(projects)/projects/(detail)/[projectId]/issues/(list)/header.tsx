@@ -23,7 +23,7 @@ import {
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import {
   useEventTracker,
@@ -113,7 +113,7 @@ export const ProjectIssuesHeader = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
+  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
