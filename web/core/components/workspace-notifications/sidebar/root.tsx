@@ -4,16 +4,15 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { EmptyState } from "@/components/empty-state";
 import {
+  NotificationsLoader,
+  NotificationEmptyState,
   NotificationSidebarHeader,
   AppliedFilters,
-  NotificationsLoader,
   NotificationCardListRoot,
 } from "@/components/workspace-notifications";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { ENotificationTab, NOTIFICATION_TABS } from "@/constants/notification";
+import { NOTIFICATION_TABS } from "@/constants/notification";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
@@ -35,11 +34,6 @@ export const NotificationsSidebar: FC = observer(() => {
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
 
-  // derived values
-  const currentTabEmptyState = ENotificationTab.ALL
-    ? EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE
-    : EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE;
-
   if (!workspaceSlug || !workspace) return <></>;
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
@@ -52,7 +46,7 @@ export const NotificationsSidebar: FC = observer(() => {
           <div
             key={tab.value}
             className="h-full px-3 relative flex flex-col cursor-pointer"
-            onClick={() => setCurrentNotificationTab(tab.value)}
+            onClick={() => currentNotificationTab != tab.value && setCurrentNotificationTab(tab.value)}
           >
             <div
               className={cn(
@@ -86,7 +80,7 @@ export const NotificationsSidebar: FC = observer(() => {
 
       {/* rendering notifications */}
       {loader === "init-loader" ? (
-        <div className="relative w-full h-full overflow-hidden p-5">
+        <div className="relative w-full h-full overflow-hidden">
           <NotificationsLoader />
         </div>
       ) : (
@@ -97,7 +91,7 @@ export const NotificationsSidebar: FC = observer(() => {
             </div>
           ) : (
             <div className="relative w-full h-full flex justify-center items-center">
-              <EmptyState type={currentTabEmptyState} layout="screen-simple" />
+              <NotificationEmptyState />
             </div>
           )}
         </>
