@@ -44,6 +44,7 @@ from plane.db.models import (
     WorkspaceTheme,
 )
 from plane.utils.cache import cache_response, invalidate_cache
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
@@ -119,7 +120,7 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if serializer.is_valid():
+            if serializer.is_valid(raise_exception=True):
                 serializer.save(owner=request.user)
                 # Create Workspace member
                 _ = WorkspaceMember.objects.create(
@@ -235,7 +236,10 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = Workspace.objects.filter(slug=slug).exists()
+        workspace = (
+            Workspace.objects.filter(slug=slug).exists()
+            or slug in RESTRICTED_WORKSPACE_SLUGS
+        )
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 

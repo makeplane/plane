@@ -23,9 +23,11 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
 
-    def validated(self, data):
-        if data.get("slug") in RESTRICTED_WORKSPACE_SLUGS:
-            raise serializers.ValidationError({"slug": "Slug is not valid"})
+    def validate_slug(self, value):
+        # Check if the slug is restricted
+        if value in RESTRICTED_WORKSPACE_SLUGS:
+            raise serializers.ValidationError("Slug is not valid")
+        return value
 
     class Meta:
         model = Workspace
