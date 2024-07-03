@@ -9,12 +9,15 @@ import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
 // plane web components
 import { EstimatePointDropdown } from "@/plane-web/components/estimates";
+// plane web constants
+import { estimateCount } from "@/plane-web/constants/estimates";
 
 type TEstimatePointDelete = {
   workspaceSlug: string;
   projectId: string;
   estimateId: string;
   estimatePointId: string;
+  estimatePoints: TEstimatePointsObject[];
   callback: () => void;
   estimatePointError?: TEstimateTypeErrorObject | undefined;
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
@@ -26,6 +29,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
     projectId,
     estimateId,
     estimatePointId,
+    estimatePoints,
     callback,
     estimatePointError,
     handleEstimatePointError,
@@ -45,6 +49,15 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
 
   const handleDelete = async () => {
     if (!workspaceSlug || !projectId || !projectId) return;
+
+    if (estimatePoints.length <= estimateCount.min) {
+      setToast({
+        type: TOAST_TYPE.WARNING,
+        title: "Estimate can't be deleted",
+        message: `Estimate must have at least ${estimateCount.min} points.`,
+      });
+      return;
+    }
 
     handleEstimatePointError && handleEstimatePointError(estimateId, undefined, "delete");
 
