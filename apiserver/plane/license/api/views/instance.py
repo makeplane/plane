@@ -38,7 +38,7 @@ class InstanceEndpoint(BaseAPIView):
         ]
 
     @cache_response(60 * 60 * 2, user=False)
-    @method_decorator(cache_control(max_age=15))
+    @method_decorator(cache_control(private=True, max_age=12))
     def get(self, request):
         instance = Instance.objects.first()
 

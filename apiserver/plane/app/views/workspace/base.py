@@ -175,7 +175,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     @cache_response(60 * 60 * 2)
-    @method_decorator(cache_control(max_age=15))
+    @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [

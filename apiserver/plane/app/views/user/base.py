@@ -50,7 +50,7 @@ class UserEndpoint(BaseViewSet):
         return self.request.user
 
     @cache_response(60 * 60)
-    @method_decorator(cache_control(max_age=15))
+    @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def retrieve(self, request):
         serialized_data = UserMeSerializer(request.user).data
@@ -60,7 +60,7 @@ class UserEndpoint(BaseViewSet):
         )
 
     @cache_response(60 * 60)
-    @method_decorator(cache_control(max_age=15))
+    @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def retrieve_user_settings(self, request):
         serialized_data = UserMeSettingsSerializer(request.user).data
@@ -295,7 +295,7 @@ class AccountEndpoint(BaseAPIView):
 
 
 class ProfileEndpoint(BaseAPIView):
-    @method_decorator(cache_control(max_age=15))
+    @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
