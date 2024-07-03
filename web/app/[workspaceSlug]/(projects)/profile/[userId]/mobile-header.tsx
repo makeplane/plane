@@ -108,8 +108,6 @@ export const ProfileIssuesMobileHeader = observer(() => {
     [workspaceSlug, updateFilters, userId]
   );
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
-
   return (
     <div className="flex justify-evenly border-b border-custom-border-200 py-2 md:hidden">
       <CustomMenu
@@ -146,7 +144,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
               <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
             </span>
           }
-          isFiltersApplied={isFiltersApplied}
+          isFiltersApplied={isIssueFilterActive(issueFilters)}
         >
           <FilterSelection
             layoutDisplayFiltersOptions={

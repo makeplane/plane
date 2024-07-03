@@ -98,7 +98,6 @@ export const GlobalIssuesHeader = observer(() => {
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
   const isLocked = viewDetails?.is_locked;
 
   return (
@@ -118,7 +117,11 @@ export const GlobalIssuesHeader = observer(() => {
         <div className="flex items-center gap-2">
           {!isLocked && (
             <>
-              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+              <FiltersDropdown
+                title="Filters"
+                placement="bottom-end"
+                isFiltersApplied={isIssueFilterActive(issueFilters)}
+              >
                 <FilterSelection
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                   filters={issueFilters?.filters ?? {}}

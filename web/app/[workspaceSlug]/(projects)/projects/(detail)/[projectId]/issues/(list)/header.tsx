@@ -113,7 +113,6 @@ export const ProjectIssuesHeader = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
@@ -193,7 +192,7 @@ export const ProjectIssuesHeader = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}

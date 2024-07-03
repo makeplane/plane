@@ -115,8 +115,6 @@ export const CycleIssuesMobileHeader = () => {
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
-
   return (
     <>
       <ProjectAnalyticsModal
@@ -156,7 +154,7 @@ export const CycleIssuesMobileHeader = () => {
                 <ChevronDown className="text-custom-text-200  h-4 w-4 ml-2" />
               </span>
             }
-            isFiltersApplied={isFiltersApplied}
+            isFiltersApplied={isIssueFilterActive(issueFilters)}
           >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}

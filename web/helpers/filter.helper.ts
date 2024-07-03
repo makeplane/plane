@@ -68,10 +68,11 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
  * @param {IIssueFilters} issueFilters
  * @returns {boolean}
  */
-export const isIssueFilterActive = (issueFilters: IIssueFilters): boolean => {
+export const isIssueFilterActive = (issueFilters: IIssueFilters | undefined): boolean => {
+  if (!issueFilters) return false;
+
   const issueType = issueFilters?.displayFilters?.type;
-  const isIssueTypeApplied = issueType === "active" || issueType === "backlog";
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0 || isIssueTypeApplied;
+  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0 || !!issueType;
 
   return isFiltersApplied;
 };

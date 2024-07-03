@@ -100,8 +100,6 @@ export const ProfileIssuesFilter = observer(() => {
     [workspaceSlug, updateFilters, userId]
   );
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
-
   return (
     <div className="relative flex items-center justify-end gap-2">
       <LayoutSelection
@@ -110,7 +108,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
         <FilterSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined

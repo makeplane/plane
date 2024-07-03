@@ -90,8 +90,6 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       : currentProjectDetails.draft_issues
     : undefined;
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
-
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
@@ -140,7 +138,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}

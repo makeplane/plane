@@ -133,8 +133,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const isFiltersApplied = issueFilters && isIssueFilterActive(issueFilters);
-
   return (
     <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
@@ -233,7 +231,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               title="Filters"
               placement="bottom-end"
               disabled={!canUserCreateIssue}
-              isFiltersApplied={isFiltersApplied}
+              isFiltersApplied={isIssueFilterActive(issueFilters)}
             >
               <FilterSelection
                 filters={issueFilters?.filters ?? {}}
