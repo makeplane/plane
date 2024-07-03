@@ -173,8 +173,4 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
     return await this.fetchIssues(workspaceSlug, projectId, viewId, loadType, this.paginationOptions, true);
   };
 
-  archiveBulkIssues = this.bulkArchiveIssues;
-  quickAddIssue = this.issueQuickAdd;
-  updateIssue = this.issueUpdate;
-  archiveIssue = this.issueArchive;
 }

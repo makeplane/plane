@@ -86,32 +86,31 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-        issues?.updateIssue &&
-          (await issues
-            .updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(() => {
-              captureIssueEvent({
-                eventName: ISSUE_UPDATED,
-                payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
-                updates: {
-                  changed_property: Object.keys(data).join(","),
-                  change_details: Object.values(data).join(","),
-                },
-                path: pathname,
-              });
-            })
-            .catch(() => {
-              captureIssueEvent({
-                eventName: ISSUE_UPDATED,
-                payload: { state: "FAILED", element: "Issue peek-overview" },
-                path: pathname,
-              });
-              setToast({
-                title: "Error!",
-                type: TOAST_TYPE.ERROR,
-                message: "Issue update failed",
-              });
-            }));
+        await issues
+          ?.updateIssue(workspaceSlug, projectId, issueId, data)
+          .then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              updates: {
+                changed_property: Object.keys(data).join(","),
+                change_details: Object.values(data).join(","),
+              },
+              path: pathname,
+            });
+          })
+          .catch(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { state: "FAILED", element: "Issue peek-overview" },
+              path: pathname,
+            });
+            setToast({
+              title: "Error!",
+              type: TOAST_TYPE.ERROR,
+              message: "Issue update failed",
+            });
+          });
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {

@@ -35,9 +35,9 @@ export interface IDraftIssues extends IBaseIssuesStore {
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
-  archiveBulkIssues: undefined;
-  quickAddIssue: undefined;
-  archiveIssue: undefined;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue, id?: string) => Promise<TIssue | undefined>;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
 
 export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
@@ -168,7 +168,19 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
   createIssue = this.createDraftIssue;
   updateIssue = this.updateDraftIssue;
 
-  archiveBulkIssues = undefined;
-  quickAddIssue = undefined;
-  archiveIssue = undefined;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override archiveIssue(workspaceSlug: string, projectId: string, issueId: string) {
+    console.warn("Archived Issues cannot be archived");
+    return Promise.resolve();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override archiveBulkIssues(workspaceSlug: string, projectId: string, issueIds: string[]) {
+    console.warn("Archived Issues cannot be archived");
+    return Promise.resolve();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override quickAddIssue(workspaceSlug: string, projectId: string, data: TIssue, id?: string) {
+    console.warn("cannot quick Add Archived issues");
+    return Promise.resolve(undefined);
+  }
 }

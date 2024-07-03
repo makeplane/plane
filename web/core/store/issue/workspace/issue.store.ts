@@ -43,8 +43,8 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue, id?: string) => Promise<TIssue | undefined>;
 
-  quickAddIssue: undefined;
   clear(): void;
 }
 
@@ -167,8 +167,9 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
   };
 
-  archiveBulkIssues = this.bulkArchiveIssues;
-  quickAddIssue = undefined;
-  updateIssue = this.issueUpdate;
-  archiveIssue = this.issueArchive;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override quickAddIssue(workspaceSlug: string, projectId: string, data: TIssue, id?: string) {
+    console.warn("cannot quick Add to workspace issues");
+    return Promise.resolve(undefined);
+  }
 }

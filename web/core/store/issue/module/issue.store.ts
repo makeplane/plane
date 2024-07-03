@@ -225,7 +225,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @param moduleId
    * @returns
    */
-  quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue, moduleId: string) => {
+  override async quickAddIssue(workspaceSlug: string, projectId: string, data: TIssue, moduleId: string) {
     try {
       // add temporary issue to store list
       this.addIssue(data);
@@ -249,9 +249,5 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     } catch (error) {
       throw error;
     }
-  };
-
-  archiveBulkIssues = this.bulkArchiveIssues;
-  updateIssue = this.issueUpdate;
-  archiveIssue = this.issueArchive;
+  }
 }

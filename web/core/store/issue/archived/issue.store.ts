@@ -1,6 +1,13 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
+import {
+  TLoader,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  ViewFlags,
+  TBulkOperationsPayload,
+  TIssue,
+} from "@plane/types";
 // services
 // types
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
@@ -29,14 +36,13 @@ export interface IArchivedIssues extends IBaseIssuesStore {
     subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
 
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   restoreIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue, id?: string) => Promise<TIssue | undefined>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
-
-  updateIssue: undefined;
-  archiveIssue: undefined;
-  archiveBulkIssues: undefined;
-  quickAddIssue: undefined;
+  archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
 
 export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
@@ -194,8 +200,31 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     }
   };
 
-  updateIssue: undefined;
-  archiveIssue: undefined;
-  archiveBulkIssues = undefined;
-  quickAddIssue = undefined;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override updateIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldSync = true
+  ) {
+    console.warn("Archived Issues cannot be updated");
+    return Promise.resolve();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override archiveIssue(workspaceSlug: string, projectId: string, issueId: string) {
+    console.warn("Archived Issues cannot be archived");
+    return Promise.resolve();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override archiveBulkIssues(workspaceSlug: string, projectId: string, issueIds: string[]) {
+    console.warn("Archived Issues cannot be archived");
+    return Promise.resolve();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  override quickAddIssue(workspaceSlug: string, projectId: string, data: TIssue, id?: string) {
+    console.warn("cannot quick Add Archived issues");
+    return Promise.resolve(undefined);
+  }
 }
