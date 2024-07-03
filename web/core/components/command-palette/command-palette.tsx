@@ -206,10 +206,6 @@ export const CommandPalette: FC = observer(() => {
         toggleCommandPaletteModal(true);
       }
 
-      if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
-        e.preventDefault();
-        toggleShortcutModal(true);
-      }
       // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
@@ -217,6 +213,11 @@ export const CommandPalette: FC = observer(() => {
         (e.target as Element)?.classList?.contains("ProseMirror")
       )
         return;
+
+      if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
+        e.preventDefault();
+        toggleShortcutModal(true);
+      }
 
       if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
