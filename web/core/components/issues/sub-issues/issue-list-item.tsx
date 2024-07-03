@@ -82,10 +82,10 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     <div key={issueId}>
       {issue && (
         <div
-          className="group relative flex h-full w-full items-center gap-2 border-b border-custom-border-100 px-2 py-1 transition-all hover:bg-custom-background-90"
+          className="group relative flex min-h-11 h-full w-full items-center gap-3 pr-2 py-1 transition-all hover:bg-custom-background-90"
           style={{ paddingLeft: `${spacingLeft}px` }}
         >
-          <div className="h-[22px] w-[22px] flex-shrink-0">
+          <div className="flex size-5 items-center justify-center flex-shrink-0">
             {/* disable the chevron when current issue is also the root issue*/}
             {subIssueCount > 0 && !isCurrentIssueRoot && (
               <>
@@ -95,7 +95,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   </div>
                 ) : (
                   <div
-                    className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-custom-background-80"
+                    className="flex h-full w-full cursor-pointer items-center justify-center text-custom-text-400 hover:text-custom-text-300"
                     onClick={async () => {
                       if (!subIssueHelpers.issue_visibility.includes(issueId)) {
                         setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
@@ -106,10 +106,10 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                     }}
                   >
                     <ChevronRight
-                      className={cn("h-3 w-3 transition-all", {
+                      className={cn("size-3.5 transition-all", {
                         "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                       })}
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                     />
                   </div>
                 )}
@@ -119,9 +119,9 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
 
           <div className="flex w-full cursor-pointer items-center gap-2">
             <div
-              className="h-[6px] w-[6px] flex-shrink-0 rounded-full"
+              className="h-2 w-2 flex-shrink-0 rounded-full"
               style={{
-                backgroundColor: currentIssueStateDetail?.color,
+                backgroundColor: currentIssueStateDetail?.color ?? "#737373",
               }}
             />
             <div className="flex-shrink-0 text-xs text-custom-text-200">
@@ -166,6 +166,33 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 </CustomMenu.MenuItem>
               )}
 
+              <CustomMenu.MenuItem
+                onClick={() =>
+                  subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`)
+                }
+              >
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <span>Copy issue link</span>
+                </div>
+              </CustomMenu.MenuItem>
+
+              {disabled && (
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    issue.project_id &&
+                      subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <X className="h-3.5 w-3.5" strokeWidth={2} />
+                    <span>Remove parent issue</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
+
+              <hr className="border-custom-border-300" />
+
               {disabled && (
                 <CustomMenu.MenuItem
                   onClick={() => {
@@ -179,55 +206,27 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
               )}
-
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`)
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                  <span>Copy issue link</span>
-                </div>
-              </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
-
-          {disabled && (
-            <>
-              {subIssueHelpers.issue_loader.includes(issue.id) ? (
-                <div className="flex h-[22px] w-[22px] flex-shrink-0 cursor-not-allowed items-center justify-center overflow-hidden rounded-sm transition-all">
-                  <Loader width={14} strokeWidth={2} className="animate-spin" />
-                </div>
-              ) : (
-                <div
-                  className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
-                  onClick={() => {
-                    issue.project_id &&
-                      subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
-                  }}
-                >
-                  <X width={14} strokeWidth={2} />
-                </div>
-              )}
-            </>
-          )}
         </div>
       )}
 
       {/* should not expand the current issue if it is also the root issue*/}
-      {subIssueHelpers.issue_visibility.includes(issueId) && issue.project_id && subIssueCount > 0 && !isCurrentIssueRoot && (
-        <IssueList
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          parentIssueId={issue.id}
-          rootIssueId={rootIssueId}
-          spacingLeft={spacingLeft + 22}
-          disabled={disabled}
-          handleIssueCrudState={handleIssueCrudState}
-          subIssueOperations={subIssueOperations}
-        />
-      )}
+      {subIssueHelpers.issue_visibility.includes(issueId) &&
+        issue.project_id &&
+        subIssueCount > 0 &&
+        !isCurrentIssueRoot && (
+          <IssueList
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            parentIssueId={issue.id}
+            rootIssueId={rootIssueId}
+            spacingLeft={spacingLeft + 22}
+            disabled={disabled}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+          />
+        )}
     </div>
   );
 });

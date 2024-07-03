@@ -126,7 +126,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         </div>
 
         <div>
-          <IssueLinkList issueId={issueId} linkOperations={handleLinkOperations} />
+          <IssueLinkList issueId={issueId} linkOperations={handleLinkOperations} disabled={disabled} />
         </div>
       </div>
     </>
