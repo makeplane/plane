@@ -91,6 +91,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__status=2)
                 | models.Q(issue_inbox__isnull=True)
             )
+            .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
