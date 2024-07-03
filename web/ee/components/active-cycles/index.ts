@@ -1,5 +1,6 @@
 export * from "./root";
 export * from "./workspace-active-cycles-upgrade";
+export * from "./workspace-active-cycles-list";
 export * from "./header";
 export * from "./progress";
 export * from "./project-title";
