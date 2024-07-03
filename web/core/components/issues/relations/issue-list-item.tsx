@@ -11,7 +11,7 @@ import { RelationIssueProperty } from "@/components/issues/relations";
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations-widget/helper";
+import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;

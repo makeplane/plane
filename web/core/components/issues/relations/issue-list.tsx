@@ -5,7 +5,7 @@ import { TIssue, TIssueRelationTypes } from "@plane/types";
 // components
 import { RelationIssueListItem } from "@/components/issues/relations";
 // types
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations-widget/helper";
+import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;

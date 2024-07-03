@@ -7,7 +7,7 @@ import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dr
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // types
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations-widget/helper";
+import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
