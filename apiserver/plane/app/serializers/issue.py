@@ -459,10 +459,14 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
@@ -509,7 +513,7 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
             "attributes",
             "issue_id",
             "updated_at",
-            "updated_by_id",
+            "updated_by",
         ]
         read_only_fields = fields
 
