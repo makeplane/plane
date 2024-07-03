@@ -30,10 +30,10 @@ export const NOTIFICATION_TABS = [
     label: "All",
     value: ENotificationTab.ALL,
   },
-  // {
-  //   label: "Mentions",
-  //   value: ENotificationTab.MENTIONS,
-  // },
+  {
+    label: "Mentions",
+    value: ENotificationTab.MENTIONS,
+  },
 ];
 
 export const FILTER_TYPE_OPTIONS = [

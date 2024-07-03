@@ -178,6 +178,8 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     // NOTE: This validation is required to show all the read and unread notifications in a single place it may change in future.
     queryParams.read = this.filters.read === true ? false : undefined;
 
+    if (this.currentNotificationTab === ENotificationTab.MENTIONS) queryParams.mentioned = true;
+
     return queryParams;
   };
 
@@ -234,6 +236,11 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   setCurrentNotificationTab = (tab: TNotificationTab): void => {
     set(this, "currentNotificationTab", tab);
+
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    this.getNotifications(workspaceSlug, ENotificationLoader.INIT_LOADER, ENotificationQueryParamType.INIT);
   };
 
   /**
