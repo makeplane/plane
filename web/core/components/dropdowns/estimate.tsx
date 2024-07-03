@@ -236,7 +236,14 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                         <Combobox.Option key={option.value} value={option.value}>
                           {({ active, selected }) => (
                             <div
-                              className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${active ? `!hover:bg-custom-background-80` : ``} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`}
+                              className={cn(
+                                "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                                {
+                                  "bg-custom-background-80": active,
+                                  "text-custom-text-100": selected,
+                                  "text-custom-text-200": !selected,
+                                }
+                              )}
                             >
                               <span className="flex-grow truncate">{option.content}</span>
                               {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
