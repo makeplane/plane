@@ -84,7 +84,7 @@ export const StateForm: FC<TStateForm> = (props) => {
         onChange={(e) => handleFormData("name", e.target.value)}
         hasError={(errors && Boolean(errors.name)) || false}
         className="w-full"
-        maxLength={255}
+        maxLength={100}
         autoFocus
       />
 
