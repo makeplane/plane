@@ -2,11 +2,10 @@ import { Crown } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 
-export const IssueEmbedCard: React.FC<any> = (props) => (
+export const IssueEmbedUpgradeCard: React.FC<any> = (props) => (
   <div
-    className={`${
-      props.selected ? "border-custom-primary-200 border-[2px]" : ""
-    } w-full h-[100px] cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 shadow-custom-shadow-2xs`}
+    className={`${props.selected ? "border-custom-primary-200 border-[2px]" : ""
+      } w-full h-[100px] cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 shadow-custom-shadow-2xs`}
   >
     <h5 className="h-[20%] text-xs text-custom-text-300 p-2">
       {props.node?.attrs?.project_identifier}-{props?.node?.attrs?.sequence_id}
