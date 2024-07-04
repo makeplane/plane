@@ -1,3 +1,4 @@
+import isNil from "lodash/isNil";
 import orderBy from "lodash/orderBy";
 import { IProjectView, TViewFilterProps, TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 import { getDate } from "@/helpers/date-time.helper";
@@ -73,4 +74,17 @@ export const getViewName = (name: string | undefined) => {
   if (name === undefined) return "";
   if (!name || name.trim() === "") return "Untitled";
   return name;
+};
+
+/**
+ * Adds validation for the view creation filters
+ * @param data
+ * @returns
+ */
+export const getValidatedViewFilters = (data: Partial<IProjectView>) => {
+  if (data?.display_filters && data?.display_filters?.layout === "kanban" && isNil(data.display_filters.group_by)) {
+    data.display_filters.group_by = "state";
+  }
+
+  return data;
 };
