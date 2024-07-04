@@ -43,7 +43,11 @@ export const getCurrentStateSequence = (groupSates: IState[], destinationData: a
         return groupSates[currentStateIndex].sequence + currentSequence;
       }
     } else {
-      return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex - 1].sequence) / 2;
+      if (edge === "top") {
+        return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex - 1].sequence) / 2;
+      } else if (edge === "bottom") {
+        return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex + 1].sequence) / 2;
+      }
     }
   }
 };
