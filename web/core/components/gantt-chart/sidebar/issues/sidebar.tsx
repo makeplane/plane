@@ -54,7 +54,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     ganttContainerRef,
     isPaginating ? null : intersectionElement,
     loadMoreBlocks,
-    "50% 0% 50% 0%"
+    "100% 0% 100% 0%"
   );
 
   const handleOnDrop = (

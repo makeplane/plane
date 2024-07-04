@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
@@ -35,9 +35,9 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
-    isDeleteAttachmentModalOpen,
-    toggleDeleteAttachmentModal,
   } = useIssueDetail();
+  // state
+  const [isDeleteIssueAttachmentModalOpen, setIsDeleteIssueAttachmentModalOpen] = useState(false);
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   // hooks
@@ -47,10 +47,10 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
 
   return (
     <>
-      {isDeleteAttachmentModalOpen === attachment.id && (
+      {isDeleteIssueAttachmentModalOpen && (
         <IssueAttachmentDeleteModal
-          isOpen={!!isDeleteAttachmentModalOpen}
-          onClose={() => toggleDeleteAttachmentModal(null)}
+          isOpen={isDeleteIssueAttachmentModalOpen}
+          onClose={() => setIsDeleteIssueAttachmentModalOpen(false)}
           handleAttachmentOperations={handleAttachmentOperations}
           data={attachment}
         />
@@ -85,7 +85,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
         </Link>
 
         {!disabled && (
-          <button type="button" onClick={() => toggleDeleteAttachmentModal(attachment.id)}>
+          <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
             <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
           </button>
         )}

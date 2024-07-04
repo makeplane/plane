@@ -296,7 +296,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     label: "Settings",
     href: `/settings`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/`),
     Icon: Settings,
   },
 ];

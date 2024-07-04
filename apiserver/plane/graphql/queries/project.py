@@ -69,7 +69,10 @@ class ProjectMembersQuery:
     ) -> list[ProjectMemberType]:
         project = await sync_to_async(list)(
             ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project, is_active=True
+                workspace__slug=slug,
+                project_id=project,
+                is_active=True,
+                member__is_bot=False,
             )
         )
         return project

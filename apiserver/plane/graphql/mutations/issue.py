@@ -127,6 +127,7 @@ class IssueMutation:
     async def updateIssue(
         self,
         info: Info,
+        id: strawberry.ID,
         name: str,
         project: str,
         state: str,
@@ -134,23 +135,26 @@ class IssueMutation:
         priority: str,
         labels: list[strawberry.ID] = None,
         assignees: list[strawberry.ID] = None,
-        description: Optional[str] = None,
+        description: Optional[str] = {},
         parent: Optional[str] = None,
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
         targetDate: Optional[datetime] = None,
     ) -> IssueType:
-        issue = await sync_to_async(Issue.objects.update)(
-            name=name,
-            priority=priority,
-            state_id=state,
-            description=description,
-            parent_id=parent,
-            estimate_point_id=estimatePoint,
-            start_date=startDate,
-            target_date=targetDate,
-        )
+        issue = await sync_to_async(Issue.objects.get)(id=id)
 
+        # Update the fields
+        issue.name = name
+        issue.priority = priority
+        issue.state_id = state
+        issue.description = description
+        issue.parent_id = parent
+        issue.estimate_point_id = estimatePoint
+        issue.start_date = startDate
+        issue.target_date = targetDate
+
+        # Save the updated issue
+        await sync_to_async(issue.save)()
         if assignees is not None and len(assignees):
             IssueAssignee.objects.bulk_create(
                 [

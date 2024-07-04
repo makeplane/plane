@@ -34,6 +34,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
   // states
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
   const [estimatePointError, setEstimatePointError] = useState<TEstimateTypeError>(undefined);
+  const [switchLoader, setSwitchLoader] = useState(false);
 
   const handleEstimatePointError = (
     key: number,
@@ -141,6 +142,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
   const handleSwitchEstimate = async () => {
     try {
       if (!workspaceSlug || !projectId) return;
+      setSwitchLoader(true);
 
       const isEstimatesValid = estimateSystemSwitchType && isValidEstimatePoints(estimateSystemSwitchType);
 
@@ -165,6 +167,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           message: "Created and Enabled successfully",
         });
         handleClose();
+        setSwitchLoader(false);
       }
     } catch (error) {
       setToast({
@@ -172,6 +175,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
         title: "Error!",
         message: "something went wrong",
       });
+      setSwitchLoader(false);
     }
   };
 
@@ -215,8 +219,8 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           Cancel
         </Button>
 
-        <Button variant="primary" size="sm" onClick={handleSwitchEstimate}>
-          Update
+        <Button variant="primary" size="sm" onClick={handleSwitchEstimate} disabled={switchLoader}>
+          {switchLoader ? "Updating..." : "Update"}
         </Button>
       </div>
     </>

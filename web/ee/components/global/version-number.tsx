@@ -12,7 +12,7 @@ export const PlaneVersionNumber = observer(() => {
   }
 
   if (instance?.product === "plane-one") {
-    return <span>Version: ${instance.current_version || "Stable"}</span>;
+    return <span>Version: {instance.current_version || "Stable"}</span>;
   }
 
   return <span>Version: v{packageJson.version}</span>;
