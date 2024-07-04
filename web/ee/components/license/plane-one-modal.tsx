@@ -119,6 +119,16 @@ export const PlaneOneModal: FC<PlaneOneModalProps> = observer((props) => {
                     <circle cx={1} cy={1} r={1} />
                   </svg>
                   <a
+                    href="https://plane.so/changelog/one"
+                    target="_blank"
+                    className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+                  >
+                    Full Changelog
+                  </a>
+                  <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
+                    <circle cx={1} cy={1} r={1} />
+                  </svg>
+                  <a
                     href="mailto:support@plane.so"
                     target="_blank"
                     className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"

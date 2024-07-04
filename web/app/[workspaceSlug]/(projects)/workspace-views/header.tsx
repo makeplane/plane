@@ -15,7 +15,7 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useUser, useIssues, useGlobalView } from "@/hooks/store";
 
@@ -98,7 +98,6 @@ export const GlobalIssuesHeader = observer(() => {
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
   const isLocked = viewDetails?.is_locked;
 
   return (
@@ -118,7 +117,11 @@ export const GlobalIssuesHeader = observer(() => {
         <div className="flex items-center gap-2">
           {!isLocked && (
             <>
-              <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+              <FiltersDropdown
+                title="Filters"
+                placement="bottom-end"
+                isFiltersApplied={isIssueFilterActive(issueFilters)}
+              >
                 <FilterSelection
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                   filters={issueFilters?.filters ?? {}}

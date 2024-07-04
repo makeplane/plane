@@ -2,6 +2,11 @@ name: Feature Preview
 
 on:
   workflow_dispatch:
+    inputs:
+      base_tag_name:
+        description: 'Base Tag Name'
+        required: false
+        default: 'preview'
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -29,7 +34,12 @@ jobs:
           echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
           echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
           echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
-          echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT
+
+          if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+            echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT
+          fi
 
           echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
 

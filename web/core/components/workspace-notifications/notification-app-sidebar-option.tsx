@@ -29,7 +29,7 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
     return <div className="absolute right-3.5 top-2 h-2 w-2 rounded-full bg-custom-primary-300" />;
 
   return (
-    <div className="text-[8px] ml-auto bg-custom-primary-100 text-white p-1 py-0.5 rounded-full">
+    <div className="ml-auto px-2.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
       {getNumberCount(unreadNotificationsCount.total_unread_notifications_count)}
     </div>
   );

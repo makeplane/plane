@@ -32,7 +32,7 @@ class IsAuthenticated(BasePermission):
 
 
 class ProjectBasePermission(IsAuthenticated):
-    message = "User does not have permission to access this workspace"
+    message = "User does not have permission to access this project"
 
     async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
         # First, check if the user is authenticated by calling the parent class's method

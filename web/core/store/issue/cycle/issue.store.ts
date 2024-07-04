@@ -370,7 +370,9 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       set(this.activeCycleIds, [cycleId, "nextCursor"], response.next_cursor);
       set(this.activeCycleIds, [cycleId, "nextPageResults"], response.next_page_results);
       set(this.activeCycleIds, [cycleId, "issueCount"], response.total_count);
-      update(this.activeCycleIds, [cycleId, "issueIds"], (issueIds: string[] = []) => this.issuesSortWithOrderBy(uniq(concat(issueIds, activeIssueIds)), this.orderBy));
+      update(this.activeCycleIds, [cycleId, "issueIds"], (issueIds: string[] = []) =>
+        this.issuesSortWithOrderBy(uniq(concat(issueIds, activeIssueIds)), this.orderBy)
+      );
 
       return response;
     } catch (error) {
@@ -413,5 +415,8 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

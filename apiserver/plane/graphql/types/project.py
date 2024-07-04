@@ -19,8 +19,8 @@ class ProjectType:
     network: int
     workspace: str
     identifier: str
-    default_assignee: Optional[str]
-    project_lead: Optional[str]
+    default_assignee: Optional[strawberry.ID]
+    project_lead: Optional[strawberry.ID]
     emoji: Optional[str]
     icon_prop: Optional[JSON]
     module_view: bool
@@ -29,11 +29,11 @@ class ProjectType:
     page_view: bool
     inbox_view: bool
     cover_image: Optional[str]
-    estimate: Optional[str]
+    estimate: Optional[strawberry.ID]
     archive_in: int
     close_in: int
     logo_props: JSON
-    default_state: Optional[str]
+    default_state: Optional[strawberry.ID]
     archived_at: Optional[datetime]
     is_member: bool
     is_favorite: bool
@@ -53,6 +53,10 @@ class ProjectType:
     @strawberry.field
     def estimate(self) -> dict:
         return self.estimate_id
+    
+    @strawberry.field
+    def default_state(self) -> int:
+        return self.default_state_id
 
 
 @strawberry_django.type(ProjectMember)

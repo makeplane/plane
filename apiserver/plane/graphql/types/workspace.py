@@ -18,8 +18,8 @@ class WorkspaceType:
     name: str
     slug: str
     logo: Optional[str]
-    owner: str
-    organization_size: str
+    owner: strawberry.ID
+    organization_size: Optional[str]
 
     @strawberry.field
     def owner(self) -> int:
