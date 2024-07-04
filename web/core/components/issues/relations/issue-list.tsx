@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, Fragment } from "react";
+import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { TIssue, TIssueRelationTypes } from "@plane/types";
 // components
@@ -35,18 +35,17 @@ export const RelationIssueList: FC<Props> = observer((props) => {
       {issueIds &&
         issueIds.length > 0 &&
         issueIds.map((relationIssueId) => (
-          <Fragment key={relationIssueId}>
-            <RelationIssueListItem
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              relationKey={relationKey}
-              relationIssueId={relationIssueId}
-              disabled={disabled}
-              handleIssueCrudState={handleIssueCrudState}
-              issueOperations={issueOperations}
-            />
-          </Fragment>
+          <RelationIssueListItem
+            key={relationIssueId}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            relationKey={relationKey}
+            relationIssueId={relationIssueId}
+            disabled={disabled}
+            handleIssueCrudState={handleIssueCrudState}
+            issueOperations={issueOperations}
+          />
         ))}
     </div>
   );
