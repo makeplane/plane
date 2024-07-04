@@ -1,5 +1,4 @@
 import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -19,8 +18,6 @@ import {
   ENotificationTab,
   TNotificationTab,
 } from "@/constants/notification";
-// helpers
-import { convertToISODateString } from "@/helpers/date-time.helper";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
@@ -122,10 +119,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   notificationIdsByWorkspaceId = computedFn((workspaceId: string) => {
     if (!workspaceId || isEmpty(this.notifications)) return undefined;
-    const workspaceNotifications = orderBy(this.notifications || {}, (n) => convertToISODateString(n["created_at"]), [
-      "desc",
-    ]);
-    const workspaceNotificationIds = Object.values(workspaceNotifications)
+    const workspaceNotificationIds = Object.values(this.notifications || {})
       .filter((n) => n.workspace === workspaceId)
       .filter((n) => {
         if (!this.filters.archived && !this.filters.snoozed) {
