@@ -147,7 +147,6 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
               )}
-              <hr className="border-custom-border-300" />
 
               {!disabled && (
                 <CustomMenu.MenuItem onClick={handleDeleteIssue}>
