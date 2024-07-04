@@ -11,11 +11,12 @@ type TGroupItem = {
   workspaceSlug: string;
   projectId: string;
   groupKey: TStateGroups;
+  groupedStates: Record<string, IState[]>;
   states: IState[];
 };
 
 export const GroupItem: FC<TGroupItem> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, states } = props;
+  const { workspaceSlug, projectId, groupKey, groupedStates, states } = props;
   // state
   const [createState, setCreateState] = useState(false);
 
@@ -41,7 +42,13 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
       )}
 
       <div id="group-droppable-container">
-        <StateList workspaceSlug={workspaceSlug} projectId={projectId} groupKey={groupKey} states={states} />
+        <StateList
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          groupKey={groupKey}
+          groupedStates={groupedStates}
+          states={states}
+        />
       </div>
     </div>
   );

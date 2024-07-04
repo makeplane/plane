@@ -10,24 +10,28 @@ type TStateList = {
   workspaceSlug: string;
   projectId: string;
   groupKey: TStateGroups;
+  groupedStates: Record<string, IState[]>;
   states: IState[];
 };
 
 export const StateList: FC<TStateList> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, states } = props;
+  const { workspaceSlug, projectId, groupKey, groupedStates, states } = props;
 
   return (
-    <div className="space-y-2">
-      {states.map((state: IState) => (
+    <>
+      {states.map((state: IState, index) => (
         <StateItem
           key={state?.name}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           groupKey={groupKey}
+          groupedStates={groupedStates}
           totalStates={states.length || 0}
           state={state}
+          isFirstElement={index === 0 ? true : false}
+          isLastElement={index === states.length - 1 ? true : false}
         />
       ))}
-    </div>
+    </>
   );
 });

@@ -27,6 +27,7 @@ export const GroupList: FC<TGroupList> = observer((props) => {
             projectId={projectId}
             groupKey={groupKey}
             states={groupStates}
+            groupedStates={groupedStates}
           />
         );
       })}
