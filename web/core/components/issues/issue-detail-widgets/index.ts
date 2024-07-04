@@ -4,6 +4,5 @@ export * from "./relations";
 export * from "./root";
 export * from "./sub-issues";
 export * from "./widget-button";
-export * from "./widget-collapsible-button";
 export * from "./collapsible-buttons";
 export * from "./action-buttons";

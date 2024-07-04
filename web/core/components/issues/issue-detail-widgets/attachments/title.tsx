@@ -1,8 +1,9 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
+import { CollapsibleButton } from "@plane/ui";
 // components
-import { WidgetCollapsibleButton, IssueAttachmentActionButton } from "@/components/issues/issue-detail-widgets";
+import { IssueAttachmentActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 
@@ -33,7 +34,7 @@ export const IssueAttachmentsCollapsibleTitle: FC<Props> = observer((props) => {
   );
 
   return (
-    <WidgetCollapsibleButton
+    <CollapsibleButton
       isOpen={isOpen}
       title="Attachments"
       indicatorElement={indicatorElement}

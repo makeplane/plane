@@ -1,8 +1,6 @@
-"use client";
 import React, { FC } from "react";
-import { DropdownIcon } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { DropdownIcon } from "../icons";
+import { cn } from "../../helpers";
 
 type Props = {
   isOpen: boolean;
@@ -12,7 +10,7 @@ type Props = {
   actionItemElement?: React.ReactNode;
 };
 
-export const WidgetCollapsibleButton: FC<Props> = (props) => {
+export const CollapsibleButton: FC<Props> = (props) => {
   const { isOpen, title, hideChevron = false, indicatorElement, actionItemElement } = props;
   return (
     <div className="flex items-center justify-between gap-3 h-12 px-2.5 py-3 border-b border-custom-border-100">

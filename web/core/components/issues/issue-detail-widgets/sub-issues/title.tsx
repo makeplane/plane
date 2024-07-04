@@ -1,9 +1,9 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { CircularProgressIndicator } from "@plane/ui";
+import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // components
-import { WidgetCollapsibleButton, SubIssuesActionButton } from "@/components/issues/issue-detail-widgets";
+import { SubIssuesActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 
@@ -45,7 +45,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   );
 
   return (
-    <WidgetCollapsibleButton
+    <CollapsibleButton
       isOpen={isOpen}
       title="Sub-issues"
       indicatorElement={indicatorElement}
