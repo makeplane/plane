@@ -193,7 +193,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         actionItems: !is_draft_issue && response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId ? projectId?.toString() : response?.project_id?.toString()}
+            projectId={response?.project_id}
             issueId={response.id}
           />
         ),
