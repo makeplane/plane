@@ -190,10 +190,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: `${is_draft_issue ? "Draft issue" : "Issue"} created successfully.`,
-        actionItems: !is_draft_issue && (
+        actionItems: !is_draft_issue && response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
+            projectId={response?.project_id}
             issueId={response.id}
           />
         ),
