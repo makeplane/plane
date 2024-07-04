@@ -116,7 +116,6 @@ export const StateItem: FC<TStateItem> = observer((props) => {
     isFirstElement,
     isLastElement,
   ]);
-
   // DND ends
 
   return (
@@ -134,13 +133,16 @@ export const StateItem: FC<TStateItem> = observer((props) => {
           <div
             ref={draggableElementRef}
             className={cn(
-              "relative border border-custom-border-100 rounded p-3 px-3.5 flex items-center gap-2 group my-1 cursor-grab",
-              isDragging ? `opacity-50` : `opacity-100`
+              "relative border border-custom-border-100 rounded p-3 px-3.5 flex items-center gap-2 group my-1",
+              isDragging ? `opacity-50` : `opacity-100`,
+              isFirstElement && isLastElement ? `cursor-auto` : `cursor-grab`
             )}
           >
-            <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
-              <GripVertical className="w-3 h-3" />
-            </div>
+            {!(isFirstElement && isLastElement) && (
+              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+                <GripVertical className="w-3 h-3" />
+              </div>
+            )}
             <div className="flex-shrink-0">
               <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
             </div>

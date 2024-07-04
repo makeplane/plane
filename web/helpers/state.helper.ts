@@ -22,6 +22,7 @@ export const getCurrentStateSequence = (groupSates: IState[], destinationData: a
   const currentSequence = 65535;
   if (!edge) return currentSequence;
   const currentStateIndex = groupSates.findIndex((state) => state.id === destinationData.id);
+
   if (destinationData.isFirstElement && destinationData.isLastElement) {
     if (edge === "top") {
       return groupSates[currentStateIndex].sequence - currentSequence;
