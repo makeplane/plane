@@ -139,6 +139,8 @@ export const WORKSPACE_LABELS = (workspaceSlug: string) => `WORKSPACE_LABELS_${w
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
 // cycles
+export const WORKSPACE_ACTIVE_CYCLES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
+  `WORKSPACE_ACTIVE_CYCLES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
 export const CYCLES_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
 export const INCOMPLETE_CYCLES_LIST = (projectId: string) => `INCOMPLETE_CYCLES_LIST_${projectId.toUpperCase()}`;
 export const CURRENT_CYCLE_LIST = (projectId: string) => `CURRENT_CYCLE_LIST_${projectId.toUpperCase()}`;

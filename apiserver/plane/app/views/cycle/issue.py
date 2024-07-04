@@ -20,12 +20,12 @@ from rest_framework.response import Response
 from plane.app.permissions import (
     ProjectEntityPermission,
 )
+
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import (
     CycleIssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
@@ -38,6 +38,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import (
@@ -46,6 +47,7 @@ from plane.utils.paginator import (
 )
 
 # Module imports
+
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
