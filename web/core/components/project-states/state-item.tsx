@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
-import { Pencil } from "lucide-react";
+import { GripVertical, Pencil } from "lucide-react";
 import { IState, TStateGroups } from "@plane/types";
 import { DropIndicator, StateGroupIcon } from "@plane/ui";
 // components
@@ -134,10 +134,13 @@ export const StateItem: FC<TStateItem> = observer((props) => {
           <div
             ref={draggableElementRef}
             className={cn(
-              "border border-custom-border-100 rounded p-3 flex items-center gap-2 group my-1",
+              "relative border border-custom-border-100 rounded p-3 px-3.5 flex items-center gap-2 group my-1 cursor-grab",
               isDragging ? `opacity-50` : `opacity-100`
             )}
           >
+            <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+              <GripVertical className="w-3 h-3" />
+            </div>
             <div className="flex-shrink-0">
               <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
             </div>
