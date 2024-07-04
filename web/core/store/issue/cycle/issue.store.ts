@@ -415,6 +415,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
   updateIssue = this.issueUpdate;
   archiveIssue = this.issueArchive;

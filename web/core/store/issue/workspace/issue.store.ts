@@ -167,8 +167,11 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
-  quickAddIssue = undefined;
   updateIssue = this.issueUpdate;
   archiveIssue = this.issueArchive;
+
+  // Setting them as undefined as they can not performed on workspace issues
+  quickAddIssue = undefined;
 }

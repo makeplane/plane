@@ -194,8 +194,9 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     }
   };
 
-  updateIssue: undefined;
-  archiveIssue: undefined;
+  // Setting them as undefined as they can not performed on Archived issues
+  updateIssue = undefined;
+  archiveIssue = undefined;
   archiveBulkIssues = undefined;
   quickAddIssue = undefined;
 }

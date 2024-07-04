@@ -251,6 +251,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     }
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
   updateIssue = this.issueUpdate;
   archiveIssue = this.issueArchive;

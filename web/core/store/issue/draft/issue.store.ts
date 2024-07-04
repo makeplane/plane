@@ -165,9 +165,11 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   createIssue = this.createDraftIssue;
   updateIssue = this.updateDraftIssue;
 
+  // Setting them as undefined as they can not performed on draft issues
   archiveBulkIssues = undefined;
   quickAddIssue = undefined;
   archiveIssue = undefined;
