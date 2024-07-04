@@ -39,6 +39,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showAccessSpecifier = false,
     showSubmitButton = true,
     isSubmitting = false,
+    placeholder = "Add comment...",
     ...rest
   } = props;
   // store hooks
@@ -81,8 +82,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,
         }}
-        {...rest}
+        placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}
+        {...rest}
       />
       <IssueCommentToolbar
         accessSpecifier={accessSpecifier}
