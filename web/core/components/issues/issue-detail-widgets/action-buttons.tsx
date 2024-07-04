@@ -1,6 +1,6 @@
 "use client";
 import React, { FC } from "react";
-import { Layers, Link, Paperclip } from "lucide-react";
+import { Layers, Link, Paperclip, Waypoints } from "lucide-react";
 // ui
 import { RelationsIcon } from "@plane/ui";
 // components
@@ -42,7 +42,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
         customButton={
           <IssueDetailWidgetButton
             title="Add Relation"
-            icon={<RelationsIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" />}
+            icon={<Waypoints className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" strokeWidth={2} />}
           />
         }
       />
