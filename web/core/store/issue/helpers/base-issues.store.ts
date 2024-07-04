@@ -1067,7 +1067,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         currentModuleIds = uniq(concat([...currentModuleIds], moduleIds));
 
         // For current Issue, update module Ids by calling current store's update Issue, without making an API call
-        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: currentModuleIds }, false);
+        this.issueUpdate(workspaceSlug, projectId, issueId, { module_ids: currentModuleIds }, false);
       });
 
       if (moduleIds.includes(this.moduleId ?? "")) {
