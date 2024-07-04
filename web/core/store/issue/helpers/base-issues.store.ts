@@ -1042,6 +1042,43 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   /*
+   * add Modules to Array in a non optimistic way while creating issues
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
+   * @param moduleIds array of modules to be added
+   */
+  async addModulesToIssue(workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) {
+    // keep a copy of the original module ids
+    const originalModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+    try {
+      //Perform API call
+      await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+        modules: moduleIds,
+        removed_modules: [],
+      });
+
+      runInAction(() => {
+        // get current Module Ids of the issue
+        let currentModuleIds = [...originalModuleIds];
+
+        // If current Module Id is included in the modules list, then add Issue to List
+        if (moduleIds.includes(this.moduleId ?? "")) this.addIssueToList(issueId);
+        currentModuleIds = uniq(concat([...currentModuleIds], moduleIds));
+
+        // For current Issue, update module Ids by calling current store's update Issue, without making an API call
+        this.updateIssue(workspaceSlug, projectId, issueId, { module_ids: currentModuleIds }, false);
+      });
+
+      if (moduleIds.includes(this.moduleId ?? "")) {
+        this.fetchParentStats(workspaceSlug, projectId);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /*
    * change modules array in issue
    * @param workspaceSlug
    * @param projectId

@@ -209,7 +209,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     try {
       const response = await super.createIssue(workspaceSlug, projectId, data, moduleId, false);
       const moduleIds = data.module_ids && data.module_ids.length > 1 ? data.module_ids : [moduleId];
-      await this.changeModulesInIssue(workspaceSlug, projectId, response.id, moduleIds, []);
+      await this.addModulesToIssue(workspaceSlug, projectId, response.id, moduleIds);
 
       return response;
     } catch (error) {
