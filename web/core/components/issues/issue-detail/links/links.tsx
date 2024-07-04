@@ -27,7 +27,7 @@ export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
   if (!issueLinks) return <></>;
 
   return (
-    <div className="grid grid-cols-12 3xl:grid-cols-10 gap-2 px-9 py-4">
+    <div className="space-y-2">
       {issueLinks &&
         issueLinks.length > 0 &&
         issueLinks.map((linkId) => (
