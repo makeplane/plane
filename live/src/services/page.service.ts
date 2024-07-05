@@ -1,12 +1,7 @@
 // types
 import { TPage } from "@plane/types";
 // services
-import { APIService } from "./api.service.js";
-import { config } from "dotenv";
-
-config();
-
-const API_BASE_URL = process.env.API_BASE_URL ?? "";
+import { API_BASE_URL, APIService } from "./api.service.js";
 
 export class PageService extends APIService {
   constructor() {
@@ -17,9 +12,15 @@ export class PageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
+    cookie: string,
   ): Promise<TPage> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
+      {
+        headers: {
+          Cookie: cookie,
+        },
+      },
     )
       .then((response) => response?.data)
       .catch((error) => {

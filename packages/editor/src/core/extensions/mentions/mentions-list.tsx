@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, us
 import { Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // ui
-import { Avatar } from "@plane/ui";
+// import { Avatar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common";
 // types
@@ -156,7 +156,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
             )}
             onClick={() => selectItem(index)}
           >
-            <Avatar name={item?.title} src={item?.avatar} />
+            {/* <Avatar name={item?.title} src={item?.avatar} /> */}
             <span className="flex-grow truncate">{item.title}</span>
           </div>
         ))

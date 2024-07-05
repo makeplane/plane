@@ -29,6 +29,11 @@ type CollaborativeEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
+  user: {
+    color: string;
+    id: string;
+    name: string;
+  };
 };
 
 export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
@@ -44,15 +49,17 @@ export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
     placeholder,
     setHideDragHandleFunction,
     tabIndex,
+    user,
   } = props;
   // initialize provider using Hocuspocus
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        url: "http://192.168.68.91:1234/collaboration?workspaceSlug=aaryan&projectId=23a09309-c139-4483-813e-ca5db250cbf6",
+        url: "http://192.168.68.91:3004/collaboration?workspaceSlug=aaryan&projectId=23a09309-c139-4483-813e-ca5db250cbf6",
         name: id,
+        token: user.id,
       }),
-    [id]
+    [id, user.id]
   );
   // destroy and disconnect connection on unmount
   useEffect(

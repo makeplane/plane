@@ -1,22 +1,19 @@
-import { config } from "dotenv";
 import { TiptapTransformer } from "@hocuspocus/transformer";
-// import { generateJSON } from "@tiptap/html";
+import { generateJSON } from "@tiptap/html";
 import * as Y from "yjs";
-// import { CoreEditorExtensionsWithoutProps } from "@plane/editor";
+// editor
+import { CoreEditorExtensionsWithoutProps } from "@plane/editor/lib";
+// services
 import { PageService } from "./services/page.service.js";
-import { TContext } from "./types/server.js";
 const pageService = new PageService();
 
-config();
-
-const BASE_URL = process.env.API_BASE_URL;
-
 export const updateDocument = async (
+  workspaceSlug: string | undefined,
+  projectId: string | undefined,
   pageId: string,
   data: Uint8Array,
-  context: TContext,
+  cookie: string | undefined,
 ) => {
-  const { workspaceSlug, projectId, cookie } = context;
   if (!workspaceSlug || !projectId || !cookie) return;
 
   // encode binary description data
@@ -41,59 +38,43 @@ export const updateDocument = async (
   }
 };
 
-const fetchByIdIfExists = async (pageId: string, context: TContext) => {
-  const { workspaceSlug, projectId, cookie } = context;
+const fetchDescriptionHTMLAndTransform = async (
+  workspaceSlug: string,
+  projectId: string,
+  pageId: string,
+  cookie: string,
+) => {
   if (!workspaceSlug || !projectId || !cookie) return;
-  const url = `${BASE_URL}/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`;
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookie,
-      },
-    });
+    const pageDetails = await pageService.fetchDetails(
+      workspaceSlug,
+      projectId,
+      pageId,
+      cookie,
+    );
 
-    if (!response.ok) {
-      try {
-        console.error(
-          `HTTP error! Status: ${response.status}, Body:`,
-          response.body,
-        );
-      } catch {
-        console.error(
-          `HTTP error! Status: ${response.status}, Body: ${response.body}`,
-        );
-      }
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+    console.log("pageDetails", pageDetails.description_html);
+    const prosemirrorJSON = generateJSON(
+      pageDetails.description_html ?? "<p></p>",
+      CoreEditorExtensionsWithoutProps(),
+    );
+    const transformedData = TiptapTransformer.toYdoc(prosemirrorJSON);
+    const encodedData = Y.encodeStateAsUpdate(transformedData);
 
-    const ans = await response.json();
-
-    if (!ans.description_yjs) {
-      console.log("ans", ans.description_html);
-      // const final = generateJSON(
-      //   ans.description_html,
-      //   CoreEditorExtensionsWithoutProps(),
-      // );
-      const finalDataInYdoc = TiptapTransformer.toYdoc({});
-      const encodedData = Y.encodeStateAsUpdate(finalDataInYdoc);
-
-      return encodedData;
-    }
-    return null;
+    return encodedData;
   } catch (error) {
-    console.error("Fetch error:", error);
+    console.error("Error while transforming from HTML to Uint8Array", error);
     throw error;
   }
 };
 
 export const fetchPageDescriptionBinary = async (
+  workspaceSlug: string | undefined,
+  projectId: string | undefined,
   pageId: string,
-  context: TContext,
+  cookie: string | undefined,
 ) => {
-  const { workspaceSlug, projectId, cookie } = context;
   if (!workspaceSlug || !projectId || !cookie) return null;
 
   try {
@@ -106,7 +87,12 @@ export const fetchPageDescriptionBinary = async (
     const binaryData = new Uint8Array(response);
 
     if (binaryData.byteLength === 0) {
-      const binary = await fetchByIdIfExists(pageId, context);
+      const binary = await fetchDescriptionHTMLAndTransform(
+        workspaceSlug,
+        projectId,
+        pageId,
+        cookie,
+      );
       if (binary) {
         console.log("not found in db:", binary, binary instanceof Uint8Array);
         return binary;

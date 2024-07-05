@@ -15,6 +15,7 @@ import { IUserLite } from "@plane/types";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -135,6 +136,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 issue: {
                   widgetCallback: () => <IssueEmbedCard />,
                 },
+              }}
+              user={{
+                id: currentUser?.id ?? "",
+                name: currentUser?.display_name ?? "",
+                color: generateRandomColor(currentUser?.id ?? ""),
               }}
             />
           ) : (

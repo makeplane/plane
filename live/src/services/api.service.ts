@@ -1,4 +1,9 @@
 import axios, { AxiosInstance } from "axios";
+import { config } from "dotenv";
+
+config();
+
+export const API_BASE_URL = process.env.API_BASE_URL ?? "";
 
 export abstract class APIService {
   protected baseURL: string;

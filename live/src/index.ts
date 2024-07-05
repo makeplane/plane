@@ -3,43 +3,103 @@ import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
 import expressWs, { Application } from "express-ws";
-// types
-import { TContext } from "./types/server.js";
 // page actions
 import { fetchPageDescriptionBinary, updateDocument } from "./page.js";
+// services
+import { UserService } from "./services/user.service.js";
+const userService = new UserService();
 
 const server = Server.configure({
+  onAuthenticate: async ({
+    requestHeaders,
+    requestParameters,
+    connection,
+    token,
+  }) => {
+    // request headers
+    const cookie = requestHeaders.cookie?.toString();
+    // params
+    const params = requestParameters;
+    const workspaceSlug = params.get("workspaceSlug")?.toString();
+    const projectId = params.get("projectId")?.toString();
+
+    if (!workspaceSlug || !projectId || !cookie)
+      throw Error("Credentials not provided");
+
+    try {
+      // fetch current user info
+      const response = await userService.currentUser(cookie);
+      if (response.id !== token) throw Error();
+      // fetch current user's roles
+      const workspaceRoles = await userService.getUserAllProjectsRole(
+        workspaceSlug,
+        cookie,
+      );
+      const currentProjectRole = workspaceRoles[projectId];
+      // make the connection read only for roles lower than a member
+      if (currentProjectRole < 15) {
+        connection.readOnly = true;
+      }
+
+      return {
+        user: {
+          id: response.id,
+          name: response.display_name,
+        },
+      };
+    } catch (error) {
+      throw Error("Authentication unsuccessful!");
+    }
+  },
   extensions: [
     new Logger(),
     new Database({
-      fetch: async ({ documentName, context }) =>
-        new Promise(async (resolve) => {
+      fetch: async ({
+        documentName: pageId,
+        requestHeaders,
+        requestParameters,
+      }) => {
+        // request headers
+        const cookie = requestHeaders.cookie?.toString();
+        // query params
+        const params = requestParameters;
+        const workspaceSlug = params.get("workspaceSlug")?.toString();
+        const projectId = params.get("projectId")?.toString();
+
+        return new Promise(async (resolve) => {
           const fetchedData = await fetchPageDescriptionBinary(
-            documentName,
-            context,
+            workspaceSlug,
+            projectId,
+            pageId,
+            cookie,
           );
           resolve(fetchedData);
-        }),
-      store: async ({ state, documentName, context }) =>
-        new Promise(async () => {
-          await updateDocument(documentName, state, context);
-        }),
+        });
+      },
+      store: async ({
+        state,
+        documentName: pageId,
+        requestHeaders,
+        requestParameters,
+      }) => {
+        // request headers
+        const cookie = requestHeaders.cookie?.toString();
+        // query params
+        const params = requestParameters;
+        const workspaceSlug = params.get("workspaceSlug")?.toString();
+        const projectId = params.get("projectId")?.toString();
+
+        return new Promise(async () => {
+          await updateDocument(workspaceSlug, projectId, pageId, state, cookie);
+        });
+      },
     }),
   ],
 });
 const { app }: { app: Application } = expressWs(express());
 
 app.ws("/collaboration", (websocket, request) => {
-  const workspaceSlug = request.query.workspaceSlug?.toString();
-  const projectId = request.query.projectId?.toString();
-
-  const context: TContext = {
-    workspaceSlug,
-    projectId,
-    cookie: request.headers.cookie,
-  };
-
-  server.handleConnection(websocket, request, context);
+  server.handleConnection(websocket, request);
 });
 
-app.listen(1234);
+app.listen(3004);

@@ -25,6 +25,11 @@ interface IDocumentEditor {
   };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  user: {
+    color: string;
+    id: string;
+    name: string;
+  };
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
@@ -39,6 +44,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     mentionHandler,
     placeholder,
     tabIndex,
+    user,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
@@ -60,6 +66,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     placeholder,
     setHideDragHandleFunction,
     tabIndex,
+    user,
   });
 
   const editorContainerClassNames = getEditorClassNames({
