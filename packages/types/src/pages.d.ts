@@ -46,3 +46,5 @@ export type TPageFilters = {
   sortBy: TPageFiltersSortBy;
   filters?: TPageFilterProps;
 };
+
+export type TPageEmbedType = "mention" | "issue";
