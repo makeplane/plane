@@ -3,15 +3,10 @@ module github.com/makeplane/plane-ee/monitor/lib/router
 go 1.22.4
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.5
-	github.com/makeplane/plane-ee/monitor/lib/logger v0.0.0-20240702074603-c3ace3ab8692
-	github.com/stretchr/testify v1.9.0
-)
-
-require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/google/uuid v1.5.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 //
 	github.com/klauspost/compress v1.17.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
