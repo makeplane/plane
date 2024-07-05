@@ -20,7 +20,7 @@ import {
   TNotificationTab,
 } from "@/constants/notification";
 // helpers
-import { convertToISODateString } from "@/helpers/date-time.helper";
+import { convertToEpoch } from "@/helpers/date-time.helper";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
@@ -122,9 +122,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   notificationIdsByWorkspaceId = computedFn((workspaceId: string) => {
     if (!workspaceId || isEmpty(this.notifications)) return undefined;
-    const workspaceNotifications = orderBy(this.notifications || {}, (n) => convertToISODateString(n.created_at), [
-      "desc",
-    ]);
+    const workspaceNotifications = orderBy(this.notifications || {}, (n) => convertToEpoch(n.created_at), ["desc"]);
     const workspaceNotificationIds = Object.values(workspaceNotifications)
       .filter((n) => n.workspace === workspaceId)
       .filter((n) => {
