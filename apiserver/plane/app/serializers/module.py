@@ -177,8 +177,8 @@ class ModuleSerializer(DynamicBaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
-    total_estimate_points = serializers.IntegerField(read_only=True)
-    completed_estimate_points = serializers.IntegerField(read_only=True)
+    total_estimate_points = serializers.FloatField(read_only=True)
+    completed_estimate_points = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Module
@@ -222,10 +222,10 @@ class ModuleSerializer(DynamicBaseSerializer):
 class ModuleDetailSerializer(ModuleSerializer):
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     sub_issues = serializers.IntegerField(read_only=True)
-    backlog_estimate_points = serializers.IntegerField(read_only=True)
-    unstarted_estimate_points = serializers.IntegerField(read_only=True)
-    started_estimate_points = serializers.IntegerField(read_only=True)
-    cancelled_estimate_points = serializers.IntegerField(read_only=True)
+    backlog_estimate_points = serializers.FloatField(read_only=True)
+    unstarted_estimate_points = serializers.FloatField(read_only=True)
+    started_estimate_points = serializers.FloatField(read_only=True)
+    cancelled_estimate_points = serializers.FloatField(read_only=True)
 
     class Meta(ModuleSerializer.Meta):
         fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues", "backlog_estimate_points", "unstarted_estimate_points", "started_estimate_points", "cancelled_estimate_points"]

@@ -149,7 +149,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             description_html=request.data.get("issue", {}).get(
                 "description_html", "<p></p>"
             ),
-            priority=request.data.get("issue", {}).get("priority", "low"),
+            priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
             state=state,
         )

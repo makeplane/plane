@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { mutate } from "swr";
 // types
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
@@ -43,6 +44,16 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
+        // mutate when the current cycle creation is active
+        if (payload.start_date && payload.end_date) {
+          const currentDate = new Date();
+          const cycleStartDate = new Date(payload.start_date);
+          const cycleEndDate = new Date(payload.end_date);
+          if (currentDate >= cycleStartDate && currentDate <= cycleEndDate) {
+            mutate(`PROJECT_ACTIVE_CYCLE_${selectedProjectId}`);
+          }
+        }
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",

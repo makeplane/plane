@@ -19,8 +19,8 @@ import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
-import { IssueEmbedCard } from "@/plane-web/components/pages";
+// plane web hooks
+import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
 // store
@@ -75,8 +75,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+
   // page filters
   const { isFullWidth } = usePageFilters();
+  // issue-embed
+  const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
+    workspaceSlug?.toString() ?? "",
+    projectId?.toString() ?? ""
+  );
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -133,9 +139,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 suggestions: mentionSuggestions,
               }}
               embedHandler={{
-                issue: {
-                  widgetCallback: () => <IssueEmbedCard />,
-                },
+                issue: issueEmbedProps,
               }}
               user={{
                 id: currentUser?.id ?? "",
@@ -154,9 +158,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 highlights: mentionHighlights,
               }}
               embedHandler={{
-                issue: {
-                  widgetCallback: () => <IssueEmbedCard />,
-                },
+                issue: issueEmbedReadOnlyProps,
               }}
             />
           )}

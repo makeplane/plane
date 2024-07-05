@@ -22,8 +22,8 @@ import {
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // helpers
 // constants
 import { GANTT_SELECT_GROUP } from "../constants";
@@ -78,6 +78,8 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
   const { currentView, currentViewData } = useGanttChart();
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   // Enable Auto Scroll for Ganttlist
   useEffect(() => {
@@ -126,7 +128,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       entities={{
         [GANTT_SELECT_GROUP]: blockIds ?? [],
       }}
-      disabled={!ENABLE_BULK_OPERATIONS}
+      disabled={!isBulkOperationsEnabled}
     >
       {(helpers) => (
         <>
