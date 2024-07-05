@@ -56,7 +56,7 @@ jobs:
             echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
 
-            if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+            if [ "${{ github.event_name}}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
               echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
             elif [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
               echo "AIO_BASE_TAG=preview" >> $GITHUB_OUTPUT
@@ -132,7 +132,7 @@ jobs:
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
           build-args: |
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BASE_TAG=${{ env.AIO_BASE_TAG }}
             BUILD_TYPE=${{env.BUILD_TYPE}}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -192,7 +192,7 @@ jobs:
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
           build-args: |
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BASE_TAG=${{ env.AIO_BASE_TAG }}
             BUILD_TYPE=${{env.BUILD_TYPE}}
           cache-from: type=gha
           cache-to: type=gha,mode=max
