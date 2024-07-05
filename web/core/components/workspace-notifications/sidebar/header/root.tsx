@@ -3,25 +3,18 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Bell } from "lucide-react";
-import { Breadcrumbs, Tooltip } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { SidebarHamburgerToggle } from "@/components/core";
 import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
-// helpers
-import { getNumberCount } from "@/helpers/string.helper";
-// hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;
-  notificationsCount: number;
 };
 
 export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
-  const { workspaceSlug, notificationsCount } = props;
-  // hooks
-  const { isMobile } = usePlatformOS();
+  const { workspaceSlug } = props;
 
   if (!workspaceSlug) return <></>;
   return (
@@ -35,20 +28,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
             type="text"
             link={
               <BreadcrumbLink
-                label={
-                  <div className="flex items-center gap-2">
-                    <div className="font-medium">Notifications</div>
-                    <Tooltip
-                      isMobile={isMobile}
-                      tooltipContent={`There are ${notificationsCount} ${notificationsCount > 1 ? "notifications" : "notification"} in this workspace`}
-                      position="bottom"
-                    >
-                      <div className="px-2.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                        {getNumberCount(notificationsCount)}
-                      </div>
-                    </Tooltip>
-                  </div>
-                }
+                label="Notifications"
                 icon={<Bell className="h-4 w-4 text-custom-text-300" />}
                 disableTooltip
               />

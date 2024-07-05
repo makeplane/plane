@@ -12,13 +12,13 @@ import { STATE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
 
-type Props = {
+type TStateDeleteModal = {
   isOpen: boolean;
   onClose: () => void;
   data: IState | null;
 };
 
-export const DeleteStateModal: React.FC<Props> = observer((props) => {
+export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) => {
   const { isOpen, onClose, data } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

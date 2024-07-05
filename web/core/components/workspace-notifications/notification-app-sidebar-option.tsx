@@ -23,14 +23,20 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
     workspaceSlug ? () => getUnreadNotificationsCount(workspaceSlug) : null
   );
 
-  if (unreadNotificationsCount.total_unread_notifications_count <= 0) return <></>;
+  // derived values
+  const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0 ? true : false;
+  const totalNotifications = isMentionsEnabled
+    ? unreadNotificationsCount.mention_unread_notifications_count
+    : unreadNotificationsCount.total_unread_notifications_count;
+
+  if (totalNotifications <= 0) return <></>;
 
   if (isSidebarCollapsed)
     return <div className="absolute right-3.5 top-2 h-2 w-2 rounded-full bg-custom-primary-300" />;
 
   return (
-    <div className="ml-auto px-2.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-      {getNumberCount(unreadNotificationsCount.total_unread_notifications_count)}
+    <div className="text-[8px] ml-auto bg-custom-primary-100 text-white p-1 py-0.5 rounded-full">
+      {`${isMentionsEnabled ? `@` : ``}${getNumberCount(totalNotifications)}`}
     </div>
   );
 });
