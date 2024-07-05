@@ -3,7 +3,7 @@ import React, { FC } from "react";
 // components
 import {
   IssueDetailWidgetActionButtons,
-  IssueDetailWidgetCollapsibleButtons,
+  IssueDetailWidgetCollapsibles,
 } from "@/components/issues/issue-detail-widgets";
 
 type Props = {
@@ -23,7 +23,7 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
         issueId={issueId}
         disabled={disabled}
       />
-      <IssueDetailWidgetCollapsibleButtons
+      <IssueDetailWidgetCollapsibles
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issueId}

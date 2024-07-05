@@ -18,7 +18,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const IssueDetailWidgetCollapsibleButtons: FC<Props> = observer((props) => {
+export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled } = props;
   // store hooks
   const {
