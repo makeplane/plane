@@ -71,12 +71,11 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
     setLoading(true);
     captureEvent("pro_plan_payment_link_clicked", { workspaceSlug });
     paymentService
-      .getPaymentLink(workspaceSlug.toString(), {
+      .getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
         price_id: priceId,
         product_id: proProduct?.id,
       })
       .then((response) => {
-        console.log("response", response);
         if (response.payment_link) {
           window.open(response.payment_link, "_blank");
         }

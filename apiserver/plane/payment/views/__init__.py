@@ -1,2 +1,6 @@
-from .product import ProductEndpoint, WorkspaceProductEndpoint
-from .payment import PaymentLinkEndpoint
+from .product import (
+    ProductEndpoint,
+    WorkspaceProductEndpoint,
+    WebsiteUserWorkspaceEndpoint,
+)
+from .payment import PaymentLinkEndpoint, WebsitePaymentLinkEndpoint
