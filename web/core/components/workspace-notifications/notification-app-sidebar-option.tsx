@@ -26,10 +26,8 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
   // derived values
   const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0 ? true : false;
   const totalNotifications = isMentionsEnabled
-    ? unreadNotificationsCount.total_unread_notifications_count
-    : unreadNotificationsCount.total_unread_notifications_count > 0
-      ? unreadNotificationsCount.total_unread_notifications_count
-      : 0;
+    ? unreadNotificationsCount.mention_unread_notifications_count
+    : unreadNotificationsCount.total_unread_notifications_count;
 
   if (totalNotifications <= 0) return <></>;
 
