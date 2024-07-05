@@ -64,6 +64,7 @@ export type TNotificationPaginatedInfoQueryParams = {
   type?: string | undefined;
   snoozed?: boolean;
   archived?: boolean;
+  mentioned?: boolean;
   read?: boolean;
   per_page?: number;
   cursor?: string;
@@ -86,6 +87,7 @@ export type TNotificationPaginatedInfo = {
 // notification count
 export type TUnreadNotificationsCount = {
   total_unread_notifications_count: number;
+  mention_unread_notifications_count: number;
 };
 
 export type TCurrentSelectedNotification = {

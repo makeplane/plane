@@ -4,16 +4,18 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { EmptyState } from "@/components/empty-state";
 import {
+  NotificationsLoader,
+  NotificationEmptyState,
   NotificationSidebarHeader,
   AppliedFilters,
-  NotificationsLoader,
   NotificationCardListRoot,
 } from "@/components/workspace-notifications";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { ENotificationTab } from "@/constants/notification";
+import { NOTIFICATION_TABS } from "@/constants/notification";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
@@ -21,25 +23,54 @@ export const NotificationsSidebar: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { unreadNotificationsCount, loader, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
+  const {
+    unreadNotificationsCount,
+    loader,
+    notificationIdsByWorkspaceId,
+    currentNotificationTab,
+    setCurrentNotificationTab,
+  } = useWorkspaceNotifications();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
-
-  // derived values
-  const currentTabEmptyState = ENotificationTab.ALL
-    ? EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE
-    : EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE;
-  const totalNotificationCount = unreadNotificationsCount.total_unread_notifications_count;
 
   if (!workspaceSlug || !workspace) return <></>;
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       <div className="border-b border-custom-border-200">
-        <NotificationSidebarHeader
-          workspaceSlug={workspaceSlug.toString()}
-          notificationsCount={totalNotificationCount}
-        />
+        <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
+      </div>
+
+      <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
+        {NOTIFICATION_TABS.map((tab) => (
+          <div
+            key={tab.value}
+            className="h-full px-3 relative flex flex-col cursor-pointer"
+            onClick={() => currentNotificationTab != tab.value && setCurrentNotificationTab(tab.value)}
+          >
+            <div
+              className={cn(
+                `relative h-full flex justify-center items-center gap-1 text-sm transition-all`,
+                currentNotificationTab === tab.value
+                  ? "text-custom-primary-100"
+                  : "text-custom-text-100 hover:text-custom-text-200"
+              )}
+            >
+              <div className="font-medium">{tab.label}</div>
+              <div
+                className={cn(
+                  `rounded-full text-xs px-1.5 py-0.5`,
+                  currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
+                )}
+              >
+                {getNumberCount(tab.count(unreadNotificationsCount))}
+              </div>
+            </div>
+            {currentNotificationTab === tab.value && (
+              <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
+            )}
+          </div>
+        ))}
       </div>
 
       {/* applied filters */}
@@ -49,7 +80,7 @@ export const NotificationsSidebar: FC = observer(() => {
 
       {/* rendering notifications */}
       {loader === "init-loader" ? (
-        <div className="relative w-full h-full overflow-hidden p-5">
+        <div className="relative w-full h-full overflow-hidden">
           <NotificationsLoader />
         </div>
       ) : (
@@ -60,7 +91,7 @@ export const NotificationsSidebar: FC = observer(() => {
             </div>
           ) : (
             <div className="relative w-full h-full flex justify-center items-center">
-              <EmptyState type={currentTabEmptyState} layout="screen-simple" />
+              <NotificationEmptyState />
             </div>
           )}
         </>
