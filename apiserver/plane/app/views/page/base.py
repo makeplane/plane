@@ -218,11 +218,10 @@ class PageViewSet(BaseViewSet):
             issue_ids = PageLog.objects.filter(
                 page_id=pk, entity_name="issue"
             ).values_list("entity_identifier", flat=True)
+            data = PageDetailSerializer(page).data
+            data["issue_ids"] = issue_ids
             return Response(
-                {
-                    "page": PageDetailSerializer(page).data,
-                    "issue_ids": issue_ids,
-                },
+                data,
                 status=status.HTTP_200_OK,
             )
 
