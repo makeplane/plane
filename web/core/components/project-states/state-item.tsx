@@ -24,13 +24,10 @@ type TStateItem = {
   groupedStates: Record<string, IState[]>;
   totalStates: number;
   state: IState;
-  isFirstElement: boolean;
-  isLastElement: boolean;
 };
 
 export const StateItem: FC<TStateItem> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, groupedStates, totalStates, state, isFirstElement, isLastElement } =
-    props;
+  const { workspaceSlug, projectId, groupKey, groupedStates, totalStates, state } = props;
   // hooks
   const { moveStatePosition } = useProjectState();
   // states
@@ -60,7 +57,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
   const [closestEdge, setClosestEdge] = useState<string | null>(null);
   useEffect(() => {
     const elementRef = draggableElementRef.current;
-    const initialData: TDraggableData = { groupKey: groupKey, id: state.id, isFirstElement, isLastElement };
+    const initialData: TDraggableData = { groupKey: groupKey, id: state.id };
 
     if (elementRef && state) {
       combine(
@@ -107,16 +104,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
         })
       );
     }
-  }, [
-    draggableElementRef,
-    state,
-    groupKey,
-    isDraggable,
-    groupedStates,
-    handleStateSequence,
-    isFirstElement,
-    isLastElement,
-  ]);
+  }, [draggableElementRef, state, groupKey, isDraggable, groupedStates, handleStateSequence]);
   // DND ends
 
   if (updateStateModal)
@@ -139,11 +127,11 @@ export const StateItem: FC<TStateItem> = observer((props) => {
         className={cn(
           "relative border border-custom-border-100 rounded p-3 px-3.5 flex items-center gap-2 group my-1",
           isDragging ? `opacity-50` : `opacity-100`,
-          isFirstElement && isLastElement ? `cursor-auto` : `cursor-grab`
+          totalStates === 1 ? `cursor-auto` : `cursor-grab`
         )}
       >
         {/* draggable indicator */}
-        {!(isFirstElement && isLastElement) && (
+        {totalStates != 1 && (
           <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
             <GripVertical className="w-3 h-3" />
           </div>

@@ -23,35 +23,27 @@ export const getCurrentStateSequence = (
   destinationData: TDraggableData,
   edge: string | undefined
 ) => {
-  const currentSequence = 65535;
-  if (!edge) return currentSequence;
-  const currentStateIndex = groupSates.findIndex((state) => state.id === destinationData.id);
+  const defaultSequence = 65535;
+  if (!edge) return defaultSequence;
 
-  if (destinationData.isFirstElement && destinationData.isLastElement) {
-    if (edge === "top") {
-      return groupSates[currentStateIndex].sequence - currentSequence;
-    } else if (edge === "bottom") {
-      return groupSates[currentStateIndex].sequence + currentSequence;
+  const currentStateIndex = groupSates.findIndex((state) => state.id === destinationData.id);
+  const currentStateSequence = groupSates[currentStateIndex]?.sequence || undefined;
+
+  if (!currentStateSequence) return defaultSequence;
+
+  if (edge === "top") {
+    const prevStateSequence = groupSates[currentStateIndex - 1]?.sequence || undefined;
+
+    if (prevStateSequence === undefined) {
+      return currentStateSequence - defaultSequence;
     }
-  } else {
-    if (destinationData.isFirstElement) {
-      if (edge === "top") {
-        return groupSates[currentStateIndex].sequence - currentSequence;
-      } else if (edge === "bottom") {
-        return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex + 1].sequence) / 2;
-      }
-    } else if (destinationData.isLastElement) {
-      if (edge === "top") {
-        return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex - 1].sequence) / 2;
-      } else if (edge === "bottom") {
-        return groupSates[currentStateIndex].sequence + currentSequence;
-      }
-    } else {
-      if (edge === "top") {
-        return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex - 1].sequence) / 2;
-      } else if (edge === "bottom") {
-        return (groupSates[currentStateIndex].sequence + groupSates[currentStateIndex + 1].sequence) / 2;
-      }
+    return (currentStateSequence + prevStateSequence) / 2;
+  } else if (edge === "bottom") {
+    const nextStateSequence = groupSates[currentStateIndex + 1]?.sequence || undefined;
+
+    if (nextStateSequence === undefined) {
+      return currentStateSequence + defaultSequence;
     }
+    return (currentStateSequence + nextStateSequence) / 2;
   }
 };

@@ -19,7 +19,7 @@ export const StateList: FC<TStateList> = observer((props) => {
 
   return (
     <>
-      {states.map((state: IState, index) => (
+      {states.map((state: IState) => (
         <StateItem
           key={state?.name}
           workspaceSlug={workspaceSlug}
@@ -28,8 +28,6 @@ export const StateList: FC<TStateList> = observer((props) => {
           groupedStates={groupedStates}
           totalStates={states.length || 0}
           state={state}
-          isFirstElement={index === 0 ? true : false}
-          isLastElement={index === states.length - 1 ? true : false}
         />
       ))}
     </>

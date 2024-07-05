@@ -3,8 +3,6 @@ import { TStateGroups } from "@plane/types";
 export type TDraggableData = {
   groupKey: TStateGroups;
   id: string;
-  isFirstElement: boolean;
-  isLastElement: boolean;
 };
 
 export const STATE_GROUPS: {
