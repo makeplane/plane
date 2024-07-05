@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { IState, TStateGroups } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-// import {} from "@/components/project-states";
-import { StateForm } from "@/components/project-states/create-update";
+import { StateForm } from "@/components/project-states";
 // constants
 import { STATE_CREATED } from "@/constants/event-tracker";
 import { STATE_GROUPS } from "@/constants/state";
@@ -39,7 +38,6 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
     setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
     try {
       const stateResponse = await createState(workspaceSlug, projectId, { ...formData, group: groupKey });
-      console.log("stateResponse", stateResponse);
       captureProjectStateEvent({
         eventName: STATE_CREATED,
         payload: {
