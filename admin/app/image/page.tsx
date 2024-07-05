@@ -1,10 +1,8 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
-// components
-import { PageHeader } from "@/components/core";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local
@@ -18,7 +16,6 @@ const InstanceImagePage = observer(() => {
 
   return (
     <>
-      <PageHeader title="Image - God Mode" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">Third-party image libraries</div>

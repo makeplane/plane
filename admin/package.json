@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -14,7 +14,6 @@
     "@headlessui/react": "^1.7.19",
     "@plane/types": "*",
     "@plane/ui": "*",
-    "@plane/constants": "*",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
@@ -23,7 +22,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.356.0",
     "mobx": "^6.12.0",
-    "mobx-react-lite": "^4.0.5",
+    "mobx-react": "^9.1.1",
     "next": "^14.2.3",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.38",

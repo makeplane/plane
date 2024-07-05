@@ -1,0 +1,203 @@
+name: Branch Build AIO
+
+on:
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Run full build'
+        type: boolean
+        required: false
+        default: false
+      slim:
+        description: 'Run slim build'
+        type: boolean
+        required: false
+        default: false
+      base_tag_name:
+        description: 'Base Tag Name'
+        required: false
+        default: ''
+  release:
+    types: [released, prereleased]
+
+env:
+  TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  FULL_BUILD_INPUT: ${{ github.event.inputs.full }}
+  SLIM_BUILD_INPUT: ${{ github.event.inputs.slim }}
+
+jobs:
+  branch_build_setup:
+    name: Build Setup
+    runs-on: ubuntu-latest
+    outputs:
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+      aio_base_tag: ${{ steps.set_env_variables.outputs.AIO_BASE_TAG }}
+      do_full_build: ${{ steps.set_env_variables.outputs.DO_FULL_BUILD }}
+      do_slim_build: ${{ steps.set_env_variables.outputs.DO_SLIM_BUILD }}
+
+    steps:
+      - id: set_env_variables
+        name: Set Environment Variables
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ]; then
+            echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
+
+            echo "AIO_BASE_TAG=latest" >> $GITHUB_OUTPUT
+          else
+            echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+
+            if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+              echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
+            elif [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
+              echo "AIO_BASE_TAG=preview" >> $GITHUB_OUTPUT
+            else
+              echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT
+            fi
+          fi
+          echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+
+          if [ "${{ env.FULL_BUILD_INPUT }}" == "true" ] || [ "${{github.event_name}}" == "push" ] || [ "${{github.event_name}}" == "release" ]; then
+            echo "DO_FULL_BUILD=true" >> $GITHUB_OUTPUT
+          else
+            echo "DO_FULL_BUILD=false" >> $GITHUB_OUTPUT
+          fi
+
+          if [ "${{ env.SLIM_BUILD_INPUT }}" == "true" ] || [ "${{github.event_name}}" == "push" ] || [ "${{github.event_name}}" == "release" ]; then
+            echo "DO_SLIM_BUILD=true" >> $GITHUB_OUTPUT
+          else
+            echo "DO_SLIM_BUILD=false" >> $GITHUB_OUTPUT
+          fi
+
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+  full_build_push:
+    if: ${{ needs.branch_build_setup.outputs.do_full_build == 'true' }}
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    env:
+      BUILD_TYPE: full
+      AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
+      AIO_IMAGE_TAGS: makeplane/plane-aio:full-${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=makeplane/plane-aio:${{env.BUILD_TYPE}}-stable,makeplane/plane-aio:${{env.BUILD_TYPE}}-${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/plane-aio:${{env.BUILD_TYPE}}-latest
+          else
+            TAG=${{ env.AIO_IMAGE_TAGS }}
+          fi
+          echo "AIO_IMAGE_TAGS=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./aio/Dockerfile-app
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.AIO_IMAGE_TAGS }}
+          push: true
+          build-args: |
+            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BUILD_TYPE=${{env.BUILD_TYPE}}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  slim_build_push:
+    if: ${{ needs.branch_build_setup.outputs.do_slim_build == 'true' }}
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    env:
+      BUILD_TYPE: slim
+      AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
+      AIO_IMAGE_TAGS: makeplane/plane-aio:slim-${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=makeplane/plane-aio:${{env.BUILD_TYPE}}-stable,makeplane/plane-aio:${{env.BUILD_TYPE}}-${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/plane-aio:${{env.BUILD_TYPE}}-latest
+          else
+            TAG=${{ env.AIO_IMAGE_TAGS }}
+          fi
+          echo "AIO_IMAGE_TAGS=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./aio/Dockerfile-app
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.AIO_IMAGE_TAGS }}
+          push: true
+          build-args: |
+            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BUILD_TYPE=${{env.BUILD_TYPE}}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}

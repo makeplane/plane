@@ -24,3 +24,23 @@ export enum EIssueCommentAccessSpecifier {
   EXTERNAL = "EXTERNAL",
   INTERNAL = "INTERNAL",
 }
+
+// estimates
+export enum EEstimateSystem {
+  POINTS = "points",
+  CATEGORIES = "categories",
+  TIME = "time",
+}
+
+export enum EEstimateUpdateStages {
+  CREATE = "create",
+  EDIT = "edit",
+  SWITCH = "switch",
+}
+
+// workspace notifications
+export enum ENotificationFilterType {
+  CREATED = "created",
+  ASSIGNED = "assigned",
+  SUBSCRIBED = "subscribed",
+}

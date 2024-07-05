@@ -81,7 +81,7 @@ export type TInboxDuplicateIssueDetails = {
 export type TInboxIssue = {
   id: string;
   status: TInboxIssueStatus;
-  snoozed_till: Date | undefined;
+  snoozed_till: Date | null;
   duplicate_to: string | undefined;
   source: string;
   issue: TIssue;

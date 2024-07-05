@@ -28,6 +28,7 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     Page,
+    ProjectPage,
     PageLabel,
     Inbox,
     InboxIssue,
@@ -37,7 +38,7 @@ from plane.db.models import (
 def create_project(workspace, user_id):
     fake = Faker()
     name = fake.name()
-    unique_id = str(uuid.uuid4())[:5] 
+    unique_id = str(uuid.uuid4())[:5]
 
     project = Project.objects.create(
         workspace=workspace,
@@ -244,7 +245,6 @@ def create_pages(workspace, project, user_id, pages_count):
         pages.append(
             Page(
                 name=fake.name(),
-                project=project,
                 workspace=workspace,
                 owned_by_id=user_id,
                 access=random.randint(0, 1),
@@ -254,8 +254,20 @@ def create_pages(workspace, project, user_id, pages_count):
                 is_locked=False,
             )
         )
-
-    return Page.objects.bulk_create(pages, ignore_conflicts=True)
+    # Bulk create pages
+    pages = Page.objects.bulk_create(pages, ignore_conflicts=True)
+    # Add Page to project
+    ProjectPage.objects.bulk_create(
+        [
+            ProjectPage(
+                page=page,
+                project=project,
+                workspace=workspace,
+            )
+            for page in pages
+        ],
+        batch_size=1000,
+    )
 
 
 def create_page_labels(workspace, project, user_id, pages_count):
@@ -263,7 +275,9 @@ def create_page_labels(workspace, project, user_id, pages_count):
     labels = Label.objects.filter(project=project).values_list("id", flat=True)
     pages = random.sample(
         list(
-            Page.objects.filter(project=project).values_list("id", flat=True)
+            Page.objects.filter(projects__id=project.id).values_list(
+                "id", flat=True
+            )
         ),
         int(pages_count / 2),
     )
@@ -278,7 +292,6 @@ def create_page_labels(workspace, project, user_id, pages_count):
                 PageLabel(
                     page_id=page,
                     label_id=label,
-                    project=project,
                     workspace=workspace,
                 )
             )
@@ -293,8 +306,14 @@ def create_issues(workspace, project, user_id, issue_count):
     fake = Faker()
     Faker.seed(0)
 
-    states = State.objects.filter(workspace=workspace, project=project).exclude(group="Triage").values_list("id", flat=True)
-    creators = ProjectMember.objects.filter(workspace=workspace, project=project).values_list("member_id", flat=True)
+    states = (
+        State.objects.filter(workspace=workspace, project=project)
+        .exclude(group="Triage")
+        .values_list("id", flat=True)
+    )
+    creators = ProjectMember.objects.filter(
+        workspace=workspace, project=project
+    ).values_list("member_id", flat=True)
 
     issues = []
 

@@ -3,189 +3,108 @@ name: Feature Preview
 on:
   workflow_dispatch:
     inputs:
-      web-build:
+      base_tag_name:
+        description: 'Base Tag Name'
         required: false
-        description: "Build Web"
-        type: boolean
-        default: true
-      space-build:
-        required: false
-        description: "Build Space"
-        type: boolean
-        default: false
-      admin-build:
-        required: false
-        description: "Build Admin"
-        type: boolean
-        default: false
+        default: 'preview'
 
 env:
-  BUILD_WEB: ${{ github.event.inputs.web-build }}
-  BUILD_SPACE: ${{ github.event.inputs.space-build }}
-  BUILD_ADMIN: ${{ github.event.inputs.admin-build }}
+  TARGET_BRANCH: ${{ github.ref_name }}
 
 jobs:
-  setup-feature-build:
-    name: Feature Build Setup
+  branch_build_setup:
+    name: Build Setup
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        run: |
-          echo "BUILD_WEB=$BUILD_WEB" 
-          echo "BUILD_SPACE=$BUILD_SPACE"
-          echo "BUILD_ADMIN=$BUILD_ADMIN"
     outputs:
-      web-build: ${{ env.BUILD_WEB}}
-      space-build: ${{env.BUILD_SPACE}}
-      admin-build: ${{env.BUILD_ADMIN}}
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
+      flat_branch_name: ${{ steps.set_env_variables.outputs.FLAT_BRANCH_NAME }}
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+      aio_base_tag: ${{ steps.set_env_variables.outputs.AIO_BASE_TAG }}
+      do_full_build: ${{ steps.set_env_variables.outputs.DO_FULL_BUILD }}
+      do_slim_build: ${{ steps.set_env_variables.outputs.DO_SLIM_BUILD }}
 
-  feature-build-web:
-    if: ${{ needs.setup-feature-build.outputs.web-build == 'true' }}
-    needs: setup-feature-build
-    name: Feature Build Web
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
-      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-      - name: Install AWS cli
+      - id: set_env_variables
+        name: Set Environment Variables
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install awscli
-      - name: Checkout
+          echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+          echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+          echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+          echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+
+          if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+            echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT
+          fi
+
+          echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+
+          FLAT_BRANCH_NAME=$(echo "${{ env.TARGET_BRANCH }}" | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "FLAT_BRANCH_NAME=$FLAT_BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - id: checkout_files
+        name: Checkout Files
         uses: actions/checkout@v4
-        with:
-          path: plane
-      - name: Install Dependencies
-        run: |
-          cd $GITHUB_WORKSPACE/plane
-          yarn install
-      - name: Build Web
-        id: build-web
-        run: |
-          cd $GITHUB_WORKSPACE/plane
-          yarn build --filter=web
-          cd $GITHUB_WORKSPACE
 
-          TAR_NAME="web.tar.gz"
-          tar -czf $TAR_NAME ./plane
-
-          FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
-          aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
-
-  feature-build-space:
-    if: ${{ needs.setup-feature-build.outputs.space-build == 'true' }}
-    needs: setup-feature-build
-    name: Feature Build Space
-    runs-on: ubuntu-latest
+  full_build_push:
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
     env:
-      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
-      NEXT_PUBLIC_SPACE_BASE_PATH: "/spaces"
-      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
+      BUILD_TYPE: full
+      AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
+      AIO_IMAGE_TAGS: makeplane/plane-aio-feature:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./aio/Dockerfile-app
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.AIO_IMAGE_TAGS }}
+          push: true
+          build-args: 
+            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BUILD_TYPE=${{env.BUILD_TYPE}}
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
     outputs:
-      do-build: ${{ needs.setup-feature-build.outputs.space-build }}
-      s3-url: ${{ steps.build-space.outputs.S3_PRESIGNED_URL }}
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-      - name: Install AWS cli
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install awscli
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: plane
-      - name: Install Dependencies
-        run: |
-          cd $GITHUB_WORKSPACE/plane
-          yarn install
-      - name: Build Space
-        id: build-space
-        run: |
-          cd $GITHUB_WORKSPACE/plane
-          yarn build --filter=space
-          cd $GITHUB_WORKSPACE
-
-          TAR_NAME="space.tar.gz"
-          tar -czf $TAR_NAME ./plane
-
-          FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
-          aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
-
-  feature-build-admin:
-    if: ${{ needs.setup-feature-build.outputs.admin-build == 'true' }}
-    needs: setup-feature-build
-    name: Feature Build Admin
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
-      NEXT_PUBLIC_ADMIN_BASE_PATH: "/god-mode"
-      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
-    outputs:
-      do-build: ${{ needs.setup-feature-build.outputs.admin-build }}
-      s3-url: ${{ steps.build-admin.outputs.S3_PRESIGNED_URL }}
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-      - name: Install AWS cli
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install awscli
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: plane
-      - name: Install Dependencies
-        run: |
-          cd $GITHUB_WORKSPACE/plane
-          yarn install
-      - name: Build Admin
-        id: build-admin
-        run: |
-          cd $GITHUB_WORKSPACE/plane
-          yarn build --filter=admin
-          cd $GITHUB_WORKSPACE
-
-          TAR_NAME="admin.tar.gz"
-          tar -czf $TAR_NAME ./plane
-
-          FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
-          aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
+      AIO_IMAGE_TAGS: ${{ env.AIO_IMAGE_TAGS }}
 
   feature-deploy:
-    if: ${{ always() && (needs.setup-feature-build.outputs.web-build == 'true' || needs.setup-feature-build.outputs.space-build == 'true' || needs.setup-feature-build.outputs.admin-build == 'true') }}
-    needs:
-      [
-        setup-feature-build,
-        feature-build-web,
-        feature-build-space,
-        feature-build-admin,
-      ]
+    needs: [branch_build_setup, full_build_push]
     name: Feature Deploy
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
-      AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
       KUBE_CONFIG_FILE: ${{ secrets.FEATURE_PREVIEW_KUBE_CONFIG }}
+      DEPLOYMENT_NAME: ${{ needs.branch_build_setup.outputs.flat_branch_name }}
     steps:
       - name: Install AWS cli
         run: |
@@ -213,54 +132,37 @@ jobs:
           ./get_helm.sh
       - name: App Deploy
         run: |
-          WEB_S3_URL=""
-          if [ ${{ env.BUILD_WEB }} == true ]; then
-            WEB_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/web.tar.gz --expires-in 3600)
-          fi
+          helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
 
-          SPACE_S3_URL=""
-          if [ ${{ env.BUILD_SPACE }} == true ]; then
-            SPACE_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/space.tar.gz --expires-in 3600)
-          fi
+          APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
 
-          ADMIN_S3_URL=""
-          if [ ${{ env.BUILD_ADMIN }} == true ]; then
-            ADMIN_S3_URL=$(aws s3 presign s3://${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}/${{github.sha}}/admin.tar.gz --expires-in 3600)
-          fi
+          helm --kube-insecure-skip-tls-verify  uninstall \
+            ${{ env.DEPLOYMENT_NAME }} \
+            --namespace $APP_NAMESPACE \
+            --timeout 10m0s \
+            --wait \
+            --ignore-not-found
 
-          if [ ${{ env.BUILD_WEB }} == true ] || [ ${{ env.BUILD_SPACE }} == true ] || [ ${{ env.BUILD_ADMIN }} == true ]; then
+          METADATA=$(helm --kube-insecure-skip-tls-verify upgrade \
+              --install=true \
+              --namespace $APP_NAMESPACE \
+              --set dockerhub.loginid=${{ secrets.DOCKERHUB_USERNAME }} \
+              --set dockerhub.password=${{ secrets.DOCKERHUB_TOKEN_RO}} \
+              --set config.feature_branch=${{ env.DEPLOYMENT_NAME }} \
+              --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
+              --set ingress.tls_secret=${{vars.FEATURE_PREVIEW_INGRESS_TLS_SECRET || '' }} \
+              --output json \
+              --timeout 10m0s \
+              --wait \
+              ${{ env.DEPLOYMENT_NAME }}  feature-preview/${{ vars.FEATURE_PREVIEW_HELM_CHART_NAME }} )
 
-            helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
+          APP_NAME=$(echo $METADATA | jq -r '.name')
 
-            APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
-            DEPLOY_SCRIPT_URL="${{ vars.FEATURE_PREVIEW_DEPLOY_SCRIPT_URL }}"
+          INGRESS_HOSTNAME=$(kubectl get ingress -n $APP_NAMESPACE --insecure-skip-tls-verify \
+              -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
+              jq -r '.spec.rules[0].host')
 
-            METADATA=$(helm --kube-insecure-skip-tls-verify install feature-preview/${{ vars.FEATURE_PREVIEW_HELM_CHART_NAME }} \
-                --generate-name \
-                --namespace $APP_NAMESPACE \
-                --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
-                --set web.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
-                --set web.enabled=${{ env.BUILD_WEB || false }} \
-                --set web.artifact_url=$WEB_S3_URL \
-                --set space.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
-                --set space.enabled=${{ env.BUILD_SPACE || false }} \
-                --set space.artifact_url=$SPACE_S3_URL \
-                --set admin.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
-                --set admin.enabled=${{ env.BUILD_ADMIN || false }} \
-                --set admin.artifact_url=$ADMIN_S3_URL \
-                --set shared_config.deploy_script_url=$DEPLOY_SCRIPT_URL \
-                --set shared_config.api_base_url=${{vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL}} \
-                --output json \
-                --timeout 1000s)
-
-            APP_NAME=$(echo $METADATA | jq -r '.name')
-
-            INGRESS_HOSTNAME=$(kubectl get ingress -n feature-builds --insecure-skip-tls-verify \
-                -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
-                jq -r '.spec.rules[0].host')
-
-            echo "****************************************"
-            echo "APP NAME ::: $APP_NAME"
-            echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
-            echo "****************************************"
-          fi
+          echo "****************************************"
+          echo "APP NAME ::: $APP_NAME"
+          echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
+          echo "****************************************"

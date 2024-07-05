@@ -91,6 +91,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__status=2)
                 | models.Q(issue_inbox__isnull=True)
             )
+            .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
@@ -119,8 +120,15 @@ class Issue(ProjectBaseModel):
         blank=True,
         related_name="state_issue",
     )
-    estimate_point = models.IntegerField(
+    point = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(12)],
+        null=True,
+        blank=True,
+    )
+    estimate_point = models.ForeignKey(
+        "db.EstimatePoint",
+        on_delete=models.SET_NULL,
+        related_name="issue_estimates",
         null=True,
         blank=True,
     )

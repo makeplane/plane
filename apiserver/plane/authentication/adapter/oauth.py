@@ -39,6 +39,16 @@ class OauthAdapter(Adapter):
         self.client_secret = client_secret
         self.code = code
 
+    def authentication_error_code(self):
+        if self.provider == "google":
+            return "GOOGLE_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "github":
+            return "GITHUB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "gitlab":
+            return "GITLAB_OAUTH_PROVIDER_ERROR"
+        else:
+            return "OAUTH_NOT_CONFIGURED"
+
     def get_auth_url(self):
         return self.auth_url
 
@@ -62,11 +72,7 @@ class OauthAdapter(Adapter):
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
-            code = (
-                "GOOGLE_OAUTH_PROVIDER_ERROR"
-                if self.provider == "google"
-                else "GITHUB_OAUTH_PROVIDER_ERROR"
-            )
+            code = self.authentication_error_code()
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[code],
                 error_message=str(code),
@@ -81,11 +87,7 @@ class OauthAdapter(Adapter):
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
-            code = (
-                "GOOGLE_OAUTH_PROVIDER_ERROR"
-                if self.provider == "google"
-                else "GITHUB_OAUTH_PROVIDER_ERROR"
-            )
+            code = self.authentication_error_code()
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[code],
                 error_message=str(code),

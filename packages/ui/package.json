@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.21.0",
+  "version": "0.22.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,18 +20,22 @@
     "postcss": "postcss styles/globals.css -o styles/output.css --watch"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
-    "@headlessui/react": "^1.7.17",
+    "@headlessui/react": "^1.7.3",
     "@popperjs/core": "^2.11.8",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.379.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
-    "sonner": "^1.4.2",
-    "tailwind-merge": "^2.0.0"
+    "sonner": "^1.4.41",
+    "tailwind-merge": "^2.0.0",
+    "use-font-face-observer": "^1.2.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",

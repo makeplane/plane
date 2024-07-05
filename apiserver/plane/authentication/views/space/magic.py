@@ -20,7 +20,7 @@ from plane.authentication.utils.login import user_login
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
-from plane.db.models import User, Profile
+from plane.db.models import User
 from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
@@ -101,18 +101,6 @@ class MagicSignInSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         # Active User
-        if not existing_user.is_active:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "USER_ACCOUNT_DEACTIVATED"
-                ],
-                error_message="USER_ACCOUNT_DEACTIVATED",
-            )
-            params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
-            return HttpResponseRedirect(url)
         try:
             provider = MagicCodeProvider(
                 request=request, key=f"magic_{email}", code=code
@@ -121,12 +109,7 @@ class MagicSignInSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            profile = Profile.objects.get(user=user)
-            if user.is_password_autoset and profile.is_onboarded:
-                path = "accounts/set-password"
-            else:
-                # Get the redirection path
-                path = str(next_path) if next_path else ""
+            path = str(next_path) if next_path else ""
             url = f"{base_host(request=request, is_space=True)}{path}"
             return HttpResponseRedirect(url)
 

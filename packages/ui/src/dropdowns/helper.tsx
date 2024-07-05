@@ -28,6 +28,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   onMenuClose?: () => void;
   closeOnSelect?: boolean;
   portalElement?: Element | null;
+  openOnHover?: boolean;
 }
 
 export interface ICustomSelectProps extends IDropdownProps {

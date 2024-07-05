@@ -1,39 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
-import Image from "next/image";
-import { useTheme } from "next-themes";
+import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Mails, KeyRound } from "lucide-react";
 import { TInstanceConfigurationKeys } from "@plane/types";
-import { Loader, setPromiseToast } from "@plane/ui";
-// components
-import { PageHeader } from "@/components/core";
-// hooks
+import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // helpers
-import { resolveGeneralTheme } from "@/helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
+// hooks
 import { useInstance } from "@/hooks/store";
-// images
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GoogleLogo from "@/public/logos/google-logo.svg";
-// local components
-import {
-  AuthenticationMethodCard,
-  EmailCodesConfiguration,
-  PasswordLoginConfiguration,
-  GithubConfiguration,
-  GoogleConfiguration,
-} from "./components";
-
-type TInstanceAuthenticationMethodCard = {
-  key: string;
-  name: string;
-  description: string;
-  icon: JSX.Element;
-  config: JSX.Element;
-};
+// plane admin components
+import { AuthenticationModes } from "@/plane-admin/components/authentication";
 
 const InstanceAuthenticationPage = observer(() => {
   // store
@@ -43,8 +20,8 @@ const InstanceAuthenticationPage = observer(() => {
 
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  // theme
-  const { resolvedTheme } = useTheme();
+  // derived values
+  const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
 
   const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
     setIsSubmitting(true);
@@ -56,7 +33,7 @@ const InstanceAuthenticationPage = observer(() => {
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration...",
+      loading: "Saving configuration",
       success: {
         title: "Success",
         message: () => "Configuration saved successfully",
@@ -77,51 +54,11 @@ const InstanceAuthenticationPage = observer(() => {
       });
   };
 
-  // Authentication methods
-  const authenticationMethodsCard: TInstanceAuthenticationMethodCard[] = [
-    {
-      key: "email-codes",
-      name: "Email codes",
-      description: "Login or sign up using codes sent via emails. You need to have email setup here and enabled.",
-      icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
-      config: <EmailCodesConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "password-login",
-      name: "Password based login",
-      description: "Allow members to create accounts with passwords for emails to sign in.",
-      icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
-      config: <PasswordLoginConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "google",
-      name: "Google",
-      description: "Allow members to login or sign up to plane with their Google accounts.",
-      icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
-      config: <GoogleConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-    {
-      key: "github",
-      name: "Github",
-      description: "Allow members to login or sign up to plane with their Github accounts.",
-      icon: (
-        <Image
-          src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
-          height={20}
-          width={20}
-          alt="GitHub Logo"
-        />
-      ),
-      config: <GithubConfiguration disabled={isSubmitting} updateConfig={updateConfig} />,
-    },
-  ];
-
   return (
     <>
-      <PageHeader title="Authentication - God Mode" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
-          <div className="text-xl font-medium text-custom-text-100">Manage authentication for your instance</div>
+          <div className="text-xl font-medium text-custom-text-100">Manage authentication modes for your instance</div>
           <div className="text-sm font-normal text-custom-text-300">
             Configure authentication modes for your team and restrict sign ups to be invite only.
           </div>
@@ -129,17 +66,32 @@ const InstanceAuthenticationPage = observer(() => {
         <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <div className="space-y-3">
-              <div className="text-lg font-medium">Authentication modes</div>
-              {authenticationMethodsCard.map((method) => (
-                <AuthenticationMethodCard
-                  key={method.key}
-                  name={method.name}
-                  description={method.description}
-                  icon={method.icon}
-                  config={method.config}
-                  disabled={isSubmitting}
-                />
-              ))}
+              <div className={cn("w-full flex items-center gap-14 rounded")}>
+                <div className="flex grow items-center gap-4">
+                  <div className="grow">
+                    <div className="text-lg font-medium pb-1">Allow anyone to sign up even without an invite</div>
+                    <div className={cn("font-normal leading-5 text-custom-text-300 text-xs")}>
+                      Toggling this off will only let users sign up when they are invited.
+                    </div>
+                  </div>
+                </div>
+                <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+                  <div className="flex items-center gap-4">
+                    <ToggleSwitch
+                      value={Boolean(parseInt(enableSignUpConfig))}
+                      onChange={() => {
+                        Boolean(parseInt(enableSignUpConfig)) === true
+                          ? updateConfig("ENABLE_SIGNUP", "0")
+                          : updateConfig("ENABLE_SIGNUP", "1");
+                      }}
+                      size="sm"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="text-lg font-medium pt-6">Authentication modes</div>
+              <AuthenticationModes disabled={isSubmitting} updateConfig={updateConfig} />
             </div>
           ) : (
             <Loader className="space-y-10">

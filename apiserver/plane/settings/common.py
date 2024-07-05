@@ -16,6 +16,7 @@ from django.core.management.utils import get_random_secret_key
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from corsheaders.defaults import default_headers
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -126,6 +127,8 @@ if cors_allowed_origins:
 else:
     CORS_ALLOW_ALL_ORIGINS = True
     secure_origins = False
+
+CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"

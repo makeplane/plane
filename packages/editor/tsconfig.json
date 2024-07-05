@@ -1,0 +1,13 @@
+{
+  "extends": "tsconfig/react-library.json",
+  "include": ["src/**/*", "index.d.ts"],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/core/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/plane-editor/*": ["src/ce/*"]
+    }
+  }
+}

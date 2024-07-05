@@ -11,10 +11,10 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
-from plane.app.serializers import ProjectDeployBoardSerializer
+from plane.app.serializers import DeployBoardSerializer
 from plane.db.models import (
     Project,
-    ProjectDeployBoard,
+    DeployBoard,
 )
 
 
@@ -23,11 +23,11 @@ class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    def get(self, request, slug, project_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def get(self, request, anchor):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
-        serializer = ProjectDeployBoardSerializer(project_deploy_board)
+        serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -36,13 +36,18 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    def get(self, request, slug):
+    def get(self, request, anchor):
+        deploy_board = DeployBoard.objects.filter(
+            anchor=anchor, entity_name="project"
+        ).values_list
         projects = (
-            Project.objects.filter(workspace__slug=slug)
+            Project.objects.filter(workspace=deploy_board.workspace)
             .annotate(
                 is_public=Exists(
-                    ProjectDeployBoard.objects.filter(
-                        workspace__slug=slug, project_id=OuterRef("pk")
+                    DeployBoard.objects.filter(
+                        anchor=anchor,
+                        project_id=OuterRef("pk"),
+                        entity_name="project",
                     )
                 )
             )
@@ -58,3 +63,16 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
         )
 
         return Response(projects, status=status.HTTP_200_OK)
+
+
+class WorkspaceProjectAnchorEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, slug, project_id):
+        project_deploy_board = DeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+        serializer = DeployBoardSerializer(project_deploy_board)
+        return Response(serializer.data, status=status.HTTP_200_OK)

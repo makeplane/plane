@@ -7,7 +7,7 @@ type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
 interface IPriorityIcon {
   className?: string;
   containerClassName?: string;
-  priority: TIssuePriorities;
+  priority: TIssuePriorities | undefined | null;
   size?: number;
   withContainer?: boolean;
 }
@@ -31,7 +31,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
     low: SignalLow,
     none: Ban,
   };
-  const Icon = icons[priority];
+  const Icon = icons[priority ?? "none"];
 
   if (!Icon) return null;
 
@@ -41,7 +41,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
         <div
           className={cn(
             "flex items-center justify-center border rounded p-0.5 flex-shrink-0",
-            priorityClasses[priority],
+            priorityClasses[priority ?? "none"],
             containerClassName
           )}
         >

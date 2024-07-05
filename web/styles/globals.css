@@ -236,7 +236,7 @@
     --color-text-100: 229, 229, 229; /* primary text */
     --color-text-200: 163, 163, 163; /* secondary text */
     --color-text-300: 115, 115, 115; /* tertiary text */
-    --color-text-350: 130, 130, 130; 
+    --color-text-350: 130, 130, 130;
     --color-text-400: 82, 82, 82; /* placeholder text */
 
     --color-scrollbar: 82, 82, 82; /* scrollbar thumb */
@@ -293,8 +293,7 @@
     --color-text-100: 250, 250, 250; /* primary text */
     --color-text-200: 241, 241, 241; /* secondary text */
     --color-text-300: 212, 212, 212; /* tertiary text */
-    --color-text-350: 190, 190, 190
-    --color-text-400: 115, 115, 115; /* placeholder text */
+    --color-text-350: 190, 190, 190 --color-text-400: 115, 115, 115; /* placeholder text */
 
     --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
 
@@ -678,4 +677,18 @@ div.web-view-spinner div.bar12 {
 .disable-autofill-style:-webkit-autofill:focus,
 .disable-autofill-style:-webkit-autofill:active {
   -webkit-background-clip: text;
+}
+
+.epr-search-container > input {
+  background-color: rgb(var(--color-background-90)) !important;
+  color: rgb(var(--color-text-100)) !important;
+  border: none !important;
+}
+
+.epr-search-container > input::placeholder {
+  color: rgb(var(--color-text-400)) !important;
+}
+
+.epr-search-container > .epr-icn-search {
+  color: rgb(var(--color-text-400)) !important;
 }

@@ -3,7 +3,7 @@
 # django
 Django==4.2.11
 # rest framework
-djangorestframework==3.15.1
+djangorestframework==3.15.2
 # postgres 
 psycopg==3.1.18
 psycopg-binary==3.1.18
@@ -61,3 +61,4 @@ zxcvbn==4.4.28
 pytz==2024.1
 # jwt
 PyJWT==2.8.0
+
