@@ -1,5 +1,3 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
 import Script from "next/script";
 // styles
@@ -44,8 +42,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppProvider>
           <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>{children}</div>
         </AppProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script defer data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.js" />
