@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // components
@@ -35,13 +35,16 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   const percentage = completedCount && totalCount ? (completedCount / totalCount) * 100 : 0;
 
   // indicator element
-  const indicatorElement = (
-    <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
-      <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
-      <span>
-        {completedCount}/{totalCount} Done
-      </span>
-    </div>
+  const indicatorElement = useMemo(
+    () => (
+      <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
+        <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
+        <span>
+          {completedCount}/{totalCount} Done
+        </span>
+      </div>
+    ),
+    [completedCount, totalCount, percentage]
   );
 
   return (

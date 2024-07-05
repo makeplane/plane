@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { CollapsibleButton } from "@plane/ui";
 // components
@@ -28,10 +28,13 @@ export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
   const linksCount = issue?.link_count ?? 0;
 
   // indicator element
-  const indicatorElement = (
-    <span className="flex items-center justify-center ">
-      <p className="text-base text-custom-text-300 !leading-3">{linksCount}</p>
-    </span>
+  const indicatorElement = useMemo(
+    () => (
+      <span className="flex items-center justify-center ">
+        <p className="text-base text-custom-text-300 !leading-3">{linksCount}</p>
+      </span>
+    ),
+    [linksCount]
   );
 
   return (
