@@ -21,12 +21,12 @@ export interface IIssueStoreActions {
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<any>;
-  removeModulesFromIssue: (
+  changeModulesInIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    moduleIds: string[]
+    addModuleIds: string[],
+    removeModuleIds: string[]
   ) => Promise<void>;
   removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
 }
@@ -193,29 +193,21 @@ export class IssueStore implements IIssueStore {
     return cycle;
   };
 
-  addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
+  changeModulesInIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ) => {
+    await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
       workspaceSlug,
       projectId,
       issueId,
-      moduleIds,
-      []
-    );
-    if (moduleIds && moduleIds.length > 0)
-      await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return currentModule;
-  };
-
-  removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-    const currentModule = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
-      workspaceSlug,
-      projectId,
-      issueId,
-      [],
-      moduleIds
+      addModuleIds,
+      removeModuleIds
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return currentModule;
   };
 
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {

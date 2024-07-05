@@ -19,7 +19,7 @@ from django.db.models import (
     When,
     Subquery,
     Sum,
-    IntegerField,
+    FloatField,
 )
 from django.db.models.functions import Coalesce, Cast
 from django.utils import timezone
@@ -86,7 +86,7 @@ class CycleViewSet(BaseViewSet):
             .values("issue_cycle__cycle_id")
             .annotate(
                 backlog_estimate_point=Sum(
-                    Cast("estimate_point__value", IntegerField())
+                    Cast("estimate_point__value", FloatField())
                 )
             )
             .values("backlog_estimate_point")[:1]
@@ -100,7 +100,7 @@ class CycleViewSet(BaseViewSet):
             .values("issue_cycle__cycle_id")
             .annotate(
                 unstarted_estimate_point=Sum(
-                    Cast("estimate_point__value", IntegerField())
+                    Cast("estimate_point__value", FloatField())
                 )
             )
             .values("unstarted_estimate_point")[:1]
@@ -114,7 +114,7 @@ class CycleViewSet(BaseViewSet):
             .values("issue_cycle__cycle_id")
             .annotate(
                 started_estimate_point=Sum(
-                    Cast("estimate_point__value", IntegerField())
+                    Cast("estimate_point__value", FloatField())
                 )
             )
             .values("started_estimate_point")[:1]
@@ -128,7 +128,7 @@ class CycleViewSet(BaseViewSet):
             .values("issue_cycle__cycle_id")
             .annotate(
                 cancelled_estimate_point=Sum(
-                    Cast("estimate_point__value", IntegerField())
+                    Cast("estimate_point__value", FloatField())
                 )
             )
             .values("cancelled_estimate_point")[:1]
@@ -142,7 +142,7 @@ class CycleViewSet(BaseViewSet):
             .values("issue_cycle__cycle_id")
             .annotate(
                 completed_estimate_points=Sum(
-                    Cast("estimate_point__value", IntegerField())
+                    Cast("estimate_point__value", FloatField())
                 )
             )
             .values("completed_estimate_points")[:1]
@@ -155,7 +155,7 @@ class CycleViewSet(BaseViewSet):
             .values("issue_cycle__cycle_id")
             .annotate(
                 total_estimate_points=Sum(
-                    Cast("estimate_point__value", IntegerField())
+                    Cast("estimate_point__value", FloatField())
                 )
             )
             .values("total_estimate_points")[:1]
@@ -287,37 +287,37 @@ class CycleViewSet(BaseViewSet):
             .annotate(
                 backlog_estimate_points=Coalesce(
                     Subquery(backlog_estimate_point),
-                    Value(0, output_field=IntegerField()),
+                    Value(0, output_field=FloatField()),
                 ),
             )
             .annotate(
                 unstarted_estimate_points=Coalesce(
                     Subquery(unstarted_estimate_point),
-                    Value(0, output_field=IntegerField()),
+                    Value(0, output_field=FloatField()),
                 ),
             )
             .annotate(
                 started_estimate_points=Coalesce(
                     Subquery(started_estimate_point),
-                    Value(0, output_field=IntegerField()),
+                    Value(0, output_field=FloatField()),
                 ),
             )
             .annotate(
                 cancelled_estimate_points=Coalesce(
                     Subquery(cancelled_estimate_point),
-                    Value(0, output_field=IntegerField()),
+                    Value(0, output_field=FloatField()),
                 ),
             )
             .annotate(
                 completed_estimate_points=Coalesce(
                     Subquery(completed_estimate_point),
-                    Value(0, output_field=IntegerField()),
+                    Value(0, output_field=FloatField()),
                 ),
             )
             .annotate(
                 total_estimate_points=Coalesce(
                     Subquery(total_estimate_point),
-                    Value(0, output_field=IntegerField()),
+                    Value(0, output_field=FloatField()),
                 ),
             )
             .order_by("-is_favorite", "name")
@@ -395,12 +395,12 @@ class CycleViewSet(BaseViewSet):
                         .values("display_name", "assignee_id", "avatar")
                         .annotate(
                             total_estimates=Sum(
-                                Cast("estimate_point__value", IntegerField())
+                                Cast("estimate_point__value", FloatField())
                             )
                         )
                         .annotate(
                             completed_estimates=Sum(
-                                Cast("estimate_point__value", IntegerField()),
+                                Cast("estimate_point__value", FloatField()),
                                 filter=Q(
                                     completed_at__isnull=False,
                                     archived_at__isnull=True,
@@ -410,7 +410,7 @@ class CycleViewSet(BaseViewSet):
                         )
                         .annotate(
                             pending_estimates=Sum(
-                                Cast("estimate_point__value", IntegerField()),
+                                Cast("estimate_point__value", FloatField()),
                                 filter=Q(
                                     completed_at__isnull=True,
                                     archived_at__isnull=True,
@@ -433,12 +433,12 @@ class CycleViewSet(BaseViewSet):
                         .values("label_name", "color", "label_id")
                         .annotate(
                             total_estimates=Sum(
-                                Cast("estimate_point__value", IntegerField())
+                                Cast("estimate_point__value", FloatField())
                             )
                         )
                         .annotate(
                             completed_estimates=Sum(
-                                Cast("estimate_point__value", IntegerField()),
+                                Cast("estimate_point__value", FloatField()),
                                 filter=Q(
                                     completed_at__isnull=False,
                                     archived_at__isnull=True,
@@ -448,7 +448,7 @@ class CycleViewSet(BaseViewSet):
                         )
                         .annotate(
                             pending_estimates=Sum(
-                                Cast("estimate_point__value", IntegerField()),
+                                Cast("estimate_point__value", FloatField()),
                                 filter=Q(
                                     completed_at__isnull=True,
                                     archived_at__isnull=True,
@@ -836,12 +836,12 @@ class CycleViewSet(BaseViewSet):
                 .values("display_name", "assignee_id", "avatar")
                 .annotate(
                     total_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField())
+                        Cast("estimate_point__value", FloatField())
                     )
                 )
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -851,7 +851,7 @@ class CycleViewSet(BaseViewSet):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -874,12 +874,12 @@ class CycleViewSet(BaseViewSet):
                 .values("label_name", "color", "label_id")
                 .annotate(
                     total_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField())
+                        Cast("estimate_point__value", FloatField())
                     )
                 )
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -889,7 +889,7 @@ class CycleViewSet(BaseViewSet):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -1234,12 +1234,12 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 .values("display_name", "assignee_id", "avatar")
                 .annotate(
                     total_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField())
+                        Cast("estimate_point__value", FloatField())
                     )
                 )
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -1249,7 +1249,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -1288,12 +1288,12 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 .values("label_name", "color", "label_id")
                 .annotate(
                     total_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField())
+                        Cast("estimate_point__value", FloatField())
                     )
                 )
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -1303,7 +1303,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,

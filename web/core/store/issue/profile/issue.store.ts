@@ -208,6 +208,11 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
+
+  // Setting them as undefined as they can not performed on profile issues
   quickAddIssue = undefined;
 }
