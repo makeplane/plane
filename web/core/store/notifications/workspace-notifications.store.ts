@@ -122,8 +122,12 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   notificationIdsByWorkspaceId = computedFn((workspaceId: string) => {
     if (!workspaceId || isEmpty(this.notifications)) return undefined;
-    const workspaceNotifications = orderBy(this.notifications || {}, (n) => convertToEpoch(n.created_at), ["desc"]);
-    const workspaceNotificationIds = Object.values(workspaceNotifications)
+    const workspaceNotifications = orderBy(
+      Object.values(this.notifications || []),
+      (n) => convertToEpoch(n.created_at),
+      ["desc"]
+    );
+    const workspaceNotificationIds = workspaceNotifications
       .filter((n) => n.workspace === workspaceId)
       .filter((n) => {
         if (!this.filters.archived && !this.filters.snoozed) {
