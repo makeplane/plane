@@ -1,8 +1,6 @@
 "use client";
 import React, { FC } from "react";
 import { Layers, Link, Paperclip, Waypoints } from "lucide-react";
-// ui
-import { RelationsIcon } from "@plane/ui";
 // components
 import {
   IssueAttachmentActionButton,
