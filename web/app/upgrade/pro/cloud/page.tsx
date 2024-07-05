@@ -98,7 +98,7 @@ const CloudUpgradePage = observer(() => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center gap-8">
+    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
       <RadioInput
         name="workspace-upgrade-radio-input"
         label={
@@ -173,7 +173,7 @@ const CloudUpgradePage = observer(() => {
       />
       {isAnyWorkspaceAvailable ? (
         <Button
-          className="w-full px-2"
+          className="w-full px-2 my-4"
           onClick={handlePaymentPageRedirection}
           loading={isLoading}
           disabled={isLoading || !selectedWorkspace}
