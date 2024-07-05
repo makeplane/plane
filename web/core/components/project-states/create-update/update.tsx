@@ -53,7 +53,6 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
       handleClose();
       return { status: "success" };
     } catch (error) {
-      console.log("error", error);
       const errorStatus = error as unknown as { status: number };
       if (errorStatus?.status === 400) {
         setToast({

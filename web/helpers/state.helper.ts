@@ -1,6 +1,6 @@
 // types
 import { IState, IStateResponse } from "@plane/types";
-import { STATE_GROUPS } from "@/constants/state";
+import { STATE_GROUPS, TDraggableData } from "@/constants/state";
 
 export const orderStateGroups = (unorderedStateGroups: IStateResponse | undefined): IStateResponse | undefined => {
   if (!unorderedStateGroups) return undefined;
@@ -18,7 +18,11 @@ export const sortStates = (states: IState[]) => {
   });
 };
 
-export const getCurrentStateSequence = (groupSates: IState[], destinationData: any, edge: string | undefined) => {
+export const getCurrentStateSequence = (
+  groupSates: IState[],
+  destinationData: TDraggableData,
+  edge: string | undefined
+) => {
   const currentSequence = 65535;
   if (!edge) return currentSequence;
   const currentStateIndex = groupSates.findIndex((state) => state.id === destinationData.id);
