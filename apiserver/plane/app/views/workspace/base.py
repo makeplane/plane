@@ -45,6 +45,8 @@ from plane.db.models import (
 )
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -128,6 +130,9 @@ class WorkSpaceViewSet(BaseViewSet):
                     role=20,
                     company_role=request.data.get("company_role", ""),
                 )
+
+                # Sync workspace members
+                member_sync_task.delay(slug)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
@@ -379,7 +384,6 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         return csv_buffer
 
     def post(self, request, slug, user_id):
-
         if not request.data.get("date"):
             return Response(
                 {"error": "Date is required"},

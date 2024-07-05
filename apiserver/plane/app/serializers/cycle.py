@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
+
 from .issue import IssueStateSerializer
 from plane.db.models import (
     Cycle,
