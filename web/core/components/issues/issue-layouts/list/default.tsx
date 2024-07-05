@@ -22,8 +22,8 @@ import { useCycle, useLabel, useMember, useModule, useProject, useProjectState }
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // utils
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, isSubGrouped } from "../utils";
 import { ListGroup } from "./list-group";
@@ -76,6 +76,8 @@ export const List: React.FC<IList> = observer((props) => {
   const projectState = useProjectState();
   const cycle = useCycle();
   const projectModule = useModule();
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -129,7 +131,7 @@ export const List: React.FC<IList> = observer((props) => {
   return (
     <div className="relative size-full flex flex-col">
       {groups && (
-        <MultipleSelectGroup containerRef={containerRef} entities={entities} disabled={!ENABLE_BULK_OPERATIONS}>
+        <MultipleSelectGroup containerRef={containerRef} entities={entities} disabled={!isBulkOperationsEnabled}>
           {(helpers) => (
             <>
               <div

@@ -19,8 +19,8 @@ import { cn } from "@/helpers/common.helper";
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { useIssueEmbed } from "@/hooks/use-issue-embed";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
-import { IssueEmbedCard } from "@/plane-web/components/pages";
+// plane web hooks
+import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
 // store
@@ -85,13 +85,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // page filters
   const { isFullWidth } = usePageFilters();
   // issue-embed
-  const { fetchIssues } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+  const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
+    workspaceSlug?.toString() ?? "",
+    projectId?.toString() ?? ""
+  );
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
-  if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
+  if (pageId === undefined || pageDescription === undefined || !pageDescriptionYJS || !isDescriptionReady)
+    return <PageContentLoader />;
 
   const handleIssueSearch = async (searchQuery: string) => {
     const response = await fetchIssues(searchQuery);
@@ -151,35 +155,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 suggestions: mentionSuggestions,
               }}
               embedHandler={{
-                issue: {
-                  searchCallback: async (query) =>
-                    new Promise((resolve) => {
-                      setTimeout(async () => {
-                        const response = await handleIssueSearch(query);
-                        const issueItemsWithIdentifiers = response?.map((issue) => ({
-                          ...issue,
-                          projectId: projectId.toString(),
-                          workspaceSlug: workspaceSlug.toString(),
-                        }));
-                        resolve(issueItemsWithIdentifiers);
-                      }, 300);
-                    }),
-                  widgetCallback: ({
-                    issueId,
-                    projectId: projectIdFromEmbed,
-                    workspaceSlug: workspaceSlugFromEmbed,
-                  }) => {
-                    const resolvedProjectId = projectIdFromEmbed ?? projectId?.toString() ?? "";
-                    const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
-                    return (
-                      <IssueEmbedCard
-                        issueId={issueId}
-                        projectId={resolvedProjectId}
-                        workspaceSlug={resolvedWorkspaceSlug}
-                      />
-                    );
-                  },
-                },
+                issue: issueEmbedProps,
               }}
             />
           ) : (
@@ -193,24 +169,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 highlights: mentionHighlights,
               }}
               embedHandler={{
-                issue: {
-                  widgetCallback: ({
-                    issueId,
-                    projectId: projectIdFromEmbed,
-                    workspaceSlug: workspaceSlugFromEmbed,
-                  }) => {
-                    const resolvedProjectId = projectIdFromEmbed ?? projectId?.toString() ?? "";
-                    const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
-
-                    return (
-                      <IssueEmbedCard
-                        issueId={issueId}
-                        projectId={resolvedProjectId}
-                        workspaceSlug={resolvedWorkspaceSlug}
-                      />
-                    );
-                  },
-                },
+                issue: issueEmbedReadOnlyProps,
               }}
             />
           )}

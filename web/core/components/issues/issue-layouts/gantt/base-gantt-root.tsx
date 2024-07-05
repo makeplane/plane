@@ -14,8 +14,8 @@ import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 import { useIssues, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 
@@ -42,6 +42,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     membership: { currentProjectRole },
   } = useUser();
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
@@ -99,7 +101,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
-          enableSelection={ENABLE_BULK_OPERATIONS && isAllowed}
+          enableSelection={isBulkOperationsEnabled && isAllowed}
           quickAdd={
             enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
           }
