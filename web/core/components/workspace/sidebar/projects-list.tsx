@@ -193,7 +193,7 @@ export const SidebarProjectsList: FC = observer(() => {
                 <>
                   <div
                     className={cn(
-                      "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                      "group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
                       {
                         "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
                           isCollapsed,
@@ -220,21 +220,23 @@ export const SidebarProjectsList: FC = observer(() => {
                         <span>{isCollapsed ? <section.icon className="flex-shrink-0 size-3" /> : section.title}</span>
                       </Tooltip>
                     </Disclosure.Button>
-                    {!isCollapsed && isAuthorizedUser && (
-                      <div className="flex items-center opacity-0 group-hover:opacity-100">
-                        <Tooltip tooltipHeading="Create project" tooltipContent="">
-                          <button
-                            type="button"
-                            className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                            onClick={() => {
-                              setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
-                              setIsFavoriteProjectCreate(section.key === "favorite");
-                              setIsProjectModalOpen(true);
-                            }}
-                          >
-                            <Plus className="size-3" />
-                          </button>
-                        </Tooltip>
+                    {!isCollapsed && (
+                      <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                        {isAuthorizedUser && (
+                          <Tooltip tooltipHeading="Create project" tooltipContent="">
+                            <button
+                              type="button"
+                              className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                              onClick={() => {
+                                setTrackElement(`APP_SIDEBAR_${section.type}_BLOCK`);
+                                setIsFavoriteProjectCreate(section.key === "favorite");
+                                setIsProjectModalOpen(true);
+                              }}
+                            >
+                              <Plus className="size-3" />
+                            </button>
+                          </Tooltip>
+                        )}
                         <Disclosure.Button
                           as="button"
                           type="button"
@@ -242,7 +244,7 @@ export const SidebarProjectsList: FC = observer(() => {
                           onClick={() => toggleListDisclosure(!section.isOpen, section.key)}
                         >
                           <ChevronRight
-                            className={cn("flex-shrink-0 size-3.5 transition-all", {
+                            className={cn("flex-shrink-0 size-4 transition-all", {
                               "rotate-90": section.isOpen,
                             })}
                           />
@@ -296,14 +298,14 @@ export const SidebarProjectsList: FC = observer(() => {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
+            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md"
             onClick={() => {
               setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >
-            <Plus className="size-5" />
-            {!isCollapsed && "Add Project"}
+            <Plus className="flex-shrink-0 size-4" />
+            {!isCollapsed && "Add project"}
           </button>
         )}
       </div>

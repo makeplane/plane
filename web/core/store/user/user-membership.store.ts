@@ -6,9 +6,9 @@ import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/ty
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 import { ProjectMemberService } from "@/services/project";
 import { UserService } from "@/services/user.service";
-import { WorkspaceService } from "@/services/workspace.service";
 // plane web store
 import { CoreRootStore } from "../root.store";
 
@@ -33,6 +33,9 @@ export interface IUserMembershipStore {
   currentProjectRole: EUserProjectRoles | undefined;
   currentWorkspaceRole: EUserWorkspaceRoles | undefined;
   currentWorkspaceAllProjectsRole: IUserProjectsRole | undefined;
+
+  // computed functions
+  currentProjectRoleByProjectId: (projectId: string) => EUserProjectRoles | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;
@@ -155,6 +158,14 @@ export class UserMembershipStore implements IUserMembershipStore {
     if (!this.router.projectId) return;
     return this.hasPermissionToProject[this.router.projectId];
   }
+
+  // computed functions
+  /**
+   * Returns the current project role by project id
+   * @param projectId
+   * @returns EUserProjectRoles
+   */
+  currentProjectRoleByProjectId = (projectId: string) => this.projectMemberInfo[projectId]?.role || undefined;
 
   /**
    * Fetches the current user workspace info

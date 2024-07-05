@@ -43,13 +43,22 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         # Get query parameters
         snoozed = request.GET.get("snoozed", "false")
         archived = request.GET.get("archived", "false")
-        read = request.GET.get("read", "true")
+        read = request.GET.get("read", None)
         type = request.GET.get("type", "all")
+        q_filters = Q()
+
+        inbox_issue = Issue.objects.filter(
+            pk=OuterRef("entity_identifier"),
+            issue_inbox__status__in=[0, 2, -2],
+            workspace__slug=self.kwargs.get("slug"),
+        )
 
         notifications = (
             Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
             )
+            .filter(entity_name="issue")
+            .annotate(is_inbox_issue=Exists(inbox_issue))
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
         )
@@ -74,8 +83,12 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         if read == "false":
             notifications = notifications.filter(read_at__isnull=True)
 
+        if read == "true":
+            notifications = notifications.filter(read_at__isnull=False)
+
+        type = type.split(",")
         # Subscribed issues
-        if type == "watching":
+        if "subscribed" in type:
             issue_ids = (
                 IssueSubscriber.objects.filter(
                     workspace__slug=slug, subscriber_id=request.user.id
@@ -97,35 +110,32 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 .filter(created=False, assigned=False)
                 .values_list("issue_id", flat=True)
             )
-            notifications = notifications.filter(
-                entity_identifier__in=issue_ids,
-            )
+            q_filters |= Q(entity_identifier__in=issue_ids)
 
         # Assigned Issues
-        if type == "assigned":
+        if "assigned" in type:
             issue_ids = IssueAssignee.objects.filter(
                 workspace__slug=slug, assignee_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(
-                entity_identifier__in=issue_ids
-            )
+            q_filters |= Q(entity_identifier__in=issue_ids)
 
         # Created issues
-        if type == "created":
+        if "created" in type:
             if WorkspaceMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
                 role__lt=15,
                 is_active=True,
             ).exists():
-                notifications = Notification.objects.none()
+                notifications = notifications.none()
             else:
                 issue_ids = Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
-                notifications = notifications.filter(
-                    entity_identifier__in=issue_ids
-                )
+                q_filters |= Q(entity_identifier__in=issue_ids)
+
+        # Apply the combined Q object filters
+        notifications = notifications.filter(q_filters)
 
         # Pagination
         if request.GET.get("per_page", False) and request.GET.get(
@@ -200,43 +210,19 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 class UnreadNotificationEndpoint(BaseAPIView):
     def get(self, request, slug):
         # Watching Issues Count
-        watching_issues_count = Notification.objects.filter(
+        unread_notifications_count = Notification.objects.filter(
             workspace__slug=slug,
             receiver_id=request.user.id,
             read_at__isnull=True,
             archived_at__isnull=True,
-            entity_identifier__in=IssueSubscriber.objects.filter(
-                workspace__slug=slug, subscriber_id=request.user.id
-            ).values_list("issue_id", flat=True),
-        ).count()
-
-        # My Issues Count
-        my_issues_count = Notification.objects.filter(
-            workspace__slug=slug,
-            receiver_id=request.user.id,
-            read_at__isnull=True,
-            archived_at__isnull=True,
-            entity_identifier__in=IssueAssignee.objects.filter(
-                workspace__slug=slug, assignee_id=request.user.id
-            ).values_list("issue_id", flat=True),
-        ).count()
-
-        # Created Issues Count
-        created_issues_count = Notification.objects.filter(
-            workspace__slug=slug,
-            receiver_id=request.user.id,
-            read_at__isnull=True,
-            archived_at__isnull=True,
-            entity_identifier__in=Issue.objects.filter(
-                workspace__slug=slug, created_by=request.user
-            ).values_list("pk", flat=True),
+            snoozed_till__isnull=True,
         ).count()
 
         return Response(
             {
-                "watching_issues": watching_issues_count,
-                "my_issues": my_issues_count,
-                "created_issues": created_issues_count,
+                "total_unread_notifications_count": int(
+                    unread_notifications_count
+                )
             },
             status=status.HTTP_200_OK,
         )

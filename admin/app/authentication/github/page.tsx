@@ -93,7 +93,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
             withBorder={false}
           />
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md p-4">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceGithubConfigForm config={formattedConfig} />
           ) : (

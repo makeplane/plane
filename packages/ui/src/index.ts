@@ -20,3 +20,4 @@ export * from "./drag-handle";
 export * from "./drop-indicator";
 export * from "./favorite-star";
 export * from "./loader";
+export * from "./collapsible";

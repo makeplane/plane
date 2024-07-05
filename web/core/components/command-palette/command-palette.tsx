@@ -139,11 +139,6 @@ export const CommandPalette: FC = observer(() => {
           description: "Create a new issue in the current project",
           action: () => toggleCreateIssueModal(true),
         },
-        h: {
-          title: "Show shortcuts",
-          description: "Show all the available shortcuts",
-          action: () => toggleShortcutModal(true),
-        },
       },
       workspace: {
         p: {
@@ -199,16 +194,18 @@ export const CommandPalette: FC = observer(() => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      const { key, ctrlKey, metaKey, altKey } = e;
+      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
       if (!key) return;
 
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
+      const shiftClicked = shiftKey;
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
         toggleCommandPaletteModal(true);
       }
+
       // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
@@ -216,6 +213,11 @@ export const CommandPalette: FC = observer(() => {
         (e.target as Element)?.classList?.contains("ProseMirror")
       )
         return;
+
+      if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
+        e.preventDefault();
+        toggleShortcutModal(true);
+      }
 
       if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {

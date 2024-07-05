@@ -30,10 +30,10 @@ import { getUserRole } from "@/helpers/user.helper";
 import { useEventTracker } from "@/hooks/store";
 import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 // assets
 import InviteMembersDark from "@/public/onboarding/invite-members-dark.svg";
 import InviteMembersLight from "@/public/onboarding/invite-members-light.svg";
-import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { OnboardingHeader } from "./header";
 import { SwitchAccountDropdown } from "./switch-account-dropdown";

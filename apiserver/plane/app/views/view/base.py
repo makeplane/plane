@@ -14,6 +14,7 @@ from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from rest_framework import status
+from django.db import transaction
 
 # Third party imports
 from rest_framework.response import Response
@@ -31,6 +32,8 @@ from plane.db.models import (
     IssueLink,
     IssueView,
     Workspace,
+    WorkspaceMember,
+    ProjectMember,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -76,32 +79,60 @@ class WorkspaceViewViewSet(BaseViewSet):
         )
 
     def partial_update(self, request, slug, pk):
+        with transaction.atomic():
+            workspace_view = IssueView.objects.select_for_update().get(
+                pk=pk,
+                workspace__slug=slug,
+            )
+
+            if workspace_view.is_locked:
+                return Response(
+                    {"error": "view is locked"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Only update the view if owner is updating
+            if workspace_view.owned_by_id != request.user.id:
+                return Response(
+                    {
+                        "error": "Only the owner of the view can update the view"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = IssueViewSerializer(
+                workspace_view, data=request.data, partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(
             pk=pk,
             workspace__slug=slug,
         )
-
-        if workspace_view.is_locked:
-            return Response(
-                {"error": "view is locked"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Only update the view if owner is updating
-        if workspace_view.owned_by_id != request.user.id:
-            return Response(
-                {"error": "Only the owner of the view can update the view"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        serializer = IssueViewSerializer(
-            workspace_view, data=request.data, partial=True
+        workspace_member = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member=request.user,
+            role=20,
+            is_active=True,
         )
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if (
+            workspace_member.exists()
+            or workspace_view.owned_by == request.user
+        ):
+            workspace_view.delete()
+        else:
+            return Response(
+                {"error": "Only admin or owner can delete the view"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
@@ -344,31 +375,58 @@ class IssueViewViewSet(BaseViewSet):
         return Response(views, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk):
-        issue_view = IssueView.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
-
-        if issue_view.is_locked:
-            return Response(
-                {"error": "view is locked"},
-                status=status.HTTP_400_BAD_REQUEST,
+        with transaction.atomic():
+            issue_view = IssueView.objects.select_for_update().get(
+                pk=pk, workspace__slug=slug, project_id=project_id
             )
 
-        # Only update the view if owner is updating
-        if issue_view.owned_by_id != request.user.id:
-            return Response(
-                {"error": "Only the owner of the view can update the view"},
-                status=status.HTTP_400_BAD_REQUEST,
+            if issue_view.is_locked:
+                return Response(
+                    {"error": "view is locked"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Only update the view if owner is updating
+            if issue_view.owned_by_id != request.user.id:
+                return Response(
+                    {
+                        "error": "Only the owner of the view can update the view"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = IssueViewSerializer(
+                issue_view, data=request.data, partial=True
             )
 
-        serializer = IssueViewSerializer(
-            issue_view, data=request.data, partial=True
-        )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def destroy(self, request, slug, project_id, pk):
+        project_view = IssueView.objects.get(
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+        project_member = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=20,
+            is_active=True,
+        )
+        if project_member.exists() or project_view.owned_by == request.user:
+            project_view.delete()
+        else:
+            return Response(
+                {"error": "Only admin or owner can delete the view"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):

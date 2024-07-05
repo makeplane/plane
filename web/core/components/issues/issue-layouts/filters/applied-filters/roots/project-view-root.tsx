@@ -13,9 +13,10 @@ import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EViewAccess } from "@/constants/views";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useIssues, useLabel, useProjectView, useUser } from "@/hooks/store";
+import { useIssues, useLabel, useProjectState, useProjectView, useUser } from "@/hooks/store";
 import { getAreFiltersEqual } from "../../../utils";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
@@ -26,6 +27,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { projectLabels } = useLabel();
+  const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
   const {
     data,
@@ -120,6 +122,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           name: `${viewDetails?.name} 2`,
           description: viewDetails?.description,
           logo_props: viewDetails?.logo_props,
+          access: viewDetails?.access ?? EViewAccess.PUBLIC,
           ...viewFilters,
         }}
       />
@@ -129,6 +132,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
+          states={projectStates}
           disableEditing={isLocked}
         />
       </div>

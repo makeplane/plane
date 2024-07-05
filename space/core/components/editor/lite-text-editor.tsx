@@ -64,7 +64,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         }}
         isSubmitting={isSubmitting}
         showSubmitButton={showSubmitButton}
-        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
+        handleSubmit={() => {
+          if (isMutableRefObject<EditorRefApi>(ref)) {
+            rest.onEnterKeyPress?.(ref.current?.getHTML() ?? "");
+          }
+        }}
         isCommentEmpty={isEmpty}
         editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
       />

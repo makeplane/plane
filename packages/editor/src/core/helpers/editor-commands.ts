@@ -1,8 +1,11 @@
 import { Editor, Range } from "@tiptap/core";
-import { startImageUpload } from "src/core/plugins/image/image-upload-handler";
-import { findTableAncestor } from "@/helpers/common";
 import { Selection } from "@tiptap/pm/state";
+// extensions
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
+// helpers
+import { findTableAncestor } from "@/helpers/common";
+// plugins
+import { startImageUpload } from "@/plugins/image";
 // types
 import { UploadImage } from "@/types";
 

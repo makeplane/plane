@@ -3,9 +3,7 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// types
 import { TIssue } from "@plane/types";
-// ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView } from "@/components/issues";
@@ -15,8 +13,10 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 interface IIssuePeekOverview {
+  embedIssue?: boolean;
   is_archived?: boolean;
   is_draft?: boolean;
 }
@@ -45,7 +45,7 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, is_draft = false } = props;
+  const { embedIssue = false, is_archived = false, is_draft = false } = props;
   // router
   const pathname = usePathname();
   const {
@@ -56,66 +56,66 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     peekIssue,
-    updateIssue,
-    removeIssue,
-    archiveIssue,
-    issue: { getIssueById, fetchIssue },
+    issue: { fetchIssue },
   } = useIssueDetail();
-  const {
-    addCycleToIssue,
-    addIssueToCycle,
-    removeIssueFromCycle,
-    addModulesToIssue,
-    removeIssueFromModule,
-    removeModulesFromIssue,
-  } = useIssueDetail();
+
+  const { issues } = useIssuesStore();
   const { captureIssueEvent } = useEventTracker();
   // state
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const [error, setError] = useState(false);
 
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
+          setLoader(true);
+          setError(false);
           await fetchIssue(
             workspaceSlug,
             projectId,
             issueId,
             is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
           );
+          setLoader(false);
+          setError(false);
         } catch (error) {
+          setLoader(false);
+          setError(true);
           console.error("Error fetching the parent issue");
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-        await updateIssue(workspaceSlug, projectId, issueId, data)
-          .then(() => {
-            captureIssueEvent({
-              eventName: ISSUE_UPDATED,
-              payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
-              updates: {
-                changed_property: Object.keys(data).join(","),
-                change_details: Object.values(data).join(","),
-              },
-              path: pathname,
-            });
-          })
-          .catch(() => {
-            captureIssueEvent({
-              eventName: ISSUE_UPDATED,
-              payload: { state: "FAILED", element: "Issue peek-overview" },
-              path: pathname,
-            });
-            setToast({
-              title: "Error!",
-              type: TOAST_TYPE.ERROR,
-              message: "Issue update failed",
-            });
-          });
+        issues?.updateIssue &&
+          (await issues
+            .updateIssue(workspaceSlug, projectId, issueId, data)
+            .then(() => {
+              captureIssueEvent({
+                eventName: ISSUE_UPDATED,
+                payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+                updates: {
+                  changed_property: Object.keys(data).join(","),
+                  change_details: Object.values(data).join(","),
+                },
+                path: pathname,
+              });
+            })
+            .catch(() => {
+              captureIssueEvent({
+                eventName: ISSUE_UPDATED,
+                payload: { state: "FAILED", element: "Issue peek-overview" },
+                path: pathname,
+              });
+              setToast({
+                title: "Error!",
+                type: TOAST_TYPE.ERROR,
+                message: "Issue update failed",
+              });
+            }));
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          removeIssue(workspaceSlug, projectId, issueId);
+          issues?.removeIssue(workspaceSlug, projectId, issueId);
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
@@ -141,7 +141,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await archiveIssue(workspaceSlug, projectId, issueId);
+          issues?.archiveIssue && (await issues.archiveIssue(workspaceSlug, projectId, issueId));
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -183,8 +183,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          console.log("Peek adding...");
-          await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -213,7 +212,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
@@ -242,7 +241,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          const removeFromCyclePromise = issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setPromiseToast(removeFromCyclePromise, {
             loading: "Removing issue from the cycle...",
             success: {
@@ -276,38 +275,34 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         }
       },
-      addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-        try {
-          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
-            updates: {
-              changed_property: "module_id",
-              change_details: moduleIds,
-            },
-            path: pathname,
-          });
-        } catch (error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be added to the module. Please try again.",
-          });
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            updates: {
-              changed_property: "module_id",
-              change_details: moduleIds,
-            },
-            path: pathname,
-          });
-        }
+      changeModulesInIssue: async (
+        workspaceSlug: string,
+        projectId: string,
+        issueId: string,
+        addModuleIds: string[],
+        removeModuleIds: string[]
+      ) => {
+        const promise = await issues.changeModulesInIssue(
+          workspaceSlug,
+          projectId,
+          issueId,
+          addModuleIds,
+          removeModuleIds
+        );
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+          updates: {
+            changed_property: "module_id",
+            change_details: { addModuleIds, removeModuleIds },
+          },
+          path: pathname,
+        });
+        return promise;
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
-          const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+          const removeFromModulePromise = issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
           setPromiseToast(removeFromModulePromise, {
             loading: "Removing issue from the module...",
             success: {
@@ -341,71 +336,32 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         }
       },
-      removeModulesFromIssue: async (
-        workspaceSlug: string,
-        projectId: string,
-        issueId: string,
-        moduleIds: string[]
-      ) => {
-        const removeModulesFromIssuePromise = removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
-        setPromiseToast(removeModulesFromIssuePromise, {
-          loading: "Removing module from issue...",
-          success: {
-            title: "Success!",
-            message: () => "Module removed from issue successfully",
-          },
-          error: {
-            title: "Error!",
-            message: () => "Module remove from issue failed",
-          },
-        });
-        await removeModulesFromIssuePromise;
-      },
     }),
-    [
-      is_archived,
-      is_draft,
-      fetchIssue,
-      updateIssue,
-      removeIssue,
-      archiveIssue,
-      restoreIssue,
-      addIssueToCycle,
-      removeIssueFromCycle,
-      addModulesToIssue,
-      removeIssueFromModule,
-      removeModulesFromIssue,
-      captureIssueEvent,
-      pathname,
-    ]
+    [is_archived, is_draft, fetchIssue, issues, restoreIssue, captureIssueEvent, pathname]
   );
 
   useEffect(() => {
     if (peekIssue) {
-      setLoader(true);
-      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
-        setLoader(false);
-      });
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
     }
   }, [peekIssue, issueOperations]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
-  const issue = getIssueById(peekIssue.issueId) || undefined;
-
   const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
   const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const isLoading = !issue || loader ? true : false;
 
   return (
     <IssueView
       workspaceSlug={peekIssue.workspaceSlug}
       projectId={peekIssue.projectId}
       issueId={peekIssue.issueId}
-      isLoading={isLoading}
+      isLoading={loader}
+      isError={error}
       is_archived={is_archived}
       disabled={!isEditable}
+      embedIssue={embedIssue}
       issueOperations={issueOperations}
     />
   );

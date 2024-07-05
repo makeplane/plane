@@ -21,7 +21,7 @@ export interface IUserProfileStore {
   // actions
   fetchUserProfile: () => Promise<TUserProfile | undefined>;
   updateUserProfile: (data: Partial<TUserProfile>) => Promise<TUserProfile | undefined>;
-  updateUserOnBoard: () => Promise<TUserProfile | undefined>;
+  finishUserOnboarding: () => Promise<void>;
   updateTourCompleted: () => Promise<TUserProfile | undefined>;
   updateUserTheme: (data: Partial<IUserTheme>) => Promise<TUserProfile | undefined>;
 }
@@ -72,7 +72,6 @@ export class ProfileStore implements IUserProfileStore {
       // actions
       fetchUserProfile: action,
       updateUserProfile: action,
-      updateUserOnBoard: action,
       updateTourCompleted: action,
       updateUserTheme: action,
     });
@@ -80,12 +79,20 @@ export class ProfileStore implements IUserProfileStore {
     this.userService = new UserService();
   }
 
+  // helper action
+  mutateUserProfile = (data: Partial<TUserProfile>) => {
+    if (!data) return
+    Object.entries(data).forEach(([key, value]) => {
+      if (key in this.data) set(this.data, key, value);
+    })
+  }
+
   // actions
   /**
    * @description fetches user profile information
    * @returns {Promise<TUserProfile | undefined>}
    */
-  fetchUserProfile = async () => {
+  fetchUserProfile = async (): Promise<TUserProfile | undefined> => {
     try {
       runInAction(() => {
         this.isLoading = true;
@@ -114,23 +121,17 @@ export class ProfileStore implements IUserProfileStore {
    * @param {Partial<TUserProfile>} data
    * @returns {Promise<TUserProfile | undefined>}
    */
-  updateUserProfile = async (data: Partial<TUserProfile>) => {
+  updateUserProfile = async (data: Partial<TUserProfile>): Promise<TUserProfile | undefined> => {
     const currentUserProfileData = this.data;
     try {
       if (currentUserProfileData) {
-        Object.keys(data).forEach((key: string) => {
-          const userKey: keyof TUserProfile = key as keyof TUserProfile;
-          if (this.data) set(this.data, userKey, data[userKey]);
-        });
+        this.mutateUserProfile(data);
       }
       const userProfile = await this.userService.updateCurrentUserProfile(data);
       return userProfile;
     } catch (error) {
       if (currentUserProfileData) {
-        Object.keys(currentUserProfileData).forEach((key: string) => {
-          const userKey: keyof TUserProfile = key as keyof TUserProfile;
-          if (this.data) set(this.data, userKey, currentUserProfileData[userKey]);
-        });
+        this.mutateUserProfile(currentUserProfileData);
       }
       runInAction(() => {
         this.error = {
@@ -142,27 +143,43 @@ export class ProfileStore implements IUserProfileStore {
   };
 
   /**
-   * @description updates the user onboarding status
-   * @returns @returns {Promise<TUserProfile | undefined>}
+   * @description finishes the user onboarding
+   * @returns { void }
    */
-  updateUserOnBoard = async () => {
-    const isUserProfileOnboard = this.data.is_onboarded || false;
+  finishUserOnboarding = async (): Promise<void> => {
     try {
-      runInAction(() => set(this.data, ["is_onboarded"], true));
-      const userProfile = await this.userService.updateUserOnBoard();
-      return userProfile;
-    } catch (error) {
+      const firstWorkspace = Object.values(this.store.workspaceRoot.workspaces ?? {})?.[0];
+      const dataToUpdate: Partial<TUserProfile> = {
+        onboarding_step: {
+          profile_complete: true,
+          workspace_join: true,
+          workspace_create: true,
+          workspace_invite: true,
+        },
+        last_workspace_id: firstWorkspace?.id,
+      };
+
+      // update user onboarding steps
+      await this.userService.updateCurrentUserProfile(dataToUpdate);
+
+      // update user onboarding status
+      await this.userService.updateUserOnBoard();
+
+      // update the user profile store
       runInAction(() => {
-        set(this.data, ["is_onboarded"], isUserProfileOnboard);
-        this.error = {
-          status: "user-profile-onboard-error",
-          message: "Failed to update user profile is_onboarded",
-        };
+        this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });
 
+    } catch (error) {
+      runInAction(() => {
+        this.error = {
+          status: "user-profile-onboard-finish-error",
+          message: "Failed to finish user onboarding",
+        };
+      });
       throw error;
     }
-  };
+  }
 
   /**
    * @description updates the user tour completed status
@@ -171,12 +188,12 @@ export class ProfileStore implements IUserProfileStore {
   updateTourCompleted = async () => {
     const isUserProfileTourCompleted = this.data.is_tour_completed || false;
     try {
-      runInAction(() => set(this.data, ["is_tour_completed"], true));
+      this.mutateUserProfile({ is_tour_completed: true });
       const userProfile = await this.userService.updateUserTourCompleted();
       return userProfile;
     } catch (error) {
       runInAction(() => {
-        set(this.data, ["is_tour_completed"], isUserProfileTourCompleted);
+        this.mutateUserProfile({ is_tour_completed: isUserProfileTourCompleted });
         this.error = {
           status: "user-profile-tour-complete-error",
           message: "Failed to update user profile is_tour_completed",
