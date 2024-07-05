@@ -17,7 +17,7 @@ export class PaymentService extends APIService {
       });
   }
 
-  getPaymentLink(workspaceSlug: string, data = {}) {
+  getCurrentWorkspacePaymentLink(workspaceSlug: string, data = {}) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/payment-link/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -27,6 +27,14 @@ export class PaymentService extends APIService {
 
   getWorkspaceCurrentPlane(workspaceSlug: string): Promise<IWorkspaceProductSubscription> {
     return this.get(`/api/payments/workspaces/${workspaceSlug}/current-plan/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getPaymentLink(data = {}) {
+    return this.post(`/api/payments/website/payment-link/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
