@@ -10,6 +10,7 @@ class IssueType(WorkspaceBaseModel):
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
+    is_default = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Issue Type"

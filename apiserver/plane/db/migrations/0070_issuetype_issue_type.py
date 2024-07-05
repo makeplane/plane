@@ -141,6 +141,10 @@ class Migration(migrations.Migration):
                         to="db.workspace",
                     ),
                 ),
+                (
+                    "is_default",
+                    models.BooleanField(default=True),
+                ),
             ],
             options={
                 "verbose_name": "Issue Type",
@@ -159,6 +163,11 @@ class Migration(migrations.Migration):
                 related_name="issue_type",
                 to="db.issuetype",
             ),
+        ),
+        migrations.AddField(
+            model_name="apitoken",
+            name="is_service",
+            field=models.BooleanField(default=False),
         ),
         migrations.RunPython(create_issue_types),
         migrations.CreateModel(
