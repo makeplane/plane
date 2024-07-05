@@ -280,6 +280,18 @@ export const convertToISODateString = (dateString: string | undefined) => {
 };
 
 /**
+ * returns the date string in Epoch regardless of the timezone in input date string
+ * @param dateString
+ * @returns
+ */
+export const convertToEpoch = (dateString: string | undefined) => {
+  if (!dateString) return dateString;
+
+  const date = new Date(dateString);
+  return date.getTime();
+};
+
+/**
  * get current Date time in UTC ISO format
  * @returns
  */
