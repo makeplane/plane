@@ -4,7 +4,7 @@ import { PageRenderer } from "@/components/editors";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useDocumentEditor } from "@/hooks/use-document-editor";
+import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
@@ -23,10 +23,8 @@ interface IDocumentEditor {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions: () => Promise<IMentionSuggestion[]>;
   };
-  onChange: (updates: Uint8Array) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value: Uint8Array;
 }
 
 const DocumentEditor = (props: IDocumentEditor) => {
@@ -39,10 +37,8 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     id,
     mentionHandler,
-    onChange,
     placeholder,
     tabIndex,
-    value,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
@@ -53,13 +49,11 @@ const DocumentEditor = (props: IDocumentEditor) => {
   };
 
   // use document editor
-  const { editor, isIndexedDbSynced } = useDocumentEditor({
+  const { editor, isIndexedDbSynced } = useCollaborativeEditor({
     id,
     editorClassName,
     embedHandler,
     fileHandler,
-    value,
-    onChange,
     handleEditorReady,
     forwardedRef,
     mentionHandler,

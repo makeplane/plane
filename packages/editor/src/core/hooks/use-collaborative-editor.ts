@@ -1,21 +1,20 @@
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { EditorProps } from "@tiptap/pm/view";
-import * as Y from "yjs";
+import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
 import { DragAndDrop, IssueWidget } from "@/extensions";
 // hooks
 import { TFileHandler, useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
-// plane editor provider
-import { CollaborationProvider } from "@/plane-editor/providers";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
 
-type DocumentEditorProps = {
+type CollaborativeEditorProps = {
   editorClassName: string;
   editorProps?: EditorProps;
   embedHandler?: TEmbedConfig;
@@ -27,14 +26,12 @@ type DocumentEditorProps = {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
-  onChange: (updates: Uint8Array) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
-  value: Uint8Array;
 };
 
-export const useDocumentEditor = (props: DocumentEditorProps) => {
+export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
   const {
     editorClassName,
     editorProps = {},
@@ -44,44 +41,34 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     handleEditorReady,
     id,
     mentionHandler,
-    onChange,
     placeholder,
     setHideDragHandleFunction,
     tabIndex,
-    value,
   } = props;
-
+  // initialize provider using Hocuspocus
   const provider = useMemo(
     () =>
-      new CollaborationProvider({
+      new HocuspocusProvider({
+        url: "http://192.168.68.91:1234/collaboration?workspaceSlug=aaryan&projectId=23a09309-c139-4483-813e-ca5db250cbf6",
         name: id,
-        onChange,
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [id]
   );
-
-  const [isIndexedDbSynced, setIndexedDbIsSynced] = useState(false);
-
-  // update document on value change from server
+  // destroy and disconnect connection on unmount
+  useEffect(
+    () => () => {
+      provider.destroy();
+      provider.disconnect();
+    },
+    [provider]
+  );
+  // indexed db integration for offline support
   useLayoutEffect(() => {
-    if (value.length > 0) {
-      Y.applyUpdate(provider.document, value);
-    }
-  }, [value, provider.document, id]);
-
-  // watch for indexedDb to complete syncing, only after which the editor is
-  // rendered
-  useLayoutEffect(() => {
-    async function checkIndexDbSynced() {
-      const hasSynced = await provider.hasIndexedDBSynced();
-      setIndexedDbIsSynced(hasSynced);
-    }
-    checkIndexDbSynced();
+    const localProvider = new IndexeddbPersistence(id, provider.document);
     return () => {
-      setIndexedDbIsSynced(false);
+      localProvider?.destroy();
     };
-  }, [provider]);
+  }, [provider, id]);
 
   const editor = useEditor({
     id,
@@ -106,9 +93,8 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
       }),
     ],
     placeholder,
-    provider,
     tabIndex,
   });
 
-  return { editor, isIndexedDbSynced };
+  return { editor, isIndexedDbSynced: true };
 };

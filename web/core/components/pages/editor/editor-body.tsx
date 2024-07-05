@@ -36,9 +36,6 @@ type Props = {
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
   updateMarkings: (description_html: string) => void;
-  handleDescriptionChange: (update: Uint8Array, source?: string | undefined) => void;
-  isDescriptionReady: boolean;
-  pageDescriptionYJS: Uint8Array | undefined;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -51,9 +48,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     page,
     sidePeekVisible,
     updateMarkings,
-    handleDescriptionChange,
-    isDescriptionReady,
-    pageDescriptionYJS,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -87,7 +81,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
-  if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
+  if (pageId === undefined) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -130,11 +124,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
               }}
               handleEditorReady={handleEditorReady}
-              value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
               editorClassName="pl-10"
-              onChange={handleDescriptionChange}
               mentionHandler={{
                 highlights: mentionHighlights,
                 suggestions: mentionSuggestions,

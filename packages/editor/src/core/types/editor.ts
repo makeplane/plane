@@ -22,8 +22,6 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
-  setSynced: () => void;
-  hasUnsyncedChanges: () => boolean;
 }
 
 export interface IEditorProps {
