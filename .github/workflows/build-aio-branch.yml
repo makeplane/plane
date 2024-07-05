@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
+      flat_branch_name: ${{ steps.set_env_variables.outputs.FLAT_BRANCH_NAME }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
@@ -56,7 +57,7 @@ jobs:
             echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
 
-            if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
+            if [ "${{ github.event_name}}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
               echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
             elif [ "${{ env.TARGET_BRANCH }}" == "preview" ]; then
               echo "AIO_BASE_TAG=preview" >> $GITHUB_OUTPUT
@@ -78,6 +79,9 @@ jobs:
             echo "DO_SLIM_BUILD=false" >> $GITHUB_OUTPUT
           fi
 
+          FLAT_BRANCH_NAME=$(echo "${{ env.TARGET_BRANCH }}" | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "FLAT_BRANCH_NAME=$FLAT_BRANCH_NAME" >> $GITHUB_OUTPUT
+
       - id: checkout_files
         name: Checkout Files
         uses: actions/checkout@v4
@@ -89,7 +93,7 @@ jobs:
     env:
       BUILD_TYPE: full
       AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
-      AIO_IMAGE_TAGS: makeplane/plane-aio:full-${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      AIO_IMAGE_TAGS: makeplane/plane-aio:full-${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -132,7 +136,7 @@ jobs:
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
           build-args: |
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BASE_TAG=${{ env.AIO_BASE_TAG }}
             BUILD_TYPE=${{env.BUILD_TYPE}}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -149,7 +153,7 @@ jobs:
     env:
       BUILD_TYPE: slim
       AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
-      AIO_IMAGE_TAGS: makeplane/plane-aio:slim-${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      AIO_IMAGE_TAGS: makeplane/plane-aio:slim-${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -192,7 +196,7 @@ jobs:
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
           build-args: |
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+            BASE_TAG=${{ env.AIO_BASE_TAG }}
             BUILD_TYPE=${{env.BUILD_TYPE}}
           cache-from: type=gha
           cache-to: type=gha,mode=max
