@@ -1,3 +1,6 @@
+// types
+import { TEmbedItem } from "@/types";
+
 export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;
 };
@@ -17,13 +20,4 @@ export type TIssueEmbedConfig = {
     projectId: string | undefined;
     workspaceSlug: string | undefined;
   }) => React.ReactNode;
-};
-
-export type TEmbedItem = {
-  id: string;
-  title: string;
-  subTitle: string;
-  icon: React.ReactNode;
-  projectId: string;
-  workspaceSlug: string;
 };

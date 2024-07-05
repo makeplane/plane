@@ -17,7 +17,6 @@ import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/compon
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
-import { useIssueEmbed } from "@/hooks/use-issue-embed";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -96,13 +95,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   if (pageId === undefined || pageDescription === undefined || !pageDescriptionYJS || !isDescriptionReady)
     return <PageContentLoader />;
-
-  const handleIssueSearch = async (searchQuery: string) => {
-    const response = await fetchIssues(searchQuery);
-    return response;
-  };
-
-  if (pageDescription === undefined) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
