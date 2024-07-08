@@ -48,8 +48,8 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
     <>
       {isDeleteAttachmentModalOpen && (
         <IssueAttachmentDeleteModal
-          isOpen={!!isDeleteAttachmentModalOpen}
-          onClose={() => toggleDeleteAttachmentModal(null)}
+          isOpen={isDeleteAttachmentModalOpen}
+          onClose={() => toggleDeleteAttachmentModal(false)}
           handleAttachmentOperations={handleAttachmentOperations}
           data={attachment}
         />
@@ -95,7 +95,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  toggleDeleteAttachmentModal(attachmentId);
+                  toggleDeleteAttachmentModal(true);
                 }}
               >
                 <div className="flex items-center gap-2">
