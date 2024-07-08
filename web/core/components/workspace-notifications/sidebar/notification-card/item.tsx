@@ -38,14 +38,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const notificationTriggeredBy = notification.triggered_by_details || undefined;
 
   const handleNotificationIssuePeekOverview = async () => {
-    if (
-      workspaceSlug &&
-      projectId &&
-      issueId &&
-      !getIsIssuePeeked(issueId) &&
-      !isSnoozeStateModalOpen &&
-      !customSnoozeModal
-    ) {
+    if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
       const currentSelectedNotificationPayload: TCurrentSelectedNotification = {
         workspace_slug: workspaceSlug,
         project_id: projectId,
@@ -65,7 +58,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       }
 
       if (notification?.is_inbox_issue === false) {
-        setPeekIssue({ workspaceSlug, projectId, issueId });
+        !getIsIssuePeeked(issueId) && setPeekIssue({ workspaceSlug, projectId, issueId });
       } else {
       }
     }

@@ -31,6 +31,7 @@ interface IIssueView {
   is_archived: boolean;
   disabled?: boolean;
   embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
 }
 
@@ -44,6 +45,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     is_archived,
     disabled = false,
     embedIssue = false,
+    embedRemoveCurrentNotification,
     issueOperations,
   } = props;
   // states
@@ -66,13 +68,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
+    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
   };
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
-      if (!isAnyModalOpen) {
-        removeRoutePeekId();
+      if (!embedIssue) {
+        if (!isAnyModalOpen) {
+          removeRoutePeekId();
+        }
       }
     },
     issueId
@@ -88,7 +93,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   };
 
-  useKeypress("Escape", handleKeyDown);
+  useKeypress("Escape", () => !embedIssue && handleKeyDown());
 
   const handleRestore = async () => {
     if (!issueOperations.restore) return;
