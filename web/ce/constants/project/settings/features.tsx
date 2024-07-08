@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { FileText, Inbox, Timer } from "lucide-react";
 import { ContrastIcon, DiceIcon, PhotoFilterIcon } from "@plane/ui";
-// components
 
 export type TFeatureList = {
   [key: string]: {
@@ -9,18 +8,19 @@ export type TFeatureList = {
     title: string;
     description: string;
     icon: ReactNode;
-    isEnabled: boolean; // feature is enabled or not
+    isPro: boolean;
+    isEnabled: boolean;
   };
 };
 
-export type ProjectFeatures = {
+export type TProjectFeatures = {
   [key: string]: {
     title: string;
     featureList: TFeatureList;
   };
 };
 
-export const PROJECT_FEATURES_LIST: ProjectFeatures = {
+export const PROJECT_FEATURES_LIST: TProjectFeatures = {
   project_features: {
     title: "Features",
     featureList: {
@@ -29,6 +29,7 @@ export const PROJECT_FEATURES_LIST: ProjectFeatures = {
         title: "Cycles",
         description: "Time-box issues and boost momentum, similar to sprints in scrum.",
         icon: <ContrastIcon className="h-4 w-4 flex-shrink-0 rotate-180 text-purple-500" />,
+        isPro: false,
         isEnabled: true,
       },
       modules: {
@@ -36,6 +37,7 @@ export const PROJECT_FEATURES_LIST: ProjectFeatures = {
         title: "Modules",
         description: "Group multiple issues together and track the progress.",
         icon: <DiceIcon width={16} height={16} className="flex-shrink-0 text-red-500" />,
+        isPro: false,
         isEnabled: true,
       },
       views: {
@@ -43,6 +45,7 @@ export const PROJECT_FEATURES_LIST: ProjectFeatures = {
         title: "Views",
         description: "Apply filters to issues and save them to analyse and investigate work.",
         icon: <PhotoFilterIcon className="h-4 w-4 flex-shrink-0 text-cyan-500" />,
+        isPro: false,
         isEnabled: true,
       },
       pages: {
@@ -50,6 +53,7 @@ export const PROJECT_FEATURES_LIST: ProjectFeatures = {
         title: "Pages",
         description: "Document ideas, feature requirements, discussions within your project.",
         icon: <FileText className="h-4 w-4 flex-shrink-0 text-red-400" />,
+        isPro: false,
         isEnabled: true,
       },
       inbox: {
@@ -57,6 +61,7 @@ export const PROJECT_FEATURES_LIST: ProjectFeatures = {
         title: "Inbox",
         description: "Capture external inputs, move valid issues to workflow.",
         icon: <Inbox className="h-4 w-4 flex-shrink-0 text-fuchsia-500" />,
+        isPro: false,
         isEnabled: true,
       },
     },
@@ -69,6 +74,7 @@ export const PROJECT_FEATURES_LIST: ProjectFeatures = {
         title: "Time Tracking",
         description: "Keep the work logs of the users in track ",
         icon: <Timer className="h-4 w-4 flex-shrink-0 text-gray-300" />,
+        isPro: true,
         isEnabled: false,
       },
     },
