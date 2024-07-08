@@ -2,22 +2,10 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import {
-  Signal,
-  Tag,
-  Triangle,
-  LayoutPanelTop,
-  CircleDot,
-  CopyPlus,
-  XCircle,
-  CalendarClock,
-  CalendarCheck2,
-  Users,
-  UserCircle2,
-} from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 } from "lucide-react";
 // hooks
 // ui icons
-import { DiceIcon, DoubleCircleIcon, ContrastIcon, RelatedIcon, Tooltip } from "@plane/ui";
+import { DiceIcon, DoubleCircleIcon, ContrastIcon, Tooltip } from "@plane/ui";
 // components
 import {
   DateDropdown,
@@ -28,13 +16,11 @@ import {
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import {
-  IssueLinkRoot,
   IssueCycleSelect,
   IssueModuleSelect,
   IssueParentSelect,
   IssueLabel,
   TIssueOperations,
-  IssueRelationSelect,
 } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -287,70 +273,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           />
         </div>
 
-        {/* relates to */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <RelatedIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Relates to</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="relates_to"
-            disabled={disabled}
-          />
-        </div>
-
-        {/* blocking */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <XCircle className="h-4 w-4 flex-shrink-0" />
-            <span>Blocking</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="blocking"
-            disabled={disabled}
-          />
-        </div>
-
-        {/* blocked by */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CircleDot className="h-4 w-4 flex-shrink-0" />
-            <span>Blocked by</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="blocked_by"
-            disabled={disabled}
-          />
-        </div>
-
-        {/* duplicate of */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CopyPlus className="h-4 w-4 flex-shrink-0" />
-            <span>Duplicate of</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="duplicate"
-            disabled={disabled}
-          />
-        </div>
-
         {/* label */}
         <div className="flex w-full items-center gap-3 min-h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -361,9 +283,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
           </div>
         </div>
-      </div>
-      <div className="w-full pt-3">
-        <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
       </div>
     </div>
   );
