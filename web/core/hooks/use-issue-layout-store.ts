@@ -30,7 +30,7 @@ export const useIssueStoreType = () => {
 };
 
 export const useIssuesStore = () => {
-  const storeType = useContext(IssuesStoreContext);
+  const storeType = useIssueStoreType();
 
   return useIssues(storeType);
 };
