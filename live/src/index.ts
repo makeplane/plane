@@ -6,8 +6,8 @@ import expressWs, { Application } from "express-ws";
 // page actions
 import { fetchPageDescriptionBinary, updateDocument } from "./page.js";
 // services
-import { UserService } from "./services/user.service.js";
-const userService = new UserService();
+import { TDocumentTypes } from "./types/common.js";
+import { handleAuthentication } from "./authentication.js";
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -20,34 +20,18 @@ const server = Server.configure({
     const cookie = requestHeaders.cookie?.toString();
     // params
     const params = requestParameters;
-    const workspaceSlug = params.get("workspaceSlug")?.toString();
-    const projectId = params.get("projectId")?.toString();
 
-    if (!workspaceSlug || !projectId || !cookie) {
+    if (!cookie) {
       throw Error("Credentials not provided");
     }
 
     try {
-      // fetch current user info
-      const response = await userService.currentUser(cookie);
-      if (response.id !== token) throw Error();
-      // fetch current user's roles
-      const workspaceRoles = await userService.getUserAllProjectsRole(
-        workspaceSlug,
+      await handleAuthentication({
+        connection,
         cookie,
-      );
-      const currentProjectRole = workspaceRoles[projectId];
-      // make the connection read only for roles lower than a member
-      if (currentProjectRole < 15) {
-        connection.readOnly = true;
-      }
-
-      return {
-        user: {
-          id: response.id,
-          name: response.display_name,
-        },
-      };
+        params,
+        token,
+      });
     } catch (error) {
       throw Error("Authentication unsuccessful!");
     }
@@ -55,28 +39,8 @@ const server = Server.configure({
   extensions: [
     new Logger(),
     new Database({
-      fetch: async ({ documentName, requestHeaders, requestParameters }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
-        // query params
-        const params = requestParameters;
-        const workspaceSlug = params.get("workspaceSlug")?.toString();
-        const projectId = params.get("projectId")?.toString();
-        const pageId = documentName.split(".")?.[1];
-
-        return new Promise(async (resolve) => {
-          const fetchedData = await fetchPageDescriptionBinary(
-            workspaceSlug,
-            projectId,
-            pageId,
-            cookie,
-          );
-          resolve(fetchedData);
-        });
-      },
-      store: async ({
-        state,
-        documentName,
+      fetch: async ({
+        documentName: pageId,
         requestHeaders,
         requestParameters,
       }) => {
@@ -84,12 +48,39 @@ const server = Server.configure({
         const cookie = requestHeaders.cookie?.toString();
         // query params
         const params = requestParameters;
-        const workspaceSlug = params.get("workspaceSlug")?.toString();
-        const projectId = params.get("projectId")?.toString();
-        const pageId = documentName.split(".")?.[1];
+        const documentType = params.get("documentType")?.toString() as
+          | TDocumentTypes
+          | undefined;
+
+        return new Promise(async (resolve) => {
+          if (documentType === "project_page") {
+            const fetchedData = await fetchPageDescriptionBinary(
+              params,
+              pageId,
+              cookie,
+            );
+            resolve(fetchedData);
+          }
+        });
+      },
+      store: async ({
+        state,
+        documentName: pageId,
+        requestHeaders,
+        requestParameters,
+      }) => {
+        // request headers
+        const cookie = requestHeaders.cookie?.toString();
+        // query params
+        const params = requestParameters;
+        const documentType = params.get("documentType")?.toString() as
+          | TDocumentTypes
+          | undefined;
 
         return new Promise(async () => {
-          await updateDocument(workspaceSlug, projectId, pageId, state, cookie);
+          if (documentType === "project_page") {
+            await updateDocument(params, pageId, state, cookie);
+          }
         });
       },
     }),
@@ -98,6 +89,7 @@ const server = Server.configure({
 const { app }: { app: Application } = expressWs(express());
 
 app.ws("/collaboration", (websocket, request) => {
+  console.log("params", request.params);
   server.handleConnection(websocket, request);
 });
 

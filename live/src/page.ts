@@ -12,16 +12,16 @@ import { PageService } from "./services/page.service.js";
 const pageService = new PageService();
 
 export const updateDocument = async (
-  workspaceSlug: string | undefined,
-  projectId: string | undefined,
+  params: URLSearchParams,
   pageId: string,
-  data: Uint8Array,
+  descriptionBinary: Uint8Array,
   cookie: string | undefined,
 ) => {
+  const workspaceSlug = params.get("workspaceSlug")?.toString();
+  const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
-
   // encode binary description data
-  const base64Data = Buffer.from(data).toString("base64");
+  const base64Data = Buffer.from(descriptionBinary).toString("base64");
 
   try {
     const payload = {
@@ -86,11 +86,12 @@ const fetchDescriptionHTMLAndTransform = async (
 };
 
 export const fetchPageDescriptionBinary = async (
-  workspaceSlug: string | undefined,
-  projectId: string | undefined,
+  params: URLSearchParams,
   pageId: string,
   cookie: string | undefined,
 ) => {
+  const workspaceSlug = params.get("workspaceSlug")?.toString();
+  const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return null;
 
   try {

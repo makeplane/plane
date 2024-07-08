@@ -95,6 +95,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       queryParams: {
         workspaceSlug: workspaceSlug?.toString(),
         projectId: projectId?.toString(),
+        documentType: "project_page",
       },
     }),
     [projectId, workspaceSlug]
@@ -135,7 +136,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           </div>
           {isContentEditable ? (
             <DocumentEditorWithRef
-              id={`page.${pageId}`}
+              id={pageId}
               fileHandler={{
                 cancel: fileService.cancelUpload,
                 delete: fileService.getDeleteImageFunction(workspaceId),
@@ -162,7 +163,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
-              id={`page.${pageId}`}
+              id={pageId}
               ref={readOnlyEditorRef}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"

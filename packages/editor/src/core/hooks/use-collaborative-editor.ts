@@ -58,6 +58,7 @@ export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
       new HocuspocusProvider({
         name: id,
         parameters: realtimeConfig.queryParams,
+        // using user id as a token to verify the user on the server
         token: user.id,
         url: realtimeConfig.url,
       }),
