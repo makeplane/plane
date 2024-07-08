@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 // hooks
 // ui icons
-import { DiceIcon, DoubleCircleIcon, ContrastIcon, RelatedIcon, Tooltip } from "@plane/ui";
+import { DiceIcon, DoubleCircleIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
 // components
 import {
   DateDropdown,
@@ -41,7 +41,6 @@ import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -60,7 +59,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -147,12 +145,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserCircle2 className="h-4 w-4 flex-shrink-0" />
               <span>Created by</span>
             </div>
-            <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-              <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
-                <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-              </div>
-            </Tooltip>
+            <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
+              <ButtonAvatars showTooltip userIds={createdByDetails?.id} />
+              <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+            </div>
           </div>
         )}
 
