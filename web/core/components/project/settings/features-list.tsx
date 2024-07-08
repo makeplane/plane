@@ -87,14 +87,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                       <p className="text-sm leading-5 tracking-tight text-custom-text-300">{featureItem.description}</p>
                     </div>
                   </div>
-                  {featureItem.isEnabled && (
-                    <ToggleSwitch
-                      value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                      onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                      disabled={!isAdmin}
-                      size="sm"
-                    />
-                  )}
+
+                  <ToggleSwitch
+                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                    onChange={() => handleSubmit(featureItemKey, featureItem.property)}
+                    disabled={!featureItem.isEnabled || !isAdmin}
+                    size="sm"
+                  />
                 </div>
               );
             })}

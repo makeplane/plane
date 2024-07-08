@@ -9,7 +9,7 @@ type TFeatureList = {
     title: string;
     description: string;
     icon: ReactNode;
-    isEnabled: boolean;
+    isEnabled: boolean; // feature is enabled or not
   };
 };
 
