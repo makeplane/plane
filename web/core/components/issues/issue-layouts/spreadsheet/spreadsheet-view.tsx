@@ -12,8 +12,8 @@ import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants
 import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
@@ -54,8 +54,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
-
+  // store hooks
   const { currentProjectDetails } = useProject();
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
@@ -82,7 +84,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
-        disabled={!ENABLE_BULK_OPERATIONS}
+        disabled={!isBulkOperationsEnabled}
       >
         {(helpers) => (
           <>

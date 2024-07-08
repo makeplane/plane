@@ -123,6 +123,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     loadMoreIssues,
     showEmptyGroup,
     enableQuickIssueCreate,
+    disableIssueCreation,
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
@@ -187,6 +188,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     handleKanbanFilters={handleKanbanFilters}
                     showEmptyGroup={showEmptyGroup}
                     enableQuickIssueCreate={enableQuickIssueCreate}
+                    disableIssueCreation={disableIssueCreation}
                     canEditProperties={canEditProperties}
                     addIssuesToView={addIssuesToView}
                     quickAddCallback={quickAddCallback}
