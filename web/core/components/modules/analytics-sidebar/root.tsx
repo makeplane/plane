@@ -565,7 +565,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   </Disclosure.Button>
                   <Transition show={open}>
                     <Disclosure.Panel>
-                      <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
+                      <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             {isEditingAllowed && !isArchived && (
