@@ -104,7 +104,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
-        storeType={EIssuesStoreType.PROJECT}
+        storeType={EIssuesStoreType.DRAFT}
         isDraft
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />

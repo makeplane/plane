@@ -348,7 +348,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         />
       ) : (
         <div className="flex h-full w-full overflow-hidden">
-          <div className="max-w-2/3 h-full w-full space-y-8 overflow-y-auto px-6 py-5">
+          <div className="max-w-2/3 h-full w-full space-y-8 overflow-y-auto px-9 py-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               swrIssueDetails={swrIssueDetails}

@@ -27,7 +27,7 @@ export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added this </span>
+            <span>added </span>
             <a
               href={`${activity.new_value}`}
               target="_blank"
