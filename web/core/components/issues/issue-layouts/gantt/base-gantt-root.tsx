@@ -21,6 +21,7 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
+  isCompletedCycle?: boolean;
 }
 
 type GanttStoreType =
@@ -30,7 +31,7 @@ type GanttStoreType =
   | EIssuesStoreType.PROJECT_VIEW;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId } = props;
+  const { viewId, isCompletedCycle = false } = props;
   // router
   const { workspaceSlug } = useParams();
 
@@ -103,7 +104,9 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableAddBlock={isAllowed}
           enableSelection={isBulkOperationsEnabled && isAllowed}
           quickAdd={
-            enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
+            enableIssueCreation && isAllowed && !isCompletedCycle ? (
+              <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} />
+            ) : undefined
           }
           loadMoreBlocks={loadMoreIssues}
           canLoadMoreBlocks={nextPageResults}
