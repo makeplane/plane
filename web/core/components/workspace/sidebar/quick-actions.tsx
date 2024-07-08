@@ -7,7 +7,6 @@ import { TIssue } from "@plane/types";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -90,7 +89,7 @@ export const SidebarQuickActions = observer(() => {
             )}
             onClick={() => {
               setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+              toggleCreateIssueModal(true);
             }}
             disabled={disabled}
           >
