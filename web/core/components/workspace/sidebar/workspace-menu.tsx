@@ -4,10 +4,12 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronRight, Crown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Tooltip } from "@plane/ui";
+// components
+import { ProIcon } from "@/components/common";
 // constants
 import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
@@ -120,9 +122,7 @@ export const SidebarWorkspaceMenu = observer(() => {
                           />
                         </span>
                         {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
-                        {!sidebarCollapsed && link.key === "active-cycles" && (
-                          <Crown className="size-3.5 text-amber-400" />
-                        )}
+                        {!sidebarCollapsed && link.key === "active-cycles" && <ProIcon />}
                       </div>
                     </Tooltip>
                   </Link>
