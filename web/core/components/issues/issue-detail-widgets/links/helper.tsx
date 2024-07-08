@@ -21,9 +21,9 @@ export const useLinkOperations = (workspaceSlug: string, projectId: string, issu
             type: TOAST_TYPE.SUCCESS,
             title: "Link created",
           });
-        } catch (error) {
+        } catch (error: any) {
           setToast({
-            message: "The link could not be created",
+            message: error?.data?.error ?? "The link could not be created",
             type: TOAST_TYPE.ERROR,
             title: "Link not created",
           });
