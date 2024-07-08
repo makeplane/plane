@@ -90,7 +90,7 @@ export type TUnreadNotificationsCount = {
   mention_unread_notifications_count: number;
 };
 
-export type TCurrentSelectedNotification = {
+export type TNotificationLite = {
   workspace_slug: string | undefined;
   project_id: string | undefined;
   notification_id: string | undefined;

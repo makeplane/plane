@@ -17,6 +17,7 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
   is_archived?: boolean;
   is_draft?: boolean;
 }
@@ -45,7 +46,7 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { embedIssue = false, is_archived = false, is_draft = false } = props;
+  const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, is_draft = false } = props;
   // router
   const pathname = usePathname();
   const {
@@ -362,6 +363,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       is_archived={is_archived}
       disabled={!isEditable}
       embedIssue={embedIssue}
+      embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
     />
   );

@@ -12,6 +12,7 @@ import {
   FileStack,
   Link,
   Trash2,
+  MoveRight,
 } from "lucide-react";
 import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -45,6 +46,7 @@ type TInboxIssueActionsHeader = {
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
+  embedRemoveCurrentNotification?: () => void;
 };
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
@@ -56,6 +58,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     isMobileSidebar,
     setIsMobileSidebar,
     isNotificationEmbed = false,
+    embedRemoveCurrentNotification,
   } = props;
   // states
   const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
@@ -240,6 +243,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
       <div className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 px-4">
         <div className="flex items-center gap-4">
+          {isNotificationEmbed && (
+            <button onClick={embedRemoveCurrentNotification}>
+              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            </button>
+          )}
           {issue?.project_id && issue.sequence_id && (
             <h3 className="text-base font-medium text-custom-text-300 flex-shrink-0">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
