@@ -10,8 +10,10 @@ export const useIssueStoreType = () => {
 
   const { globalViewId, viewId, projectId, cycleId, moduleId, userId } = useParams();
 
+  // If store type exists in context, use that store type
   if (storeType) return storeType;
 
+  // else check the router params to determine the issue store
   if (globalViewId) return EIssuesStoreType.GLOBAL;
 
   if (userId) return EIssuesStoreType.PROFILE;
