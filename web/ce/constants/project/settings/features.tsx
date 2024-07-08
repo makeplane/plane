@@ -3,7 +3,7 @@ import { FileText, Inbox, Timer } from "lucide-react";
 import { ContrastIcon, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // components
 
-type TFeatureList = {
+export type TFeatureList = {
   [key: string]: {
     property: string;
     title: string;
@@ -13,7 +13,7 @@ type TFeatureList = {
   };
 };
 
-type ProjectFeatures = {
+export type ProjectFeatures = {
   [key: string]: {
     title: string;
     featureList: TFeatureList;
