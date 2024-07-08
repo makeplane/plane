@@ -7,7 +7,7 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Django Imports
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 # Module Imports

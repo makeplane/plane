@@ -21,6 +21,7 @@ from .queries.issue import (
     IssueCommentActivityQuery,
 )
 from .queries.page import PageQuery
+from .queries.search import ProjectSearchQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -32,6 +33,7 @@ from .mutations.project import (
 from .mutations.issue import IssueMutation, IssueUserPropertyMutation
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
+from .mutations.page import PageFavoriteMutation
 
 
 # combined query class for all
@@ -54,7 +56,8 @@ class Query(
     WorkspaceIssuesQuery,
     PageQuery,
     WorkspaceLabelQuery,
-    WorkspaceStateQuery
+    WorkspaceStateQuery,
+    ProjectSearchQuery,
 ):
     pass
 
@@ -71,6 +74,7 @@ class Mutation(
     IssueUserPropertyMutation,
     NotificationMutation,
     ProfileMutation,
+    PageFavoriteMutation,
 ):
     pass
 

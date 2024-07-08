@@ -1,5 +1,4 @@
 # Python imports
-import json
 from datetime import datetime
 
 # Strawberry imports
@@ -13,8 +12,6 @@ from typing import Optional
 from asgiref.sync import sync_to_async
 
 # Django imports
-from django.utils import timezone
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
 from plane.graphql.types.issue import IssueType, IssueUserPropertyType
@@ -29,7 +26,6 @@ from plane.db.models import (
     IssueLabel,
     Workspace,
 )
-from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 
 @strawberry.type
@@ -128,14 +124,14 @@ class IssueMutation:
         self,
         info: Info,
         id: strawberry.ID,
-        name: str,
         project: str,
-        state: str,
         slug: str,
-        priority: str,
+        name: Optional[str] = None,
+        state: Optional[str] = None,
+        priority: Optional[str] = None,
         labels: list[strawberry.ID] = None,
         assignees: list[strawberry.ID] = None,
-        description: Optional[str] = {},
+        description: Optional[str] = None,
         parent: Optional[str] = None,
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
@@ -143,24 +139,37 @@ class IssueMutation:
     ) -> IssueType:
         issue = await sync_to_async(Issue.objects.get)(id=id)
 
-        # Update the fields
-        issue.name = name
-        issue.priority = priority
-        issue.state_id = state
-        issue.description = description
-        issue.parent_id = parent
-        issue.estimate_point_id = estimatePoint
-        issue.start_date = startDate
-        issue.target_date = targetDate
+        if name is not None:
+            issue.name = name
+        if priority is not None:
+            issue.priority = priority
+        if state is not None:
+            issue.state_id = state
+        if description is not None:
+            issue.description = description
+        if parent is not None:
+            issue.parent_id = parent
+        if estimatePoint is not None:
+            issue.estimate_point_id = estimatePoint
+        if startDate is not None:
+            issue.start_date = startDate
+        if targetDate is not None:
+            issue.target_date = targetDate
 
+        workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
         # Save the updated issue
         await sync_to_async(issue.save)()
-        if assignees is not None and len(assignees):
-            IssueAssignee.objects.bulk_create(
+
+        if assignees is not None:
+            await sync_to_async(
+                IssueAssignee.objects.filter(issue=issue).delete
+            )()
+            await sync_to_async(IssueAssignee.objects.bulk_create)(
                 [
                     IssueAssignee(
                         assignee_id=user,
                         issue=issue,
+                        workspace=workspace,
                         project_id=project,
                         created_by_id=info.context.user.id,
                         updated_by_id=info.context.user.id,
@@ -170,13 +179,17 @@ class IssueMutation:
                 batch_size=10,
             )
 
-        if labels is not None and len(labels):
-            IssueLabel.objects.bulk_create(
+        if labels is not None:
+            await sync_to_async(
+                IssueLabel.objects.filter(issue=issue).delete
+            )()
+            await sync_to_async(IssueLabel.objects.bulk_create)(
                 [
                     IssueLabel(
                         label_id=label,
                         issue=issue,
                         project_id=project,
+                        workspace=workspace,
                         created_by_id=info.context.user.id,
                         updated_by_id=info.context.user.id,
                     )

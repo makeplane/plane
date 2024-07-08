@@ -46,7 +46,6 @@ from plane.db.models import (
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.payment.bgtasks.member_sync_task import member_sync_task
-from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 
 class WorkSpaceViewSet(BaseViewSet):

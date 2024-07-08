@@ -29,6 +29,7 @@ class PageType:
     is_global: bool
     created_at: datetime
     updated_at: datetime
+    is_favorite: bool
     # projects: list[strawberry.ID]
     # teams: list[strawberry.ID]
     # labels: list[strawberry.ID]
