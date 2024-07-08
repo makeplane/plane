@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { EActivityFilterType } from "@/constants/issue";
 import { useIssueDetail } from "@/hooks/store";
 // components
-import { IssueActivityList } from "./activity/activity-list";
+import { IssueActivityItem } from "./activity/activity-list";
 import { IssueCommentCard } from "./comments/comment-card";
 // types
 import { TActivityOperations } from "./root";
@@ -56,7 +56,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             disabled={disabled}
           />
         ) : activityComment.activity_type === "ACTIVITY" ? (
-          <IssueActivityList
+          <IssueActivityItem
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
           />
