@@ -1509,6 +1509,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         updated_cycles = []
         update_cycle_issue_activity = []
         for cycle_issue in cycle_issues:
+            cycle_issue.cycle_id = new_cycle_id
             updated_cycles.append(cycle_issue)
             update_cycle_issue_activity.append(
                 {
@@ -1517,7 +1518,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     "issue_id": str(cycle_issue.issue_id),
                 }
             )
-            cycle_issue.cycle_id = new_cycle_id
 
         cycle_issues = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
