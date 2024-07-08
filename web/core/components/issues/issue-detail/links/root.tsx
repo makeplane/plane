@@ -52,9 +52,9 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
             title: "Link created",
           });
           toggleIssueLinkModal(false);
-        } catch (error) {
+        } catch (error: any) {
           setToast({
-            message: "The link could not be created",
+            message: error?.data?.error ?? "The link could not be created",
             type: TOAST_TYPE.ERROR,
             title: "Link not created",
           });
