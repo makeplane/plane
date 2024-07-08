@@ -184,13 +184,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         setIsSubmitting={(value) => setIsSubmitting(value)}
                       />
 
-                      <IssueDetailWidgets
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issueId}
-                        disabled={disabled}
-                      />
-
                       <PeekOverviewProperties
                         workspaceSlug={workspaceSlug}
                         projectId={projectId}
@@ -198,6 +191,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         issueOperations={issueOperations}
                         disabled={disabled || is_archived}
                       />
+
+                      <div className="py-2">
+                        <IssueDetailWidgets
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          disabled={disabled}
+                        />
+                      </div>
 
                       <IssueActivity
                         workspaceSlug={workspaceSlug}
@@ -221,12 +223,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             setIsSubmitting={(value) => setIsSubmitting(value)}
                           />
 
-                          <IssueDetailWidgets
-                            workspaceSlug={workspaceSlug}
-                            projectId={projectId}
-                            issueId={issueId}
-                            disabled={disabled}
-                          />
+                          <div className="py-2">
+                            <IssueDetailWidgets
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              issueId={issueId}
+                              disabled={disabled}
+                            />
+                          </div>
 
                           <IssueActivity
                             workspaceSlug={workspaceSlug}

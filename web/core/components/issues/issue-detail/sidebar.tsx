@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
+import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 // ui
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
@@ -14,7 +14,7 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
+import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -249,6 +249,21 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 />
               </div>
             )}
+
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
+                <span>Parent</span>
+              </div>
+              <IssueParentSelect
+                className="h-full w-3/5 flex-grow"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                issueOperations={issueOperations}
+                disabled={!isEditable}
+              />
+            </div>
 
             <div className="flex min-h-8 gap-2">
               <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
