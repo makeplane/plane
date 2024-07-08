@@ -542,6 +542,7 @@ def dashboard_recent_collaborators(self, request, slug):
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
+            is_active=True,
         )
         .annotate(
             num_activities=Coalesce(
