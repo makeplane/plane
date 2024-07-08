@@ -1,0 +1,1 @@
+from .rephrase import RephraseGrammarEndpoint

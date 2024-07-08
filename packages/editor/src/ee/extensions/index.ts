@@ -1,1 +1,2 @@
-export * from "src/ce/extensions";
+export * from "./issue-suggestions";
+export * from "./document-extensions";

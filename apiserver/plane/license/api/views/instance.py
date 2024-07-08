@@ -56,6 +56,10 @@ class InstanceEndpoint(BaseAPIView):
         (
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
+            IS_OIDC_ENABLED,
+            OIDC_PROVIDER_NAME,
+            IS_SAML_ENABLED,
+            SAML_PROVIDER_NAME,
             GITHUB_APP_NAME,
             IS_GITLAB_ENABLED,
             EMAIL_HOST,
@@ -75,6 +79,22 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "IS_GITHUB_ENABLED",
                     "default": os.environ.get("IS_GITHUB_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_OIDC_ENABLED",
+                    "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                },
+                {
+                    "key": "OIDC_PROVIDER_NAME",
+                    "default": os.environ.get("OIDC_PROVIDER_NAME", ""),
+                },
+                {
+                    "key": "IS_SAML_ENABLED",
+                    "default": os.environ.get("IS_SAML_ENABLED", "0"),
+                },
+                {
+                    "key": "SAML_PROVIDER_NAME",
+                    "default": os.environ.get("SAML_PROVIDER_NAME", ""),
                 },
                 {
                     "key": "GITHUB_APP_NAME",
@@ -126,6 +146,10 @@ class InstanceEndpoint(BaseAPIView):
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
+        data["is_oidc_enabled"] = IS_OIDC_ENABLED == "1"
+        data["oidc_provider_name"] = OIDC_PROVIDER_NAME
+        data["is_saml_enabled"] = IS_SAML_ENABLED == "1"
+        data["saml_provider_name"] = SAML_PROVIDER_NAME
 
         # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)

@@ -30,6 +30,8 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
       ? fullName
       : user?.email;
 
+  if (!displayName && !fullName) return null;
+
   return (
     <div className="flex w-full shrink-0 justify-end">
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />

@@ -12,7 +12,7 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
