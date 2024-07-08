@@ -52,16 +52,6 @@ const WorkspaceDashboardPage = observer(() => {
     workspace_slug && project_id && is_inbox_issue ? () => fetchUserProjectInfo(workspace_slug, project_id) : null
   );
 
-  const handleNotificationClear = () => {
-    setCurrentSelectedNotification({
-      workspace_slug: undefined,
-      project_id: undefined,
-      notification_id: undefined,
-      issue_id: undefined,
-      is_inbox_issue: undefined,
-    });
-  };
-
   return (
     <>
       <PageHead title={pageTitle} />
@@ -80,12 +70,15 @@ const WorkspaceDashboardPage = observer(() => {
                 projectId={project_id}
                 inboxIssueId={issue_id}
                 isNotificationEmbed
-                embedRemoveCurrentNotification={handleNotificationClear}
+                embedRemoveCurrentNotification={() => setCurrentSelectedNotification(undefined)}
               />
             )}
           </>
         ) : (
-          <IssuePeekOverview embedIssue embedRemoveCurrentNotification={handleNotificationClear} />
+          <IssuePeekOverview
+            embedIssue
+            embedRemoveCurrentNotification={() => setCurrentSelectedNotification(undefined)}
+          />
         )}
       </div>
     </>

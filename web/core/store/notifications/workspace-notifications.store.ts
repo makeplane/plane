@@ -48,7 +48,7 @@ export interface IWorkspaceNotificationStore {
   updateBulkFilters: (filters: Partial<TNotificationFilter>) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
-  setCurrentSelectedNotification: (notification: TCurrentSelectedNotification) => void;
+  setCurrentSelectedNotification: (notification: TCurrentSelectedNotification | undefined) => void;
   setUnreadNotificationsCount: (type: "increment" | "decrement") => void;
   getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
@@ -258,8 +258,18 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @param { TCurrentSelectedNotification } notification
    * @returns { void }
    */
-  setCurrentSelectedNotification = (notification: TCurrentSelectedNotification): void => {
-    set(this, "currentSelectedNotification", notification);
+  setCurrentSelectedNotification = (notification: TCurrentSelectedNotification | undefined): void => {
+    if (notification === undefined) {
+      set(this, "currentSelectedNotification", {
+        workspace_slug: undefined,
+        project_id: undefined,
+        notification_id: undefined,
+        issue_id: undefined,
+        is_inbox_issue: false,
+      });
+    } else {
+      set(this, "currentSelectedNotification", notification);
+    }
   };
 
   /**
