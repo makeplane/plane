@@ -12,7 +12,7 @@ from django.db.models import (
     OuterRef,
     Q,
     Sum,
-    IntegerField,
+    FloatField,
 )
 from django.db.models.functions import Cast
 
@@ -867,12 +867,12 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 .values("display_name", "assignee_id", "avatar")
                 .annotate(
                     total_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField())
+                        Cast("estimate_point__value", FloatField())
                     )
                 )
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -882,7 +882,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -921,12 +921,12 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 .values("label_name", "color", "label_id")
                 .annotate(
                     total_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField())
+                        Cast("estimate_point__value", FloatField())
                     )
                 )
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -936,7 +936,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", IntegerField()),
+                        Cast("estimate_point__value", FloatField()),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,

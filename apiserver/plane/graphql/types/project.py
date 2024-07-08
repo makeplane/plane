@@ -10,7 +10,6 @@ from strawberry.scalars import JSON
 # Module imports
 from plane.db.models import Project, ProjectMember
 
-
 @strawberry_django.type(Project)
 class ProjectType:
     id: strawberry.ID
@@ -69,3 +68,5 @@ class ProjectMemberType:
     @strawberry.field
     def member(self) -> int:
         return self.member_id
+
+

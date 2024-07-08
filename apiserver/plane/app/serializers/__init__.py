@@ -39,8 +39,6 @@ from .view import (
     IssueViewSerializer,
 )
 
-from .active_cycle import ActiveCycleSerializer
-
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,

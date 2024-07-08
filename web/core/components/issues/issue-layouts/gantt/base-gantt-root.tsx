@@ -14,13 +14,14 @@ import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 import { useIssues, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
+  isCompletedCycle?: boolean;
 }
 
 type GanttStoreType =
@@ -30,7 +31,7 @@ type GanttStoreType =
   | EIssuesStoreType.PROJECT_VIEW;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId } = props;
+  const { viewId, isCompletedCycle = false } = props;
   // router
   const { workspaceSlug } = useParams();
 
@@ -42,6 +43,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     membership: { currentProjectRole },
   } = useUser();
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
@@ -82,6 +85,11 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
+  const quickAdd =
+    enableIssueCreation && isAllowed && !isCompletedCycle ? (
+      <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} />
+    ) : undefined;
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
       <div className="h-full w-full">
@@ -99,10 +107,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
-          enableSelection={ENABLE_BULK_OPERATIONS && isAllowed}
-          quickAdd={
-            enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
-          }
+          enableSelection={isBulkOperationsEnabled && isAllowed}
+          quickAdd={quickAdd}
           loadMoreBlocks={loadMoreIssues}
           canLoadMoreBlocks={nextPageResults}
           showAllBlocks

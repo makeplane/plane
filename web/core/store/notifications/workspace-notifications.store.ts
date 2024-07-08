@@ -1,4 +1,5 @@
 import isEmpty from "lodash/isEmpty";
+import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -18,6 +19,8 @@ import {
   ENotificationTab,
   TNotificationTab,
 } from "@/constants/notification";
+// helpers
+import { convertToEpoch } from "@/helpers/date-time.helper";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
@@ -63,6 +66,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   loader: TNotificationLoader = undefined;
   unreadNotificationsCount: TUnreadNotificationsCount = {
     total_unread_notifications_count: 0,
+    mention_unread_notifications_count: 0,
   };
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
@@ -119,7 +123,12 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   notificationIdsByWorkspaceId = computedFn((workspaceId: string) => {
     if (!workspaceId || isEmpty(this.notifications)) return undefined;
-    const workspaceNotificationIds = Object.values(this.notifications || {})
+    const workspaceNotifications = orderBy(
+      Object.values(this.notifications || []),
+      (n) => convertToEpoch(n.created_at),
+      ["desc"]
+    );
+    const workspaceNotificationIds = workspaceNotifications
       .filter((n) => n.workspace === workspaceId)
       .filter((n) => {
         if (!this.filters.archived && !this.filters.snoozed) {
@@ -178,6 +187,8 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     // NOTE: This validation is required to show all the read and unread notifications in a single place it may change in future.
     queryParams.read = this.filters.read === true ? false : undefined;
 
+    if (this.currentNotificationTab === ENotificationTab.MENTIONS) queryParams.mentioned = true;
+
     return queryParams;
   };
 
@@ -234,6 +245,12 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   setCurrentNotificationTab = (tab: TNotificationTab): void => {
     set(this, "currentNotificationTab", tab);
+
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    set(this, "notifications", {});
+    this.getNotifications(workspaceSlug, ENotificationLoader.INIT_LOADER, ENotificationQueryParamType.INIT);
   };
 
   /**
@@ -250,12 +267,22 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @param { "increment" | "decrement" } type
    * @returns { void }
    */
-  setUnreadNotificationsCount = (type: "increment" | "decrement"): void =>
-    runInAction(() => {
-      update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
-        type === "increment" ? count + 1 : count - 1
-      );
-    });
+  setUnreadNotificationsCount = (type: "increment" | "decrement"): void => {
+    switch (this.currentNotificationTab) {
+      case ENotificationTab.ALL:
+        update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
+          type === "increment" ? count + 1 : count - 1
+        );
+        break;
+      case ENotificationTab.MENTIONS:
+        update(this.unreadNotificationsCount, "mention_unread_notifications_count", (count: 0) =>
+          type === "increment" ? count + 1 : count - 1
+        );
+        break;
+      default:
+        break;
+    }
+  };
 
   /**
    * @description get unread notifications count

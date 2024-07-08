@@ -31,7 +31,6 @@ export const PlaneOneModal: FC<PlaneOneModalProps> = observer((props) => {
   const instanceService = new InstanceService();
 
   const { data } = useSWR("INSTANCE_CHANGELOG", () => instanceService.getInstanceChangeLog());
-  console.log("data", data);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

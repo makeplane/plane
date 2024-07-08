@@ -12,7 +12,7 @@ from django.db.models import (
     Sum,
     Value,
     When,
-    IntegerField,
+    FloatField,
 )
 from django.db.models.functions import (
     Coalesce,
@@ -98,7 +98,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     # Estimate
     else:
         queryset = queryset.annotate(
-            estimate=Sum(Cast("estimate_point__value", IntegerField()))
+            estimate=Sum(Cast("estimate_point__value", FloatField()))
         ).order_by(x_axis)
         queryset = (
             queryset.annotate(segment=F(segment)) if segment else queryset
@@ -137,8 +137,7 @@ def burndown_plot(
         estimate__isnull=False,
         estimate__type="points",
     ).exists()
-    total_estimate_points = 0
-    if estimate_type and plot_type == "points":
+    if estimate_type and plot_type == "points" and cycle_id:
         issue_estimates = Issue.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
@@ -146,7 +145,18 @@ def burndown_plot(
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
-        issue_estimates = [int(value) for value in issue_estimates]
+        issue_estimates = [float(value) for value in issue_estimates]
+        total_estimate_points = sum(issue_estimates)
+
+    if estimate_type and plot_type == "points" and module_id:
+        issue_estimates = Issue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_module__module_id=module_id,
+            estimate_point__isnull=False,
+        ).values_list("estimate_point__value", flat=True)
+
+        issue_estimates = [float(value) for value in issue_estimates]
         total_estimate_points = sum(issue_estimates)
 
     if cycle_id:
@@ -228,12 +238,12 @@ def burndown_plot(
                 .order_by("date")
             )
 
-    for date in date_range:
-        if plot_type == "points":
+    if plot_type == "points":
+        for date in date_range:
             cumulative_pending_issues = total_estimate_points
             total_completed = 0
             total_completed = sum(
-                int(item["estimate_point__value"])
+                float(item["estimate_point__value"])
                 for item in completed_issues_estimate_point_distribution
                 if item["date"] is not None and item["date"] <= date
             )
@@ -242,7 +252,8 @@ def burndown_plot(
                 chart_data[str(date)] = None
             else:
                 chart_data[str(date)] = cumulative_pending_issues
-        else:
+    else:
+        for date in date_range:
             cumulative_pending_issues = total_issues
             total_completed = 0
             total_completed = sum(

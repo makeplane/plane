@@ -1,5 +1,3 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
 import Script from "next/script";
 // styles
@@ -7,6 +5,8 @@ import "@/styles/globals.css";
 import "@/styles/command-pallette.css";
 import "@/styles/emoji.css";
 import "@/styles/react-day-picker.css";
+// helpers
+import { API_BASE_URL } from "@/helpers/common.helper";
 // local
 import { AppProvider } from "./provider";
 
@@ -38,14 +38,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest.json" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
+        {/* preloading */}
+        <link rel="preload" href={`${API_BASE_URL}/api/instances/`} as="fetch" crossOrigin="use-credentials" />
+        <link rel="preload" href={`${API_BASE_URL}/api/users/me/ `} as="fetch" crossOrigin="use-credentials" />
+        <link rel="preload" href={`${API_BASE_URL}/api/users/me/profile/ `} as="fetch" crossOrigin="use-credentials" />
+        <link rel="preload" href={`${API_BASE_URL}/api/users/me/settings/ `} as="fetch" crossOrigin="use-credentials" />
+        <link
+          rel="preload"
+          href={`${API_BASE_URL}/api/users/me/workspaces/`}
+          as="fetch"
+          crossOrigin="use-credentials"
+        />
       </head>
       <body>
         <div id="context-menu-portal" />
         <AppProvider>
           <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>{children}</div>
         </AppProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script defer data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.js" />

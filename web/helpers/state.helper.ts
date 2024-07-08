@@ -1,6 +1,6 @@
 // types
 import { IState, IStateResponse } from "@plane/types";
-import { STATE_GROUPS } from "@/constants/state";
+import { STATE_GROUPS, TDraggableData } from "@/constants/state";
 
 export const orderStateGroups = (unorderedStateGroups: IStateResponse | undefined): IStateResponse | undefined => {
   if (!unorderedStateGroups) return undefined;
@@ -16,4 +16,34 @@ export const sortStates = (states: IState[]) => {
     }
     return Object.keys(STATE_GROUPS).indexOf(stateA.group) - Object.keys(STATE_GROUPS).indexOf(stateB.group);
   });
+};
+
+export const getCurrentStateSequence = (
+  groupSates: IState[],
+  destinationData: TDraggableData,
+  edge: string | undefined
+) => {
+  const defaultSequence = 65535;
+  if (!edge) return defaultSequence;
+
+  const currentStateIndex = groupSates.findIndex((state) => state.id === destinationData.id);
+  const currentStateSequence = groupSates[currentStateIndex]?.sequence || undefined;
+
+  if (!currentStateSequence) return defaultSequence;
+
+  if (edge === "top") {
+    const prevStateSequence = groupSates[currentStateIndex - 1]?.sequence || undefined;
+
+    if (prevStateSequence === undefined) {
+      return currentStateSequence - defaultSequence;
+    }
+    return (currentStateSequence + prevStateSequence) / 2;
+  } else if (edge === "bottom") {
+    const nextStateSequence = groupSates[currentStateIndex + 1]?.sequence || undefined;
+
+    if (nextStateSequence === undefined) {
+      return currentStateSequence + defaultSequence;
+    }
+    return (currentStateSequence + nextStateSequence) / 2;
+  }
 };
