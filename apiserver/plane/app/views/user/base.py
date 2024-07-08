@@ -86,6 +86,9 @@ class UserEndpoint(BaseViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     @invalidate_cache(path="/api/users/me/")
+    @invalidate_cache(
+        path="/api/users/me/workspaces/", multiple=True, user=False
+    )
     def deactivate(self, request):
         # Check all workspace user is active
         user = self.get_object()
