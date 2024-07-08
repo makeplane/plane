@@ -24,7 +24,7 @@ export const NotificationsSidebar: FC = observer(() => {
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const {
-    currentSelectedNotification,
+    currentSelectedNotificationId,
     unreadNotificationsCount,
     loader,
     notificationIdsByWorkspaceId,
@@ -41,7 +41,7 @@ export const NotificationsSidebar: FC = observer(() => {
     <div
       className={cn(
         "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all overflow-hidden",
-        currentSelectedNotification.issue_id ? "w-0 md:w-2/6" : "w-full md:w-2/6"
+        currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
       )}
     >
       <div className="relative w-full h-full overflow-hidden flex flex-col">

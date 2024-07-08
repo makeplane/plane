@@ -3,7 +3,6 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
-import { TCurrentSelectedNotification } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
@@ -23,7 +22,7 @@ type TNotificationItem = {
 export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const { workspaceSlug, notificationId } = props;
   // hooks
-  const { currentSelectedNotification, setCurrentSelectedNotification } = useWorkspaceNotifications();
+  const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   // states
@@ -39,14 +38,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
   const handleNotificationIssuePeekOverview = async () => {
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
-      const currentSelectedNotificationPayload: TCurrentSelectedNotification = {
-        workspace_slug: workspaceSlug,
-        project_id: projectId,
-        issue_id: issueId,
-        notification_id: notification?.id,
-        is_inbox_issue: notification?.is_inbox_issue || false,
-      };
-      setCurrentSelectedNotification(currentSelectedNotificationPayload);
+      setCurrentSelectedNotificationId(notificationId);
 
       // make the notification as read
       if (notification.read_at === null) {
@@ -70,9 +62,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
     <div
       className={cn(
         "relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
-        currentSelectedNotification && currentSelectedNotification?.notification_id === notification?.id
-          ? "bg-custom-background-80/30"
-          : "",
+        currentSelectedNotificationId === notification?.id ? "bg-custom-background-80/30" : "",
         notification.read_at === null ? "bg-custom-primary-100/5" : ""
       )}
       onClick={handleNotificationIssuePeekOverview}
