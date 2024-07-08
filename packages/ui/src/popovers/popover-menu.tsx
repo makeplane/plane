@@ -1,4 +1,4 @@
-import React, { Fragment, PropsWithChildren } from "react";
+import React, { Fragment } from "react";
 // components
 import { Popover } from "./popover";
 // helpers
@@ -6,7 +6,7 @@ import { cn } from "../../helpers";
 // types
 import { TPopoverMenu } from "./types";
 
-export const PopoverMenu = <T,>(props: PropsWithChildren<TPopoverMenu<T>>) => {
+export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
   const {
     popperPosition = "bottom-end",
     popperPadding = 0,
