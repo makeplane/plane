@@ -8,7 +8,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { TActivityOperations } from "../root";
-import { IssueCommentCard } from "./comment-card";
+import { IssueActivityCard } from "./comment-card";
 // types
 
 type TIssueCommentRoot = {
@@ -34,7 +34,7 @@ export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
     <div>
       {commentIds.length > 0 ? (
         commentIds.map((commentId, index) => (
-          <IssueCommentCard
+          <IssueActivityCard
             projectId={projectId}
             key={commentId}
             workspaceSlug={workspaceSlug}

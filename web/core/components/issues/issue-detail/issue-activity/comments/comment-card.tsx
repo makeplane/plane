@@ -21,7 +21,7 @@ import { IssueCommentReaction } from "../../reactions/issue-comment";
 import { TActivityOperations } from "../root";
 import { IssueCommentBlock } from "./comment-block";
 
-type TIssueCommentCard = {
+type TIssueActivityCard = {
   projectId: string;
   workspaceSlug: string;
   commentId: string;
@@ -31,7 +31,7 @@ type TIssueCommentCard = {
   disabled?: boolean;
 };
 
-export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
+export const IssueActivityCard: FC<TIssueActivityCard> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
