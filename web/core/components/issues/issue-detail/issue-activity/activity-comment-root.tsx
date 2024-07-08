@@ -5,7 +5,7 @@ import { EActivityFilterType } from "@/constants/issue";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityList } from "./activity/activity-list";
-import { IssueActivityCard } from "./comments/comment-card";
+import { IssueCommentCard } from "./comments/comment-card";
 // types
 import { TActivityOperations } from "./root";
 
@@ -45,7 +45,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
     <div>
       {filteredActivityComments.map((activityComment, index) =>
         activityComment.activity_type === "COMMENT" ? (
-          <IssueActivityCard
+          <IssueCommentCard
             projectId={projectId}
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
