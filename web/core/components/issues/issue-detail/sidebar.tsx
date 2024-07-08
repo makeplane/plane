@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 // ui
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, Tooltip } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
 import {
   DateDropdown,
@@ -21,7 +21,6 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import type { TIssueOperations } from "./root";
 
@@ -43,7 +42,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
-  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -131,12 +129,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <UserCircle2 className="h-4 w-4 flex-shrink-0" />
                   <span>Created by</span>
                 </div>
-                <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-                  <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                    <ButtonAvatars showTooltip={false} userIds={createdByDetails.id} />
-                    <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-                  </div>
-                </Tooltip>
+                <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
+                  <ButtonAvatars showTooltip userIds={createdByDetails.id} />
+                  <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+                </div>
               </div>
             )}
 
