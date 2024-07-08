@@ -8,19 +8,18 @@ import {
   PeekOverviewProperties,
   TIssueOperations,
   ArchiveIssueModal,
-  PeekOverviewIssueAttachments,
   IssuePeekOverviewLoader,
   IssuePeekOverviewError,
+  IssueDetailWidgets,
 } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
-import { SubIssuesRoot } from "../sub-issues";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -52,7 +51,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { data: currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,
@@ -181,21 +179,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         setIsSubmitting={(value) => setIsSubmitting(value)}
                       />
 
-                      {currentUser && (
-                        <SubIssuesRoot
-                          workspaceSlug={workspaceSlug}
-                          projectId={projectId}
-                          parentIssueId={issueId}
-                          currentUser={currentUser}
-                          disabled={disabled || is_archived}
-                        />
-                      )}
-
-                      <PeekOverviewIssueAttachments
-                        disabled={disabled || is_archived}
-                        issueId={issueId}
-                        projectId={projectId}
+                      <IssueDetailWidgets
                         workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        disabled={disabled}
                       />
 
                       <PeekOverviewProperties
@@ -228,21 +216,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             setIsSubmitting={(value) => setIsSubmitting(value)}
                           />
 
-                          {currentUser && (
-                            <SubIssuesRoot
-                              workspaceSlug={workspaceSlug}
-                              projectId={projectId}
-                              parentIssueId={issueId}
-                              currentUser={currentUser}
-                              disabled={disabled || is_archived}
-                            />
-                          )}
-
-                          <PeekOverviewIssueAttachments
-                            disabled={disabled || is_archived}
-                            issueId={issueId}
-                            projectId={projectId}
+                          <IssueDetailWidgets
                             workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            issueId={issueId}
+                            disabled={disabled}
                           />
 
                           <IssueActivity
