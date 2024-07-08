@@ -44,13 +44,35 @@ NGINX_PORT=80
 
 ​
 
-## {PROJECT_FOLDER}/web/.env.example
-
-​
+## {PROJECT_FOLDER}/web/.env
 
 ```
-# Public boards deploy URL
-NEXT_PUBLIC_DEPLOY_URL="http://localhost/spaces"
+NEXT_PUBLIC_API_BASE_URL="http://localhost:8000"
+
+NEXT_PUBLIC_ADMIN_BASE_URL="http://localhost:3001"
+NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+
+NEXT_PUBLIC_SPACE_BASE_URL="http://localhost:3002"
+NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+
+```
+
+## {PROJECT_FOLDER}/admin/.env
+
+```
+NEXT_PUBLIC_API_BASE_URL="http://localhost:8000"
+NEXT_PUBLIC_WEB_BASE_URL="http://localhost:3000"
+NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+
+```
+
+## {PROJECT_FOLDER}/space/.env
+
+```
+NEXT_PUBLIC_API_BASE_URL="http://localhost:8000"
+NEXT_PUBLIC_WEB_BASE_URL="http://localhost:3000"
+NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+
 ```
 
 ## {PROJECT_FOLDER}/apiserver/.env
@@ -123,7 +145,6 @@ WEB_URL="http://localhost"
 
 ## Updates​
 
-- The environment variable NEXT_PUBLIC_API_BASE_URL has been removed from both the web and space projects.
 - The naming convention for containers and images has been updated.
 - The plane-worker image will no longer be maintained, as it has been merged with plane-backend.
 - The Tiptap pro-extension dependency has been removed, eliminating the need for Tiptap API keys.
