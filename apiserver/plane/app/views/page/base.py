@@ -490,6 +490,7 @@ class PagesDescriptionViewSet(BaseViewSet):
             # Store the updated binary data
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
+            page.description = request.data.get("description")
             page.save()
             return Response({"message": "Updated successfully"})
         else:
