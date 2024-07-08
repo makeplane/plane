@@ -33,9 +33,15 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
+    toggleAttachmentDeleteModal,
   } = useIssueDetail();
   // state
   const [isDeleteIssueAttachmentModalOpen, setIsDeleteIssueAttachmentModalOpen] = useState(false);
+
+  const toggleIssueLinkModal = (modalToggle: boolean) => {
+    toggleAttachmentDeleteModal(modalToggle);
+    setIsDeleteIssueAttachmentModalOpen(modalToggle);
+  };
 
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
@@ -49,7 +55,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
       {isDeleteIssueAttachmentModalOpen && (
         <IssueAttachmentDeleteModal
           isOpen={isDeleteIssueAttachmentModalOpen}
-          onClose={() => setIsDeleteIssueAttachmentModalOpen(false)}
+          onClose={() => toggleIssueLinkModal(false)}
           handleAttachmentOperations={handleAttachmentOperations}
           data={attachment}
         />
@@ -95,7 +101,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setIsDeleteIssueAttachmentModalOpen(true);
+                  toggleIssueLinkModal(true);
                 }}
               >
                 <div className="flex items-center gap-2">
