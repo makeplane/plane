@@ -23,8 +23,9 @@ const server = Server.configure({
     const workspaceSlug = params.get("workspaceSlug")?.toString();
     const projectId = params.get("projectId")?.toString();
 
-    if (!workspaceSlug || !projectId || !cookie)
+    if (!workspaceSlug || !projectId || !cookie) {
       throw Error("Credentials not provided");
+    }
 
     try {
       // fetch current user info
@@ -54,17 +55,14 @@ const server = Server.configure({
   extensions: [
     new Logger(),
     new Database({
-      fetch: async ({
-        documentName: pageId,
-        requestHeaders,
-        requestParameters,
-      }) => {
+      fetch: async ({ documentName, requestHeaders, requestParameters }) => {
         // request headers
         const cookie = requestHeaders.cookie?.toString();
         // query params
         const params = requestParameters;
         const workspaceSlug = params.get("workspaceSlug")?.toString();
         const projectId = params.get("projectId")?.toString();
+        const pageId = documentName.split(".")?.[1];
 
         return new Promise(async (resolve) => {
           const fetchedData = await fetchPageDescriptionBinary(
@@ -78,7 +76,7 @@ const server = Server.configure({
       },
       store: async ({
         state,
-        documentName: pageId,
+        documentName,
         requestHeaders,
         requestParameters,
       }) => {
@@ -88,6 +86,7 @@ const server = Server.configure({
         const params = requestParameters;
         const workspaceSlug = params.get("workspaceSlug")?.toString();
         const projectId = params.get("projectId")?.toString();
+        const pageId = documentName.split(".")?.[1];
 
         return new Promise(async () => {
           await updateDocument(workspaceSlug, projectId, pageId, state, cookie);
@@ -102,4 +101,4 @@ app.ws("/collaboration", (websocket, request) => {
   server.handleConnection(websocket, request);
 });
 
-app.listen(3004);
+app.listen(3003);

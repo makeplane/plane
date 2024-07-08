@@ -20,7 +20,6 @@ export { CoreEditorExtensionsWithoutProps } from "@/extensions";
 
 // helpers
 export * from "@/helpers/common";
-export * from "@/components/editors/document/helpers";
 export * from "@/helpers/editor-commands";
 export * from "@/helpers/yjs";
 export * from "@/extensions/table/table";

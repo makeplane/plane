@@ -1,36 +1,14 @@
 import React, { useState } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// extensions
+import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
-import { TFileHandler } from "@/hooks/use-editor";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
-
-interface IDocumentEditor {
-  containerClassName?: string;
-  editorClassName?: string;
-  embedHandler: TEmbedConfig;
-  fileHandler: TFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions: () => Promise<IMentionSuggestion[]>;
-  };
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  tabIndex?: number;
-  user: {
-    color: string;
-    id: string;
-    name: string;
-  };
-}
+import { EditorRefApi, IDocumentEditor } from "@/types";
 
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
@@ -43,6 +21,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     id,
     mentionHandler,
     placeholder,
+    realtimeConfig,
     tabIndex,
     user,
   } = props;
@@ -54,16 +33,27 @@ const DocumentEditor = (props: IDocumentEditor) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
+  const extensions = [];
+  if (embedHandler?.issue) {
+    extensions.push(
+      IssueWidget({
+        widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
   // use document editor
-  const { editor, isIndexedDbSynced } = useCollaborativeEditor({
+  const { editor } = useCollaborativeEditor({
     id,
     editorClassName,
     embedHandler,
+    extensions,
     fileHandler,
     handleEditorReady,
     forwardedRef,
     mentionHandler,
     placeholder,
+    realtimeConfig,
     setHideDragHandleFunction,
     tabIndex,
     user,
@@ -75,7 +65,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     containerClassName,
   });
 
-  if (!editor || !isIndexedDbSynced) return null;
+  if (!editor) return null;
 
   return (
     <PageRenderer

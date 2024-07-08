@@ -136,7 +136,7 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
       {
         tag: "a[href]",
         getAttrs: (node) => {
-          if (typeof node === "string" || !(node instanceof HTMLElement)) {
+          if (typeof node === "string") {
             return null;
           }
           const href = node.getAttribute("href")?.toLowerCase() || "";

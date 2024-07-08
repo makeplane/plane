@@ -8,14 +8,12 @@ import { Markdown } from "tiptap-markdown";
 import {
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
-  CustomCodeMarkPlugin,
   CustomHorizontalRule,
-  CustomKeymap,
   CustomLinkExtension,
   CustomMentionWithoutProps,
   CustomQuoteExtension,
-  CustomTypographyExtension,
   ImageExtensionWithoutProps,
+  IssueWidgetWithoutProps,
   Table,
   TableCell,
   TableHeader,
@@ -53,7 +51,6 @@ export const CoreEditorExtensionsWithoutProps = () => [
       class: "my-4 border-custom-border-400",
     },
   }),
-  CustomKeymap,
   CustomLinkExtension.configure({
     openOnClick: true,
     autolink: true,
@@ -65,7 +62,6 @@ export const CoreEditorExtensionsWithoutProps = () => [
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  CustomTypographyExtension,
   ImageExtensionWithoutProps().configure({
     HTMLAttributes: {
       class: "rounded-md",
@@ -89,7 +85,6 @@ export const CoreEditorExtensionsWithoutProps = () => [
       class: "",
     },
   }),
-  CustomCodeMarkPlugin,
   CustomCodeInlineExtension,
   Markdown.configure({
     html: true,
@@ -101,3 +96,5 @@ export const CoreEditorExtensionsWithoutProps = () => [
   TableRow,
   CustomMentionWithoutProps(),
 ];
+
+export const DocumentEditorExtensionsWithoutProps = () => [IssueWidgetWithoutProps()];

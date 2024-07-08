@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -8,13 +8,14 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TRealtimeConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
@@ -88,6 +89,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
+  const realtimeConfig: TRealtimeConfig = useMemo(
+    () => ({
+      url: `${LIVE_BASE_URL}/collaboration`,
+      queryParams: {
+        workspaceSlug: workspaceSlug?.toString(),
+        projectId: projectId?.toString(),
+      },
+    }),
+    [projectId, workspaceSlug]
+  );
+
   if (pageId === undefined) return <PageContentLoader />;
 
   return (
@@ -123,7 +135,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           </div>
           {isContentEditable ? (
             <DocumentEditorWithRef
-              id={pageId}
+              id={`page.${pageId}`}
               fileHandler={{
                 cancel: fileService.cancelUpload,
                 delete: fileService.getDeleteImageFunction(workspaceId),
@@ -141,6 +153,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               embedHandler={{
                 issue: issueEmbedProps,
               }}
+              realtimeConfig={realtimeConfig}
               user={{
                 id: currentUser?.id ?? "",
                 name: currentUser?.display_name ?? "",
@@ -149,8 +162,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
+              id={`page.${pageId}`}
               ref={readOnlyEditorRef}
-              initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
               editorClassName="pl-10"
@@ -159,6 +172,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
               embedHandler={{
                 issue: issueEmbedReadOnlyProps,
+              }}
+              realtimeConfig={realtimeConfig}
+              user={{
+                id: currentUser?.id ?? "",
+                name: currentUser?.display_name ?? "",
+                color: generateRandomColor(currentUser?.id ?? ""),
               }}
             />
           )}

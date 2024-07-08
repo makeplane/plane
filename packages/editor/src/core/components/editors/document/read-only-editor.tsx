@@ -6,59 +6,48 @@ import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
-// plane web types
-import { TEmbedConfig } from "@/plane-editor/types";
+import { useReadOnlyCollaborativeEditor } from "@/hooks/use-read-only-collaborative-editor";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
-
-interface IDocumentReadOnlyEditor {
-  initialValue: string;
-  containerClassName: string;
-  editorClassName?: string;
-  embedHandler: TEmbedConfig;
-  tabIndex?: number;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-}
+import { EditorReadOnlyRefApi, IDocumentReadOnlyEditor } from "@/types";
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   const {
     containerClassName,
     editorClassName = "",
     embedHandler,
-    initialValue,
     forwardedRef,
-    tabIndex,
     handleEditorReady,
+    id,
     mentionHandler,
+    realtimeConfig,
+    user,
   } = props;
-  const editor = useReadOnlyEditor({
-    initialValue,
+  const extensions = [];
+  if (embedHandler?.issue) {
+    extensions.push(
+      IssueWidget({
+        widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
+  const { editor } = useReadOnlyCollaborativeEditor({
     editorClassName,
-    mentionHandler,
+    extensions,
     forwardedRef,
     handleEditorReady,
-    extensions: [
-      embedHandler?.issue &&
-        IssueWidget({
-          widgetCallback: embedHandler?.issue.widgetCallback,
-        }),
-    ],
+    id,
+    mentionHandler,
+    realtimeConfig,
+    user,
   });
-
-  if (!editor) {
-    return null;
-  }
 
   const editorContainerClassName = getEditorClassNames({
     containerClassName,
   });
 
-  return <PageRenderer tabIndex={tabIndex} editor={editor} editorContainerClassName={editorContainerClassName} />;
+  if (!editor) return null;
+  return <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} />;
 };
 
 const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (

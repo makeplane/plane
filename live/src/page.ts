@@ -1,8 +1,12 @@
-import { TiptapTransformer } from "@hocuspocus/transformer";
+import { getSchema } from "@tiptap/core";
 import { generateJSON } from "@tiptap/html";
 import * as Y from "yjs";
+import { prosemirrorJSONToYDoc } from "y-prosemirror";
 // editor
-import { CoreEditorExtensionsWithoutProps } from "@plane/editor/lib";
+import {
+  CoreEditorExtensionsWithoutProps,
+  DocumentEditorExtensionsWithoutProps,
+} from "@plane/editor/lib";
 // services
 import { PageService } from "./services/page.service.js";
 const pageService = new PageService();
@@ -53,13 +57,25 @@ const fetchDescriptionHTMLAndTransform = async (
       pageId,
       cookie,
     );
-
-    console.log("pageDetails", pageDetails.description_html);
-    const prosemirrorJSON = generateJSON(
+    // document editor extensions
+    const extensions = [
+      ...CoreEditorExtensionsWithoutProps(),
+      ...DocumentEditorExtensionsWithoutProps(),
+    ];
+    // convert already existing html to json
+    const contentJSON = generateJSON(
       pageDetails.description_html ?? "<p></p>",
-      CoreEditorExtensionsWithoutProps(),
+      extensions,
     );
-    const transformedData = TiptapTransformer.toYdoc(prosemirrorJSON);
+    // get editor schema from the extensions array
+    const schema = getSchema(extensions);
+    // convert json to Y.Doc format
+    const transformedData = prosemirrorJSONToYDoc(
+      schema,
+      contentJSON,
+      "default",
+    );
+    // convert Y.Doc to Uint8Array format
     const encodedData = Y.encodeStateAsUpdate(transformedData);
 
     return encodedData;

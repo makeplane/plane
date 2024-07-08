@@ -1658,14 +1658,6 @@
     uuid "^10.0.0"
     ws "^8.5.0"
 
-"@hocuspocus/transformer@^2.11.3":
-  version "2.13.5"
-  resolved "https://registry.yarnpkg.com/@hocuspocus/transformer/-/transformer-2.13.5.tgz#c9115579a57e65fa2b689cd3445fe929515553e3"
-  integrity sha512-G5QWvV4K7lussF4lSWPFjtqSTZjiq1tkU4WEn1u8OdKQUF0GtfNcnrGWMlCeJdz5Ucpp4qJHWt4TTPI1Lpw/9Q==
-  dependencies:
-    "@tiptap/core" "^2.1.12"
-    "@tiptap/starter-kit" "^2.1.12"
-
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"
@@ -3845,7 +3837,7 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.5.2.tgz#db7257d727c891905947bd1c1a99da20e03c2ebd"
   integrity sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==
 
-"@tiptap/core@^2.1.12", "@tiptap/core@^2.1.13", "@tiptap/core@^2.4.0":
+"@tiptap/core@^2.1.13", "@tiptap/core@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.4.0.tgz#6f8eee8beb5b89363582366b201ccc4798ac98a9"
   integrity sha512-YJSahk8pkxpCs8SflCZfTnJpE7IPyUWIylfgXM2DefjRQa5DZ+c6sNY0s/zbxKYFQ6AuHVX40r9pCfcqHChGxQ==
@@ -4033,7 +4025,7 @@
     "@tiptap/extension-bubble-menu" "^2.4.0"
     "@tiptap/extension-floating-menu" "^2.4.0"
 
-"@tiptap/starter-kit@^2.1.12", "@tiptap/starter-kit@^2.1.13":
+"@tiptap/starter-kit@^2.1.13":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@tiptap/starter-kit/-/starter-kit-2.4.0.tgz#ad2c2d900af41e55eaaccafa92fd6b2acaebd97e"
   integrity sha512-DYYzMZdTEnRn9oZhKOeRCcB+TjhNz5icLlvJKoHoOGL9kCbuUyEf8WRR2OSPckI0+KUIPJL3oHRqO4SqSdTjfg==
@@ -4062,11 +4054,6 @@
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@tiptap/suggestion/-/suggestion-2.4.0.tgz#1926cde5f197d116baf7794f55bd971245540e5c"
   integrity sha512-6dCkjbL8vIzcLWtS6RCBx0jlYPKf2Beuyq5nNLrDDZZuyJow5qJAY0eGu6Xomp9z0WDK/BYOxT4hHNoGMDkoAg==
-
-"@tsconfig/node-lts@^20.1.3":
-  version "20.1.3"
-  resolved "https://registry.yarnpkg.com/@tsconfig/node-lts/-/node-lts-20.1.3.tgz#8cdf6fa6c593bf5e16e53134ed377627a58a746e"
-  integrity sha512-m3b7EP2U+h5tNSpaBMfcTuHmHn04wrgRPQQrfKt75YIPq6kPs2153/KfPHdqkEWGx5pEBvS6rnvToT+yTtC1iw==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
@@ -14218,7 +14205,7 @@ y-indexeddb@^9.0.12:
   dependencies:
     lib0 "^0.2.74"
 
-y-prosemirror@^1.2.5:
+y-prosemirror@^1.2.5, y-prosemirror@^1.2.9:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.9.tgz#0202b5f6b164fa35d80bdbcdc876d81fe6da7ac2"
   integrity sha512-fThGIVmSqrqnG/ckywEGlHM9ElfILC4TcMZd5zxWPe/i+UuP97TEr4swsopRKG3Y+KHBVt4Y/5NVBC3AAsUoUg==

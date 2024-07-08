@@ -4,62 +4,45 @@ import { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
 import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
-// extensions
-import { DragAndDrop } from "@/extensions";
-// hooks
-import { TFileHandler, useEditor } from "@/hooks/use-editor";
-// plane editor extensions
-import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TRealtimeConfig, TUserDetails } from "@/types";
+import { EditorReadOnlyRefApi, IMentionHighlight, TRealtimeConfig, TUserDetails } from "@/types";
+// hooks
+import { useReadOnlyEditor } from "./use-read-only-editor";
 
-type CollaborativeEditorProps = {
+type ReadOnlyCollaborativeEditorProps = {
   editorClassName: string;
   editorProps?: EditorProps;
-  embedHandler?: TEmbedConfig;
   extensions?: Extensions;
-  fileHandler: TFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
   id: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
   };
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
   realtimeConfig: TRealtimeConfig;
-  setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
-  tabIndex?: number;
   user: TUserDetails;
 };
 
-export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
+export const useReadOnlyCollaborativeEditor = (props: ReadOnlyCollaborativeEditorProps) => {
   const {
     editorClassName,
     editorProps = {},
-    embedHandler,
     extensions,
-    fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
     mentionHandler,
-    placeholder,
     realtimeConfig,
-    setHideDragHandleFunction,
-    tabIndex,
     user,
   } = props;
   // initialize Hocuspocus provider
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        name: id,
-        parameters: realtimeConfig.queryParams,
-        token: user.id,
         url: realtimeConfig.url,
+        name: id,
+        token: user.id,
+        parameters: realtimeConfig.queryParams,
       }),
     [id, realtimeConfig, user.id]
   );
@@ -79,28 +62,19 @@ export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
     };
   }, [provider, id]);
 
-  const editor = useEditor({
-    id,
+  const editor = useReadOnlyEditor({
     editorProps,
     editorClassName,
-    fileHandler,
-    handleEditorReady,
     forwardedRef,
+    handleEditorReady,
     mentionHandler,
     extensions: [
-      DragAndDrop(setHideDragHandleFunction),
+      ...(extensions ?? []),
       Collaboration.configure({
         document: provider.document,
       }),
-      ...(extensions ?? []),
-      ...DocumentEditorAdditionalExtensions({
-        fileHandler,
-        issueEmbedConfig: embedHandler?.issue,
-      }),
     ],
-    placeholder,
-    tabIndex,
   });
 
-  return { editor };
+  return { editor, isIndexedDbSynced: true };
 };

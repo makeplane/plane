@@ -5,8 +5,9 @@ import { IMarking } from "@/helpers/scroll-to-node";
 // hooks
 import { TFileHandler } from "@/hooks/use-editor";
 // types
-import { IMentionHighlight, IMentionSuggestion } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TEmbedConfig } from "@/types";
 
+// editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
   getHTML: () => string;
@@ -24,6 +25,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   isEditorReadyToDiscard: () => boolean;
 }
 
+// editor props
 export interface IEditorProps {
   containerClassName?: string;
   editorClassName?: string;
@@ -48,6 +50,15 @@ export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
 }
 
+export interface IDocumentEditor extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+  embedHandler: TEmbedConfig;
+  handleEditorReady?: (value: boolean) => void;
+  id: string;
+  realtimeConfig: TRealtimeConfig;
+  user: TUserDetails;
+}
+
+// read only editor props
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
   editorClassName?: string;
@@ -56,9 +67,29 @@ export interface IReadOnlyEditorProps {
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
   };
-  tabIndex?: number;
 }
 
 export interface ILiteTextReadOnlyEditor extends IReadOnlyEditorProps {}
 
 export interface IRichTextReadOnlyEditor extends IReadOnlyEditorProps {}
+
+export interface IDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
+  embedHandler: TEmbedConfig;
+  handleEditorReady?: (value: boolean) => void;
+  id: string;
+  realtimeConfig: TRealtimeConfig;
+  user: TUserDetails;
+}
+
+export type TUserDetails = {
+  color: string;
+  id: string;
+  name: string;
+};
+
+export type TRealtimeConfig = {
+  url: string;
+  queryParams: {
+    [key: string]: string;
+  };
+};
