@@ -71,22 +71,12 @@ export const useRelationOperations = (): TRelationIssueOperations => {
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await removeIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
-          });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             path: pathname,
           });
         } catch (error) {
-          setToast({
-            title: "Error!",
-            type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
-          });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },

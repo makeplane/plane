@@ -13,6 +13,7 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDetail } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 // components
@@ -36,9 +37,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     onClose,
     onSubmit,
     withDraftIssueWrapper = true,
-    storeType = EIssuesStoreType.PROJECT,
+    storeType: issueStoreFromProps,
     isDraft = false,
   } = props;
+  const issueStoreType = useIssueStoreType();
+
+  const storeType = issueStoreFromProps ?? issueStoreType;
   // ref
   const issueTitleRef = useRef<HTMLInputElement>(null);
   // states
