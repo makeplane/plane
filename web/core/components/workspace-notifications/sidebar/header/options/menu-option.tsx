@@ -5,14 +5,13 @@ import { observer } from "mobx-react";
 import { Check, CheckCheck, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 import { TNotificationFilter } from "@plane/types";
-import { ArchiveIcon, Spinner, Tooltip } from "@plane/ui";
+import { ArchiveIcon, Spinner } from "@plane/ui";
 // constants
 import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 import { ENotificationLoader } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TNotificationHeaderMenuOption = {
   workspaceSlug: string;
@@ -22,7 +21,6 @@ export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = o
   const { workspaceSlug } = props;
   // hooks
   const { captureEvent } = useEventTracker();
-  const { isMobile } = usePlatformOS();
   const { loader, filters, updateFilters, updateBulkFilters, markAllNotificationsAsRead } = useWorkspaceNotifications();
 
   const handleFilterChange = (filterType: keyof TNotificationFilter, filterValue: boolean) =>
@@ -42,16 +40,14 @@ export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = o
 
   return (
     <Popover className="relative">
-      <Tooltip tooltipContent="Notification Filters" isMobile={isMobile} position="bottom">
-        <Popover.Button
-          className={cn(
-            "flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none",
-            ({ open }: { open: boolean }) => (open ? "bg-custom-background-80" : "")
-          )}
-        >
-          <MoreVertical className="h-3 w-3" />
-        </Popover.Button>
-      </Tooltip>
+      <Popover.Button
+        className={cn(
+          "flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none",
+          ({ open }: { open: boolean }) => (open ? "bg-custom-background-80" : "")
+        )}
+      >
+        <MoreVertical className="h-3 w-3" />
+      </Popover.Button>
 
       <Transition
         as={Fragment}
