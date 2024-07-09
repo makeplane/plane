@@ -162,7 +162,6 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   // derived values
   const inputProps = {
     type: "text",
-    pattern: undefined,
     maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
   };
 
