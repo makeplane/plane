@@ -5,9 +5,9 @@ import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
-  TCurrentSelectedNotification,
   TNotification,
   TNotificationFilter,
+  TNotificationLite,
   TNotificationPaginatedInfo,
   TNotificationPaginatedInfoQueryParams,
   TUnreadNotificationsCount,
@@ -36,19 +36,20 @@ export interface IWorkspaceNotificationStore {
   unreadNotificationsCount: TUnreadNotificationsCount;
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
-  currentSelectedNotification: TCurrentSelectedNotification;
+  currentSelectedNotificationId: string | undefined;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined;
   filters: TNotificationFilter;
   // computed
   // computed functions
   notificationIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
+  notificationLiteByNotificationId: (notificationId: string | undefined) => TNotificationLite;
   // helper actions
   mutateNotifications: (notifications: TNotification[]) => void;
   updateFilters: <T extends keyof TNotificationFilter>(key: T, value: TNotificationFilter[T]) => void;
   updateBulkFilters: (filters: Partial<TNotificationFilter>) => void;
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
-  setCurrentSelectedNotification: (notification: TCurrentSelectedNotification) => void;
+  setCurrentSelectedNotificationId: (notificationId: string | undefined) => void;
   setUnreadNotificationsCount: (type: "increment" | "decrement") => void;
   getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
@@ -70,13 +71,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   };
   notifications: Record<string, INotification> = {};
   currentNotificationTab: TNotificationTab = ENotificationTab.ALL;
-  currentSelectedNotification: TCurrentSelectedNotification = {
-    workspace_slug: undefined,
-    project_id: undefined,
-    notification_id: undefined,
-    issue_id: undefined,
-    is_inbox_issue: false,
-  };
+  currentSelectedNotificationId: string | undefined = undefined;
   paginationInfo: Omit<TNotificationPaginatedInfo, "results"> | undefined = undefined;
   filters: TNotificationFilter = {
     type: {
@@ -96,13 +91,13 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       unreadNotificationsCount: observable,
       notifications: observable,
       currentNotificationTab: observable.ref,
-      currentSelectedNotification: observable,
+      currentSelectedNotificationId: observable,
       paginationInfo: observable,
       filters: observable,
       // computed
       // helper actions
       setCurrentNotificationTab: action,
-      setCurrentSelectedNotification: action,
+      setCurrentSelectedNotificationId: action,
       setUnreadNotificationsCount: action,
       mutateNotifications: action,
       updateFilters: action,
@@ -152,6 +147,24 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       // .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
       .map((n) => n.id) as string[];
     return workspaceNotificationIds;
+  });
+
+  /**
+   * @description get notification lite by notification id
+   * @param { string } notificationId
+   */
+  notificationLiteByNotificationId = computedFn((notificationId: string | undefined) => {
+    if (!notificationId) return {} as TNotificationLite;
+    const { workspaceSlug } = this.store.router;
+    const notification = this.notifications[notificationId];
+    if (!notification || !workspaceSlug) return {} as TNotificationLite;
+    return {
+      workspace_slug: workspaceSlug,
+      project_id: notification.project,
+      notification_id: notification.id,
+      issue_id: notification.data?.issue?.id,
+      is_inbox_issue: notification.is_inbox_issue || false,
+    };
   });
 
   // helper functions
@@ -255,11 +268,11 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
 
   /**
    * @description set current selected notification
-   * @param { TCurrentSelectedNotification } notification
+   * @param { string | undefined } notificationId
    * @returns { void }
    */
-  setCurrentSelectedNotification = (notification: TCurrentSelectedNotification): void => {
-    set(this, "currentSelectedNotification", notification);
+  setCurrentSelectedNotificationId = (notificationId: string | undefined): void => {
+    set(this, "currentSelectedNotificationId", notificationId);
   };
 
   /**

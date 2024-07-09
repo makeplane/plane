@@ -24,12 +24,12 @@ import {
   IssueInboxActivity,
 } from "./actions";
 
-type TIssueActivityList = {
+type TIssueActivityItem = {
   activityId: string;
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueActivityList: FC<TIssueActivityList> = observer((props) => {
+export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
   const { activityId, ends } = props;
   // hooks
   const {
