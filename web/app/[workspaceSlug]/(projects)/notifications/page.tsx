@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
@@ -11,7 +12,6 @@ import { IssuePeekOverview } from "@/components/issues";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
-import { useEffect } from "react";
 
 const WorkspaceDashboardPage = observer(() => {
   // hooks
