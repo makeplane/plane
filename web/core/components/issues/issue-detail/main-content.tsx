@@ -7,17 +7,19 @@ import { TIssue } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // components
-import { IssueAttachmentRoot, IssueUpdateStatus } from "@/components/issues";
+import {
+  IssueActivity,
+  IssueUpdateStatus,
+  IssueReaction,
+  IssueParentDetail,
+  IssueTitleInput,
+  IssueDescriptionInput,
+  IssueDetailWidgets,
+} from "@/components/issues";
 // hooks
 import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// components
-import { IssueDescriptionInput } from "../description-input";
-import { SubIssuesRoot } from "../sub-issues";
-import { IssueTitleInput } from "../title-input";
-import { IssueActivity } from "./issue-activity";
-import { IssueParentDetail } from "./parent";
-import { IssueReaction } from "./reactions";
+// types
 import { TIssueOperations } from "./root";
 
 type Props = {
@@ -56,7 +58,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4 pl-3">
+      <div className="rounded-lg space-y-4">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}
@@ -113,30 +115,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             disabled={isArchived}
           />
         )}
-
-        {currentUser && (
-          <SubIssuesRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssueId={issueId}
-            currentUser={currentUser}
-            disabled={!isEditable}
-          />
-        )}
       </div>
 
-      <div className="pl-3">
-        <IssueAttachmentRoot
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={!isEditable}
-        />
-      </div>
+      <IssueDetailWidgets
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        disabled={!isEditable}
+      />
 
-      <div className="pl-3">
-        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
-      </div>
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
     </>
   );
 });

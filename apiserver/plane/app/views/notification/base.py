@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Case, When, BooleanField
 from django.utils import timezone
 
 # Third party imports
@@ -45,6 +45,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         archived = request.GET.get("archived", "false")
         read = request.GET.get("read", None)
         type = request.GET.get("type", "all")
+        mentioned = request.GET.get("mentioned", False)
         q_filters = Q()
 
         inbox_issue = Issue.objects.filter(
@@ -59,6 +60,13 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             )
             .filter(entity_name="issue")
             .annotate(is_inbox_issue=Exists(inbox_issue))
+            .annotate(
+                is_mentioned_notification=Case(
+                    When(sender__icontains="mentioned", then=True),
+                    default=False,
+                    output_field=BooleanField(),
+                )
+            )
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
         )
@@ -85,6 +93,13 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         if read == "true":
             notifications = notifications.filter(read_at__isnull=False)
+
+        if mentioned:
+            notifications = notifications.filter(sender__icontains="mentioned")
+        else:
+            notifications = notifications.exclude(
+                sender__icontains="mentioned"
+            )
 
         type = type.split(",")
         # Subscribed issues
@@ -210,19 +225,35 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 class UnreadNotificationEndpoint(BaseAPIView):
     def get(self, request, slug):
         # Watching Issues Count
-        unread_notifications_count = Notification.objects.filter(
+        unread_notifications_count = (
+            Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                read_at__isnull=True,
+                archived_at__isnull=True,
+                snoozed_till__isnull=True,
+            )
+            .exclude(sender__icontains="mentioned")
+            .count()
+        )
+
+        mention_notifications_count = Notification.objects.filter(
             workspace__slug=slug,
             receiver_id=request.user.id,
             read_at__isnull=True,
             archived_at__isnull=True,
             snoozed_till__isnull=True,
+            sender__icontains="mentioned",
         ).count()
 
         return Response(
             {
                 "total_unread_notifications_count": int(
                     unread_notifications_count
-                )
+                ),
+                "mention_unread_notifications_count": int(
+                    mention_notifications_count
+                ),
             },
             status=status.HTTP_200_OK,
         )

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 // ui
@@ -33,9 +33,9 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
+    isDeleteAttachmentModalOpen,
+    toggleDeleteAttachmentModal,
   } = useIssueDetail();
-  // state
-  const [isDeleteIssueAttachmentModalOpen, setIsDeleteIssueAttachmentModalOpen] = useState(false);
 
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
@@ -46,10 +46,10 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
 
   return (
     <>
-      {isDeleteIssueAttachmentModalOpen && (
+      {isDeleteAttachmentModalOpen && (
         <IssueAttachmentDeleteModal
-          isOpen={isDeleteIssueAttachmentModalOpen}
-          onClose={() => setIsDeleteIssueAttachmentModalOpen(false)}
+          isOpen={isDeleteAttachmentModalOpen}
+          onClose={() => toggleDeleteAttachmentModal(false)}
           handleAttachmentOperations={handleAttachmentOperations}
           data={attachment}
         />
@@ -90,12 +90,12 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
               </>
             )}
 
-            <CustomMenu ellipsis closeOnSelect placement="bottom-end" openOnHover disabled={disabled}>
+            <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setIsDeleteIssueAttachmentModalOpen(true);
+                  toggleDeleteAttachmentModal(true);
                 }}
               >
                 <div className="flex items-center gap-2">

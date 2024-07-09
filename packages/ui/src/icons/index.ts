@@ -23,5 +23,4 @@ export * from "./side-panel-icon";
 export * from "./subscribe-icon";
 export * from "./transfer-icon";
 export * from "./info-icon";
-export * from "./relations-icon";
 export * from "./dropdown-icon";

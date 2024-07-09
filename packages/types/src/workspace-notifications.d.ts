@@ -51,6 +51,7 @@ export type TNotification = {
   archived_at: string | undefined;
   snoozed_till: string | undefined;
   is_inbox_issue: boolean | undefined;
+  is_mentioned_notification: boolean | undefined;
   workspace: string | undefined;
   project: string | undefined;
   created_at: string | undefined;
@@ -64,6 +65,7 @@ export type TNotificationPaginatedInfoQueryParams = {
   type?: string | undefined;
   snoozed?: boolean;
   archived?: boolean;
+  mentioned?: boolean;
   read?: boolean;
   per_page?: number;
   cursor?: string;
@@ -86,9 +88,10 @@ export type TNotificationPaginatedInfo = {
 // notification count
 export type TUnreadNotificationsCount = {
   total_unread_notifications_count: number;
+  mention_unread_notifications_count: number;
 };
 
-export type TCurrentSelectedNotification = {
+export type TNotificationLite = {
   workspace_slug: string | undefined;
   project_id: string | undefined;
   notification_id: string | undefined;

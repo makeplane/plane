@@ -16,7 +16,6 @@ from plane.db.models import (
     IssueProperty,
     IssueActivity,
     IssueComment,
-    IssueAttachment,
 )
 
 
@@ -26,7 +25,7 @@ class IssueType:
     workspace: strawberry.ID
     project: strawberry.ID
     parent: Optional[strawberry.ID]
-    state: Optional[strawberry.ID]
+    state: strawberry.ID
     point: Optional[int]
     estimate_point: Optional[strawberry.ID]
     name: str

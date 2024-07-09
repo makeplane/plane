@@ -40,8 +40,7 @@ export interface IStateStore {
     workspaceSlug: string,
     projectId: string,
     stateId: string,
-    direction: "up" | "down",
-    groupIndex: number
+    payload: Partial<IState>
   ) => Promise<void>;
 }
 
@@ -245,33 +244,16 @@ export class StateStore implements IStateStore {
    * @param direction
    * @param groupIndex
    */
-  moveStatePosition = async (
-    workspaceSlug: string,
-    projectId: string,
-    stateId: string,
-    direction: "up" | "down",
-    groupIndex: number
-  ) => {
-    const SEQUENCE_GAP = 15000;
+  moveStatePosition = async (workspaceSlug: string, projectId: string, stateId: string, payload: Partial<IState>) => {
     const originalStates = this.stateMap;
     try {
-      let newSequence = SEQUENCE_GAP;
-      const stateMap = this.projectStates || [];
-      const selectedState = stateMap?.find((state) => state.id === stateId);
-      const groupStates = stateMap?.filter((state) => state.group === selectedState?.group);
-      const groupLength = groupStates.length;
-      if (direction === "up") {
-        if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
-        else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
-      } else {
-        if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
-        else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
-      }
-      runInAction(() => {
-        set(this.stateMap, [stateId, "sequence"], newSequence);
+      Object.entries(payload).forEach(([key, value]) => {
+        runInAction(() => {
+          set(this.stateMap, [stateId, key], value);
+        });
       });
       // updating using api
-      await this.stateService.patchState(workspaceSlug, projectId, stateId, { sequence: newSequence });
+      await this.stateService.patchState(workspaceSlug, projectId, stateId, payload);
     } catch (err) {
       // reverting back to old state group if api fails
       runInAction(() => {

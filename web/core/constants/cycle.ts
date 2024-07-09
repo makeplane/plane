@@ -95,22 +95,22 @@ export const CYCLE_STATE_GROUPS_DETAILS = [
   {
     key: "completed_issues",
     title: "Completed",
-    color: "#6490FE",
+    color: "#16A34A",
   },
   {
     key: "started_issues",
     title: "Started",
-    color: "#FDD97F",
+    color: "#F59E0B",
   },
   {
     key: "unstarted_issues",
     title: "Unstarted",
-    color: "#FEB055",
+    color: "#3A3A3A",
   },
   {
     key: "backlog_issues",
     title: "Backlog",
-    color: "#F0F0F3",
+    color: "#A3A3A3",
   },
 ];
 

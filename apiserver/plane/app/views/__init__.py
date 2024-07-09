@@ -94,7 +94,6 @@ from .cycle.base import (
     CycleViewSet,
     TransferCycleIssueEndpoint,
 )
-from .cycle.active_cycle import ActiveCycleEndpoint
 from .cycle.issue import (
     CycleIssueViewSet,
 )
