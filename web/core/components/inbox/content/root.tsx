@@ -16,6 +16,7 @@ type TInboxContentRoot = {
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed?: boolean;
+  embedRemoveCurrentNotification?: () => void;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
@@ -26,6 +27,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     isMobileSidebar,
     setIsMobileSidebar,
     isNotificationEmbed = false,
+    embedRemoveCurrentNotification,
   } = props;
   /// router
   const router = useAppRouter();
@@ -78,6 +80,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             inboxIssue={inboxIssue}
             isSubmitting={isSubmitting}
             isNotificationEmbed={isNotificationEmbed || false}
+            embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
         <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5 vertical-scrollbar scrollbar-md">

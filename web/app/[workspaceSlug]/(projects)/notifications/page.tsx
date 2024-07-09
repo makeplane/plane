@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
@@ -10,18 +11,26 @@ import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
 const WorkspaceDashboardPage = observer(() => {
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { currentSelectedNotification, notificationIdsByWorkspaceId, getNotifications } = useWorkspaceNotifications();
+  const {
+    currentSelectedNotificationId,
+    setCurrentSelectedNotificationId,
+    notificationLiteByNotificationId,
+    notificationIdsByWorkspaceId,
+    getNotifications,
+  } = useWorkspaceNotifications();
   const {
     membership: { fetchUserProjectInfo },
   } = useUser();
+  const { setPeekIssue } = useIssueDetail();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
-  const { workspace_slug, project_id, issue_id, is_inbox_issue } = currentSelectedNotification;
+  const { workspace_slug, project_id, issue_id, is_inbox_issue } =
+    notificationLiteByNotificationId(currentSelectedNotificationId);
 
   // fetch workspace notifications
   const notificationMutation =
@@ -47,6 +56,15 @@ const WorkspaceDashboardPage = observer(() => {
     workspace_slug && project_id && is_inbox_issue ? () => fetchUserProjectInfo(workspace_slug, project_id) : null
   );
 
+  // clearing up the selected notifications when unmounting the page
+  useEffect(
+    () => () => {
+      setCurrentSelectedNotificationId(undefined);
+      setPeekIssue(undefined);
+    },
+    []
+  );
+
   return (
     <>
       <PageHead title={pageTitle} />
@@ -65,11 +83,15 @@ const WorkspaceDashboardPage = observer(() => {
                 projectId={project_id}
                 inboxIssueId={issue_id}
                 isNotificationEmbed
+                embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
               />
             )}
           </>
         ) : (
-          <IssuePeekOverview embedIssue />
+          <IssuePeekOverview
+            embedIssue
+            embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
+          />
         )}
       </div>
     </>

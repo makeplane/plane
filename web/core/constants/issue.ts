@@ -485,3 +485,19 @@ export enum EServerGroupByToFilterOptions {
   "project_id" = "project",
   "created_by" = "created_by",
 }
+
+export enum EActivityFilterType {
+  COMMENT = "COMMENT",
+  ACTIVITY = "ACTIVITY",
+}
+
+export const ACTIVITY_FILTER_TYPE_OPTIONS = [
+  {
+    value: EActivityFilterType.COMMENT,
+    label: "Comments",
+  },
+  {
+    value: EActivityFilterType.ACTIVITY,
+    label: "Updates",
+  },
+];

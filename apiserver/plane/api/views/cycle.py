@@ -1140,12 +1140,38 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         )
 
         updated_cycles = []
+        update_cycle_issue_activity = []
         for cycle_issue in cycle_issues:
             cycle_issue.cycle_id = new_cycle_id
             updated_cycles.append(cycle_issue)
+            update_cycle_issue_activity.append(
+                {
+                    "old_cycle_id": str(cycle_id),
+                    "new_cycle_id": str(new_cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
+            )
 
         cycle_issues = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
+        )
+
+        # Capture Issue Activity
+        issue_activity.delay(
+            type="cycle.activity.created",
+            requested_data=json.dumps({"cycles_list": []}),
+            actor_id=str(self.request.user.id),
+            issue_id=None,
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "updated_cycle_issues": update_cycle_issue_activity,
+                    "created_cycle_issues": "[]",
+                }
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

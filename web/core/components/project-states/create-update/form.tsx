@@ -1,10 +1,9 @@
 "use client";
 
-import { FormEvent, FC, useEffect, useState, Fragment } from "react";
+import { FormEvent, FC, useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
-import { Popover, Transition } from "@headlessui/react";
 import { IState } from "@plane/types";
-import { Button, Input } from "@plane/ui";
+import { Button, Popover, Input } from "@plane/ui";
 
 type TStateForm = {
   data: Partial<IState>;
@@ -47,30 +46,24 @@ export const StateForm: FC<TStateForm> = (props) => {
     }
   };
 
+  const PopoverButton = useMemo(
+    () => (
+      <div
+        className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
+        style={{
+          backgroundColor: formData?.color ?? "black",
+        }}
+      />
+    ),
+    [formData?.color]
+  );
+
   return (
     <form onSubmit={formSubmit} className="relative flex items-center gap-2">
       {/* color */}
       <div className="flex-shrink-0">
-        <Popover className="relative flex h-full w-full items-center justify-center">
-          <Popover.Button
-            className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
-            style={{
-              backgroundColor: formData?.color ?? "black",
-            }}
-          />
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-y-1"
-            enterTo="opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-1"
-          >
-            <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
-              <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
-            </Popover.Panel>
-          </Transition>
+        <Popover button={PopoverButton} panelClassName="mt-4 -ml-3">
+          <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
         </Popover>
       </div>
 
