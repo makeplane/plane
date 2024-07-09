@@ -69,8 +69,8 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
   project_others: {
     title: "Others",
     featureList: {
-      time_tracking: {
-        property: "time_tracking",
+      is_time_tracking_enabled: {
+        property: "is_time_tracking_enabled",
         title: "Time Tracking",
         description: "Keep the work logs of the users in track ",
         icon: <Timer className="h-4 w-4 flex-shrink-0 text-gray-300" />,
