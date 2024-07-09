@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
@@ -10,7 +11,7 @@ import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
 const WorkspaceDashboardPage = observer(() => {
   // hooks
@@ -25,6 +26,7 @@ const WorkspaceDashboardPage = observer(() => {
   const {
     membership: { fetchUserProjectInfo },
   } = useUser();
+  const { setPeekIssue } = useIssueDetail();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
   const { workspace_slug, project_id, issue_id, is_inbox_issue } =
@@ -52,6 +54,15 @@ const WorkspaceDashboardPage = observer(() => {
       ? `PROJECT_MEMBER_PERMISSION_INFO_${workspace_slug}_${project_id}`
       : null,
     workspace_slug && project_id && is_inbox_issue ? () => fetchUserProjectInfo(workspace_slug, project_id) : null
+  );
+
+  // clearing up the selected notifications when unmounting the page
+  useEffect(
+    () => () => {
+      setCurrentSelectedNotificationId(undefined);
+      setPeekIssue(undefined);
+    },
+    []
   );
 
   return (

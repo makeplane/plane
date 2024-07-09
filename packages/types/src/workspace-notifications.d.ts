@@ -51,6 +51,7 @@ export type TNotification = {
   archived_at: string | undefined;
   snoozed_till: string | undefined;
   is_inbox_issue: boolean | undefined;
+  is_mentioned_notification: boolean | undefined;
   workspace: string | undefined;
   project: string | undefined;
   created_at: string | undefined;

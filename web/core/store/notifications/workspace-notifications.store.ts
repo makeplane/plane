@@ -125,6 +125,11 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     );
     const workspaceNotificationIds = workspaceNotifications
       .filter((n) => n.workspace === workspaceId)
+      .filter((n) =>
+        this.currentNotificationTab === ENotificationTab.MENTIONS
+          ? n.is_mentioned_notification
+          : !n.is_mentioned_notification
+      )
       .filter((n) => {
         if (!this.filters.archived && !this.filters.snoozed) {
           if (n.archived_at) {
