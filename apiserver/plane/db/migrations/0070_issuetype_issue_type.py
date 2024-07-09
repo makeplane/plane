@@ -50,7 +50,7 @@ def create_page_versions(apps, schema_editor):
                 description_html=page["description_html"],
                 description_binary=page["description_binary"],
                 description_stripped=page["description_stripped"],
-                ownned_by_id=page["owned_by_id"],
+                owned_by_id=page["owned_by_id"],
                 last_saved_at=page["updated_at"],
             )
             for page in Page.objects.values(
@@ -220,7 +220,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "ownned_by",
+                    "owned_by",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="page_versions",

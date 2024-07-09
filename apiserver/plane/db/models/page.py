@@ -273,7 +273,7 @@ class PageVersion(BaseModel):
         related_name="page_versions",
     )
     last_saved_at = models.DateTimeField(default=timezone.now)
-    ownned_by = models.ForeignKey(
+    owned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="page_versions",
