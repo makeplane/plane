@@ -120,13 +120,11 @@ const CloudUpgradePage = observer(() => {
               label: (
                 <div className={`flex items-center gap-3 px-1`}>
                   <div className="flex-shrink-0">
-                    <div className="grid h-7 w-7 place-items-center rounded">
+                    <div className="relative grid h-7 w-7 place-items-center rounded">
                       {workspace?.logo && workspace.logo !== "" ? (
                         <img
                           src={workspace.logo}
-                          height="100%"
-                          width="100%"
-                          className="rounded"
+                          className="absolute left-0 top-0 h-full w-full rounded object-cover"
                           alt={workspace.name}
                         />
                       ) : (
