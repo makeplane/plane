@@ -8,8 +8,10 @@ import { Dialog, Transition, Tab } from "@headlessui/react";
 import { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // store
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useUser } from "@/hooks/store";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
 
@@ -49,6 +51,9 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   const { workspaceSlug } = useParams();
   // store
   const { captureEvent } = useEventTracker();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
   // fetch products
   const { data } = useSWR(
     workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL ? "CLOUD_PAYMENT_PRODUCTS" : null,
@@ -65,9 +70,21 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tabIndex, setTabIndex] = useState(0);
   const [isLoading, setLoading] = useState(false);
+  // derived values
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   const handlePaymentLink = (priceId: string) => {
     if (!workspaceSlug) return;
+
+    if (!isAdmin) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Unauthorized!",
+        message: "You don't have permission to perform this action.",
+      });
+      return;
+    }
+
     setLoading(true);
     captureEvent("pro_plan_payment_link_clicked", { workspaceSlug });
     paymentService
@@ -80,11 +97,11 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
           window.open(response.payment_link, "_blank");
         }
       })
-      .catch(() => {
+      .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Failed to generate payment link. Please try again.",
+          message: error?.detail ?? "Failed to generate payment link. Please try again.",
         });
       })
       .finally(() => {
