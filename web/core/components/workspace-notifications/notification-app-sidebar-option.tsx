@@ -3,6 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// components
+import { CountChip } from "@/components/common";
 // helpers
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
@@ -35,8 +37,8 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
     return <div className="absolute right-3.5 top-2 h-2 w-2 rounded-full bg-custom-primary-300" />;
 
   return (
-    <div className="ml-auto flex items-center text-center justify-center px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-      {`${isMentionsEnabled ? `@` : ``}${getNumberCount(totalNotifications)}`}
+    <div className="ml-auto">
+      <CountChip count={`${isMentionsEnabled ? `@` : ``}${getNumberCount(totalNotifications)}`} />
     </div>
   );
 });
