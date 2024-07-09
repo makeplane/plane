@@ -6,38 +6,6 @@ import django.db.models.deletion
 import uuid
 
 
-def create_issue_types(apps, schema_editor):
-    Project = apps.get_model("db", "Project")
-    Issue = apps.get_model("db", "Issue")
-    IssueType = apps.get_model("db", "IssueType")
-    # Create the issue types for all projects
-    IssueType.objects.bulk_create(
-        [
-            IssueType(
-                name="Task",
-                description="A task that needs to be completed.",
-                project_id=project["id"],
-                workspace_id=project["workspace_id"],
-            )
-            for project in Project.objects.values("id", "workspace_id")
-        ],
-        batch_size=1000,
-    )
-    # Update the issue type for all existing issues
-    issue_types = {
-        str(issue_type["project_id"]): str(issue_type["id"])
-        for issue_type in IssueType.objects.values("id", "project_id")
-    }
-    # Update the issue type for all existing issues
-    bulk_issues = []
-    for issue in Issue.objects.all():
-        issue.type_id = issue_types[str(issue.project_id)]
-        bulk_issues.append(issue)
-
-    # Update the issue type for all existing issues
-    Issue.objects.bulk_update(bulk_issues, ["type_id"], batch_size=1000)
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -140,7 +108,6 @@ class Migration(migrations.Migration):
             name="is_service",
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(create_issue_types),
         migrations.CreateModel(
             name="PageVersion",
             fields=[

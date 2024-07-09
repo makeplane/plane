@@ -26,7 +26,6 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
-    IssueType,
 )
 from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
@@ -240,13 +239,6 @@ class ProjectAPIEndpoint(BaseAPIView):
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
                     .first()
-                )
-
-                # Create the Issue Types
-                IssueType.objects.create(
-                    name="Task",
-                    description="A task that needs to be done",
-                    project_id=project.id,
                 )
 
                 # Model activity

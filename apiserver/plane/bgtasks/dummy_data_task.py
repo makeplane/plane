@@ -21,7 +21,6 @@ from plane.db.models import (
     Cycle,
     Module,
     Issue,
-    IssueType,
     IssueSequence,
     IssueAssignee,
     IssueLabel,
@@ -335,12 +334,6 @@ def create_issues(workspace, project, user_id, issue_count):
 
     largest_sort_order = (
         65535 if largest_sort_order is None else largest_sort_order + 10000
-    )
-
-    issue_type = IssueType.objects.create(
-        name="Task",
-        description="A task that needs to be completed.",
-        project=project,
     )
 
     for _ in range(0, issue_count):
