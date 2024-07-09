@@ -340,8 +340,12 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <Logo logo={project.logo_props} size={16} />
                       </div>
                       {!isSidebarCollapsed && (
-                        <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
-                      )}
+                        <Disclosure.Button
+                          as="button"
+                          type="button"
+                          className="p-0.5 rounded"
+                        >    <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
+                        </Disclosure.Button>)}
                     </Link>
                   </Tooltip>
                   <CustomMenu
@@ -500,9 +504,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
               </Disclosure.Panel>
             </Transition>
             {isLastChild && <DropIndicator isVisible={instruction === "DRAG_BELOW"} />}
-          </div>
+          </div >
         )}
-      </Disclosure>
+      </Disclosure >
     </>
   );
 });
