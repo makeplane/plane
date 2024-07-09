@@ -1,8 +1,9 @@
 # Environment Variables
 
-
 Environment variables are distributed in various files. Please refer them carefully.
+
 ## {PROJECT_FOLDER}/.env
+
 File is available in the project root folder​
 
 ```
@@ -35,18 +36,7 @@ USE_MINIO=1
 NGINX_PORT=80
 ```
 
-​
-
-## {PROJECT_FOLDER}/web/.env.example
-
-
-```
-# Public boards deploy URL
-NEXT_PUBLIC_DEPLOY_URL="http://localhost/spaces"
-```
 ## {PROJECT_FOLDER}/apiserver/.env
-
-
 
 ```
 # Backend
@@ -95,7 +85,6 @@ SECRET_KEY="gxoytl7dmnc1y37zahah820z5iq3iozu38cnfjtu3yaau9cd9z"
 
 ## Updates​
 
-- The environment variable NEXT_PUBLIC_API_BASE_URL has been removed from both the web and space projects.
 - The naming convention for containers and images has been updated.
 - The plane-worker image will no longer be maintained, as it has been merged with plane-backend.
 - The Tiptap pro-extension dependency has been removed, eliminating the need for Tiptap API keys.
