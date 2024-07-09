@@ -38,6 +38,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
   const handleNotificationIssuePeekOverview = async () => {
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
+      setPeekIssue(undefined);
       setCurrentSelectedNotificationId(notificationId);
 
       // make the notification as read
@@ -51,7 +52,6 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
       if (notification?.is_inbox_issue === false) {
         !getIsIssuePeeked(issueId) && setPeekIssue({ workspaceSlug, projectId, issueId });
-      } else {
       }
     }
   };
