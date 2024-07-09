@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 // ui
@@ -29,27 +29,31 @@ type TIssueAttachmentsListItem = {
 export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
   // props
   const { attachmentId, handleAttachmentOperations, disabled } = props;
+  const [isDeleteIssueAttachmentModalOpen, setIsDeleteIssueAttachmentModalOpen] = useState(false);
   // store hooks
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
-    isDeleteAttachmentModalOpen,
     toggleDeleteAttachmentModal,
   } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
+
+  const handleModalToggle = (value: boolean) => {
+    setIsDeleteIssueAttachmentModalOpen(value);
+    toggleDeleteAttachmentModal(value);
+  };
 
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
-  // hooks
-  const { isMobile } = usePlatformOS();
 
   if (!attachment) return <></>;
 
   return (
     <>
-      {isDeleteAttachmentModalOpen && (
+      {isDeleteIssueAttachmentModalOpen && (
         <IssueAttachmentDeleteModal
-          isOpen={isDeleteAttachmentModalOpen}
-          onClose={() => toggleDeleteAttachmentModal(false)}
+          isOpen={isDeleteIssueAttachmentModalOpen}
+          onClose={() => handleModalToggle(false)}
           handleAttachmentOperations={handleAttachmentOperations}
           data={attachment}
         />
@@ -95,7 +99,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  toggleDeleteAttachmentModal(true);
+                  handleModalToggle(true);
                 }}
               >
                 <div className="flex items-center gap-2">
