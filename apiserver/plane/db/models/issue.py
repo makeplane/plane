@@ -164,6 +164,13 @@ class Issue(ProjectBaseModel):
     is_draft = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    type = models.ForeignKey(
+        "db.IssueType",
+        on_delete=models.SET_NULL,
+        related_name="issue_type",
+        null=True,
+        blank=True,
+    )
 
     objects = models.Manager()
     issue_objects = IssueManager()
