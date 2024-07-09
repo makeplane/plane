@@ -8,32 +8,25 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
-import { IssueAttachmentDeleteModal } from "@/components/issues";
 // helpers
 import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
-import { TAttachmentOperations } from "./root";
-
-type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
 
 type TIssueAttachmentsListItem = {
   attachmentId: string;
-  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
   disabled?: boolean;
 };
 
 export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
   // props
-  const { attachmentId, handleAttachmentOperations, disabled } = props;
+  const { attachmentId, disabled } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
-    isDeleteAttachmentModalOpen,
     toggleDeleteAttachmentModal,
   } = useIssueDetail();
 
@@ -46,14 +39,6 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
 
   return (
     <>
-      {isDeleteAttachmentModalOpen && (
-        <IssueAttachmentDeleteModal
-          isOpen={isDeleteAttachmentModalOpen}
-          onClose={() => toggleDeleteAttachmentModal(false)}
-          handleAttachmentOperations={handleAttachmentOperations}
-          data={attachment}
-        />
-      )}
       <button
         onClick={(e) => {
           e.preventDefault();
@@ -95,7 +80,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  toggleDeleteAttachmentModal(true);
+                  toggleDeleteAttachmentModal(attachmentId);
                 }}
               >
                 <div className="flex items-center gap-2">
