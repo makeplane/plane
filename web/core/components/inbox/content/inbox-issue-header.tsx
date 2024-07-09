@@ -387,6 +387,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           workspaceSlug={workspaceSlug}
           isMobileSidebar={isMobileSidebar}
           setIsMobileSidebar={setIsMobileSidebar}
+          isNotificationEmbed={isNotificationEmbed}
+          embedRemoveCurrentNotification={embedRemoveCurrentNotification}
         />
       </div>
     </>
