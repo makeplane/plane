@@ -94,6 +94,7 @@ class Project(BaseModel):
     issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     inbox_view = models.BooleanField(default=False)
+    is_time_tracking_enabled = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate",

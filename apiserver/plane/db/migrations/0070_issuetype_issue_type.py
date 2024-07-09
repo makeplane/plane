@@ -50,7 +50,7 @@ def create_page_versions(apps, schema_editor):
                 description_html=page["description_html"],
                 description_binary=page["description_binary"],
                 description_stripped=page["description_stripped"],
-                ownned_by_id=page["owned_by_id"],
+                owned_by_id=page["owned_by_id"],
                 last_saved_at=page["updated_at"],
             )
             for page in Page.objects.values(
@@ -220,7 +220,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "ownned_by",
+                    "owned_by",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="page_versions",
@@ -260,6 +260,38 @@ class Migration(migrations.Migration):
                 "db_table": "page_versions",
                 "ordering": ("-created_at",),
             },
+        ),
+        migrations.AddField(
+            model_name="exporterhistory",
+            name="filters",
+            field=models.JSONField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name="exporterhistory",
+            name="name",
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+                null=True,
+                verbose_name="Exporter Name",
+            ),
+        ),
+        migrations.AddField(
+            model_name="exporterhistory",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("issue_exports", "Issue Exports"),
+                    ("issue_work_logs", "Issue Work Logs"),
+                ],
+                default="issue_exports",
+                max_length=50,
+            ),
+        ),
+        migrations.AddField(
+            model_name="project",
+            name="is_time_tracking_enabled",
+            field=models.BooleanField(default=False),
         ),
         migrations.AddField(
             model_name="project",
