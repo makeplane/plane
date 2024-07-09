@@ -137,7 +137,7 @@ class IssueCreateSerializer(BaseSerializer):
         default_assignee_id = self.context["default_assignee_id"]
 
         # Get Issue Type
-        issue_type = IssueType.objects.get(project_id=project_id)
+        issue_type = IssueType.objects.filter(project_id=project_id).first()
         # Create Issue
         issue = Issue.objects.create(
             **validated_data, project_id=project_id, type=issue_type

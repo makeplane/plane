@@ -143,7 +143,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             is_triage=True,
         )
         # Get the issue type
-        issue_type = IssueType.objects.get(project_id=project_id)
+        issue_type = IssueType.objects.filter(project_id=project_id).first()
 
         # create an issue
         issue = Issue.objects.create(
