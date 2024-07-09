@@ -38,35 +38,6 @@ def create_issue_types(apps, schema_editor):
     Issue.objects.bulk_update(bulk_issues, ["type_id"], batch_size=1000)
 
 
-def create_page_versions(apps, schema_editor):
-    Page = apps.get_model("db", "Page")
-    PageVersion = apps.get_model("db", "PageVersion")
-    # Create the page versions for all pages
-    PageVersion.objects.bulk_create(
-        [
-            PageVersion(
-                page_id=page["id"],
-                workspace_id=page["workspace_id"],
-                description_html=page["description_html"],
-                description_binary=page["description_binary"],
-                description_stripped=page["description_stripped"],
-                owned_by_id=page["owned_by_id"],
-                last_saved_at=page["updated_at"],
-            )
-            for page in Page.objects.values(
-                "id",
-                "workspace_id",
-                "description_html",
-                "description_binary",
-                "description_stripped",
-                "owned_by_id",
-                "updated_at",
-            )
-        ],
-        batch_size=1000,
-    )
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -303,5 +274,4 @@ class Migration(migrations.Migration):
             name="target_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
-        migrations.RunPython(create_page_versions),
     ]
