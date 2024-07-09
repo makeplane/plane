@@ -15,13 +15,20 @@ import { useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store"
 const WorkspaceDashboardPage = observer(() => {
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { currentSelectedNotification, notificationIdsByWorkspaceId, getNotifications } = useWorkspaceNotifications();
+  const {
+    currentSelectedNotificationId,
+    setCurrentSelectedNotificationId,
+    notificationLiteByNotificationId,
+    notificationIdsByWorkspaceId,
+    getNotifications,
+  } = useWorkspaceNotifications();
   const {
     membership: { fetchUserProjectInfo },
   } = useUser();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
-  const { workspace_slug, project_id, issue_id, is_inbox_issue } = currentSelectedNotification;
+  const { workspace_slug, project_id, issue_id, is_inbox_issue } =
+    notificationLiteByNotificationId(currentSelectedNotificationId);
 
   // fetch workspace notifications
   const notificationMutation =
@@ -65,11 +72,15 @@ const WorkspaceDashboardPage = observer(() => {
                 projectId={project_id}
                 inboxIssueId={issue_id}
                 isNotificationEmbed
+                embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
               />
             )}
           </>
         ) : (
-          <IssuePeekOverview embedIssue />
+          <IssuePeekOverview
+            embedIssue
+            embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
+          />
         )}
       </div>
     </>
