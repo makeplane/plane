@@ -261,5 +261,37 @@ class Migration(migrations.Migration):
                 "ordering": ("-created_at",),
             },
         ),
+        migrations.AddField(
+            model_name="exporterhistory",
+            name="filters",
+            field=models.JSONField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name="exporterhistory",
+            name="name",
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+                null=True,
+                verbose_name="Exporter Name",
+            ),
+        ),
+        migrations.AddField(
+            model_name="exporterhistory",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("issue_exports", "Issue Exports"),
+                    ("issue_work_logs", "Issue Work Logs"),
+                ],
+                default="issue_exports",
+                max_length=50,
+            ),
+        ),
+        migrations.AddField(
+            model_name="project",
+            name="is_time_tracking_enabled",
+            field=models.BooleanField(default=False),
+        ),
         migrations.RunPython(create_page_versions),
     ]
