@@ -89,6 +89,10 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
 
     const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
 
+    if (_filters.displayFilters) {
+
+      _filters.displayFilters.sub_issue = true
+    }
     return _filters;
   }
 
