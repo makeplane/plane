@@ -35,7 +35,7 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
     return <div className="absolute right-3.5 top-2 h-2 w-2 rounded-full bg-custom-primary-300" />;
 
   return (
-    <div className="text-[8px] ml-auto bg-custom-primary-100 text-white p-1 py-0.5 rounded-full">
+    <div className="ml-auto flex items-center text-center justify-center px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
       {`${isMentionsEnabled ? `@` : ``}${getNumberCount(totalNotifications)}`}
     </div>
   );
