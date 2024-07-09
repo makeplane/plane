@@ -1,2 +1,2 @@
 export * from "./estimate.service";
-export * from "ce/services/project/view.service";
+export * from "./view.service";

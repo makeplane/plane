@@ -7,7 +7,7 @@
     "paths": {
       "@/*": ["src/core/*"],
       "@/styles/*": ["src/styles/*"],
-      "@/plane-editor/*": ["src/ce/*"]
+      "@/plane-editor/*": ["src/ee/*"]
     }
   }
 }
