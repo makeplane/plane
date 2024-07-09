@@ -16,6 +16,7 @@ from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Inbox,
+    IssueType,
     InboxIssue,
     Issue,
     Project,
@@ -141,6 +142,12 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             color="#ff7700",
             is_triage=True,
         )
+        # Get the issue type
+        issue_type = (
+            IssueType.objects.filter(project_id=project_id)
+            .order_by("created_at")
+            .first()
+        )
 
         # create an issue
         issue = Issue.objects.create(
@@ -152,6 +159,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
             state=state,
+            type=issue_type,
         )
 
         # create an inbox issue

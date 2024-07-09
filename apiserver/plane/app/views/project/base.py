@@ -47,6 +47,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
+    IssueType,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
@@ -340,6 +341,13 @@ class ProjectViewSet(BaseViewSet):
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
                     .first()
+                )
+
+                # Create the issue type
+                IssueType.objects.create(
+                    name="Task",
+                    description="A task that needs to be done",
+                    project_id=project.id,
                 )
 
                 model_activity.delay(
