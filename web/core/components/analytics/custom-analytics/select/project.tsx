@@ -25,7 +25,7 @@ export const SelectProject: React.FC<Props> = observer((props) => {
       content: (
         <div className="flex items-center gap-2 truncate">
           <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
-          <span className="flex-grow truncate">{projectDetails?.name}</span>
+          <span className="flex-grow truncate">{projectDetails?.name.substring(0, 21)}{projectDetails?.name && projectDetails.name.length > 21 && '...'}</span>
         </div>
       ),
     };
@@ -39,9 +39,9 @@ export const SelectProject: React.FC<Props> = observer((props) => {
       label={
         value && value.length > 0
           ? projectIds
-              ?.filter((p) => value.includes(p))
-              .map((p) => getProjectById(p)?.name)
-              .join(", ")
+            ?.filter((p) => value.includes(p))
+            .map((p) => getProjectById(p)?.name)
+            .join(", ")
           : "All projects"
       }
       multiple
