@@ -261,5 +261,15 @@ class Migration(migrations.Migration):
                 "ordering": ("-created_at",),
             },
         ),
+        migrations.AddField(
+            model_name="project",
+            name="start_date",
+            field=models.DateTimeField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name="project",
+            name="target_date",
+            field=models.DateTimeField(blank=True, null=True),
+        ),
         migrations.RunPython(create_page_versions),
     ]
