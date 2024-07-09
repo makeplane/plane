@@ -520,8 +520,6 @@ class IssueViewSet(BaseViewSet):
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
 
-        print(current_instance, "current instance")
-
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
             issue, data=request.data, partial=True
