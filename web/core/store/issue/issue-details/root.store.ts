@@ -57,7 +57,7 @@ export interface IIssueDetail
   isArchiveIssueModalOpen: string | null;
   isRelationModalOpen: TIssueRelationModal | null;
   isSubIssuesModalOpen: string | null;
-  isDeleteAttachmentModalOpen: boolean;
+  attachmentDeleteModalId: string | null;
   // computed
   isAnyModalOpen: boolean;
   // helper actions
@@ -71,7 +71,7 @@ export interface IIssueDetail
   toggleArchiveIssueModal: (value: string | null) => void;
   toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: string | null) => void;
-  toggleDeleteAttachmentModal: (value:boolean) => void;
+  toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -96,7 +96,7 @@ export class IssueDetail implements IIssueDetail {
   isArchiveIssueModalOpen: string | null = null;
   isRelationModalOpen: TIssueRelationModal | null = null;
   isSubIssuesModalOpen: string | null = null;
-  isDeleteAttachmentModalOpen: boolean = false;
+  attachmentDeleteModalId: string | null = null;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -121,7 +121,7 @@ export class IssueDetail implements IIssueDetail {
       isArchiveIssueModalOpen: observable.ref,
       isRelationModalOpen: observable.ref,
       isSubIssuesModalOpen: observable.ref,
-      isDeleteAttachmentModalOpen: observable,
+      attachmentDeleteModalId: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -160,7 +160,7 @@ export class IssueDetail implements IIssueDetail {
       !!this.isArchiveIssueModalOpen ||
       !!this.isRelationModalOpen?.issueId ||
       !!this.isSubIssuesModalOpen ||
-      this.isDeleteAttachmentModalOpen
+      !!this.attachmentDeleteModalId
     );
   }
 
@@ -177,7 +177,7 @@ export class IssueDetail implements IIssueDetail {
   toggleRelationModal = (issueId: string | null, relationType: TIssueRelationTypes | null) =>
     (this.isRelationModalOpen = { issueId, relationType });
   toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
-  toggleDeleteAttachmentModal = (value: boolean) => (this.isDeleteAttachmentModalOpen = value);
+  toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
 
   // issue
   fetchIssue = async (
