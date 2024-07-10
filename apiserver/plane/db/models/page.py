@@ -281,6 +281,7 @@ class PageVersion(BaseModel):
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
+    description_json = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = "Page Version"

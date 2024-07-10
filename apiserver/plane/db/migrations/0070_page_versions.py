@@ -4,6 +4,67 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import uuid
+from apiserver.plane.db.backfills.backfill_0070_page_versions import (
+    backfill_issue_type_task,
+    backfill_page_versions_task,
+)
+
+CHUNK_SIZE = 100  #  Initial Delay in seconds
+INITIAL_DELAY = 30  # Initial delay in seconds
+INCREMENT_DELAY = 1  # Increment delay in seconds
+
+
+def backfill_issue_types(apps, schema_editor):
+    start = 0
+    end = CHUNK_SIZE
+
+    Project = apps.get_model("db", "Project")
+
+    total = Project.objects.count()
+    delay_increment = INITIAL_DELAY
+
+    while start < total:
+        projects = list(
+            Project.objects.values("id", "workspace_id")[start:end]
+        )
+        backfill_issue_type_task.apply_async(
+            (projects,), countdown=delay_increment
+        )
+        delay_increment += (
+            INCREMENT_DELAY  # Increment delay for the next batch
+        )
+        start += CHUNK_SIZE
+        end += CHUNK_SIZE
+
+
+def backfill_page_versions(apps, schema_editor):
+    start = 0
+    end = CHUNK_SIZE
+
+    Page = apps.get_model("db", "Page")
+
+    total = Page.objects.count()
+    delay_increment = INITIAL_DELAY
+
+    while start < total:
+        pages = list(
+            Page.objects.values(
+                "id",
+                "workspace_id",
+                "owned_by_id",
+                "description_binary",
+                "description_html",
+                "description_stripped",
+            )[start:end]
+        )
+        backfill_page_versions_task.apply_async(
+            (pages,), countdown=delay_increment
+        )
+        delay_increment += (
+            INCREMENT_DELAY  # Increment delay for the next batch
+        )
+        start += CHUNK_SIZE
+        end += CHUNK_SIZE
 
 
 class Migration(migrations.Migration):
@@ -148,6 +209,10 @@ class Migration(migrations.Migration):
                     models.TextField(blank=True, null=True),
                 ),
                 (
+                    "description_json",
+                    models.JSONField(blank=True, default=dict),
+                ),
+                (
                     "created_by",
                     models.ForeignKey(
                         null=True,
@@ -241,4 +306,6 @@ class Migration(migrations.Migration):
             name="target_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
+        migrations.RunPython(backfill_issue_types),
+        migrations.RunPython(backfill_page_versions),
     ]
