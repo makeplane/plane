@@ -5,7 +5,7 @@ from celery import shared_task
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import PageVersion, IssueType, Project, Issue
+from plane.db.models import PageVersion, IssueType, Issue
 
 
 @shared_task
