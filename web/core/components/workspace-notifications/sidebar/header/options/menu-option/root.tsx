@@ -2,13 +2,14 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { Check, CheckCheck, CheckCircle, Clock, MoreVertical } from "lucide-react";
+import { Check, CheckCheck, CheckCircle, Clock } from "lucide-react";
 import { TNotificationFilter } from "@plane/types";
 import { ArchiveIcon, PopoverMenu, Spinner } from "@plane/ui";
+// components
+import { NotificationMenuOptionItem } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 import { ENotificationLoader } from "@/constants/notification";
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 
@@ -16,7 +17,7 @@ type TNotificationHeaderMenuOption = {
   workspaceSlug: string;
 };
 
-type TPopoverMenuOptions = {
+export type TPopoverMenuOptions = {
   key: string;
   type: string;
   label?: string | undefined;
@@ -104,35 +105,10 @@ export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = o
   return (
     <PopoverMenu
       data={popoverMenuOptions}
-      button={
-        <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none">
-          <MoreVertical className="h-3 w-3" />
-        </div>
-      }
+      buttonClassName="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none"
       keyExtractor={(item: TPopoverMenuOptions) => item.key}
       panelClassName="p-0 py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1"
-      render={(item: TPopoverMenuOptions) => {
-        if (item.type === "menu-item") {
-          return (
-            <div
-              className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-              onClick={() => item.onClick && item.onClick()}
-            >
-              {item.prependIcon && item.prependIcon}
-              <div
-                className={cn(
-                  "whitespace-nowrap text-sm",
-                  item.isActive ? "text-custom-text-100" : "text-custom-text-200"
-                )}
-              >
-                {item?.label}
-              </div>
-              {item.appendIcon && <div className="ml-auto">{item.appendIcon}</div>}
-            </div>
-          );
-        }
-        return <div className="border-b border-custom-border-200" />;
-      }}
+      render={(item: TPopoverMenuOptions) => <NotificationMenuOptionItem {...item} />}
     />
   );
 });
