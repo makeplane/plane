@@ -114,7 +114,7 @@ export const SidebarWorkspaceMenu = observer(() => {
                           }
                         )}
                       >
-                        <div className="grow flex items-center gap-1.5">
+                        <div className={cn("grow flex items-center gap-1.5", { "justify-center": sidebarCollapsed })}>
                           <span className="flex-shrink-0 size-4 grid place-items-center">
                             <link.Icon
                               className={cn("size-4", {
@@ -124,9 +124,11 @@ export const SidebarWorkspaceMenu = observer(() => {
                           </span>
                           {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
                         </div>
-                        <div className="flex-shrink-0">
-                          {!sidebarCollapsed && link.key === "active-cycles" && <UpgradeBadge />}
-                        </div>
+                        {!sidebarCollapsed && link.key === "active-cycles" && (
+                          <div className="flex-shrink-0">
+                            <UpgradeBadge />
+                          </div>
+                        )}
                       </div>
                     </Tooltip>
                   </Link>
