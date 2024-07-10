@@ -84,7 +84,7 @@ export type TIssuesResponse = {
   total_pages: number;
   extra_stats: null;
   results: TIssueResponseResults;
-}
+};
 
 export type TBulkIssueProperties = Pick<
   TIssue,
@@ -100,3 +100,9 @@ export type TBulkOperationsPayload = {
   issue_ids: string[];
   properties: Partial<TBulkIssueProperties>;
 };
+
+export type TIssueDetailWidget =
+  | "sub-issues"
+  | "relations"
+  | "links"
+  | "attachments";
