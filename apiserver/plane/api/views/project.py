@@ -240,6 +240,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+
                 # Model activity
                 model_activity.delay(
                     model_name="project",

@@ -131,7 +131,10 @@ class IssueSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        issue = Issue.objects.create(
+            **validated_data,
+            project_id=project_id,
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -312,10 +315,14 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )

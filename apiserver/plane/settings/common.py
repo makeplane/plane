@@ -281,6 +281,8 @@ CELERY_IMPORTS = (
     "plane.license.bgtasks.version_check_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
+    # backfill tasks
+    "plane.db.backfills.backfill_0070_page_versions",
 )
 
 # Sentry Settings
