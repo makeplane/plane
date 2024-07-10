@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
 import {
-  DocumentEditorWithRef,
-  DocumentReadOnlyEditorWithRef,
+  CollaborativeDocumentEditorWithRef,
+  CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
@@ -135,7 +135,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           </div>
           {isContentEditable ? (
-            <DocumentEditorWithRef
+            <CollaborativeDocumentEditorWithRef
               id={pageId}
               fileHandler={{
                 cancel: fileService.cancelUpload,
@@ -162,7 +162,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
             />
           ) : (
-            <DocumentReadOnlyEditorWithRef
+            <CollaborativeDocumentReadOnlyEditorWithRef
               id={pageId}
               ref={readOnlyEditorRef}
               handleEditorReady={handleReadOnlyEditorReady}

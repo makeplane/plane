@@ -19,7 +19,7 @@ const DOCUMENT_EDITOR_EXTENSIONS = [
   ...DocumentEditorExtensionsWithoutProps(),
 ];
 
-export const updateDocument = async (
+export const updatePageDescription = async (
   params: URLSearchParams,
   pageId: string,
   updatedDescription: Uint8Array,
@@ -125,7 +125,6 @@ export const fetchPageDescriptionBinary = async (
         cookie,
       );
       if (binary) {
-        console.log("not found in db:", binary, binary instanceof Uint8Array);
         return binary;
       }
     }

@@ -4,9 +4,10 @@ import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
 import expressWs, { Application } from "express-ws";
 // page actions
-import { fetchPageDescriptionBinary, updateDocument } from "./page.js";
-// services
+import { fetchPageDescriptionBinary, updatePageDescription } from "./page.js";
+// types
 import { TDocumentTypes } from "./types/common.js";
+// helpers
 import { handleAuthentication } from "./authentication.js";
 
 const server = Server.configure({
@@ -14,6 +15,7 @@ const server = Server.configure({
     requestHeaders,
     requestParameters,
     connection,
+    // user id used as token for authentication
     token,
   }) => {
     // request headers
@@ -79,7 +81,7 @@ const server = Server.configure({
 
         return new Promise(async () => {
           if (documentType === "project_page") {
-            await updateDocument(params, pageId, state, cookie);
+            await updatePageDescription(params, pageId, state, cookie);
           }
         });
       },

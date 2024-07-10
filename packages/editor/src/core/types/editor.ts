@@ -50,7 +50,8 @@ export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
 }
 
-export interface IDocumentEditor extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+export interface ICollaborativeDocumentEditor
+  extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
@@ -73,12 +74,17 @@ export interface ILiteTextReadOnlyEditor extends IReadOnlyEditorProps {}
 
 export interface IRichTextReadOnlyEditor extends IReadOnlyEditorProps {}
 
-export interface IDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
+export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
   realtimeConfig: TRealtimeConfig;
   user: TUserDetails;
+}
+
+export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {
+  embedHandler: TEmbedConfig;
+  handleEditorReady?: (value: boolean) => void;
 }
 
 export type TUserDetails = {

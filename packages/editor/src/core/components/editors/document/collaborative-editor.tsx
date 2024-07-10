@@ -8,9 +8,9 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, IDocumentEditor } from "@/types";
+import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
-const DocumentEditor = (props: IDocumentEditor) => {
+const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
     containerClassName,
     editorClassName = "",
@@ -77,10 +77,12 @@ const DocumentEditor = (props: IDocumentEditor) => {
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-));
+const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditor>(
+  (props, ref) => (
+    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+  )
+);
 
-DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
+CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 
-export { DocumentEditorWithRef };
+export { CollaborativeDocumentEditorWithRef };
