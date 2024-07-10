@@ -1,11 +1,10 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCheck, CheckCircle, Clock, MoreVertical } from "lucide-react";
-import { Popover, Transition } from "@headlessui/react";
 import { TNotificationFilter } from "@plane/types";
-import { ArchiveIcon, Spinner } from "@plane/ui";
+import { ArchiveIcon, PopoverMenu, Spinner } from "@plane/ui";
 // constants
 import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 import { ENotificationLoader } from "@/constants/notification";
@@ -15,6 +14,16 @@ import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 
 type TNotificationHeaderMenuOption = {
   workspaceSlug: string;
+};
+
+type TPopoverMenuOptions = {
+  key: string;
+  type: string;
+  label?: string | undefined;
+  isActive?: boolean | undefined;
+  prependIcon?: ReactNode | undefined;
+  appendIcon?: ReactNode | undefined;
+  onClick?: (() => void) | undefined;
 };
 
 export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = observer((props) => {
@@ -38,119 +47,92 @@ export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = o
     }
   };
 
+  const popoverMenuOptions: TPopoverMenuOptions[] = [
+    {
+      key: "menu-mark-all-read",
+      type: "menu-item",
+      label: "Mark all as read",
+      isActive: true,
+      prependIcon: <CheckCheck className="h-3 w-3" />,
+      appendIcon: loader === ENotificationLoader.MARK_ALL_AS_READY ? <Spinner height="14px" width="14px" /> : undefined,
+      onClick: () => {
+        captureEvent(NOTIFICATIONS_READ);
+        handleMarkAllNotificationsAsRead();
+      },
+    },
+    {
+      key: "menu-divider",
+      type: "divider",
+    },
+    {
+      key: "menu-unread",
+      type: "menu-item",
+      label: "Show unread",
+      isActive: filters?.read,
+      prependIcon: <CheckCircle className="flex-shrink-0 h-3 w-3" />,
+      appendIcon: filters?.read ? <Check className="w-3 h-3" /> : undefined,
+      onClick: () => handleFilterChange("read", !filters?.read),
+    },
+    {
+      key: "menu-archived",
+      type: "menu-item",
+      label: "Show archived",
+      isActive: filters?.archived,
+      prependIcon: <ArchiveIcon className="flex-shrink-0 h-3 w-3" />,
+      appendIcon: filters?.archived ? <Check className="w-3 h-3" /> : undefined,
+      onClick: () =>
+        handleBulkFilterChange({
+          archived: !filters?.archived,
+          snoozed: false,
+        }),
+    },
+    {
+      key: "menu-snoozed",
+      type: "menu-item",
+      label: "Show snoozed",
+      isActive: filters?.snoozed,
+      prependIcon: <Clock className="flex-shrink-0 h-3 w-3" />,
+      appendIcon: filters?.snoozed ? <Check className="w-3 h-3" /> : undefined,
+      onClick: () =>
+        handleBulkFilterChange({
+          snoozed: !filters?.snoozed,
+          archived: false,
+        }),
+    },
+  ];
+
   return (
-    <Popover className="relative">
-      <Popover.Button
-        className={cn(
-          "flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none",
-          ({ open }: { open: boolean }) => (open ? "bg-custom-background-80" : "")
-        )}
-      >
-        <MoreVertical className="h-3 w-3" />
-      </Popover.Button>
-
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-200"
-        enterFrom="opacity-0 translate-y-1"
-        enterTo="opacity-100 translate-y-0"
-        leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 translate-y-0"
-        leaveTo="opacity-0 translate-y-1"
-      >
-        <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44 select-none">
-          <div className="py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
-            <div className="px-2">
+    <PopoverMenu
+      data={popoverMenuOptions}
+      button={
+        <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none">
+          <MoreVertical className="h-3 w-3" />
+        </div>
+      }
+      keyExtractor={(item: TPopoverMenuOptions) => item.key}
+      panelClassName="p-0 py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1"
+      render={(item: TPopoverMenuOptions) => {
+        if (item.type === "menu-item") {
+          return (
+            <div
+              className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+              onClick={() => item.onClick && item.onClick()}
+            >
+              {item.prependIcon && item.prependIcon}
               <div
-                className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() => {
-                  handleMarkAllNotificationsAsRead();
-                  captureEvent(NOTIFICATIONS_READ);
-                }}
-              >
-                <CheckCheck className="h-3 w-3" />
-                <div>Mark all as read</div>
-                {loader === ENotificationLoader.MARK_ALL_AS_READY && (
-                  <div className="ml-auto">
-                    <Spinner height="14px" width="14px" />
-                  </div>
+                className={cn(
+                  "whitespace-nowrap text-sm",
+                  item.isActive ? "text-custom-text-100" : "text-custom-text-200"
                 )}
+              >
+                {item?.label}
               </div>
+              {item.appendIcon && <div className="ml-auto">{item.appendIcon}</div>}
             </div>
-
-            <div className="border-b border-custom-border-200 " />
-
-            <div className="px-2">
-              <div
-                className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() => handleFilterChange("read", !filters?.read)}
-              >
-                <CheckCircle className="flex-shrink-0 h-3 w-3" />
-                <div
-                  className={cn("whitespace-nowrap", filters?.read ? "text-custom-text-100" : "text-custom-text-200")}
-                >
-                  Show unread
-                </div>
-                {filters?.read && (
-                  <div className="ml-auto">
-                    <Check className="w-3 h-3" />
-                  </div>
-                )}
-              </div>
-
-              <div
-                className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() =>
-                  handleBulkFilterChange({
-                    archived: !filters?.archived,
-                    snoozed: false,
-                  })
-                }
-              >
-                <ArchiveIcon className="flex-shrink-0 h-3 w-3" />
-                <div
-                  className={cn(
-                    "whitespace-nowrap",
-                    filters?.archived ? "text-custom-text-100" : "text-custom-text-200"
-                  )}
-                >
-                  Show Archived
-                </div>
-                {filters?.archived && (
-                  <div className="ml-auto">
-                    <Check className="w-3 h-3" />
-                  </div>
-                )}
-              </div>
-
-              <div
-                className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                onClick={() =>
-                  handleBulkFilterChange({
-                    snoozed: !filters?.snoozed,
-                    archived: false,
-                  })
-                }
-              >
-                <Clock className="flex-shrink-0 h-3 w-3" />
-                <div
-                  className={cn(
-                    "whitespace-nowrap",
-                    filters?.snoozed ? "text-custom-text-100" : "text-custom-text-200"
-                  )}
-                >
-                  Show Snoozed
-                </div>
-                {filters?.snoozed && (
-                  <div className="ml-auto">
-                    <Check className="w-3 h-3" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </Popover.Panel>
-      </Transition>
-    </Popover>
+          );
+        }
+        return <div className="border-b border-custom-border-200" />;
+      }}
+    />
   );
 });
