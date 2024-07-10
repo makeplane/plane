@@ -113,6 +113,19 @@ export const CommandPalette: FC = observer(() => {
     },
     [currentProjectRole]
   );
+  const canPerformIssueCreateActions = useCallback(
+    (showToast: boolean = true) => {
+      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserProjectRoles.MEMBER;
+      if (!isAllowed && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+
+      return isAllowed;
+    },
+    [currentWorkspaceRole]
+  );
   const canPerformWorkspaceCreateActions = useCallback(
     (showToast: boolean = true) => {
       const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
@@ -228,7 +241,8 @@ export const CommandPalette: FC = observer(() => {
         }
       } else if (!isAnyModalOpen) {
         setTrackElement("Shortcut key");
-        if (Object.keys(shortcutsList.global).includes(keyPressed)) shortcutsList.global[keyPressed].action();
+        if (Object.keys(shortcutsList.global).includes(keyPressed) && canPerformIssueCreateActions())
+          shortcutsList.global[keyPressed].action();
         // workspace authorized actions
         else if (
           Object.keys(shortcutsList.workspace).includes(keyPressed) &&
@@ -249,6 +263,7 @@ export const CommandPalette: FC = observer(() => {
       }
     },
     [
+      canPerformIssueCreateActions,
       canPerformProjectCreateActions,
       canPerformWorkspaceCreateActions,
       copyIssueUrlToClipboard,
