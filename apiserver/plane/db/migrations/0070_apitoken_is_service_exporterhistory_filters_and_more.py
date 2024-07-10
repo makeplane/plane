@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 choices=[
                     ("issue_exports", "Issue Exports"),
-                    ("issue_work_logs", "Issue Work Logs"),
+                    ("issue_worklogs", "Issue Worklogs"),
                 ],
                 default="issue_exports",
                 max_length=50,
