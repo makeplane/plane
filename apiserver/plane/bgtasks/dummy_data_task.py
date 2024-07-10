@@ -21,7 +21,6 @@ from plane.db.models import (
     Cycle,
     Module,
     Issue,
-    IssueType,
     IssueSequence,
     IssueAssignee,
     IssueLabel,
@@ -337,12 +336,6 @@ def create_issues(workspace, project, user_id, issue_count):
         65535 if largest_sort_order is None else largest_sort_order + 10000
     )
 
-    issue_type = IssueType.objects.create(
-        name="Task",
-        description="A task that needs to be completed.",
-        project=project,
-    )
-
     for _ in range(0, issue_count):
         start_date = [None, fake.date_this_year()][random.randint(0, 1)]
         end_date = (
@@ -371,7 +364,6 @@ def create_issues(workspace, project, user_id, issue_count):
                     random.randint(0, 4)
                 ],
                 created_by_id=creators[random.randint(0, len(creators) - 1)],
-                type=issue_type,
             )
         )
 

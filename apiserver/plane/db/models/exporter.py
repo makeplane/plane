@@ -26,7 +26,7 @@ class ExporterHistory(BaseModel):
         default="issue_exports",
         choices=(
             ("issue_exports", "Issue Exports"),
-            ("issue_work_logs", "Issue Work Logs"),
+            ("issue_worklogs", "Issue Worklogs"),
         ),
     )
     workspace = models.ForeignKey(
