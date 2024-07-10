@@ -8,6 +8,7 @@ import {
   TIssueLink,
   TIssueReaction,
   TIssueRelationTypes,
+  TIssueDetailWidget,
 } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { IIssueActivityStore, IssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
@@ -50,6 +51,8 @@ export interface IIssueDetail
     IIssueCommentReactionStoreActions {
   // observables
   peekIssue: TPeekIssue | undefined;
+  activeIssueDetailWidgets: TIssueDetailWidget[];
+  lastWidgetAction: TIssueDetailWidget | null;
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: string | null;
@@ -72,6 +75,9 @@ export interface IIssueDetail
   toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: string | null) => void;
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
+  setActiveIssueDetailWidgets: (state: TIssueDetailWidget[]) => void;
+  setLastWidgetAction: (action: TIssueDetailWidget) => void;
+  toggleActiveIssueDetailWidget: (state: TIssueDetailWidget) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -89,6 +95,8 @@ export interface IIssueDetail
 export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
+  activeIssueDetailWidgets: TIssueDetailWidget[] = ["sub-issues"];
+  lastWidgetAction: TIssueDetailWidget | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: string | null = null;
@@ -122,6 +130,8 @@ export class IssueDetail implements IIssueDetail {
       isRelationModalOpen: observable.ref,
       isSubIssuesModalOpen: observable.ref,
       attachmentDeleteModalId: observable.ref,
+      activeIssueDetailWidgets: observable.ref,
+      lastWidgetAction: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -134,6 +144,9 @@ export class IssueDetail implements IIssueDetail {
       toggleRelationModal: action,
       toggleSubIssuesModal: action,
       toggleDeleteAttachmentModal: action,
+      setActiveIssueDetailWidgets: action,
+      setLastWidgetAction: action,
+      toggleActiveIssueDetailWidget: action,
     });
 
     // store
@@ -178,6 +191,18 @@ export class IssueDetail implements IIssueDetail {
     (this.isRelationModalOpen = { issueId, relationType });
   toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
   toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
+  setActiveIssueDetailWidgets = (state: TIssueDetailWidget[]) => {
+    this.activeIssueDetailWidgets = state;
+    if (this.lastWidgetAction) this.lastWidgetAction = null;
+  };
+  setLastWidgetAction = (action: TIssueDetailWidget) => {
+    this.activeIssueDetailWidgets = [action];
+  };
+  toggleActiveIssueDetailWidget = (state: TIssueDetailWidget) => {
+    if (this.activeIssueDetailWidgets && this.activeIssueDetailWidgets.includes(state))
+      this.activeIssueDetailWidgets = this.activeIssueDetailWidgets.filter((s) => s !== state);
+    else this.activeIssueDetailWidgets = [state, ...this.activeIssueDetailWidgets];
+  };
 
   // issue
   fetchIssue = async (
