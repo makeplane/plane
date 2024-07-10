@@ -1,8 +1,8 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Q, UUIDField, Value
-from django.db.models.functions import Coalesce
+from django.db.models import Q, UUIDField, Value, F, Case, When, JSONField
+from django.db.models.functions import Coalesce, JSONObject
 
 # Module imports
 from plane.db.models import (
@@ -15,7 +15,6 @@ from plane.db.models import (
     State,
     WorkspaceMember,
 )
-from plane.space.serializer import IssuePublicSerializer
 
 def issue_queryset_grouper(queryset, group_by, sub_group_by):
 
@@ -75,8 +74,6 @@ def issue_on_results(issues, group_by, sub_group_by):
         "cycle_id",
         "created_by",
         "state__group",
-        "votes",
-        "issue_reactions",
     ]
 
     if group_by in FIELD_MAPPER:
@@ -89,7 +86,49 @@ def issue_on_results(issues, group_by, sub_group_by):
 
     required_fields.extend(original_list)
 
-    issues = IssuePublicSerializer(issues, many=True).data
+    issues = (
+        issues.annotate(
+            vote_items=ArrayAgg(
+                Case(
+                    When(
+                        votes__isnull=False,
+                        then=JSONObject(
+                            vote=F("votes__vote"),
+                            actor=F("votes__actor"),
+                        ),
+                    ),
+                    default=None,
+                    output_field=JSONField(),
+                ),
+                filter=Case(
+                    When(votes__isnull=False, then=True),
+                    default=False,
+                    output_field=JSONField(),
+                ),
+                distinct=True,
+            ),
+            reaction_items=ArrayAgg(
+                Case(
+                    When(
+                        issue_reactions__isnull=False,
+                        then=JSONObject(
+                            reaction=F("issue_reactions__reaction"),
+                            actor=F("issue_reactions__actor"),
+                        ),
+                    ),
+                    default=None,
+                    output_field=JSONField(),
+                ),
+                filter=Case(
+                    When(issue_reactions__isnull=False, then=True),
+                    default=False,
+                    output_field=JSONField(),
+                ),
+                distinct=True,
+            ),
+        )
+        .values(*required_fields, "vote_items", "reaction_items")
+    )
 
     return issues
 
