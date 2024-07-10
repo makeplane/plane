@@ -1,8 +1,11 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
+import { observer } from "mobx-react";
 import { Collapsible } from "@plane/ui";
 // components
 import { SubIssuesCollapsibleContent, SubIssuesCollapsibleTitle } from "@/components/issues/issue-detail-widgets";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -11,17 +14,22 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SubIssuesCollapsible: FC<Props> = (props) => {
+export const SubIssuesCollapsible: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
-  // state
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // store hooks
+  const { activeIssueDetailWidgets, toggleActiveIssueDetailWidget } = useIssueDetail();
+
+  // derived state
+  const isCollapsibleOpen = activeIssueDetailWidgets.includes("sub-issues");
+
   return (
     <Collapsible
-      isOpen={isOpen}
-      onToggle={() => setIsOpen((prev) => !prev)}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleActiveIssueDetailWidget("sub-issues")}
       title={
         <SubIssuesCollapsibleTitle
-          isOpen={isOpen}
+          isOpen={isCollapsibleOpen}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           parentIssueId={issueId}
@@ -37,4 +45,4 @@ export const SubIssuesCollapsible: FC<Props> = (props) => {
       />
     </Collapsible>
   );
-};
+});

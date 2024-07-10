@@ -23,7 +23,7 @@ export const IssueLinksActionButton: FC<Props> = observer((props) => {
   const [isIssueLinkModal, setIsIssueLinkModal] = useState(false);
 
   // store hooks
-  const { toggleIssueLinkModal: toggleIssueLinkModalStore } = useIssueDetail();
+  const { toggleIssueLinkModal: toggleIssueLinkModalStore, setLastWidgetAction } = useIssueDetail();
 
   // helper
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId);
@@ -43,11 +43,16 @@ export const IssueLinksActionButton: FC<Props> = observer((props) => {
     toggleIssueLinkModal(true);
   };
 
+  const handleOnClose = () => {
+    toggleIssueLinkModal(false);
+    setLastWidgetAction("links");
+  };
+
   return (
     <>
       <IssueLinkCreateUpdateModal
         isModalOpen={isIssueLinkModal}
-        handleModal={toggleIssueLinkModal}
+        handleOnClose={handleOnClose}
         linkOperations={handleLinkOperations}
       />
       <button type="button" onClick={handleOnClick} disabled={disabled}>
