@@ -4,38 +4,67 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import uuid
+from apiserver.plane.db.backfills.backfill_0070_page_versions import (
+    backfill_issue_type_task,
+    backfill_page_versions_task,
+)
+
+CHUNK_SIZE = 100  #  Initial Delay in seconds
+INITIAL_DELAY = 30  # Initial delay in seconds
+INCREMENT_DELAY = 1  # Increment delay in seconds
 
 
-def create_issue_types(apps, schema_editor):
+def backfill_issue_types(apps, schema_editor):
+    start = 0
+    end = CHUNK_SIZE
+
     Project = apps.get_model("db", "Project")
-    Issue = apps.get_model("db", "Issue")
-    IssueType = apps.get_model("db", "IssueType")
-    # Create the issue types for all projects
-    IssueType.objects.bulk_create(
-        [
-            IssueType(
-                name="Task",
-                description="A task that needs to be completed.",
-                project_id=project["id"],
-                workspace_id=project["workspace_id"],
-            )
-            for project in Project.objects.values("id", "workspace_id")
-        ],
-        batch_size=1000,
-    )
-    # Update the issue type for all existing issues
-    issue_types = {
-        str(issue_type["project_id"]): str(issue_type["id"])
-        for issue_type in IssueType.objects.values("id", "project_id")
-    }
-    # Update the issue type for all existing issues
-    bulk_issues = []
-    for issue in Issue.objects.all():
-        issue.type_id = issue_types[str(issue.project_id)]
-        bulk_issues.append(issue)
 
-    # Update the issue type for all existing issues
-    Issue.objects.bulk_update(bulk_issues, ["type_id"], batch_size=1000)
+    total = Project.objects.count()
+    delay_increment = INITIAL_DELAY
+
+    while start < total:
+        projects = list(
+            Project.objects.values("id", "workspace_id")[start:end]
+        )
+        backfill_issue_type_task.apply_async(
+            (projects,), countdown=delay_increment
+        )
+        delay_increment += (
+            INCREMENT_DELAY  # Increment delay for the next batch
+        )
+        start += CHUNK_SIZE
+        end += CHUNK_SIZE
+
+
+def backfill_page_versions(apps, schema_editor):
+    start = 0
+    end = CHUNK_SIZE
+
+    Page = apps.get_model("db", "Page")
+
+    total = Page.objects.count()
+    delay_increment = INITIAL_DELAY
+
+    while start < total:
+        pages = list(
+            Page.objects.values(
+                "id",
+                "workspace_id",
+                "owned_by_id",
+                "description_binary",
+                "description_html",
+                "description_stripped",
+            )[start:end]
+        )
+        backfill_page_versions_task.apply_async(
+            (pages,), countdown=delay_increment
+        )
+        delay_increment += (
+            INCREMENT_DELAY  # Increment delay for the next batch
+        )
+        start += CHUNK_SIZE
+        end += CHUNK_SIZE
 
 
 class Migration(migrations.Migration):
@@ -140,7 +169,6 @@ class Migration(migrations.Migration):
             name="is_service",
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(create_issue_types),
         migrations.CreateModel(
             name="PageVersion",
             fields=[
@@ -179,6 +207,10 @@ class Migration(migrations.Migration):
                 (
                     "description_stripped",
                     models.TextField(blank=True, null=True),
+                ),
+                (
+                    "description_json",
+                    models.JSONField(blank=True, default=dict),
                 ),
                 (
                     "created_by",
@@ -274,4 +306,6 @@ class Migration(migrations.Migration):
             name="target_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
+        migrations.RunPython(backfill_issue_types),
+        migrations.RunPython(backfill_page_versions),
     ]
