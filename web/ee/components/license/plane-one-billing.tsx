@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { getButtonStyling } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // assets
 import PlaneOneLogo from "@/public/plane-logos/plane-one.svg";
 
@@ -32,13 +34,17 @@ export const PlaneOneBilling: React.FC = () => (
             <h4 className="text-2xl mb-1 leading-6 font-bold"> Plane One</h4>
           </div>
           <div>
-            <Button
-              variant="neutral-primary"
-              className="cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
+            <a
+              href="https://prime.plane.so/"
+              target="_blank"
+              className={cn(
+                getButtonStyling("neutral-primary", "md"),
+                "cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
+              )}
             >
-              {"Manage your license "}
+              {"Manage your license"}
               <ExternalLink className="h-3 w-3" strokeWidth={2} />
-            </Button>
+            </a>
           </div>
         </div>
         <p className="mt-4 text-lg">Perpetual license: 1</p>
