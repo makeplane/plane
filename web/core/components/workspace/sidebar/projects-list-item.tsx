@@ -348,9 +348,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <div className="size-4 grid place-items-center flex-shrink-0">
                           <Logo logo={project.logo_props} size={16} />
                         </div>
-                        {!isSidebarCollapsed && (
-                          <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
-                        )}
+                        <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
                       </Disclosure.Button>
                     </Link>
                   </Tooltip>
