@@ -89,7 +89,6 @@ const server = Server.configure({
 const { app }: { app: Application } = expressWs(express());
 
 app.ws("/collaboration", (websocket, request) => {
-  console.log("params", request.params);
   server.handleConnection(websocket, request);
 });
 

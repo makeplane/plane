@@ -29,7 +29,7 @@ export const handleAuthentication = async (props: Props) => {
   if (documentType === "project_page") {
     if (!workspaceSlug || !projectId) {
       throw Error(
-        "Incomplete query params, workspaceSLug or projectId missing",
+        "Incomplete query params, workspaceSlug or projectId missing",
       );
     }
     // fetch current user's roles

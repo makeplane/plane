@@ -1,7 +1,10 @@
 import { getSchema } from "@tiptap/core";
-import { generateJSON } from "@tiptap/html";
+import { generateHTML, generateJSON } from "@tiptap/html";
 import * as Y from "yjs";
-import { prosemirrorJSONToYDoc } from "y-prosemirror";
+import {
+  prosemirrorJSONToYDoc,
+  yXmlFragmentToProseMirrorRootNode,
+} from "y-prosemirror";
 // editor
 import {
   CoreEditorExtensionsWithoutProps,
@@ -11,22 +14,38 @@ import {
 import { PageService } from "./services/page.service.js";
 const pageService = new PageService();
 
+const DOCUMENT_EDITOR_EXTENSIONS = [
+  ...CoreEditorExtensionsWithoutProps(),
+  ...DocumentEditorExtensionsWithoutProps(),
+];
+
 export const updateDocument = async (
   params: URLSearchParams,
   pageId: string,
-  descriptionBinary: Uint8Array,
+  updatedDescription: Uint8Array,
   cookie: string | undefined,
 ) => {
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
   // encode binary description data
-  const base64Data = Buffer.from(descriptionBinary).toString("base64");
+  const base64Data = Buffer.from(updatedDescription).toString("base64");
+  const yDoc = new Y.Doc();
+  Y.applyUpdate(yDoc, updatedDescription);
+  // convert to JSON
+  const type = yDoc.getXmlFragment("default");
+  const contentJSON = yXmlFragmentToProseMirrorRootNode(
+    type,
+    getSchema(DOCUMENT_EDITOR_EXTENSIONS),
+  ).toJSON();
+  // convert to HTML
+  const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
 
   try {
     const payload = {
       description_binary: base64Data,
-      description_html: "<p></p>",
+      description_html: contentHTML,
+      description: contentJSON,
     };
 
     await pageService.updateDescription(
@@ -57,18 +76,13 @@ const fetchDescriptionHTMLAndTransform = async (
       pageId,
       cookie,
     );
-    // document editor extensions
-    const extensions = [
-      ...CoreEditorExtensionsWithoutProps(),
-      ...DocumentEditorExtensionsWithoutProps(),
-    ];
     // convert already existing html to json
     const contentJSON = generateJSON(
       pageDetails.description_html ?? "<p></p>",
-      extensions,
+      DOCUMENT_EDITOR_EXTENSIONS,
     );
-    // get editor schema from the extensions array
-    const schema = getSchema(extensions);
+    // get editor schema from the DOCUMENT_EDITOR_EXTENSIONS array
+    const schema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
     // convert json to Y.Doc format
     const transformedData = prosemirrorJSONToYDoc(
       schema,
