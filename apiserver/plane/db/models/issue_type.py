@@ -11,8 +11,10 @@ class IssueType(WorkspaceBaseModel):
     logo_props = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
     is_default = models.BooleanField(default=True)
+    weight = models.PositiveIntegerField(default=0)
 
     class Meta:
+        unique_together = ["project", "name"]
         verbose_name = "Issue Type"
         verbose_name_plural = "Issue Types"
         db_table = "issue_types"
