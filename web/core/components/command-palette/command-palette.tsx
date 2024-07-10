@@ -115,7 +115,7 @@ export const CommandPalette: FC = observer(() => {
   );
   const canPerformIssueCreateActions = useCallback(
     (showToast: boolean = true) => {
-      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserProjectRoles.MEMBER;
+      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
       if (!isAllowed && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
