@@ -89,10 +89,6 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
 
     const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
 
-    if (_filters.displayFilters) {
-
-      _filters.displayFilters.sub_issue = true
-    }
     return _filters;
   }
 
@@ -137,7 +133,10 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
       );
 
       const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
-      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
+      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters({
+        ..._filters?.display_filters,
+        sub_issue: true,
+      });
       const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
       const kanbanFilters = {
         group_by: [],
