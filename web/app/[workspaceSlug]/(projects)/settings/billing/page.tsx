@@ -6,9 +6,9 @@ import { PageHead } from "@/components/core";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useInstance, useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 // plane web components
-import { PlaneCloudBilling, PlaneOneBilling } from "@/plane-web/components/license";
+import { BillingRoot } from "@/plane-web/components/workspace";
 
 const BillingSettingsPage = observer(() => {
   // store hooks
@@ -16,7 +16,6 @@ const BillingSettingsPage = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
-  const { instance } = useInstance();
   // derived values
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing & Plans` : undefined;
@@ -31,19 +30,10 @@ const BillingSettingsPage = observer(() => {
       </>
     );
 
-  if (instance?.product === "plane-one") {
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <PlaneOneBilling />
-      </>
-    );
-  }
-
   return (
     <>
       <PageHead title={pageTitle} />
-      <PlaneCloudBilling />
+      <BillingRoot />
     </>
   );
 });

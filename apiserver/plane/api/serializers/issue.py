@@ -11,7 +11,6 @@ from rest_framework import serializers
 # Module imports
 from plane.db.models import (
     Issue,
-    IssueType,
     IssueActivity,
     IssueAssignee,
     IssueAttachment,
@@ -132,15 +131,9 @@ class IssueSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        # Get the issue type from the project
-        issue_type = (
-            IssueType.objects.filter(project_id=project_id)
-            .order_by("created_at")
-            .first()
-        )
-
         issue = Issue.objects.create(
-            **validated_data, project_id=project_id, type=issue_type
+            **validated_data,
+            project_id=project_id,
         )
 
         # Issue Audit Users
