@@ -89,6 +89,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
 
   const handleExistingIssuesModalClose = () => {
     handleIssueCrudState("existing", null, null);
+    setLastWidgetAction("sub-issues");
     toggleSubIssuesModal(null);
   };
 
