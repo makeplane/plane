@@ -337,11 +337,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     disabled={!isSidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    <Link href={`/${workspaceSlug}/projects/${project.id}/issues`} className="flex-grow flex">
+                    <Link href={`/${workspaceSlug}/projects/${project.id}/issues`} className="flex-grow flex truncate">
                       <Disclosure.Button
                         as="button"
                         type="button"
-                        className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
+                        className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
                           "justify-center": isSidebarCollapsed,
                         })}
                       >
