@@ -283,29 +283,27 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          {workspaceSlug && workspaceProjectIds && workspaceProjectIds.length > 0 && (
-                            <Command.Group heading="Issue">
-                              <Command.Item
-                                onSelect={() => {
-                                  closePalette();
-                                  setTrackElement("Command Palette");
-                                  canPerformWorkspaceCreateActions
-                                    ? toggleCreateIssueModal(true)
-                                    : setToast({
-                                        type: TOAST_TYPE.ERROR,
-                                        title: "You don't have permission to perform this action.",
-                                      });
-                                }}
-                                className="focus:bg-custom-background-80"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <LayersIcon className="h-3.5 w-3.5" />
-                                  Create new issue
-                                </div>
-                                <kbd>C</kbd>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
+                          {workspaceSlug &&
+                            workspaceProjectIds &&
+                            workspaceProjectIds.length > 0 &&
+                            canPerformWorkspaceCreateActions && (
+                              <Command.Group heading="Issue">
+                                <Command.Item
+                                  onSelect={() => {
+                                    closePalette();
+                                    setTrackElement("Command Palette");
+                                    toggleCreateIssueModal(true);
+                                  }}
+                                  className="focus:bg-custom-background-80"
+                                >
+                                  <div className="flex items-center gap-2 text-custom-text-200">
+                                    <LayersIcon className="h-3.5 w-3.5" />
+                                    Create new issue
+                                  </div>
+                                  <kbd>C</kbd>
+                                </Command.Item>
+                              </Command.Group>
+                            )}
 
                           {workspaceSlug && (
                             <Command.Group heading="Project">
