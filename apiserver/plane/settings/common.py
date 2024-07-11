@@ -276,8 +276,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.api_logs_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
-    # backfill tasks
-    "plane.db.backfills.backfill_0070_page_versions",
 )
 
 # Sentry Settings
