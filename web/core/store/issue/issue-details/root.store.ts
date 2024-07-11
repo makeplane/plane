@@ -119,7 +119,7 @@ export class IssueDetail implements IIssueDetail {
       issue: undefined,
     },
   };
-  openWidgets: TIssueDetailWidget[] = ["sub-issues"];
+  openWidgets: TIssueDetailWidget[] = ["sub-issues", "links", "attachments"];
   lastWidgetAction: TIssueDetailWidget | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
