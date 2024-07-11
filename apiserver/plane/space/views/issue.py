@@ -107,6 +107,8 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         ).distinct()
 
+        issue_queryset = issue_queryset.filter(**filters)
+
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,
