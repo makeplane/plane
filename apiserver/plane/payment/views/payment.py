@@ -34,7 +34,11 @@ class PaymentLinkEndpoint(BaseAPIView):
                     user_id=F("member__id"),
                     user_role=F("role"),
                 )
-                .values("user_email", "user_id")
+                .values(
+                    "user_email",
+                    "user_id",
+                    "user_role",
+                )
             )
 
             for member in workspace_members:
@@ -119,6 +123,11 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
                     user_email=F("member__email"),
                     user_id=F("member__id"),
                     user_role=F("role"),
+                )
+                .values(
+                    "user_email",
+                    "user_id",
+                    "user_role",
                 )
                 .values("user_email", "user_id")
             )
