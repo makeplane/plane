@@ -10,7 +10,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { LayersIcon, Loader, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
 import {
   CommandPaletteThemeActions,
   ChangeIssueAssignee,
@@ -25,7 +25,7 @@ import {
 import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -46,6 +46,7 @@ export const CommandModal: React.FC = observer(() => {
   // hooks
   const { getProjectById, workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
+  const { canPerformWorkspaceCreateActions } = useUser();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -288,7 +289,12 @@ export const CommandModal: React.FC = observer(() => {
                                 onSelect={() => {
                                   closePalette();
                                   setTrackElement("Command Palette");
-                                  toggleCreateIssueModal(true);
+                                  canPerformWorkspaceCreateActions
+                                    ? toggleCreateIssueModal(true)
+                                    : setToast({
+                                        type: TOAST_TYPE.ERROR,
+                                        title: "You don't have permission to perform this action.",
+                                      });
                                 }}
                                 className="focus:bg-custom-background-80"
                               >
