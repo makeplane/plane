@@ -11,7 +11,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import {
@@ -161,9 +161,7 @@ export const ProjectIssuesHeader = observer(() => {
                 tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
                 position="bottom"
               >
-                <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                  {issuesCount}
-                </span>
+                <CountChip count={issuesCount} />
               </Tooltip>
             ) : null}
           </div>

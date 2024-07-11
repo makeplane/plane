@@ -152,7 +152,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
-        storeType={EIssuesStoreType.PROJECT}
+        storeType={EIssuesStoreType.GLOBAL}
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu

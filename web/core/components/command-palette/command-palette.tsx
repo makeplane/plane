@@ -17,14 +17,14 @@ import { CreateProjectModal } from "@/components/project";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { useEventTracker, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { IssueService } from "@/services/issue";
@@ -49,7 +49,7 @@ export const CommandPalette: FC = observer(() => {
   } = useUser();
   const {
     issues: { removeIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssuesStore();
   const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
@@ -71,7 +71,6 @@ export const CommandPalette: FC = observer(() => {
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
     isAnyModalOpen,
-    createIssueStoreType,
   } = useCommandPalette();
 
   const { data: issueDetails } = useSWR(
@@ -317,7 +316,6 @@ export const CommandPalette: FC = observer(() => {
         isOpen={isCreateIssueModalOpen}
         onClose={() => toggleCreateIssueModal(false)}
         data={cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_ids: [moduleId.toString()] } : undefined}
-        storeType={createIssueStoreType}
         isDraft={isDraftIssue}
       />
 

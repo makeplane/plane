@@ -342,6 +342,7 @@ class ProjectViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Create the model activity
                 model_activity.delay(
                     model_name="project",
                     model_id=str(project.id),

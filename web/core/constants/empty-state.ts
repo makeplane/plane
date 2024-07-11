@@ -80,6 +80,7 @@ export enum EmptyStateType {
   ISSUE_RELATION_EMPTY_STATE = "issue-relation-empty-state",
   ISSUE_COMMENT_EMPTY_STATE = "issue-comment-empty-state",
 
+  NOTIFICATION_DETAIL_EMPTY_STATE = "notification-detail-empty-state",
   NOTIFICATION_ALL_EMPTY_STATE = "notification-all-empty-state",
   NOTIFICATION_MENTIONS_EMPTY_STATE = "notification-mentions-empty-state",
   NOTIFICATION_MY_ISSUE_EMPTY_STATE = "notification-my-issues-empty-state",
@@ -595,6 +596,11 @@ const emptyStateDetails = {
     path: "/empty-state/search/comments",
   },
 
+  [EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE]: {
+    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+    title: "Select to view details.",
+    path: "/empty-state/inbox/issue-detail",
+  },
   [EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE]: {
     key: EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE,
     title: "No issues assigned",

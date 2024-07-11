@@ -22,8 +22,6 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
   return (
     <div className="flex items-center flex-wrap gap-2">
       <SubIssuesActionButton
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
         issueId={issueId}
         disabled={disabled}
         customButton={
@@ -34,8 +32,6 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
         }
       />
       <RelationActionButton
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
         issueId={issueId}
         customButton={
           <IssueDetailWidgetButton
@@ -45,9 +41,6 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
         }
       />
       <IssueLinksActionButton
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
         customButton={
           <IssueDetailWidgetButton
             title="Add Links"
