@@ -23,7 +23,8 @@ export const RelationActionButton: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, customButton, issueId, disabled = false } = props;
   // state
   const [relationKey, setRelationKey] = useState<TIssueRelationTypes | null>(null);
-  const { createRelation, isRelationModalOpen, toggleRelationModal } = useIssueDetail();
+  // store hooks
+  const { createRelation, isRelationModalOpen, toggleRelationModal, setLastWidgetAction } = useIssueDetail();
 
   // handlers
   const handleOnClick = (relationKey: TIssueRelationTypes) => {
@@ -57,6 +58,7 @@ export const RelationActionButton: FC<Props> = observer((props) => {
   const handleOnClose = () => {
     setRelationKey(null);
     toggleRelationModal(null, null);
+    setLastWidgetAction("relations");
   };
 
   // button element

@@ -47,6 +47,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
     toggleCreateIssueModal,
     isSubIssuesModalOpen,
     toggleSubIssuesModal,
+    setLastWidgetAction,
   } = useIssueDetail();
   const { setTrackElement } = useEventTracker();
 
@@ -88,6 +89,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
 
   const handleExistingIssuesModalClose = () => {
     handleIssueCrudState("existing", null, null);
+    setLastWidgetAction("sub-issues");
     toggleSubIssuesModal(null);
   };
 
@@ -102,6 +104,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   const handleCreateUpdateModalClose = () => {
     handleIssueCrudState("create", null, null);
     toggleCreateIssueModal(false);
+    setLastWidgetAction("sub-issues");
   };
 
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
