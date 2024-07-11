@@ -38,7 +38,7 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
 
   return (
     <div className="ml-auto">
-      <CountChip count={`${isMentionsEnabled ? `@` : ``}${getNumberCount(totalNotifications)}`} />
+      <CountChip count={`${isMentionsEnabled ? `@ ` : ``}${getNumberCount(totalNotifications)}`} />
     </div>
   );
 });
