@@ -30,7 +30,9 @@ class PaymentLinkEndpoint(BaseAPIView):
                     workspace__slug=slug, is_active=True, member__is_bot=False
                 )
                 .annotate(
-                    user_email=F("member__email"), user_id=F("member__id")
+                    user_email=F("member__email"),
+                    user_id=F("member__id"),
+                    user_role=F("role"),
                 )
                 .values("user_email", "user_id")
             )
@@ -114,7 +116,9 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
                     workspace__slug=slug, is_active=True, member__is_bot=False
                 )
                 .annotate(
-                    user_email=F("member__email"), user_id=F("member__id")
+                    user_email=F("member__email"),
+                    user_id=F("member__id"),
+                    user_role=F("role"),
                 )
                 .values("user_email", "user_id")
             )

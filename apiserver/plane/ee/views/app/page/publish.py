@@ -10,6 +10,8 @@ from plane.ee.permissions import (
 )
 from plane.db.models import DeployBoard, Workspace, Page
 from plane.app.serializers import DeployBoardSerializer
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class ProjectPagePublishEndpoint(BaseAPIView):
@@ -18,6 +20,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         ProjectMemberPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def post(self, request, slug, project_id, page_id):
         workspace = Workspace.objects.get(slug=slug)
         # Fetch the page
@@ -62,6 +65,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def patch(self, request, slug, project_id, page_id):
         # Get the deploy board
         deploy_board = DeployBoard.objects.get(
@@ -96,6 +100,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def get(self, request, slug, project_id, page_id):
         # Get the deploy board
         deploy_board = DeployBoard.objects.get(
@@ -123,6 +128,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         WorkSpaceAdminPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def post(self, request, slug, page_id):
         workspace = Workspace.objects.get(slug=slug)
         # Fetch the page
@@ -165,6 +171,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def patch(self, request, slug, page_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=page_id, entity_name="page", workspace__slug=slug
@@ -194,6 +201,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def get(self, request, slug, page_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=page_id, entity_name="page", workspace__slug=slug

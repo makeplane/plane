@@ -2,8 +2,10 @@
 import csv
 import io
 from datetime import date
-
+import requests
 from dateutil.relativedelta import relativedelta
+
+# Django imports
 from django.db import IntegrityError
 from django.db.models import (
     Count,
@@ -15,8 +17,6 @@ from django.db.models import (
 )
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
-
-# Django imports
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -49,6 +49,7 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.payment.bgtasks.member_sync_task import member_sync_task
+from django.conf import settings
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -167,6 +168,33 @@ class WorkSpaceViewSet(BaseViewSet):
         path="/api/users/me/settings/", multiple=True, user=False
     )
     def destroy(self, request, *args, **kwargs):
+        # Get the workspace
+        workspace = self.get_object()
+
+        # Fetch the workspace subcription
+        if settings.PAYMENT_SERVER_BASE_URL:
+            # Make a cancel request to the payment server
+            response = requests.post(
+                f"{settings.PAYMENT_SERVER_BASE_URL}/api/subscriptions/check/",
+                headers={
+                    "content-type": "application/json",
+                    "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                },
+                json={"workspace_id": str(workspace.id)},
+            )
+            # Check if the response is successful
+            response.raise_for_status()
+            # Return the response
+            response = response.json()
+            # Check if the response contains the product key
+            if response.get("subscription_exists"):
+                return Response(
+                    {"error": "workspace has active subscription"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                # Delete the workspace
+                return super().destroy(request, *args, **kwargs)
         return super().destroy(request, *args, **kwargs)
 
 

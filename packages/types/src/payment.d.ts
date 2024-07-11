@@ -19,5 +19,5 @@ export type IPaymentProduct = {
 
 export type IWorkspaceProductSubscription = {
   product: TProductSubscriptionType;
-  expiry_date: string | null;
+  current_period_end_date: string | null;
 };

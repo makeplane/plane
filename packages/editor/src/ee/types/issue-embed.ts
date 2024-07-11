@@ -10,7 +10,7 @@ export type TReadOnlyEmbedConfig = {
 };
 
 export type TIssueEmbedConfig = {
-  searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>;
+  searchCallback?: (searchQuery: string) => Promise<TEmbedItem[]>;
   widgetCallback: ({
     issueId,
     projectId,

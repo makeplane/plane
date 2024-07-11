@@ -27,17 +27,40 @@ class ProductEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-                count = WorkspaceMember.objects.filter(
-                    workspace__slug=slug
+                # Get all the paid users in the workspace
+                paid_count = WorkspaceMember.objects.filter(
+                    workspace__slug=slug,
+                    is_active=True,
+                    member__is_bot=False,
+                    role__gt=10,
                 ).count()
+
+                # Get all the viewers and guests in the workspace
+                free_count = WorkspaceMember.objects.filter(
+                    workspace__slug=slug,
+                    is_active=True,
+                    member__is_bot=False,
+                    role__lte=10,
+                ).count()
+
+                # If paid users are currently the pay workspace count
+                workspace_count = paid_count
+
+                # If free users are more than 5 times the paid users, then workspace count is free users - 5 * paid users
+                if free_count > 5 * paid_count:
+                    workspace_count = free_count - 5 * paid_count
+
+                # Fetch the products from the payment server
                 response = requests.get(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/?quantity={count}",
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/?quantity={workspace_count}",
                     headers={
                         "content-type": "application/json",
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                     },
                 )
+                # Check if the response is successful
                 response.raise_for_status()
+                # Convert the response to json
                 response = response.json()
                 return Response(response, status=status.HTTP_200_OK)
             else:
@@ -96,7 +119,12 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
                 role=20,
             )
             .annotate(uuid_str=Cast("workspace_id", CharField()))
-            .values("uuid_str", "workspace__slug", "workspace__name", "workspace__logo")
+            .values(
+                "uuid_str",
+                "workspace__slug",
+                "workspace__name",
+                "workspace__logo",
+            )
         )
 
         workspaces = [
