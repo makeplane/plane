@@ -27,15 +27,7 @@ export const SubIssuesCollapsible: FC<Props> = observer((props) => {
     <Collapsible
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleActiveIssueDetailWidget("sub-issues")}
-      title={
-        <SubIssuesCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          parentIssueId={issueId}
-          disabled={disabled}
-        />
-      }
+      title={<SubIssuesCollapsibleTitle isOpen={isCollapsibleOpen} parentIssueId={issueId} disabled={disabled} />}
     >
       <SubIssuesCollapsibleContent
         workspaceSlug={workspaceSlug}

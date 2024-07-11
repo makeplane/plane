@@ -26,15 +26,7 @@ export const LinksCollapsible: FC<Props> = observer((props) => {
     <Collapsible
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleActiveIssueDetailWidget("links")}
-      title={
-        <IssueLinksCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
-      }
+      title={<IssueLinksCollapsibleTitle isOpen={isCollapsibleOpen} issueId={issueId} disabled={disabled} />}
     >
       <IssueLinksCollapsibleContent
         workspaceSlug={workspaceSlug}

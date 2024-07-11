@@ -26,15 +26,7 @@ export const RelationsCollapsible: FC<Props> = observer((props) => {
     <Collapsible
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleActiveIssueDetailWidget("relations")}
-      title={
-        <RelationsCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
-      }
+      title={<RelationsCollapsibleTitle isOpen={isCollapsibleOpen} issueId={issueId} disabled={disabled} />}
     >
       <RelationsCollapsibleContent
         workspaceSlug={workspaceSlug}
