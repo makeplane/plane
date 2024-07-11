@@ -9,18 +9,17 @@ import { IssueBlockDueDate, IssueBlockPriority, IssueBlockState } from "@/compon
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, usePublish } from "@/hooks/store";
+import { useIssue, useIssueDetails, usePublish } from "@/hooks/store";
 // interfaces
-import { IIssue } from "@/types/issue";
 
 type Props = {
   anchor: string;
-  issue: IIssue;
-  params: any;
+  issueId: string;
 };
 
 export const IssueKanBanBlock: FC<Props> = observer((props) => {
-  const { anchor, issue } = props;
+  const { anchor, issueId } = props;
+  const { getIssueById } = useIssue();
   const searchParams = useSearchParams();
   // query params
   const board = searchParams.get("board");
@@ -31,11 +30,15 @@ export const IssueKanBanBlock: FC<Props> = observer((props) => {
   const { project_details } = usePublish(anchor);
   const { setPeekId } = useIssueDetails();
 
-  const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
+  const { queryParam } = queryParamGenerator({ board, peekId: issueId, priority, state, labels });
 
   const handleBlockClick = () => {
-    setPeekId(issue.id);
+    setPeekId(issueId);
   };
+
+  const issue = getIssueById(issueId);
+
+  if (!issue) return <></>;
 
   return (
     <Link
@@ -61,15 +64,15 @@ export const IssueKanBanBlock: FC<Props> = observer((props) => {
           </div>
         )}
         {/* state */}
-        {issue?.state_detail && (
+        {issue?.state_id && (
           <div className="flex-shrink-0">
-            <IssueBlockState state={issue?.state_detail} />
+            <IssueBlockState stateId={issue?.state_id} />
           </div>
         )}
         {/* due date */}
         {issue?.target_date && (
           <div className="flex-shrink-0">
-            <IssueBlockDueDate due_date={issue?.target_date} group={issue?.state_detail?.group} />
+            <IssueBlockDueDate due_date={issue?.target_date} stateId={issue?.state_id ?? undefined} />
           </div>
         )}
       </div>
