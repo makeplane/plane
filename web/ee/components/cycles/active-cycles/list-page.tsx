@@ -5,6 +5,7 @@ import { Spinner } from "@plane/ui";
 // components
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 // plane web components
+import { WorkspaceActiveCyclesUpgrade } from "@/plane-web/components/active-cycles/";
 import { ActiveCycleInfoCard } from "@/plane-web/components/cycles/active-cycles";
 // constants
 // services
@@ -24,7 +25,7 @@ export const ActiveCyclesListPage: FC<ActiveCyclesListPageProps> = (props) => {
   const { workspaceSlug, cursor, perPage, updateTotalPages, updateResultsCount } = props;
 
   // fetching active cycles in workspace
-  const { data: workspaceActiveCycles } = useSWR(
+  const { data: workspaceActiveCycles, error } = useSWR(
     workspaceSlug && cursor ? WORKSPACE_ACTIVE_CYCLES_LIST(workspaceSlug as string, cursor, `${perPage}`) : null,
     workspaceSlug && cursor ? () => cycleService.workspaceActiveCycles(workspaceSlug.toString(), cursor, perPage) : null
   );
@@ -35,6 +36,11 @@ export const ActiveCyclesListPage: FC<ActiveCyclesListPageProps> = (props) => {
       updateResultsCount(workspaceActiveCycles.results.length);
     }
   }, [updateTotalPages, updateResultsCount, workspaceActiveCycles]);
+
+  if (error) {
+    if (error.error_code === 1999) return <WorkspaceActiveCyclesUpgrade />;
+    else throw Error(error.error);
+  }
 
   if (!workspaceActiveCycles) {
     return (

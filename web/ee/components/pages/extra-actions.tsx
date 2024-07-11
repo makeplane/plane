@@ -11,6 +11,7 @@ import { usePage } from "@/hooks/store";
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web hooks
 import { usePublishPage } from "@/plane-web/hooks/store";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 export const PageDetailsHeaderExtraActions = observer(() => {
   // states
@@ -21,11 +22,14 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   const { anchor, isCurrentUserOwner } = usePage(pageId.toString());
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
+  const isPagePublishEnabled = useFlag("PAGE_PUBLISH");
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
 
   const publishLink = `${SPACE_BASE_URL}/pages/${anchor}`;
+
+  if (!isPagePublishEnabled) return null;
 
   return (
     <>

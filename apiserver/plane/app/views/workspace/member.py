@@ -146,6 +146,8 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            # Sync workspace members
+            member_sync_task.delay(slug)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

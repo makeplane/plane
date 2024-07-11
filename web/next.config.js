@@ -81,6 +81,15 @@ const nextConfig = {
         destination: `${GOD_MODE_BASE_URL}/:path*`,
       });
     }
+
+    if (process.env.NEXT_PUBLIC_FEATURE_FLAG_SERVER_BASE_URL) {
+      const FEATURE_FLAG_SERVER_BASE_URL = process.env.NEXT_PUBLIC_FEATURE_FLAG_SERVER_BASE_URL;
+      rewrites.push({
+        source: "/flags/",
+        destination: `${FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/`,
+      });
+    }
+
     return rewrites;
   },
 };

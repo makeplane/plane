@@ -31,6 +31,8 @@ from plane.db.models import (
 from plane.ee.views.base import BaseViewSet
 
 from plane.bgtasks.page_transaction_task import page_transaction
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -90,6 +92,7 @@ class WorkspacePageViewSet(BaseViewSet):
             .distinct()
         )
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = WorkspacePageSerializer(
@@ -112,6 +115,7 @@ class WorkspacePageViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def partial_update(self, request, slug, pk):
         try:
             page = Page.objects.get(
@@ -175,6 +179,7 @@ class WorkspacePageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
         if page is None:
@@ -188,6 +193,7 @@ class WorkspacePageViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def lock(self, request, slug, pk):
         page = Page.objects.filter(
             pk=pk,
@@ -198,6 +204,7 @@ class WorkspacePageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def unlock(self, request, slug, pk):
         page = Page.objects.filter(
             pk=pk,
@@ -209,11 +216,13 @@ class WorkspacePageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def list(self, request, slug):
         queryset = self.get_queryset()
         pages = WorkspacePageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def archive(self, request, slug, pk):
         page = Page.objects.get(
             pk=pk,
@@ -241,6 +250,7 @@ class WorkspacePageViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def unarchive(self, request, slug, pk):
         page = Page.objects.get(
             pk=pk,
@@ -270,6 +280,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def destroy(self, request, slug, pk):
         page = Page.objects.get(
             pk=pk,
@@ -310,6 +321,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         WorkspaceEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, pk):
         page = Page.objects.get(
             pk=pk,

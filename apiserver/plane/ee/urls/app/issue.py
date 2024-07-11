@@ -1,18 +1,18 @@
 from django.urls import path
 
-from plane.ee.views import (
+from plane.ee.views.app import (
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
-    BulkSubscribeIssuesEndpoint
+    BulkSubscribeIssuesEndpoint,
 )
 
 urlpatterns = [
-   path(
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
         BulkIssueOperationsEndpoint.as_view(),
         name="bulk-operations-issues",
     ),
-     path(
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
         BulkArchiveIssuesEndpoint.as_view(),
         name="bulk-archive-issues",

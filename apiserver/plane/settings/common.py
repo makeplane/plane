@@ -366,6 +366,14 @@ ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
-# Cloud server base url
+# payment server base url
 PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
 PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
+
+# feature flag server base urls
+FEATURE_FLAG_SERVER_BASE_URL = os.environ.get(
+    "FEATURE_FLAG_SERVER_BASE_URL", False
+)
+FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get(
+    "FEATURE_FLAG_SERVER_AUTH_TOKEN", ""
+)

@@ -39,13 +39,19 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
     },
   ];
 
-  const extensions = [SlashCommand(fileHandler.upload, slashCommandAdditionalOptions)];
+  let extensions = [];
+  // If searchCallback is provided, then add the slash command for issue embed. This check is required as the searchCallback is optional.
+  if (issueEmbedConfig?.searchCallback) {
+    extensions = [SlashCommand(fileHandler.upload, slashCommandAdditionalOptions)];
+  } else {
+    extensions = [SlashCommand(fileHandler.upload)];
+  }
 
-  if (issueEmbedConfig)
+  if (issueEmbedConfig && issueEmbedConfig.searchCallback)
     extensions.push(
       IssueEmbedSuggestions.configure({
         suggestion: {
-          render: () => IssueListRenderer(issueEmbedConfig?.searchCallback),
+          render: () => issueEmbedConfig.searchCallback && IssueListRenderer(issueEmbedConfig.searchCallback),
         },
       })
     );

@@ -13,6 +13,8 @@ from plane.db.models import (
     IssueView,
 )
 from plane.ee.views.base import BaseViewSet
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssueViewEEViewSet(BaseViewSet):
@@ -41,6 +43,7 @@ class IssueViewEEViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @check_feature_flag(FeatureFlag.VIEW_ACCESS_PRIVATE)
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 1)
 

@@ -5,13 +5,18 @@ import { TPageEmbedResponse, TPageEmbedType } from "@plane/types";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // plane web components
-import { IssueEmbedCard } from "@/plane-web/components/pages";
+import { IssueEmbedCard, IssueEmbedUpgradeCard } from "@/plane-web/components/pages";
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // services
 import { ProjectPageService } from "@/services/page";
 
 const pageService = new ProjectPageService();
 
 export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryType: TPageEmbedType = "issue") => {
+  // store hooks
+  const isIssueEmbedEnabled = useFlag("PAGE_ISSUE_EMBEDS");
+
   const fetchIssues = async (searchQuery: string): Promise<TEmbedItem[]> => {
     const response = await pageService.searchEmbed<TPageEmbedResponse[]>(workspaceSlug, projectId, {
       query_type: queryType,
@@ -52,6 +57,8 @@ export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryTyp
     return <IssueEmbedCard issueId={issueId} projectId={resolvedProjectId} workspaceSlug={resolvedWorkspaceSlug} />;
   };
 
+  const upgradeCallback = () => <IssueEmbedUpgradeCard />;
+
   const issueEmbedProps: TEmbedConfig["issue"] = {
     searchCallback,
     widgetCallback,
@@ -61,8 +68,23 @@ export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryTyp
     widgetCallback,
   };
 
+  const issueEmbedUpgradeProps: TEmbedConfig["issue"] = {
+    widgetCallback: upgradeCallback,
+  };
+
+  const issueEmbedReadOnlyUpgradeProps: TReadOnlyEmbedConfig["issue"] = {
+    widgetCallback: upgradeCallback,
+  };
+
+  if (isIssueEmbedEnabled) {
+    return {
+      issueEmbedProps,
+      issueEmbedReadOnlyProps,
+    };
+  }
+
   return {
-    issueEmbedProps,
-    issueEmbedReadOnlyProps,
+    issueEmbedProps: issueEmbedUpgradeProps,
+    issueEmbedReadOnlyProps: issueEmbedReadOnlyUpgradeProps,
   };
 };
