@@ -10,7 +10,7 @@ import { usePage } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web hooks
-import { usePublishPage } from "@/plane-web/hooks/store";
+import { usePublishPage, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 export const PageDetailsHeaderExtraActions = observer(() => {
@@ -22,6 +22,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   const { anchor, isCurrentUserOwner } = usePage(pageId.toString());
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
+  const { toggleProPlanModal } = useWorkspaceSubscription();
   const isPagePublishEnabled = useFlag("PAGE_PUBLISH");
   // derived values
   const isDeployed = !!anchor;
@@ -29,7 +30,12 @@ export const PageDetailsHeaderExtraActions = observer(() => {
 
   const publishLink = `${SPACE_BASE_URL}/pages/${anchor}`;
 
-  if (!isPagePublishEnabled) return null;
+  if (!isPagePublishEnabled)
+    return (
+      <Button variant="accent-primary" size="sm" onClick={() => toggleProPlanModal(true)}>
+        Upgrade to publish
+      </Button>
+    );
 
   return (
     <>
