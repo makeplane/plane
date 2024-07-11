@@ -44,7 +44,7 @@ export const SelectProject: React.FC<Props> = observer((props) => {
               .join(", ")
           : "All projects"
       }
-      optionsClassName={"w-52"}
+      optionsClassName={"w-48"}
       multiple
     />
   );
