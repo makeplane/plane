@@ -800,6 +800,8 @@ class CycleViewSet(BaseViewSet):
                 "sub_issues",
                 "logo_props",
                 # meta fields
+                "completed_estimate_points",
+                "total_estimate_points",
                 "is_favorite",
                 "total_issues",
                 "cancelled_issues",
