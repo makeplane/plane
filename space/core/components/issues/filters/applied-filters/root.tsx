@@ -64,14 +64,18 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
   );
 
   const handleRemoveAllFilters = () => {
-    initIssueFilters(anchor, {
-      display_filters: { layout: activeLayout || "list" },
-      filters: {
-        state: [],
-        priority: [],
-        labels: [],
+    initIssueFilters(
+      anchor,
+      {
+        display_filters: { layout: activeLayout || "list" },
+        filters: {
+          state: [],
+          priority: [],
+          labels: [],
+        },
       },
-    });
+      true
+    );
 
     router.push(`/issues/${anchor}?${`board=${activeLayout || "list"}`}`);
   };

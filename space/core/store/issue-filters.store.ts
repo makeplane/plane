@@ -30,7 +30,7 @@ export interface IIssueFilterStore {
   getAppliedFilters: (anchor: string) => TIssueQueryFiltersParams | undefined;
   // actions
   updateLayoutOptions: (layout: TIssueLayoutOptions) => void;
-  initIssueFilters: (anchor: string, filters: TIssueFilters) => void;
+  initIssueFilters: (anchor: string, filters: TIssueFilters, shouldFetchIssues?: boolean) => void;
   updateIssueFilters: <K extends keyof TIssueFilters>(
     anchor: string,
     filterKind: K,
@@ -124,9 +124,11 @@ export class IssueFilterStore implements IIssueFilterStore {
   // actions
   updateLayoutOptions = (options: TIssueLayoutOptions) => set(this, ["layoutOptions"], options);
 
-  initIssueFilters = async (anchor: string, initFilters: TIssueFilters) => {
+  initIssueFilters = async (anchor: string, initFilters: TIssueFilters, shouldFetchIssues: boolean = false) => {
     if (this.filters === undefined) runInAction(() => (this.filters = {}));
     if (this.filters && initFilters) set(this.filters, [anchor], initFilters);
+
+    if (shouldFetchIssues) await this.store.issue.fetchPublicIssuesWithExistingPagination(anchor, "mutation");
   };
 
   getFilterParams = computedFn(
