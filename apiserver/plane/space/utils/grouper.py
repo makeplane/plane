@@ -86,49 +86,58 @@ def issue_on_results(issues, group_by, sub_group_by):
 
     required_fields.extend(original_list)
 
-    issues = (
-        issues.annotate(
-            vote_items=ArrayAgg(
-                Case(
-                    When(
-                        votes__isnull=False,
-                        then=JSONObject(
-                            vote=F("votes__vote"),
-                            actor=F("votes__actor"),
+    issues = issues.annotate(
+        vote_items=ArrayAgg(
+            Case(
+                When(
+                    votes__isnull=False,
+                    then=JSONObject(
+                        vote=F("votes__vote"),
+                        actor_details=JSONObject(
+                            id=F("votes__actor__id"),
+                            first_name=F("votes__actor__first_name"),
+                            last_name=F("votes__actor__last_name"),
+                            avatar=F("votes__actor__avatar"),
+                            display_name=F("votes__actor__display_name"),
+                        )
+                    ),
+                ),
+                default=None,
+                output_field=JSONField(),
+            ),
+            filter=Case(
+                When(votes__isnull=False, then=True),
+                default=False,
+                output_field=JSONField(),
+            ),
+            distinct=True,
+        ),
+        reaction_items=ArrayAgg(
+            Case(
+                When(
+                    issue_reactions__isnull=False,
+                    then=JSONObject(
+                        reaction=F("issue_reactions__reaction"),
+                        actor_details=JSONObject(
+                            id=F("issue_reactions__actor__id"),
+                            first_name=F("issue_reactions__actor__first_name"),
+                            last_name=F("issue_reactions__actor__last_name"),
+                            avatar=F("issue_reactions__actor__avatar"),
+                            display_name=F("issue_reactions__actor__display_name"),
                         ),
                     ),
-                    default=None,
-                    output_field=JSONField(),
                 ),
-                filter=Case(
-                    When(votes__isnull=False, then=True),
-                    default=False,
-                    output_field=JSONField(),
-                ),
-                distinct=True,
+                default=None,
+                output_field=JSONField(),
             ),
-            reaction_items=ArrayAgg(
-                Case(
-                    When(
-                        issue_reactions__isnull=False,
-                        then=JSONObject(
-                            reaction=F("issue_reactions__reaction"),
-                            actor=F("issue_reactions__actor"),
-                        ),
-                    ),
-                    default=None,
-                    output_field=JSONField(),
-                ),
-                filter=Case(
-                    When(issue_reactions__isnull=False, then=True),
-                    default=False,
-                    output_field=JSONField(),
-                ),
-                distinct=True,
+            filter=Case(
+                When(issue_reactions__isnull=False, then=True),
+                default=False,
+                output_field=JSONField(),
             ),
-        )
-        .values(*required_fields, "vote_items", "reaction_items")
-    )
+            distinct=True,
+        ),
+    ).values(*required_fields, "vote_items", "reaction_items")
 
     return issues
 
