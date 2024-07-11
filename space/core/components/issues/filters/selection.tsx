@@ -4,8 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // types
-import { IStateLite } from "@plane/types";
-import { IIssueLabel, IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
+import { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
 // components
 import { FilterPriority, FilterState } from ".";
 
@@ -13,12 +12,10 @@ type Props = {
   filters: IIssueFilterOptions;
   handleFilters: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: TIssueFilterKeys[];
-  labels?: IIssueLabel[] | undefined;
-  states?: IStateLite[] | undefined;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFilters, layoutDisplayFiltersOptions, states } = props;
+  const { filters, handleFilters, layoutDisplayFiltersOptions } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -63,7 +60,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.state ?? null}
               handleUpdate={(val) => handleFilters("state", val)}
               searchQuery={filtersSearchQuery}
-              states={states}
             />
           </div>
         )}

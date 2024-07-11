@@ -94,6 +94,7 @@ class Project(BaseModel):
     issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     inbox_view = models.BooleanField(default=False)
+    is_time_tracking_enabled = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate",
@@ -115,6 +116,9 @@ class Project(BaseModel):
         related_name="default_state",
     )
     archived_at = models.DateTimeField(null=True)
+    # Project start and target date
+    start_date = models.DateTimeField(null=True, blank=True)
+    target_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         """Return name of the project"""

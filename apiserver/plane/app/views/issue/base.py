@@ -481,7 +481,38 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
-        issue = self.get_queryset().filter(pk=pk).first()
+        issue = (
+            self.get_queryset()
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .filter(pk=pk)
+            .first()
+        )
 
         if not issue:
             return Response(

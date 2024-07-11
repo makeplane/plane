@@ -13,6 +13,7 @@ import {
   Link,
   Trash2,
   PanelLeft,
+  MoveRight,
 } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 // components
@@ -44,6 +45,8 @@ type Props = {
   handleCopyIssueLink: () => void;
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
+  isNotificationEmbed: boolean;
+  embedRemoveCurrentNotification?: () => void;
 };
 
 export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
@@ -65,6 +68,8 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     handleCopyIssueLink,
     isMobileSidebar,
     setIsMobileSidebar,
+    isNotificationEmbed,
+    embedRemoveCurrentNotification,
   } = props;
   const router = useAppRouter();
   const issue = inboxIssue?.issue;
@@ -76,6 +81,11 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
 
   return (
     <div className="h-12 relative flex border-custom-border-200 w-full items-center gap-2 px-4">
+      {isNotificationEmbed && (
+        <button onClick={embedRemoveCurrentNotification}>
+          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+        </button>
+      )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
         className={cn(

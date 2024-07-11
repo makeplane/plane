@@ -1,9 +1,11 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { ALL_ISSUES } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
-import { ALL_ISSUES, EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssues, useUser } from "@/hooks/store";

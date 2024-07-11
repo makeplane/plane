@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { ALL_ISSUES } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // hooks
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
 import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
 //constants
-import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks
@@ -21,6 +23,7 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
+  isCompletedCycle?: boolean;
 }
 
 type GanttStoreType =
@@ -30,7 +33,7 @@ type GanttStoreType =
   | EIssuesStoreType.PROJECT_VIEW;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId } = props;
+  const { viewId, isCompletedCycle = false } = props;
   // router
   const { workspaceSlug } = useParams();
 
@@ -84,6 +87,11 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
+  const quickAdd =
+    enableIssueCreation && isAllowed && !isCompletedCycle ? (
+      <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} />
+    ) : undefined;
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
       <div className="h-full w-full">
@@ -102,9 +110,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
           enableSelection={isBulkOperationsEnabled && isAllowed}
-          quickAdd={
-            enableIssueCreation && isAllowed ? <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} /> : undefined
-          }
+          quickAdd={quickAdd}
           loadMoreBlocks={loadMoreIssues}
           canLoadMoreBlocks={nextPageResults}
           showAllBlocks

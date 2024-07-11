@@ -7,6 +7,7 @@ from plane.app.views import (
     PageLogEndpoint,
     SubPagesEndpoint,
     PagesDescriptionViewSet,
+    PageVersionEndpoint,
 )
 
 
@@ -89,5 +90,15 @@ urlpatterns = [
             }
         ),
         name="page-description",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/",
+        PageVersionEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/<uuid:pk>/",
+        PageVersionEndpoint.as_view(),
+        name="page-versions",
     ),
 ]
