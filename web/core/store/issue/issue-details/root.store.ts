@@ -38,6 +38,13 @@ export type TIssueRelationModal = {
   relationType: TIssueRelationTypes | null;
 };
 
+export type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
+
+export type TIssueCrudOperationState = {
+  create: TIssueCrudState;
+  existing: TIssueCrudState;
+};
+
 export interface IIssueDetail
   extends IIssueStoreActions,
     IIssueReactionStoreActions,
@@ -51,6 +58,8 @@ export interface IIssueDetail
     IIssueCommentReactionStoreActions {
   // observables
   peekIssue: TPeekIssue | undefined;
+  relationKey: TIssueRelationTypes | null;
+  issueCrudOperationState: TIssueCrudOperationState;
   activeIssueDetailWidgets: TIssueDetailWidget[];
   lastWidgetAction: TIssueDetailWidget | null;
   isCreateIssueModalOpen: boolean;
@@ -78,6 +87,8 @@ export interface IIssueDetail
   setActiveIssueDetailWidgets: (state: TIssueDetailWidget[]) => void;
   setLastWidgetAction: (action: TIssueDetailWidget) => void;
   toggleActiveIssueDetailWidget: (state: TIssueDetailWidget) => void;
+  setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
+  setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -95,6 +106,19 @@ export interface IIssueDetail
 export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
+  relationKey: TIssueRelationTypes | null = null;
+  issueCrudOperationState: TIssueCrudOperationState = {
+    create: {
+      toggle: false,
+      parentIssueId: undefined,
+      issue: undefined,
+    },
+    existing: {
+      toggle: false,
+      parentIssueId: undefined,
+      issue: undefined,
+    },
+  };
   activeIssueDetailWidgets: TIssueDetailWidget[] = ["sub-issues"];
   lastWidgetAction: TIssueDetailWidget | null = null;
   isCreateIssueModalOpen: boolean = false;
@@ -122,6 +146,8 @@ export class IssueDetail implements IIssueDetail {
     makeObservable(this, {
       // observables
       peekIssue: observable,
+      relationKey: observable,
+      issueCrudOperationState: observable,
       isCreateIssueModalOpen: observable,
       isIssueLinkModalOpen: observable.ref,
       isParentIssueModalOpen: observable.ref,
@@ -147,6 +173,8 @@ export class IssueDetail implements IIssueDetail {
       setActiveIssueDetailWidgets: action,
       setLastWidgetAction: action,
       toggleActiveIssueDetailWidget: action,
+      setRelationKey: action,
+      setIssueCrudOperationState: action,
     });
 
     // store
@@ -181,6 +209,8 @@ export class IssueDetail implements IIssueDetail {
   getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
   // actions
+  setRelationKey = (relationKey: TIssueRelationTypes | null) => (this.relationKey = relationKey);
+  setIssueCrudOperationState = (state: TIssueCrudOperationState) => (this.issueCrudOperationState = state);
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
   toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
