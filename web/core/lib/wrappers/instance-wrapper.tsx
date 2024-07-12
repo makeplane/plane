@@ -18,6 +18,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
 
   const { isLoading: isInstanceSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
+    revalidateIfStale: false,
   });
 
   // loading state
