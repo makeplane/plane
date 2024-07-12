@@ -38,6 +38,8 @@ class FlagProvider(AbstractProvider):
                 response.raise_for_status()
                 # Get the value of the feature flag from the response
                 resp = response.json()
+                if resp.get("values"):
+                    return resp.get("values").get(feature_key, default_value)
                 return resp.get("value", default_value)
             # If the request fails, log the exception and return the default value
             except requests.exceptions.RequestException as e:
