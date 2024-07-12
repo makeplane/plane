@@ -21,8 +21,8 @@ COPY ./channel .
 # Compile TypeScript to JavaScript
 RUN npx tsc
 
-# Expose port 1234
-EXPOSE 1234
+# Expose port 3003
+EXPOSE 3003
 
 # Start the Node.js server
 CMD ["node", "dist/index.js"]

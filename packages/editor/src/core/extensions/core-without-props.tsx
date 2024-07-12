@@ -3,24 +3,18 @@ import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-import { Markdown } from "tiptap-markdown";
 // extensions
-import {
-  CustomCodeBlockExtension,
-  CustomCodeInlineExtension,
-  CustomHorizontalRule,
-  CustomLinkExtension,
-  CustomMentionWithoutProps,
-  CustomQuoteExtension,
-  ImageExtensionWithoutProps,
-  IssueWidgetWithoutProps,
-  Table,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
+import { CustomCodeInlineExtension } from "./code-inline";
+import { CustomLinkExtension } from "./custom-link";
+import { CustomHorizontalRule } from "./horizontal-rule";
+import { ImageExtensionWithoutProps } from "./image";
+import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props";
+import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
+import { CustomQuoteExtension } from "./quote";
+import { TableHeader, TableCell, TableRow, Table } from "./table";
 
 export const CoreEditorExtensionsWithoutProps = () => [
   StarterKit.configure({
@@ -80,16 +74,8 @@ export const CoreEditorExtensionsWithoutProps = () => [
     },
     nested: true,
   }),
-  CustomCodeBlockExtension.configure({
-    HTMLAttributes: {
-      class: "",
-    },
-  }),
   CustomCodeInlineExtension,
-  Markdown.configure({
-    html: true,
-    transformPastedText: true,
-  }),
+  CustomCodeBlockExtensionWithoutProps,
   Table,
   TableHeader,
   TableCell,

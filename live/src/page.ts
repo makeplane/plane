@@ -18,6 +18,7 @@ const DOCUMENT_EDITOR_EXTENSIONS = [
   ...CoreEditorExtensionsWithoutProps(),
   ...DocumentEditorExtensionsWithoutProps(),
 ];
+const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
 export const updatePageDescription = async (
   params: URLSearchParams,
@@ -36,7 +37,7 @@ export const updatePageDescription = async (
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(
     type,
-    getSchema(DOCUMENT_EDITOR_EXTENSIONS),
+    documentEditorSchema,
   ).toJSON();
   // convert to HTML
   const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);

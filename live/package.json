@@ -4,9 +4,9 @@
   "description": "",
   "main": "./src/index.ts",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsup",
     "start": "node dist/index.js",
-    "dev": "nodemon dist/index.js"
+    "dev": "tsup --watch"
   },
   "keywords": [],
   "type": "module",
@@ -34,6 +34,7 @@
     "@types/express": "^4.17.21",
     "@types/express-ws": "^3.0.4",
     "@types/node": "^20.14.9",
+    "tsup": "^7.2.0",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

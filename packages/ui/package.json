@@ -13,8 +13,8 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -65,7 +65,7 @@
     "tailwind-config-custom": "*",
     "tailwindcss": "^3.4.3",
     "tsconfig": "*",
-    "tsup": "^5.10.1",
+    "tsup": "^7.2.0",
     "typescript": "4.7.4"
   }
 }

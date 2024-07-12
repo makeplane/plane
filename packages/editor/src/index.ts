@@ -17,7 +17,6 @@ export {
 } from "@/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
-export { CoreEditorExtensionsWithoutProps } from "@/extensions";
 
 // helpers
 export * from "@/helpers/common";

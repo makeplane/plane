@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 RUN yarn global add turbo
 RUN yarn install
-EXPOSE 1234
+EXPOSE 3003
 
 VOLUME [ "/app/node_modules", "/app/channel/node_modules"]
 CMD ["yarn","dev", "--filter=channel"]
