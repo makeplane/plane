@@ -25,7 +25,7 @@ export const ProjectViewsList = observer(() => {
 
   if (loader || !projectViews || !filteredProjectViews) return <ViewListLoader />;
 
-  if (filteredProjectViews.length === 0 && projectViews) {
+  if (filteredProjectViews.length === 0 && projectViews.length > 0) {
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">

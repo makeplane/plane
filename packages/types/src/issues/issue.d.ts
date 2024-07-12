@@ -97,3 +97,9 @@ export type TBulkOperationsPayload = {
   issue_ids: string[];
   properties: Partial<TBulkIssueProperties>;
 };
+
+export type TIssueDetailWidget =
+  | "sub-issues"
+  | "relations"
+  | "links"
+  | "attachments";

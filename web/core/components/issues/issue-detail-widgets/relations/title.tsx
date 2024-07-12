@@ -9,14 +9,12 @@ import { useIssueDetail } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
-  workspaceSlug: string;
-  projectId: string;
   issueId: string;
   disabled: boolean;
 };
 
 export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
-  const { isOpen, workspaceSlug, projectId, issueId, disabled } = props;
+  const { isOpen, issueId, disabled } = props;
   // store hook
   const {
     relation: { getRelationsByIssueId },
@@ -41,14 +39,7 @@ export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title="Relations"
       indicatorElement={indicatorElement}
-      actionItemElement={
-        <RelationActionButton
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
-      }
+      actionItemElement={<RelationActionButton issueId={issueId} disabled={disabled} />}
     />
   );
 });
