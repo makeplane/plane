@@ -184,14 +184,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         setIsSubmitting={(value) => setIsSubmitting(value)}
                       />
 
-                      <PeekOverviewProperties
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issueId}
-                        issueOperations={issueOperations}
-                        disabled={disabled || is_archived}
-                      />
-
                       <div className="py-2">
                         <IssueDetailWidgets
                           workspaceSlug={workspaceSlug}
@@ -200,6 +192,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled}
                         />
                       </div>
+
+                      <PeekOverviewProperties
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        issueId={issueId}
+                        issueOperations={issueOperations}
+                        disabled={disabled || is_archived}
+                      />
 
                       <IssueActivity
                         workspaceSlug={workspaceSlug}
