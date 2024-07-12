@@ -266,10 +266,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       .finally(() => setIAmFeelingLucky(false));
   };
 
+  const condition =
+    (watch("name") && watch("name") !== "") || (watch("description_html") && watch("description_html") !== "<p></p>");
+
   const handleFormChange = () => {
     if (!onChange) return;
 
-    if (isDirty && (watch("name") || watch("description_html"))) onChange(watch());
+    if (isDirty && condition) onChange(watch());
     else onChange(null);
   };
 
@@ -591,7 +594,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   <div className="h-7">
                     <DateDropdown
                       value={value}
-                      onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                      onChange={(date) => {
+                        onChange(date ? renderFormattedPayloadDate(date) : null);
+                        handleFormChange();
+                      }}
                       buttonVariant="border-with-text"
                       maxDate={maxDate ?? undefined}
                       placeholder="Start date"
@@ -607,7 +613,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   <div className="h-7">
                     <DateDropdown
                       value={value}
-                      onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
+                      onChange={(date) => {
+                        onChange(date ? renderFormattedPayloadDate(date) : null);
+                        handleFormChange();
+                      }}
                       buttonVariant="border-with-text"
                       minDate={minDate ?? undefined}
                       placeholder="Due date"
