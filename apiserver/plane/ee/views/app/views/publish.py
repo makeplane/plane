@@ -10,6 +10,8 @@ from plane.ee.permissions import (
 )
 from plane.db.models import DeployBoard, Workspace, IssueView
 from plane.app.serializers import DeployBoardSerializer
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceViewsPublishEndpoint(BaseAPIView):
@@ -18,6 +20,7 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
         WorkSpaceAdminPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def post(self, request, slug, view_id):
         workspace = Workspace.objects.get(slug=slug)
         # Fetch the view
@@ -63,6 +66,7 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def patch(self, request, slug, view_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=view_id, entity_name="view", workspace__slug=slug
@@ -92,6 +96,7 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def get(self, request, slug, view_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=view_id, entity_name="view", workspace__slug=slug
@@ -99,6 +104,7 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def delete(self, request, slug, view_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=view_id, entity_name="view", workspace__slug=slug
@@ -113,6 +119,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         ProjectMemberPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def post(self, request, slug, project_id, view_id):
         # Fetch the view
         issue_view = IssueView.objects.get(
@@ -157,6 +164,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def patch(self, request, slug, project_id, view_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=view_id,
@@ -189,6 +197,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def get(self, request, slug, project_id, view_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=view_id,
@@ -199,6 +208,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def delete(self, request, slug, project_id, view_id):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=view_id,

@@ -6,6 +6,7 @@ from .views import (
     WorkspaceProductEndpoint,
     WebsitePaymentLinkEndpoint,
     WebsiteUserWorkspaceEndpoint,
+    SubscriptionEndpoint,
 )
 
 urlpatterns = [
@@ -33,5 +34,10 @@ urlpatterns = [
         "website/workspaces/",
         WebsiteUserWorkspaceEndpoint.as_view(),
         name="website-workspaces",
+    ),
+    path(
+        "workspaces/<str:slug>/subscriptions/",
+        SubscriptionEndpoint.as_view(),
+        name="subscription",
     ),
 ]

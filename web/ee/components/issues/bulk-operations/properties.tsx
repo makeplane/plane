@@ -119,6 +119,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 buttonVariant="border-with-text"
                 disabled={isUpdateDisabled}
                 showDefaultState={false}
+                placement="top-start"
               />
             )}
           />
@@ -134,6 +135,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 buttonVariant="border-with-text"
                 buttonClassName="!text-custom-text-300"
                 disabled={isUpdateDisabled}
+                placement="top-start"
               />
             )}
           />
@@ -152,6 +154,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 placeholder="Assignees"
                 multiple
                 disabled={isUpdateDisabled}
+                placement="top-start"
               />
             )}
           />
@@ -169,6 +172,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 icon={<CalendarClock className="size-3 flex-shrink-0" />}
                 disabled={isUpdateDisabled}
                 maxDate={maxDate ?? undefined}
+                placement="top-start"
               />
             )}
           />
@@ -186,6 +190,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 icon={<CalendarCheck2 className="size-3 flex-shrink-0" />}
                 disabled={isUpdateDisabled}
                 minDate={minDate ?? undefined}
+                placement="top-start"
               />
             )}
           />
@@ -209,6 +214,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                     onChange={onChange}
                     setIsOpen={() => setCreateLabelModal(true)}
                     buttonClassName="text-custom-text-300"
+                    placement="top-start"
                   />
                 </div>
               </>

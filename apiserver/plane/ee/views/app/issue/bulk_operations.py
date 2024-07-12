@@ -22,10 +22,12 @@ from plane.db.models import (
     IssueLabel,
     IssueAssignee,
     Workspace,
-    IssueSubscriber
+    IssueSubscriber,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
@@ -33,6 +35,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.BULK_OPS)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         if not len(issue_ids):
@@ -271,7 +274,13 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         # Bulk update all the objects
         Issue.objects.bulk_update(
             bulk_update_issues,
-            ["priority", "start_date", "target_date", "state_id", "completed_at"],
+            [
+                "priority",
+                "start_date",
+                "target_date",
+                "state_id",
+                "completed_at",
+            ],
             batch_size=100,
         )
 
@@ -303,6 +312,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.BULK_OPS)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 
@@ -358,6 +368,7 @@ class BulkSubscribeIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.BULK_OPS)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         workspace = Workspace.objects.filter(slug=slug).first()

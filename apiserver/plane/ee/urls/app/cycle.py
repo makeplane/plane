@@ -1,6 +1,6 @@
 from django.urls import path
 
-from plane.ee.views import (
+from plane.ee.views.app import (
     WorkspaceActiveCycleEndpoint,
 )
 

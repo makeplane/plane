@@ -21,6 +21,10 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 
 # Module imports
+from plane.db.models import Cycle, UserFavorite, Issue, Label, User, Project
+from plane.utils.analytics_plot import burndown_plot
+
+# ee imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import (
     WorkspaceUserPermission,
@@ -28,8 +32,8 @@ from plane.ee.permissions import (
 from plane.ee.serializers import (
     WorkspaceActiveCycleSerializer,
 )
-from plane.db.models import Cycle, UserFavorite, Issue, Label, User, Project
-from plane.utils.analytics_plot import burndown_plot
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
@@ -232,6 +236,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
                 )
         return results
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)
     def get(self, request, slug):
 
         favorite_subquery = UserFavorite.objects.filter(

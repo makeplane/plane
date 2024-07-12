@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // ui
-import { Checkbox } from "@plane/ui";
+import { Button, Checkbox, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -8,6 +8,10 @@ import { useMultipleSelectStore } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@/plane-web/components/issues";
+import { UpgradeToast } from "@/plane-web/components/workspace";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   className?: string;
@@ -18,7 +22,9 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   const { className, selectionHelpers } = props;
   // store hooks
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
+  const { toggleProPlanModal } = useWorkspaceSubscription();
   // derived values
+  const isBulkOpsEnabled = useFlag("BULK_OPS");
   const { handleClearSelection } = selectionHelpers;
 
   if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;
@@ -43,13 +49,38 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
             selected
           </div>
         </div>
-        <BulkOperationsActionsRoot handleClearSelection={handleClearSelection} selectedEntityIds={selectedEntityIds} />
-        <div className="h-7 pl-3 flex-grow">
-          <IssueBulkOperationsProperties
-            selectionHelpers={selectionHelpers}
-            snapshot={{ isSelectionActive, selectedEntityIds }}
-          />
-        </div>
+        <Tooltip
+          position="top-right"
+          className="mb-4 rounded-lg shadow"
+          disabled={isBulkOpsEnabled}
+          tooltipContent={<UpgradeToast />}
+        >
+          <div className="flex w-full overflow-hidden overflow-x-auto">
+            <div
+              className={cn("flex grow", {
+                "opacity-50 pointer-events-none": !isBulkOpsEnabled,
+              })}
+            >
+              <BulkOperationsActionsRoot
+                handleClearSelection={handleClearSelection}
+                selectedEntityIds={selectedEntityIds}
+              />
+              <div className="h-7 pl-3 flex-grow">
+                <IssueBulkOperationsProperties
+                  selectionHelpers={selectionHelpers}
+                  snapshot={{ isSelectionActive, selectedEntityIds }}
+                />
+              </div>
+            </div>
+            {!isBulkOpsEnabled && (
+              <div className="flex-shrink-0">
+                <Button variant="accent-primary" size="sm" onClick={() => toggleProPlanModal(true)}>
+                  Upgrade
+                </Button>
+              </div>
+            )}
+          </div>
+        </Tooltip>
       </div>
     </div>
   );
