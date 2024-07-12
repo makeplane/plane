@@ -317,11 +317,18 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
               {isSidebarCollapsed ? (
-                <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
-                  <div className="size-4 grid place-items-center flex-shrink-0">
-                    <Logo logo={project.logo_props} size={16} />
-                  </div>
-                </Disclosure.Button>
+                <Link
+                  href={`/${workspaceSlug}/projects/${project.id}/issues`}
+                  className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
+                    "justify-center": isSidebarCollapsed,
+                  })}
+                >
+                  <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
+                    <div className="size-4 grid place-items-center flex-shrink-0">
+                      <Logo logo={project.logo_props} size={16} />
+                    </div>
+                  </Disclosure.Button>
+                </Link>
               ) : (
                 <>
                   <Tooltip
@@ -330,18 +337,19 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     disabled={!isSidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    <Link
-                      href={`/${workspaceSlug}/projects/${project.id}/issues`}
-                      className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
-                        "justify-center": isSidebarCollapsed,
-                      })}
-                    >
-                      <div className="size-4 grid place-items-center flex-shrink-0">
-                        <Logo logo={project.logo_props} size={16} />
-                      </div>
-                      {!isSidebarCollapsed && (
+                    <Link href={`/${workspaceSlug}/projects/${project.id}/issues`} className="flex-grow flex truncate">
+                      <Disclosure.Button
+                        as="button"
+                        type="button"
+                        className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
+                          "justify-center": isSidebarCollapsed,
+                        })}
+                      >
+                        <div className="size-4 grid place-items-center flex-shrink-0">
+                          <Logo logo={project.logo_props} size={16} />
+                        </div>
                         <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
-                      )}
+                      </Disclosure.Button>
                     </Link>
                   </Tooltip>
                   <CustomMenu
@@ -451,7 +459,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </>
               )}
             </div>
-
             <Transition
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"

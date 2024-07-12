@@ -17,24 +17,16 @@ type Props = {
 export const RelationsCollapsible: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // store hooks
-  const { activeIssueDetailWidgets, toggleActiveIssueDetailWidget } = useIssueDetail();
+  const { openWidgets, toggleOpenWidget } = useIssueDetail();
 
   // derived values
-  const isCollapsibleOpen = activeIssueDetailWidgets.includes("relations");
+  const isCollapsibleOpen = openWidgets.includes("relations");
 
   return (
     <Collapsible
       isOpen={isCollapsibleOpen}
-      onToggle={() => toggleActiveIssueDetailWidget("relations")}
-      title={
-        <RelationsCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
-      }
+      onToggle={() => toggleOpenWidget("relations")}
+      title={<RelationsCollapsibleTitle isOpen={isCollapsibleOpen} issueId={issueId} disabled={disabled} />}
     >
       <RelationsCollapsibleContent
         workspaceSlug={workspaceSlug}
