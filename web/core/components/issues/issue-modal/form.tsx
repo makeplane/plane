@@ -309,6 +309,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     } as ISearchIssueResponse);
   }, [watch, getIssueById, getProjectById, selectedParentIssue]);
 
+  // executing this useEffect when isDirty changes
+  useEffect(() => {
+    if (!onChange) return;
+
+    if (isDirty && condition) onChange(watch());
+    else onChange(null);
+  }, [isDirty]);
+
   return (
     <>
       {projectId && (
