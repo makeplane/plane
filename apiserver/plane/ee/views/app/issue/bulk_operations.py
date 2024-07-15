@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 # Third Party imports
@@ -10,17 +11,23 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseAPIView
-from plane.app.permissions import (
+from plane.ee.views.base import BaseAPIView
+from plane.ee.permissions import (
     ProjectEntityPermission,
 )
+from plane.ee.serializers import IssueSerializer
 from plane.db.models import (
     Project,
     Issue,
     IssueLabel,
     IssueAssignee,
+    Workspace,
+    IssueSubscriber,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.ee.bgtasks import bulk_issue_activity
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
@@ -28,6 +35,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.BULK_OPS)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         if not len(issue_ids):
@@ -52,6 +60,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         workspace_id = project.workspace_id
 
         # Initialize arrays
+        issue_activities = []
         bulk_update_issues = []
         bulk_issue_activities = []
         bulk_update_issue_labels = []
@@ -59,10 +68,16 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
         properties = request.data.get("properties", {})
 
-        if properties.get("start_date", False) and properties.get("target_date", False):
+        if properties.get("start_date", False) and properties.get(
+            "target_date", False
+        ):
             if (
-                datetime.strptime(properties.get("start_date"), "%Y-%m-%d").date()
-                > datetime.strptime(properties.get("target_date"), "%Y-%m-%d").date()
+                datetime.strptime(
+                    properties.get("start_date"), "%Y-%m-%d"
+                ).date()
+                > datetime.strptime(
+                    properties.get("target_date"), "%Y-%m-%d"
+                ).date()
             ):
                 return Response(
                     {
@@ -76,7 +91,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Priority
             if properties.get("priority", False):
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -95,14 +110,14 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # State
             if properties.get("state_id", False):
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
-                            {"state": properties.get("state")}
+                            {"state_id": properties.get("state_id")}
                         ),
                         "current_instance": json.dumps(
-                            {"state": str(issue.state_id)}
+                            {"state_id": str(issue.state_id)}
                         ),
                         "issue_id": str(issue.id),
                         "actor_id": str(request.user.id),
@@ -111,6 +126,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     }
                 )
                 issue.state_id = properties.get("state_id")
+                if issue.state.group == "completed":
+                    issue.completed_at = timezone.now()
 
             # Start date
             if properties.get("start_date", False):
@@ -129,7 +146,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -163,7 +180,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                bulk_issue_activities.append(
+                issue_activities.append(
                     {
                         "type": "issue.activity.updated",
                         "requested_data": json.dumps(
@@ -261,7 +278,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 "priority",
                 "start_date",
                 "target_date",
-                "state",
+                "state_id",
+                "completed_at",
             ],
             batch_size=100,
         )
@@ -280,9 +298,105 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             batch_size=100,
         )
         # update the issue activity
+        [issue_activity.delay(**activity) for activity in issue_activities]
         [
-            issue_activity.delay(**activity)
+            bulk_issue_activity.delay(**activity)
             for activity in bulk_issue_activities
         ]
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BulkArchiveIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    @check_feature_flag(FeatureFlag.BULK_OPS)
+    def post(self, request, slug, project_id):
+        issue_ids = request.data.get("issue_ids", [])
+
+        if not len(issue_ids):
+            return Response(
+                {"error": "Issue IDs are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issues = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+        ).select_related("state")
+        bulk_archive_issues = []
+        for issue in issues:
+            if issue.state.group not in ["completed", "cancelled"]:
+                return Response(
+                    {
+                        "error_code": 4091,
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps(
+                    {
+                        "archived_at": str(timezone.now().date()),
+                        "automation": False,
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(issue.id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    IssueSerializer(issue).data, cls=DjangoJSONEncoder
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            issue.archived_at = timezone.now().date()
+            bulk_archive_issues.append(issue)
+        Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
+
+        return Response(
+            {"archived_at": str(timezone.now().date())},
+            status=status.HTTP_200_OK,
+        )
+
+
+class BulkSubscribeIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    @check_feature_flag(FeatureFlag.BULK_OPS)
+    def post(self, request, slug, project_id):
+        issue_ids = request.data.get("issue_ids", [])
+        workspace = Workspace.objects.filter(slug=slug).first()
+
+        if not len(issue_ids):
+            return Response(
+                {"error": "Issue IDs are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issues = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+        )
+
+        IssueSubscriber.objects.bulk_create(
+            [
+                IssueSubscriber(
+                    subscriber_id=request.user.id,
+                    issue=issue,
+                    project_id=project_id,
+                    workspace_id=workspace.id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
+                )
+                for issue in issues
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

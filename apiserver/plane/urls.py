@@ -6,6 +6,7 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
+
 handler404 = "plane.app.views.error_404.custom_404_view"
 
 urlpatterns = [
@@ -15,7 +16,9 @@ urlpatterns = [
     path("api/instances/", include("plane.license.urls")),
     path("api/v1/", include("plane.api.urls")),
     path("auth/", include("plane.authentication.urls")),
+    path("api/payments/", include("plane.payment.urls")),
     path("", include("plane.web.urls")),
+    path("graphql/", include("plane.graphql.urls")),
 ]
 
 

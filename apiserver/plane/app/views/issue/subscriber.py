@@ -123,3 +123,4 @@ class IssueSubscriberViewSet(BaseViewSet):
         return Response(
             {"subscribed": issue_subscriber}, status=status.HTTP_200_OK
         )
+
