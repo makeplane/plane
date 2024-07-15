@@ -4,7 +4,7 @@ import { ExternalLink, Globe2 } from "lucide-react";
 // ui
 import { Button, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { SPACE_BASE_URL } from "@/helpers/common.helper";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // plane web types
 import { TPagePublishSettings } from "@/plane-web/types";
@@ -43,7 +43,8 @@ export const PublishPageModal: React.FC<Props> = observer((props) => {
       .finally(() => setIsUnpublishing(false));
   };
 
-  const publishLink = `${SPACE_BASE_URL}/pages/${pagePublishSettings?.anchor}`;
+  const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
+  const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${pagePublishSettings?.anchor}`;
   const handleCopyLink = () =>
     copyTextToClipboard(publishLink).then(() =>
       setToast({
