@@ -6,6 +6,7 @@ const useClipboardWritePermission = () => {
   useEffect(() => {
     const checkClipboardWriteAccess = () => {
       navigator.permissions
+        //eslint-disable-next-line no-undef
         .query({ name: "clipboard-write" as PermissionName })
         .then((result) => {
           if (result.state === "granted") {

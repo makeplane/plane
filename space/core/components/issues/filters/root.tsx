@@ -12,7 +12,7 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssue, useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store";
 // types
 import { TIssueQueryFilters } from "@/types/issue";
 
@@ -26,7 +26,6 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
   const router = useRouter();
   // hooks
   const { getIssueFilters, updateIssueFilters } = useIssueFilter();
-  const { states, labels } = useIssue();
   // derived values
   const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
@@ -65,8 +64,6 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
           filters={issueFilters?.filters ?? {}}
           handleFilters={handleFilters as any}
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT?.[activeLayout]?.filters : []}
-          states={states ?? undefined}
-          labels={labels ?? undefined}
         />
       </FiltersDropdown>
     </div>
