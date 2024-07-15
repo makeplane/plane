@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import uniq from "lodash/uniq";
+import { ALL_ISSUES } from "@plane/constants";
 import { TIssue } from "@plane/types";
-import { ALL_ISSUES } from "@/constants/issue";
 import { EIssueGroupedAction } from "./base-issues.store";
 
 /**

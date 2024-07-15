@@ -5,7 +5,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // hooks
-import { useIssue, useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store";
 // store
 import { TIssueQueryFilters } from "@/types/issue";
 // components
@@ -21,7 +21,6 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
   const router = useRouter();
   // store hooks
   const { getIssueFilters, initIssueFilters, updateIssueFilters } = useIssueFilter();
-  const { states, labels } = useIssue();
   // derived values
   const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
@@ -65,14 +64,18 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
   );
 
   const handleRemoveAllFilters = () => {
-    initIssueFilters(anchor, {
-      display_filters: { layout: activeLayout || "list" },
-      filters: {
-        state: [],
-        priority: [],
-        labels: [],
+    initIssueFilters(
+      anchor,
+      {
+        display_filters: { layout: activeLayout || "list" },
+        filters: {
+          state: [],
+          priority: [],
+          labels: [],
+        },
       },
-    });
+      true
+    );
 
     router.push(`/issues/${anchor}?${`board=${activeLayout || "list"}`}`);
   };
@@ -85,8 +88,6 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
         appliedFilters={appliedFilters || {}}
         handleRemoveFilter={handleFilters as any}
         handleRemoveAllFilters={handleRemoveAllFilters}
-        labels={labels ?? []}
-        states={states ?? []}
       />
     </div>
   );
