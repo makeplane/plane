@@ -37,11 +37,14 @@ export const IssueLinkItem: FC<TIssueLinkItem> = (props) => {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
+  const handleOnClose = () => {
+    toggleIssueLinkModal(false);
+  };
   return (
     <>
       <IssueLinkCreateUpdateModal
         isModalOpen={isIssueLinkModalOpen}
-        handleModal={toggleIssueLinkModal}
+        handleOnClose={handleOnClose}
         linkOperations={linkOperations}
         preloadedData={linkDetail}
       />

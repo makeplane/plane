@@ -1,9 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
+// ui
 import { Breadcrumbs, ContrastIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink, ProIcon } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
+// plane web components
+import { UpgradeBadge } from "@/plane-web/components/workspace";
 
 export const WorkspaceActiveCycleHeader = observer(() => (
   <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -20,7 +23,7 @@ export const WorkspaceActiveCycleHeader = observer(() => (
             }
           />
         </Breadcrumbs>
-        <ProIcon />
+        <UpgradeBadge size="md" />
       </div>
     </div>
   </div>

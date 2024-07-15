@@ -35,7 +35,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
   const { data: currentUserProfile } = useUserProfile();
   const { data: currentUserSettings } = useUserSettings();
-  const { workspaces } = useWorkspace();
+  const { loader: workspacesLoader, workspaces } = useWorkspace();
 
   const { isLoading: isUserSWRLoading } = useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
     revalidateOnFocus: false,
@@ -73,7 +73,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     return redirectionRoute;
   };
 
-  if ((isUserSWRLoading || isUserLoading) && !currentUser?.id)
+  if ((isUserSWRLoading || isUserLoading || workspacesLoader) && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />

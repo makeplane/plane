@@ -6,9 +6,11 @@ import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";
 // constants
+import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
@@ -62,36 +64,44 @@ const WorkspaceDashboardPage = observer(() => {
       setCurrentSelectedNotificationId(undefined);
       setPeekIssue(undefined);
     },
-    []
+    [setCurrentSelectedNotificationId, setPeekIssue]
   );
 
   return (
     <>
       <PageHead title={pageTitle} />
       <div className="w-full h-full overflow-hidden overflow-y-auto">
-        {is_inbox_issue === true && workspace_slug && project_id && issue_id ? (
+        {!currentSelectedNotificationId ? (
+          <div className="w-full h-screen flex justify-center items-center">
+            <EmptyState type={EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE} layout="screen-simple" />
+          </div>
+        ) : (
           <>
-            {projectMemberInfoLoader ? (
-              <div className="w-full h-full flex justify-center items-center">
-                <LogoSpinner />
-              </div>
+            {is_inbox_issue === true && workspace_slug && project_id && issue_id ? (
+              <>
+                {projectMemberInfoLoader ? (
+                  <div className="w-full h-full flex justify-center items-center">
+                    <LogoSpinner />
+                  </div>
+                ) : (
+                  <InboxContentRoot
+                    setIsMobileSidebar={() => {}}
+                    isMobileSidebar={false}
+                    workspaceSlug={workspace_slug}
+                    projectId={project_id}
+                    inboxIssueId={issue_id}
+                    isNotificationEmbed
+                    embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
+                  />
+                )}
+              </>
             ) : (
-              <InboxContentRoot
-                setIsMobileSidebar={() => {}}
-                isMobileSidebar={false}
-                workspaceSlug={workspace_slug}
-                projectId={project_id}
-                inboxIssueId={issue_id}
-                isNotificationEmbed
+              <IssuePeekOverview
+                embedIssue
                 embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
               />
             )}
           </>
-        ) : (
-          <IssuePeekOverview
-            embedIssue
-            embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
-          />
         )}
       </div>
     </>

@@ -100,11 +100,15 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
     [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink, toggleIssueLinkModal]
   );
 
+  const handleOnClose = () => {
+    toggleIssueLinkModal(false);
+  };
+
   return (
     <>
       <IssueLinkCreateUpdateModal
         isModalOpen={isIssueLinkModal}
-        handleModal={toggleIssueLinkModal}
+        handleOnClose={handleOnClose}
         linkOperations={handleLinkOperations}
       />
 

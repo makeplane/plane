@@ -1,8 +1,11 @@
 import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
 import { IUser } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "@/constants/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -38,6 +41,9 @@ export interface IUserStore {
   deactivateAccount: () => Promise<void>;
   reset: () => void;
   signOut: () => Promise<void>;
+  // computed
+  canPerformProjectCreateActions: boolean;
+  canPerformWorkspaceCreateActions: boolean;
 }
 
 export class UserStore implements IUserStore {
@@ -82,6 +88,9 @@ export class UserStore implements IUserStore {
       deactivateAccount: action,
       reset: action,
       signOut: action,
+      // computed
+      canPerformProjectCreateActions: computed,
+      canPerformWorkspaceCreateActions: computed,
     });
   }
 
@@ -219,4 +228,20 @@ export class UserStore implements IUserStore {
     await this.authService.signOut(API_BASE_URL);
     this.store.resetOnSignOut();
   };
+
+  /**
+   * @description tells if user has project create actions permissions
+   * @returns {boolean}
+   */
+  get canPerformProjectCreateActions() {
+    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.MEMBER;
+  }
+
+  /**
+   * @description tells if user has workspace create actions permissions
+   * @returns {boolean}
+   */
+  get canPerformWorkspaceCreateActions() {
+    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  }
 }
