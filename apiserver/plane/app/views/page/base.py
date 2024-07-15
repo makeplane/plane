@@ -32,6 +32,7 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     ProjectPage,
+    DeployBoard,
 )
 
 # Module imports
@@ -119,6 +120,13 @@ class PageViewSet(BaseViewSet):
                 ),
             )
             .filter(project=True)
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="page",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .distinct()
         )
 

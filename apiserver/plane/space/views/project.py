@@ -15,16 +15,14 @@ from plane.app.serializers import DeployBoardSerializer
 from plane.db.models import Project, DeployBoard, ProjectMember
 
 
-class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
+class DeployBoardPublicSettingsEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
     def get(self, request, anchor):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
-        serializer = DeployBoardSerializer(project_deploy_board)
+        deploy_board = DeployBoard.objects.get(anchor=anchor)
+        serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

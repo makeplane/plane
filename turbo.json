@@ -15,6 +15,7 @@
     "NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS",
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
+    "NEXT_PUBLIC_GOD_MODE",
     "NEXT_PUBLIC_POSTHOG_DEBUG",
     "NEXT_PUBLIC_SUPPORT_EMAIL",
     "SENTRY_AUTH_TOKEN",
@@ -22,36 +23,30 @@
     "SENTRY_PROJECT_ID",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
     "NEXT_PUBLIC_SENTRY_DSN",
-    "SENTRY_MONITORING_ENABLED"
+    "SENTRY_MONITORING_ENABLED",
+    "NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL",
+    "NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL",
+    "NEXT_PUBLIC_DISCO_BASE_URL",
+    "NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL",
+    "NEXT_PUBLIC_FEATURE_FLAG_SERVER_BASE_URL"
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
     "develop": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {
