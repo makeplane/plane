@@ -309,7 +309,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
       <>
-        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
+        <div className="sticky z-10 pt-20 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -565,7 +565,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   </Disclosure.Button>
                   <Transition show={open}>
                     <Disclosure.Panel>
-                      <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
+                      <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             {isEditingAllowed && !isArchived && (

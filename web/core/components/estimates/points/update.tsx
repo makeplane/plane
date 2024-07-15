@@ -160,11 +160,8 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   };
 
   // derived values
-  const inputFieldType =
-    estimateType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateType) ? "number" : "text";
   const inputProps = {
-    type: inputFieldType,
-    pattern: inputFieldType === "number" ? "[0-9]*" : undefined,
+    type: "text",
     maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
   };
 

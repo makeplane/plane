@@ -135,7 +135,11 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        # Create Issue
+        issue = Issue.objects.create(
+            **validated_data,
+            project_id=project_id,
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id

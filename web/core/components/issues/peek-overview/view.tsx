@@ -8,19 +8,18 @@ import {
   PeekOverviewProperties,
   TIssueOperations,
   ArchiveIssueModal,
-  PeekOverviewIssueAttachments,
   IssuePeekOverviewLoader,
   IssuePeekOverviewError,
+  IssueDetailWidgets,
 } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
-import { SubIssuesRoot } from "../sub-issues";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -31,6 +30,7 @@ interface IIssueView {
   is_archived: boolean;
   disabled?: boolean;
   embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
 }
 
@@ -44,6 +44,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     is_archived,
     disabled = false,
     embedIssue = false,
+    embedRemoveCurrentNotification,
     issueOperations,
   } = props;
   // states
@@ -52,7 +53,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { data: currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,
@@ -66,13 +66,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
+    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
   };
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
-      if (!isAnyModalOpen) {
-        removeRoutePeekId();
+      if (!embedIssue) {
+        if (!isAnyModalOpen) {
+          removeRoutePeekId();
+        }
       }
     },
     issueId
@@ -88,7 +91,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   };
 
-  useKeypress("Escape", handleKeyDown);
+  useKeypress("Escape", () => !embedIssue && handleKeyDown());
 
   const handleRestore = async () => {
     if (!issueOperations.restore) return;
@@ -181,22 +184,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         setIsSubmitting={(value) => setIsSubmitting(value)}
                       />
 
-                      {currentUser && (
-                        <SubIssuesRoot
+                      <div className="py-2">
+                        <IssueDetailWidgets
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
-                          parentIssueId={issueId}
-                          currentUser={currentUser}
-                          disabled={disabled || is_archived}
+                          issueId={issueId}
+                          disabled={disabled}
                         />
-                      )}
-
-                      <PeekOverviewIssueAttachments
-                        disabled={disabled || is_archived}
-                        issueId={issueId}
-                        projectId={projectId}
-                        workspaceSlug={workspaceSlug}
-                      />
+                      </div>
 
                       <PeekOverviewProperties
                         workspaceSlug={workspaceSlug}
@@ -228,22 +223,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             setIsSubmitting={(value) => setIsSubmitting(value)}
                           />
 
-                          {currentUser && (
-                            <SubIssuesRoot
+                          <div className="py-2">
+                            <IssueDetailWidgets
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
-                              parentIssueId={issueId}
-                              currentUser={currentUser}
-                              disabled={disabled || is_archived}
+                              issueId={issueId}
+                              disabled={disabled}
                             />
-                          )}
-
-                          <PeekOverviewIssueAttachments
-                            disabled={disabled || is_archived}
-                            issueId={issueId}
-                            projectId={projectId}
-                            workspaceSlug={workspaceSlug}
-                          />
+                          </div>
 
                           <IssueActivity
                             workspaceSlug={workspaceSlug}

@@ -260,7 +260,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
 
       <>
-        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
+        <div className="sticky z-10 pt-20 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"

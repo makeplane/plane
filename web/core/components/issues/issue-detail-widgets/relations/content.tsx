@@ -160,7 +160,6 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
           onSubmit={async () =>
             await issueOperations.remove(workspaceSlug, projectId, issueCrudState?.delete?.issue?.id as string)
           }
-          isSubIssue
         />
       )}
 
