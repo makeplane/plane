@@ -12,6 +12,7 @@ class NotificationSerializer(BaseSerializer):
         read_only=True, source="triggered_by"
     )
     is_inbox_issue = serializers.BooleanField(read_only=True)
+    is_mentioned_notification = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Notification

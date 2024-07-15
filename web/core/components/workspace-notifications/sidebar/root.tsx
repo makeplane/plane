@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
   NotificationEmptyState,
@@ -65,14 +66,9 @@ export const NotificationsSidebar: FC = observer(() => {
                 )}
               >
                 <div className="font-medium">{tab.label}</div>
-                <div
-                  className={cn(
-                    `rounded-full text-xs px-1.5 py-0.5`,
-                    currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
-                  )}
-                >
-                  {getNumberCount(tab.count(unreadNotificationsCount))}
-                </div>
+                {tab.count(unreadNotificationsCount) > 0 && (
+                  <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
+                )}
               </div>
               {currentNotificationTab === tab.value && (
                 <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />

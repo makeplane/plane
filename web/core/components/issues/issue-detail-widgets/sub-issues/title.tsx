@@ -9,14 +9,12 @@ import { useIssueDetail } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
-  workspaceSlug: string;
-  projectId: string;
   parentIssueId: string;
   disabled: boolean;
 };
 
 export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
-  const { isOpen, workspaceSlug, projectId, parentIssueId, disabled } = props;
+  const { isOpen, parentIssueId, disabled } = props;
   // store hooks
   const {
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
@@ -52,14 +50,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title="Sub-issues"
       indicatorElement={indicatorElement}
-      actionItemElement={
-        <SubIssuesActionButton
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={parentIssueId}
-          disabled={disabled}
-        />
-      }
+      actionItemElement={<SubIssuesActionButton issueId={parentIssueId} disabled={disabled} />}
     />
   );
 });

@@ -9,14 +9,12 @@ import { useIssueDetail } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
-  workspaceSlug: string;
-  projectId: string;
   issueId: string;
   disabled: boolean;
 };
 
 export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
-  const { isOpen, workspaceSlug, projectId, issueId, disabled } = props;
+  const { isOpen, issueId, disabled } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -42,14 +40,7 @@ export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title="Links"
       indicatorElement={indicatorElement}
-      actionItemElement={
-        <IssueLinksActionButton
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
-      }
+      actionItemElement={<IssueLinksActionButton disabled={disabled} />}
     />
   );
 });

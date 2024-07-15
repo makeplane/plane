@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Case, When, BooleanField
 from django.utils import timezone
 
 # Third party imports
@@ -60,6 +60,13 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             )
             .filter(entity_name="issue")
             .annotate(is_inbox_issue=Exists(inbox_issue))
+            .annotate(
+                is_mentioned_notification=Case(
+                    When(sender__icontains="mentioned", then=True),
+                    default=False,
+                    output_field=BooleanField(),
+                )
+            )
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
         )

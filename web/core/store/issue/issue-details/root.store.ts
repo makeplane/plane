@@ -8,6 +8,7 @@ import {
   TIssueLink,
   TIssueReaction,
   TIssueRelationTypes,
+  TIssueDetailWidget,
 } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
 import { IIssueActivityStore, IssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
@@ -37,6 +38,13 @@ export type TIssueRelationModal = {
   relationType: TIssueRelationTypes | null;
 };
 
+export type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
+
+export type TIssueCrudOperationState = {
+  create: TIssueCrudState;
+  existing: TIssueCrudState;
+};
+
 export interface IIssueDetail
   extends IIssueStoreActions,
     IIssueReactionStoreActions,
@@ -50,6 +58,10 @@ export interface IIssueDetail
     IIssueCommentReactionStoreActions {
   // observables
   peekIssue: TPeekIssue | undefined;
+  relationKey: TIssueRelationTypes | null;
+  issueCrudOperationState: TIssueCrudOperationState;
+  openWidgets: TIssueDetailWidget[];
+  lastWidgetAction: TIssueDetailWidget | null;
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: string | null;
@@ -57,7 +69,7 @@ export interface IIssueDetail
   isArchiveIssueModalOpen: string | null;
   isRelationModalOpen: TIssueRelationModal | null;
   isSubIssuesModalOpen: string | null;
-  isDeleteAttachmentModalOpen: boolean;
+  attachmentDeleteModalId: string | null;
   // computed
   isAnyModalOpen: boolean;
   // helper actions
@@ -71,7 +83,12 @@ export interface IIssueDetail
   toggleArchiveIssueModal: (value: string | null) => void;
   toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: string | null) => void;
-  toggleDeleteAttachmentModal: (value:boolean) => void;
+  toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
+  setOpenWidgets: (state: TIssueDetailWidget[]) => void;
+  setLastWidgetAction: (action: TIssueDetailWidget) => void;
+  toggleOpenWidget: (state: TIssueDetailWidget) => void;
+  setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
+  setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -89,6 +106,21 @@ export interface IIssueDetail
 export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
+  relationKey: TIssueRelationTypes | null = null;
+  issueCrudOperationState: TIssueCrudOperationState = {
+    create: {
+      toggle: false,
+      parentIssueId: undefined,
+      issue: undefined,
+    },
+    existing: {
+      toggle: false,
+      parentIssueId: undefined,
+      issue: undefined,
+    },
+  };
+  openWidgets: TIssueDetailWidget[] = ["sub-issues", "links", "attachments"];
+  lastWidgetAction: TIssueDetailWidget | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: string | null = null;
@@ -96,7 +128,7 @@ export class IssueDetail implements IIssueDetail {
   isArchiveIssueModalOpen: string | null = null;
   isRelationModalOpen: TIssueRelationModal | null = null;
   isSubIssuesModalOpen: string | null = null;
-  isDeleteAttachmentModalOpen: boolean = false;
+  attachmentDeleteModalId: string | null = null;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -114,6 +146,8 @@ export class IssueDetail implements IIssueDetail {
     makeObservable(this, {
       // observables
       peekIssue: observable,
+      relationKey: observable,
+      issueCrudOperationState: observable,
       isCreateIssueModalOpen: observable,
       isIssueLinkModalOpen: observable.ref,
       isParentIssueModalOpen: observable.ref,
@@ -121,7 +155,9 @@ export class IssueDetail implements IIssueDetail {
       isArchiveIssueModalOpen: observable.ref,
       isRelationModalOpen: observable.ref,
       isSubIssuesModalOpen: observable.ref,
-      isDeleteAttachmentModalOpen: observable,
+      attachmentDeleteModalId: observable.ref,
+      openWidgets: observable.ref,
+      lastWidgetAction: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -134,6 +170,11 @@ export class IssueDetail implements IIssueDetail {
       toggleRelationModal: action,
       toggleSubIssuesModal: action,
       toggleDeleteAttachmentModal: action,
+      setOpenWidgets: action,
+      setLastWidgetAction: action,
+      toggleOpenWidget: action,
+      setRelationKey: action,
+      setIssueCrudOperationState: action,
     });
 
     // store
@@ -160,7 +201,7 @@ export class IssueDetail implements IIssueDetail {
       !!this.isArchiveIssueModalOpen ||
       !!this.isRelationModalOpen?.issueId ||
       !!this.isSubIssuesModalOpen ||
-      this.isDeleteAttachmentModalOpen
+      !!this.attachmentDeleteModalId
     );
   }
 
@@ -168,6 +209,8 @@ export class IssueDetail implements IIssueDetail {
   getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
   // actions
+  setRelationKey = (relationKey: TIssueRelationTypes | null) => (this.relationKey = relationKey);
+  setIssueCrudOperationState = (state: TIssueCrudOperationState) => (this.issueCrudOperationState = state);
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
   toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
@@ -177,7 +220,19 @@ export class IssueDetail implements IIssueDetail {
   toggleRelationModal = (issueId: string | null, relationType: TIssueRelationTypes | null) =>
     (this.isRelationModalOpen = { issueId, relationType });
   toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
-  toggleDeleteAttachmentModal = (value: boolean) => (this.isDeleteAttachmentModalOpen = value);
+  toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
+  setOpenWidgets = (state: TIssueDetailWidget[]) => {
+    this.openWidgets = state;
+    if (this.lastWidgetAction) this.lastWidgetAction = null;
+  };
+  setLastWidgetAction = (action: TIssueDetailWidget) => {
+    this.openWidgets = [action];
+  };
+  toggleOpenWidget = (state: TIssueDetailWidget) => {
+    if (this.openWidgets && this.openWidgets.includes(state))
+      this.openWidgets = this.openWidgets.filter((s) => s !== state);
+    else this.openWidgets = [state, ...this.openWidgets];
+  };
 
   // issue
   fetchIssue = async (
