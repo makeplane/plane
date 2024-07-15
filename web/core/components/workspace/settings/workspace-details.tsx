@@ -3,15 +3,13 @@
 import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Pencil } from "lucide-react";
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
-import { DeleteWorkspaceModal } from "@/components/workspace";
 // constants
 import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "@/constants/workspace";
@@ -19,9 +17,10 @@ import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "@/constants/workspace";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+// plane web components
+import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
 // services
 import { FileService } from "@/services/file.service";
-// types
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -36,7 +35,6 @@ const fileService = new FileService();
 export const WorkspaceDetails: FC = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
@@ -154,11 +152,6 @@ export const WorkspaceDetails: FC = observer(() => {
 
   return (
     <>
-      <DeleteWorkspaceModal
-        data={currentWorkspace}
-        isOpen={deleteWorkspaceModal}
-        onClose={() => setDeleteWorkspaceModal(false)}
-      />
       <Controller
         control={control}
         name="logo"
@@ -308,44 +301,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
           )}
         </div>
-        {isAdmin && (
-          <Disclosure as="div" className="border-t border-custom-border-100">
-            {({ open }) => (
-              <div className="w-full">
-                <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-                  <span className="text-lg tracking-tight">Delete Workspace</span>
-                  {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
-                  {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                </Disclosure.Button>
-
-                <Transition
-                  show={open}
-                  enter="transition duration-100 ease-out"
-                  enterFrom="transform opacity-0"
-                  enterTo="transform opacity-100"
-                  leave="transition duration-75 ease-out"
-                  leaveFrom="transform opacity-100"
-                  leaveTo="transform opacity-0"
-                >
-                  <Disclosure.Panel>
-                    <div className="flex flex-col gap-8">
-                      <span className="text-sm tracking-tight">
-                        The danger zone of the workspace delete page is a critical area that requires careful
-                        consideration and attention. When deleting a workspace, all of the data and resources within
-                        that workspace will be permanently removed and cannot be recovered.
-                      </span>
-                      <div>
-                        <Button variant="danger" onClick={() => setDeleteWorkspaceModal(true)}>
-                          Delete my workspace
-                        </Button>
-                      </div>
-                    </div>
-                  </Disclosure.Panel>
-                </Transition>
-              </div>
-            )}
-          </Disclosure>
-        )}
+        {isAdmin && <DeleteWorkspaceSection workspace={currentWorkspace} />}
       </div>
     </>
   );
