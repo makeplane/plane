@@ -10,17 +10,17 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { LayersIcon, Loader, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import {
-  CommandPaletteThemeActions,
   ChangeIssueAssignee,
   ChangeIssuePriority,
   ChangeIssueState,
   CommandPaletteHelpActions,
   CommandPaletteIssueActions,
   CommandPaletteProjectActions,
-  CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
+  CommandPaletteThemeActions,
+  CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
