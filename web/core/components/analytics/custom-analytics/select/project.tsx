@@ -37,14 +37,16 @@ export const SelectProject: React.FC<Props> = observer((props) => {
       onChange={(val: string[]) => onChange(val)}
       options={options}
       label={
-        value && value.length > 0
-          ? projectIds
-              ?.filter((p) => value.includes(p))
-              .map((p) => getProjectById(p)?.name)
-              .join(", ")
-          : "All projects"
+        <div className="truncate">
+          {value && value.length > 0
+            ? projectIds
+                ?.filter((p) => value.includes(p))
+                .map((p) => getProjectById(p)?.name)
+                .join(", ")
+            : "All projects"}
+        </div>
       }
-      optionsClassName={"w-48"}
+      optionsClassName="w-48"
       multiple
     />
   );

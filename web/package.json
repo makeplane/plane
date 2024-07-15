@@ -51,7 +51,7 @@
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
-    "react-hook-form": "^7.38.0",
+    "react-hook-form": "7.51.5",
     "react-markdown": "^8.0.7",
     "react-popper": "^2.3.0",
     "sharp": "^0.32.1",
