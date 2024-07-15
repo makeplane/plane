@@ -38,6 +38,7 @@ export const AttachmentsCollapsible: FC<Props> = observer((props) => {
           disabled={disabled}
         />
       }
+      buttonClassName="w-full"
     >
       <IssueAttachmentsCollapsibleContent
         workspaceSlug={workspaceSlug}
