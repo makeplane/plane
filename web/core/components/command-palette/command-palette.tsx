@@ -17,8 +17,6 @@ import { CreateProjectModal } from "@/components/project";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -43,10 +41,7 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { platform } = usePlatformOS();
-  const {
-    membership: { currentWorkspaceRole, currentProjectRole },
-    data: currentUser,
-  } = useUser();
+  const { data: currentUser, canPerformProjectCreateActions, canPerformWorkspaceCreateActions } = useUser();
   const {
     issues: { removeIssue },
   } = useIssuesStore();
@@ -100,30 +95,29 @@ export const CommandPalette: FC = observer(() => {
   }, [issueId]);
 
   // auth
-  const canPerformProjectCreateActions = useCallback(
+  const performProjectCreateActions = useCallback(
     (showToast: boolean = true) => {
-      const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-      if (!isAllowed && showToast)
+      if (!canPerformProjectCreateActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
 
-      return isAllowed;
+      return canPerformProjectCreateActions;
     },
-    [currentProjectRole]
+    [canPerformProjectCreateActions]
   );
-  const canPerformWorkspaceCreateActions = useCallback(
+
+  const performWorkspaceCreateActions = useCallback(
     (showToast: boolean = true) => {
-      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-      if (!isAllowed && showToast)
+      if (!canPerformWorkspaceCreateActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
-      return isAllowed;
+      return canPerformWorkspaceCreateActions;
     },
-    [currentWorkspaceRole]
+    [canPerformWorkspaceCreateActions]
   );
 
   const shortcutsList: {
@@ -228,19 +222,20 @@ export const CommandPalette: FC = observer(() => {
         }
       } else if (!isAnyModalOpen) {
         setTrackElement("Shortcut key");
-        if (Object.keys(shortcutsList.global).includes(keyPressed)) shortcutsList.global[keyPressed].action();
+        if (Object.keys(shortcutsList.global).includes(keyPressed) && performWorkspaceCreateActions())
+          shortcutsList.global[keyPressed].action();
         // workspace authorized actions
         else if (
           Object.keys(shortcutsList.workspace).includes(keyPressed) &&
           workspaceSlug &&
-          canPerformWorkspaceCreateActions()
+          performWorkspaceCreateActions()
         )
           shortcutsList.workspace[keyPressed].action();
         // project authorized actions
         else if (
           Object.keys(shortcutsList.project).includes(keyPressed) &&
           projectId &&
-          canPerformProjectCreateActions()
+          performProjectCreateActions()
         ) {
           e.preventDefault();
           // actions that can be performed only inside a project
@@ -249,8 +244,8 @@ export const CommandPalette: FC = observer(() => {
       }
     },
     [
-      canPerformProjectCreateActions,
-      canPerformWorkspaceCreateActions,
+      performProjectCreateActions,
+      performWorkspaceCreateActions,
       copyIssueUrlToClipboard,
       isAnyModalOpen,
       projectId,
