@@ -8,7 +8,7 @@ import { MAX_FILE_SIZE } from "@/constants/common";
 // helper
 import { generateFileName } from "@/helpers/attachment.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance, useIssueDetail } from "@/hooks/store";
 
 import { useAttachmentOperations } from "./helper";
 
@@ -22,11 +22,16 @@ type Props = {
 
 export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, customButton, disabled = false } = props;
-  // helper
+  // state
   const [isLoading, setIsLoading] = useState(false);
+  // store hooks
   const { config } = useInstance();
+  const { setLastWidgetAction } = useIssueDetail();
+
+  // operations
   const handleAttachmentOperations = useAttachmentOperations(workspaceSlug, projectId, issueId);
 
+  // handlers
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const currentFile: File = acceptedFiles[0];
@@ -45,7 +50,10 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
         })
       );
       setIsLoading(true);
-      handleAttachmentOperations.create(formData).finally(() => setIsLoading(false));
+      handleAttachmentOperations.create(formData).finally(() => {
+        setLastWidgetAction("attachments");
+        setIsLoading(false);
+      });
     },
     [handleAttachmentOperations, workspaceSlug]
   );

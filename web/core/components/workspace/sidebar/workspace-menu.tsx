@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronRight, Crown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -18,6 +18,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { UpgradeBadge } from "@/plane-web/components/workspace";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // store hooks
@@ -112,16 +114,20 @@ export const SidebarWorkspaceMenu = observer(() => {
                           }
                         )}
                       >
-                        <span className="flex-shrink-0 size-4 grid place-items-center">
-                          <link.Icon
-                            className={cn("size-4", {
-                              "rotate-180": link.key === "active-cycles",
-                            })}
-                          />
-                        </span>
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                        <div className={cn("grow flex items-center gap-1.5", { "justify-center": sidebarCollapsed })}>
+                          <span className="flex-shrink-0 size-4 grid place-items-center">
+                            <link.Icon
+                              className={cn("size-4", {
+                                "rotate-180": link.key === "active-cycles",
+                              })}
+                            />
+                          </span>
+                          {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                        </div>
                         {!sidebarCollapsed && link.key === "active-cycles" && (
-                          <Crown className="size-3.5 text-amber-400" />
+                          <div className="flex-shrink-0">
+                            <UpgradeBadge />
+                          </div>
                         )}
                       </div>
                     </Tooltip>
