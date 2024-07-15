@@ -8,6 +8,8 @@ import { Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 const APPS_LIST = [
   {
@@ -32,10 +34,11 @@ export const SidebarAppSwitcher = observer(() => {
   const pathname = usePathname();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
+  const isWorkspacePagesEnabled = useFlag("WORKSPACE_PAGES");
 
   const isPagesApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
 
-  if (true) return null;
+  if (!isWorkspacePagesEnabled) return null;
 
   return (
     <div

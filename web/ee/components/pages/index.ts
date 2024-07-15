@@ -5,3 +5,4 @@ export * from "./modals";
 export * from "./sidebar";
 export * from "./extra-actions";
 export * from "./quick-actions";
+export * from "./workspace-pages-upgrade";
