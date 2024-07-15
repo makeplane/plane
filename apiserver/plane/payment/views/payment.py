@@ -129,7 +129,7 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
                     "user_id",
                     "user_role",
                 )
-                .values("user_email", "user_id")
+                .values("user_email", "user_id", "user_role")
             )
 
             # Convert the user_id to string
