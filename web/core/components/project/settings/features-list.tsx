@@ -4,10 +4,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
-// components
-import { ProIcon } from "@/components/common";
 // hooks
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
+// plane web components
+import { UpgradeBadge } from "@/plane-web/components/workspace";
 // plane web constants
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 
@@ -72,7 +72,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 pb-2 pt-4 last:border-b-0"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center rounded bg-custom-primary-50/10 p-3">
+                    <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
                       {featureItem.icon}
                     </div>
                     <div>
@@ -80,7 +80,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                         <h4 className="text-sm font-medium leading-5">{featureItem.title}</h4>
                         {featureItem.isPro && (
                           <Tooltip tooltipContent="Pro feature" position="top">
-                            <ProIcon />
+                            <UpgradeBadge />
                           </Tooltip>
                         )}
                       </div>
