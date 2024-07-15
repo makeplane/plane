@@ -6,3 +6,4 @@ export * from "./sub-issues";
 export * from "./widget-button";
 export * from "./issue-detail-widget-collapsibles";
 export * from "./action-buttons";
+export * from "./issue-detail-widget-modals";

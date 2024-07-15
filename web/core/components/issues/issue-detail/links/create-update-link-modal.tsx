@@ -17,7 +17,7 @@ export type TIssueLinkCreateFormFieldOptions = TIssueLinkEditableFields & {
 
 export type TIssueLinkCreateEditModal = {
   isModalOpen: boolean;
-  handleModal: (modalToggle: boolean) => void;
+  handleOnClose?: () => void;
   linkOperations: TLinkOperationsModal;
   preloadedData?: TIssueLinkCreateFormFieldOptions | null;
 };
@@ -29,7 +29,7 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
 
 export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props) => {
   // props
-  const { isModalOpen, handleModal, linkOperations, preloadedData } = props;
+  const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
 
   // react hook form
   const {
@@ -42,7 +42,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
   });
 
   const onClose = () => {
-    handleModal(false);
+    if (handleOnClose) handleOnClose();
     const timeout = setTimeout(() => {
       reset(preloadedData ? preloadedData : defaultValues);
       clearTimeout(timeout);

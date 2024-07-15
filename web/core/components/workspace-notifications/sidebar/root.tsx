@@ -66,12 +66,9 @@ export const NotificationsSidebar: FC = observer(() => {
                 )}
               >
                 <div className="font-medium">{tab.label}</div>
-                <CountChip
-                  count={getNumberCount(tab.count(unreadNotificationsCount))}
-                  className={
-                    currentNotificationTab === tab.value ? `bg-custom-primary-100/20` : `bg-custom-background-80/50`
-                  }
-                />
+                {tab.count(unreadNotificationsCount) > 0 && (
+                  <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
+                )}
               </div>
               {currentNotificationTab === tab.value && (
                 <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
