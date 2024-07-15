@@ -188,11 +188,16 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueReactionSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:
         model = IssueReaction
-        fields = "__all__"
+        fields = [
+            "issue",
+            "reaction",
+            "workspace",
+            "project",
+            "actor",
+        ]
         read_only_fields = [
             "workspace",
             "project",
@@ -454,20 +459,6 @@ class IssueCreateSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
-class IssueReactionSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-
-    class Meta:
-        model = IssueReaction
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "actor",
-        ]
-
-
 class CommentReactionSerializer(BaseSerializer):
     class Meta:
         model = CommentReaction
@@ -476,7 +467,6 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 class IssueVoteSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:
         model = IssueVote
@@ -486,35 +476,45 @@ class IssueVoteSerializer(BaseSerializer):
             "workspace",
             "project",
             "actor",
-            "actor_detail",
         ]
         read_only_fields = fields
 
 
 class IssuePublicSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    state_detail = StateLiteSerializer(read_only=True, source="state")
     reactions = IssueReactionSerializer(
         read_only=True, many=True, source="issue_reactions"
     )
     votes = IssueVoteSerializer(read_only=True, many=True)
+    module_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
+    label_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
+    assignee_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
 
     class Meta:
         model = Issue
         fields = [
             "id",
             "name",
-            "description_html",
             "sequence_id",
             "state",
-            "state_detail",
             "project",
-            "project_detail",
             "workspace",
             "priority",
             "target_date",
             "reactions",
             "votes",
+            "module_ids",
+            "created_by",
+            "label_ids",
+            "assignee_ids",
         ]
         read_only_fields = fields
 

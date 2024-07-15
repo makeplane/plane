@@ -22,3 +22,4 @@ export * from "./favorite-star";
 export * from "./loader";
 export * from "./collapsible";
 export * from "./popovers";
+export * from "./tables";

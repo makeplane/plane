@@ -37,20 +37,20 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
 
   const issueId = issueDetailsStore.peekId;
 
-  const votes = issueId ? issueDetailsStore.details[issueId]?.votes : [];
+  const votes = issueDetailsStore.details[issueId ?? ""]?.vote_items ?? [];
 
-  const allUpVotes = votes?.filter((vote) => vote.vote === 1);
-  const allDownVotes = votes?.filter((vote) => vote.vote === -1);
+  const allUpVotes = votes.filter((vote) => vote.vote === 1);
+  const allDownVotes = votes.filter((vote) => vote.vote === -1);
 
-  const isUpVotedByUser = allUpVotes?.some((vote) => vote.actor === user?.id);
-  const isDownVotedByUser = allDownVotes?.some((vote) => vote.actor === user?.id);
+  const isUpVotedByUser = allUpVotes.some((vote) => vote.actor_details?.id === user?.id);
+  const isDownVotedByUser = allDownVotes.some((vote) => vote.actor_details?.id === user?.id);
 
   const handleVote = async (e: any, voteValue: 1 | -1) => {
     if (!issueId) return;
 
     setIsSubmitting(true);
 
-    const actionPerformed = votes?.find((vote) => vote.actor === user?.id && vote.vote === voteValue);
+    const actionPerformed = votes?.find((vote) => vote.actor_details?.id === user?.id && vote.vote === voteValue);
 
     if (actionPerformed) await issueDetailsStore.removeIssueVote(anchor, issueId);
     else {
@@ -76,7 +76,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
             {allUpVotes.length > 0 ? (
               <>
                 {allUpVotes
-                  .map((r) => r.actor_detail.display_name)
+                  .map((r) => r.actor_details?.display_name)
                   .splice(0, VOTES_LIMIT)
                   .join(", ")}
                 {allUpVotes.length > VOTES_LIMIT && " and " + (allUpVotes.length - VOTES_LIMIT) + " more"}
@@ -116,7 +116,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
             {allDownVotes.length > 0 ? (
               <>
                 {allDownVotes
-                  .map((r) => r.actor_detail.display_name)
+                  .map((r) => r.actor_details.display_name)
                   .splice(0, VOTES_LIMIT)
                   .join(", ")}
                 {allDownVotes.length > VOTES_LIMIT && " and " + (allDownVotes.length - VOTES_LIMIT) + " more"}
