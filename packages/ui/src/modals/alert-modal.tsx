@@ -13,7 +13,7 @@ export type TModalVariant = "danger" | "primary";
 type Props = {
   content: React.ReactNode | string;
   handleClose: () => void;
-  handleSubmit: () => Promise<void>;
+  handleSubmit: () => void;
   hideIcon?: boolean;
   isSubmitting: boolean;
   isOpen: boolean;
