@@ -1,5 +1,3 @@
-# Python imports
-
 # Django imports
 from django.db.models import Q
 

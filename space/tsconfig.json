@@ -15,7 +15,7 @@
       "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
       "@/styles/*": ["styles/*"],
-      "@/plane-web/*": ["ce/*"]
+      "@/plane-web/*": ["ee/*"]
     },
     "plugins": [
       {

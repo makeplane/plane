@@ -4,7 +4,11 @@ import {
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
+  // enterprise
+  TInstanceEnterpriseAuthenticationKeys,
 } from "./";
+
+type TProductType = "plane-ce" | "plane-one";
 
 export interface IInstanceInfo {
   instance: IInstance;
@@ -21,6 +25,8 @@ export interface IInstance {
   license_key: string | undefined;
   current_version: string | undefined;
   latest_version: string | undefined;
+  product: TProductType;
+  domain: string | undefined;
   last_checked_at: string | undefined;
   namespace: string | undefined;
   is_telemetry_enabled: boolean;
@@ -52,6 +58,11 @@ export interface IInstanceConfig {
   app_base_url: string | undefined;
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
+  // enterprise
+  is_oidc_enabled: boolean;
+  oidc_provider_name: string | undefined;
+  is_saml_enabled: boolean;
+  saml_provider_name: string | undefined;
 }
 
 export interface IInstanceAdmin {
@@ -70,7 +81,9 @@ export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
-  | TInstanceAuthenticationKeys;
+  | TInstanceAuthenticationKeys
+  // enterprise
+  | TInstanceEnterpriseAuthenticationKeys;
 
 export interface IInstanceConfiguration {
   id: string;

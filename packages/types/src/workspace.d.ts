@@ -1,5 +1,6 @@
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import type {
+  ICycle,
   IProjectMember,
   IUser,
   IUserLite,
@@ -189,4 +190,15 @@ export interface IProductUpdateResponse {
     rocket: number;
     eyes: number;
   };
+}
+
+export interface IWorkspaceActiveCyclesResponse {
+  count: number;
+  extra_stats: null;
+  next_cursor: string;
+  next_page_results: boolean;
+  prev_cursor: string;
+  prev_page_results: boolean;
+  results: ICycle[];
+  total_pages: number;
 }

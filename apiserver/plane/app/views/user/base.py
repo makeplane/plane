@@ -40,6 +40,8 @@ from plane.utils.host import base_host
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+
 
 
 class UserEndpoint(BaseViewSet):
@@ -170,6 +172,12 @@ class UserEndpoint(BaseViewSet):
         WorkspaceMember.objects.bulk_update(
             workspaces_to_deactivate, ["is_active"], batch_size=100
         )
+
+        # Sync workspace members
+        [
+            member_sync_task.delay(workspace.workspace.slug)
+            for workspace in workspaces_to_deactivate
+        ]
 
         # Delete all workspace invites
         WorkspaceMemberInvite.objects.filter(

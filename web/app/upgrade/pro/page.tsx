@@ -1,0 +1,80 @@
+"use client";
+
+import { useState } from "react";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { RadioInput } from "@/components/estimates";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
+
+type TPlaneEditions = {
+  [key: string]: {
+    title: string;
+    description: string;
+  };
+};
+
+const PLANE_EDITIONS: TPlaneEditions = {
+  cloud: {
+    title: "Cloud account at app.plane.so",
+    description: "You will log into your Plane account and select the workspace you want to upgrade",
+  },
+  "self-hosted": {
+    title: "Self-hosted Plane",
+    description: "Choose this if you self-host the Community Edition or One",
+  },
+};
+
+export default function UpgradePlanPage() {
+  const router = useAppRouter();
+  // states
+  const [selectedEdition, setSelectedEdition] = useState<string>("cloud");
+
+  const handleNextStep = () => {
+    if (!selectedEdition) {
+      setToast({
+        type: TOAST_TYPE.INFO,
+        title: "Please select an edition to continue",
+      });
+      return;
+    }
+
+    if (selectedEdition === "cloud") {
+      router.push("/upgrade/pro/cloud");
+    }
+    if (selectedEdition === "self-hosted") {
+      if (process.env.NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL) {
+        window.open(process.env.NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL, "_blank");
+      }
+    }
+  };
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center gap-8">
+      <RadioInput
+        name="edition-radio-input"
+        label="Choose your edition"
+        options={Object.keys(PLANE_EDITIONS).map((edition) => ({
+          label: (
+            <div className="flex flex-col gap-1">
+              <div className="text-base font-medium">{PLANE_EDITIONS[edition].title}</div>
+              <div className="text-sm text-onboarding-text-300">{PLANE_EDITIONS[edition].description}</div>
+            </div>
+          ),
+          value: edition,
+        }))}
+        className="w-full"
+        labelClassName="text-center text-3xl font-semibold pb-6"
+        wrapperClassName="w-full flex flex-col gap-4"
+        fieldClassName="border border-custom-border-200 rounded-md py-2 px-4 items-start"
+        buttonClassName="size-3.5 mt-1"
+        selected={selectedEdition}
+        onChange={(value) => setSelectedEdition(value)}
+      />
+      <Button className="w-full px-2" onClick={handleNextStep} disabled={!selectedEdition}>
+        Continue
+      </Button>
+    </div>
+  );
+}
