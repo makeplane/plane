@@ -18,7 +18,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 // plane web components
-import { DeleteWorkspace } from "@/plane-web/components/workspace";
+import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -301,7 +301,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
           )}
         </div>
-        {isAdmin && <DeleteWorkspace workspace={currentWorkspace} />}
+        {isAdmin && <DeleteWorkspaceSection workspace={currentWorkspace} />}
       </div>
     </>
   );
