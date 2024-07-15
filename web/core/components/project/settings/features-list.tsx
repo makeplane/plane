@@ -6,7 +6,7 @@ import { FileText, Inbox } from "lucide-react";
 // types
 import { IProject } from "@plane/types";
 // ui
-import { ContrastIcon, DiceIcon, PhotoFilterIcon, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { ContrastIcon, DiceIcon, Intake, PhotoFilterIcon, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // hooks
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
 
@@ -42,9 +42,9 @@ const PROJECT_FEATURES_LIST = [
     property: "page_view",
   },
   {
-    title: "Inbox",
+    title: "Intake",
     description: "Capture external inputs, move valid issues to workflow.",
-    icon: <Inbox className="h-4 w-4 flex-shrink-0 text-fuchsia-500" />,
+    icon: <Intake className="h-4 w-4 flex-shrink-0 text-fuchsia-500" />,
     property: "inbox_view",
   },
 ];
