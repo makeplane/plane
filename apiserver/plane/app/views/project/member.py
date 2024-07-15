@@ -22,7 +22,7 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     TeamMember,
-    IssueProperty,
+    IssueUserProperty,
 )
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
@@ -136,7 +136,7 @@ class ProjectMemberViewSet(BaseViewSet):
             )
             # Create a new issue property
             bulk_issue_props.append(
-                IssueProperty(
+                IssueUserProperty(
                     user_id=member.get("member_id"),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
@@ -150,7 +150,7 @@ class ProjectMemberViewSet(BaseViewSet):
             ignore_conflicts=True,
         )
 
-        _ = IssueProperty.objects.bulk_create(
+        _ = IssueUserProperty.objects.bulk_create(
             bulk_issue_props, batch_size=10, ignore_conflicts=True
         )
 
@@ -323,7 +323,7 @@ class AddTeamToProjectEndpoint(BaseAPIView):
                 )
             )
             issue_props.append(
-                IssueProperty(
+                IssueUserProperty(
                     project_id=project_id,
                     user_id=member,
                     workspace=workspace,
@@ -335,7 +335,7 @@ class AddTeamToProjectEndpoint(BaseAPIView):
             project_members, batch_size=10, ignore_conflicts=True
         )
 
-        _ = IssueProperty.objects.bulk_create(
+        _ = IssueUserProperty.objects.bulk_create(
             issue_props, batch_size=10, ignore_conflicts=True
         )
 

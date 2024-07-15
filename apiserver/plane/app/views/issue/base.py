@@ -32,7 +32,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
-    IssuePropertySerializer,
+    IssueUserPropertySerializer,
     IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -40,7 +40,7 @@ from plane.db.models import (
     Issue,
     IssueAttachment,
     IssueLink,
-    IssueProperty,
+    IssueUserProperty,
     IssueReaction,
     IssueSubscriber,
     Project,
@@ -570,7 +570,7 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
     ]
 
     def patch(self, request, slug, project_id):
-        issue_property = IssueProperty.objects.get(
+        issue_property = IssueUserProperty.objects.get(
             user=request.user,
             project_id=project_id,
         )
@@ -585,14 +585,14 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
             "display_properties", issue_property.display_properties
         )
         issue_property.save()
-        serializer = IssuePropertySerializer(issue_property)
+        serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug, project_id):
-        issue_property, _ = IssueProperty.objects.get_or_create(
+        issue_property, _ = IssueUserProperty.objects.get_or_create(
             user=request.user, project_id=project_id
         )
-        serializer = IssuePropertySerializer(issue_property)
+        serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
