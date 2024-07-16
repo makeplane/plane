@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { FileText, Inbox, Timer } from "lucide-react";
-import { ContrastIcon, DiceIcon, PhotoFilterIcon } from "@plane/ui";
+import { FileText, Timer } from "lucide-react";
+import { ContrastIcon, DiceIcon, PhotoFilterIcon, Intake } from "@plane/ui";
 
 export type TFeatureList = {
   [key: string]: {
@@ -58,9 +58,9 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
       },
       inbox: {
         property: "inbox_view",
-        title: "Inbox",
+        title: "Intake",
         description: "Capture external inputs, move valid issues to workflow.",
-        icon: <Inbox className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+        icon: <Intake className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
         isPro: false,
         isEnabled: true,
       },

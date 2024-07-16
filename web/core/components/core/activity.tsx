@@ -19,10 +19,9 @@ import {
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
-  Inbox,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
@@ -710,10 +709,10 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
-        {activity.verb === "2" && ` from inbox by marking a duplicate issue.`}
+        {activity.verb === "2" && ` from intake by marking a duplicate issue.`}
       </>
     ),
-    icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Intake className="size-3" color="#6b7280" aria-hidden="true" />,
   },
 };
 

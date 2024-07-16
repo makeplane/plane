@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { Inbox } from "lucide-react";
+import { Intake } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -35,7 +35,11 @@ export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
 
   if (!activity) return <></>;
   return (
-    <IssueActivityBlockComponent icon={<Inbox className="h-4 w-4 flex-shrink-0" />} activityId={activityId} ends={ends}>
+    <IssueActivityBlockComponent
+      icon={<Intake className="h-4 w-4 flex-shrink-0" />}
+      activityId={activityId}
+      ends={ends}
+    >
       <>{getInboxActivityMessage()}</>
     </IssueActivityBlockComponent>
   );
