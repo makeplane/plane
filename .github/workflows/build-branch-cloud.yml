@@ -1,0 +1,379 @@
+name: Branch Build Enterprise Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      web_base_url:
+        description: 'Web Base URL'
+        required: true
+        default: 'https://app.plane.so'
+      admin_base_url:
+        description: 'Admin Base URL'
+        required: true
+        default: 'https://admin.plane.so'
+      space_base_url:
+        description: 'Space Base URL'
+        required: true
+        default: 'https://space.plane.so'
+      api_base_url:
+        description: 'API Base URL'
+        required: true
+        default: 'https://api.plane.so'
+      disco_base_url:
+        description: 'Disco Base URL'
+        required: true
+        default: 'https://disco.plane.so'
+      feature_flag_server_base_url:
+        description: 'Feature Flag Server Base URL'
+        required: true
+        default: 'https://disco.plane.so'
+      support_email:
+        description: 'Support Email'
+        required: true
+        default: 'support@plane.so'
+      sentry_monitoring_enabled:
+        description: 'Sentry Monitoring Enabled'
+        required: false
+        default: '1'
+      sentry_project_id:
+        description: 'Sentry Project ID'
+        required: false
+        default: 'plane-web'
+      sentry_org_id:
+        description: 'Sentry Organization ID'
+        required: false
+        default: 'plane-hq'
+      sentry_enviroment:
+        description: 'Sentry Environment'
+        required: false
+        default: 'production'
+      sentry_dsn:
+        description: 'Sentry DSN'
+        required: false
+        default: 'https://866cdc0309304a48984f27f162b1cad6@o4505441148272640.ingest.sentry.io/4505589698002944'
+      sentry_auth_token:
+        description: 'Sentry Auth Token'
+        required: false
+        default: ''
+      plausible_domain:
+        description: 'Plausible Domain'
+        required: false
+        default: 'app.plane.so'
+      session_recorder_key:
+        description: 'Session Recorder Key'
+        required: false
+        default: ''
+      crisp_id:
+        description: 'Crisp ID'
+        required: false
+        default: ''
+      posthog_host:
+        description: 'Posthog Host'
+        required: false
+        default: 'https://app.posthog.com'
+      posthog_key:
+        description: 'Posthog Key'
+        required: false
+        default: ''
+      pro_self_hosted_payment_url:
+        description: 'Pro Self Hosted Payment URL'
+        required: false
+        default: 'https://buy.stripe.com/aEUdSNaCsbTr9ji14f'
+  release:
+    types: [released, prereleased]
+
+env:
+  TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || 'https://api.plane.so' }}
+  NEXT_PUBLIC_WEB_BASE_URL: ${{ inputs.web_base_url || 'https://app.plane.so' }}
+  NEXT_PUBLIC_SPACE_BASE_URL: ${{ inputs.space_base_url || 'https://space.plane.so' }}
+  NEXT_PUBLIC_ADMIN_BASE_URL: ${{ inputs.admin_base_url || 'https://admin.plane.so' }}
+  NEXT_PUBLIC_SUPPORT_EMAIL: ${{ inputs.support_email || 'support@plane.so' }}
+  NEXT_PUBLIC_DISCO_BASE_URL: ${{ inputs.disco_base_url || 'https://disco.plane.so' }}
+  NEXT_PUBLIC_FEATURE_FLAG_SERVER_BASE_URL: ${{ inputs.feature_flag_server_base_url || 'https://disco.plane.so' }}
+  NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL: ${{ inputs.pro_self_hosted_payment_url || 'https://buy.stripe.com/aEUdSNaCsbTr9ji14f' }}
+  NEXT_PUBLIC_POSTHOG_KEY: ${{ inputs.posthog_key || secrets.CLOUD_BUILD_POSTHOG_KEY || '' }}
+  NEXT_PUBLIC_POSTHOG_HOST: ${{ inputs.posthog_host || 'https://app.posthog.com' }}
+  NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.sentry_dsn || 'https://866cdc0309304a48984f27f162b1cad6@o4505441148272640.ingest.sentry.io/4505589698002944' }}
+  NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${{ inputs.sentry_enviroment || 'production' }}
+  SENTRY_MONITORING_ENABLED: ${{ inputs.sentry_monitoring_enabled || '1' }}
+  SENTRY_PROJECT_ID: ${{ inputs.sentry_project_id || 'plane-web' }}
+  SENTRY_ORG_ID: ${{ inputs.sentry_org_id || 'plane-hq' }}
+  SENTRY_AUTH_TOKEN: ${{ inputs.sentry_auth_token || secrets.CLOUD_BUILD_SENTRY_AUTH_TOKEN || '' }}
+  NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ inputs.plausible_domain || 'app.plane.so' }}
+  NEXT_PUBLIC_SESSION_RECORDER_KEY: ${{ inputs.session_recorder_key || secrets.CLOUD_BUILD_SESSION_RECORDER_KEY || '' }}
+  NEXT_PUBLIC_CRISP_ID: ${{ inputs.crisp_id || secrets.CLOUD_BUILD_CRISP_ID || '' }}
+
+jobs:
+  branch_build_setup:
+    name: Build Setup
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    outputs:
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
+      flat_branch_name: ${{ steps.set_env_variables.outputs.FLAT_BRANCH_NAME }}
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+
+    steps:
+      - id: set_env_variables
+        name: Set Environment Variables
+        run: |
+          echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+          echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+          echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+          echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+
+          FLAT_BRANCH_NAME=$(echo "${{ env.TARGET_BRANCH }}" | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "FLAT_BRANCH_NAME=$FLAT_BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Generate Keypair
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then 
+            ssh-keygen -t ed25519 -m PEM -f monitor/prime.key -N ""
+            echo "-----------------"
+            echo ""
+            cat monitor/prime.key.pub
+            echo ""
+            echo "-----------------"
+          else
+            echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}"  > monitor/prime.key
+          fi
+
+  branch_build_push_admin:
+    name: Build-Push Admin Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      ADMIN_CLOUD_TAG: makeplane/admin-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Admin Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=makeplane/admin-enterprise-cloud:stable
+            CLOUD_TAG=${CLOUD_TAG},makeplane/admin-enterprise-cloud:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=makeplane/admin-enterprise-cloud:latest
+          else
+            CLOUD_TAG=${{ env.ADMIN_CLOUD_TAG }}
+          fi
+          echo "ADMIN_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Admin-Cloud to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./admin/Dockerfile.admin
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.ADMIN_CLOUD_TAG }}
+          push: true
+          build-args: |
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_web:
+    name: Build-Push Web Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      WEB_CLOUD_IMAGE: makeplane/web-enterprise-cloud
+      WEB_CLOUD_TAG: makeplane/web-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Web Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=${{env.WEB_CLOUD_IMAGE}}:stable
+            CLOUD_TAG=${CLOUD_TAG},${{env.WEB_CLOUD_IMAGE}}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=${{env.WEB_CLOUD_IMAGE}}:latest
+          else
+            CLOUD_TAG=${{ env.WEB_CLOUD_TAG }}
+          fi
+          echo "WEB_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+
+      - name: Build and Push Web Cloud to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./web/Dockerfile.web
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.WEB_CLOUD_TAG }}
+          push: true
+          build-args: |
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+  branch_build_push_space:
+    name: Build-Push Space Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      SPACE_CLOUD_IMAGE: makeplane/space-enterprise-cloud
+      SPACE_CLOUD_TAG: makeplane/space-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Space Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=${{env.SPACE_CLOUD_IMAGE}}:stable
+            CLOUD_TAG=${CLOUD_TAG},${{env.SPACE_CLOUD_IMAGE}}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=${{env.SPACE_CLOUD_IMAGE}}:latest
+          else
+            CLOUD_TAG=${{ env.SPACE_CLOUD_TAG }}
+          fi
+          echo "SPACE_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Space-Cloud to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./space/Dockerfile.space
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.SPACE_CLOUD_TAG }}
+          push: true
+          build-args: |
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_apiserver:
+    name: Build-Push API Server Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      BACKEND_CLOUD_IMAGE: makeplane/backend-enterprise-cloud
+      BACKEND_CLOUD_TAG: makeplane/backend-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Backend Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=${{env.BACKEND_CLOUD_IMAGE}}:stable
+            CLOUD_TAG=${CLOUD_TAG},${{env.BACKEND_CLOUD_IMAGE}}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=${{env.BACKEND_CLOUD_IMAGE}}:latest
+          else
+            CLOUD_TAG=${{ env.BACKEND_CLOUD_TAG }}
+          fi
+          echo "BACKEND_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Backend-Cloud to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: ./apiserver
+          file: ./apiserver/Dockerfile.api
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          push: true
+          tags: ${{ env.BACKEND_CLOUD_TAG }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
