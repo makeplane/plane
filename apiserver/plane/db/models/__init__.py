@@ -29,7 +29,7 @@ from .issue import (
     IssueLabel,
     IssueLink,
     IssueMention,
-    IssueProperty,
+    IssueUserProperty,
     IssueReaction,
     IssueRelation,
     IssueSequence,
