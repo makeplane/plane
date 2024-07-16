@@ -32,10 +32,10 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
   const { data: user } = useUser();
 
   const issueId = issueDetailsStore.peekId;
-  const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
+  const reactions = issueDetailsStore.details[issueId ?? ""]?.reaction_items ?? [];
   const groupedReactions = groupReactions(reactions, "reaction");
 
-  const userReactions = reactions?.filter((r) => r.actor_detail.id === user?.id);
+  const userReactions = reactions.filter((r) => r.actor_details?.id === user?.id);
 
   const handleAddReaction = (reactionHex: string) => {
     if (!issueId) return;
@@ -48,7 +48,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
   };
 
   const handleReactionClick = (reactionHex: string) => {
-    const userReaction = userReactions?.find((r) => r.actor_detail.id === user?.id && r.reaction === reactionHex);
+    const userReaction = userReactions?.find((r) => r.actor_details?.id === user?.id && r.reaction === reactionHex);
     if (userReaction) handleRemoveReaction(reactionHex);
     else handleAddReaction(reactionHex);
   };
@@ -78,9 +78,9 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
                 tooltipContent={
                   <div>
                     {reactions
-                      .map((r) => r.actor_detail.display_name)
-                      .splice(0, REACTIONS_LIMIT)
-                      .join(", ")}
+                      ?.map((r) => r?.actor_details?.display_name)
+                      ?.splice(0, REACTIONS_LIMIT)
+                      ?.join(", ")}
                     {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
                   </div>
                 }
@@ -92,7 +92,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
                     else router.push(`/?next_path=${pathName}?${queryParam}`);
                   }}
                   className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                    reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                    reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
                       ? "bg-custom-primary-100/10"
                       : "bg-custom-background-80"
                   }`}
@@ -100,7 +100,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
                   <span>{renderEmoji(reaction)}</span>
                   <span
                     className={
-                      reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                      reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
                         ? "text-custom-primary-100"
                         : ""
                     }
