@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
+//
+import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { usePage } from "@/hooks/store";
+import { usePage, useUser } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web hooks
@@ -19,6 +21,9 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   // params
   const { projectId, pageId } = useParams();
   // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const { anchor, isCurrentUserOwner } = usePage(pageId.toString());
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
@@ -27,6 +32,8 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
+
+  const isPublishAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
@@ -62,7 +69,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
           Live
         </a>
       )}
-      {isCurrentUserOwner && (
+      {isCurrentUserOwner && isPublishAllowed && (
         <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
           {isDeployed ? "Unpublish" : "Publish"}
         </Button>
