@@ -126,7 +126,7 @@ export const SidebarWorkspaceMenu = observer(() => {
                         </div>
                         {!sidebarCollapsed && link.key === "active-cycles" && (
                           <div className="flex-shrink-0">
-                            <UpgradeBadge />
+                            <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
                           </div>
                         )}
                       </div>
