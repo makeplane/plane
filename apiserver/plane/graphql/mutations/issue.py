@@ -21,7 +21,7 @@ from plane.graphql.permissions.project import (
 )
 from plane.db.models import (
     Issue,
-    IssueProperty,
+    IssueUserProperty,
     IssueAssignee,
     IssueLabel,
     Workspace,
@@ -30,7 +30,6 @@ from plane.db.models import (
 
 @strawberry.type
 class IssueMutation:
-
     @strawberry.mutation(
         extensions=[
             PermissionExtension(permissions=[ProjectMemberPermission()])
@@ -237,7 +236,6 @@ class IssueMutation:
 
 @strawberry.type
 class IssueUserPropertyMutation:
-
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
@@ -250,7 +248,7 @@ class IssueUserPropertyMutation:
         display_filters: JSON,
         display_properties: JSON,
     ) -> IssueUserPropertyType:
-        issue_properties = await sync_to_async(IssueProperty.objects.get)(
+        issue_properties = await sync_to_async(IssueUserProperty.objects.get)(
             workspace__slug=slug, project_id=project, user=info.context.user
         )
         issue_properties.filters = filters

@@ -23,7 +23,7 @@ from plane.graphql.types.issue import (
 from plane.db.models import (
     Issue,
     IssueActivity,
-    IssueProperty,
+    IssueUserProperty,
     IssueComment,
     CommentReaction,
 )
@@ -85,7 +85,6 @@ class IssueQuery:
 
 @strawberry.type
 class RecentIssuesQuery:
-
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
@@ -115,9 +114,7 @@ class RecentIssuesQuery:
             ).filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
-            )[
-                :5
-            ]
+            )[:5]
         )
 
         return issues
@@ -125,7 +122,6 @@ class RecentIssuesQuery:
 
 @strawberry.type
 class IssueUserPropertyQuery:
-
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
@@ -136,7 +132,7 @@ class IssueUserPropertyQuery:
         project: strawberry.ID,
     ) -> list[IssueUserPropertyType]:
         issue_properties = await sync_to_async(list)(
-            IssueProperty.objects.filter(
+            IssueUserProperty.objects.filter(
                 workspace__slug=slug, project_id=project
             )
             .filter(
@@ -150,7 +146,6 @@ class IssueUserPropertyQuery:
 
 @strawberry.type
 class IssuePropertiesActivityQuery:
-
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
@@ -161,7 +156,6 @@ class IssuePropertiesActivityQuery:
         project: strawberry.ID,
         issue: strawberry.ID,
     ) -> list[IssuePropertyActivityType]:
-
         issue_activities = await sync_to_async(list)(
             IssueActivity.objects.filter(
                 issue_id=issue, project_id=project, workspace__slug=slug
@@ -182,7 +176,6 @@ class IssuePropertiesActivityQuery:
 
 @strawberry.type
 class IssueCommentActivityQuery:
-
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
@@ -218,7 +211,6 @@ class IssueCommentActivityQuery:
 # User profile issues
 @strawberry.type
 class WorkspaceIssuesQuery:
-
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
