@@ -44,6 +44,7 @@ export interface IUserStore {
   // computed
   canPerformProjectCreateActions: boolean;
   canPerformWorkspaceCreateActions: boolean;
+  getProjectsWithPermissions: { [projectId: string]: number } | null;
 }
 
 export class UserStore implements IUserStore {
@@ -91,6 +92,7 @@ export class UserStore implements IUserStore {
       // computed
       canPerformProjectCreateActions: computed,
       canPerformWorkspaceCreateActions: computed,
+      getProjectsWithPermissions: computed,
     });
   }
 
@@ -228,6 +230,26 @@ export class UserStore implements IUserStore {
     await this.authService.signOut(API_BASE_URL);
     this.store.resetOnSignOut();
   };
+
+  /**
+   * @description returns projects where user has permissions
+   * @returns {{[projectId: string]: number} || null}
+   */
+  get getProjectsWithPermissions() {
+    const allWorkspaceRoles =
+      this.membership.workspaceProjectsRole &&
+      this.membership.workspaceProjectsRole[this.membership.router.workspaceSlug || ""];
+    return (
+      (allWorkspaceRoles &&
+        Object.keys(allWorkspaceRoles)
+          .filter((key) => allWorkspaceRoles[key] >= EUserProjectRoles.MEMBER)
+          .reduce(
+            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceRoles[key]), res),
+            {}
+          )) ||
+      null
+    );
+  }
 
   /**
    * @description tells if user has project create actions permissions

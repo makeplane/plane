@@ -11,6 +11,7 @@ import { ProjectMemberService } from "@/services/project";
 import { UserService } from "@/services/user.service";
 // plane web store
 import { CoreRootStore } from "../root.store";
+import { IRouterStore } from "../router.store";
 
 export interface IUserMembershipStore {
   // observables
@@ -47,6 +48,8 @@ export interface IUserMembershipStore {
   leaveWorkspace: (workspaceSlug: string) => Promise<void>;
   joinProject: (workspaceSlug: string, projectIds: string[]) => Promise<any>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+
+  router: IRouterStore;
 }
 
 export class UserMembershipStore implements IUserMembershipStore {
