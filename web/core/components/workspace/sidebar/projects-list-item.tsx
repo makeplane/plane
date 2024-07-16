@@ -19,7 +19,6 @@ import {
   Share2,
   LogOut,
   MoreHorizontal,
-  Inbox,
   ChevronRight,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -35,6 +34,7 @@ import {
   setPromiseToast,
   DropIndicator,
   DragHandle,
+  Intake,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -91,9 +91,9 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     Icon: FileText,
   },
   {
-    name: "Inbox",
+    name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/inbox`,
-    Icon: Inbox,
+    Icon: Intake,
   },
   {
     name: "Settings",
@@ -497,7 +497,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                             }
                           )}
                         >
-                          <item.Icon className="flex-shrink-0 size-4 stroke-[1.5]" />
+                          <item.Icon
+                            className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                          />
                           {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
                         </div>
                       </Tooltip>
