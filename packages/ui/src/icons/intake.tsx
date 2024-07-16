@@ -9,7 +9,7 @@ export const Intake: React.FC<ISvgIcons> = ({ className = "text-current", ...res
     stroke="currentColor"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    strokeWidth="1.5"
+    strokeWidth="1.25"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...rest}
