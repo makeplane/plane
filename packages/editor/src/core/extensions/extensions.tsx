@@ -30,23 +30,25 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { DeleteImage, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
 
 type TArguments = {
-  mentionConfig: {
-    mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
-    mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  };
+  enableHistory: boolean;
   fileConfig: {
     deleteFile: DeleteImage;
     restoreFile: RestoreImage;
     cancelUploadImage?: () => void;
     uploadFile: UploadImage;
   };
+  mentionConfig: {
+    mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
+    mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
 
 export const CoreEditorExtensions = ({
-  mentionConfig,
+  enableHistory,
   fileConfig: { deleteFile, restoreFile, cancelUploadImage, uploadFile },
+  mentionConfig,
   placeholder,
   tabIndex,
 }: TArguments) => [
@@ -70,11 +72,11 @@ export const CoreEditorExtensions = ({
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
-    history: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
       width: 1,
     },
+    ...(enableHistory ? {} : { history: false }),
   }),
   CustomQuoteExtension,
   DropHandlerExtension(uploadFile),

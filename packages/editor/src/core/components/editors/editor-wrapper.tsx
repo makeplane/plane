@@ -34,6 +34,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
 
   const editor = useEditor({
     editorClassName,
+    enableHistory: true,
     extensions,
     fileHandler,
     forwardedRef,

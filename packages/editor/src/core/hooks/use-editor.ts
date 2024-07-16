@@ -24,42 +24,44 @@ export type TFileHandler = {
 };
 
 export interface CustomEditorProps {
-  id?: string;
-  fileHandler: TFileHandler;
-  initialValue?: string;
   editorClassName: string;
-  // undefined when prop is not passed, null if intentionally passed to stop
-  // swr syncing
-  value?: string | null | undefined;
-  provider?: CollaborationProvider;
-  onChange?: (json: object, html: string) => void;
-  extensions?: any;
   editorProps?: EditorProps;
+  enableHistory: boolean;
+  extensions?: any;
+  fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
+  handleEditorReady?: (value: boolean) => void;
+  id?: string;
+  initialValue?: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
-  handleEditorReady?: (value: boolean) => void;
+  onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  provider?: CollaborationProvider;
   tabIndex?: number;
+  // undefined when prop is not passed, null if intentionally passed to stop
+  // swr syncing
+  value?: string | null | undefined;
 }
 
 export const useEditor = ({
-  id = "",
-  editorProps = {},
-  initialValue,
   editorClassName,
-  value,
+  editorProps = {},
+  enableHistory,
   extensions = [],
   fileHandler,
-  onChange,
   forwardedRef,
-  tabIndex,
   handleEditorReady,
-  provider,
+  id = "",
+  initialValue,
   mentionHandler,
+  onChange,
   placeholder,
+  provider,
+  tabIndex,
+  value,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
@@ -68,15 +70,16 @@ export const useEditor = ({
     },
     extensions: [
       ...CoreEditorExtensions({
-        mentionConfig: {
-          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights ?? [],
-        },
+        enableHistory,
         fileConfig: {
           uploadFile: fileHandler.upload,
           deleteFile: fileHandler.delete,
           restoreFile: fileHandler.restore,
           cancelUploadImage: fileHandler.cancel,
+        },
+        mentionConfig: {
+          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
+          mentionHighlights: mentionHandler.highlights ?? [],
         },
         placeholder,
         tabIndex,
