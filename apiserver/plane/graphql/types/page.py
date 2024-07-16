@@ -16,7 +16,10 @@ class PageType:
     id: strawberry.ID
     parent: Optional[strawberry.ID]
     name: str
-    description: JSON
+    description: Optional[JSON]
+    description_html: Optional[str]
+    description_stripped: Optional[str]
+    description_binary: Optional[str]
     workspace: strawberry.ID
     # project: strawberry.ID
     owned_by: strawberry.ID
@@ -27,6 +30,7 @@ class PageType:
     view_props: JSON
     logo_props: JSON
     is_global: bool
+    is_favorite: bool
     created_at: datetime
     updated_at: datetime
     is_favorite: bool

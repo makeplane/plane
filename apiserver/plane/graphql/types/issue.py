@@ -45,6 +45,8 @@ class IssueType:
     external_id: Optional[str]
     created_by: strawberry.ID
     updated_by: strawberry.ID
+    created_at: datetime
+    updated_at: datetime
 
     @strawberry.field
     def state(self) -> int:
