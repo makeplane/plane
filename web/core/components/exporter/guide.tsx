@@ -19,7 +19,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { IntegrationService } from "@/services/integrations";
@@ -38,6 +38,7 @@ const IntegrationGuide = observer(() => {
   const provider = searchParams.get("provider");
   // store hooks
   const { data: currentUser } = useUser();
+  const { workspaceProjectIds } = useProject();
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -49,6 +50,8 @@ const IntegrationGuide = observer(() => {
   const handleCsvClose = () => {
     router.replace(`/${workspaceSlug?.toString()}/settings/exports`);
   };
+
+  const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
 
   return (
     <>
@@ -73,7 +76,7 @@ const IntegrationGuide = observer(() => {
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <span>
-                        <Button variant="primary" className="capitalize">
+                        <Button variant="primary" className="capitalize" disabled={!hasProjects}>
                           {service.type}
                         </Button>
                       </span>

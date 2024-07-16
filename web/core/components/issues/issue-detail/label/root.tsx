@@ -67,7 +67,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
             type: TOAST_TYPE.ERROR,
             message: "Label creation failed",
           });
-          return error;
+          throw error;
         }
       },
     }),

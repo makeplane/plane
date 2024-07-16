@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
 // helpers
-import { SPACE_BASE_URL } from "@/helpers/common.helper";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { usePage } from "@/hooks/store";
 // plane web components
@@ -28,7 +28,8 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
 
-  const publishLink = `${SPACE_BASE_URL}/pages/${anchor}`;
+  const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
+  const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
 
   if (!isPagePublishEnabled)
     return (

@@ -12,20 +12,20 @@ import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import {
-  CommandPaletteThemeActions,
   ChangeIssueAssignee,
   ChangeIssuePriority,
   ChangeIssueState,
   CommandPaletteHelpActions,
   CommandPaletteIssueActions,
   CommandPaletteProjectActions,
-  CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
+  CommandPaletteThemeActions,
+  CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -46,6 +46,7 @@ export const CommandModal: React.FC = observer(() => {
   // hooks
   const { getProjectById, workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
+  const { canPerformWorkspaceCreateActions } = useUser();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -282,24 +283,27 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          {workspaceSlug && workspaceProjectIds && workspaceProjectIds.length > 0 && (
-                            <Command.Group heading="Issue">
-                              <Command.Item
-                                onSelect={() => {
-                                  closePalette();
-                                  setTrackElement("Command Palette");
-                                  toggleCreateIssueModal(true);
-                                }}
-                                className="focus:bg-custom-background-80"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <LayersIcon className="h-3.5 w-3.5" />
-                                  Create new issue
-                                </div>
-                                <kbd>C</kbd>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
+                          {workspaceSlug &&
+                            workspaceProjectIds &&
+                            workspaceProjectIds.length > 0 &&
+                            canPerformWorkspaceCreateActions && (
+                              <Command.Group heading="Issue">
+                                <Command.Item
+                                  onSelect={() => {
+                                    closePalette();
+                                    setTrackElement("Command Palette");
+                                    toggleCreateIssueModal(true);
+                                  }}
+                                  className="focus:bg-custom-background-80"
+                                >
+                                  <div className="flex items-center gap-2 text-custom-text-200">
+                                    <LayersIcon className="h-3.5 w-3.5" />
+                                    Create new issue
+                                  </div>
+                                  <kbd>C</kbd>
+                                </Command.Item>
+                              </Command.Group>
+                            )}
 
                           {workspaceSlug && (
                             <Command.Group heading="Project">
