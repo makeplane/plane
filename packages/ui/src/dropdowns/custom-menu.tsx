@@ -137,6 +137,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 onClick={handleMenuButtonClick}
                 className={customButtonClassName}
                 tabIndex={customButtonTabIndex}
+                disabled={disabled}
               >
                 {customButton}
               </button>
@@ -172,6 +173,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
+                    disabled={disabled}
                   >
                     {label}
                     {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
