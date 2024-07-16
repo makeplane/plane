@@ -19,12 +19,12 @@ import {
   Underline,
 } from "lucide-react";
 // editor
-import { EditorMenuItemNames } from "@plane/editor";
+import { TEditorCommands } from "@plane/editor";
 
 type TEditorTypes = "lite" | "document";
 
 export type ToolbarMenuItem = {
-  key: EditorMenuItemNames;
+  key: TEditorCommands;
   name: string;
   icon: LucideIcon;
   shortcut?: string[];

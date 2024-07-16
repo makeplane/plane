@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 // editor
-import { EditorMenuItemNames, EditorRefApi } from "@plane/editor";
+import { EditorRefApi, TEditorCommands } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
@@ -14,7 +14,7 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   accessSpecifier?: EIssueCommentAccessSpecifier;
-  executeCommand: (commandName: EditorMenuItemNames) => void;
+  executeCommand: (commandKey: TEditorCommands) => void;
   handleAccessChange?: (accessKey: EIssueCommentAccessSpecifier) => void;
   handleSubmit: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isCommentEmpty: boolean;

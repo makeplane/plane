@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Check, ChevronDown } from "lucide-react";
 // editor
-import { EditorMenuItemNames, EditorRefApi } from "@plane/editor";
+import { EditorRefApi, TEditorCommands } from "@plane/editor";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // constants
@@ -18,7 +18,7 @@ type Props = {
 type ToolbarButtonProps = {
   item: ToolbarMenuItem;
   isActive: boolean;
-  executeCommand: (commandName: EditorMenuItemNames) => void;
+  executeCommand: (commandKey: TEditorCommands) => void;
 };
 
 const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
