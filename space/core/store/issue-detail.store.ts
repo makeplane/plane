@@ -1,3 +1,4 @@
+import set from "lodash/set";
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 // services
@@ -97,7 +98,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       this.loader = true;
       this.error = null;
 
-      const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueID);
+      const issueDetails = await this.rootStore.issue.fetchIssueById(anchor, issueID);
       const commentsResponse = await this.issueService.getIssueComments(anchor, issueID);
 
       if (issueDetails) {
@@ -119,17 +120,11 @@ export class IssueDetailStore implements IIssueDetailStore {
 
   addIssueComment = async (anchor: string, issueID: string, data: any) => {
     try {
-      const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueID);
+      const issueDetails = this.rootStore.issue.getIssueById(issueID);
       const issueCommentResponse = await this.issueService.createIssueComment(anchor, issueID, data);
       if (issueDetails) {
         runInAction(() => {
-          this.details = {
-            ...this.details,
-            [issueID]: {
-              ...issueDetails,
-              comments: [...this.details[issueID].comments, issueCommentResponse],
-            },
-          };
+          set(this.details, [issueID, "comments"], [...this.details[issueID].comments, issueCommentResponse]);
         });
       }
       return issueCommentResponse;
@@ -267,21 +262,17 @@ export class IssueDetailStore implements IIssueDetailStore {
   addIssueReaction = async (anchor: string, issueID: string, reactionHex: string) => {
     try {
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            reactions: [
-              ...this.details[issueID].reactions,
-              {
-                id: uuidv4(),
-                issue: issueID,
-                reaction: reactionHex,
-                actor_detail: this.rootStore.user.currentActor,
-              },
-            ],
-          },
-        };
+        set(
+          this.details,
+          [issueID, "reaction_items"],
+          [
+            ...this.details[issueID].reaction_items,
+            {
+              reaction: reactionHex,
+              actor_detail: this.rootStore.user.currentActor,
+            },
+          ]
+        );
       });
 
       await this.issueService.createIssueReaction(anchor, issueID, {
@@ -291,31 +282,19 @@ export class IssueDetailStore implements IIssueDetailStore {
       console.log("Failed to add issue vote");
       const issueReactions = await this.issueService.getIssueReactions(anchor, issueID);
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            reactions: issueReactions,
-          },
-        };
+        set(this.details, [issueID, "reaction_items"], issueReactions);
       });
     }
   };
 
   removeIssueReaction = async (anchor: string, issueID: string, reactionHex: string) => {
     try {
-      const newReactions = this.details[issueID].reactions.filter(
-        (_r) => !(_r.reaction === reactionHex && _r.actor_detail.id === this.rootStore.user.data?.id)
+      const newReactions = this.details[issueID].reaction_items.filter(
+        (_r) => !(_r.reaction === reactionHex && _r.actor_details.id === this.rootStore.user.data?.id)
       );
 
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            reactions: newReactions,
-          },
-        };
+        set(this.details, [issueID, "reaction_items"], newReactions);
       });
 
       await this.issueService.deleteIssueReaction(anchor, issueID, reactionHex);
@@ -323,13 +302,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       console.log("Failed to remove issue reaction");
       const reactions = await this.issueService.getIssueReactions(anchor, issueID);
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            reactions: reactions,
-          },
-        };
+        set(this.details, [issueID, "reaction_items"], reactions);
       });
     }
   };
@@ -341,25 +314,19 @@ export class IssueDetailStore implements IIssueDetailStore {
     if (!projectID || !workspaceSlug) throw new Error("Publish settings not found");
 
     const newVote: IVote = {
-      actor: this.rootStore.user.data?.id ?? "",
-      actor_detail: this.rootStore.user.currentActor,
-      issue: issueID,
-      project: projectID,
-      workspace: workspaceSlug,
+      actor_details: this.rootStore.user.currentActor,
       vote: data.vote,
     };
 
-    const filteredVotes = this.details[issueID].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
+    const filteredVotes = this.details[issueID].vote_items.filter(
+      (v) => v.actor_details?.id !== this.rootStore.user.data?.id
+    );
 
     try {
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            votes: [...filteredVotes, newVote],
-          },
-        };
+        runInAction(() => {
+          set(this.details, [issueID, "vote_items"], [...filteredVotes, newVote]);
+        });
       });
 
       await this.issueService.createIssueVote(anchor, issueID, data);
@@ -368,29 +335,19 @@ export class IssueDetailStore implements IIssueDetailStore {
       const issueVotes = await this.issueService.getIssueVotes(anchor, issueID);
 
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            votes: issueVotes,
-          },
-        };
+        set(this.details, [issueID, "vote_items"], issueVotes);
       });
     }
   };
 
   removeIssueVote = async (anchor: string, issueID: string) => {
-    const newVotes = this.details[issueID].votes.filter((v) => v.actor !== this.rootStore.user.data?.id);
+    const newVotes = this.details[issueID].vote_items.filter(
+      (v) => v.actor_details?.id !== this.rootStore.user.data?.id
+    );
 
     try {
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            votes: newVotes,
-          },
-        };
+        set(this.details, [issueID, "vote_items"], newVotes);
       });
 
       await this.issueService.deleteIssueVote(anchor, issueID);
@@ -399,13 +356,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       const issueVotes = await this.issueService.getIssueVotes(anchor, issueID);
 
       runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueID]: {
-            ...this.details[issueID],
-            votes: issueVotes,
-          },
-        };
+        set(this.details, [issueID, "vote_items"], issueVotes);
       });
     }
   };
