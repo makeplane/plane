@@ -4,6 +4,8 @@ import { AlertTriangle } from "lucide-react";
 import { Loader } from "@plane/ui";
 // components
 import { IssueBlockDueDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
+// hooks
+import { usePublish, useStates } from "@/hooks/store";
 // plane web hooks
 import { usePage } from "@/plane-web/hooks/store";
 
@@ -16,12 +18,15 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const { anchor, issueId } = props;
   // store hooks
   const pageDetails = usePage(anchor);
+  const { project_details } = usePublish(anchor);
+  const { getStateById } = useStates();
 
   if (!pageDetails) return null;
 
   // derived values
   const { areIssueEmbedsLoaded, getIssueEmbedDetails, issueEmbedError } = pageDetails;
   const issueDetails = getIssueEmbedDetails(issueId);
+  const stateDetails = issueDetails?.state_id ? getStateById(issueDetails?.state_id) : undefined;
 
   if (!areIssueEmbedsLoaded && !issueEmbedError)
     return (
@@ -53,7 +58,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   return (
     <div className="issue-embed space-y-2 rounded-md bg-custom-background-90 p-3 my-2">
       <h5 className="!text-xs !font-normal !mt-0 text-custom-text-300">
-        {issueDetails.project_detail?.identifier}-{issueDetails?.sequence_id}
+        {project_details?.identifier}-{issueDetails?.sequence_id}
       </h5>
       <h4 className="!text-sm !font-medium !mt-1 line-clamp-2 break-words">{issueDetails?.name}</h4>
       <div className="hide-horizontal-scrollbar relative flex w-full flex-grow items-end gap-2 overflow-x-scroll">
@@ -64,15 +69,15 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
           </div>
         )}
         {/* state */}
-        {issueDetails?.state_detail && (
+        {stateDetails && (
           <div className="flex-shrink-0">
-            <IssueBlockState state={issueDetails?.state_detail} />
+            <IssueBlockState stateId={stateDetails.id} />
           </div>
         )}
         {/* due date */}
         {issueDetails?.target_date && (
           <div className="flex-shrink-0">
-            <IssueBlockDueDate due_date={issueDetails?.target_date} group={issueDetails?.state_detail?.group} />
+            <IssueBlockDueDate due_date={issueDetails?.target_date} stateId={stateDetails?.id} />
           </div>
         )}
       </div>
