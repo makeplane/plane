@@ -14,6 +14,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
     button,
     panelClassName = "",
     data,
+    popoverClassName = "",
     keyExtractor,
     render,
   } = props;
@@ -28,6 +29,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
         "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none",
         panelClassName
       )}
+      popoverClassName={popoverClassName}
     >
       <Fragment>
         {data.map((item, index) => (

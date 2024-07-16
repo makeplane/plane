@@ -69,19 +69,22 @@ const useMemberColumns = () => {
                   {rowData.member.first_name} {rowData.member.last_name}
                 </div>
 
-                <PopoverMenu
-                  data={[""]}
-                  keyExtractor={(item) => item}
-                  buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  render={() => (
-                    <div
-                      className="flex items-center gap-x-3 cursor-pointer"
-                      onClick={() => setRemoveMemberModal(rowData)}
-                    >
-                      <Trash2 className="size-3.5 align-middle" /> Remove
-                    </div>
-                  )}
-                />
+                {currentWorkspaceRole === EUserWorkspaceRoles.ADMIN && (
+                  <PopoverMenu
+                    data={[""]}
+                    keyExtractor={(item) => item}
+                    popoverClassName="justify-end"
+                    buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    render={() => (
+                      <div
+                        className="flex items-center gap-x-3 cursor-pointer"
+                        onClick={() => setRemoveMemberModal(rowData)}
+                      >
+                        <Trash2 className="size-3.5 align-middle" /> Remove
+                      </div>
+                    )}
+                  />
+                )}
               </div>
             </div>
           )}
