@@ -79,8 +79,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   };
 
   // derived values
-  const hasAddMemberPermission =
-    currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
+  const hasAddMemberPermission = currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN].includes(currentWorkspaceRole);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   return (
