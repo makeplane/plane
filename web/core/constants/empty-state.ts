@@ -677,9 +677,9 @@ const emptyStateDetails = {
   },
   [EmptyStateType.DISABLED_PROJECT_INBOX]: {
     key: EmptyStateType.DISABLED_PROJECT_INBOX,
-    title: "Inbox is not enabled for the project.",
+    title: "Intake is not enabled for the project.",
     description:
-      "Inbox helps you manage incoming requests to your project and add them as issues in your workflow. Enable inbox \n from project settings to manage requests.",
+      "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake \n from project settings to manage requests.",
     accessType: "project",
     access: EUserProjectRoles.ADMIN,
     path: "/empty-state/disabled-feature/inbox",
@@ -750,7 +750,7 @@ const emptyStateDetails = {
   [EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
     key: EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
     title: "No  matching issues",
-    description: "No issue matches filter applied in inbox. \n Create a new issue.",
+    description: "No issue matches filter applied in intake. \n Create a new issue.",
     path: "/empty-state/inbox/filter-issue",
   },
   [EmptyStateType.INBOX_DETAIL_EMPTY_STATE]: {
