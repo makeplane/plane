@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
-import { Activity, Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
+import { Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // types
@@ -31,19 +31,6 @@ const userLinks = (workspaceSlug: string) => [
     name: "Workspace settings",
     href: `/${workspaceSlug}/settings`,
     icon: Settings,
-  },
-];
-
-const profileLinks = (workspaceSlug: string, userId: string) => [
-  {
-    name: "My activity",
-    icon: Activity,
-    link: `/${workspaceSlug}/profile/${userId}`,
-  },
-  {
-    name: "Settings",
-    icon: Settings,
-    link: "/profile",
   },
 ];
 
@@ -285,22 +272,14 @@ export const SidebarDropdown = observer(() => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Link
-                    key={index}
-                    href={link.link}
-                    onClick={() => {
-                      if (index == 0) handleItemClick();
-                    }}
-                  >
-                    <Menu.Item key={index} as="div">
-                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                        <link.icon className="h-4 w-4 stroke-[1.5]" />
-                        {link.name}
-                      </span>
-                    </Menu.Item>
-                  </Link>
-                ))}
+                <Link href="/profile">
+                  <Menu.Item as="div">
+                    <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                      <Settings className="h-4 w-4 stroke-[1.5]" />
+                      <span>Settings</span>
+                    </span>
+                  </Menu.Item>
+                </Link>
               </div>
               <div className={`pt-2 ${isUserInstanceAdmin || false ? "pb-2" : ""}`}>
                 <Menu.Item
