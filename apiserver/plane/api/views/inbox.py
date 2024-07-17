@@ -3,8 +3,11 @@ import json
 
 # Django improts
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
 from django.utils import timezone
+from django.db.models import Q, Value, UUIDField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 
 # Third party imports
 from rest_framework import status
@@ -224,8 +227,27 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         issue_data = request.data.pop("issue", False)
 
         if bool(issue_data):
-            issue = Issue.objects.get(
-                pk=issue_id, workspace__slug=slug, project_id=project_id
+            issue = Issue.objects.annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            ).get(
+                pk=issue_id,
+                workspace__slug=slug,
+                project_id=project_id,
             )
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
