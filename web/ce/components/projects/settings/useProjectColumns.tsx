@@ -63,13 +63,6 @@ const useProjectColumns = () => {
         />
       ),
     },
-    // {
-    //   key: "Billing Status",
-    //   content: "Billing Status",
-    //   tdRender: (rowData: RowData) => (
-    //     <div className="w-36">{rowData.role < EUserWorkspaceRoles.MEMBER ? "Inactive" : "Active"}</div>
-    //   ),
-    // },
     {
       key: "Joining Date",
       content: "Joining Date",

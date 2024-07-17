@@ -32,7 +32,7 @@ const useMemberColumns = () => {
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
-          workspaceSlug={workspaceSlug}
+          workspaceSlug={workspaceSlug as string}
           isAdmin={isAdmin}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
@@ -52,17 +52,11 @@ const useMemberColumns = () => {
         <AccountTypeColumn
           rowData={rowData}
           currentWorkspaceRole={currentWorkspaceRole}
-          workspaceSlug={workspaceSlug}
+          workspaceSlug={workspaceSlug as string}
         />
       ),
     },
-    // {
-    //   key: "Billing Status",
-    //   content: "Billing Status",
-    //   tdRender: (rowData: RowData) => (
-    //     <div className="w-36">{rowData.role < EUserWorkspaceRoles.MEMBER ? "Inactive" : "Active"}</div>
-    //   ),
-    // },
+
     {
       key: "Joining Date",
       content: "Joining Date",
