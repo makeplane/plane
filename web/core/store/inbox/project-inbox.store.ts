@@ -249,7 +249,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   /**
-   * @description fetch inbox issues with paginated data
+   * @description fetch intake issues with paginated data
    * @param workspaceSlug
    * @param projectId
    */
@@ -285,10 +285,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
         }
       });
     } catch (error) {
-      console.error("Error fetching the inbox issues", error);
+      console.error("Error fetching the intake issues", error);
       this.loader = undefined;
       this.error = {
-        message: "Error fetching the inbox issues please try again later.",
+        message: "Error fetching the intake issues please try again later.",
         status: "init-error",
       };
       throw error;
@@ -296,7 +296,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   /**
-   * @description fetch inbox issues with paginated data
+   * @description fetch intake issues with paginated data
    * @param workspaceSlug
    * @param projectId
    */
@@ -326,9 +326,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
         });
       } else set(this, ["inboxIssuePaginationInfo", "next_page_results"], false);
     } catch (error) {
-      console.error("Error fetching the inbox issues", error);
+      console.error("Error fetching the intake issues", error);
       this.error = {
-        message: "Error fetching the paginated inbox issues please try again later.",
+        message: "Error fetching the paginated intake issues please try again later.",
         status: "pagination-error",
       };
       throw error;
@@ -336,7 +336,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   /**
-   * @description fetch inbox issue with issue id
+   * @description fetch intake issue with issue id
    * @param workspaceSlug
    * @param projectId
    * @param inboxIssueId
@@ -369,14 +369,14 @@ export class ProjectInboxStore implements IProjectInboxStore {
       }
       return inboxIssue;
     } catch (error) {
-      console.error("Error fetching the inbox issue with inbox issue id");
+      console.error("Error fetching the intake issue with intake issue id");
       this.loader = undefined;
       throw error;
     }
   };
 
   /**
-   * @description create inbox issue
+   * @description create intake issue
    * @param workspaceSlug
    * @param projectId
    * @param data
@@ -400,12 +400,12 @@ export class ProjectInboxStore implements IProjectInboxStore {
         });
       return inboxIssueResponse;
     } catch {
-      console.error("Error creating the inbox issue");
+      console.error("Error creating the intake issue");
     }
   };
 
   /**
-   * @description delete inbox issue
+   * @description delete intake issue
    * @param workspaceSlug
    * @param projectId
    * @param inboxIssueId
@@ -429,7 +429,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       });
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
     } catch {
-      console.error("Error removing the inbox issue");
+      console.error("Error removing the intake issue");
       set(this.inboxIssues, [inboxIssueId], currentIssue);
       set(this, ["inboxIssuePaginationInfo", "total_results"], (this.inboxIssuePaginationInfo?.total_results || 0) + 1);
       set(this, ["inboxIssueIds"], [...this.inboxIssueIds, inboxIssueId]);
