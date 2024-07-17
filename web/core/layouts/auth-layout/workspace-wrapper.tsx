@@ -37,7 +37,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspace: { fetchWorkspaceMembers },
   } = useMember();
   const { workspaces } = useWorkspace();
-  const { loader: featureFlagsLoader, fetchFeatureFlags } = useFeatureFlags();
+  const { fetchFeatureFlags } = useFeatureFlags();
   const { isMobile } = usePlatformOS();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
@@ -46,10 +46,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
 
   // fetching feature flags
-  useSWR(
+  const { isLoading: featureFlagsLoader } = useSWR(
     workspaceSlug && currentUser ? `WORKSPACE_FEATURE_FLAGS_${workspaceSlug}_${currentUser.id}` : null,
     workspaceSlug && currentUser ? () => fetchFeatureFlags(workspaceSlug.toString(), currentUser.id) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    { revalidateOnFocus: false }
   );
 
   // fetching user workspace information
