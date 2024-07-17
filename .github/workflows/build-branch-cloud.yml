@@ -2,112 +2,17 @@ name: Branch Build Enterprise Cloud
 
 on:
   workflow_dispatch:
-    inputs:
-      web_base_url:
-        description: 'Web Base URL'
-        required: true
-        default: 'https://app.plane.so'
-      admin_base_url:
-        description: 'Admin Base URL'
-        required: true
-        default: 'https://admin.plane.so'
-      space_base_url:
-        description: 'Space Base URL'
-        required: true
-        default: 'https://space.plane.so'
-      api_base_url:
-        description: 'API Base URL'
-        required: true
-        default: 'https://api.plane.so'
-      disco_base_url:
-        description: 'Disco Base URL'
-        required: true
-        default: 'https://disco.plane.so'
-      feature_flag_server_base_url:
-        description: 'Feature Flag Server Base URL'
-        required: true
-        default: 'https://disco.plane.so'
-      support_email:
-        description: 'Support Email'
-        required: true
-        default: 'support@plane.so'
-      sentry_monitoring_enabled:
-        description: 'Sentry Monitoring Enabled'
-        required: false
-        default: '1'
-      sentry_project_id:
-        description: 'Sentry Project ID'
-        required: false
-        default: 'plane-web'
-      sentry_org_id:
-        description: 'Sentry Organization ID'
-        required: false
-        default: 'plane-hq'
-      sentry_enviroment:
-        description: 'Sentry Environment'
-        required: false
-        default: 'production'
-      sentry_dsn:
-        description: 'Sentry DSN'
-        required: false
-        default: 'https://866cdc0309304a48984f27f162b1cad6@o4505441148272640.ingest.sentry.io/4505589698002944'
-      sentry_auth_token:
-        description: 'Sentry Auth Token'
-        required: false
-        default: ''
-      plausible_domain:
-        description: 'Plausible Domain'
-        required: false
-        default: 'app.plane.so'
-      session_recorder_key:
-        description: 'Session Recorder Key'
-        required: false
-        default: ''
-      crisp_id:
-        description: 'Crisp ID'
-        required: false
-        default: ''
-      posthog_host:
-        description: 'Posthog Host'
-        required: false
-        default: 'https://app.posthog.com'
-      posthog_key:
-        description: 'Posthog Key'
-        required: false
-        default: ''
-      pro_self_hosted_payment_url:
-        description: 'Pro Self Hosted Payment URL'
-        required: false
-        default: 'https://buy.stripe.com/aEUdSNaCsbTr9ji14f'
   release:
     types: [released, prereleased]
 
 env:
   TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
-  NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || 'https://api.plane.so' }}
-  NEXT_PUBLIC_WEB_BASE_URL: ${{ inputs.web_base_url || 'https://app.plane.so' }}
-  NEXT_PUBLIC_SPACE_BASE_URL: ${{ inputs.space_base_url || 'https://space.plane.so' }}
-  NEXT_PUBLIC_ADMIN_BASE_URL: ${{ inputs.admin_base_url || 'https://admin.plane.so' }}
-  NEXT_PUBLIC_SUPPORT_EMAIL: ${{ inputs.support_email || 'support@plane.so' }}
-  NEXT_PUBLIC_DISCO_BASE_URL: ${{ inputs.disco_base_url || 'https://disco.plane.so' }}
-  NEXT_PUBLIC_FEATURE_FLAG_SERVER_BASE_URL: ${{ inputs.feature_flag_server_base_url || 'https://disco.plane.so' }}
-  NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL: ${{ inputs.pro_self_hosted_payment_url || 'https://buy.stripe.com/aEUdSNaCsbTr9ji14f' }}
-  NEXT_PUBLIC_POSTHOG_KEY: ${{ inputs.posthog_key || secrets.CLOUD_BUILD_POSTHOG_KEY || '' }}
-  NEXT_PUBLIC_POSTHOG_HOST: ${{ inputs.posthog_host || 'https://app.posthog.com' }}
-  NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.sentry_dsn || 'https://866cdc0309304a48984f27f162b1cad6@o4505441148272640.ingest.sentry.io/4505589698002944' }}
-  NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${{ inputs.sentry_enviroment || 'production' }}
-  SENTRY_MONITORING_ENABLED: ${{ inputs.sentry_monitoring_enabled || '1' }}
-  SENTRY_PROJECT_ID: ${{ inputs.sentry_project_id || 'plane-web' }}
-  SENTRY_ORG_ID: ${{ inputs.sentry_org_id || 'plane-hq' }}
-  SENTRY_AUTH_TOKEN: ${{ inputs.sentry_auth_token || secrets.CLOUD_BUILD_SENTRY_AUTH_TOKEN || '' }}
-  NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ${{ inputs.plausible_domain || 'app.plane.so' }}
-  NEXT_PUBLIC_SESSION_RECORDER_KEY: ${{ inputs.session_recorder_key || secrets.CLOUD_BUILD_SESSION_RECORDER_KEY || '' }}
-  NEXT_PUBLIC_CRISP_ID: ${{ inputs.crisp_id || secrets.CLOUD_BUILD_CRISP_ID || '' }}
+  VAULT_KP_PREFIX: plane-ee-cloud-builds
 
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ${{vars.ACTION_RUNS_ON}}
+    runs-on: ubuntu-22.04
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       flat_branch_name: ${{ steps.set_env_variables.outputs.FLAT_BRANCH_NAME }}
@@ -169,6 +74,28 @@ jobs:
           fi
           echo "ADMIN_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
 
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      
+      - name: Get the ENV values from Vault
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            ENV_NAME="prod"
+          else
+            ENV_NAME="stage"
+          fi
+
+          curl -fsSL \
+            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            --request GET \
+            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > values.json
+
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' values.json >> $GITHUB_ENV
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -199,6 +126,9 @@ jobs:
             NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
             NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
             NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -229,6 +159,28 @@ jobs:
           fi
           echo "WEB_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
 
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      
+      - name: Get the ENV values from Vault
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            ENV_NAME="prod"
+          else
+            ENV_NAME="stage"
+          fi
+
+          curl -fsSL \
+            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            --request GET \
+            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > values.json
+
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' values.json >> $GITHUB_ENV
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -245,7 +197,6 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-
       - name: Build and Push Web Cloud to Docker Container Registry
         uses: docker/build-push-action@v5.1.0
         with:
@@ -259,6 +210,9 @@ jobs:
             NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
             NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
             NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -289,6 +243,28 @@ jobs:
           fi
           echo "SPACE_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
 
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      
+      - name: Get the ENV values from Vault
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            ENV_NAME="prod"
+          else
+            ENV_NAME="stage"
+          fi
+
+          curl -fsSL \
+            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            --request GET \
+            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > values.json
+
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' values.json >> $GITHUB_ENV
+      
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -318,6 +294,9 @@ jobs:
             NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
             NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
             NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
