@@ -1,7 +1,8 @@
 "use client";
 
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { TInboxIssueCurrentTab } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -53,6 +54,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   } = useProjectInbox();
 
   const router = useAppRouter();
+  const { inboxIssueId } = useParams();
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -61,6 +63,13 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
 
   // page observer
   useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
+
+  useEffect(() => {
+    if (inboxIssueId) return;
+    router.push(
+      `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
+    );
+  }, [filteredInboxIssueIds, currentTab, workspaceSlug, projectId, router, inboxIssueId]);
 
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
