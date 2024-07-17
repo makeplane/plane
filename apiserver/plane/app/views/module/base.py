@@ -53,6 +53,7 @@ from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class ModuleViewSet(BaseViewSet):
@@ -441,6 +442,13 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+        )
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="module",
+            entity_identifier=pk,
+            actor_id=request.user.id,
+            project_id=project_id,
         )
 
         estimate_type = Project.objects.filter(

@@ -36,6 +36,7 @@ from .issue import (
     IssueSubscriber,
     IssueVote,
     Label,
+    RecentVisited,
 )
 from .module import (
     Module,

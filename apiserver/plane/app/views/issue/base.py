@@ -58,8 +58,7 @@ from plane.utils.paginator import (
 )
 from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
-
-# Module imports
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -410,6 +409,13 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="issue",
+            entity_identifier=pk,
+            actor_id=request.user.id,
+            project_id=project_id,
+        )
         issue = (
             self.get_queryset()
             .filter(pk=pk)

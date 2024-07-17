@@ -49,6 +49,7 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 # Module imports
 from .. import BaseAPIView, BaseViewSet
@@ -767,6 +768,13 @@ class CycleViewSet(BaseViewSet):
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
+        )
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="cycle",
+            entity_identifier=pk,
+            actor_id=request.user.id,
+            project_id=project_id,
         )
         data = (
             self.get_queryset()

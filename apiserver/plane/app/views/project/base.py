@@ -50,6 +50,7 @@ from plane.db.models import (
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class ProjectViewSet(BaseViewSet):
@@ -239,6 +240,14 @@ class ProjectViewSet(BaseViewSet):
                 .values("count")
             )
         ).first()
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=pk,
+            entity_name="project",
+            entity_identifier=pk,
+            actor_id=request.user.id,
+        )
 
         if project is None:
             return Response(
