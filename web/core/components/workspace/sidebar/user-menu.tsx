@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // components
 import { Tooltip } from "@plane/ui";
-import { SidebarNavigation } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // constants
 import { SIDEBAR_USER_MENU_ITEMS } from "@/constants/dashboard";
@@ -71,14 +71,17 @@ export const SidebarUserMenu = observer(() => {
                 href={`/${workspaceSlug}${link.href}${link.key === "my-work" ? `/${currentUser?.id}` : ""}`}
                 onClick={() => handleLinkClick(link.key)}
               >
-                <SidebarNavigation
+                <SidebarNavItem
                   key={link.key}
-                  label={<>{!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}</>}
                   className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-                  icon={<link.Icon className="size-4 flex-shrink-0" />}
                   isActive={link.highlight(pathname, `/${workspaceSlug}`)}
-                  indicatorElement={link.key === "notifications" ? notificationIndicatorElement : undefined}
-                />
+                >
+                  <div className="flex items-center gap-1.5 py-[1px]">
+                    <link.Icon className="size-4 flex-shrink-0" />
+                    {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                  </div>
+                  {link.key === "notifications" && notificationIndicatorElement}
+                </SidebarNavItem>
               </Link>
             </Tooltip>
           )

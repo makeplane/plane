@@ -3,16 +3,14 @@ import React, { FC } from "react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
-type TSidebarNavigation = {
-  label: string | React.ReactNode;
+type TSidebarNavItem = {
   className?: string;
   isActive?: boolean;
-  icon?: React.ReactNode;
-  indicatorElement?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
-export const SidebarNavigation: FC<TSidebarNavigation> = (props) => {
-  const { label, className, isActive, icon, indicatorElement } = props;
+export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
+  const { className, isActive, children } = props;
   return (
     <div
       className={cn(
@@ -25,11 +23,7 @@ export const SidebarNavigation: FC<TSidebarNavigation> = (props) => {
         className
       )}
     >
-      <div className="flex items-center gap-1.5 py-[1px]">
-        {icon && icon}
-        {label}
-      </div>
-      {indicatorElement && indicatorElement}
+      {children}
     </div>
   );
 };

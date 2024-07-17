@@ -39,7 +39,7 @@ import {
 // components
 import { Logo } from "@/components/common";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
-import { SidebarNavigation } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -484,19 +484,18 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       disabled={!isSidebarCollapsed}
                     >
                       <Link key={item.name} href={item.href} onClick={handleProjectClick}>
-                        <SidebarNavigation
+                        <SidebarNavItem
                           key={item.name}
-                          label={
-                            <> {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}</>
-                          }
                           className={`pl-[18px]  ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                          icon={
+                          isActive={pathname.includes(item.href)}
+                        >
+                          <div className="flex items-center gap-1.5 py-[1px]">
                             <item.Icon
                               className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
                             />
-                          }
-                          isActive={pathname.includes(item.href)}
-                        />
+                            {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
+                          </div>
+                        </SidebarNavItem>
                       </Link>
                     </Tooltip>
                   );

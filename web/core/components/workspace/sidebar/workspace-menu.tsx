@@ -9,7 +9,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Tooltip } from "@plane/ui";
 // components
-import { SidebarNavigation } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
@@ -108,22 +108,21 @@ export const SidebarWorkspaceMenu = observer(() => {
                     isMobile={isMobile}
                   >
                     <Link href={`/${workspaceSlug}${link.href}`} onClick={() => handleLinkClick(link.key)}>
-                      <SidebarNavigation
+                      <SidebarNavItem
                         key={link.key}
-                        label={
-                          <>{!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}</>
-                        }
                         className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-                        icon={
+                        isActive={link.highlight(pathname, `/${workspaceSlug}`)}
+                      >
+                        <div className="flex items-center gap-1.5 py-[1px]">
                           <link.Icon
                             className={cn("size-4", {
                               "rotate-180": link.key === "active-cycles",
                             })}
                           />
-                        }
-                        isActive={link.highlight(pathname, `/${workspaceSlug}`)}
-                        indicatorElement={!sidebarCollapsed && link.key === "active-cycles" && indicatorElement}
-                      />
+                          {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                        </div>
+                        {!sidebarCollapsed && link.key === "active-cycles" && indicatorElement}
+                      </SidebarNavItem>
                     </Link>
                   </Tooltip>
                 )
