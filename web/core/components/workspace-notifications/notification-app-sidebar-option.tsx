@@ -34,7 +34,7 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
   if (totalNotifications <= 0) return <></>;
 
   if (isSidebarCollapsed)
-    return <div className="absolute right-3.5 top-2 h-2 w-2 rounded-full bg-custom-primary-300" />;
+    return <div className="absolute right-2 top-1.5 h-2 w-2 rounded-full bg-custom-primary-300" />;
 
   return (
     <div className="ml-auto">
