@@ -44,7 +44,7 @@ export interface IUserStore {
   // computed
   canPerformProjectCreateActions: boolean;
   canPerformWorkspaceCreateActions: boolean;
-  getProjectsWithPermissions: { [projectId: string]: number } | null;
+  projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
 
 export class UserStore implements IUserStore {
@@ -92,7 +92,7 @@ export class UserStore implements IUserStore {
       // computed
       canPerformProjectCreateActions: computed,
       canPerformWorkspaceCreateActions: computed,
-      getProjectsWithPermissions: computed,
+      projectsWithCreatePermissions: computed,
     });
   }
 
@@ -235,7 +235,7 @@ export class UserStore implements IUserStore {
    * @description returns projects where user has permissions
    * @returns {{[projectId: string]: number} || null}
    */
-  get getProjectsWithPermissions() {
+  get projectsWithCreatePermissions() {
     const allWorkspaceRoles =
       this.membership.workspaceProjectsRole &&
       this.membership.workspaceProjectsRole[this.membership.router.workspaceSlug || ""];

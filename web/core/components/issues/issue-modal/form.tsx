@@ -121,7 +121,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString())?.id as string;
   const { config } = useInstance();
-  const { getProjectsWithPermissions } = useUser();
+  const { projectsWithCreatePermissions } = useUser();
 
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
@@ -344,8 +344,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   required: true,
                 }}
                 render={({ field: { value, onChange } }) =>
-                  getProjectsWithPermissions &&
-                  getProjectsWithPermissions[value!] && (
+                  projectsWithCreatePermissions && projectsWithCreatePermissions[value!] ? (
                     <div className="h-7">
                       <ProjectDropdown
                         value={value}
@@ -358,6 +357,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         tabIndex={getTabIndex("project_id")}
                       />
                     </div>
+                  ) : (
+                    <></>
                   )
                 }
               />

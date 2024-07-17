@@ -45,7 +45,7 @@ export const CommandPalette: FC = observer(() => {
     data: currentUser,
     canPerformProjectCreateActions,
     canPerformWorkspaceCreateActions,
-    getProjectsWithPermissions,
+    projectsWithCreatePermissions,
   } = useUser();
   const {
     issues: { removeIssue },
@@ -127,15 +127,17 @@ export const CommandPalette: FC = observer(() => {
 
   const performAnyProjectCreateActions = useCallback(
     (showToast: boolean = true) => {
-      const projectsWithPermissions = Object.keys(getProjectsWithPermissions).length;
-      if (projectsWithPermissions < 0 && showToast)
+      const projectsWithPermissionsCount = projectsWithCreatePermissions
+        ? Object.keys(projectsWithCreatePermissions).length
+        : 0;
+      if (projectsWithPermissionsCount < 0 && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
-      return projectsWithPermissions > 0;
+      return projectsWithPermissionsCount > 0;
     },
-    [getProjectsWithPermissions]
+    [projectsWithCreatePermissions]
   );
 
   const shortcutsList: {
