@@ -10,8 +10,8 @@ import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "@/compon
 // hooks
 import { useMember } from "@/hooks/store";
 
-export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props) => {
-  const { searchQuery } = props;
+export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }> = observer((props) => {
+  const { searchQuery, isAdmin } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -52,41 +52,43 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
           <h4 className="mt-16 text-center text-sm text-custom-text-400">No matching members</h4>
         )}
       </div>
-      <Disclosure as="div" className="border-t border-custom-border-100  pt-6 overscroll-x-hidden	">
-        {({ open }) => (
-          <>
-            <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-              <div className="flex">
-                <h4 className="text-xl font-medium pt-2 pb-2">Pending invites</h4>
-                {/* <div className="w-5 flex justify-center bg-">{searchedInvitationsIds && searchedInvitationsIds.length}</div> */}
-                {searchedInvitationsIds && (
-                  <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
-                )}
-              </div>{" "}
-              <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
-            </Disclosure.Button>
-            <Transition
-              show={open}
-              enter="transition duration-100 ease-out"
-              enterFrom="transform opacity-0"
-              enterTo="transform opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform opacity-100"
-              leaveTo="transform opacity-0"
-            >
-              <Disclosure.Panel>
-                <div className="ml-auto  items-center gap-1.5 rounded-md bg-custom-background-100  py-1.5">
-                  {searchedInvitationsIds && searchedInvitationsIds.length > 0
-                    ? searchedInvitationsIds?.map((invitationId) => (
-                        <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
-                      ))
-                    : null}
-                </div>
-              </Disclosure.Panel>
-            </Transition>
-          </>
-        )}
-      </Disclosure>
+      {isAdmin && (
+        <Disclosure as="div" className="border-t border-custom-border-100  pt-6 overscroll-x-hidden	">
+          {({ open }) => (
+            <>
+              <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
+                <div className="flex">
+                  <h4 className="text-xl font-medium pt-2 pb-2">Pending invites</h4>
+                  {/* <div className="w-5 flex justify-center bg-">{searchedInvitationsIds && searchedInvitationsIds.length}</div> */}
+                  {searchedInvitationsIds && (
+                    <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
+                  )}
+                </div>{" "}
+                <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+              </Disclosure.Button>
+              <Transition
+                show={open}
+                enter="transition duration-100 ease-out"
+                enterFrom="transform opacity-0"
+                enterTo="transform opacity-100"
+                leave="transition duration-75 ease-out"
+                leaveFrom="transform opacity-100"
+                leaveTo="transform opacity-0"
+              >
+                <Disclosure.Panel>
+                  <div className="ml-auto  items-center gap-1.5 rounded-md bg-custom-background-100  py-1.5">
+                    {searchedInvitationsIds && searchedInvitationsIds.length > 0
+                      ? searchedInvitationsIds?.map((invitationId) => (
+                          <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+                        ))
+                      : null}
+                  </div>
+                </Disclosure.Panel>
+              </Transition>
+            </>
+          )}
+        </Disclosure>
+      )}
     </>
   );
 });
