@@ -1,6 +1,4 @@
-// type
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-// router from next-nprogress-bar
+// router from n-progress-bar
 import { useRouter } from "@/lib/n-progress";
 
-export const useAppRouter = (): AppRouterInstance => useRouter();
+export const useAppRouter = () => useRouter();

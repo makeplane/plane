@@ -22,36 +22,28 @@
     "SENTRY_PROJECT_ID",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
     "NEXT_PUBLIC_SENTRY_DSN",
-    "SENTRY_MONITORING_ENABLED"
+    "SENTRY_MONITORING_ENABLED",
+    "NEXT_PUBLIC_PRO_PLAN_MONTHLY_PAYMENT_URL",
+    "NEXT_PUBLIC_PRO_PLAN_YEARLY_PAYMENT_URL",
+    "NEXT_PUBLIC_PLANE_ONE_PAYMENT_URL"
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
     "develop": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {

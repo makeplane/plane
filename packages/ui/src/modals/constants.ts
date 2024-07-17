@@ -8,4 +8,6 @@ export enum EModalWidth {
   XXL = "sm:max-w-2xl",
   XXXL = "sm:max-w-3xl",
   XXXXL = "sm:max-w-4xl",
+  VXL = "sm:max-w-5xl",
+  VIXL = "sm:max-w-6xl",
 }
