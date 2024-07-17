@@ -16,7 +16,6 @@ interface RowData {
 }
 
 const useProjectColumns = () => {
-  console.log("");
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
   // form info
