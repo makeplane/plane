@@ -153,7 +153,7 @@ export const SidebarProjectsList: FC = observer(() => {
     {
       key: "favorite",
       type: "FAVORITES",
-      title: "Favorites",
+      title: "FAVORITES",
       icon: Star,
       projects: favoriteProjects,
       isOpen: isFavoriteProjectsListOpen,
@@ -161,7 +161,7 @@ export const SidebarProjectsList: FC = observer(() => {
     {
       key: "all",
       type: "JOINED",
-      title: "My projects",
+      title: "MY PROJECTS",
       icon: Briefcase,
       projects: joinedProjects,
       isOpen: isAllProjectsListOpen,
@@ -217,7 +217,13 @@ export const SidebarProjectsList: FC = observer(() => {
                         position="right"
                         disabled={!isCollapsed}
                       >
-                        <span>{isCollapsed ? <section.icon className="flex-shrink-0 size-3" /> : section.title}</span>
+                        <>
+                          {isCollapsed ? (
+                            <section.icon className="flex-shrink-0 size-3" />
+                          ) : (
+                            <span className="text-xs font-semibold">{section.title}</span>
+                          )}
+                        </>
                       </Tooltip>
                     </Disclosure.Button>
                     {!isCollapsed && (
@@ -264,7 +270,7 @@ export const SidebarProjectsList: FC = observer(() => {
                     {section.isOpen && (
                       <Disclosure.Panel
                         as="div"
-                        className={cn("mt-2 ml-1 space-y-1", {
+                        className={cn("space-y-1", {
                           "space-y-0 ml-0": isCollapsed,
                         })}
                         static
