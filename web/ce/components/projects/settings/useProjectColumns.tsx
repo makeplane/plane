@@ -15,7 +15,7 @@ interface RowData {
   role: EUserWorkspaceRoles;
 }
 
-const useMemberColumns = () => {
+const useProjectColumns = () => {
   console.log("");
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
@@ -24,12 +24,12 @@ const useMemberColumns = () => {
     control,
     formState: { errors },
   } = useForm();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   const {
-    workspace: { updateMember },
+    project: { updateMember },
   } = useMember();
   const {
-    membership: { currentWorkspaceRole },
+    membership: { currentProjectRole },
     data: currentUser,
   } = useUser();
 
@@ -39,8 +39,8 @@ const useMemberColumns = () => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
     return date.toLocaleDateString("en-US", options);
   };
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-
+  // derived values
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   const columns = [
     {
       key: "Full Name",
@@ -83,7 +83,7 @@ const useMemberColumns = () => {
                         className="flex items-center gap-x-3 cursor-pointer"
                         onClick={() => setRemoveMemberModal(rowData)}
                       >
-                        <Trash2 className="size-3.5 align-middle" />{" "}
+                        <Trash2 className="size-3.5 align-middle" />
                         {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
                       </div>
                     )}
@@ -105,7 +105,7 @@ const useMemberColumns = () => {
       key: "Account Type",
       content: "Account Type",
       tdRender: (rowData: RowData) =>
-        rowData.role === EUserWorkspaceRoles.ADMIN || currentWorkspaceRole !== EUserWorkspaceRoles.ADMIN ? (
+        rowData.role === EUserWorkspaceRoles.ADMIN || currentProjectRole !== EUserProjectRoles.ADMIN ? (
           <div className="w-32 flex ">
             <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
           </div>
@@ -118,11 +118,10 @@ const useMemberColumns = () => {
               <CustomSelect
                 value={value}
                 onChange={(value: EUserProjectRoles) => {
-                  console.log({ value, workspaceSlug }, "onChange");
                   if (!workspaceSlug) return;
 
-                  updateMember(workspaceSlug.toString(), rowData.member.id, {
-                    role: value as unknown as EUserWorkspaceRoles, // Cast value to unknown first, then to EUserWorkspaceRoles
+                  updateMember(workspaceSlug.toString(), projectId.toString(), rowData.member.id, {
+                    role: value as unknown as EUserProjectRoles, // Cast value to unknown first, then to EUserWorkspaceRoles
                   }).catch((err) => {
                     console.log(err, "err");
                     const error = err.error;
@@ -168,7 +167,7 @@ const useMemberColumns = () => {
       tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData.member.joining_date)}</div>,
     },
   ];
-  return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };
+  return { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal };
 };
 
-export default useMemberColumns;
+export default useProjectColumns;
