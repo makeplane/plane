@@ -14,7 +14,7 @@ from .. import BaseViewSet
 from plane.app.serializers import IssueReactionSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.db.models import IssueReaction
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueReactionViewSet(BaseViewSet):
