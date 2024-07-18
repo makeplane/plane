@@ -21,15 +21,15 @@ export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
   const getInboxActivityMessage = () => {
     switch (activity?.verb) {
       case "-1":
-        return "declined this issue from inbox.";
+        return "declined this issue from intake.";
       case "0":
         return "snoozed this issue.";
       case "1":
-        return "accepted this issue from inbox.";
+        return "accepted this issue from intake.";
       case "2":
-        return "declined this issue from inbox by marking a duplicate issue.";
+        return "declined this issue from intake by marking a duplicate issue.";
       default:
-        return "updated inbox issue status.";
+        return "updated intake issue status.";
     }
   };
 

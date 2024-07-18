@@ -79,8 +79,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   };
 
   // derived values
-  const hasAddMemberPermission =
-    currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
+  const isAdmin = currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN].includes(currentWorkspaceRole);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   return (
@@ -104,13 +103,13 @@ const WorkspaceMembersSettingsPage = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {hasAddMemberPermission && (
+          {isAdmin && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}
         </div>
-        <WorkspaceMembersList searchQuery={searchQuery} />
+        <WorkspaceMembersList searchQuery={searchQuery} isAdmin={isAdmin ?? false} />
       </section>
     </>
   );

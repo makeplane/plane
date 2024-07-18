@@ -101,7 +101,7 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
 const inboxActivityMessage = {
   declined: {
     showIssue: "declined issue",
-    noIssue: "declined this issue from inbox.",
+    noIssue: "declined this issue from intake.",
   },
   snoozed: {
     showIssue: "snoozed issue",
@@ -109,11 +109,11 @@ const inboxActivityMessage = {
   },
   accepted: {
     showIssue: "accepted issue",
-    noIssue: "accepted this issue from inbox.",
+    noIssue: "accepted this issue from intake.",
   },
   markedDuplicate: {
     showIssue: "declined issue",
-    noIssue: "declined this issue from inbox by marking a duplicate issue.",
+    noIssue: "declined this issue from intake by marking a duplicate issue.",
   },
 };
 
@@ -128,7 +128,7 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
     case "2":
       return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
     default:
-      return "updated inbox issue status.";
+      return "updated intake issue status.";
   }
 };
 

@@ -14,6 +14,7 @@ export type TPopoverDefaultOptions = TPopoverButtonDefaultOptions & {
   popperPadding?: number | undefined;
   // panel styling
   panelClassName?: string;
+  popoverClassName?: string;
 };
 
 export type TPopover = TPopoverDefaultOptions & {

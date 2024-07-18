@@ -12,6 +12,7 @@ export const Popover = (props: TPopover) => {
     popperPosition = "bottom-end",
     popperPadding = 0,
     buttonClassName = "",
+    popoverClassName = "",
     button,
     disabled = false,
     panelClassName = "",
@@ -35,7 +36,7 @@ export const Popover = (props: TPopover) => {
   });
 
   return (
-    <HeadlessReactPopover className="relative flex h-full w-full items-center justify-center">
+    <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
       <HeadlessReactPopover.Button
         ref={setReferenceElement}
         className={cn(

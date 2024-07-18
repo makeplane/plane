@@ -155,7 +155,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   return (
     <form onSubmit={handleFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create Inbox Issue</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">Create Intake Issue</h3>
         <div className="space-y-3">
           <InboxIssueTitle
             data={formData}
