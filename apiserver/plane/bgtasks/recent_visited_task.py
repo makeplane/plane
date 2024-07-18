@@ -27,6 +27,16 @@ def recent_visited_task(
             recent_visited.visited_at = timezone.now()
             recent_visited.save(update_fields=["visited_at"])
         else:
+            recent_visited_count = RecentVisited.objects.filter(
+                actor_id=actor_id, workspace_id=workspace.id
+            ).count()
+
+            if recent_visited_count == 20:
+                recent_visited = RecentVisited.objects.filter(
+                    actor_id=actor_id, workspace_id=workspace.id
+                ).order_by("created").first()
+                recent_visited.delete()
+
             recent_activity = RecentVisited.objects.create(
                 entity_name=entity_name,
                 entity_identifier=entity_identifier,
