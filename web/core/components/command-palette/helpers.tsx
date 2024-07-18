@@ -1,7 +1,7 @@
 "use client";
 
 // types
-import { Briefcase, FileText, LayoutGrid } from "lucide-react";
+import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -9,7 +9,7 @@ import {
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
-import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 
 export const commandGroups: {
   [key: string]: {
@@ -45,7 +45,7 @@ export const commandGroups: {
     title: "Issues",
   },
   issue_view: {
-    icon: <PhotoFilterIcon className="h-3 w-3" />,
+    icon: <Layers className="h-3 w-3" />,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{view.project__identifier}</span> {view.name}

@@ -3,9 +3,10 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Layers } from "lucide-react";
 // ui
 import { TViewFilterProps } from "@plane/types";
-import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
+import { Breadcrumbs, Button } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
@@ -75,9 +76,7 @@ export const ProjectViewsHeader = observer(() => {
               />
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={
-                  <BreadcrumbLink label="Views" icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />} />
-                }
+                link={<BreadcrumbLink label="Views" icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
           </div>

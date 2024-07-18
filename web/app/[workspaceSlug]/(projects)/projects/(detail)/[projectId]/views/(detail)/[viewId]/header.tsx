@@ -4,11 +4,11 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Earth, Lock } from "lucide-react";
+import { Earth, Layers, Lock } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
@@ -159,7 +159,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
                 label="Views"
-                icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<Layers className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />
@@ -172,7 +172,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                     {viewDetails?.logo_props?.in_use ? (
                       <Logo logo={viewDetails.logo_props} size={12} type="lucide" />
                     ) : (
-                      <PhotoFilterIcon height={12} width={12} />
+                      <Layers height={12} width={12} />
                     )}
                     {viewDetails?.name && truncateText(viewDetails.name, 40)}
                   </>
@@ -194,7 +194,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                         {view?.logo_props?.in_use ? (
                           <Logo logo={view.logo_props} size={12} type="lucide" />
                         ) : (
-                          <PhotoFilterIcon height={12} width={12} />
+                          <Layers height={12} width={12} />
                         )}
                         {truncateText(view.name, 40)}
                       </Link>
