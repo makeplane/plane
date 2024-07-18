@@ -1,9 +1,9 @@
 "use client";
 
 import { Command } from "cmdk";
-import { ContrastIcon, FileText } from "lucide-react";
+import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
-import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
+import { DiceIcon } from "@plane/ui";
 import { useCommandPalette, useEventTracker } from "@/hooks/store";
 // ui
 
@@ -62,7 +62,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <PhotoFilterIcon className="h-3.5 w-3.5" />
+            <Layers className="h-3.5 w-3.5" />
             Create new view
           </div>
           <kbd>V</kbd>

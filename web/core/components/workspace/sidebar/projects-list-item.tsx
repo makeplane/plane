@@ -20,6 +20,7 @@ import {
   LogOut,
   MoreHorizontal,
   ChevronRight,
+  Layers,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
@@ -27,7 +28,6 @@ import {
   CustomMenu,
   Tooltip,
   ArchiveIcon,
-  PhotoFilterIcon,
   DiceIcon,
   ContrastIcon,
   LayersIcon,
@@ -84,7 +84,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: PhotoFilterIcon,
+    Icon: Layers,
   },
   {
     name: "Pages",
