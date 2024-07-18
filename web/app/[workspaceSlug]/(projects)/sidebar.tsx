@@ -1,4 +1,4 @@
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // components
 import {
@@ -16,12 +16,14 @@ import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // plane web components
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
+import useSize from "@/hooks/use-window-size";
 
 export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
+  const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
 
@@ -32,6 +34,14 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       }
     }
   });
+
+  useEffect(() => {
+    if (windowSize[0] < 768) {
+      !sidebarCollapsed && toggleSidebar();
+    } else {
+      sidebarCollapsed && toggleSidebar();
+    }
+  }, [windowSize, sidebarCollapsed]);
 
   return (
     <div
