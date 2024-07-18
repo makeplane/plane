@@ -50,12 +50,12 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
   return (
     <>
       <div className="divide-y-[0.5px] divide-custom-border-100 overflow-scroll	">
-        <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />
+        {searchedMemberIds?.length !== 0 && <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
           <h4 className="mt-16 text-center text-sm text-custom-text-400">No matching members</h4>
         )}
       </div>
-      {isAdmin && (
+      {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
         <Collapsible
           isOpen={showPendingInvites}
           onToggle={() => setShowPendingInvites((prev) => !prev)}
@@ -74,11 +74,9 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
         >
           <Disclosure.Panel>
             <div className="ml-auto  items-center gap-1.5 rounded-md bg-custom-background-100  py-1.5">
-              {searchedInvitationsIds && searchedInvitationsIds.length > 0
-                ? searchedInvitationsIds?.map((invitationId) => (
-                    <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
-                  ))
-                : null}
+              {searchedInvitationsIds?.map((invitationId) => (
+                <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+              ))}
             </div>
           </Disclosure.Panel>
         </Collapsible>

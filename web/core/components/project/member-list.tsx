@@ -42,10 +42,10 @@ export const ProjectMemberList: React.FC = observer(() => {
 
       <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5 overflow-x-hidden">
         <h4 className="text-xl font-medium">Members</h4>
-        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
+        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
           <Search className="h-3.5 w-3.5" />
           <input
-            className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none"
+            className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
             placeholder="Search"
             value={searchQuery}
             autoFocus
@@ -68,7 +68,7 @@ export const ProjectMemberList: React.FC = observer(() => {
         <MembersSettingsLoader />
       ) : (
         <div className="divide-y divide-custom-border-100 overflow-scroll">
-          <ProjectMemberListItem memberDetails={memberDetails ?? []} />
+          {searchedMembers.length !== 0 && <ProjectMemberListItem memberDetails={memberDetails ?? []} />}
 
           {searchedMembers.length === 0 && (
             <h4 className="text-sm mt-16 text-center text-custom-text-400">No matching members</h4>
