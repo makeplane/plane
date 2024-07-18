@@ -11,7 +11,7 @@ interface RowData {
   role: EUserWorkspaceRoles;
 }
 
-const useProjectColumns = () => {
+export const useProjectColumns = () => {
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
 
@@ -71,5 +71,3 @@ const useProjectColumns = () => {
   ];
   return { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal };
 };
-
-export default useProjectColumns;
