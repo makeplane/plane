@@ -66,7 +66,7 @@ const useProjectColumns = () => {
     {
       key: "Joining Date",
       content: "Joining Date",
-      tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData.member.joining_date)}</div>,
+      tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];
   return { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal };

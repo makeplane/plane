@@ -94,7 +94,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
       )}
       <Table
         columns={columns}
-        data={memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []}
+        data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-custom-border-100"
         thClassName="text-left font-medium divide-x-0"
