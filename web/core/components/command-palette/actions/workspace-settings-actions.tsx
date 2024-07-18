@@ -5,10 +5,12 @@ import { Command } from "cmdk";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // constants
-import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "@/constants/workspace";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane wev constants
+import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 
 type Props = {
   closePalette: () => void;

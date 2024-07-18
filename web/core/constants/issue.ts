@@ -456,19 +456,3 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return groupedEmojis;
 };
-
-export enum EActivityFilterType {
-  COMMENT = "COMMENT",
-  ACTIVITY = "ACTIVITY",
-}
-
-export const ACTIVITY_FILTER_TYPE_OPTIONS = [
-  {
-    value: EActivityFilterType.COMMENT,
-    label: "Comments",
-  },
-  {
-    value: EActivityFilterType.ACTIVITY,
-    label: "Updates",
-  },
-];

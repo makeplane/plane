@@ -7,11 +7,12 @@ import { TIssueComment } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ActivityFilter, IssueActivityCommentRoot, IssueCommentCreate } from "@/components/issues";
-// constants
-import { EActivityFilterType } from "@/constants/issue";
+import { ActivityFilter, IssueCommentCreate } from "@/components/issues";
+import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+// plane web constants
+import { TActivityFilters, EActivityFilterType } from "@/plane-web/constants/issues";
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -32,9 +33,12 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
   // state
-  const [selectedFilters, setSelectedFilters] = useState([EActivityFilterType.COMMENT, EActivityFilterType.ACTIVITY]);
+  const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>([
+    EActivityFilterType.ACTIVITY,
+    EActivityFilterType.COMMENT,
+  ]);
   // toggle filter
-  const toggleFilter = (filter: EActivityFilterType) => {
+  const toggleFilter = (filter: TActivityFilters) => {
     setSelectedFilters((prevFilters) => {
       if (prevFilters.includes(filter)) {
         if (prevFilters.length === 1) return prevFilters; // Ensure at least one filter is applied
