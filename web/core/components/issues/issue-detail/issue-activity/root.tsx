@@ -11,6 +11,8 @@ import { ActivityFilter, IssueCommentCreate } from "@/components/issues";
 import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+// plane web components
+import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/activity";
 // plane web constants
 import { TActivityFilters, EActivityFilterType } from "@/plane-web/constants/issues";
 
@@ -114,7 +116,15 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       {/* header */}
       <div className="flex items-center justify-between">
         <div className="text-lg text-custom-text-100">Activity</div>
-        <ActivityFilter selectedFilters={selectedFilters} toggleFilter={toggleFilter} />
+        <div className="flex items-center gap-2">
+          <IssueActivityWorklogCreateButton
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
+          />
+          <ActivityFilter selectedFilters={selectedFilters} toggleFilter={toggleFilter} />
+        </div>
       </div>
 
       {/* rendering activity */}
