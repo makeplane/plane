@@ -12,7 +12,7 @@ import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useMember, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import useMemberColumns from "@/plane-web/components/workspace/settings/useMemberColumns";
+import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";
 
 type Props = {
   memberDetails: (IWorkspaceMember | null)[];

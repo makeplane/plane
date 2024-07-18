@@ -11,7 +11,7 @@ import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import useProjectColumns from "@/plane-web/components/projects/settings/useProjectColumns";
+import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
 import { IProjectMemberDetails } from "@/store/member/project-member.store";
 
 type Props = {

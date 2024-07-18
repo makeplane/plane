@@ -4,7 +4,7 @@ import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/s
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useUser } from "@/hooks/store";
 
-const useMemberColumns = () => {
+export const useMemberColumns = () => {
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
 
@@ -65,5 +65,3 @@ const useMemberColumns = () => {
   ];
   return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };
 };
-
-export default useMemberColumns;
