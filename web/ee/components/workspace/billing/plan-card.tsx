@@ -32,7 +32,7 @@ export type TPlanCard = {
 };
 
 export const PlanCard: FC<TPlanCard> = (props) => {
-  const { variant, planName, isActive, priceDetails, callToAction, baseFeature, features } = props;
+  const { planName, isActive, priceDetails, callToAction, baseFeature, features } = props;
 
   return (
     <div className="py-2 px-4">

@@ -29,7 +29,7 @@ export const Table = <T,>(props: TTableData<T>) => {
           ))}
         </tr>
       </thead>
-      <tbody className={cn("divide-y divide-x divide-custom-border-200", tBodyClassName)}>
+      <tbody className={cn("divide-y divide-custom-border-200", tBodyClassName)}>
         {data.map((item) => (
           <tr
             key={keyExtractor(item)}

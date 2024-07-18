@@ -2,11 +2,11 @@
 
 import { linearGradientDef } from "@nivo/core";
 // icons
-import { BarChart2, Bell, Briefcase, CheckCircle, Home, Settings } from "lucide-react";
+import { BarChart2, Briefcase, Home, Inbox, Layers } from "lucide-react";
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // ui
-import { ContrastIcon } from "@plane/ui";
+import { ContrastIcon, UserActivityIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
 // assets
 import CompletedIssuesDark from "@/public/empty-state/dashboard/dark/completed-issues.svg";
@@ -260,14 +260,6 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
   Icon: React.FC<Props>;
 }[] = [
   {
-    key: "all-issues",
-    label: "All Issues",
-    href: `/workspace-views/all-issues`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
-    Icon: CheckCircle,
-  },
-  {
     key: "projects",
     label: "Projects",
     href: `/projects`,
@@ -276,8 +268,16 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     Icon: Briefcase,
   },
   {
+    key: "all-issues",
+    label: "Views",
+    href: `/workspace-views/all-issues`,
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
+    Icon: Layers,
+  },
+  {
     key: "active-cycles",
-    label: "Active Cycles",
+    label: "Cycles",
     href: `/active-cycles`,
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
@@ -290,14 +290,6 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     access: EUserWorkspaceRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
     Icon: BarChart2,
-  },
-  {
-    key: "settings",
-    label: "Settings",
-    href: `/settings`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/`),
-    Icon: Settings,
   },
 ];
 
@@ -318,11 +310,19 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     Icon: Home,
   },
   {
+    key: "my-work",
+    label: "My Work",
+    href: "/profile",
+    access: EUserWorkspaceRoles.GUEST,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/profile/`),
+    Icon: UserActivityIcon,
+  },
+  {
     key: "notifications",
-    label: "Notifications",
+    label: "Inbox",
     href: `/notifications`,
     access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/notifications`,
-    Icon: Bell,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
+    Icon: Inbox,
   },
 ];
