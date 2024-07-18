@@ -69,7 +69,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     router.push(
       `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
     );
-  }, [filteredInboxIssueIds, currentTab, workspaceSlug, projectId, router, inboxIssueId]);
+  }, []);
 
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">

@@ -1,8 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { EActivityFilterType } from "@/constants/issue";
 import { useIssueDetail } from "@/hooks/store";
+// plane wev components
+import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
+// plane web constants
+import { TActivityFilters, filterActivityOnSelectedFilters } from "@/plane-web/constants/issues";
 // components
 import { IssueActivityItem } from "./activity/activity-list";
 import { IssueCommentCard } from "./comments/comment-card";
@@ -13,7 +16,7 @@ type TIssueActivityCommentRoot = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  selectedFilters: EActivityFilterType[];
+  selectedFilters: TActivityFilters[];
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
@@ -32,14 +35,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
 
   if (!activityComments || (activityComments && activityComments.length <= 0)) return <></>;
 
-  const isCommentFilterSelected = selectedFilters.includes(EActivityFilterType.COMMENT);
-  const isActivityFilterSelected = selectedFilters.includes(EActivityFilterType.ACTIVITY);
-
-  const filteredActivityComments = activityComments.filter(
-    (activityComment) =>
-      (activityComment.activity_type === "COMMENT" && isCommentFilterSelected) ||
-      (activityComment.activity_type === "ACTIVITY" && isActivityFilterSelected)
-  );
+  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments, selectedFilters);
 
   return (
     <div>
@@ -59,6 +55,13 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
           <IssueActivityItem
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
+          />
+        ) : activityComment.activity_type === "WORKLOG" ? (
+          <IssueActivityWorklog
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            activityComment={activityComment}
           />
         ) : (
           <></>

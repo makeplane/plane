@@ -12,7 +12,9 @@ export const Popover = (props: TPopover) => {
     popperPosition = "bottom-end",
     popperPadding = 0,
     buttonClassName = "",
+    popoverClassName = "",
     button,
+    disabled = false,
     panelClassName = "",
     children,
   } = props;
@@ -34,20 +36,19 @@ export const Popover = (props: TPopover) => {
   });
 
   return (
-    <HeadlessReactPopover className="relative flex h-full w-full items-center justify-center">
-      <HeadlessReactPopover.Button ref={setReferenceElement} className="flex justify-center items-center">
-        {button ? (
-          button
-        ) : (
-          <div
-            className={cn(
-              "flex justify-center items-center text-base h-6 w-6 rounded transition-all bg-custom-background-90 hover:bg-custom-background-80",
-              buttonClassName
-            )}
-          >
-            <EllipsisVertical className="h-3 w-3" />
-          </div>
+    <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
+      <HeadlessReactPopover.Button
+        ref={setReferenceElement}
+        className={cn(
+          {
+            "flex justify-center items-center text-base h-6 w-6 rounded transition-all bg-custom-background-90 hover:bg-custom-background-80":
+              !button,
+          },
+          buttonClassName
         )}
+        disabled={disabled}
+      >
+        {button ? button : <EllipsisVertical className="h-3 w-3" />}
       </HeadlessReactPopover.Button>
 
       <Transition
