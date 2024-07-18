@@ -12,6 +12,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
     popperPadding = 0,
     buttonClassName = "",
     button,
+    disabled,
     panelClassName = "",
     data,
     popoverClassName = "",
@@ -25,6 +26,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
       popperPadding={popperPadding}
       buttonClassName={buttonClassName}
       button={button}
+      disabled={disabled}
       panelClassName={cn(
         "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none",
         panelClassName
