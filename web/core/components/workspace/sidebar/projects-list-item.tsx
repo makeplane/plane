@@ -470,7 +470,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     (item.name === "Modules" && !project.module_view) ||
                     (item.name === "Views" && !project.issue_views_view) ||
                     (item.name === "Pages" && !project.page_view) ||
-                    (item.name === "Inbox" && !project.inbox_view)
+                    (item.name === "Intake" && !project.inbox_view)
                   )
                     return;
 
