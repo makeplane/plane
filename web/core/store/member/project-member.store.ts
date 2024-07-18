@@ -15,7 +15,7 @@ import { IUserStore } from "@/store/user";
 import { CoreRootStore } from "../root.store";
 import { IMemberRootStore } from ".";
 
-interface IProjectMemberDetails {
+export interface IProjectMemberDetails {
   id: string;
   member: IUserLite;
   role: EUserProjectRoles;

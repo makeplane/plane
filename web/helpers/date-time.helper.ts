@@ -299,3 +299,38 @@ export const getCurrentDateTimeInISO = () => {
   const date = new Date();
   return date.toISOString();
 };
+
+/**
+ * @description converts hours and minutes to minutes
+ * @param { number } hours
+ * @param { number } minutes
+ * @returns { number } minutes
+ * @example convertHoursMinutesToMinutes(2, 30) // Output: 150
+ */
+export const convertHoursMinutesToMinutes = (hours: number, minutes: number): number => hours * 60 + minutes;
+
+/**
+ * @description converts minutes to hours and minutes
+ * @param { number } mins
+ * @returns { number, number } hours and minutes
+ * @example convertMinutesToHoursAndMinutes(150) // Output: { hours: 2, minutes: 30 }
+ */
+export const convertMinutesToHoursAndMinutes = (mins: number): { hours: number; minutes: number } => {
+  const hours = Math.floor(mins / 60);
+  const minutes = Math.floor(mins % 60);
+
+  return { hours: hours, minutes: minutes };
+};
+
+/**
+ * @description converts minutes to days, hours and minutes
+ * @param { number } totalMinutes
+ * @returns { string } days, hours and minutes
+ */
+export const convertMinutesToDaysHoursMinutes = (totalMinutes: number): string => {
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  return `${days ? `${days}d ` : ``}${hours ? `${hours}h ` : ``}${minutes ? `${minutes}m ` : ``} `;
+};
