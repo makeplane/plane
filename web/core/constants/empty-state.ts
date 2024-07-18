@@ -423,8 +423,8 @@ const emptyStateDetails = {
   [EmptyStateType.VIEWS_EMPTY_SEARCH]: {
     key: EmptyStateType.VIEWS_EMPTY_SEARCH,
     title: "No matching views",
-    description: "No views match the search criteria. Create a new view instead.",
-    path: "/empty-state/search/search",
+    description: "No views match the search criteria. \n Create a new view instead.",
+    path: "/empty-state/search/views",
   },
   [EmptyStateType.PROJECTS_EMPTY_SEARCH]: {
     key: EmptyStateType.PROJECTS_EMPTY_SEARCH,
