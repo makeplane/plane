@@ -12,7 +12,7 @@ import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
-import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/activity";
+import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 // plane web constants
 import { TActivityFilters, EActivityFilterType } from "@/plane-web/constants/issues";
 

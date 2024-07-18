@@ -2,11 +2,11 @@
 
 import { FC } from "react";
 
-type TIssueEEProperties = {
+type TIssueWorklogProperty = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   disabled: boolean;
 };
 
-export const IssueEEProperties: FC<TIssueEEProperties> = () => <></>;
+export const IssueWorklogProperty: FC<TIssueWorklogProperty> = () => <></>;

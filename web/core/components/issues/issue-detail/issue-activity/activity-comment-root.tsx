@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane wev components
-import { IssueEEActivityRoot } from "@/plane-web/components/issues/activity/root";
+import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
 // plane web constants
 import { TActivityFilters, filterActivityOnSelectedFilters } from "@/plane-web/constants/issues";
 // components
@@ -56,13 +56,15 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
           />
-        ) : (
-          <IssueEEActivityRoot
+        ) : activityComment.activity_type === "WORKLOG" ? (
+          <IssueActivityWorklog
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={issueId}
             activityComment={activityComment}
           />
+        ) : (
+          <></>
         )
       )}
     </div>

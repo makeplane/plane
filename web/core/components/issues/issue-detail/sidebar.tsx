@@ -22,7 +22,7 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
-import { IssueEEProperties } from "@/plane-web/components/issues";
+import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
 
@@ -282,7 +282,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             </div>
 
-            <IssueEEProperties
+            <IssueWorklogProperty
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueId={issueId}
