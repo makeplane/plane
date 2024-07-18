@@ -42,12 +42,14 @@ export const IssueAttachmentsCollapsibleTitle: FC<Props> = observer((props) => {
       title="Attachments"
       indicatorElement={indicatorElement}
       actionItemElement={
-        <IssueAttachmentActionButton
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
+        !disabled && (
+          <IssueAttachmentActionButton
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
+          />
+        )
       }
     />
   );

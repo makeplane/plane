@@ -30,7 +30,7 @@ def page_version(
             workspace_id=page.workspace_id,
             description_html=page.description_html,
             description_binary=page.description_binary,
-            ownned_by_id=user_id,
+            owned_by_id=user_id,
             last_saved_at=page.updated_at,
         )
 

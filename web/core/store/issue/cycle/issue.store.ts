@@ -6,8 +6,10 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, observable, makeObservable, runInAction } from "mobx";
-// types
 import { computedFn } from "mobx-utils";
+// types
+// plane constants
+import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TLoader,
@@ -16,7 +18,6 @@ import {
   ViewFlags,
   TBulkOperationsPayload,
 } from "@plane/types";
-import { ALL_ISSUES } from "@/constants/issue";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { IIssueRootStore } from "../root.store";
 import { ICycleIssuesFilter } from "./filter.store";

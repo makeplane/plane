@@ -26,7 +26,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
           "h-4 w-6": size === "sm",
           "h-5 w-8": size === "md",
           "bg-custom-primary-100": value,
-          "cursor-not-allowed": disabled,
+          "cursor-not-allowed bg-custom-background-80": disabled,
         },
         className
       )}
@@ -43,7 +43,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
             "translate-x-3": value && size === "sm",
             "translate-x-4": value && size === "md",
             "translate-x-0.5 bg-custom-background-90": !value,
-            "cursor-not-allowed": disabled,
+            "cursor-not-allowed bg-custom-background-90": disabled,
           }
         )}
       />

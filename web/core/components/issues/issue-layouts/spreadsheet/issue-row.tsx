@@ -30,9 +30,7 @@ interface Props {
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue:
-    | ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -133,9 +131,7 @@ interface IssueRowDetailsProps {
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue:
-    | ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -328,7 +324,10 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 </Tooltip>
               </div>
             </div>
-            <div className={`hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+            <div
+              className={`hidden group-hover:block ${isMenuActive ? "!block" : ""}`}
+              onClick={(e) => e.stopPropagation()}
+            >
               {quickActions({
                 issue: issueDetail,
                 parentRef: cellRef,

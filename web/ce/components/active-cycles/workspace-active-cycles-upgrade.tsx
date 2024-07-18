@@ -3,10 +3,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-// icons
-import { Crown } from "lucide-react";
 // ui
 import { getButtonStyling } from "@plane/ui";
+// components
+import { ProIcon } from "@/components/common";
 // constants
 import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
@@ -45,7 +45,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
               target="_blank"
               rel="noreferrer"
             >
-              <Crown className="h-3.5 w-3.5" />
+              <ProIcon className="h-3.5 w-3.5 text-white" />
               Upgrade
             </a>
           </div>

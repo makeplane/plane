@@ -22,38 +22,36 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
   return (
     <div className="flex items-center flex-wrap gap-2">
       <SubIssuesActionButton
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
         issueId={issueId}
-        disabled={disabled}
         customButton={
           <IssueDetailWidgetButton
             title="Add sub-issues"
-            icon={<Layers className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" strokeWidth={2} />}
+            icon={<Layers className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+            disabled={disabled}
           />
         }
+        disabled={disabled}
       />
       <RelationActionButton
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
         issueId={issueId}
         customButton={
           <IssueDetailWidgetButton
             title="Add Relation"
-            icon={<Waypoints className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" strokeWidth={2} />}
+            icon={<Waypoints className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+            disabled={disabled}
           />
         }
+        disabled={disabled}
       />
       <IssueLinksActionButton
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
         customButton={
           <IssueDetailWidgetButton
             title="Add Links"
-            icon={<Link className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" strokeWidth={2} />}
+            icon={<Link className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+            disabled={disabled}
           />
         }
+        disabled={disabled}
       />
       <IssueAttachmentActionButton
         workspaceSlug={workspaceSlug}
@@ -62,9 +60,11 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
         customButton={
           <IssueDetailWidgetButton
             title="Attach"
-            icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" strokeWidth={2} />}
+            icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+            disabled={disabled}
           />
         }
+        disabled={disabled}
       />
     </div>
   );

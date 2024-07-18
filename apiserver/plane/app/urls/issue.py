@@ -233,13 +233,13 @@ urlpatterns = [
         name="project-issue-comment-reactions",
     ),
     ## End Comment Reactions
-    ## IssueProperty
+    ## IssueUserProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
         IssueUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
-    ## IssueProperty End
+    ## IssueUserProperty End
     ## Issue Archives
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",

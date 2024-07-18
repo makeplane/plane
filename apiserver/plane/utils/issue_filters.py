@@ -154,6 +154,13 @@ def filter_priority(params, filter, method, prefix=""):
         ]
         if len(priorities) and "" not in priorities:
             filter[f"{prefix}priority__in"] = priorities
+    else:
+        if (
+            params.get("priority", None)
+            and len(params.get("priority"))
+            and params.get("priority") != "null"
+        ):
+            filter[f"{prefix}priority__in"] = params.get("priority")
     return filter
 
 

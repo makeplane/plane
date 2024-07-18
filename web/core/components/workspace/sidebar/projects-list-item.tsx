@@ -19,7 +19,6 @@ import {
   Share2,
   LogOut,
   MoreHorizontal,
-  Inbox,
   ChevronRight,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -35,6 +34,7 @@ import {
   setPromiseToast,
   DropIndicator,
   DragHandle,
+  Intake,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -91,9 +91,9 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     Icon: FileText,
   },
   {
-    name: "Inbox",
+    name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/inbox`,
-    Icon: Inbox,
+    Icon: Intake,
   },
   {
     name: "Settings",
@@ -317,11 +317,18 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
               {isSidebarCollapsed ? (
-                <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
-                  <div className="size-4 grid place-items-center flex-shrink-0">
-                    <Logo logo={project.logo_props} size={16} />
-                  </div>
-                </Disclosure.Button>
+                <Link
+                  href={`/${workspaceSlug}/projects/${project.id}/issues`}
+                  className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
+                    "justify-center": isSidebarCollapsed,
+                  })}
+                >
+                  <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
+                    <div className="size-4 grid place-items-center flex-shrink-0">
+                      <Logo logo={project.logo_props} size={16} />
+                    </div>
+                  </Disclosure.Button>
+                </Link>
               ) : (
                 <>
                   <Tooltip
@@ -330,18 +337,19 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     disabled={!isSidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    <Link
-                      href={`/${workspaceSlug}/projects/${project.id}/issues`}
-                      className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
-                        "justify-center": isSidebarCollapsed,
-                      })}
-                    >
-                      <div className="size-4 grid place-items-center flex-shrink-0">
-                        <Logo logo={project.logo_props} size={16} />
-                      </div>
-                      {!isSidebarCollapsed && (
+                    <Link href={`/${workspaceSlug}/projects/${project.id}/issues`} className="flex-grow flex truncate">
+                      <Disclosure.Button
+                        as="button"
+                        type="button"
+                        className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
+                          "justify-center": isSidebarCollapsed,
+                        })}
+                      >
+                        <div className="size-4 grid place-items-center flex-shrink-0">
+                          <Logo logo={project.logo_props} size={16} />
+                        </div>
                         <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
-                      )}
+                      </Disclosure.Button>
                     </Link>
                   </Tooltip>
                   <CustomMenu
@@ -451,7 +459,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </>
               )}
             </div>
-
             <Transition
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"
@@ -490,7 +497,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                             }
                           )}
                         >
-                          <item.Icon className="flex-shrink-0 size-4 stroke-[1.5]" />
+                          <item.Icon
+                            className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                          />
                           {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
                         </div>
                       </Tooltip>

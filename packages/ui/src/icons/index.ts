@@ -22,3 +22,4 @@ export * from "./side-panel-icon";
 export * from "./transfer-icon";
 export * from "./info-icon";
 export * from "./dropdown-icon";
+export * from "./intake";

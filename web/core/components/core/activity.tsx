@@ -19,10 +19,9 @@ import {
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
-  Inbox,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
@@ -102,7 +101,7 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
 const inboxActivityMessage = {
   declined: {
     showIssue: "declined issue",
-    noIssue: "declined this issue from inbox.",
+    noIssue: "declined this issue from intake.",
   },
   snoozed: {
     showIssue: "snoozed issue",
@@ -110,11 +109,11 @@ const inboxActivityMessage = {
   },
   accepted: {
     showIssue: "accepted issue",
-    noIssue: "accepted this issue from inbox.",
+    noIssue: "accepted this issue from intake.",
   },
   markedDuplicate: {
     showIssue: "declined issue",
-    noIssue: "declined this issue from inbox by marking a duplicate issue.",
+    noIssue: "declined this issue from intake by marking a duplicate issue.",
   },
 };
 
@@ -129,7 +128,7 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
     case "2":
       return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
     default:
-      return "updated inbox issue status.";
+      return "updated intake issue status.";
   }
 };
 
@@ -710,10 +709,10 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
-        {activity.verb === "2" && ` from inbox by marking a duplicate issue.`}
+        {activity.verb === "2" && ` from intake by marking a duplicate issue.`}
       </>
     ),
-    icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Intake className="size-3" color="#6b7280" aria-hidden="true" />,
   },
 };
 

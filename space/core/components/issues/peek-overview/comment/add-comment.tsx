@@ -79,6 +79,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               }
               onChange={(comment_json, comment_html) => onChange(comment_html)}
               isSubmitting={isSubmitting}
+              placeholder="Add Comment..."
             />
           )}
         />
