@@ -7,7 +7,7 @@ from .common import *  # noqa
 DEBUG = True
 
 # Debug Toolbar settings
-INSTALLED_APPS += ("debug_toolbar",)  # noqa
+INSTALLED_APPS += ("debug_toolbar", "strawberry_django")  # noqa
 MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
