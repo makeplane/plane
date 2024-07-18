@@ -1,1 +1,1 @@
-export * from "ce/components/issues/activity/create-button";
+export * from "ce/components/issues/activity/worklog-create-button";
