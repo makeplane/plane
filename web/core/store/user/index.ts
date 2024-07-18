@@ -44,6 +44,7 @@ export interface IUserStore {
   // computed
   canPerformProjectCreateActions: boolean;
   canPerformWorkspaceCreateActions: boolean;
+  canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
 
@@ -92,6 +93,7 @@ export class UserStore implements IUserStore {
       // computed
       canPerformProjectCreateActions: computed,
       canPerformWorkspaceCreateActions: computed,
+      canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
     });
   }
@@ -137,6 +139,26 @@ export class UserStore implements IUserStore {
       throw error;
     }
   };
+
+  /**
+   * @description fetches the prjects with write permissions
+   * @returns {{[projectId: string]: number} || null}
+   */
+  fetchProjectsWithCreatePermissions() {
+    const allWorkspaceRoles =
+      this.membership.workspaceProjectsRole &&
+      this.membership.workspaceProjectsRole[this.membership.router.workspaceSlug || ""];
+    return (
+      (allWorkspaceRoles &&
+        Object.keys(allWorkspaceRoles)
+          .filter((key) => allWorkspaceRoles[key] >= EUserProjectRoles.MEMBER)
+          .reduce(
+            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceRoles[key]), res),
+            {}
+          )) ||
+      null
+    );
+  }
 
   /**
    * @description updates the current user
@@ -236,19 +258,16 @@ export class UserStore implements IUserStore {
    * @returns {{[projectId: string]: number} || null}
    */
   get projectsWithCreatePermissions() {
-    const allWorkspaceRoles =
-      this.membership.workspaceProjectsRole &&
-      this.membership.workspaceProjectsRole[this.membership.router.workspaceSlug || ""];
-    return (
-      (allWorkspaceRoles &&
-        Object.keys(allWorkspaceRoles)
-          .filter((key) => allWorkspaceRoles[key] >= EUserProjectRoles.MEMBER)
-          .reduce(
-            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceRoles[key]), res),
-            {}
-          )) ||
-      null
-    );
+    return this.fetchProjectsWithCreatePermissions();
+  }
+
+  /**
+   * @description returns true if user has permissions to write in any project
+   * @returns {boolean}
+   */
+  get canPerformAnyCreateAction() {
+    const filteredProjects = this.fetchProjectsWithCreatePermissions();
+    return filteredProjects ? Object.keys(filteredProjects).length > 0 : false;
   }
 
   /**
