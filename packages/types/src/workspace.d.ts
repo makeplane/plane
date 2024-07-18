@@ -70,12 +70,12 @@ export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
   role: EUserWorkspaceRoles;
-  created_at: string;
+  created_at?: string;
   avatar?: string;
   email?: string;
   first_name?: string;
   last_name?: string;
-  joining_date: string;
+  joining_date?: string;
   display_name?: string;
 }
 
