@@ -41,6 +41,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
+
   return (
     <div
       className={cn(

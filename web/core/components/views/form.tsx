@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { Layers } from "lucide-react";
 // types
 import { IProjectView, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, PhotoFilterIcon, TextArea } from "@plane/ui";
+import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
@@ -144,7 +145,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                      <Layers className="h-4 w-4 text-custom-text-300" />
                     )}
                   </>
                 </span>
