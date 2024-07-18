@@ -12,7 +12,6 @@ import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useMember, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 import useMemberColumns from "@/plane-web/components/workspace/settings/useMemberColumns";
 
 type Props = {
@@ -33,7 +32,6 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     workspace: { removeMemberFromWorkspace },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  const { isMobile } = usePlatformOS();
   // derived values
 
   const handleLeaveWorkspace = async () => {
@@ -96,9 +94,10 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
       )}
       <Table
         columns={columns}
-        data={memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []}
+        data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
-        thClassName="text-left font-medium divide-x-0 border-b border-t divide-custom-border-200"
+        tHeadClassName="border-b border-custom-border-100"
+        thClassName="text-left font-medium divide-x-0"
         tBodyClassName="divide-y-0"
         tBodyTrClassName="divide-x-0"
         tHeadTrClassName="divide-x-0"

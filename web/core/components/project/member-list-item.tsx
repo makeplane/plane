@@ -80,7 +80,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       )}
       <Table
         columns={columns}
-        data={memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []}
+        data={(memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         thClassName="text-left font-medium divide-x-0 border-b border-t divide-custom-border-200"
         tBodyClassName="divide-y-0"
