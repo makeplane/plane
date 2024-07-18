@@ -15,8 +15,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // plane web components
-import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 import useSize from "@/hooks/use-window-size";
+import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 
 export interface IAppSidebar {}
 
