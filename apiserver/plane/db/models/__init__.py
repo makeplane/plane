@@ -87,7 +87,7 @@ from .workspace import (
 
 from .importer import Importer
 
-from .page import Page, PageLog, PageFavorite, PageLabel
+from .page import Page, PageLog, PageFavorite, PageLabel, ProjectPage, TeamPage
 
 from .estimate import Estimate, EstimatePoint
 
