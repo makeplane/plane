@@ -27,7 +27,7 @@ type AccountTypeProps = {
   workspaceSlug: string;
 };
 
-export const NameColumn: React.FC<NameProps> = (props: any) => {
+export const NameColumn: React.FC<NameProps> = (props) => {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   return (
     <Disclosure>

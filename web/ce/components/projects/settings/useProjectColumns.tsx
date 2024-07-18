@@ -6,7 +6,7 @@ import { AccountTypeColumn, NameColumn } from "@/components/project/settings/mem
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useUser } from "@/hooks/store";
 
-interface RowData {
+export interface RowData {
   member: IWorkspaceMember;
   role: EUserWorkspaceRoles;
 }
