@@ -1,8 +1,8 @@
 import { TIssueActivityComment } from "@plane/types";
 
 export enum EActivityFilterType {
-  ACTIVITY = "activity",
-  COMMENT = "comment",
+  ACTIVITY = "ACTIVITY",
+  COMMENT = "COMMENT",
 }
 
 export type TActivityFilters = EActivityFilterType;
