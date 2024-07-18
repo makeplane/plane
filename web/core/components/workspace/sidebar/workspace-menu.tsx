@@ -8,6 +8,8 @@ import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Tooltip } from "@plane/ui";
+// components
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
@@ -53,15 +55,21 @@ export const SidebarWorkspaceMenu = observer(() => {
     if (sidebarCollapsed) toggleWorkspaceMenu(true);
   }, [sidebarCollapsed, toggleWorkspaceMenu]);
 
+  const indicatorElement = (
+    <div className="flex-shrink-0">
+      <UpgradeBadge />
+    </div>
+  );
+
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
         <Disclosure.Button
           as="button"
-          className="group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold"
+          className="group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
           onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
         >
-          <span>Workspace</span>
+          <span>WORKSPACE</span>
           <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 hover:bg-custom-sidebar-background-80">
             <ChevronRight
               className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
@@ -83,7 +91,7 @@ export const SidebarWorkspaceMenu = observer(() => {
         {isWorkspaceMenuOpen && (
           <Disclosure.Panel
             as="div"
-            className={cn("mt-2 ml-1 space-y-1", {
+            className={cn("flex flex-col mt-0.5 gap-0.5", {
               "space-y-0 mt-0 ml-0": sidebarCollapsed,
             })}
             static
@@ -91,47 +99,32 @@ export const SidebarWorkspaceMenu = observer(() => {
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map(
               (link) =>
                 workspaceMemberInfo >= link.access && (
-                  <Link
+                  <Tooltip
                     key={link.key}
-                    href={`/${workspaceSlug}${link.href}`}
-                    onClick={() => handleLinkClick(link.key)}
-                    className="block"
+                    tooltipContent={link.label}
+                    position="right"
+                    className="ml-2"
+                    disabled={!sidebarCollapsed}
+                    isMobile={isMobile}
                   >
-                    <Tooltip
-                      tooltipContent={link.label}
-                      position="right"
-                      className="ml-2"
-                      disabled={!sidebarCollapsed}
-                      isMobile={isMobile}
-                    >
-                      <div
-                        className={cn(
-                          "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
-                          {
-                            "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10":
-                              link.highlight(pathname, `/${workspaceSlug}`),
-                            "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
-                          }
-                        )}
+                    <Link href={`/${workspaceSlug}${link.href}`} onClick={() => handleLinkClick(link.key)}>
+                      <SidebarNavItem
+                        key={link.key}
+                        className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
+                        isActive={link.highlight(pathname, `/${workspaceSlug}`)}
                       >
-                        <div className={cn("grow flex items-center gap-1.5", { "justify-center": sidebarCollapsed })}>
-                          <span className="flex-shrink-0 size-4 grid place-items-center">
-                            <link.Icon
-                              className={cn("size-4", {
-                                "rotate-180": link.key === "active-cycles",
-                              })}
-                            />
-                          </span>
+                        <div className="flex items-center gap-1.5 py-[1px]">
+                          <link.Icon
+                            className={cn("size-4", {
+                              "rotate-180": link.key === "active-cycles",
+                            })}
+                          />
                           {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
                         </div>
-                        {!sidebarCollapsed && link.key === "active-cycles" && (
-                          <div className="flex-shrink-0">
-                            <UpgradeBadge />
-                          </div>
-                        )}
-                      </div>
-                    </Tooltip>
-                  </Link>
+                        {!sidebarCollapsed && link.key === "active-cycles" && indicatorElement}
+                      </SidebarNavItem>
+                    </Link>
+                  </Tooltip>
                 )
             )}
           </Disclosure.Panel>
