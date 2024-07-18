@@ -1,1 +1,1 @@
-export * from "@/plane-web/components/issues/worklog/activity/root";
+export * from "ce/components/issues/worklog/activity/root";

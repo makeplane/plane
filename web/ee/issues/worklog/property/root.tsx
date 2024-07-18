@@ -1,1 +1,1 @@
-export * from "@/plane-web/components/issues/worklog/property/root";
+export * from "ce/components/issues/worklog/property/root";
