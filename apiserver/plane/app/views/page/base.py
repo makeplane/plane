@@ -492,6 +492,12 @@ class PagesDescriptionViewSet(BaseViewSet):
             .first()
         )
 
+        if page is None:
+            return Response(
+                {"error": "Page not found"},
+                status=404,
+            )
+
         if page.is_locked:
             return Response(
                 {"error": "Page is locked"},
