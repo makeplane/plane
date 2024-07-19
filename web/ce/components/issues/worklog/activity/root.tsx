@@ -8,6 +8,7 @@ type TIssueActivityWorklog = {
   projectId: string;
   issueId: string;
   activityComment: TIssueActivityComment;
+  ends?: "top" | "bottom";
 };
 
 export const IssueActivityWorklog: FC<TIssueActivityWorklog> = () => <></>;
