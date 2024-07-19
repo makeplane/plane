@@ -90,6 +90,10 @@ const server = Server.configure({
 });
 const { app }: { app: Application } = expressWs(express());
 
+app.get("/health", (_request, response) => {
+  response.status(200);
+});
+
 app.ws("/collaboration", (websocket, request) => {
   server.handleConnection(websocket, request);
 });

@@ -15,8 +15,8 @@ import { PageService } from "./services/page.service.js";
 const pageService = new PageService();
 
 const DOCUMENT_EDITOR_EXTENSIONS = [
-  ...CoreEditorExtensionsWithoutProps(),
-  ...DocumentEditorExtensionsWithoutProps(),
+  ...CoreEditorExtensionsWithoutProps,
+  ...DocumentEditorExtensionsWithoutProps,
 ];
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
