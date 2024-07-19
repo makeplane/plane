@@ -18,7 +18,7 @@ urlpatterns = [
     path("auth/", include("plane.authentication.urls")),
     path("api/payments/", include("plane.payment.urls")),
     path("", include("plane.web.urls")),
-    # path("graphql/", include("plane.graphql.urls")),
+    path("graphql/", include("plane.graphql.urls")),
 ]
 
 
