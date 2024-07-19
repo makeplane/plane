@@ -46,7 +46,7 @@ export const CommandModal: React.FC = observer(() => {
   // hooks
   const { getProjectById, workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
-  const { canPerformWorkspaceCreateActions } = useUser();
+  const { canPerformAnyCreateAction } = useUser();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -286,7 +286,7 @@ export const CommandModal: React.FC = observer(() => {
                           {workspaceSlug &&
                             workspaceProjectIds &&
                             workspaceProjectIds.length > 0 &&
-                            canPerformWorkspaceCreateActions && (
+                            canPerformAnyCreateAction && (
                               <Command.Group heading="Issue">
                                 <Command.Item
                                   onSelect={() => {

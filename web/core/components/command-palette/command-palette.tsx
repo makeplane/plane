@@ -41,7 +41,12 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { platform } = usePlatformOS();
-  const { data: currentUser, canPerformProjectCreateActions, canPerformWorkspaceCreateActions } = useUser();
+  const {
+    data: currentUser,
+    canPerformProjectCreateActions,
+    canPerformWorkspaceCreateActions,
+    canPerformAnyCreateAction,
+  } = useUser();
   const {
     issues: { removeIssue },
   } = useIssuesStore();
@@ -118,6 +123,18 @@ export const CommandPalette: FC = observer(() => {
       return canPerformWorkspaceCreateActions;
     },
     [canPerformWorkspaceCreateActions]
+  );
+
+  const performAnyProjectCreateActions = useCallback(
+    (showToast: boolean = true) => {
+      if (!canPerformAnyCreateAction && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+      return canPerformAnyCreateAction;
+    },
+    [canPerformAnyCreateAction]
   );
 
   const shortcutsList: {
@@ -222,7 +239,10 @@ export const CommandPalette: FC = observer(() => {
         }
       } else if (!isAnyModalOpen) {
         setTrackElement("Shortcut key");
-        if (Object.keys(shortcutsList.global).includes(keyPressed) && performWorkspaceCreateActions())
+        if (
+          Object.keys(shortcutsList.global).includes(keyPressed) &&
+          ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
+        )
           shortcutsList.global[keyPressed].action();
         // workspace authorized actions
         else if (
@@ -244,6 +264,7 @@ export const CommandPalette: FC = observer(() => {
       }
     },
     [
+      performAnyProjectCreateActions,
       performProjectCreateActions,
       performWorkspaceCreateActions,
       copyIssueUrlToClipboard,

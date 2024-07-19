@@ -32,7 +32,7 @@ import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper"
 import { getChangedIssuefields, getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-import { useProjectEstimates, useInstance, useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import { useProjectEstimates, useInstance, useIssueDetail, useProject, useWorkspace, useUser } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // services
@@ -121,6 +121,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString())?.id as string;
   const { config } = useInstance();
+  const { projectsWithCreatePermissions } = useUser();
+
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
@@ -341,20 +343,24 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 rules={{
                   required: true,
                 }}
-                render={({ field: { value, onChange } }) => (
-                  <div className="h-7">
-                    <ProjectDropdown
-                      value={value}
-                      onChange={(projectId) => {
-                        onChange(projectId);
-                        handleFormChange();
-                      }}
-                      buttonVariant="border-with-text"
-                      renderCondition={(project) => shouldRenderProject(project)}
-                      tabIndex={getTabIndex("project_id")}
-                    />
-                  </div>
-                )}
+                render={({ field: { value, onChange } }) =>
+                  projectsWithCreatePermissions && projectsWithCreatePermissions[value!] ? (
+                    <div className="h-7">
+                      <ProjectDropdown
+                        value={value}
+                        onChange={(projectId) => {
+                          onChange(projectId);
+                          handleFormChange();
+                        }}
+                        buttonVariant="border-with-text"
+                        renderCondition={(project) => shouldRenderProject(project)}
+                        tabIndex={getTabIndex("project_id")}
+                      />
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                }
               />
             )}
             <h3 className="text-xl font-medium text-custom-text-200">{data?.id ? "Update" : "Create"} Issue</h3>

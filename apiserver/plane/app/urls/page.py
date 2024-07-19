@@ -66,6 +66,27 @@ urlpatterns = [
         ),
         name="project-page-archive-unarchive",
     ),
+    # lock and unlock
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
+        PageViewSet.as_view(
+            {
+                "post": "lock",
+                "delete": "unlock",
+            }
+        ),
+        name="project-pages-lock-unlock",
+    ),
+    # private and public page
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/access/",
+        PageViewSet.as_view(
+            {
+                "post": "access",
+            }
+        ),
+        name="project-pages-access",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/",
         PageLogEndpoint.as_view(),
