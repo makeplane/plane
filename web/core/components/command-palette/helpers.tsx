@@ -73,8 +73,8 @@ export const commandGroups: {
         <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
       </h6>
     ),
-    path: (page: IWorkspaceDefaultSearchResult) =>
-      `/${page?.workspace__slug}/projects/${page?.project_id}/pages/${page?.id}`,
+    path: (page: IWorkspacePageSearchResult) =>
+      `/${page?.workspace__slug}/projects/${page?.project_ids?.[0]}/pages/${page?.id}`,
     title: "Pages",
   },
   project: {
