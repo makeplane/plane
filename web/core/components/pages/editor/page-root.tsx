@@ -25,7 +25,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
-  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768 ? true : false);
+  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);

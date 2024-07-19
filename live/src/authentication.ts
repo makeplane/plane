@@ -21,15 +21,21 @@ export const handleAuthentication = async (props: Props) => {
     | TDocumentTypes
     | undefined;
   // fetch current user info
-  const response = await userService.currentUser(cookie);
+  let response;
+  try {
+    response = await userService.currentUser(cookie);
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    throw error;
+  }
   if (response.id !== token) {
-    throw Error("Token doesn't match");
+    throw Error("Authentication failed: Token doesn't match the current user.");
   }
 
   if (documentType === "project_page") {
     if (!workspaceSlug || !projectId) {
       throw Error(
-        "Incomplete query params, workspaceSlug or projectId missing",
+        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing.",
       );
     }
     // fetch current user's roles
@@ -43,7 +49,7 @@ export const handleAuthentication = async (props: Props) => {
       connection.readOnly = true;
     }
   } else {
-    throw Error("Invalid document type provided");
+    throw Error("Authentication failed: Invalid document type provided.");
   }
 
   return {

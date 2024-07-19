@@ -26,6 +26,12 @@ export const updatePageDescription = async (
   updatedDescription: Uint8Array,
   cookie: string | undefined,
 ) => {
+  if (!(updatedDescription instanceof Uint8Array)) {
+    throw new Error(
+      "Invalid updatedDescription: must be an instance of Uint8Array",
+    );
+  }
+
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
