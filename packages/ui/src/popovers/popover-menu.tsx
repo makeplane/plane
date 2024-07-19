@@ -18,6 +18,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
     popoverClassName = "",
     keyExtractor,
     render,
+    popoverButtonRef,
   } = props;
 
   return (
@@ -32,6 +33,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
         panelClassName
       )}
       popoverClassName={popoverClassName}
+      popoverButtonRef={popoverButtonRef}
     >
       <Fragment>
         {data.map((item, index) => (

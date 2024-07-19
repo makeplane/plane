@@ -10,8 +10,14 @@ import {
   TIssueRelationTypes,
   TIssueDetailWidget,
 } from "@plane/types";
+// plane web store
+import {
+  IIssueActivityStore,
+  IssueActivityStore,
+  IIssueActivityStoreActions,
+  TActivityLoader,
+} from "@/plane-web/store/issue/issue-details/activity.store";
 import { IIssueRootStore } from "../root.store";
-import { IIssueActivityStore, IssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
 import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
 import { IIssueCommentStore, IssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
 import {
@@ -187,7 +193,7 @@ export class IssueDetail implements IIssueDetail {
     this.issue = new IssueStore(this);
     this.reaction = new IssueReactionStore(this);
     this.attachment = new IssueAttachmentStore(rootStore);
-    this.activity = new IssueActivityStore(this);
+    this.activity = new IssueActivityStore(rootStore.rootStore);
     this.comment = new IssueCommentStore(this);
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this);

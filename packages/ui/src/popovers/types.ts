@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { MutableRefObject, ReactNode } from "react";
 import { Placement } from "@popperjs/core";
 
 export type TPopoverButtonDefaultOptions = {
@@ -15,6 +15,7 @@ export type TPopoverDefaultOptions = TPopoverButtonDefaultOptions & {
   // panel styling
   panelClassName?: string;
   popoverClassName?: string;
+  popoverButtonRef?: MutableRefObject<HTMLButtonElement | null>;
 };
 
 export type TPopover = TPopoverDefaultOptions & {
