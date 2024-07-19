@@ -32,7 +32,6 @@ class ProjectQuery:
                     project_projectmember__member=info.context.user,
                     project_projectmember__is_active=True,
                 )
-                | Q(network=2)
             )
             .annotate(
                 is_favorite=Exists(
