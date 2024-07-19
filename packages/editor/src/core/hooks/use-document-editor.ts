@@ -87,6 +87,7 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     id,
     editorProps,
     editorClassName,
+    enableHistory: false,
     fileHandler,
     handleEditorReady,
     forwardedRef,
