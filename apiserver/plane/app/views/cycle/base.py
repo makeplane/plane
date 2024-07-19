@@ -646,6 +646,8 @@ class CycleViewSet(BaseViewSet):
                         "progress_snapshot",
                         "logo_props",
                         # meta fields
+                        "completed_estimate_points",
+                        "total_estimate_points",
                         "is_favorite",
                         "cancelled_issues",
                         "total_issues",
@@ -655,6 +657,7 @@ class CycleViewSet(BaseViewSet):
                         "backlog_issues",
                         "assignee_ids",
                         "status",
+                        "created_by",
                     )
                     .first()
                 )
@@ -740,6 +743,8 @@ class CycleViewSet(BaseViewSet):
                 "progress_snapshot",
                 "logo_props",
                 # meta fields
+                "completed_estimate_points",
+                "total_estimate_points",
                 "is_favorite",
                 "total_issues",
                 "cancelled_issues",
@@ -749,6 +754,7 @@ class CycleViewSet(BaseViewSet):
                 "backlog_issues",
                 "assignee_ids",
                 "status",
+                "created_by",
             ).first()
 
             # Send the model activity
@@ -801,6 +807,8 @@ class CycleViewSet(BaseViewSet):
                 "sub_issues",
                 "logo_props",
                 # meta fields
+                "completed_estimate_points",
+                "total_estimate_points",
                 "is_favorite",
                 "total_issues",
                 "cancelled_issues",
