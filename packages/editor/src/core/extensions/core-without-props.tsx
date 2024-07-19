@@ -16,7 +16,7 @@ import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 
-export const CoreEditorExtensionsWithoutProps = () => [
+export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -83,4 +83,4 @@ export const CoreEditorExtensionsWithoutProps = () => [
   CustomMentionWithoutProps(),
 ];
 
-export const DocumentEditorExtensionsWithoutProps = () => [IssueWidgetWithoutProps()];
+export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];
