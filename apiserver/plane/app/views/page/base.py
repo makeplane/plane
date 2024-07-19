@@ -245,6 +245,28 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def access(self, request, slug, project_id, pk):
+        access = request.data.get("access", 0)
+        page = Page.objects.filter(
+            pk=pk, workspace__slug=slug, projects__id=project_id
+        ).first()
+
+        # Only update access if the page owner is the requesting user
+        if (
+            page.access != request.data.get("access", page.access)
+            and page.owned_by_id != request.user.id
+        ):
+            return Response(
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        page.access = access
+        page.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         pages = PageSerializer(queryset, many=True).data

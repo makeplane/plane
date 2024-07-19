@@ -363,7 +363,7 @@ export class Page implements IPage {
     runInAction(() => (this.access = EPageAccess.PUBLIC));
 
     try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
+      await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PUBLIC,
       });
     } catch (error) {
@@ -385,7 +385,7 @@ export class Page implements IPage {
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
     try {
-      await this.pageService.update(workspaceSlug, projectId, this.id, {
+      await this.pageService.updateAccess (workspaceSlug, projectId, this.id, {
         access: EPageAccess.PRIVATE,
       });
     } catch (error) {

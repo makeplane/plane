@@ -1,9 +1,10 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
 import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
+// plane web root store
+import { RootStore } from "@/plane-web/store/root.store";
 // root store
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
-import { CoreRootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
@@ -43,7 +44,7 @@ export interface IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined;
   cycleMap: Record<string, ICycle> | undefined;
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
   issues: IIssueStore;
 
@@ -98,7 +99,7 @@ export class IssueRootStore implements IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined = undefined;
   cycleMap: Record<string, ICycle> | undefined = undefined;
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
   issues: IIssueStore;
 
@@ -133,7 +134,7 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  constructor(rootStore: CoreRootStore) {
+  constructor(rootStore: RootStore) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
       projectId: observable.ref,

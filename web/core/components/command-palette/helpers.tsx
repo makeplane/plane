@@ -15,7 +15,7 @@ export const commandGroups: {
   [key: string]: {
     icon: JSX.Element;
     itemName: (item: any) => React.ReactNode;
-    path: (item: any) => string;
+    path: (item: any, projectId: string | undefined) => string;
     title: string;
   };
 } = {
@@ -73,8 +73,11 @@ export const commandGroups: {
         <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
       </h6>
     ),
-    path: (page: IWorkspaceDefaultSearchResult) =>
-      `/${page?.workspace__slug}/projects/${page?.project_id}/pages/${page?.id}`,
+    path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {
+      let redirectProjectId = page?.project_ids?.[0];
+      if (!!projectId && page?.project_ids?.includes(projectId)) redirectProjectId = projectId;
+      return `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`;
+    },
     title: "Pages",
   },
   project: {

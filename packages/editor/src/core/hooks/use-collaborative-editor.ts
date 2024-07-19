@@ -84,6 +84,7 @@ export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
     id,
     editorProps,
     editorClassName,
+    enableHistory: false,
     fileHandler,
     handleEditorReady,
     forwardedRef,
