@@ -98,6 +98,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
               )}
               groupID={groupID}
               selectionHelpers={selectionHelpers}
+              disabled={count === 0}
             />
           </div>
         )}

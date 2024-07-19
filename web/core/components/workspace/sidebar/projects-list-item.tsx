@@ -20,6 +20,7 @@ import {
   LogOut,
   MoreHorizontal,
   ChevronRight,
+  Layers,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
@@ -27,7 +28,6 @@ import {
   CustomMenu,
   Tooltip,
   ArchiveIcon,
-  PhotoFilterIcon,
   DiceIcon,
   ContrastIcon,
   LayersIcon,
@@ -39,6 +39,7 @@ import {
 // components
 import { Logo } from "@/components/common";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
@@ -83,7 +84,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: PhotoFilterIcon,
+    Icon: Layers,
   },
   {
     name: "Pages",
@@ -94,11 +95,6 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/inbox`,
     Icon: Intake,
-  },
-  {
-    name: "Settings",
-    href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    Icon: Settings,
   },
 ];
 
@@ -467,43 +463,41 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel as="div" className="mt-1 space-y-1">
+              <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1">
                 {navigation(workspaceSlug?.toString(), project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||
                     (item.name === "Modules" && !project.module_view) ||
                     (item.name === "Views" && !project.issue_views_view) ||
                     (item.name === "Pages" && !project.page_view) ||
-                    (item.name === "Inbox" && !project.inbox_view)
+                    (item.name === "Intake" && !project.inbox_view)
                   )
                     return;
 
                   return (
-                    <Link key={item.name} href={item.href} onClick={handleProjectClick}>
-                      <Tooltip
-                        isMobile={isMobile}
-                        tooltipContent={`${project?.name}: ${item.name}`}
-                        position="right"
-                        className="ml-2"
-                        disabled={!isSidebarCollapsed}
-                      >
-                        <div
-                          className={cn(
-                            "flex items-center gap-1.5 rounded-md pl-[18px] pr-2 py-1.5 outline-none text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
-                            {
-                              "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10":
-                                pathname.includes(item.href),
-                              "p-0 size-7 justify-center mx-auto": isSidebarCollapsed,
-                            }
-                          )}
+                    <Tooltip
+                      key={item.name}
+                      isMobile={isMobile}
+                      tooltipContent={`${project?.name}: ${item.name}`}
+                      position="right"
+                      className="ml-2"
+                      disabled={!isSidebarCollapsed}
+                    >
+                      <Link key={item.name} href={item.href} onClick={handleProjectClick}>
+                        <SidebarNavItem
+                          key={item.name}
+                          className={`pl-[18px]  ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
+                          isActive={pathname.includes(item.href)}
                         >
-                          <item.Icon
-                            className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
-                          />
-                          {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
-                        </div>
-                      </Tooltip>
-                    </Link>
+                          <div className="flex items-center gap-1.5 py-[1px]">
+                            <item.Icon
+                              className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                            />
+                            {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
+                          </div>
+                        </SidebarNavItem>
+                      </Link>
+                    </Tooltip>
                   );
                 })}
               </Disclosure.Panel>

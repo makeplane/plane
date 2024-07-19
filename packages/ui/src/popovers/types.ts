@@ -5,6 +5,7 @@ export type TPopoverButtonDefaultOptions = {
   // button and button styling
   button?: ReactNode;
   buttonClassName?: string;
+  disabled?: boolean;
 };
 
 export type TPopoverDefaultOptions = TPopoverButtonDefaultOptions & {
@@ -13,6 +14,7 @@ export type TPopoverDefaultOptions = TPopoverButtonDefaultOptions & {
   popperPadding?: number | undefined;
   // panel styling
   panelClassName?: string;
+  popoverClassName?: string;
 };
 
 export type TPopover = TPopoverDefaultOptions & {

@@ -4,14 +4,14 @@ import { Check, ListFilter } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
-// constants
-import { ACTIVITY_FILTER_TYPE_OPTIONS, EActivityFilterType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
+// constants
+import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS } from "@/plane-web/constants/issues";
 
 type Props = {
-  selectedFilters: EActivityFilterType[];
-  toggleFilter: (filter: EActivityFilterType) => void;
+  selectedFilters: TActivityFilters[];
+  toggleFilter: (filter: TActivityFilters) => void;
 };
 
 export const ActivityFilter: FC<Props> = observer((props) => {
@@ -42,13 +42,15 @@ export const ActivityFilter: FC<Props> = observer((props) => {
           >
             <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-40">
               <div className="p-2 rounded-md border border-custom-border-200 bg-custom-background-100">
-                {ACTIVITY_FILTER_TYPE_OPTIONS.map((filter) => {
-                  const isSelected = selectedFilters.includes(filter.value);
+                {Object.keys(ACTIVITY_FILTER_TYPE_OPTIONS).map((key) => {
+                  const filterKey = key as TActivityFilters;
+                  const filter = ACTIVITY_FILTER_TYPE_OPTIONS[filterKey];
+                  const isSelected = selectedFilters.includes(filterKey);
                   return (
                     <div
-                      key={filter.value}
+                      key={filterKey}
                       className="flex items-center gap-2 text-sm cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
-                      onClick={() => toggleFilter(filter.value)}
+                      onClick={() => toggleFilter(filterKey)}
                     >
                       <div
                         className={cn(
