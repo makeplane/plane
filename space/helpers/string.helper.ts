@@ -56,3 +56,7 @@ export const isEmptyHtmlString = (htmlString: string) => {
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
+
+export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
+
+export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);

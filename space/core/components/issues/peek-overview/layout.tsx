@@ -6,16 +6,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
-// store
+// hooks
 import { useIssue, useIssueDetails } from "@/hooks/store";
 
 type TIssuePeekOverview = {
   anchor: string;
   peekId: string;
+  handlePeekClose?: () => void;
 };
 
 export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
-  const { anchor, peekId } = props;
+  const { anchor, peekId, handlePeekClose } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
   // query params
@@ -34,23 +35,23 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
 
   useEffect(() => {
     if (anchor && peekId && issueStore.groupedIssueIds) {
-      if (!issueDetails) {
-        issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
-      }
+      issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
     }
-  }, [anchor, issueDetailStore, issueDetails, peekId, issueStore.groupedIssueIds]);
+  }, [anchor, issueDetailStore, peekId, issueStore.groupedIssueIds]);
 
-  const handleClose = () => {
-    issueDetailStore.setPeekId(null);
-    let queryParams: any = {
-      board,
-    };
-    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
-    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
-    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
-    queryParams = new URLSearchParams(queryParams).toString();
-    router.push(`/issues/${anchor}?${queryParams}`);
-  };
+  const handleClose =
+    handlePeekClose ??
+    (() => {
+      issueDetailStore.setPeekId(null);
+      let queryParams: any = {
+        board,
+      };
+      if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
+      if (state && state.length > 0) queryParams = { ...queryParams, state: state };
+      if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
+      queryParams = new URLSearchParams(queryParams).toString();
+      router.push(`/issues/${anchor}?${queryParams}`);
+    });
 
   useEffect(() => {
     if (peekId) {

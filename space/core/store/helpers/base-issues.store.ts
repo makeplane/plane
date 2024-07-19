@@ -1,6 +1,5 @@
 import concat from "lodash/concat";
 import get from "lodash/get";
-import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
@@ -23,7 +22,6 @@ import {
 // services
 import IssueService from "@/services/issue.service";
 import { IIssue, TIssuesResponse } from "@/types/issue";
-import { IIssueFilterStore } from "../issue-filters.store";
 import { CoreRootStore } from "../root.store";
 // constants
 // helpers
@@ -39,14 +37,9 @@ export enum EIssueGroupedAction {
 export interface IBaseIssuesStore {
   // observable
   loader: Record<string, TLoader>;
-  issuesMap: Record<string, IIssue>; // Record defines issue_id as key and IIssue as value
   // actions
   addIssue(issues: IIssue[], shouldReplace?: boolean): void;
   // helper methods
-  getIssueById(issueId: string): undefined | IIssue;
-
-  fetchIssueById(anchorId: string, issueId: string): Promise<IIssue | undefined>;
-
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined; // object to store Issue Ids based on group or subgroup
   groupedIssueCount: TGroupedIssueCount; // map of groupId/subgroup and issue count of that particular group/subgroup
   issuePaginationData: TIssuePaginationData; // map of groupId/subgroup and pagination Data of that particular group/subgroup
@@ -79,7 +72,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   loader: Record<string, TLoader> = {};
   groupedIssueIds: TIssues | undefined = undefined;
   issuePaginationData: TIssuePaginationData = {};
-  issuesMap: Record<string, IIssue> = {}; // Record defines issue_id as key and TIssue as value
   groupedIssueCount: TGroupedIssueCount = {};
   //
   paginationOptions: IssuePaginationOptions | undefined = undefined;
@@ -87,9 +79,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   issueService;
   // root store
   rootIssueStore;
-  issueFilterStore;
 
-  constructor(_rootStore: CoreRootStore, issueFilterStore: IIssueFilterStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observable
       loader: observable,
@@ -107,7 +98,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       setLoader: action.bound,
     });
     this.rootIssueStore = _rootStore;
-    this.issueFilterStore = issueFilterStore;
     this.issueService = new IssueService();
   }
 
@@ -141,33 +131,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        if (!this.issuesMap[issue.id] || shouldReplace) set(this.issuesMap, issue.id, issue);
+        if (!this.rootIssueStore.issueDetail.getIssueById(issue.id) || shouldReplace)
+          set(this.rootIssueStore.issueDetail.details, issue.id, issue);
       });
     });
-  };
-
-  /**
-   * @description This method will return the issue from the issuesMap
-   * @param {string} issueId
-   * @returns {IIssue | undefined}
-   */
-  getIssueById = computedFn((issueId: string) => {
-    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
-    return this.issuesMap[issueId];
-  });
-
-  fetchIssueById = async (anchorId: string, issueId: string) => {
-    try {
-      const issueDetails = await this.issueService.getIssueById(anchorId, issueId);
-
-      runInAction(() => {
-        set(this.issuesMap, [issueId], issueDetails);
-      });
-
-      return issueDetails;
-    } catch (e) {
-      console.error("error fetching issue details");
-    }
   };
 
   /**
