@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, Ref, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
 // helpers
@@ -17,9 +17,10 @@ export const Popover = (props: TPopover) => {
     disabled = false,
     panelClassName = "",
     children,
+    popoverButtonRef,
   } = props;
   // states
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   // react-popper derived values
@@ -37,19 +38,21 @@ export const Popover = (props: TPopover) => {
 
   return (
     <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
-      <HeadlessReactPopover.Button
-        ref={setReferenceElement}
-        className={cn(
-          {
-            "flex justify-center items-center text-base h-6 w-6 rounded transition-all bg-custom-background-90 hover:bg-custom-background-80":
-              !button,
-          },
-          buttonClassName
-        )}
-        disabled={disabled}
-      >
-        {button ? button : <EllipsisVertical className="h-3 w-3" />}
-      </HeadlessReactPopover.Button>
+      <div ref={setReferenceElement} className="w-full">
+        <HeadlessReactPopover.Button
+          ref={popoverButtonRef as Ref<HTMLButtonElement>}
+          className={cn(
+            {
+              "flex justify-center items-center text-base h-6 w-6 rounded transition-all bg-custom-background-90 hover:bg-custom-background-80":
+                !button,
+            },
+            buttonClassName
+          )}
+          disabled={disabled}
+        >
+          {button ? button : <EllipsisVertical className="h-3 w-3" />}
+        </HeadlessReactPopover.Button>
+      </div>
 
       <Transition
         as={Fragment}
