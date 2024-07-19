@@ -1,3 +1,4 @@
+import { PageNotFound } from "@/components/ui/not-found";
 import { PublishStore } from "@/store/publish/publish.store";
 
 type Props = {
@@ -6,4 +7,4 @@ type Props = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const ViewLayoutsRoot = (props: Props) => <></>;
+export const ViewLayoutsRoot = (props: Props) => <PageNotFound />;
