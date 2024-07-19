@@ -59,6 +59,7 @@ export interface IIssueDetail
   // observables
   peekIssue: TPeekIssue | undefined;
   relationKey: TIssueRelationTypes | null;
+  issueLinkData: TIssueLink | null;
   issueCrudOperationState: TIssueCrudOperationState;
   openWidgets: TIssueDetailWidget[];
   lastWidgetAction: TIssueDetailWidget | null;
@@ -76,6 +77,7 @@ export interface IIssueDetail
   getIsIssuePeeked: (issueId: string) => boolean;
   // actions
   setPeekIssue: (peekIssue: TPeekIssue | undefined) => void;
+  setIssueLinkData: (issueLinkData: TIssueLink | null) => void;
   toggleCreateIssueModal: (value: boolean) => void;
   toggleIssueLinkModal: (value: boolean) => void;
   toggleParentIssueModal: (issueId: string | null) => void;
@@ -107,6 +109,7 @@ export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
   relationKey: TIssueRelationTypes | null = null;
+  issueLinkData: TIssueLink | null = null;
   issueCrudOperationState: TIssueCrudOperationState = {
     create: {
       toggle: false,
@@ -147,6 +150,7 @@ export class IssueDetail implements IIssueDetail {
       // observables
       peekIssue: observable,
       relationKey: observable,
+      issueLinkData: observable,
       issueCrudOperationState: observable,
       isCreateIssueModalOpen: observable,
       isIssueLinkModalOpen: observable.ref,
@@ -162,6 +166,7 @@ export class IssueDetail implements IIssueDetail {
       isAnyModalOpen: computed,
       // action
       setPeekIssue: action,
+      setIssueLinkData: action,
       toggleCreateIssueModal: action,
       toggleIssueLinkModal: action,
       toggleParentIssueModal: action,
@@ -233,6 +238,7 @@ export class IssueDetail implements IIssueDetail {
       this.openWidgets = this.openWidgets.filter((s) => s !== state);
     else this.openWidgets = [state, ...this.openWidgets];
   };
+  setIssueLinkData = (issueLinkData: TIssueLink | null) => (this.issueLinkData = issueLinkData);
 
   // issue
   fetchIssue = async (
