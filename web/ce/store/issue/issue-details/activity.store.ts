@@ -70,7 +70,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = (issueId: string) => {
+  public getActivityCommentByIssueId(issueId: string) {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];
@@ -101,15 +101,15 @@ export class IssueActivityStore implements IIssueActivityStore {
     activityComments = sortBy(activityComments, "created_at");
 
     return activityComments;
-  };
+  }
 
   // actions
-  fetchActivities = async (
+  public async fetchActivities(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     loaderType: TActivityLoader = "fetch"
-  ) => {
+  ) {
     try {
       this.loader = loaderType;
 
@@ -137,7 +137,8 @@ export class IssueActivityStore implements IIssueActivityStore {
 
       return activities;
     } catch (error) {
+      this.loader = undefined;
       throw error;
     }
-  };
+  }
 }
