@@ -25,6 +25,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   const {
     isIssueLinkModalOpen,
     toggleIssueLinkModal: toggleIssueLinkModalStore,
+    setIssueLinkData,
     isCreateIssueModalOpen,
     toggleCreateIssueModal,
     isSubIssuesModalOpen,
@@ -88,6 +89,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   const handleIssueLinkModalOnClose = () => {
     toggleIssueLinkModalStore(false);
     setLastWidgetAction("links");
+    setIssueLinkData(null);
   };
 
   const handleRelationOnClose = () => {
