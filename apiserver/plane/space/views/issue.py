@@ -1,9 +1,12 @@
 # Python imports
 import json
+
+# Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce, JSONObject
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 from django.db.models import (
     Exists,
     F,
@@ -14,15 +17,15 @@ from django.db.models import (
     When,
     JSONField,
     Value,
+    OuterRef,
+    Func
 )
-
-# Django imports
-from django.utils import timezone
-from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # Third Party imports
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
 
 # Module imports
 from .base import BaseAPIView, BaseViewSet
@@ -43,7 +46,6 @@ from plane.utils.paginator import (
 from plane.app.serializers import (
     CommentReactionSerializer,
     IssueCommentSerializer,
-    IssuePublicSerializer,
     IssueReactionSerializer,
     IssueVoteSerializer,
 )
@@ -57,6 +59,7 @@ from plane.db.models import (
     DeployBoard,
     IssueVote,
     ProjectPublicMember,
+    IssueAttachment,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
@@ -102,6 +105,28 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 )
             )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
         ).distinct()
 
         issue_queryset = issue_queryset.filter(**filters)
