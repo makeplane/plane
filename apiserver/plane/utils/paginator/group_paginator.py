@@ -1,47 +1,137 @@
 # Python imports
 import math
 from collections import defaultdict
-from collections.abc import Sequence
 
 # Django imports
 from django.db.models import Count, F, Window
 from django.db.models.functions import RowNumber
 
-# Third party imports
-from rest_framework.exceptions import ParseError
-from rest_framework.response import Response
-
 # Module imports
+from .list_paginator import OffsetPaginator
+from .paginator_util import Cursor, CursorResult, BadPaginationError
 
 
-class InitialGrouperPaginator(object):
-    """This class generate the initial grouping of the queryset"""
+class GroupedOffsetPaginator(OffsetPaginator):
 
-    max_limit = 50
+    # Field mappers - list m2m fields here
+    FIELD_MAPPER = {
+        "labels__id": "label_ids",
+        "assignees__id": "assignee_ids",
+        "issue_module__module_id": "module_ids",
+    }
 
     def __init__(
         self,
         queryset,
         group_by_field_name,
         group_by_fields,
-        count_queryset,
-        order_by=None,
-    ) -> None:
-        # Set the queryset
-        self.queryset = queryset
+        *args,
+        **kwargs,
+    ):
+        # Initiate the parent class for all the parameters
+        super().__init__(queryset, *args, **kwargs)
         # Set the group by field name
         self.group_by_field_name = group_by_field_name
         # Set the group by fields
         self.group_by_fields = group_by_fields
-        # Set the count queryset
-        self.count_queryset = count_queryset
-        # Set the key
-        self.desc = True if order_by and order_by.startswith("-") else False
-        # Key tuple and remove `-` if descending order by
-        self.key = (
-            order_by
-            if order_by is None or isinstance(order_by, (list, tuple, set))
-            else (order_by[1::] if order_by.startswith("-") else order_by,)
+
+    def get_result(self, limit=50, cursor=None):
+        # offset is page #
+        # value is page limit
+        if cursor is None:
+            cursor = Cursor(0, 0, 0)
+
+        limit = min(limit, self.max_limit)
+
+        # Adjust the initial offset and stop based on the cursor and limit
+        queryset = self.queryset
+
+        page = cursor.offset
+        offset = cursor.offset * cursor.value
+        stop = offset + (cursor.value or limit) + 1
+
+        # Check if the offset is greater than the max offset
+        if self.max_offset is not None and offset >= self.max_offset:
+            raise BadPaginationError("Pagination offset too large")
+
+        # Check if the offset is less than 0
+        if offset < 0:
+            raise BadPaginationError("Pagination offset cannot be negative")
+
+        # Compute the results
+        results = {}
+        # Create window for all the groups
+        queryset = queryset.annotate(
+            row_number=Window(
+                expression=RowNumber(),
+                partition_by=[F(self.group_by_field_name)],
+                order_by=(
+                    (
+                        F(*self.key).desc(
+                            nulls_last=True
+                        )  # order by desc if desc is set
+                        if self.desc
+                        else F(*self.key).asc(
+                            nulls_last=True
+                        )  # Order by asc if set
+                    ),
+                    F("created_at").desc(),
+                ),
+            )
+        )
+        # Filter the results by row number
+        results = queryset.filter(
+            row_number__gt=offset, row_number__lt=stop
+        ).order_by(
+            (
+                F(*self.key).desc(nulls_last=True)
+                if self.desc
+                else F(*self.key).asc(nulls_last=True)
+            ),
+            F("created_at").desc(),
+        )
+
+        # Adjust cursors based on the grouped results for pagination
+        next_cursor = Cursor(
+            limit,
+            page + 1,
+            False,
+            queryset.filter(row_number__gte=stop).exists(),
+        )
+
+        # Add previous cursors
+        prev_cursor = Cursor(
+            limit,
+            page - 1,
+            True,
+            page > 0,
+        )
+
+        # Count the queryset
+        count = self.count_queryset.count()
+
+        # Optionally, calculate the total count and max_hits if needed
+        # This might require adjustments based on specific use cases
+        if results:
+            max_hits = math.ceil(
+                self.count_queryset.values(self.group_by_field_name)
+                .annotate(
+                    count=Count(
+                        "id",
+                        distinct=True,
+                    )
+                )
+                .order_by("-count")[0]["count"]
+                / limit
+            )
+        else:
+            max_hits = 0
+        return CursorResult(
+            results=results,
+            next=next_cursor,
+            prev=prev_cursor,
+            hits=count,
+            max_hits=max_hits,
         )
 
     def __get_total_queryset(self):
@@ -125,7 +215,6 @@ class InitialGrouperPaginator(object):
             for group_id, issues in grouped_by_field_name.items()
         }
 
-        # Return the processed results
         return processed_results
 
     def __query_grouper(self, results):
@@ -135,64 +224,15 @@ class InitialGrouperPaginator(object):
             group_value = str(result.get(self.group_by_field_name))
             if group_value in processed_results:
                 processed_results[str(group_value)]["results"].append(result)
-        # Return the processed results
         return processed_results
 
-    # Get the results
-    def get_result(self, limit=50, is_multi_grouper=False, on_results=None):
-        # Get the min from limit and max limit
-        limit = min(limit, self.max_limit)
-        # Get the queryset
-        queryset = self.queryset
-        # Create window for all the groups
-        queryset = queryset.annotate(
-            row_number=Window(
-                expression=RowNumber(),
-                partition_by=[F(self.group_by_field_name)],
-                order_by=(
-                    (
-                        F(*self.key).desc(
-                            nulls_last=True
-                        )  # order by desc if desc is set
-                        if self.desc
-                        else F(*self.key).asc(
-                            nulls_last=True
-                        )  # Order by asc if set
-                    ),
-                    F("created_at").desc(),
-                ),
-            )
-        )
-
-        # Filter the results by row number
-        results = queryset.filter(row_number__lt=limit + 1).order_by(
-            (
-                F(*self.key).desc(nulls_last=True)
-                if self.desc
-                else F(*self.key).asc(nulls_last=True)
-            ),
-            F("created_at").desc(),
-        )
-
-        # Process the results
-        if on_results:
-            results = on_results(results)
-
+    def process_results(self, results):
         # Process results
         if results:
-            # Check if the results are multi grouper
-            if is_multi_grouper:
+            if self.group_by_field_name in self.FIELD_MAPPER:
                 processed_results = self.__query_multi_grouper(results=results)
             else:
                 processed_results = self.__query_grouper(results=results)
         else:
             processed_results = {}
-
-        response = Response(
-            {
-                "results": processed_results,
-                "total_count": self.count_queryset.count(),
-            }
-        )
-
-        return response
+        return processed_results

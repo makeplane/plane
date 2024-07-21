@@ -289,13 +289,9 @@ class IssueViewSet(BaseViewSet):
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
-                        count_filter=Q(
-                            Q(issue_inbox__status=1)
-                            | Q(issue_inbox__status=-1)
-                            | Q(issue_inbox__status=2)
-                            | Q(issue_inbox__isnull=True),
-                            archived_at__isnull=True,
-                            is_draft=False,
+                        count_queryset=Issue.issue_objects.filter(
+                            workspace__slug=slug,
+                            project_id=project_id,
                         ),
                     )
             else:
@@ -304,6 +300,10 @@ class IssueViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    count_queryset=Issue.issue_objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                    ),
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by,
                         issues=issues,
@@ -317,20 +317,16 @@ class IssueViewSet(BaseViewSet):
                         filters=filters,
                     ),
                     group_by_field_name=group_by,
-                    count_filter=Q(
-                        Q(issue_inbox__status=1)
-                        | Q(issue_inbox__status=-1)
-                        | Q(issue_inbox__status=2)
-                        | Q(issue_inbox__isnull=True),
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
                 )
         else:
             return self.paginate(
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                count_queryset=Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                ),
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
