@@ -1,7 +1,5 @@
-import { Extensions, generateJSON, getSchema } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
 import { clsx, type ClassValue } from "clsx";
-import { CoreEditorExtensionsWithoutProps } from "src/core/extensions/core-without-props";
 import { twMerge } from "tailwind-merge";
 
 interface EditorClassNames {

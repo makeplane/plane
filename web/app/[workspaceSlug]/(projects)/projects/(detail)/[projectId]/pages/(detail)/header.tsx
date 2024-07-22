@@ -7,7 +7,7 @@ import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
@@ -29,11 +29,9 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
+  const { name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
   // use platform
-  const { isMobile, platform } = usePlatformOS();
-  // derived values
-  const isMac = platform === "MacOS";
+  const { isMobile } = usePlatformOS();
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -157,25 +155,6 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </div>
       <PageDetailsHeaderExtraActions />
-      {isContentEditable && (
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => {
-            // ctrl/cmd + s to save the changes
-            const event = new KeyboardEvent("keydown", {
-              key: "s",
-              ctrlKey: !isMac,
-              metaKey: isMac,
-            });
-            window.dispatchEvent(event);
-          }}
-          className="flex-shrink-0 w-24"
-          loading={isSubmitting === "submitting"}
-        >
-          {isSubmitting === "submitting" ? "Saving" : "Save changes"}
-        </Button>
-      )}
     </div>
   );
 });
