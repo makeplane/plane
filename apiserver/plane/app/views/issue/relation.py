@@ -81,7 +81,7 @@ class IssueRelationViewSet(BaseViewSet):
 
         queryset = (
             Issue.issue_objects
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
