@@ -76,3 +76,14 @@ export const issuePriorityFilter = (priorityKey: TIssuePriorities): TIssueFilter
   if (currentIssuePriority) return currentIssuePriority;
   return undefined;
 };
+
+export const ISSUE_PRIORITIES: {
+  key: TIssuePriorities;
+  title: string;
+}[] = [
+  { key: "urgent", title: "Urgent" },
+  { key: "high", title: "High" },
+  { key: "medium", title: "Medium" },
+  { key: "low", title: "Low" },
+  { key: "none", title: "None" },
+];

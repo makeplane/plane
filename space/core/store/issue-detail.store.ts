@@ -1,5 +1,7 @@
+import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { makeObservable, observable, action, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // services
 import IssueService from "@/services/issue.service";
@@ -17,7 +19,10 @@ export interface IIssueDetailStore {
   details: {
     [key: string]: IIssue;
   };
+  // computed actions
+  getIsIssuePeeked: (issueID: string) => boolean;
   // actions
+  getIssueById: (issueId: string) => IIssue | undefined;
   setPeekId: (issueID: string | null) => void;
   setPeekMode: (mode: IPeekMode) => void;
   // issue actions
@@ -88,6 +93,38 @@ export class IssueDetailStore implements IIssueDetailStore {
     this.peekMode = mode;
   };
 
+  getIsIssuePeeked = (issueID: string) => this.peekId === issueID;
+
+  /**
+   * @description This method will return the issue from the issuesMap
+   * @param {string} issueId
+   * @returns {IIssue | undefined}
+   */
+  getIssueById = computedFn((issueId: string) => {
+    if (!issueId || isEmpty(this.details) || !this.details[issueId]) return undefined;
+    return this.details[issueId];
+  });
+
+  /**
+   * Retrieves issue from API
+   * @param anchorId ]
+   * @param issueId
+   * @returns
+   */
+  fetchIssueById = async (anchorId: string, issueId: string) => {
+    try {
+      const issueDetails = await this.issueService.getIssueById(anchorId, issueId);
+
+      runInAction(() => {
+        set(this.details, [issueId], issueDetails);
+      });
+
+      return issueDetails;
+    } catch (e) {
+      console.error(`Error fetching issue details for issueId ${issueId}: `, e);
+    }
+  };
+
   /**
    * @description fetc
    * @param {string} anchor
@@ -98,7 +135,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       this.loader = true;
       this.error = null;
 
-      const issueDetails = await this.rootStore.issue.fetchIssueById(anchor, issueID);
+      const issueDetails = await this.fetchIssueById(anchor, issueID);
       const commentsResponse = await this.issueService.getIssueComments(anchor, issueID);
 
       if (issueDetails) {
@@ -120,11 +157,11 @@ export class IssueDetailStore implements IIssueDetailStore {
 
   addIssueComment = async (anchor: string, issueID: string, data: any) => {
     try {
-      const issueDetails = this.rootStore.issue.getIssueById(issueID);
+      const issueDetails = this.getIssueById(issueID);
       const issueCommentResponse = await this.issueService.createIssueComment(anchor, issueID, data);
       if (issueDetails) {
         runInAction(() => {
-          set(this.details, [issueID, "comments"], [...this.details[issueID].comments, issueCommentResponse]);
+          set(this.details, [issueID, "comments"], [...(issueDetails?.comments ?? []), issueCommentResponse]);
         });
       }
       return issueCommentResponse;
