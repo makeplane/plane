@@ -294,7 +294,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
         profiles_sample_rate=float(
-            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0)
         ),
     )
 
