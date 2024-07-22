@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+export const DISCO_BASE_URL = process.env.NEXT_PUBLIC_DISCO_BASE_URL || "";
+
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || "";

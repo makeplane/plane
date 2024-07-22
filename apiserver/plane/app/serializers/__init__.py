@@ -30,7 +30,6 @@ from .project import (
     ProjectIdentifierSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
-    DeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
@@ -39,6 +38,7 @@ from .state import StateSerializer, StateLiteSerializer
 from .view import (
     IssueViewSerializer,
 )
+
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
@@ -121,3 +121,15 @@ from .exporter import ExporterHistorySerializer
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .dashboard import DashboardSerializer, WidgetSerializer
+
+from .integration import (
+    IntegrationSerializer,
+    WorkspaceIntegrationSerializer,
+    GithubIssueSyncSerializer,
+    GithubRepositorySerializer,
+    GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
+    SlackProjectSyncSerializer,
+)
+
+from .deploy_board import DeployBoardSerializer
