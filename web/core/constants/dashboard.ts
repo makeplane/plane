@@ -311,7 +311,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
   },
   {
     key: "my-work",
-    label: "My Work",
+    label: "Your work",
     href: "/profile",
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/profile/`),
