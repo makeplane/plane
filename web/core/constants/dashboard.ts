@@ -310,7 +310,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     Icon: Home,
   },
   {
-    key: "my-work",
+    key: "your-work",
     label: "Your work",
     href: "/profile",
     access: EUserWorkspaceRoles.GUEST,
