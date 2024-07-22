@@ -41,6 +41,7 @@ class ExportIssuesEndpoint(BaseAPIView):
                 project=project_ids,
                 initiated_by=request.user,
                 provider=provider,
+                type="issue_exports",
             )
 
             issue_export_task.delay(
@@ -65,7 +66,8 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         exporter_history = ExporterHistory.objects.filter(
-            workspace__slug=slug
+            workspace__slug=slug,
+            type="issue_exports",
         ).select_related("workspace", "initiated_by")
 
         if request.GET.get("per_page", False) and request.GET.get(
