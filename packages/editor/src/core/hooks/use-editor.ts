@@ -3,7 +3,7 @@ import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 // components
-import { EditorMenuItemNames, getEditorMenuItems } from "@/components/menus";
+import { getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
@@ -14,7 +14,15 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { DeleteImage, EditorRefApi, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
+import {
+  DeleteImage,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  RestoreImage,
+  TEditorCommands,
+  UploadImage,
+} from "@/types";
 
 export type TFileHandler = {
   cancel: () => void;
@@ -147,12 +155,12 @@ export const useEditor = ({
           insertContentAtSavedSelection(editorRef, content, savedSelection);
         }
       },
-      executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
+      executeMenuItemCommand: (itemKey: TEditorCommands) => {
         const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
+        const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
 
-        const item = getEditorMenuItem(itemName);
+        const item = getEditorMenuItem(itemKey);
         if (item) {
           if (item.key === "image") {
             item.command(savedSelectionRef.current);
@@ -160,13 +168,13 @@ export const useEditor = ({
             item.command();
           }
         } else {
-          console.warn(`No command found for item: ${itemName}`);
+          console.warn(`No command found for item: ${itemKey}`);
         }
       },
-      isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
+      isMenuItemActive: (itemName: TEditorCommands): boolean => {
         const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
+        const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
