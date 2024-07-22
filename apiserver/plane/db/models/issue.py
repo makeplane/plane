@@ -386,6 +386,8 @@ class IssueAttachment(ProjectBaseModel):
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
     )
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Issue Attachment"
