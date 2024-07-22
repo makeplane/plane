@@ -10,8 +10,9 @@ class IssueType(WorkspaceBaseModel):
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
-    is_default = models.BooleanField(default=True)
+    is_default = models.BooleanField(default=False)
     weight = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ["project", "name"]

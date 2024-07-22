@@ -50,7 +50,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title="Sub-issues"
       indicatorElement={indicatorElement}
-      actionItemElement={<SubIssuesActionButton issueId={parentIssueId} disabled={disabled} />}
+      actionItemElement={!disabled && <SubIssuesActionButton issueId={parentIssueId} disabled={disabled} />}
     />
   );
 });

@@ -39,7 +39,7 @@ export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title="Relations"
       indicatorElement={indicatorElement}
-      actionItemElement={<RelationActionButton issueId={issueId} disabled={disabled} />}
+      actionItemElement={!disabled && <RelationActionButton issueId={issueId} disabled={disabled} />}
     />
   );
 });

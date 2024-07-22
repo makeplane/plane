@@ -5,8 +5,10 @@ import { IssueDetailStore, IIssueDetailStore } from "@/store/issue-detail.store"
 import { IssueStore, IIssueStore } from "@/store/issue.store";
 import { IUserStore, UserStore } from "@/store/user.store";
 import { IssueFilterStore, IIssueFilterStore } from "./issue-filters.store";
+import { IIssueLabelStore, LabelStore } from "./label.store";
 import { IMentionsStore, MentionsStore } from "./mentions.store";
 import { IPublishListStore, PublishListStore } from "./publish/publish_list.store";
+import { IStateStore, StateStore } from "./state.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -16,6 +18,8 @@ export class CoreRootStore {
   issue: IIssueStore;
   issueDetail: IIssueDetailStore;
   mentionStore: IMentionsStore;
+  state: IStateStore;
+  label: IIssueLabelStore;
   issueFilter: IIssueFilterStore;
   publishList: IPublishListStore;
 
@@ -25,6 +29,8 @@ export class CoreRootStore {
     this.issue = new IssueStore(this);
     this.issueDetail = new IssueDetailStore(this);
     this.mentionStore = new MentionsStore(this);
+    this.state = new StateStore(this);
+    this.label = new LabelStore(this);
     this.issueFilter = new IssueFilterStore(this);
     this.publishList = new PublishListStore(this);
   }
@@ -43,6 +49,8 @@ export class CoreRootStore {
     this.issue = new IssueStore(this);
     this.issueDetail = new IssueDetailStore(this);
     this.mentionStore = new MentionsStore(this);
+    this.state = new StateStore(this);
+    this.label = new LabelStore(this);
     this.issueFilter = new IssueFilterStore(this);
     this.publishList = new PublishListStore(this);
   }

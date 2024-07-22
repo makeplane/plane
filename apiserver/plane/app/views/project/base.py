@@ -39,7 +39,7 @@ from plane.db.models import (
     Cycle,
     Inbox,
     DeployBoard,
-    IssueProperty,
+    IssueUserProperty,
     Issue,
     Module,
     Project,
@@ -266,7 +266,7 @@ class ProjectViewSet(BaseViewSet):
                     role=20,
                 )
                 # Also create the issue property for the user
-                _ = IssueProperty.objects.create(
+                _ = IssueUserProperty.objects.create(
                     project_id=serializer.data["id"],
                     user=request.user,
                 )
@@ -280,7 +280,7 @@ class ProjectViewSet(BaseViewSet):
                         role=20,
                     )
                     # Also create the issue property for the user
-                    IssueProperty.objects.create(
+                    IssueUserProperty.objects.create(
                         project_id=serializer.data["id"],
                         user_id=serializer.data["project_lead"],
                     )

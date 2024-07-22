@@ -1,5 +1,4 @@
 # Python imports
-import json
 import secrets
 import uuid
 
@@ -21,16 +20,10 @@ class Command(BaseCommand):
         parser.add_argument("admin_email", type=str, help="Admin Email")
 
     def handle(self, *args, **options):
-        with open("package.json", "r") as file:
-            # Load JSON content from the file
-            data = json.load(file)
-
         admin_email = options.get("admin_email", False)
 
         if not admin_email:
             raise CommandError("admin email is required")
-
-        user_count = User.objects.filter(is_bot=False).count()
 
         user = User.objects.filter(email=admin_email).first()
         if user is None:
@@ -47,16 +40,17 @@ class Command(BaseCommand):
 
             if instance is None:
                 instance = Instance.objects.create(
-                    instance_name="Plane Enterprise",
+                    instance_name="Plane Cloud",
                     instance_id=secrets.token_hex(12),
                     license_key=None,
-                    api_key=secrets.token_hex(8),
-                    version=data.get("version"),
+                    current_version="latest",
+                    latest_version="latest",
                     last_checked_at=timezone.now(),
-                    user_count=user_count,
+                    user_count=0,
                     is_verified=True,
                     is_setup_done=True,
                     is_signup_screen_visited=True,
+                    product="plane-cloud",
                 )
 
             # Get or create an instance admin

@@ -3,7 +3,6 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { IssueKanbanLayoutRoot, IssuesListLayoutRoot } from "@/components/issues";
@@ -23,22 +22,22 @@ type Props = {
 
 export const IssuesLayoutsRoot: FC<Props> = observer((props) => {
   const { peekId, publishSettings } = props;
-  // query params
-  const searchParams = useSearchParams();
-  const states = searchParams.get("states") || undefined;
-  const priority = searchParams.get("priority") || undefined;
-  const labels = searchParams.get("labels") || undefined;
   // store hooks
   const { getIssueFilters } = useIssueFilter();
-  const { loader, issues, error, fetchPublicIssues } = useIssue();
+  const { loader, groupedIssueIds, fetchPublicIssues } = useIssue();
   const issueDetailStore = useIssueDetails();
   // derived values
   const { anchor } = publishSettings;
   const issueFilters = anchor ? getIssueFilters(anchor) : undefined;
+  // derived values
+  const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
-  useSWR(
+  const { error } = useSWR(
     anchor ? `PUBLIC_ISSUES_${anchor}` : null,
-    anchor ? () => fetchPublicIssues(anchor, { states, priority, labels }) : null
+    anchor
+      ? () => fetchPublicIssues(anchor, "init-loader", { groupedBy: "state", canGroup: true, perPageCount: 50 })
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   useEffect(() => {
@@ -47,16 +46,13 @@ export const IssuesLayoutsRoot: FC<Props> = observer((props) => {
     }
   }, [peekId, issueDetailStore]);
 
-  // derived values
-  const activeLayout = issueFilters?.display_filters?.layout || undefined;
-
   if (!anchor) return null;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
       {peekId && <IssuePeekOverview anchor={anchor} peekId={peekId} />}
 
-      {loader && !issues ? (
+      {loader && !groupedIssueIds ? (
         <div className="py-10 text-center text-sm text-custom-text-100">Loading...</div>
       ) : (
         <>

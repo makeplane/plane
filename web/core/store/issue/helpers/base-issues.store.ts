@@ -13,6 +13,7 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -28,7 +29,7 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
 } from "@plane/types";
-import { ALL_ISSUES, EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
+import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
 import { convertToISODateString } from "@/helpers/date-time.helper";
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";

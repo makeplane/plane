@@ -1,10 +1,11 @@
 "use client";
 import { FC } from "react";
 import { observer } from "mobx-react";
-// components
-import { IssueListLayoutBlock, IssueListLayoutHeader } from "@/components/issues";
+// types
+import { TGroupedIssues } from "@plane/types";
 // mobx hook
 import { useIssue } from "@/hooks/store";
+import { Group } from "./group";
 
 type Props = {
   anchor: string;
@@ -13,27 +14,20 @@ type Props = {
 export const IssuesListLayoutRoot: FC<Props> = observer((props) => {
   const { anchor } = props;
   // store hooks
-  const { states, getFilteredIssuesByState } = useIssue();
+  const { groupedIssueIds } = useIssue();
+
+  const groupedIssues = groupedIssueIds as TGroupedIssues | undefined;
+
+  if (!groupedIssues) return <></>;
+
+  const issueGroupIds = Object.keys(groupedIssues);
 
   return (
     <>
-      {states?.map((state) => {
-        const issues = getFilteredIssuesByState(state.id);
+      {issueGroupIds?.map((stateId) => {
+        const issueIds = groupedIssues[stateId];
 
-        return (
-          <div key={state.id} className="relative w-full">
-            <IssueListLayoutHeader state={state} />
-            {issues && issues.length > 0 ? (
-              <div className="divide-y divide-custom-border-200">
-                {issues.map((issue) => (
-                  <IssueListLayoutBlock key={issue.id} anchor={anchor} issue={issue} />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues.</div>
-            )}
-          </div>
-        );
+        return <Group key={stateId} anchor={anchor} stateId={stateId} issueIds={issueIds} />;
       })}
     </>
   );

@@ -40,7 +40,7 @@ export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title="Links"
       indicatorElement={indicatorElement}
-      actionItemElement={<IssueLinksActionButton disabled={disabled} />}
+      actionItemElement={!disabled && <IssueLinksActionButton disabled={disabled} />}
     />
   );
 });

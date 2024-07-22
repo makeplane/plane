@@ -27,6 +27,7 @@
     "@plane/editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@plane/constants": "*",
     "@popperjs/core": "^2.11.8",
     "@sentry/nextjs": "^8",
     "axios": "^1.1.3",

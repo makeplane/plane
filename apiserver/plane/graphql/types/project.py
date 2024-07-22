@@ -57,6 +57,10 @@ class ProjectType:
     def default_state(self) -> int:
         return self.default_state_id
 
+    @strawberry.field
+    def default_state(self) -> int:
+        return self.default_state_id
+
 
 @strawberry_django.type(ProjectMember)
 class ProjectMemberType:
@@ -64,9 +68,17 @@ class ProjectMemberType:
     member: strawberry.ID
     role: int
     is_active: bool
+    project: strawberry.ID
+    workspace: strawberry.ID
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id
+
+    @strawberry.field
+    def project(self) -> int:
+        return self.project_id
 
     @strawberry.field
     def member(self) -> int:
         return self.member_id
-
-

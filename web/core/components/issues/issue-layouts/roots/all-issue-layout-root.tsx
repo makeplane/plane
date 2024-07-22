@@ -3,6 +3,8 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
+// plane constants
+import { ALL_ISSUES } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -12,7 +14,6 @@ import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-ac
 import { SpreadsheetLayoutLoader } from "@/components/ui";
 // constants
 import {
-  ALL_ISSUES,
   EIssueFilterType,
   EIssueLayoutTypes,
   EIssuesStoreType,

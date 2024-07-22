@@ -14,6 +14,7 @@
     "@headlessui/react": "^1.7.19",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@plane/constants": "*",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",

@@ -6,6 +6,7 @@ from django.db import models
 from .base import BaseModel
 from .project import ProjectBaseModel
 from .workspace import WorkspaceBaseModel
+from plane.utils.issue_filters import issue_filters
 
 
 def get_default_filters():
@@ -115,6 +116,26 @@ class IssueView(WorkspaceBaseModel):
         verbose_name_plural = "Issue Views"
         db_table = "issue_views"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        query_params = self.filters
+        self.query = (
+            issue_filters(query_params, "POST") if query_params else {}
+        )
+
+        if self._state.adding:
+            if self.project:
+                largest_sort_order = IssueView.objects.filter(
+                    project=self.project
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+            else:
+                largest_sort_order = IssueView.objects.filter(
+                    workspace=self.workspace, project__isnull=True
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
+        super(IssueView, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return name of the View"""

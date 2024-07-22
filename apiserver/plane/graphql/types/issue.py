@@ -13,7 +13,7 @@ from strawberry.scalars import JSON
 # Module Imports
 from plane.db.models import (
     Issue,
-    IssueProperty,
+    IssueUserProperty,
     IssueActivity,
     IssueComment,
 )
@@ -45,6 +45,8 @@ class IssueType:
     external_id: Optional[str]
     created_by: strawberry.ID
     updated_by: strawberry.ID
+    created_at: datetime
+    updated_at: datetime
 
     @strawberry.field
     def state(self) -> int:
@@ -89,7 +91,7 @@ class IssueType:
     #     )
 
 
-@strawberry_django.type(IssueProperty)
+@strawberry_django.type(IssueUserProperty)
 class IssueUserPropertyType:
     display_filters: JSON
     display_properties: JSON
@@ -114,7 +116,6 @@ class IssueUserPropertyType:
 
 @strawberry_django.type(IssueActivity)
 class IssuePropertyActivityType:
-
     id: strawberry.ID
     issue: strawberry.ID
     verb: str
@@ -156,7 +157,6 @@ class IssuePropertyActivityType:
 
 @strawberry_django.type(IssueComment)
 class IssueCommentActivityType:
-
     id: strawberry.ID
     comment_stripped: str
     comment_json: JSON

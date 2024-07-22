@@ -44,8 +44,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200">{projectDetails?.identifier}</span>
-          {projectDetails?.name}
+          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
     };
@@ -111,7 +111,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div className="flex min-h-full items-center justify-center p-4 text-center  sm:p-0">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -121,7 +121,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-xl">
                 <div className="flex flex-col gap-6 gap-y-4 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="flex items-center justify-start">
@@ -150,7 +150,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
                       }
                       onOpen={() => setIsSelectOpen(true)}
                       onClose={() => setIsSelectOpen(false)}
-                      optionsClassName="min-w-full"
+                      optionsClassName="max-w-48 sm:max-w-[532px]"
+                      placement="bottom-end"
                       multiple
                     />
                   </div>

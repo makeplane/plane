@@ -25,7 +25,7 @@ from plane.db.models import (
     ProjectMemberInvite,
     User,
     WorkspaceMember,
-    IssueProperty,
+    IssueUserProperty,
 )
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
@@ -180,9 +180,9 @@ class UserProjectInvitationsViewset(BaseViewSet):
             ignore_conflicts=True,
         )
 
-        IssueProperty.objects.bulk_create(
+        IssueUserProperty.objects.bulk_create(
             [
-                IssueProperty(
+                IssueUserProperty(
                     project_id=project_id,
                     user=request.user,
                     workspace=workspace,

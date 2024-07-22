@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button, Intake } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
@@ -45,7 +45,7 @@ export const ProjectInboxHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Inbox" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label="Intake" icon={<Intake className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
 

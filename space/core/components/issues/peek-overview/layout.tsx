@@ -33,12 +33,12 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
 
   useEffect(() => {
-    if (anchor && peekId && issueStore.issues && issueStore.issues.length > 0) {
+    if (anchor && peekId && issueStore.groupedIssueIds) {
       if (!issueDetails) {
         issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
       }
     }
-  }, [anchor, issueDetailStore, issueDetails, peekId, issueStore.issues]);
+  }, [anchor, issueDetailStore, issueDetails, peekId, issueStore.groupedIssueIds]);
 
   const handleClose = () => {
     issueDetailStore.setPeekId(null);

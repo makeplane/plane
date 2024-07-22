@@ -42,6 +42,14 @@ export class WorkspacePageService extends APIService {
       });
   }
 
+  async updateAccess(workspaceSlug: string, pageId: string, data: Partial<TPage>): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/access/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async remove(workspaceSlug: string, pageId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`)
       .then((response) => response?.data)

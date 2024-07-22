@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { ALL_ISSUES } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // hooks
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
 import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
 //constants
-import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks

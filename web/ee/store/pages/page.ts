@@ -369,7 +369,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
     runInAction(() => (this.access = EPageAccess.PUBLIC));
 
     try {
-      await this.pageService.update(workspaceSlug, this.id, {
+      await this.pageService.updateAccess(workspaceSlug, this.id, {
         access: EPageAccess.PUBLIC,
       });
     } catch (error) {
@@ -391,7 +391,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
     try {
-      await this.pageService.update(workspaceSlug, this.id, {
+      await this.pageService.updateAccess(workspaceSlug, this.id, {
         access: EPageAccess.PRIVATE,
       });
     } catch (error) {

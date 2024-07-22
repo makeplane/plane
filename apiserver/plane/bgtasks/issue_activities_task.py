@@ -1391,6 +1391,7 @@ def create_issue_relation_activity(
                     workspace_id=workspace_id,
                     comment=f"added {requested_data.get('relation_type')} relation",
                     old_identifier=related_issue,
+                    epoch=epoch,
                 )
             )
             issue = Issue.objects.get(pk=issue_id)

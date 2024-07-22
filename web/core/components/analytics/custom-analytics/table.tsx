@@ -64,7 +64,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               <div className="relative flex items-center gap-2 w-full overflow-hidden">
                 <div className="flex-shrink-0 h-3 w-3 rounded overflow-hidden">
                   {params.x_axis === "priority" ? (
-                    <PriorityIcon priority={(item.name as string).toLowerCase() as TIssuePriorities} />
+                    <PriorityIcon size={12} priority={(item.name as string).toLowerCase() as TIssuePriorities} />
                   ) : (
                     <div
                       className="w-full h-full"

@@ -217,6 +217,29 @@ class WorkspacePageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def access(self, request, slug, pk):
+        access = request.data.get("access", 0)
+        page = Page.objects.filter(
+            pk=pk, workspace__slug=slug
+        ).first()
+
+        # Only update access if the page owner is the requesting user
+        if (
+            page.access != request.data.get("access", page.access)
+            and page.owned_by_id != request.user.id
+        ):
+            return Response(
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        page.access = access
+        page.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def list(self, request, slug):
         queryset = self.get_queryset()
         pages = WorkspacePageSerializer(queryset, many=True).data

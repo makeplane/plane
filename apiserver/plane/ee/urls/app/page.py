@@ -48,6 +48,16 @@ urlpatterns = [
         ),
         name="workspace-page-archive-unarchive",
     ),
+    # private and public page
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/access/",
+        WorkspacePageViewSet.as_view(
+            {
+                "post": "access",
+            }
+        ),
+        name="project-pages-access",
+    ),
     # lock and unlock
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/lock/",

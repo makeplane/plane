@@ -17,19 +17,16 @@ export const renderEmoji = (
   else return isNaN(parseInt(emoji)) ? emoji : String.fromCodePoint(parseInt(emoji));
 };
 
-export const groupReactions: (reactions: any[], key: string) => { [key: string]: any[] } = (
-  reactions: any,
-  key: string
-) => {
+export const groupReactions = <T extends { reaction: string }>(reactions: T[], key: string) => {
   const groupedReactions = reactions.reduce(
-    (acc: any, reaction: any) => {
+    (acc: { [key: string]: T[] }, reaction: any) => {
       if (!acc[reaction[key]]) {
         acc[reaction[key]] = [];
       }
       acc[reaction[key]].push(reaction);
       return acc;
     },
-    {} as { [key: string]: any[] }
+    {} as { [key: string]: T[] }
   );
 
   return groupedReactions;

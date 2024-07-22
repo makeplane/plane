@@ -1,27 +1,31 @@
 "use client";
 
+import { observer } from "mobx-react";
 import { CalendarCheck2 } from "lucide-react";
-// types
-import { TStateGroups } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+// hooks
+import { useStates } from "@/hooks/store";
 
 type Props = {
   due_date: string;
-  group: TStateGroups;
+  stateId: string | undefined;
 };
 
-export const IssueBlockDueDate = (props: Props) => {
-  const { due_date, group } = props;
+export const IssueBlockDueDate = observer((props: Props) => {
+  const { due_date, stateId } = props;
+  const { getStateById } = useStates();
+
+  const state = getStateById(stateId);
 
   return (
     <div
       className={cn(
         "flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs text-custom-text-100",
         {
-          "text-red-500": shouldHighlightIssueDueDate(due_date, group),
+          "text-red-500": shouldHighlightIssueDueDate(due_date, state?.group),
         }
       )}
     >
@@ -29,4 +33,4 @@ export const IssueBlockDueDate = (props: Props) => {
       {renderFormattedDate(due_date)}
     </div>
   );
-};
+});

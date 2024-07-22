@@ -181,7 +181,6 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       throw error;
     }
   };
-  
   // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;

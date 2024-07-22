@@ -19,7 +19,7 @@ from plane.app.permissions import ProjectBasePermission
 from plane.db.models import (
     Cycle,
     Inbox,
-    IssueProperty,
+    IssueUserProperty,
     Module,
     Project,
     DeployBoard,
@@ -165,7 +165,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     role=20,
                 )
                 # Also create the issue property for the user
-                _ = IssueProperty.objects.create(
+                _ = IssueUserProperty.objects.create(
                     project_id=serializer.data["id"],
                     user=request.user,
                 )
@@ -179,7 +179,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                         role=20,
                     )
                     # Also create the issue property for the user
-                    IssueProperty.objects.create(
+                    IssueUserProperty.objects.create(
                         project_id=serializer.data["id"],
                         user_id=serializer.data["project_lead"],
                     )
