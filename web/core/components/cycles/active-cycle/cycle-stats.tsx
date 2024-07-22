@@ -69,7 +69,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const cycleIssueDetails = cycleId && getActiveCycleById(cycleId);
+  const cycleIssueDetails = cycleId ? getActiveCycleById(cycleId) : { nextPageResults: false };
 
   const loadMoreIssues = useCallback(() => {
     if (!cycleId) return;
@@ -155,7 +155,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               ref={issuesContainerRef}
               className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
             >
-              {cycleIssueDetails && cycleIssueDetails.issueIds ? (
+              {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
                 cycleIssueDetails.issueCount > 0 ? (
                   <>
                     {cycleIssueDetails.issueIds.map((issueId: string) => {
