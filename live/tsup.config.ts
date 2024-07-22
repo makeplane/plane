@@ -1,10 +1,10 @@
 import { defineConfig, Options } from "tsup";
 
 export default defineConfig((options: Options) => ({
-  entry: ["src/index.ts", "src/lib.ts"],
+  entry: ["src/index.ts"],
   format: ["cjs", "esm"],
   dts: true,
-  clean: true,
+  clean: false,
   external: ["react"],
   injectStyle: true,
   ...options,

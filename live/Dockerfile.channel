@@ -1,0 +1,28 @@
+# Use a Node.js base image
+FROM node:latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY ./channel/package*.json ./
+
+# Install dependencies
+RUN yarn install
+
+# COPY ./plane/editor-core ./node_modules/@plane/editor-core
+
+# Install TypeScript
+RUN yarn add typescript
+
+# Copy the rest of the application
+COPY ./channel .
+
+# Compile TypeScript to JavaScript
+RUN npx tsc
+
+# Expose port 3003
+EXPOSE 3003
+
+# Start the Node.js server
+CMD ["node", "dist/index.js"]
