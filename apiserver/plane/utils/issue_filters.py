@@ -502,6 +502,28 @@ def filter_start_target_date_issues(params, filter, method, prefix=""):
     return filter
 
 
+def filter_logged_by(params, filter, method, prefix=""):
+    if method == "GET":
+        logged_bys = [
+            item
+            for item in params.get("logged_by").split(",")
+            if item != "null"
+        ]
+        if "None" in logged_bys:
+            filter[f"{prefix}logged_by__isnull"] = True
+        logged_bys = filter_valid_uuids(logged_bys)
+        if len(logged_bys) and "" not in logged_bys:
+            filter[f"{prefix}logged_by__in"] = logged_bys
+    else:
+        if (
+            params.get("logged_by", None)
+            and len(params.get("logged_by"))
+            and params.get("logged_by") != "null"
+        ):
+            filter[f"{prefix}logged_by__in"] = params.get("logged_by")
+    return filter
+
+
 def issue_filters(query_params, method, prefix=""):
     filter = {}
 
@@ -515,6 +537,7 @@ def issue_filters(query_params, method, prefix=""):
         "assignees": filter_assignees,
         "mentions": filter_mentions,
         "created_by": filter_created_by,
+        "logged_by": filter_logged_by,
         "name": filter_name,
         "created_at": filter_created_at,
         "updated_at": filter_updated_at,

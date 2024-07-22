@@ -6,6 +6,12 @@ import {
   IWorkspaceSubscriptionStore,
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
+import {
+  IWorkspaceWorklogStore,
+  WorkspaceWorklogStore,
+  IWorkspaceWorklogDownloadStore,
+  WorkspaceWorklogDownloadStore,
+} from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
 
@@ -13,6 +19,8 @@ export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;
   publishPage: IPublishPageStore;
   workspaceSubscription: IWorkspaceSubscriptionStore;
+  workspaceWorklogs: IWorkspaceWorklogStore;
+  workspaceWorklogDownloads: IWorkspaceWorklogDownloadStore;
   featureFlags: IFeatureFlagsStore;
 
   constructor() {
@@ -20,6 +28,8 @@ export class RootStore extends CoreRootStore {
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
+    this.workspaceWorklogs = new WorkspaceWorklogStore(this);
+    this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
   }
 
@@ -28,6 +38,8 @@ export class RootStore extends CoreRootStore {
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
+    this.workspaceWorklogs = new WorkspaceWorklogStore(this);
+    this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
   }
 }

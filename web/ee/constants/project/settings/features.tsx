@@ -1,11 +1,6 @@
-import {
-  TFeatureList,
-  TProjectFeatures,
-  PROJECT_FEATURES_LIST as PROJECT_FEATURES_LIST_CE,
-} from "ce/constants/project/settings/features";
+import { TFeatureList, TProjectFeatures, PROJECT_FEATURES_LIST } from "ce/constants/project/settings/features";
 
-export const PROJECT_FEATURES_LIST: TProjectFeatures = {
-  project_features: PROJECT_FEATURES_LIST_CE.project_features,
-};
+PROJECT_FEATURES_LIST.project_others.featureList.is_time_tracking_enabled.isEnabled = true;
 
 export type { TFeatureList, TProjectFeatures };
+export { PROJECT_FEATURES_LIST };
