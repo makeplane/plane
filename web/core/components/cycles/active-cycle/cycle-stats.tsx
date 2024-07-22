@@ -30,11 +30,12 @@ import useLocalStorage from "@/hooks/use-local-storage";
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: ICycle | null;
+  cycleId?: string | null;
 };
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
-  const { workspaceSlug, projectId, cycle } = props;
+  const { workspaceSlug, projectId, cycle, cycleId } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
@@ -63,22 +64,22 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { currentProjectDetails } = useProject();
 
   useSWR(
-    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id
-      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycle.id)
-      : null,
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
+    workspaceSlug && projectId && cycleId ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycleId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const cycleIssueDetails = getActiveCycleById(cycle.id);
+  const cycleIssueDetails = cycleId && getActiveCycleById(cycleId);
 
   const loadMoreIssues = useCallback(() => {
-    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);
-  }, [workspaceSlug, projectId, cycle.id, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
+    if (!cycleId) return;
+    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycleId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceSlug, projectId, cycleId, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
 
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
-  return (
+  return cycle && cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <Tab.Group
         as={Fragment}
@@ -315,5 +316,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         </Tab.Panels>
       </Tab.Group>
     </div>
+  ) : (
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+      <Loader.Item width="100%" height="17rem" />
+    </Loader>
   );
 });
