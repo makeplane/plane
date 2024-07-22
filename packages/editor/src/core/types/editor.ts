@@ -1,11 +1,9 @@
-// components
-import { EditorMenuItemNames } from "@/components/menus";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // hooks
 import { TFileHandler } from "@/hooks/use-editor";
 // types
-import { IMentionHighlight, IMentionSuggestion } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TEditorCommands } from "@/types";
 
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -17,8 +15,8 @@ export type EditorReadOnlyRefApi = {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   setEditorValueAtCursorPosition: (content: string) => void;
-  executeMenuItemCommand: (itemName: EditorMenuItemNames) => void;
-  isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
+  executeMenuItemCommand: (itemKey: TEditorCommands) => void;
+  isMenuItemActive: (itemKey: TEditorCommands) => boolean;
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
