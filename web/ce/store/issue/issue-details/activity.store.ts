@@ -6,6 +6,7 @@ import sortBy from "lodash/sortBy";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 // plane web constants
 import { EActivityFilterType } from "@/plane-web/constants/issues";
@@ -70,7 +71,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  public getActivityCommentByIssueId(issueId: string) {
+  getActivityCommentByIssueId = computedFn((issueId: string) => {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];
@@ -101,7 +102,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     activityComments = sortBy(activityComments, "created_at");
 
     return activityComments;
-  }
+  });
 
   // actions
   public async fetchActivities(
