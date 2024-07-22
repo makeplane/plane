@@ -9,7 +9,7 @@ import { IUser, IImporterService } from "@plane/types";
 // ui
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";
@@ -35,21 +35,26 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();
+  const { projectsWithCreatePermissions } = useUser();
 
-  const options = workspaceProjectIds?.map((projectId) => {
-    const projectDetails = getProjectById(projectId);
+  const options = projectsWithCreatePermissions
+    ? workspaceProjectIds
+        ?.filter((projectId) => projectId in projectsWithCreatePermissions)
+        ?.map((projectId) => {
+          const projectDetails = getProjectById(projectId);
 
-    return {
-      value: projectDetails?.id,
-      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
-          <span className="truncate">{projectDetails?.name}</span>
-        </div>
-      ),
-    };
-  });
+          return {
+            value: projectDetails?.id,
+            query: `${projectDetails?.name} ${projectDetails?.identifier}`,
+            content: (
+              <div className="flex items-center gap-2">
+                <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+                <span className="truncate">{projectDetails?.name}</span>
+              </div>
+            ),
+          };
+        })
+    : [];
 
   const [value, setValue] = React.useState<string[]>([]);
   const [multiple, setMultiple] = React.useState<boolean>(false);
