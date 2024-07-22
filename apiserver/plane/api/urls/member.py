@@ -1,13 +1,13 @@
 from django.urls import path
 
 from plane.api.views import (
-    UserAPIEndpoint,
+    WorkspaceMemberAPIEndpoint,
 )
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/users/",
-        UserAPIEndpoint.as_view(),
+        "workspaces/<str:slug>/members/",
+        WorkspaceMemberAPIEndpoint.as_view(),
         name="users",
     ),
 ]

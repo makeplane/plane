@@ -23,7 +23,7 @@ from plane.db.models import (
 
 
 # API endpoint to get and insert users inside the workspace
-class UserAPIEndpoint(BaseAPIView):
+class WorkspaceMemberAPIEndpoint(BaseAPIView):
     # Get all the users that are present inside the workspace
     def get(self, request, slug):
         # Check if the workspace exists
