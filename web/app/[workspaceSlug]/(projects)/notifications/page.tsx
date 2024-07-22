@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -14,8 +15,10 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 const WorkspaceDashboardPage = observer(() => {
+  const { workspaceSlug } = useParams();
   // hooks
   const { currentWorkspace } = useWorkspace();
   const {
@@ -33,6 +36,9 @@ const WorkspaceDashboardPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
   const { workspace_slug, project_id, issue_id, is_inbox_issue } =
     notificationLiteByNotificationId(currentSelectedNotificationId);
+
+  // fetching workspace issue properties
+  useWorkspaceIssueProperties(workspaceSlug);
 
   // fetch workspace notifications
   const notificationMutation =

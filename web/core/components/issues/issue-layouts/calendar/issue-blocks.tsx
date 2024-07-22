@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { TIssue, TIssueMap, TPaginationData } from "@plane/types";
+import { TIssue, TPaginationData } from "@plane/types";
 // components
 import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
@@ -10,7 +10,6 @@ import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
   date: Date;
-  issues: TIssueMap | undefined;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
@@ -28,7 +27,6 @@ type Props = {
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const {
     date,
-    issues,
     issueIdList,
     quickActions,
     loadMoreIssues,
@@ -62,7 +60,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
       {issueIdList?.map((issueId) => (
         <div key={issueId} className="relative cursor-pointer p-1 px-2">
           <CalendarIssueBlockRoot
-            issues={issues}
             issueId={issueId}
             quickActions={quickActions}
             isDragDisabled={isDragDisabled || isMobileView}

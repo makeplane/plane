@@ -146,10 +146,11 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
         <div className="text-center text-custom-text-400">Loading...</div>
       ) : items.length ? (
         items.map((item, index) => (
-          <div
+          <button
             key={item.id}
+            type="button"
             className={cn(
-              "flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 hover:bg-custom-background-80 text-custom-text-200",
+              "w-full text-left flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 hover:bg-custom-background-80 text-custom-text-200",
               {
                 "bg-custom-background-80": index === selectedIndex,
               }
@@ -158,7 +159,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
           >
             <Avatar name={item?.title} src={item?.avatar} />
             <span className="flex-grow truncate">{item.title}</span>
-          </div>
+          </button>
         ))
       ) : (
         <div className="text-center text-custom-text-400">No results</div>

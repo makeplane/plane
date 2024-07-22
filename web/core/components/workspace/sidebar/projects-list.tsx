@@ -161,7 +161,7 @@ export const SidebarProjectsList: FC = observer(() => {
     {
       key: "all",
       type: "JOINED",
-      title: "MY PROJECTS",
+      title: "YOUR PROJECTS",
       icon: Briefcase,
       projects: joinedProjects,
       isOpen: isAllProjectsListOpen,
