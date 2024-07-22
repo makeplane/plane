@@ -176,6 +176,21 @@ export class InboxIssueStore implements IInboxIssueStore {
         set(this.issue, issueKey, issue[issueKey]);
       });
       await this.issueService.patchIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      if (issue.cycle_id) {
+        await this.store.issue.issueDetail.addIssueToCycle(this.workspaceSlug, this.projectId, issue.cycle_id, [
+          this.issue.id,
+        ]);
+      }
+      if (issue.module_ids) {
+        await this.store.issue.issueDetail.changeModulesInIssue(
+          this.workspaceSlug,
+          this.projectId,
+          this.issue.id,
+          issue.module_ids,
+          []
+        );
+      }
+
       // fetching activity
       this.fetchIssueActivity();
     } catch {

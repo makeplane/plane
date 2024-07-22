@@ -37,24 +37,6 @@ class IssueRelationViewSet(BaseViewSet):
         ProjectEntityPermission,
     ]
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .distinct()
-        )
-
     def list(self, request, slug, project_id, issue_id):
         issue_relations = (
             IssueRelation.objects.filter(
@@ -98,11 +80,8 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("issue_id", flat=True)
 
         queryset = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            Issue.issue_objects
+            .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
