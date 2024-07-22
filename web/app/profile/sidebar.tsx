@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// components
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // hooks
@@ -119,7 +121,7 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
+          <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
@@ -132,16 +134,16 @@ export const ProfileLayoutSidebar = observer(() => {
                     disabled={!sidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    <div
-                      className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                        link.highlight(pathname)
-                          ? "bg-custom-primary-100/10 text-custom-primary-100"
-                          : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      } ${sidebarCollapsed ? "justify-center" : ""}`}
+                    <SidebarNavItem
+                      key={link.key}
+                      className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
+                      isActive={link.highlight(pathname)}
                     >
-                      {<link.Icon className="h-4 w-4" />}
-                      {!sidebarCollapsed && link.label}
-                    </div>
+                      <div className="flex items-center gap-1.5 py-[1px]">
+                        <link.Icon className="size-4" />
+                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                      </div>
+                    </SidebarNavItem>
                   </Tooltip>
                 </Link>
               );

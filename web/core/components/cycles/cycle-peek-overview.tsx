@@ -51,6 +51,7 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
             cycleId={peekCycle?.toString() ?? ""}
             handleClose={handleClose}
             isArchived={isArchived}
+            isPeekMode
           />
         </div>
       )}

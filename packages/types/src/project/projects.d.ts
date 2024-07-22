@@ -35,6 +35,7 @@ export interface IProject {
   anchor: string | null;
   is_favorite: boolean;
   is_member: boolean;
+  is_time_tracking_enabled: boolean;
   logo_props: TLogoProps;
   member_role: EUserProjectRoles | null;
   members: IProjectMemberLite[];

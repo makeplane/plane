@@ -51,6 +51,7 @@ export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, worksp
             moduleId={peekModule?.toString() ?? ""}
             handleClose={handleClose}
             isArchived={isArchived}
+            isPeekMode
           />
         </div>
       )}

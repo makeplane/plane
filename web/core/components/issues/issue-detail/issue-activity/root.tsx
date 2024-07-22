@@ -14,7 +14,7 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
 import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 // plane web constants
-import { TActivityFilters, EActivityFilterType } from "@/plane-web/constants/issues";
+import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -35,10 +35,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
   // state
-  const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>([
-    EActivityFilterType.ACTIVITY,
-    EActivityFilterType.COMMENT,
-  ]);
+  const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>(defaultActivityFilters);
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     setSelectedFilters((prevFilters) => {
