@@ -1,17 +1,10 @@
 "use client";
 
 import React from "react";
-import { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 // ui
-import { Button } from "@plane/ui";
 // images
 import Image404 from "@/public/404.svg";
-
-export const metadata: Metadata = {
-  title: "404 - Page Not Found",
-};
 
 export const PageNotFound = () => (
   <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>

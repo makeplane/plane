@@ -39,19 +39,23 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
     }
   }, [anchor, issueDetailStore, peekId, issueStore.groupedIssueIds]);
 
-  const handleClose =
-    handlePeekClose ??
-    (() => {
-      issueDetailStore.setPeekId(null);
-      let queryParams: any = {
-        board,
-      };
-      if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
-      if (state && state.length > 0) queryParams = { ...queryParams, state: state };
-      if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
-      queryParams = new URLSearchParams(queryParams).toString();
-      router.push(`/issues/${anchor}?${queryParams}`);
-    });
+  const handleClose = () => {
+    // if close logic is passed down, call that instead of the below logic
+    if (handlePeekClose) {
+      handlePeekClose();
+      return;
+    }
+
+    issueDetailStore.setPeekId(null);
+    let queryParams: any = {
+      board,
+    };
+    if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
+    if (state && state.length > 0) queryParams = { ...queryParams, state: state };
+    if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
+    queryParams = new URLSearchParams(queryParams).toString();
+    router.push(`/issues/${anchor}?${queryParams}`);
+  };
 
   useEffect(() => {
     if (peekId) {

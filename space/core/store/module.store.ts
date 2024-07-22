@@ -51,13 +51,18 @@ export class ModuleStore implements IIssueModuleStore {
   };
 
   fetchModules = async (anchor: string) => {
-    const modulesResponse = await this.moduleService.getModules(anchor);
-    runInAction(() => {
-      this.moduleMap = {};
-      for (const issueModule of modulesResponse) {
-        set(this.moduleMap, [issueModule.id], issueModule);
-      }
-    });
-    return modulesResponse;
+    try {
+      const modulesResponse = await this.moduleService.getModules(anchor);
+      runInAction(() => {
+        this.moduleMap = {};
+        for (const issueModule of modulesResponse) {
+          set(this.moduleMap, [issueModule.id], issueModule);
+        }
+      });
+      return modulesResponse;
+    } catch (error) {
+      console.error("Failed to fetch members:", error);
+      return [];
+    }
   };
 }

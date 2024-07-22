@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // types
 import { IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
@@ -26,13 +26,17 @@ export const IssuesListLayoutRoot = observer((props: Props) => {
 
   const groupedIssueIds = storeGroupedIssueIds as TGroupedIssues | undefined;
   // auth
-  const displayProperties: IIssueDisplayProperties = {
-    key: true,
-    state: true,
-    priority: true,
-    due_date: true,
-    labels: true,
-  };
+  const displayProperties: IIssueDisplayProperties = useMemo(
+    () => ({
+      key: true,
+      state: true,
+      labels: true,
+      priority: true,
+      due_date: true,
+    }),
+    []
+  );
+
   const loadMoreIssues = useCallback(
     (groupId?: string) => {
       fetchNextPublicIssues(anchor, groupId);

@@ -121,7 +121,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       return issueDetails;
     } catch (e) {
-      console.error("error fetching issue details");
+      console.error(`Error fetching issue details for issueId ${issueId}: `, e);
     }
   };
 

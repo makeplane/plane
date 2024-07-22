@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 // types
@@ -20,13 +20,16 @@ export const IssueKanbanLayoutRoot: React.FC<Props> = observer((props: Props) =>
   // store hooks
   const { groupedIssueIds, getIssueLoader, fetchNextPublicIssues, getGroupIssueCount, getPaginationData } = useIssue();
 
-  const displayProperties: IIssueDisplayProperties = {
-    key: true,
-    state: true,
-    labels: true,
-    priority: true,
-    due_date: true,
-  };
+  const displayProperties: IIssueDisplayProperties = useMemo(
+    () => ({
+      key: true,
+      state: true,
+      labels: true,
+      priority: true,
+      due_date: true,
+    }),
+    []
+  );
 
   const fetchMoreIssues = useCallback(
     (groupId?: string, subgroupId?: string) => {

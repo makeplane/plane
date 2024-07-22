@@ -51,13 +51,18 @@ export class MemberStore implements IIssueMemberStore {
   };
 
   fetchMembers = async (anchor: string) => {
-    const membersResponse = await this.memberService.getAnchorMembers(anchor);
-    runInAction(() => {
-      this.memberMap = {};
-      for (const member of membersResponse) {
-        set(this.memberMap, [member.member], member);
-      }
-    });
-    return membersResponse;
+    try {
+      const membersResponse = await this.memberService.getAnchorMembers(anchor);
+      runInAction(() => {
+        this.memberMap = {};
+        for (const member of membersResponse) {
+          set(this.memberMap, [member.member], member);
+        }
+      });
+      return membersResponse;
+    } catch (error) {
+      console.error("Failed to fetch members:", error);
+      return [];
+    }
   };
 }
