@@ -4,6 +4,8 @@ from plane.ee.views.app import (
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
     BulkSubscribeIssuesEndpoint,
+    IssueWorkLogsEndpoint,
+    IssueTotalWorkLogEndpoint,
 )
 
 urlpatterns = [
@@ -21,5 +23,20 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-subscribe-issues/",
         BulkSubscribeIssuesEndpoint.as_view(),
         name="bulk-subscribe-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/",
+        IssueWorkLogsEndpoint.as_view(),
+        name="issue-work-logs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/<uuid:pk>/",
+        IssueWorkLogsEndpoint.as_view(),
+        name="issue-work-logs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/total-worklogs/",
+        IssueTotalWorkLogEndpoint.as_view(),
+        name="issue-work-logs",
     ),
 ]

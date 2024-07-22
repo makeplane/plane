@@ -5,6 +5,8 @@ from plane.ee.views.app.issue import (
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
     BulkSubscribeIssuesEndpoint,
+    IssueWorkLogsEndpoint,
+    IssueTotalWorkLogEndpoint,
 )
 from plane.ee.views.app.page import (
     ProjectPagePublishEndpoint,
@@ -15,6 +17,10 @@ from plane.ee.views.app.page import (
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,
     WorkspaceViewEEViewSet,
+)
+from plane.ee.views.app.workspace import (
+    WorkspaceWorkLogsEndpoint,
+    WorkspaceExportWorkLogsEndpoint,
 )
 
 # Space imports

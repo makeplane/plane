@@ -4,4 +4,6 @@ from plane.ee.views.app.issue import (
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
     BulkSubscribeIssuesEndpoint,
+    IssueWorkLogsEndpoint,
+    IssueTotalWorkLogEndpoint,
 )
