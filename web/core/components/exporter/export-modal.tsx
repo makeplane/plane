@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import _ from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
@@ -13,7 +14,6 @@ import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";
-
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -37,24 +37,24 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { workspaceProjectIds, getProjectById } = useProject();
   const { projectsWithCreatePermissions } = useUser();
 
-  const options = projectsWithCreatePermissions
-    ? workspaceProjectIds
-        ?.filter((projectId) => projectId in projectsWithCreatePermissions)
-        ?.map((projectId) => {
-          const projectDetails = getProjectById(projectId);
-
-          return {
-            value: projectDetails?.id,
-            query: `${projectDetails?.name} ${projectDetails?.identifier}`,
-            content: (
-              <div className="flex items-center gap-2">
-                <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
-                <span className="truncate">{projectDetails?.name}</span>
-              </div>
-            ),
-          };
-        })
+  const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
+    ? _.intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
+
+  const options = wsProjectIdsWithCreatePermisisons?.map((projectId) => {
+    const projectDetails = getProjectById(projectId);
+
+    return {
+      value: projectDetails?.id,
+      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="truncate">{projectDetails?.name}</span>
+        </div>
+      ),
+    };
+  });
 
   const [value, setValue] = React.useState<string[]>([]);
   const [multiple, setMultiple] = React.useState<boolean>(false);
