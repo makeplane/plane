@@ -203,7 +203,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               </p>
               <CalendarIssueBlocks
                 date={selectedDate}
-                issues={issues}
                 issueIdList={issueIdList}
                 loadMoreIssues={loadMoreIssues}
                 getPaginationData={getPaginationData}
@@ -230,7 +229,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           </p>
           <CalendarIssueBlocks
             date={selectedDate}
-            issues={issues}
             issueIdList={issueIdList}
             quickActions={quickActions}
             loadMoreIssues={loadMoreIssues}

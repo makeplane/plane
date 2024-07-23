@@ -34,12 +34,14 @@ export interface IProjectInboxStore {
   loader: TLoader;
   error: { message: string; status: "init-error" | "pagination-error" } | undefined;
   currentInboxProjectId: string;
-  inboxFilters: Partial<TInboxIssueFilter>;
-  inboxSorting: Partial<TInboxIssueSorting>;
+  filtersMap: Record<string, Partial<TInboxIssueFilter>>; // projectId -> Partial<TInboxIssueFilter>
+  sortingMap: Record<string, Partial<TInboxIssueSorting>>; // projectId -> Partial<TInboxIssueSorting>
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   inboxIssueIds: string[];
   // computed
+  inboxFilters: Partial<TInboxIssueFilter>; // computed project inbox filters
+  inboxSorting: Partial<TInboxIssueSorting>; // computed project inbox sorting
   getAppliedFiltersCount: number;
   filteredInboxIssueIds: string[];
   // computed functions
@@ -76,13 +78,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   loader: TLoader = "init-loading";
   error: { message: string; status: "init-error" | "pagination-error" } | undefined = undefined;
   currentInboxProjectId: string = "";
-  inboxFilters: Partial<TInboxIssueFilter> = {
-    status: [EInboxIssueStatus.PENDING],
-  };
-  inboxSorting: Partial<TInboxIssueSorting> = {
-    order_by: "issue__created_at",
-    sort_by: "desc",
-  };
+  filtersMap: Record<string, Partial<TInboxIssueFilter>> = {};
+  sortingMap: Record<string, Partial<TInboxIssueSorting>> = {};
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
   inboxIssueIds: string[] = [];
@@ -95,12 +92,14 @@ export class ProjectInboxStore implements IProjectInboxStore {
       loader: observable.ref,
       error: observable,
       currentInboxProjectId: observable.ref,
-      inboxFilters: observable,
-      inboxSorting: observable,
+      filtersMap: observable,
+      sortingMap: observable,
       inboxIssuePaginationInfo: observable,
       inboxIssues: observable,
       inboxIssueIds: observable,
       // computed
+      inboxFilters: computed,
+      inboxSorting: computed,
       getAppliedFiltersCount: computed,
       filteredInboxIssueIds: computed,
       // actions
@@ -116,6 +115,30 @@ export class ProjectInboxStore implements IProjectInboxStore {
   }
 
   // computed
+  /**
+   * @description computed project inbox filters
+   */
+  get inboxFilters() {
+    const { projectId } = this.store.router;
+    if (!projectId) return {} as TInboxIssueFilter;
+    return isEmpty(this.filtersMap?.[projectId])
+      ? this.currentTab === EInboxIssueCurrentTab.OPEN
+        ? { status: [EInboxIssueStatus.PENDING] }
+        : { status: [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE] }
+      : this.filtersMap?.[projectId];
+  }
+
+  /**
+   * @description computed project inbox sorting
+   */
+  get inboxSorting() {
+    const { projectId } = this.store.router;
+    if (!projectId) return {} as TInboxIssueSorting;
+    return isEmpty(this.sortingMap?.[projectId])
+      ? ({ order_by: "issue__created_at", sort_by: "desc" } as TInboxIssueSorting)
+      : this.sortingMap?.[projectId];
+  }
+
   get getAppliedFiltersCount() {
     let count = 0;
     this.inboxFilters != undefined &&
@@ -219,33 +242,37 @@ export class ProjectInboxStore implements IProjectInboxStore {
   handleCurrentTab = (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => {
     runInAction(() => {
       set(this, "currentTab", tab);
-      set(this, "inboxFilters", undefined);
-      set(this, ["inboxSorting", "order_by"], "issue__created_at");
-      set(this, ["inboxSorting", "sort_by"], "desc");
       set(this, ["inboxIssueIds"], []);
       set(this, ["inboxIssuePaginationInfo"], undefined);
-      if (tab === "closed") set(this, ["inboxFilters", "status"], [-1, 1, 2]);
-      else set(this, ["inboxFilters", "status"], [-2]);
+      set(this, ["sorting", projectId, "order_by"], "issue__created_at");
+      set(this, ["sorting", projectId, "sort_by"], "desc");
+      set(this, "filters", undefined);
+      if (tab === "closed") set(this, ["filters", projectId, "status"], [-1, 1, 2]);
+      else set(this, ["filters", projectId, "status"], [-2]);
     });
     if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
-    runInAction(() => {
-      set(this.inboxFilters, key, value);
-      set(this, ["inboxIssuePaginationInfo"], undefined);
-    });
     const { workspaceSlug, projectId } = this.store.router;
-    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    if (workspaceSlug && projectId) {
+      runInAction(() => {
+        set(this.filtersMap, [projectId, key], value);
+        set(this, ["inboxIssuePaginationInfo"], undefined);
+      });
+      this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    }
   };
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
-    runInAction(() => {
-      set(this.inboxSorting, key, value);
-      set(this, ["inboxIssuePaginationInfo"], undefined);
-    });
     const { workspaceSlug, projectId } = this.store.router;
-    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    if (workspaceSlug && projectId) {
+      runInAction(() => {
+        set(this.sortingMap, [projectId, key], value);
+        set(this, ["inboxIssuePaginationInfo"], undefined);
+      });
+      this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    }
   };
 
   /**

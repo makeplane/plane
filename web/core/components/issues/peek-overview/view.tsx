@@ -189,7 +189,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                         />
                       </div>
 

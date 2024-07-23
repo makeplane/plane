@@ -310,8 +310,8 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     Icon: Home,
   },
   {
-    key: "my-work",
-    label: "My Work",
+    key: "your-work",
+    label: "Your work",
     href: "/profile",
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/profile/`),

@@ -121,7 +121,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issueId}
-        disabled={!isEditable}
+        disabled={!isEditable || isArchived}
       />
 
       <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
