@@ -407,16 +407,15 @@ When you want to restore the previously backed-up data, follow the instructions 
    --------------------------------------------
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/pgdata.tar.gz
    .....Restoring plane-app_pgdata
-   .....Successfully restored volume plane-app_pgdata from pgdata
+   .....Successfully restored volume plane-app_pgdata from pgdata.tar.gz
 
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/redisdata.tar.gz
    .....Restoring plane-app_redisdata
-   mv: can't rename '/restore/redisdata/*': No such file or directory
-   Error: Failed to restore volume plane-app_redisdata from redisdata.tar.gz
+   .....Successfully restored volume plane-app_redisdata from redisdata.tar.gz
 
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/uploads.tar.gz
    .....Restoring plane-app_uploads
-   .....Successfully restored volume plane-app_uploads from uploads
+   .....Successfully restored volume plane-app_uploads from uploads.tar.gz
 
 
    Restore completed successfully.

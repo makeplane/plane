@@ -48,7 +48,7 @@ function restoreSingleVolume() {
         echo ""
         return 1
     fi
-    echo ".....Successfully restored volume $selectedVolume from $restoreFile"
+    echo ".....Successfully restored volume $selectedVolume from ${restoreFile}.tar.gz"
     echo ""
 }
 
