@@ -388,7 +388,7 @@ When you want to restore the previously backed-up data, follow the instructions 
 1. Execute the command below to restore your data.
 
    ```bash
-   ./restore.sh <path to backup folder containing *.tgz files>
+   ./restore.sh <path to backup folder containing *.tar.gz files>
    ```
 
    As an example, for a backup folder `/opt/plane-selfhost/plane-app/backup/20240722-0914`, expect the response below:
