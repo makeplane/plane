@@ -39,9 +39,14 @@ class UserFavorite(WorkspaceBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            largest_sequence = UserFavorite.objects.filter(
-                workspace=self.project.workspace
-            ).aggregate(largest=models.Max("sequence"))["largest"]
+            if self.project:
+                largest_sequence = UserFavorite.objects.filter(
+                    workspace=self.project.workspace
+                ).aggregate(largest=models.Max("sequence"))["largest"]
+            else:
+                largest_sequence = UserFavorite.objects.filter(
+                    workspace=self.workspace,
+                ).aggregate(largest=models.Max("sequence"))["largest"]
             if largest_sequence is not None:
                 self.sequence = largest_sequence + 10000
 
