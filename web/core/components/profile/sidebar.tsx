@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// types
+import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 // fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
@@ -22,29 +22,26 @@ import { useAppTheme, useProject, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { UserService } from "@/services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
 
 // services
-const userService = new UserService();
 
-export const ProfileSidebar = observer(() => {
+type TProfileSidebar = {
+  userProjectsData: IUserProfileProjectSegregation | undefined;
+};
+
+export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+  const { userProjectsData } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const { workspaceSlug, userId } = useParams();
+  const { userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
-  const { data: userProjectsData } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId
-      ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
-      : null
-  );
 
   useOutsideClickDetector(ref, () => {
     if (profileSidebarCollapsed === false) {

@@ -2,18 +2,23 @@
 
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import useSWR from "swr";
 // components
 import { AppHeader, ContentWrapper } from "@/components/core";
 import { ProfileSidebar } from "@/components/profile";
 // constants
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
 // local components
+import { UserService } from "@/services/user.service";
 import { UserProfileHeader } from "./header";
 import { ProfileIssuesMobileHeader } from "./mobile-header";
 import { ProfileNavbar } from "./navbar";
+
+const userService = new UserService();
 
 type Props = {
   children: React.ReactNode;
@@ -30,6 +35,13 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+
+  const { data: userProjectsData } = useSWR(
+    workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
+    workspaceSlug && userId
+      ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
+      : null
+  );
   // derived values
   const isAuthorized = currentWorkspaceRole && AUTHORIZED_ROLES.includes(currentWorkspaceRole);
   const isAuthorizedPath =
@@ -44,7 +56,7 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
       {/* Passing the type prop from the current route value as we need the header as top most component.
       TODO: We are depending on the route path to handle the mobile header type. If the path changes, this logic will break. */}
       <AppHeader
-        header={<UserProfileHeader type={currentTab?.label} />}
+        header={<UserProfileHeader type={currentTab?.label} userProjectsData={userProjectsData} />}
         mobileHeader={isIssuesTab && <ProfileIssuesMobileHeader />}
       />
       <ContentWrapper>
@@ -59,7 +71,7 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
               </div>
             )}
           </div>
-          <ProfileSidebar />
+          <ProfileSidebar userProjectsData={userProjectsData} />
         </div>
       </ContentWrapper>
     </>
