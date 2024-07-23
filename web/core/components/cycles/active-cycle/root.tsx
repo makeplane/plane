@@ -57,7 +57,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
               {!currentProjectActiveCycle ? (
                 <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
               ) : (
-                <div className="flex flex-col bg-custom-background-90 border-b">
+                <div className="flex flex-col bg-custom-background-90">
                   {currentProjectActiveCycleId && (
                     <CyclesListItem
                       key={currentProjectActiveCycleId}
