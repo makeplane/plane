@@ -20,11 +20,11 @@ class FeatureFlag(Enum):
     PAGE_ISSUE_EMBEDS = "PAGE_ISSUE_EMBEDS"
     # Page Publish
     PAGE_PUBLISH = "PAGE_PUBLISH"
-    # Work logging
-    WORK_LOG = "WORK_LOG"
     # Estimate with time
     ESTIMATE_WITH_TIME = "ESTIMATE_WITH_TIME"
     # Issue list
     ISSUE_TYPE_DISPLAY = "ISSUE_TYPE_DISPLAY"
     # Settings
     ISSUE_TYPE_SETTINGS = "ISSUE_TYPE_SETTINGS"
+    # Issue Worklog
+    ISSUE_WORKLOG = "ISSUE_WORKLOG"

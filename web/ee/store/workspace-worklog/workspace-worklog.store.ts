@@ -5,12 +5,14 @@ import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import unset from "lodash/unset";
 import update from "lodash/update";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
 // plane web constants
 import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
+// plane web hooks
+import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 // plane web services
 import worklogService from "@/plane-web/services/workspace-worklog.service";
 // plane web store
@@ -42,6 +44,7 @@ export interface IWorkspaceWorklogStore {
   paginatedWorklogIds: Record<string, string[]>;
   issueWorklogTotalMinutes: Record<string, number>; // issuesId -> totalWorklogMinutes
   // computed functions
+  isFeatureFlagEnabled: boolean;
   isWorklogsEnabledByProjectId: (projectId: string) => boolean;
   worklogIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
   worklogIdsByIssueId: (workspaceId: string, issueId: string) => string[] | undefined;
@@ -105,6 +108,8 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
       currentPaginatedKey: observable.ref,
       paginatedWorklogIds: observable,
       issueWorklogTotalMinutes: observable,
+      // computed
+      isFeatureFlagEnabled: computed,
       // helper actions
       updateFilters: action,
       setCurrentPaginatedKey: action,
@@ -117,8 +122,16 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
     });
   }
 
-  // computed functions
+  // computed
+  /**
+   * @description validating is worklogs feature flag is enabled or not
+   * @returns { boolean }
+   */
+  get isFeatureFlagEnabled(): boolean {
+    return this.store.featureFlags.flags[E_FEATURE_FLAGS.ISSUE_WORKLOG] || false;
+  }
 
+  // computed functions
   /**
    * @description validating is worklogs is enabled or not in the project level
    * @param { string } projectId
@@ -126,7 +139,7 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
    */
   isWorklogsEnabledByProjectId = computedFn((projectId: string) => {
     const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
-    return projectDetails?.is_time_tracking_enabled ? true : false;
+    return projectDetails?.is_time_tracking_enabled && this.isFeatureFlagEnabled ? true : false;
   });
 
   /**
@@ -239,8 +252,9 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
     set(this.filters, key, value);
 
     set(this, "paginatedWorklogIds", {});
+    set(this, "worklogs", {});
     this.setCurrentPaginatedKey(undefined);
-    this.getWorkspaceWorklogs(workspaceSlug, EWorklogLoader.WORKSPACE_INIT_LOADER, EWorklogQueryParamType.INIT);
+    this.getWorkspaceWorklogs(workspaceSlug, EWorklogLoader.WORKSPACE_PAGINATION_LOADER, EWorklogQueryParamType.INIT);
   };
 
   /**
@@ -382,7 +396,7 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
       );
       if (issueWorklogTotalMinutes) {
         runInAction(() => {
-          set(this.issueWorklogTotalMinutes, issueId, issueWorklogTotalMinutes.total_work_log || 0);
+          set(this.issueWorklogTotalMinutes, issueId, issueWorklogTotalMinutes.total_worklog || 0);
         });
       }
       return issueWorklogTotalMinutes;

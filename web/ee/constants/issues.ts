@@ -1,11 +1,11 @@
-// types
-import { TIssueActivityComment } from "@plane/types";
 // ce constants
 import {
   TActivityFilters as TActivityFiltersCe,
   EActivityFilterType,
   ACTIVITY_FILTER_TYPE_OPTIONS as ACTIVITY_FILTER_TYPE_OPTIONS_CE,
 } from "ce/constants/issues";
+// types
+import { TIssueActivityComment } from "@plane/types";
 
 export enum EActivityFilterTypeEE {
   WORKLOG = "WORKLOG",
@@ -25,6 +25,13 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterTypeEE.WORKLOG,
 ];
+
+export type TActivityFilterOption = {
+  key: TActivityFilters;
+  label: string;
+  isSelected: boolean;
+  onClick: () => void;
+};
 
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],

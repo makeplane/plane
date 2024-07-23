@@ -19,6 +19,8 @@ from plane.app.permissions import WorkSpaceBasePermission
 from plane.ee.bgtasks.worklogs_export_task import (
     worklogs_export_task,
 )
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceWorkLogsEndpoint(BaseAPIView):
@@ -26,6 +28,7 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
         WorkSpaceBasePermission,
     ]
 
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @method_decorator(gzip_page)
     def get(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
@@ -57,6 +60,7 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
         WorkSpaceBasePermission,
     ]
 
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def post(self, request, slug):
         provider = request.data.get("provider", False)
         filters = request.data.get("filters", {False})
@@ -87,9 +91,10 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def get(self, request, slug):
         exporter_history = ExporterHistory.objects.filter(
-            workspace__slug=slug, type="issue_work_logs"
+            workspace__slug=slug, type="issue_worklogs"
         ).select_related("workspace", "initiated_by")
 
         return self.paginate(

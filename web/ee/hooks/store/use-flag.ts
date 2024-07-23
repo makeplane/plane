@@ -15,7 +15,7 @@ export enum E_FEATURE_FLAGS {
   VIEW_PUBLISH = "VIEW_PUBLISH",
   WORKSPACE_ACTIVE_CYCLES = "WORKSPACE_ACTIVE_CYCLES",
   WORKSPACE_PAGES = "WORKSPACE_PAGES",
-  WORK_LOGS = "WORK_LOGS",
+  ISSUE_WORKLOG = "ISSUE_WORKLOG",
 }
 
 export const useFlag = (flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean = false): boolean => {

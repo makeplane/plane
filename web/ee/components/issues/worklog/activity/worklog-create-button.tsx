@@ -24,7 +24,7 @@ export const IssueActivityWorklogCreateButton: FC<TIssueActivityWorklogCreateBut
   // ref
   const popoverButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  if (isWorklogsEnabledByProjectId(projectId)) return <></>;
+  if (!isWorklogsEnabledByProjectId(projectId)) return <></>;
   return (
     <Popover
       popoverButtonRef={popoverButtonRef}

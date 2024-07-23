@@ -7,8 +7,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
 
 # Module imports

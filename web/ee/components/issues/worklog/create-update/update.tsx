@@ -16,7 +16,7 @@ type TWorklogUpdate = {
   projectId: string;
   issueId: string;
   worklogId: string;
-  handleClose: () => void;
+  handleClose?: () => void;
 };
 
 export const WorklogUpdate: FC<TWorklogUpdate> = (props) => {
@@ -28,22 +28,25 @@ export const WorklogUpdate: FC<TWorklogUpdate> = (props) => {
 
   const onCancel = () => {
     setLoader(false);
-    handleClose();
+    handleClose && handleClose();
   };
 
   const onSubmit = async (payload: Partial<TWorklog>) => {
     if (!workspaceSlug || !projectId || !issueId || !worklogId) return { status: "error" };
 
     try {
+      setLoader(true);
       await updateWorklog(workspaceSlug, projectId, issueId, payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Worklog created successfully.",
       });
-      handleClose();
+      setLoader(false);
+      handleClose && handleClose();
       return { status: "success" };
     } catch {
+      setLoader(false);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

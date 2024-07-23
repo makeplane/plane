@@ -10,10 +10,12 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // store hooks
 import { useUser, useWorkspace } from "@/hooks/store";
 // plane web components
-import { WorkspaceWorklogRoot } from "@/plane-web/components/worklogs";
-// plane web constants
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
+// plane web hooks
+import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 
-const ApiTokensPage = observer(() => {
+const WorklogsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -41,9 +43,11 @@ const ApiTokensPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <WorkspaceWorklogRoot workspaceSlug={workspaceSlug.toString()} workspaceId={currentWorkspace.id} />
+      <WithFeatureFlagHOC flag={E_FEATURE_FLAGS.ISSUE_WORKLOG} fallback={<WorkspaceWorklogsUpgrade />}>
+        <WorkspaceWorklogRoot workspaceSlug={workspaceSlug.toString()} workspaceId={currentWorkspace.id} />
+      </WithFeatureFlagHOC>
     </>
   );
 });
 
-export default ApiTokensPage;
+export default WorklogsPage;

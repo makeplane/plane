@@ -32,7 +32,7 @@ export const WorklogDownloadLoader: FC<TWorklogDownloadLoader> = (props) => {
                 <Loader.Item height="19.1px" width="160px" />
                 <Loader.Item height="19.1px" width="60px" />
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center text-custom-text-400 gap-1">
                 <Loader.Item height="18px" width="40px" />|<Loader.Item height="18px" width="60px" />
               </div>
             </div>

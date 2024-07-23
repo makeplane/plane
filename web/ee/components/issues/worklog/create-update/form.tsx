@@ -36,24 +36,25 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
 
   const handleFormData = <T extends keyof TWorklogForm>(key: T, value: TWorklogForm[T]) => {
     setFromData((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: "" }));
+    setErrors(undefined);
   };
 
   const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!formData) return;
 
-    const hours = formData?.hours || undefined;
-    const minutes = formData?.minutes || undefined;
-    if (!formData || !hours || !minutes) {
-      let currentErrors: Partial<Record<keyof TWorklogForm, string>> = {};
-      if (!hours) currentErrors = { ...currentErrors, hours: "Hour field is required" };
-      if (!minutes) currentErrors = { ...currentErrors, minutes: "Minute field is required" };
+    const hours = Number(formData?.hours) || undefined;
+    const minutes = Number(formData?.minutes) || undefined;
+    let currentErrors: Partial<Record<keyof TWorklogForm, string>> = {};
+
+    if (!hours && !minutes) {
+      currentErrors = { ...currentErrors, hours: "Hour field is required", minutes: "Minute field is required" };
       setErrors(currentErrors);
       return;
     }
 
     const payload: Partial<TWorklog> = {
-      duration: convertHoursMinutesToMinutes(Number(hours), Number(minutes)),
+      duration: Math.round(convertHoursMinutesToMinutes(hours || 0, minutes || 0)),
       description: formData.description || "",
     };
 
@@ -79,7 +80,7 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
           {/* hours */}
           <Input
             id="worklog-hours"
-            type="text"
+            type="number"
             name="hours"
             placeholder="Hours"
             value={formData?.hours}
@@ -87,11 +88,13 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
             hasError={(errors && Boolean(errors.hours)) || false}
             className="w-full rounded-r-none"
             autoFocus
+            min={0}
+            step={0.25}
           />
           {/* minutes */}
           <Input
             id="worklog-minutes"
-            type="text"
+            type="number"
             name="minutes"
             placeholder="Minutes"
             value={formData?.minutes}
@@ -99,7 +102,6 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
             hasError={(errors && Boolean(errors.minutes)) || false}
             className="w-full rounded-l-none"
             min={0}
-            max={60}
           />
         </div>
 

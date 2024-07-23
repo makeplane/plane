@@ -55,7 +55,9 @@ export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton>
     <button
       className={cn(
         "relative flex items-center rounded transition-all bg-custom-primary-100 hover:bg-custom-primary-200 focus:text-custom-brand-40 focus:bg-custom-primary-200 font-semibold text-white",
-        `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60` && buttonLoader === true
+        {
+          "cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60": buttonLoader,
+        }
       )}
       disabled={buttonLoader}
     >
@@ -63,12 +65,12 @@ export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton>
         className="flex w-full h-full px-2.5 py-1 text-sm font-medium border-r border-white"
         onClick={() => downloadWorklogs("csv")}
       >
-        Download
+        {buttonLoader ? "Downloading..." : "Download"}
       </div>
       <PopoverMenu
         buttonClassName="outline-none focus:outline-none"
         button={
-          <div className="flex-shrink-0 w-6 h-6 overflow-hidden flex justify-center items-center">
+          <div className="flex-shrink-0 w-6 h-7 overflow-hidden flex justify-center items-center">
             <ChevronDown size={16} />
           </div>
         }

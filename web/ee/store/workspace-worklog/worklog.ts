@@ -128,12 +128,21 @@ export class Worklog implements IWorklog {
         payload
       );
       if (worklogResponse) {
-        runInAction(() => this.mutateWorklog(worklogResponse));
+        runInAction(() => {
+          this.mutateWorklog(worklogResponse);
+          this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId] =
+            this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId] -
+            (Number(worklog.duration) - Number(payload.duration));
+        });
       }
       return worklogResponse;
     } catch (error) {
       console.error("worklog -> updateWorklogById -> error", error);
-      runInAction(() => this.mutateWorklog(worklog));
+      runInAction(() => {
+        this.mutateWorklog(worklog);
+        this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId] =
+          this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId];
+      });
       throw error;
     }
   };

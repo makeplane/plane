@@ -46,22 +46,25 @@ export const WorkspaceWorklogRoot: FC<TWorkspaceWorklogRoot> = observer((props) 
       <h3 className="text-xl font-medium">Worklogs</h3>
 
       <div>
-        {/* header section */}
-        <WorkspaceWorklogHeaderRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-
         {loader === EWorklogLoader.WORKSPACE_INIT_LOADER ? (
           <WorklogLoader loader={loader} />
         ) : (
-          <div className="space-y-3">
-            {loader === EWorklogLoader.WORKSPACE_PAGINATION_LOADER ? (
-              <WorklogLoader loader={loader} />
-            ) : (workspaceWorklogIds || []).length <= 0 ? (
-              <WorklogEmptyScreen />
-            ) : (
-              <WorklogsPaginatedTableRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-            )}
-            <WorkspaceTablePaginationBar workspaceSlug={workspaceSlug} />
-          </div>
+          <>
+            {/* header section */}
+            <WorkspaceWorklogHeaderRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+
+            {/* table section */}
+            <div className="space-y-3">
+              {loader === EWorklogLoader.WORKSPACE_PAGINATION_LOADER ? (
+                <WorklogLoader loader={loader} />
+              ) : (workspaceWorklogIds || []).length <= 0 ? (
+                <WorklogEmptyScreen />
+              ) : (
+                <WorklogsPaginatedTableRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+              )}
+              <WorkspaceTablePaginationBar workspaceSlug={workspaceSlug} />
+            </div>
+          </>
         )}
       </div>
 

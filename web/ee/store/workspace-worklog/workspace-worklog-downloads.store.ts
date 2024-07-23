@@ -255,11 +255,7 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
 
       const worklogResponse = await worklogService.createWorklogDownload(workspaceSlug, payload, filterQueryParams);
       if (worklogResponse) {
-        this.getWorkspaceWorklogDownloads(
-          workspaceSlug,
-          EWorklogDownloadLoader.MUTATION_LOADER,
-          EWorklogDownloadQueryParamType.CURRENT
-        );
+        this.mutateWorklogDownloads([worklogResponse]);
       }
       return worklogResponse;
     } catch (error) {

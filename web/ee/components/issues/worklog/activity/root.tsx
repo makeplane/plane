@@ -8,7 +8,7 @@ import { TIssueActivityComment } from "@plane/types";
 import { CustomMenu, Popover, Tooltip } from "@plane/ui";
 import {
   calculateTimeAgo,
-  convertMinutesToDaysHoursMinutes,
+  convertMinutesToHoursMinutesString,
   renderFormattedDate,
   renderFormattedTime,
 } from "@/helpers/date-time.helper";
@@ -84,7 +84,7 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
               {currentUser?.member?.display_name}
             </Link>
             <span className="text-custom-text-200">logged</span>
-            <span className="font-medium">{convertMinutesToDaysHoursMinutes(worklog?.duration || 0)}</span>
+            <span className="font-medium">{convertMinutesToHoursMinutesString(worklog?.duration || 0)}</span>
             {worklog.created_at && (
               <span>
                 <Tooltip

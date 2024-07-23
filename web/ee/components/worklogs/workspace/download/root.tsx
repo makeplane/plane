@@ -48,6 +48,8 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
       : null
   );
 
+  if (loader === EWorklogDownloadLoader.INIT_LOADER) return <WorklogDownloadLoader loader={loader} />;
+
   return (
     <Fragment>
       <div className="flex justify-between items-center">
@@ -67,11 +69,7 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
 
       {disclosureState && (
         <div className="py-4">
-          {loader === EWorklogDownloadLoader.INIT_LOADER ? (
-            <WorklogDownloadLoader loader={loader} />
-          ) : (
-            <WorkspaceWorklogDownloadList workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-          )}
+          <WorkspaceWorklogDownloadList workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
         </div>
       )}
     </Fragment>

@@ -77,5 +77,5 @@ export type TWorklogDownloadPaginatedInfo = TDefaultPaginatedInfo & {
 
 // worklog issue total count
 export type TWorklogIssueTotalCount = {
-  total_work_log: number | undefined;
+  total_worklog: number | undefined;
 };

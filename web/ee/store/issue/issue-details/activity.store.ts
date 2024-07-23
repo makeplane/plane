@@ -1,10 +1,15 @@
 /* eslint-disable no-useless-catch */
 
-import sortBy from "lodash/sortBy";
+import {
+  IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
+  IIssueActivityStore as IIssueActivityStoreCe,
+  IssueActivityStore as IssueActivityStoreCe,
+} from "ce/store/issue/issue-details/activity.store";
 
+import sortBy from "lodash/sortBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TIssueActivity, TIssueActivityComment } from "@plane/types";
+import { TIssueActivityComment } from "@plane/types";
 // plane web constants
 import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constants/issues";
 // plane web store types
@@ -12,11 +17,6 @@ import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
 // ce store
-import {
-  IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
-  IIssueActivityStore as IIssueActivityStoreCe,
-  IssueActivityStore as IssueActivityStoreCe,
-} from "ce/store/issue/issue-details/activity.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 
@@ -92,11 +92,11 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     try {
       this.loader = loaderType;
       // fetching the worklogs for the issue
-      const promiseResponse = await Promise.all([
-        this.store.workspaceWorklogs.getWorklogsByIssueId(workspaceSlug, projectId, issueId),
-        super.fetchActivities(workspaceSlug, projectId, issueId, loaderType),
-      ]);
-      return promiseResponse as unknown as TIssueActivity[];
+      if (this.store.workspaceWorklogs.isWorklogsEnabledByProjectId(projectId)) {
+        await this.store.workspaceWorklogs.getWorklogsByIssueId(workspaceSlug, projectId, issueId);
+      }
+      const activities = await super.fetchActivities(workspaceSlug, projectId, issueId, loaderType);
+      return activities;
     } catch (error) {
       this.loader = undefined;
       throw error;

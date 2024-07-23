@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { Avatar, Table } from "@plane/ui";
 // helpers
-import { convertMinutesToDaysHoursMinutes, renderFormattedDate } from "@/helpers/date-time.helper";
+import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useMember, useProject } from "@/hooks/store";
 // plane web hooks
@@ -78,7 +78,7 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
       key: "tile",
       content: "Time",
       tdRender: (rowData: TWorklog) => (
-        <div className="font-medium">{rowData.duration && convertMinutesToDaysHoursMinutes(rowData.duration)}</div>
+        <div className="font-medium">{rowData.duration && convertMinutesToHoursMinutesString(rowData.duration)}</div>
       ),
     },
   ];
