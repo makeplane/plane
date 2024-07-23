@@ -1,6 +1,10 @@
 # App imports
 from plane.ee.views.app.ai import RephraseGrammarEndpoint
-from plane.ee.views.app.cycle import WorkspaceActiveCycleEndpoint
+from plane.ee.views.app.cycle import (
+    WorkspaceActiveCycleEndpoint,
+    ActiveCycleProgressEndpoint,
+    WorkspaceActiveAnalyticsCycleEndpoint,
+)
 from plane.ee.views.app.issue import (
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,

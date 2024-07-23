@@ -33,7 +33,12 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 10, cycle.id) : null
+    workspaceSlug && projectId && cycle.id
+      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 10, cycle.id)
+      : null,
+    {
+      revalidateOnFocus: false,
+    }
   );
 
   useSWR(
