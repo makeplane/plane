@@ -330,12 +330,12 @@ CPU_ARCH=$(uname -m)
 if [[ $FORCE_CPU == "amd64" || $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; 
 then
     DOCKERHUB_USER=makeplane
+    mkdir -p $PLANE_INSTALL_DIR/archive
 
     if [ "$BRANCH" == "master" ];
     then
         export APP_RELEASE=stable
         export PULL_POLICY=${PULL_POLICY:-always}
-        mkdir -p $PLANE_INSTALL_DIR/archive
     fi
 
     # REMOVE SPECIAL CHARACTERS FROM BRANCH NAME
