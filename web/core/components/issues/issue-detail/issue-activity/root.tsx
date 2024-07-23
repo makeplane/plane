@@ -7,12 +7,12 @@ import { TIssueComment } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ActivityFilter, IssueCommentCreate } from "@/components/issues";
+import { IssueCommentCreate } from "@/components/issues";
 import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
-import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
+import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 // plane web constants
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 
@@ -120,7 +120,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             issueId={issueId}
             disabled={disabled}
           />
-          <ActivityFilter selectedFilters={selectedFilters} toggleFilter={toggleFilter} />
+          <ActivityFilterRoot selectedFilters={selectedFilters} toggleFilter={toggleFilter} />
         </div>
       </div>
 

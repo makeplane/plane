@@ -323,14 +323,13 @@ export const convertMinutesToHoursAndMinutes = (mins: number): { hours: number; 
 };
 
 /**
- * @description converts minutes to days, hours and minutes
+ * @description converts minutes to hours and minutes string
  * @param { number } totalMinutes
- * @returns { string } days, hours and minutes
+ * @returns { string } 0h 0m
+ * @example convertMinutesToHoursAndMinutes(150) // Output: 2h 10m
  */
-export const convertMinutesToDaysHoursMinutes = (totalMinutes: number): string => {
-  const days = Math.floor(totalMinutes / (60 * 24));
-  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
-  const minutes = totalMinutes % 60;
+export const convertMinutesToHoursMinutesString = (totalMinutes: number): string => {
+  const { hours, minutes } = convertMinutesToHoursAndMinutes(totalMinutes);
 
-  return `${days ? `${days}d ` : ``}${hours ? `${hours}h ` : ``}${minutes ? `${minutes}m ` : ``} `;
+  return `${hours ? `${hours}h ` : ``}${minutes ? `${minutes}m ` : ``}`;
 };

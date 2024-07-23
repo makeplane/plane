@@ -18,6 +18,13 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<EActivityFilterType, { label: 
 
 export const defaultActivityFilters: TActivityFilters[] = [EActivityFilterType.ACTIVITY, EActivityFilterType.COMMENT];
 
+export type TActivityFilterOption = {
+  key: EActivityFilterType;
+  label: string;
+  isSelected: boolean;
+  onClick: () => void;
+};
+
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
   filter: TActivityFilters[]
