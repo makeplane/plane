@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import _ from "lodash";
+import { intersection } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
@@ -38,7 +38,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { projectsWithCreatePermissions } = useUser();
 
   const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
-    ? _.intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
+    ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
 
   const options = wsProjectIdsWithCreatePermisisons?.map((projectId) => {
