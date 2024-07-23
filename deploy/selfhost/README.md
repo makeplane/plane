@@ -394,7 +394,6 @@ When you want to restore the previously backed-up data, follow the instructions 
    As an example, for a backup folder `/opt/plane-selfhost/plane-app/backup/20240722-0914`, expect the response below:
 
    ```bash
-   ./restore.sh /opt/plane-selfhost/plane-app/backup/20240722-0914
    --------------------------------------------
     ____  _                          ///////// 
    |  _ \| | __ _ _ __   ___         ///////// 
