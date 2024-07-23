@@ -72,6 +72,7 @@ class Project(BaseModel):
     identifier = models.CharField(
         max_length=12,
         verbose_name="Project Identifier",
+        db_index=True,
     )
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -117,9 +118,6 @@ class Project(BaseModel):
         related_name="default_state",
     )
     archived_at = models.DateTimeField(null=True)
-    # Project start and target date
-    start_date = models.DateTimeField(null=True, blank=True)
-    target_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         """Return name of the project"""
@@ -222,7 +220,7 @@ class ProjectIdentifier(AuditModel):
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
     )
-    name = models.CharField(max_length=12)
+    name = models.CharField(max_length=12, db_index=True)
 
     class Meta:
         unique_together = ["name", "workspace"]
