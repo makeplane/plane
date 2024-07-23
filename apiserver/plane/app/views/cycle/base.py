@@ -384,7 +384,7 @@ class CycleViewSet(BaseViewSet):
                 data[0]["estimate_distribution"] = {}
                 if estimate_type:
                     assignee_distribution = (
-                        Issue.objects.filter(
+                        Issue.issue_objects.filter(
                             issue_cycle__cycle_id=data[0]["id"],
                             workspace__slug=slug,
                             project_id=project_id,
@@ -422,7 +422,7 @@ class CycleViewSet(BaseViewSet):
                     )
 
                     label_distribution = (
-                        Issue.objects.filter(
+                        Issue.issue_objects.filter(
                             issue_cycle__cycle_id=data[0]["id"],
                             workspace__slug=slug,
                             project_id=project_id,
@@ -476,7 +476,7 @@ class CycleViewSet(BaseViewSet):
                         )
 
                 assignee_distribution = (
-                    Issue.objects.filter(
+                    Issue.issue_objects.filter(
                         issue_cycle__cycle_id=data[0]["id"],
                         workspace__slug=slug,
                         project_id=project_id,
@@ -518,7 +518,7 @@ class CycleViewSet(BaseViewSet):
                 )
 
                 label_distribution = (
-                    Issue.objects.filter(
+                    Issue.issue_objects.filter(
                         issue_cycle__cycle_id=data[0]["id"],
                         workspace__slug=slug,
                         project_id=project_id,
@@ -833,7 +833,7 @@ class CycleViewSet(BaseViewSet):
         data["estimate_distribution"] = {}
         if estimate_type:
             assignee_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -871,7 +871,7 @@ class CycleViewSet(BaseViewSet):
             )
 
             label_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -926,7 +926,7 @@ class CycleViewSet(BaseViewSet):
 
         # Assignee Distribution
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -977,7 +977,7 @@ class CycleViewSet(BaseViewSet):
 
         # Label Distribution
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
