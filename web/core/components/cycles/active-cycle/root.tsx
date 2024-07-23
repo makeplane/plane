@@ -28,7 +28,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
   // props
   const { workspaceSlug, projectId } = props;
   // store hooks
-  const { fetchActiveCycle, currentProjectActiveCycleId, getActiveCycleById } = useCycle();
+  const { currentProjectActiveCycle, fetchActiveCycle, currentProjectActiveCycleId, getActiveCycleById } = useCycle();
   // derived values
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
   // fetch active cycle details
@@ -38,7 +38,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
   );
 
   // show loader if active cycle is loading
-  if (!activeCycle && isLoading)
+  if (!currentProjectActiveCycle && isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -54,10 +54,10 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
               <CycleListGroupHeader title="Active cycle" type="current" isExpanded={open} />
             </Disclosure.Button>
             <Disclosure.Panel>
-              {!activeCycle ? (
+              {!currentProjectActiveCycle ? (
                 <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
               ) : (
-                <div className="flex flex-col bg-custom-background-90 border-b">
+                <div className="flex flex-col bg-custom-background-90">
                   {currentProjectActiveCycleId && (
                     <CyclesListItem
                       key={currentProjectActiveCycleId}
@@ -75,7 +75,12 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                         projectId={projectId}
                         cycle={activeCycle}
                       />
-                      <ActiveCycleStats workspaceSlug={workspaceSlug} projectId={projectId} cycle={activeCycle} />
+                      <ActiveCycleStats
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        cycle={activeCycle}
+                        cycleId={currentProjectActiveCycleId}
+                      />
                     </div>
                   </div>
                 </div>

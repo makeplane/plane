@@ -1,4 +1,4 @@
-import type { TIssue, IIssueFilterOptions } from "@plane/types";
+import type {TIssue, IIssueFilterOptions} from "@plane/types";
 
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
 
@@ -61,6 +61,10 @@ export type TProgressSnapshot = {
   estimate_distribution?: TCycleEstimateDistribution;
 };
 
+export interface IProjectDetails {
+  id: string;
+}
+
 export interface ICycle extends TProgressSnapshot {
   progress_snapshot: TProgressSnapshot | undefined;
 
@@ -85,6 +89,7 @@ export interface ICycle extends TProgressSnapshot {
     filters: IIssueFilterOptions;
   };
   workspace_id: string;
+  project_detail: IProjectDetails;
 }
 
 export interface CycleIssueResponse {
@@ -102,7 +107,7 @@ export interface CycleIssueResponse {
 }
 
 export type SelectCycleType =
-  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
+  | (ICycle & {actionType: "edit" | "delete" | "create-issue"})
   | undefined;
 
 export type CycleDateCheckData = {

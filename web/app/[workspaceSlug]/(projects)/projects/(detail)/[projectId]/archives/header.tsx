@@ -26,17 +26,13 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
-    issuesFilter: { issueFilters },
+    issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { currentProjectDetails, loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
-  const issueCount = currentProjectDetails
-    ? !issueFilters?.displayFilters?.sub_issue && currentProjectDetails.archived_sub_issues
-      ? currentProjectDetails.archived_issues - currentProjectDetails.archived_sub_issues
-      : currentProjectDetails.archived_issues
-    : undefined;
+  const issueCount = getGroupIssueCount(undefined, undefined, false);
 
   const activeTabBreadcrumbDetail =
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];

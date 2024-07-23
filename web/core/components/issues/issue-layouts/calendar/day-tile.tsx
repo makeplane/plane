@@ -165,7 +165,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           >
             <CalendarIssueBlocks
               date={date.date}
-              issues={issues}
               issueIdList={issueIds}
               quickActions={quickActions}
               loadMoreIssues={loadMoreIssues}
