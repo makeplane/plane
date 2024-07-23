@@ -168,6 +168,7 @@ services:
     image: ${DOCKERHUB_USER:-makeplane}/plane-proxy:${APP_RELEASE:-stable}
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: if_not_present
+    restart: unless-stopped
     ports:
       - ${NGINX_PORT}:80
     depends_on:
