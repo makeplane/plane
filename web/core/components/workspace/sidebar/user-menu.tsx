@@ -34,6 +34,9 @@ export const SidebarUserMenu = observer(() => {
   // computed
   const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
 
+  const getHref = (link: any) =>
+    `/${workspaceSlug}${link.href}${link.key === "your-work" ? `/${currentUser?.id}` : ""}`;
+
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
       toggleSidebar();
@@ -67,12 +70,8 @@ export const SidebarUserMenu = observer(() => {
               disabled={!sidebarCollapsed}
               isMobile={isMobile}
             >
-              <Link
-                href={`/${workspaceSlug}${link.href}${link.key === "my-work" ? `/${currentUser?.id}` : ""}`}
-                onClick={() => handleLinkClick(link.key)}
-              >
+              <Link key={link.key} href={getHref(link)} onClick={() => handleLinkClick(link.key)}>
                 <SidebarNavItem
-                  key={link.key}
                   className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
                   isActive={link.highlight(pathname, `/${workspaceSlug}`)}
                 >

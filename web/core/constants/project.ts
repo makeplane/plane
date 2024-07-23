@@ -116,6 +116,14 @@ export const PROJECT_SETTINGS_LINKS: {
     Icon: SettingIcon,
   },
   {
+    key: "integrations",
+    label: "Integrations",
+    href: `/settings/integrations`,
+    access: EUserProjectRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations/`,
+    Icon: SettingIcon,
+  },
+  {
     key: "estimates",
     label: "Estimates",
     href: `/settings/estimates`,
