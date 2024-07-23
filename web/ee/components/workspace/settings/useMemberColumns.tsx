@@ -1,6 +1,6 @@
-import { useMemberColumns as useCeMemberColumns } from "ce/components/workspace/settings/useMemberColumns";
 import { RowData } from "@/components/workspace/settings/member-columns";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useMemberColumns as useCeMemberColumns } from "ce/components/workspace/settings/useMemberColumns";
 
 export const useMemberColumns = () => {
   const { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal } = useCeMemberColumns();

@@ -1,5 +1,5 @@
-import { RowData, useProjectColumns as useCeProjectColumns } from "ce/components/projects/settings/useProjectColumns";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { RowData, useProjectColumns as useCeProjectColumns } from "ce/components/projects/settings/useProjectColumns";
 
 export const useProjectColumns = () => {
   const { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal } = useCeProjectColumns();

@@ -1,11 +1,5 @@
 /* eslint-disable no-useless-catch */
 
-// ce store
-import {
-  IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
-  IIssueActivityStore as IIssueActivityStoreCe,
-  IssueActivityStore as IssueActivityStoreCe,
-} from "ce/store/issue/issue-details/activity.store";
 import sortBy from "lodash/sortBy";
 
 import { makeObservable } from "mobx";
@@ -17,6 +11,12 @@ import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constant
 import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
+// ce store
+import {
+  IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
+  IIssueActivityStore as IIssueActivityStoreCe,
+  IssueActivityStore as IssueActivityStoreCe,
+} from "ce/store/issue/issue-details/activity.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 

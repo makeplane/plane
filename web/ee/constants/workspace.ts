@@ -1,11 +1,10 @@
-import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
-
 import { Timer } from "lucide-react";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
-// plane web constants
+// ce constants
+import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
 
 export const WORKSPACE_SETTINGS = {
   ...WORKSPACE_SETTINGS_CE,
