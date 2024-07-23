@@ -80,7 +80,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                         projectId={projectId}
                         cycle={activeCycle}
                         cycleId={currentProjectActiveCycleId}
-                      />{" "}
+                      />
                     </div>
                   </div>
                 </div>
