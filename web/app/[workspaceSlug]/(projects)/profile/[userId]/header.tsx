@@ -29,6 +29,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const {
     membership: { currentWorkspaceRole },
+    data: currentUser,
   } = useUser();
   // derived values
   const AUTHORIZED_ROLES = [20, 15, 10];
@@ -40,12 +41,16 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
 
   const userName = `${userProjectsData?.user_data?.first_name} ${userProjectsData?.user_data?.last_name}`;
 
+  const isCurrentUser = currentUser?.id === userId;
+
+  const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Activity`;
+
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex w-full justify-between">
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={userName} disableTooltip />} />
+            <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={breadcrumbLabel} disableTooltip />} />
           </Breadcrumbs>
           <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div>
           <div className="flex gap-4 md:hidden">
