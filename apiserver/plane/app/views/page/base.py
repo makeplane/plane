@@ -41,6 +41,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 
+
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
     sql = """
@@ -210,13 +211,6 @@ class PageViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
-        recent_visited_task.delay(
-            slug=slug,
-            entity_name="page",
-            entity_identifier=pk,
-            actor_id=request.user.id,
-            project_id=project_id,
-        )
         if page is None:
             return Response(
                 {"error": "Page not found"},
@@ -228,6 +222,13 @@ class PageViewSet(BaseViewSet):
             ).values_list("entity_identifier", flat=True)
             data = PageDetailSerializer(page).data
             data["issue_ids"] = issue_ids
+            recent_visited_task.delay(
+                slug=slug,
+                entity_name="page",
+                entity_identifier=pk,
+                user_id=request.user.id,
+                project_id=project_id,
+            )
             return Response(
                 data,
                 status=status.HTTP_200_OK,

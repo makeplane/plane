@@ -133,6 +133,14 @@ class IssueListEndpoint(BaseAPIView):
             sub_group_by=sub_group_by,
         )
 
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
+        )
+
         if self.fields or self.expand:
             issues = IssueSerializer(
                 queryset, many=True, fields=self.fields, expand=self.expand
@@ -252,6 +260,14 @@ class IssueViewSet(BaseViewSet):
             queryset=issue_queryset,
             group_by=group_by,
             sub_group_by=sub_group_by,
+        )
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
         )
 
         if group_by:
@@ -409,13 +425,6 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        recent_visited_task.delay(
-            slug=slug,
-            entity_name="issue",
-            entity_identifier=pk,
-            actor_id=request.user.id,
-            project_id=project_id,
-        )
         issue = (
             self.get_queryset()
             .filter(pk=pk)
@@ -482,6 +491,14 @@ class IssueViewSet(BaseViewSet):
                 {"error": "The required object does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="issue",
+            entity_identifier=pk,
+            user_id=request.user.id,
+            project_id=project_id,
+        )
 
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)

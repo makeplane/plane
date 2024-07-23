@@ -120,7 +120,7 @@ class WorkspaceViewViewSet(BaseViewSet):
             project_id=None,
             entity_name="view",
             entity_identifier=pk,
-            actor_id=request.user.id,
+            user_id=request.user.id,
         )
         return Response(
             serializer.data,
@@ -400,7 +400,7 @@ class IssueViewViewSet(BaseViewSet):
             project_id=project_id,
             entity_name="view",
             entity_identifier=pk,
-            actor_id=request.user.id,
+            user_id=request.user.id,
         )
         return Response(
             serializer.data,

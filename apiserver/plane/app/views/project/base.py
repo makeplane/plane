@@ -241,19 +241,19 @@ class ProjectViewSet(BaseViewSet):
             )
         ).first()
 
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=pk,
-            entity_name="project",
-            entity_identifier=pk,
-            actor_id=request.user.id,
-        )
-
         if project is None:
             return Response(
                 {"error": "Project does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=pk,
+            entity_name="project",
+            entity_identifier=pk,
+            user_id=request.user.id,
+        )
 
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)

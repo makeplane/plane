@@ -443,13 +443,6 @@ class ModuleViewSet(BaseViewSet):
                 .values("count")
             )
         )
-        recent_visited_task.delay(
-            slug=slug,
-            entity_name="module",
-            entity_identifier=pk,
-            actor_id=request.user.id,
-            project_id=project_id,
-        )
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -666,6 +659,14 @@ class ModuleViewSet(BaseViewSet):
                 plot_type="issues",
                 module_id=pk,
             )
+
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="module",
+            entity_identifier=pk,
+            user_id=request.user.id,
+            project_id=project_id,
+        )
 
         return Response(
             data,

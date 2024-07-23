@@ -13,7 +13,6 @@ from django.utils import timezone
 from plane.utils.html_processor import strip_tags
 
 from .project import ProjectBaseModel
-from .workspace import WorkspaceBaseModel
 
 
 def get_default_properties():
@@ -687,35 +686,3 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
-
-
-class RecentVisited(WorkspaceBaseModel):
-    TYPE_CHOICES = (
-        ("view", "View"),
-        ("page", "Page"),
-        ("issue", "Issue"),
-        ("cycle", "Cycle"),
-        ("module", "Module"),
-        ("project", "Project"),
-    )
-    entity_identifier = models.UUIDField(null=True)
-    entity_name = models.CharField(
-        max_length=30,
-        choices=TYPE_CHOICES,
-        verbose_name="Type",
-    )
-    actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="recent_visited",
-    )
-    visited_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Recent Visited"
-        verbose_name_plural = "Recent Visits"
-        db_table = "recent_visits"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.entity_name} {self.actor.email}"
