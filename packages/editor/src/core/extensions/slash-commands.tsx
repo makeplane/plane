@@ -32,6 +32,9 @@ import {
   toggleHeadingOne,
   toggleHeadingTwo,
   toggleHeadingThree,
+  toggleHeadingFour,
+  toggleHeadingFive,
+  toggleHeadingSix,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem, UploadImage } from "@/types";
@@ -139,7 +142,7 @@ const getSuggestionItems =
         searchTerms: ["subtitle", "small"],
         icon: <Heading4 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          toggleHeadingThree(editor, range);
+          toggleHeadingFour(editor, range);
         },
       },
       {
@@ -149,7 +152,7 @@ const getSuggestionItems =
         searchTerms: ["subtitle", "small"],
         icon: <Heading5 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          toggleHeadingThree(editor, range);
+          toggleHeadingFive(editor, range);
         },
       },
       {
@@ -159,7 +162,7 @@ const getSuggestionItems =
         searchTerms: ["subtitle", "small"],
         icon: <Heading6 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          toggleHeadingThree(editor, range);
+          toggleHeadingSix(editor, range);
         },
       },
       {
