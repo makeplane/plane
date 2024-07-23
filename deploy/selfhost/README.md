@@ -374,49 +374,55 @@ Backup completed successfully. Backup files are stored in /....../plane-app/back
 
 ### Restore Data
 
-When you want to restore the previously backed-up data, you need to follow the below instructions
+When you want to restore the previously backed-up data, follow the instructions below.
 
-1. Make sure that Plane-CE is installed, started and then stopped. This is to make sure that the docker volumes were created.
+1. Make sure that Plane-CE is installed, started, and then stopped. This ensures that the Docker volumes are created.
 
-1. Download the restore script using below command. We suggest to download in the same folder as `setup.sh`.
+1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
 
    ```bash
    curl -fsSL -o restore.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/restore.sh
    chmod +x restore.sh
    ```
 
-1. Execute the below command to restore your data
+1. Execute the command below to restore your data.
 
    ```bash
    ./restore.sh <path to backup folder containing *.tgz files>
    ```
 
-   As an example, for a backup folder as `/opt/plane-selfhost/plane-app/backup/20240722-0914` expect response as below
+   As an example, for a backup folder `/opt/plane-selfhost/plane-app/backup/20240722-0914`, expect the response below:
 
    ```bash
    ./restore.sh /opt/plane-selfhost/plane-app/backup/20240722-0914
    --------------------------------------------
-   ____  _                          /////////
-   |  _ \| | __ _ _ __   ___         /////////
-   | |_) | |/ _` | '_ \ / _ \   /////    /////
-   |  __/| | (_| | | | |  __/   /////    /////
-   |_|   |_|\__,_|_| |_|\___|        ////
-                                    ////
+    ____  _                          ///////// 
+   |  _ \| | __ _ _ __   ___         ///////// 
+   | |_) | |/ _` | '_ \ / _ \   /////    ///// 
+   |  __/| | (_| | | | |  __/   /////    ///// 
+   |_|   |_|\__,_|_| |_|\___|        ////      
+                                    ////      
    --------------------------------------------
    Project management tool from the future
    --------------------------------------------
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/pgdata.tar.gz
    .....Restoring plane-app_pgdata
+   .....Successfully restored volume plane-app_pgdata from pgdata
+
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/redisdata.tar.gz
    .....Restoring plane-app_redisdata
    mv: can't rename '/restore/redisdata/*': No such file or directory
+   Error: Failed to restore volume plane-app_redisdata from redisdata.tar.gz
+
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/uploads.tar.gz
    .....Restoring plane-app_uploads
+   .....Successfully restored volume plane-app_uploads from uploads
+
 
    Restore completed successfully.
    ```
 
-1. Start the Plane instance using `./setup.sh start`
+1. Start the Plane instance using `./setup.sh start`.
 
 ---
 
