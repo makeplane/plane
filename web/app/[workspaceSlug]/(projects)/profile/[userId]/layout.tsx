@@ -12,6 +12,7 @@ import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
 // local components
 import { UserService } from "@/services/user.service";
 import { UserProfileHeader } from "./header";
@@ -36,6 +37,9 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
     membership: { currentWorkspaceRole },
   } = useUser();
 
+  const windowSize = useSize();
+  const isSmallerScreen = windowSize[0] >= 768;
+
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
     workspaceSlug && userId
@@ -58,26 +62,32 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
       <div className="h-full w-full md:flex md:overflow-hidden">
         <div className="h-full w-full md:overflow-hidden">
           <AppHeader
-            header={<UserProfileHeader type={currentTab?.label} userProjectsData={userProjectsData} />}
+            header={
+              <UserProfileHeader
+                type={currentTab?.label}
+                userProjectsData={userProjectsData}
+                showProfileIssuesFilter={isIssuesTab}
+              />
+            }
             mobileHeader={isIssuesTab && <ProfileIssuesMobileHeader />}
           />
           <ContentWrapper>
             <div className="h-full w-full flex flex-row md:flex-col  md:overflow-hidden">
               <div className="flex w-full flex-col md:h-full md:overflow-hidden">
-                <ProfileNavbar isAuthorized={!!isAuthorized} showProfileIssuesFilter={isIssuesTab} />
+                <ProfileNavbar isAuthorized={!!isAuthorized} />
                 {isAuthorized || !isAuthorizedPath ? (
-                  <div className={`w-full overflow-hidden md:h-full`}>{children}</div>
+                  <div className={`w-full overflow-hidden h-full`}>{children}</div>
                 ) : (
                   <div className="grid h-full w-full place-items-center text-custom-text-200">
                     You do not have the permission to access this page.
                   </div>
                 )}
               </div>
-              <ProfileSidebar userProjectsData={userProjectsData} className="block md:hidden" />
+              {!isSmallerScreen && <ProfileSidebar userProjectsData={userProjectsData} />}
             </div>
           </ContentWrapper>
         </div>
-        <ProfileSidebar userProjectsData={userProjectsData} className="hidden md:block" />
+        {isSmallerScreen && <ProfileSidebar userProjectsData={userProjectsData} />}
       </div>
     </>
   );

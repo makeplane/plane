@@ -10,6 +10,7 @@ import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
+import { ProfileIssuesFilter } from "@/components/profile";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useUser } from "@/hooks/store";
@@ -17,10 +18,11 @@ import { useAppTheme, useUser } from "@/hooks/store";
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
   type?: string | undefined;
+  showProfileIssuesFilter?: boolean;
 };
 
 export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
-  const { userProjectsData, type = undefined } = props;
+  const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
   // store hooks
@@ -45,6 +47,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={userName} disableTooltip />} />
           </Breadcrumbs>
+          <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div>
           <div className="flex gap-4 md:hidden">
             <CustomMenu
               maxHeight={"md"}
