@@ -89,7 +89,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
     >
       {userProjectsData ? (
         <>
-          <div className="relative h-32">
+          <div className="relative h-[110px]">
             {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
@@ -102,7 +102,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
             <img
               src={userProjectsData.user_data?.cover_image ?? "/users/user-profile-cover-default-img.png"}
               alt={userProjectsData.user_data?.display_name}
-              className="h-32 w-full object-cover"
+              className="h-[110px] w-full object-cover"
             />
             <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
               {userProjectsData.user_data?.avatar && userProjectsData.user_data?.avatar !== "" ? (
