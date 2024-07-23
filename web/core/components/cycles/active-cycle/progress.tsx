@@ -5,7 +5,7 @@ import Link from "next/link";
 // types
 import { ICycle } from "@plane/types";
 // ui
-import { LinearProgressIndicator } from "@plane/ui";
+import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
@@ -15,7 +15,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 export type ActiveCycleProgressProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: ICycle | null;
 };
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
@@ -24,18 +24,20 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
   const progressIndicatorData = CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
-    value: cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
+    value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
     color: group.color,
   }));
 
-  const groupedIssues: any = {
-    completed: cycle.completed_issues,
-    started: cycle.started_issues,
-    unstarted: cycle.unstarted_issues,
-    backlog: cycle.backlog_issues,
-  };
+  const groupedIssues: any = cycle
+    ? {
+        completed: cycle.completed_issues,
+        started: cycle.started_issues,
+        unstarted: cycle.unstarted_issues,
+        backlog: cycle.backlog_issues,
+      }
+    : {};
 
-  return (
+  return cycle ? (
     <Link
       href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}
       className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg"
@@ -94,5 +96,9 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
         </div>
       )}
     </Link>
+  ) : (
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+      <Loader.Item width="100%" height="100%" />
+    </Loader>
   );
 };

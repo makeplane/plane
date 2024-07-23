@@ -111,3 +111,5 @@ from .dashboard import Dashboard, DashboardWidget, Widget
 from .favorite import UserFavorite
 
 from .issue_type import IssueType
+
+from .recent_visit import UserRecentVisit

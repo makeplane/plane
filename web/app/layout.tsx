@@ -16,7 +16,8 @@ export const metadata: Metadata = {
     "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
   openGraph: {
     title: "Plane | Simple, extensible, open-source project management tool.",
-    description: "Plane Deploy is a customer feedback management tool built on top of plane.so",
+    description:
+      "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
     url: "https://app.plane.so/",
   },
   keywords:

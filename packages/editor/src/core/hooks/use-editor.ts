@@ -3,7 +3,7 @@ import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 // components
-import { EditorMenuItemNames, getEditorMenuItems } from "@/components/menus";
+import { getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
@@ -14,7 +14,15 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { DeleteImage, EditorRefApi, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
+import {
+  DeleteImage,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  RestoreImage,
+  TEditorCommands,
+  UploadImage,
+} from "@/types";
 
 export type TFileHandler = {
   cancel: () => void;
@@ -24,42 +32,44 @@ export type TFileHandler = {
 };
 
 export interface CustomEditorProps {
-  id?: string;
-  fileHandler: TFileHandler;
-  initialValue?: string;
   editorClassName: string;
-  // undefined when prop is not passed, null if intentionally passed to stop
-  // swr syncing
-  value?: string | null | undefined;
-  provider?: CollaborationProvider;
-  onChange?: (json: object, html: string) => void;
-  extensions?: any;
   editorProps?: EditorProps;
+  enableHistory: boolean;
+  extensions?: any;
+  fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
+  handleEditorReady?: (value: boolean) => void;
+  id?: string;
+  initialValue?: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
-  handleEditorReady?: (value: boolean) => void;
+  onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  provider?: CollaborationProvider;
   tabIndex?: number;
+  // undefined when prop is not passed, null if intentionally passed to stop
+  // swr syncing
+  value?: string | null | undefined;
 }
 
 export const useEditor = ({
-  id = "",
-  editorProps = {},
-  initialValue,
   editorClassName,
-  value,
+  editorProps = {},
+  enableHistory,
   extensions = [],
   fileHandler,
-  onChange,
   forwardedRef,
-  tabIndex,
   handleEditorReady,
-  provider,
+  id = "",
+  initialValue,
   mentionHandler,
+  onChange,
   placeholder,
+  provider,
+  tabIndex,
+  value,
 }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
@@ -68,15 +78,16 @@ export const useEditor = ({
     },
     extensions: [
       ...CoreEditorExtensions({
-        mentionConfig: {
-          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights ?? [],
-        },
+        enableHistory,
         fileConfig: {
           uploadFile: fileHandler.upload,
           deleteFile: fileHandler.delete,
           restoreFile: fileHandler.restore,
           cancelUploadImage: fileHandler.cancel,
+        },
+        mentionConfig: {
+          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
+          mentionHighlights: mentionHandler.highlights ?? [],
         },
         placeholder,
         tabIndex,
@@ -144,12 +155,12 @@ export const useEditor = ({
           insertContentAtSavedSelection(editorRef, content, savedSelection);
         }
       },
-      executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
+      executeMenuItemCommand: (itemKey: TEditorCommands) => {
         const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
+        const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
 
-        const item = getEditorMenuItem(itemName);
+        const item = getEditorMenuItem(itemKey);
         if (item) {
           if (item.key === "image") {
             item.command(savedSelectionRef.current);
@@ -157,13 +168,13 @@ export const useEditor = ({
             item.command();
           }
         } else {
-          console.warn(`No command found for item: ${itemName}`);
+          console.warn(`No command found for item: ${itemKey}`);
         }
       },
-      isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
+      isMenuItemActive: (itemName: TEditorCommands): boolean => {
         const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
 
-        const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.key === itemName);
+        const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },

@@ -6,6 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import type { TIssueLinkEditableFields } from "@plane/types";
 // ui
 import { Button, Input } from "@plane/ui";
+import { useIssueDetail } from "@/hooks/store";
 // types
 import { TLinkOperations } from "./root";
 
@@ -19,7 +20,6 @@ export type TIssueLinkCreateEditModal = {
   isModalOpen: boolean;
   handleOnClose?: () => void;
   linkOperations: TLinkOperationsModal;
-  preloadedData?: TIssueLinkCreateFormFieldOptions | null;
 };
 
 const defaultValues: TIssueLinkCreateFormFieldOptions = {
@@ -29,7 +29,7 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
 
 export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props) => {
   // props
-  const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
+  const { isModalOpen, handleOnClose, linkOperations } = props;
 
   // react hook form
   const {
@@ -41,12 +41,11 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
     defaultValues,
   });
 
+  const { issueLinkData: preloadedData, setIssueLinkData } = useIssueDetail();
+
   const onClose = () => {
+    setIssueLinkData(null);
     if (handleOnClose) handleOnClose();
-    const timeout = setTimeout(() => {
-      reset(preloadedData ? preloadedData : defaultValues);
-      clearTimeout(timeout);
-    }, 500);
   };
 
   const handleFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {

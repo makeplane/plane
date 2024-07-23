@@ -4,6 +4,7 @@ from .issue import urlpatterns as issue_patterns
 from .cycle import urlpatterns as cycle_patterns
 from .module import urlpatterns as module_patterns
 from .inbox import urlpatterns as inbox_patterns
+from .member import urlpatterns as member_patterns
 
 urlpatterns = [
     *project_patterns,
@@ -12,4 +13,5 @@ urlpatterns = [
     *cycle_patterns,
     *module_patterns,
     *inbox_patterns,
+    *member_patterns,
 ]

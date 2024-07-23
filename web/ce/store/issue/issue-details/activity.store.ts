@@ -1,14 +1,19 @@
+/* eslint-disable no-useless-catch */
+
 import concat from "lodash/concat";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
+// plane web constants
+import { EActivityFilterType } from "@/plane-web/constants/issues";
+// plane web store types
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
-// types
-import { IIssueDetail } from "./root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 
@@ -38,12 +43,11 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
-  // root store
-  rootIssueDetailStore: IIssueDetail;
+
   // services
   issueActivityService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(protected store: RootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
@@ -52,8 +56,6 @@ export class IssueActivityStore implements IIssueActivityStore {
       // actions
       fetchActivities: action,
     });
-    // root store
-    this.rootIssueDetailStore = rootStore;
     // services
     this.issueActivityService = new IssueActivityService();
   }
@@ -69,50 +71,46 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = (issueId: string) => {
+  getActivityCommentByIssueId = computedFn((issueId: string) => {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];
 
     const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = this.rootIssueDetailStore.comment.getCommentsByIssueId(issueId) || [];
+    const comments = this.store.issue.issueDetail.comment.getCommentsByIssueId(issueId) || [];
 
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
       if (!activity) return;
       activityComments.push({
         id: activity.id,
-        activity_type: "ACTIVITY",
+        activity_type: EActivityFilterType.ACTIVITY,
         created_at: activity.created_at,
       });
     });
 
     comments.forEach((commentId) => {
-      const comment = this.rootIssueDetailStore.comment.getCommentById(commentId);
+      const comment = this.store.issue.issueDetail.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
         id: comment.id,
-        activity_type: "COMMENT",
+        activity_type: EActivityFilterType.COMMENT,
         created_at: comment.created_at,
       });
     });
 
     activityComments = sortBy(activityComments, "created_at");
-    activityComments = activityComments.map((activityComment) => ({
-      id: activityComment.id,
-      activity_type: activityComment.activity_type,
-    }));
 
     return activityComments;
-  };
+  });
 
   // actions
-  fetchActivities = async (
+  public async fetchActivities(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     loaderType: TActivityLoader = "fetch"
-  ) => {
+  ) {
     try {
       this.loader = loaderType;
 
@@ -140,7 +138,8 @@ export class IssueActivityStore implements IIssueActivityStore {
 
       return activities;
     } catch (error) {
+      this.loader = undefined;
       throw error;
     }
-  };
+  }
 }

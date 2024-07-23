@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { FileText, Timer } from "lucide-react";
-import { ContrastIcon, DiceIcon, PhotoFilterIcon, Intake } from "@plane/ui";
+import { FileText, Layers, Timer } from "lucide-react";
+import { ContrastIcon, DiceIcon, Intake } from "@plane/ui";
 
 export type TFeatureList = {
   [key: string]: {
@@ -44,7 +44,7 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
         property: "issue_views_view",
         title: "Views",
         description: "Apply filters to issues and save them to analyse and investigate work.",
-        icon: <PhotoFilterIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+        icon: <Layers className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
         isPro: false,
         isEnabled: true,
       },

@@ -14,7 +14,7 @@ import { Button } from "@plane/ui";
 import { useProject, useUser } from "@/hooks/store";
 
 type Props = {
-  data: IUserLite;
+  data: Partial<IUserLite>;
   onSubmit: () => Promise<void>;
   isOpen: boolean;
   onClose: () => void;

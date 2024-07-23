@@ -11,6 +11,7 @@ import { ProjectMemberService } from "@/services/project";
 import { UserService } from "@/services/user.service";
 // plane web store
 import { CoreRootStore } from "../root.store";
+import { IRouterStore } from "../router.store";
 
 export interface IUserMembershipStore {
   // observables
@@ -47,6 +48,8 @@ export interface IUserMembershipStore {
   leaveWorkspace: (workspaceSlug: string) => Promise<void>;
   joinProject: (workspaceSlug: string, projectIds: string[]) => Promise<any>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+
+  router: IRouterStore;
 }
 
 export class UserMembershipStore implements IUserMembershipStore {
@@ -246,14 +249,10 @@ export class UserMembershipStore implements IUserMembershipStore {
    */
   leaveProject = async (workspaceSlug: string, projectId: string) =>
     await this.userService.leaveProject(workspaceSlug, projectId).then(() => {
-      const newPermissions: { [projectId: string]: boolean } = {};
-      newPermissions[projectId] = false;
-      runInAction(() => {
-        this.hasPermissionToProject = {
-          ...this.hasPermissionToProject,
-          ...newPermissions,
-        };
-      });
+      // remove the user membership for a project
+      set(this.hasPermissionToProject, [projectId], false);
+      // update the project member list with the new permissions
+      set(this.store.projectRoot.project.projectMap, [projectId, "is_member"], false);
     });
 
   /**

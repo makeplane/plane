@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // ui
 import { Loader } from "@plane/ui";
+// components
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
@@ -44,15 +46,13 @@ export const ProjectSettingsSidebar = () => {
             (link) =>
               projectMemberInfo >= link.access && (
                 <Link key={link.key} href={`/${workspaceSlug}/projects/${projectId}${link.href}`}>
-                  <div
-                    className={`rounded-md px-4 py-2 text-sm font-medium ${
-                      link.highlight(pathname, `/${workspaceSlug}/projects/${projectId}`)
-                        ? "bg-custom-primary-100/10 text-custom-primary-100"
-                        : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                    }`}
+                  <SidebarNavItem
+                    key={link.key}
+                    isActive={link.highlight(pathname, `/${workspaceSlug}/projects/${projectId}`)}
+                    className="text-sm font-medium px-4 py-2"
                   >
                     {link.label}
-                  </div>
+                  </SidebarNavItem>
                 </Link>
               )
           )}

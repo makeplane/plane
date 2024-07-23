@@ -2,7 +2,7 @@ import { FC, Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ICycle, TCyclePlotType } from "@plane/types";
-import { CustomSelect, Spinner } from "@plane/ui";
+import { CustomSelect, Loader, Spinner } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { EmptyState } from "@/components/empty-state";
@@ -15,7 +15,7 @@ import { EEstimateSystem } from "@/plane-web/constants/estimates";
 export type ActiveCycleProductivityProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: ICycle | null;
 };
 
 const cycleBurnDownChartOptions = [
@@ -51,10 +51,11 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
 
-  const chartDistributionData = plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
+  const chartDistributionData =
+    cycle && plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
-  return (
+  return cycle ? (
     <div className="flex flex-col justify-center min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="relative flex items-center justify-between gap-4 -mt-7">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
@@ -135,5 +136,9 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         )}
       </Link>
     </div>
+  ) : (
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+      <Loader.Item width="100%" height="100%" />
+    </Loader>
   );
 });
