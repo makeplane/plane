@@ -110,9 +110,9 @@ class WorkspaceViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    def retrieve(self, request, slug, project_id, pk):
+    def retrieve(self, request, slug, pk):
         issue_view = (
-            self.get_queryset().filter(pk=pk, project_id=project_id).first()
+            self.get_queryset().filter(pk=pk).first()
         )
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
