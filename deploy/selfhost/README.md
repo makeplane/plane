@@ -424,9 +424,8 @@ When you want to restore the previously backed-up data, follow the instructions 
 
 ---
 
-
-
-## Upgrading from v0.13.2 to v0.14.x
+<details>
+   <summary><h2>Upgrading from v0.13.2 to v0.14.x</h2></summary>
 
 This is one time activity for users who are upgrading from v0.13.2 to v0.14.0
 
@@ -498,3 +497,4 @@ In case the suffixes are wrong or the mentioned volumes are not found, you will 
 In case of successful migration, it will be a silent exit without error.
 
 Now its time to restart v0.14.0 setup.
+</details>
