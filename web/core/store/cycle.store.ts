@@ -32,6 +32,8 @@ export interface ICycleStore {
   currentProjectDraftCycleIds: string[] | null;
   currentProjectActiveCycleId: string | null;
   currentProjectArchivedCycleIds: string[] | null;
+  currentProjectActiveCycle: ICycle | null;
+
   // computed actions
   getFilteredCycleIds: (projectId: string, sortByManual: boolean) => string[] | null;
   getFilteredCompletedCycleIds: (projectId: string) => string[] | null;
@@ -100,6 +102,8 @@ export class CycleStore implements ICycleStore {
       currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
       currentProjectArchivedCycleIds: computed,
+      currentProjectActiveCycle: computed,
+
       // actions
       setPlotType: action,
       fetchWorkspaceCycles: action,
@@ -208,7 +212,7 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.router.projectId;
     if (!projectId) return null;
-    const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
+    const activeCycle = Object.keys(this.cycleMap ?? {}).find(
       (cycleId) => this.cycleMap?.[cycleId]?.project_id === projectId
     );
     return activeCycle || null;
@@ -226,6 +230,12 @@ export class CycleStore implements ICycleStore {
     archivedCycles = sortBy(archivedCycles, [(c) => c.sort_order]);
     const archivedCycleIds = archivedCycles.map((c) => c.id);
     return archivedCycleIds;
+  }
+
+  get currentProjectActiveCycle() {
+    const projectId = this.rootStore.router.projectId;
+    if (!projectId && !this.currentProjectActiveCycleId) return null;
+    return this.cycleMap?.[this.currentProjectActiveCycleId!] ?? null;
   }
 
   /**
