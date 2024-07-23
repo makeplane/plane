@@ -37,6 +37,9 @@ export const SidebarUserMenu = observer(() => {
   const getHref = (link: any) =>
     `/${workspaceSlug}${link.href}${link.key === "your-work" ? `/${currentUser?.id}` : ""}`;
 
+  const currentUserPath = `/${workspaceSlug}/profile/${currentUser?.id}`;
+  const isCurrentUser = pathname.includes(currentUserPath);
+
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
       toggleSidebar();
@@ -73,7 +76,7 @@ export const SidebarUserMenu = observer(() => {
               <Link key={link.key} href={getHref(link)} onClick={() => handleLinkClick(link.key)}>
                 <SidebarNavItem
                   className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-                  isActive={link.highlight(pathname, `/${workspaceSlug}`)}
+                  isActive={link.key === "your-work" ? isCurrentUser : link.highlight(pathname, `/${workspaceSlug}`)}
                 >
                   <div className="flex items-center gap-1.5 py-[1px]">
                     <link.Icon className="size-4 flex-shrink-0" />
