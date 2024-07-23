@@ -34,14 +34,14 @@ export interface IProjectInboxStore {
   loader: TLoader;
   error: { message: string; status: "init-error" | "pagination-error" } | undefined;
   currentInboxProjectId: string;
-  filters: Record<string, Partial<TInboxIssueFilter>>;
-  sorting: Record<string, Partial<TInboxIssueSorting>>;
-  inboxFilters: Partial<TInboxIssueFilter>;
-  inboxSorting: Partial<TInboxIssueSorting>;
+  filtersMap: Record<string, Partial<TInboxIssueFilter>>; // projectId -> Partial<TInboxIssueFilter>
+  sortingMap: Record<string, Partial<TInboxIssueSorting>>; // projectId -> Partial<TInboxIssueSorting>
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   inboxIssueIds: string[];
   // computed
+  inboxFilters: Partial<TInboxIssueFilter>; // computed project inbox filters
+  inboxSorting: Partial<TInboxIssueSorting>; // computed project inbox sorting
   getAppliedFiltersCount: number;
   filteredInboxIssueIds: string[];
   // computed functions
@@ -78,8 +78,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   loader: TLoader = "init-loading";
   error: { message: string; status: "init-error" | "pagination-error" } | undefined = undefined;
   currentInboxProjectId: string = "";
-  filters: Record<string, Partial<TInboxIssueFilter>> = {};
-  sorting: Record<string, Partial<TInboxIssueSorting>> = {};
+  filtersMap: Record<string, Partial<TInboxIssueFilter>> = {};
+  sortingMap: Record<string, Partial<TInboxIssueSorting>> = {};
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
   inboxIssueIds: string[] = [];
@@ -92,8 +92,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
       loader: observable.ref,
       error: observable,
       currentInboxProjectId: observable.ref,
-      filters: observable,
-      sorting: observable,
+      filtersMap: observable,
+      sortingMap: observable,
       inboxIssuePaginationInfo: observable,
       inboxIssues: observable,
       inboxIssueIds: observable,
@@ -115,22 +115,28 @@ export class ProjectInboxStore implements IProjectInboxStore {
   }
 
   // computed
+  /**
+   * @description computed project inbox filters
+   */
   get inboxFilters() {
     const { projectId } = this.store.router;
     if (!projectId) return {} as TInboxIssueFilter;
-    return isEmpty(this.filters?.[projectId])
+    return isEmpty(this.filtersMap?.[projectId])
       ? this.currentTab === EInboxIssueCurrentTab.OPEN
         ? { status: [EInboxIssueStatus.PENDING] }
         : { status: [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE] }
-      : this.filters?.[projectId];
+      : this.filtersMap?.[projectId];
   }
 
+  /**
+   * @description computed project inbox sorting
+   */
   get inboxSorting() {
     const { projectId } = this.store.router;
     if (!projectId) return {} as TInboxIssueSorting;
-    return isEmpty(this.sorting?.[projectId])
+    return isEmpty(this.sortingMap?.[projectId])
       ? ({ order_by: "issue__created_at", sort_by: "desc" } as TInboxIssueSorting)
-      : this.sorting?.[projectId];
+      : this.sortingMap?.[projectId];
   }
 
   get getAppliedFiltersCount() {
@@ -251,7 +257,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) {
       runInAction(() => {
-        set(this.filters, [projectId, key], value);
+        set(this.filtersMap, [projectId, key], value);
         set(this, ["inboxIssuePaginationInfo"], undefined);
       });
       this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
@@ -262,7 +268,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     const { workspaceSlug, projectId } = this.store.router;
     if (workspaceSlug && projectId) {
       runInAction(() => {
-        set(this.sorting, [projectId, key], value);
+        set(this.sortingMap, [projectId, key], value);
         set(this, ["inboxIssuePaginationInfo"], undefined);
       });
       this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
