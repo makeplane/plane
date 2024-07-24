@@ -1,5 +1,6 @@
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+import {EUserWorkspaceRoles} from "@/constants/workspace";
 import type {
+  ICycle,
   IProjectMember,
   IUser,
   IUserLite,
@@ -46,7 +47,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: EUserWorkspaceRoles }[];
+  emails: {email: string; role: EUserWorkspaceRoles}[];
 }
 
 export type Properties = {
@@ -196,4 +197,26 @@ export interface IProductUpdateResponse {
     rocket: number;
     eyes: number;
   };
+}
+
+export interface IWorkspaceActiveCyclesResponse {
+  count: number;
+  extra_stats: null;
+  next_cursor: string;
+  next_page_results: boolean;
+  prev_cursor: string;
+  prev_page_results: boolean;
+  results: ICycle[];
+  total_pages: number;
+}
+
+export interface IWorkspaceProgressResponse {
+  completed_issues: number;
+  total_issues: number;
+  started_issues: number;
+  cancelled_issues: number;
+  unstarted_issues: number;
+}
+export interface IWorkspaceAnalyticsResponse {
+  completion_chart: any;
 }

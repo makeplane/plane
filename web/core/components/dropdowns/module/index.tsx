@@ -36,7 +36,7 @@ type Props = TDropdownProps & {
     | {
         multiple: true;
         onChange: (val: string[]) => void;
-        value: string[];
+        value: string[] | null;
       }
   );
 
@@ -139,7 +139,9 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     return (
       <>
         {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate text-left">{value ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate text-left">{value ? getModuleById(value)?.name : placeholder}</span>
+        )}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}

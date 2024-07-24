@@ -7,8 +7,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
 
 # Module imports
@@ -386,6 +384,8 @@ class IssueAttachment(ProjectBaseModel):
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
     )
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Issue Attachment"
@@ -578,9 +578,9 @@ class IssueSequence(ProjectBaseModel):
         Issue,
         on_delete=models.SET_NULL,
         related_name="issue_sequence",
-        null=True,
+        null=True,  # This is set to null because we want to keep the sequence even if the issue is deleted
     )
-    sequence = models.PositiveBigIntegerField(default=1)
+    sequence = models.PositiveBigIntegerField(default=1, db_index=True)
     deleted = models.BooleanField(default=False)
 
     class Meta:
