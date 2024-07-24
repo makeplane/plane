@@ -182,7 +182,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   }, [projectId]);
 
   useEffect(() => {
-    if (data?.description_html) setValue("description_html", data?.description_html);
+    if (data?.description_html) setValue<"description_html">("description_html", data?.description_html);
   }, [data?.description_html]);
 
   const issueName = watch("name");
@@ -202,7 +202,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       ? formData
       : {
           ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
-          project_id: getValues("project_id"),
+          project_id: getValues<"project_id">("project_id"),
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
         };
@@ -217,7 +217,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     reset({
       ...defaultValues,
       ...(isCreateMoreToggleEnabled ? { ...data } : {}),
-      project_id: getValues("project_id"),
+      project_id: getValues<"project_id">("project_id"),
       description_html: data?.description_html ?? "<p></p>",
     });
     editorRef?.current?.clearEditor();
@@ -327,7 +327,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           handleClose={() => setLabelModal(false)}
           projectId={projectId}
           onSuccess={(response) => {
-            setValue("label_ids", [...watch("label_ids"), response.id]);
+            setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
             handleFormChange();
           }}
         />

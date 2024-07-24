@@ -10,6 +10,8 @@ import { useEventTracker, useProject, useUser } from "@/hooks/store";
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 // plane web constants
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+// plane web hooks
+import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   workspaceSlug: string;
@@ -80,7 +82,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                         <h4 className="text-sm font-medium leading-5">{featureItem.title}</h4>
                         {featureItem.isPro && (
                           <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge />
+                            <UpgradeBadge
+                              flag={
+                                featureItem.property === "is_time_tracking_enabled"
+                                  ? E_FEATURE_FLAGS.ISSUE_WORKLOG
+                                  : undefined
+                              }
+                            />
                           </Tooltip>
                         )}
                       </div>

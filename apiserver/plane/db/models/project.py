@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-# Modeule imports
+# Module imports
 from plane.db.mixins import AuditModel
 
 # Module imports
