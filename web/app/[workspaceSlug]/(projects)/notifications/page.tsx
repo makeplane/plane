@@ -33,7 +33,7 @@ const WorkspaceDashboardPage = observer(() => {
   } = useUser();
   const { setPeekIssue } = useIssueDetail();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Notifications` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Inbox` : undefined;
   const { workspace_slug, project_id, issue_id, is_inbox_issue } =
     notificationLiteByNotificationId(currentSelectedNotificationId);
 
