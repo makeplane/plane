@@ -309,6 +309,11 @@ class IssueAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
+            # Refetch the issue
+            issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=serializer.data["id"]).first()
+            issue.created_at = request.data.get("created_at")
+            issue.save(update_fields=["created_at"])
+
 
             # Track the issue
             issue_activity.delay(

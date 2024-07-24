@@ -582,17 +582,18 @@ def create_issue_activity(
     issue_activities,
     epoch,
 ):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created the issue",
-            verb="created",
-            actor_id=actor_id,
-            epoch=epoch,
-        )
+    issue = Issue.objects.get(pk=issue_id)
+    issue_activity = IssueActivity.objects.create(
+        issue_id=issue_id,
+        project_id=project_id,
+        workspace_id=workspace_id,
+        comment="created the issue",
+        verb="created",
+        actor_id=actor_id,
+        epoch=epoch,
     )
+    issue_activity.created_at = issue.created_at
+    issue_activity.save(update_fields=["created_at"])
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
@@ -1717,12 +1718,16 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue" if inbox else "issue"
+                        else "inbox_issue"
+                        if inbox
+                        else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox if inbox else activity.issue_id
+                        else inbox
+                        if inbox
+                        else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(
