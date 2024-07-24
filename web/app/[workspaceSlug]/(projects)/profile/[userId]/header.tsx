@@ -6,44 +6,53 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
+import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
+import { ProfileIssuesFilter } from "@/components/profile";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useUser } from "@/hooks/store";
 
 type TUserProfileHeader = {
+  userProjectsData: IUserProfileProjectSegregation | undefined;
   type?: string | undefined;
+  showProfileIssuesFilter?: boolean;
 };
 
 export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
-  const { type = undefined } = props;
+  const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const {
     membership: { currentWorkspaceRole },
+    data: currentUser,
   } = useUser();
   // derived values
-  const AUTHORIZED_ROLES = [20, 15, 10];
+  const isAuthorized = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.VIEWER;
 
   if (!currentWorkspaceRole) return null;
 
-  const isAuthorized = AUTHORIZED_ROLES.includes(currentWorkspaceRole);
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
+
+  const userName = `${userProjectsData?.user_data?.first_name} ${userProjectsData?.user_data?.last_name}`;
+
+  const isCurrentUser = currentUser?.id === userId;
+
+  const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Activity`;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex w-full justify-between">
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink href="/profile" label="Activity Overview" />}
-            />
+            <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={breadcrumbLabel} disableTooltip />} />
           </Breadcrumbs>
+          <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div>
           <div className="flex gap-4 md:hidden">
             <CustomMenu
               maxHeight={"md"}

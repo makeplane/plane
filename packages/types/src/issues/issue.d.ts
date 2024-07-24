@@ -1,7 +1,7 @@
-import {TIssuePriorities} from "../issues";
-import {TIssueAttachment} from "./issue_attachment";
-import {TIssueLink} from "./issue_link";
-import {TIssueReaction} from "./issue_reaction";
+import { TIssuePriorities } from "../issues";
+import { TIssueAttachment } from "./issue_attachment";
+import { TIssueLink } from "./issue_link";
+import { TIssueReaction } from "./issue_reaction";
 
 // new issue structure types
 
