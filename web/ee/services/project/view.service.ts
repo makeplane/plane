@@ -9,7 +9,7 @@ export class ViewService extends CoreViewService {
   }
 
   async updateViewAccess(workspaceSlug: string, projectId: string, viewId: string, access: EViewAccess) {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/access/`, {
+    return await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/access/`, {
       access,
     }).catch((error) => {
       throw error?.response?.data;
@@ -17,52 +17,64 @@ export class ViewService extends CoreViewService {
   }
 
   async lockView(workspaceSlug: string, projectId: string, viewId: string) {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`).catch((error) => {
-      throw error?.response?.data;
-    });
-  }
-
-  async unLockView(workspaceSlug: string, projectId: string, viewId: string) {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`).catch(
+    return await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`).catch(
       (error) => {
         throw error?.response?.data;
       }
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getPublishDetails(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
-    return Promise.resolve({});
+  async unLockView(workspaceSlug: string, projectId: string, viewId: string) {
+    return await this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`).catch(
+      (error) => {
+        throw error?.response?.data;
+      }
+    );
   }
 
-  async publishView(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    workspaceSlug: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    projectId: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    viewId: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    data: TPublishViewSettings
-  ): Promise<any> {
-    return Promise.resolve();
+  async getPublishDetails(workspaceSlug: string, projectId: string, viewId: string) {
+    return await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/publish/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async publishView(workspaceSlug: string, projectId: string, viewId: string, data: TPublishViewSettings) {
+    return await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/publish/`, {
+      ...data,
+      view_props: {
+        list: true,
+        kanban: true,
+        calendar: true,
+        gantt: true,
+        spreadsheet: true,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async updatePublishedView(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     workspaceSlug: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     projectId: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     viewId: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     data: Partial<TPublishViewSettings>
-  ): Promise<void> {
-    return Promise.resolve();
+  ) {
+    return await this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/publish/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async unPublishView(workspaceSlug: string, projectId: string, viewId: string): Promise<void> {
-    return Promise.resolve();
+  async unPublishView(workspaceSlug: string, projectId: string, viewId: string) {
+    return await this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/publish/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 }

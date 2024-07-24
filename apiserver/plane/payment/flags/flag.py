@@ -6,10 +6,10 @@ class FeatureFlag(Enum):
     WORKSPACE_ACTIVE_CYCLES = "WORKSPACE_ACTIVE_CYCLES"
     # Bulk operations on issues
     BULK_OPS = "BULK_OPS"
+    # Publish Views
+    VIEW_PUBLISH = "VIEW_PUBLISH"
     # Make views public or private
     VIEW_ACCESS_PRIVATE = "VIEW_ACCESS_PRIVATE"
-    # View publish
-    VIEW_PUBLISH = "VIEW_PUBLISH"
     # View Locking and unlocking
     VIEW_LOCKING = "VIEW_LOCKING"
     # Workspace level pages
