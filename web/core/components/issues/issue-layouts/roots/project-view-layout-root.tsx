@@ -29,7 +29,7 @@ const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undef
     case EIssueLayoutTypes.CALENDAR:
       return <ProjectViewCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot />;
+      return <BaseGanttRoot viewId={props.viewId} />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ProjectViewSpreadsheetLayout />;
     default:
