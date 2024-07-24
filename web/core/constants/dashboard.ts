@@ -294,7 +294,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
 ];
 
 type TLinkOptions = {
-  id: string | undefined;
+  userId: string | undefined;
 };
 
 export const SIDEBAR_USER_MENU_ITEMS: {
@@ -319,7 +319,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     href: "/profile",
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
-      options?.id ? pathname.includes(`${baseUrl}/profile/${options?.id}`) : false,
+      options?.userId ? pathname.includes(`${baseUrl}/profile/${options?.userId}`) : false,
     Icon: UserActivityIcon,
   },
   {
