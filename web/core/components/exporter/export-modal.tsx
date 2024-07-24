@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import intersection from "lodash/intersection";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
@@ -9,11 +10,10 @@ import { IUser, IImporterService } from "@plane/types";
 // ui
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";
-
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -35,8 +35,13 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();
+  const { projectsWithCreatePermissions } = useUser();
 
-  const options = workspaceProjectIds?.map((projectId) => {
+  const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
+    ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
+    : [];
+
+  const options = wsProjectIdsWithCreatePermisisons?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
 
     return {
