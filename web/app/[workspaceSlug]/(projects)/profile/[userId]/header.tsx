@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs, CustomMenu } from "@plane/ui";
+import { Breadcrumbs, CustomMenu, UserActivityIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
 import { ProfileIssuesFilter } from "@/components/profile";
@@ -53,9 +53,11 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <div className="flex items-center gap-1 text-sm font-medium text-custom-text-100">
-                  {breadcrumbLabel}
-                </div>
+                <BreadcrumbLink
+                  label={breadcrumbLabel}
+                  disableTooltip
+                  icon={<UserActivityIcon className="h-4 w-4 text-custom-text-100" />}
+                />
               }
             />
           </Breadcrumbs>
