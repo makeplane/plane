@@ -42,7 +42,7 @@ export type TBaseIssue = {
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
-  parent?: Partial<TIssue>;
+  parent?: partial<TIssue>;
   issue_reactions?: TIssueReaction[];
   issue_attachment?: TIssueAttachment[];
   issue_link?: TIssueLink[];
@@ -91,6 +91,9 @@ export type TBulkIssueProperties = Pick<
   | "assignee_ids"
   | "start_date"
   | "target_date"
+  | "module_ids"
+  | "cycle_id"
+  | "estimate_point"
 >;
 
 export type TBulkOperationsPayload = {
