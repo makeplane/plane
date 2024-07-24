@@ -56,7 +56,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                 <BreadcrumbLink
                   label={breadcrumbLabel}
                   disableTooltip
-                  icon={<UserActivityIcon className="h-4 w-4 text-custom-text-100" />}
+                  icon={<UserActivityIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
