@@ -12,6 +12,7 @@ import { BreadcrumbLink } from "@/components/common";
 // components
 import { ProfileIssuesFilter } from "@/components/profile";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useUser } from "@/hooks/store";
 
@@ -32,11 +33,10 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
     data: currentUser,
   } = useUser();
   // derived values
-  const AUTHORIZED_ROLES = [20, 15, 10];
+  const isAuthorized = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.VIEWER;
 
   if (!currentWorkspaceRole) return null;
 
-  const isAuthorized = AUTHORIZED_ROLES.includes(currentWorkspaceRole);
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 
   const userName = `${userProjectsData?.user_data?.first_name} ${userProjectsData?.user_data?.last_name}`;
