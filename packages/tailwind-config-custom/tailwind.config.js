@@ -270,7 +270,7 @@ module.exports = {
             "--tw-prose-headings": convertToRGB("--color-text-100"),
             "--tw-prose-lead": convertToRGB("--color-text-100"),
             "--tw-prose-links": convertToRGB("--color-primary-100"),
-            "--tw-prose-bold": convertToRGB("--color-text-100"),
+            "--tw-prose-bold": "inherit",
             "--tw-prose-counters": convertToRGB("--color-text-100"),
             "--tw-prose-bullets": convertToRGB("--color-text-100"),
             "--tw-prose-hr": convertToRGB("--color-text-100"),

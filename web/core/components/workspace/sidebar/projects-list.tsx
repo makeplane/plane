@@ -304,7 +304,12 @@ export const SidebarProjectsList: FC = observer(() => {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md"
+            className={cn(
+              `w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md`,
+              {
+                "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
+              }
+            )}
             onClick={() => {
               setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
