@@ -1,7 +1,7 @@
-import { TIssuePriorities } from "../issues";
-import { TIssueAttachment } from "./issue_attachment";
-import { TIssueLink } from "./issue_link";
-import { TIssueReaction } from "./issue_reaction";
+import {TIssuePriorities} from "../issues";
+import {TIssueAttachment} from "./issue_attachment";
+import {TIssueLink} from "./issue_link";
+import {TIssueReaction} from "./issue_reaction";
 
 // new issue structure types
 
@@ -42,13 +42,10 @@ export type TBaseIssue = {
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
-
-  parent?: partial<TIssue>;
-
+  parent?: Partial<TIssue>;
   issue_reactions?: TIssueReaction[];
   issue_attachment?: TIssueAttachment[];
   issue_link?: TIssueLink[];
-
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
 };
@@ -94,6 +91,9 @@ export type TBulkIssueProperties = Pick<
   | "assignee_ids"
   | "start_date"
   | "target_date"
+  | "module_ids"
+  | "cycle_id"
+  | "estimate_point"
 >;
 
 export type TBulkOperationsPayload = {
