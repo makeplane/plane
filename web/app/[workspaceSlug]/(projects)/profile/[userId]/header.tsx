@@ -43,14 +43,21 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
 
   const isCurrentUser = currentUser?.id === userId;
 
-  const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Activity`;
+  const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Work`;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex w-full justify-between">
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={breadcrumbLabel} disableTooltip />} />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <div className="flex items-center gap-1 text-sm font-medium text-custom-text-100">
+                  {breadcrumbLabel}
+                </div>
+              }
+            />
           </Breadcrumbs>
           <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div>
           <div className="flex gap-4 md:hidden">
