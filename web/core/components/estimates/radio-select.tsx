@@ -62,7 +62,7 @@ export const RadioInput = ({
               id={`${name}_${index}`}
               name={name}
               className={cn(
-                `group flex size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 cursor-pointer`,
+                `group flex flex-shrink-0 size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 cursor-pointer`,
                 selected === value ? `bg-custom-primary-200 border-custom-primary-100 ` : ``,
                 disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
                 inputButtonClassName

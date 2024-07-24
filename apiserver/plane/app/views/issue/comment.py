@@ -22,7 +22,7 @@ from plane.db.models import (
     ProjectMember,
     CommentReaction,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueCommentViewSet(BaseViewSet):
