@@ -29,7 +29,8 @@ export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
           >
             <div className="h-full flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-              {`${labels.length} Labels`}
+              <span>{labels.length}</span>
+              <span> Labels</span>
             </div>
           </Tooltip>
         </>
