@@ -91,7 +91,8 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     );
   };
 
-  const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
+  // add a placeholder object instead of appliedFilters if it is undefined
+  const areFiltersEqual = getAreFiltersEqual(appliedFilters ?? {}, issueFilters, viewDetails);
   const viewFilters = {
     filters: cloneDeep(appliedFilters ?? {}),
     display_filters: cloneDeep(issueFilters?.displayFilters),
