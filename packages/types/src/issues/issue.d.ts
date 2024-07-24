@@ -42,7 +42,7 @@ export type TBaseIssue = {
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
-  parent?: partial<TIssue>;
+  parent?: Partial<TBaseIssue>;
   issue_reactions?: TIssueReaction[];
   issue_attachment?: TIssueAttachment[];
   issue_link?: TIssueLink[];
