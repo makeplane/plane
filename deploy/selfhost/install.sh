@@ -53,33 +53,120 @@ function spinner() {
 function initialize(){
     printf "Please wait while we check the availability of Docker images for the selected release ($APP_RELEASE) with ${CPU_ARCH^^} support." >&2
 
-    # local IMAGE_NAME=makeplane/plane-proxy
-    # local IMAGE_TAG=${APP_RELEASE}
-    # docker manifest inspect ${IMAGE_NAME}:${IMAGE_TAG} | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
-    # local pid=$!
-    # spinner $pid
+    if [ "$CUSTOM_BUILD" == "true" ]; then
+        echo "" >&2
+        echo "" >&2
+        echo "${CPU_ARCH^^} images are not available for selected release ($APP_RELEASE)." >&2
+        echo "build"
+        return 1
+    fi
+
+    local IMAGE_NAME=makeplane/plane-proxy
+    local IMAGE_TAG=${APP_RELEASE}
+    docker manifest inspect ${IMAGE_NAME}:${IMAGE_TAG} | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
+    local pid=$!
+    spinner $pid
     
-    # echo "" >&2
+    echo "" >&2
 
-    # wait $pid
+    wait $pid
 
-
-    # if [ $? -eq 0 ]; then
-    #     echo "Plane supports ${CPU_ARCH}" >&2
-    #     echo "available"
-    #     return 0
-    # else
+    if [ $? -eq 0 ]; then
+        echo "Plane supports ${CPU_ARCH}" >&2
+        echo "available"
+        return 0
+    else
         echo "" >&2
         echo "" >&2
-        echo "${CPU_ARCH^^} images are not available for selected release ($APP_RELEASE). Please use the 'Build Your Own Image' option to build the images locally." >&2
+        echo "${CPU_ARCH^^} images are not available for selected release ($APP_RELEASE)." >&2
         echo "" >&2
         echo "build"
         return 1
-    # fi
+    fi
+}
+function getEnvValue() {
+    local key=$1
+    local file=$2
+
+    if [ -z "$key" ] || [ -z "$file" ]; then
+        echo "Invalid arguments supplied"
+        exit 1
+    fi
+
+    if [ -f "$file" ]; then
+        grep -q "^$key=" $file
+        if [ $? -eq 0 ]; then
+            local value=$(grep "^$key=" $file | cut -d'=' -f2)
+            echo $value
+        else
+            echo ""
+        fi
+    fi
+}
+function updateEnvFile() {
+    local key=$1
+    local value=$2
+    local file=$3
+
+    if [ -z "$key" ] || [ -z "$value" ] || [ -z "$file" ]; then
+        echo "Invalid arguments supplied"
+        exit 1
+    fi
+
+    if [ -f "$file" ]; then
+        # check if key exists in the file
+        grep -q "^$key=" $file
+        if [ $? -ne 0 ]; then
+            echo "$key=$value" >> $file
+            return
+        else 
+            # if key exists, update the value
+            sed -i "s/^$key=.*/$key=$value/g" $file
+        fi
+    else
+        echo "File not found: $file"
+        exit 1
+    fi
+}
+
+function updateCustomVariables(){
+    echo "Updating custom variables..." >&2
+    updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" $DOCKER_ENV_PATH
+    updateEnvFile "APP_RELEASE" "$APP_RELEASE" $DOCKER_ENV_PATH
+    updateEnvFile "PULL_POLICY" "$PULL_POLICY" $DOCKER_ENV_PATH
+    updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" $DOCKER_ENV_PATH
+    echo "Custom variables updated successfully" >&2
+}
+
+function syncEnvFile(){
+    echo "Syncing environment variables..." >&2
+    if [ -f "$PLANE_INSTALL_DIR/plane.env.bak" ]; then
+        updateCustomVariables
+        
+        # READ keys of plane.env and update the values from plane.env.bak
+        while IFS= read -r line
+        do
+            # ignore is the line is empty or starts with #
+            if [ -z "$line" ] || [[ $line == \#* ]]; then
+                continue
+            fi
+            key=$(echo $line | cut -d'=' -f1)
+            value=$(getEnvValue $key $PLANE_INSTALL_DIR/plane.env.bak)
+            if [ -n "$value" ]; then
+                updateEnvFile $key "$value" $DOCKER_ENV_PATH
+            fi
+        done < $DOCKER_ENV_PATH
+    fi
+    echo "Environment variables synced successfully" >&2
 }
 
 function buildYourOwnImage(){
     echo "Building images locally..."
+
+    export DOCKERHUB_USER="myplane"
+    export APP_RELEASE="local"
+    export PULL_POLICY="never"
+    CUSTOM_BUILD="true"
 
     # checkout the code to ~/tmp/plane folder and build the images
     local PLANE_TEMP_CODE_DIR=~/tmp/plane
@@ -91,12 +178,6 @@ function buildYourOwnImage(){
     cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
 
     cd $PLANE_TEMP_CODE_DIR
-    if [ "$BRANCH" == "master" ];
-    then
-        export APP_RELEASE=stable
-    fi
-
-    export DOCKERHUB_USER=myplane
 
     /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
     if [ $? -ne 0 ]; then
@@ -124,11 +205,16 @@ function install() {
             exit 0
         fi
     fi
-    download $build_image
+
+    if [ "$build_image" == "build" ]; then
+        download "true"
+    else
+        download "false"
+    fi
 }
 
 function download() {
-    local build_image=$1
+    local LOCAL_BUILD=$1
     cd $SCRIPT_DIR
     TS=$(date +%s)
     if [ -f "$PLANE_INSTALL_DIR/docker-compose.yaml" ]
@@ -142,19 +228,37 @@ function download() {
     if [ -f "$DOCKER_ENV_PATH" ];
     then
         cp $DOCKER_ENV_PATH $PLANE_INSTALL_DIR/archive/$TS.env
-    else
-        mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
+        cp $DOCKER_ENV_PATH $PLANE_INSTALL_DIR/plane.env.bak
     fi
 
-    if [ "$build_image" == "build" ]; then
+    mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
+
+    syncEnvFile
+
+    if [ "$LOCAL_BUILD" == "true" ]; then
+        export DOCKERHUB_USER="myplane"
+        export APP_RELEASE="local"
+        export PULL_POLICY="never"
+        CUSTOM_BUILD="true"
+
         buildYourOwnImage
+
         if [ $? -ne 0 ]; then
             echo ""
             echo "Build failed. Exiting..."
             exit 1
         fi
+        updateCustomVariables
     else
-        /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull --policy $PULL_POLICY"
+        CUSTOM_BUILD="false"
+        updateCustomVariables
+        /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull --policy always"
+
+        if [ $? -ne 0 ]; then
+            echo ""
+            echo "Failed to pull the images. Exiting..."
+            exit 1
+        fi
     fi
     
     echo ""
@@ -226,7 +330,7 @@ function upgrade() {
 
     echo
     echo "***** DOWNLOADING STABLE VERSION ****"
-    download
+    install
 
     echo "***** PLEASE VALIDATE AND START SERVICES ****"
 }
@@ -352,7 +456,7 @@ function askForAction() {
     then
         echo
         echo "Select a Action you want to perform:"
-        echo "   1) Install / Build Your Own Image"
+        echo "   1) Install"
         echo "   2) Start"
         echo "   3) Stop"
         echo "   4) Restart"
@@ -423,5 +527,32 @@ elif [ "$CPU_ARCH" == "aarch64" ] || [ "$CPU_ARCH" == "arm64" ]; then
     CPU_ARCH="arm64"
 fi
 
+if [ -f "$DOCKER_ENV_PATH" ]; then
+    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" $DOCKER_ENV_PATH)
+    APP_RELEASE=$(getEnvValue "APP_RELEASE" $DOCKER_ENV_PATH)
+    PULL_POLICY=$(getEnvValue "PULL_POLICY" $DOCKER_ENV_PATH)
+    CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" $DOCKER_ENV_PATH)
+
+    if [ -z "$DOCKERHUB_USER" ]; then
+        DOCKERHUB_USER=makeplane
+        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" $DOCKER_ENV_PATH
+    fi
+
+    if [ -z "$APP_RELEASE" ]; then
+        APP_RELEASE=stable
+        updateEnvFile "APP_RELEASE" "$APP_RELEASE" $DOCKER_ENV_PATH
+    fi
+
+    if [ -z "$PULL_POLICY" ]; then
+        PULL_POLICY=if_not_present
+        updateEnvFile "PULL_POLICY" "$PULL_POLICY" $DOCKER_ENV_PATH
+    fi
+
+    if [ -z "$CUSTOM_BUILD" ]; then
+        CUSTOM_BUILD=false
+        updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" $DOCKER_ENV_PATH
+    fi
+fi
+
 print_header
-askForAction $@
+askForAction "$@"
