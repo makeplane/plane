@@ -15,51 +15,35 @@ class ProjectFavoriteLiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = [
-            "id",
-            "name",
-            "logo_props",
-        ]
+        fields = ["id", "name", "logo_props", "project_id"]
 
 
 class PageFavoriteLiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = [
-            "id",
-            "name",
-            "logo_props",
-        ]
+        fields = ["id", "name", "logo_props", "project_id"]
 
 
 class CycleFavoriteLiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cycle
-        fields = [
-            "id",
-            "name",
-            "logo_props",
-        ]
+        fields = ["id", "name", "logo_props", "project_id"]
 
 
 class ModuleFavoriteLiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Module
-        fields = [
-            "id",
-            "name",
-            "logo_props",
-        ]
+        fields = ["id", "name", "logo_props", "project_id"]
 
 
 class ViewFavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IssueView
-        fields = ["id", "name", "logo_props"]
+        fields = ["id", "name", "logo_props", "project_id"]
 
 
 def get_entity_model_and_serializer(entity_type):
