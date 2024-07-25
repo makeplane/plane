@@ -89,7 +89,7 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
             className="w-full rounded-r-none"
             autoFocus
             min={0}
-            step={0.25}
+            step="any"
           />
           {/* minutes */}
           <Input
