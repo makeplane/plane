@@ -12,7 +12,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
   // chart hook
 
   return (
-    <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
+    <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2 justify-end">
       <button type="button" className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80" onClick={handleToday}>
         Today
       </button>
