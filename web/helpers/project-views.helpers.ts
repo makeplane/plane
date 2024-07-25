@@ -2,6 +2,7 @@ import isNil from "lodash/isNil";
 import orderBy from "lodash/orderBy";
 import { IProjectView, TViewFilterProps, TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 import { getDate } from "@/helpers/date-time.helper";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "./common.helper";
 import { satisfiesDateFilter } from "./filter.helper";
 
 /**
@@ -87,4 +88,16 @@ export const getValidatedViewFilters = (data: Partial<IProjectView>) => {
   }
 
   return data;
+};
+
+/**
+ * returns published view link
+ * @param anchor
+ * @returns
+ */
+export const getPublishViewLink = (anchor: string | undefined) => {
+  if (!anchor) return;
+
+  const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
+  return `${SPACE_APP_URL}/views/${anchor}`;
 };
