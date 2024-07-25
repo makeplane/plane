@@ -155,7 +155,7 @@ function syncEnvFile(){
             if [ -z "$line" ] || [[ $line == \#* ]]; then
                 continue
             fi
-            key=$(echo $line | cut -d'=' -f1)
+            key=$(echo "$line" | cut -d'=' -f1)
             value=$(getEnvValue "$key" "$PLANE_INSTALL_DIR/plane.env.bak")
             if [ -n "$value" ]; then
                 updateEnvFile "$key" "$value" "$DOCKER_ENV_PATH"
