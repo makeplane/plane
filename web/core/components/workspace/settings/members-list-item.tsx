@@ -5,8 +5,9 @@ import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 // ui
 import { IWorkspaceMember } from "@plane/types";
-import { Loader, TOAST_TYPE, Table, setToast } from "@plane/ui";
+import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
+import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
 import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
@@ -80,14 +81,10 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   // 2. only admin or member can change role
   // 3. user cannot change role of higher role
 
-  if (isEmpty(columns))
-    return (
-      <Loader className="w-full">
-        <Loader.Item width="100%" height="200px" />
-      </Loader>
-    );
+  if (isEmpty(columns)) return <MembersLayoutLoader />;
+
   return (
-    <>
+    <div className="border-t border-custom-border-100">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}
@@ -100,7 +97,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         />
       )}
       <Table
-        columns={columns}
+        columns={columns ?? []}
         data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-custom-border-100"
@@ -109,6 +106,6 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         tBodyTrClassName="divide-x-0"
         tHeadTrClassName="divide-x-0"
       />
-    </>
+    </div>
   );
 });
