@@ -7,15 +7,16 @@ type Props = {
   id: string;
 };
 
+const getImageElement = (editorId: string): HTMLImageElement | null =>
+  document.querySelector(`#editor-container-${editorId}.active-editor .ProseMirror-selectednode`);
+
 export const ImageResizer = (props: Props) => {
   const { editor, id } = props;
   // states
   const [aspectRatio, setAspectRatio] = useState(1);
 
   const updateMediaSize = () => {
-    const imageElement = document.querySelector(
-      `#editor-container-${id}.active-editor .ProseMirror-seclectednode`
-    ) as HTMLImageElement;
+    const imageElement = getImageElement(id);
 
     if (!imageElement) return;
 
@@ -39,7 +40,7 @@ export const ImageResizer = (props: Props) => {
 
   return (
     <Moveable
-      target={document.querySelector(`#editor-container-${id}.active-editor .ProseMirror-selectednode`) as HTMLElement}
+      target={getImageElement(id)}
       container={null}
       origin={false}
       edge={false}
@@ -48,9 +49,7 @@ export const ImageResizer = (props: Props) => {
       resizable
       throttleResize={0}
       onResizeStart={() => {
-        const imageElement = document.querySelector(
-          `#editor-container-${id}.active-editor .ProseMirror-selectednode`
-        ) as HTMLImageElement;
+        const imageElement = getImageElement(id);
         if (imageElement) {
           const originalWidth = Number(imageElement.width);
           const originalHeight = Number(imageElement.height);
