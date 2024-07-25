@@ -100,7 +100,8 @@ function getEnvValue() {
     if [ -f "$file" ]; then
         grep -q "^$key=" "$file"
         if [ $? -eq 0 ]; then
-            local value=$(grep "^$key=" "$file" | cut -d'=' -f2)
+            local value
+            value=$(grep "^$key=" "$file" | cut -d'=' -f2)
             echo "$value"
         else
             echo ""
