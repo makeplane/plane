@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
 import { ExternalLink, Globe2 } from "lucide-react";
 // types
 import { IProjectView, TPublishViewSettings } from "@plane/types";
@@ -12,9 +13,10 @@ import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, ModalCore, EModalWi
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
-import { useProjectView } from "@/hooks/store";
-import useSWR from "swr";
 // hooks
+import { useProjectView } from "@/hooks/store";
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   isOpen: boolean;
@@ -36,10 +38,13 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { publishView, fetchPublishDetails, updatePublishedView, unPublishView } = useProjectView();
+  const isViewsPublishEnabled = useFlag("VIEW_PUBLISH");
   // derived values
   const { data: publishedViewSettings, isLoading } = useSWR(
     view?.anchor ? `PUBLISHED_VIEW_${view.id}` : null,
-    view?.anchor ? () => fetchPublishDetails(workspaceSlug.toString(), view.project, view.id) : null
+    view?.anchor && isViewsPublishEnabled
+      ? () => fetchPublishDetails(workspaceSlug.toString(), view.project, view.id)
+      : null
   );
   // form info
   const {
