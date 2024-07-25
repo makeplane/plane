@@ -53,7 +53,7 @@ export const IssueWorklogProperty: FC<TIssueWorklogProperty> = observer((props) 
         className={`flex items-center gap-1 flex-shrink-0 text-sm text-custom-text-300 ${isPeekOverview ? "w-1/4" : "w-2/5"}`}
       >
         <Timer className="h-4 w-4 flex-shrink-0" />
-        <span>Track time</span>
+        <span>Tracked time</span>
       </div>
       <div className="relative h-full min-h-8 w-full flex-grow flex items-center">
         <Popover

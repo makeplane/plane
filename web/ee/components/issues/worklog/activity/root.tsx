@@ -78,7 +78,7 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
         ) : (
           <>
             {currentUser?.member?.first_name
-              ? currentUser?.member?.first_name?.charAt(0)
+              ? currentUser?.member?.first_name.charAt(0)
               : currentUser?.member?.display_name?.charAt(0)}
           </>
         )}
@@ -90,13 +90,15 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
         <div className="w-full truncate relative flex ">
           <div className="w-full truncate space-y-1">
             <div>
-              <div className="text-xs capitalize">
+              <div className="text-xs">
                 <Link
                   href={`/${workspaceSlug}/profile/${currentUser?.member?.id}`}
-                  className="hover:underline text-custom-text-100 font-medium"
+                  className="hover:underline text-custom-text-100 font-medium capitalize"
                 >
                   {currentUser?.member?.display_name}
                 </Link>
+                <span className="text-custom-text-300 font-medium">{` logged `}</span>
+                <span className="text-custom-text-100 font-medium">{`${convertMinutesToHoursMinutesString(worklog?.duration || 0)}.`}</span>
               </div>
               {worklog.created_at && (
                 <span>
@@ -104,9 +106,7 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
                     isMobile={isMobile}
                     tooltipContent={`${renderFormattedDate(worklog.created_at)}, ${renderFormattedTime(worklog.created_at)}`}
                   >
-                    <div className="text-xs text-custom-text-200">
-                      {`logged ${convertMinutesToHoursMinutesString(worklog?.duration || 0)}. ${calculateTimeAgo(worklog.created_at)}`}
-                    </div>
+                    <div className="text-xs text-custom-text-200">{`${calculateTimeAgo(worklog.created_at)}`}</div>
                   </Tooltip>
                 </span>
               )}
