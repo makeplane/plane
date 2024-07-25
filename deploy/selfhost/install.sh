@@ -181,7 +181,7 @@ function buildYourOwnImage(){
 
     cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
 
-    cd "$PLANE_TEMP_CODE_DIR"
+    cd "$PLANE_TEMP_CODE_DIR" || exit
 
     /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
     if [ $? -ne 0 ]; then
