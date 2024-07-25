@@ -116,14 +116,14 @@ class WorkspaceViewViewSet(BaseViewSet):
             pk=pk,
             workspace__slug=slug,
         )
-        if (
+        if not (
             WorkspaceMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
-                role__in=[15, 10, 5],
+                role=20,
                 is_active=True,
             ).exists()
-            and workspace_view.owned_by != request.user
+            and workspace_view.owned_by_id != request.user.id
         ):
             return Response(
                 {"error": "You do not have permission to delete this view"},
@@ -434,7 +434,7 @@ class IssueViewViewSet(BaseViewSet):
                 role=20,
                 is_active=True,
             ).exists()
-            or project_view.owned_by == request.user
+            or project_view.owned_by_id == request.user.id
         ):
             project_view.delete()
         else:
