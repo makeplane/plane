@@ -40,7 +40,11 @@ function spinner() {
     local delay=.5
     local spinstr='|/-\'
 
-    while [ "$(ps a | awk '{print $1}' | grep -w $pid)" ]; do
+    if ! ps -p "$pid" > /dev/null; then  
+        echo "Invalid PID: $pid"  
+        return 1  
+    fi  
+    while ps -p "$pid" > /dev/null; do  
         local temp=${spinstr#?}
         printf " [%c]  " "$spinstr" >&2
         local spinstr=$temp${spinstr%"$temp"}
@@ -63,13 +67,13 @@ function initialize(){
 
     local IMAGE_NAME=makeplane/plane-proxy
     local IMAGE_TAG=${APP_RELEASE}
-    docker manifest inspect ${IMAGE_NAME}:${IMAGE_TAG} | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
+    docker manifest inspect "${IMAGE_NAME}:${IMAGE_TAG}" | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
     local pid=$!
-    spinner $pid
+    spinner "$pid"
     
     echo "" >&2
 
-    wait $pid
+    wait "$pid"
 
     if [ $? -eq 0 ]; then
         echo "Plane supports ${CPU_ARCH}" >&2
@@ -94,10 +98,10 @@ function getEnvValue() {
     fi
 
     if [ -f "$file" ]; then
-        grep -q "^$key=" $file
+        grep -q "^$key=" "$file"
         if [ $? -eq 0 ]; then
-            local value=$(grep "^$key=" $file | cut -d'=' -f2)
-            echo $value
+            local value=$(grep "^$key=" "$file" | cut -d'=' -f2)
+            echo "$value"
         else
             echo ""
         fi
@@ -115,13 +119,13 @@ function updateEnvFile() {
 
     if [ -f "$file" ]; then
         # check if key exists in the file
-        grep -q "^$key=" $file
+        grep -q "^$key=" "$file"
         if [ $? -ne 0 ]; then
-            echo "$key=$value" >> $file
+            echo "$key=$value" >> "$file"
             return
         else 
             # if key exists, update the value
-            sed -i "s/^$key=.*/$key=$value/g" $file
+            sed -i "s/^$key=.*/$key=$value/g" "$file"
         fi
     else
         echo "File not found: $file"
@@ -151,11 +155,11 @@ function syncEnvFile(){
                 continue
             fi
             key=$(echo $line | cut -d'=' -f1)
-            value=$(getEnvValue $key $PLANE_INSTALL_DIR/plane.env.bak)
+            value=$(getEnvValue "$key" "$PLANE_INSTALL_DIR/plane.env.bak")
             if [ -n "$value" ]; then
-                updateEnvFile $key "$value" $DOCKER_ENV_PATH
+                updateEnvFile "$key" "$value" "$DOCKER_ENV_PATH"
             fi
-        done < $DOCKER_ENV_PATH
+        done < "$DOCKER_ENV_PATH"
     fi
     echo "Environment variables synced successfully" >&2
 }
@@ -173,11 +177,11 @@ function buildYourOwnImage(){
     rm -rf $PLANE_TEMP_CODE_DIR
     mkdir -p $PLANE_TEMP_CODE_DIR
     REPO=https://github.com/makeplane/plane.git
-    git clone $REPO $PLANE_TEMP_CODE_DIR  --branch $BRANCH --single-branch --depth 1
+    git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
-    cp $PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml $PLANE_TEMP_CODE_DIR/build.yml
+    cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
 
-    cd $PLANE_TEMP_CODE_DIR
+    cd "$PLANE_TEMP_CODE_DIR"
 
     /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
     if [ $? -ne 0 ]; then
@@ -227,8 +231,8 @@ function download() {
 
     if [ -f "$DOCKER_ENV_PATH" ];
     then
-        cp "$DOCKER_ENV_PATH" $PLANE_INSTALL_DIR/archive/$TS.env
-        cp "$DOCKER_ENV_PATH" $PLANE_INSTALL_DIR/plane.env.bak
+        cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/archive/$TS.env"
+        cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/plane.env.bak"
     fi
 
     mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
