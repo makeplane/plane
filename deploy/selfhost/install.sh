@@ -500,7 +500,7 @@ function askForAction() {
         # askForAction
     elif [ "$ACTION" == "6" ]  || [ "$DEFAULT_ACTION" == "logs" ];
     then
-        viewLogs $@
+        viewLogs "$@"
         askForAction
     elif [ "$ACTION" == "7" ]  || [ "$DEFAULT_ACTION" == "backup" ];
     then
