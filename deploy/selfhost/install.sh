@@ -8,10 +8,6 @@ export APP_RELEASE="stable"
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
 
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
 CPU_ARCH=$(uname -m)
 
 mkdir -p $PLANE_INSTALL_DIR/archive
