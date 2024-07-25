@@ -131,10 +131,10 @@ function updateEnvFile() {
 
 function updateCustomVariables(){
     echo "Updating custom variables..." >&2
-    updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" $DOCKER_ENV_PATH
-    updateEnvFile "APP_RELEASE" "$APP_RELEASE" $DOCKER_ENV_PATH
-    updateEnvFile "PULL_POLICY" "$PULL_POLICY" $DOCKER_ENV_PATH
-    updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" $DOCKER_ENV_PATH
+    updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
+    updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
+    updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
+    updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
     echo "Custom variables updated successfully" >&2
 }
 
@@ -227,8 +227,8 @@ function download() {
 
     if [ -f "$DOCKER_ENV_PATH" ];
     then
-        cp $DOCKER_ENV_PATH $PLANE_INSTALL_DIR/archive/$TS.env
-        cp $DOCKER_ENV_PATH $PLANE_INSTALL_DIR/plane.env.bak
+        cp "$DOCKER_ENV_PATH" $PLANE_INSTALL_DIR/archive/$TS.env
+        cp "$DOCKER_ENV_PATH" $PLANE_INSTALL_DIR/plane.env.bak
     fi
 
     mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
@@ -528,29 +528,29 @@ elif [ "$CPU_ARCH" == "aarch64" ] || [ "$CPU_ARCH" == "arm64" ]; then
 fi
 
 if [ -f "$DOCKER_ENV_PATH" ]; then
-    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" $DOCKER_ENV_PATH)
-    APP_RELEASE=$(getEnvValue "APP_RELEASE" $DOCKER_ENV_PATH)
-    PULL_POLICY=$(getEnvValue "PULL_POLICY" $DOCKER_ENV_PATH)
-    CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" $DOCKER_ENV_PATH)
+    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
+    APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
+    PULL_POLICY=$(getEnvValue "PULL_POLICY" "$DOCKER_ENV_PATH")
+    CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" "$DOCKER_ENV_PATH")
 
     if [ -z "$DOCKERHUB_USER" ]; then
         DOCKERHUB_USER=makeplane
-        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" $DOCKER_ENV_PATH
+        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
     fi
 
     if [ -z "$APP_RELEASE" ]; then
         APP_RELEASE=stable
-        updateEnvFile "APP_RELEASE" "$APP_RELEASE" $DOCKER_ENV_PATH
+        updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     fi
 
     if [ -z "$PULL_POLICY" ]; then
         PULL_POLICY=if_not_present
-        updateEnvFile "PULL_POLICY" "$PULL_POLICY" $DOCKER_ENV_PATH
+        updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
     fi
 
     if [ -z "$CUSTOM_BUILD" ]; then
         CUSTOM_BUILD=false
-        updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" $DOCKER_ENV_PATH
+        updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
     fi
 fi
 
