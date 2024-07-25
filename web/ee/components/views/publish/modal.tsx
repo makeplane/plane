@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { ExternalLink, Globe2 } from "lucide-react";
 // types
-import { IProjectView, TProjectPublishSettings, TPublishViewSettings } from "@plane/types";
+import { IProjectView, TPublishViewSettings } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
@@ -55,7 +55,7 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
     onClose();
   };
 
-  const handlePublishProject = async (payload: TPublishViewSettings) => {
+  const handlePublishView = async (payload: TPublishViewSettings) => {
     if (!workspaceSlug || !view) return;
     await publishView(workspaceSlug.toString(), view.project, view.id, payload);
   };
@@ -75,7 +75,7 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleUnPublishProject = async () => {
+  const handleUnPublishView = async () => {
     if (!workspaceSlug || !view) return;
 
     setIsUnPublishing(true);
@@ -91,7 +91,7 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
       .finally(() => setIsUnPublishing(false));
   };
 
-  const handleFormSubmit = async (formData: Partial<TProjectPublishSettings>) => {
+  const handleFormSubmit = async (formData: Partial<TPublishViewSettings>) => {
     const payload: TPublishViewSettings = {
       is_comments_enabled: !!formData.is_comments_enabled,
       is_reactions_enabled: !!formData.is_reactions_enabled,
@@ -99,10 +99,10 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
     };
 
     if (view.anchor) await handleUpdatePublishSettings(payload);
-    else await handlePublishProject(payload);
+    else await handlePublishView(payload);
   };
 
-  // prefill form values for already published projects
+  // prefill form values for already published views
   useEffect(() => {
     if (!publishedViewSettings?.anchor) return;
 
@@ -128,9 +128,9 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish project</h5>
+          <h5 className="text-xl font-medium text-custom-text-200">Publish views</h5>
           {view.anchor && (
-            <Button variant="danger" onClick={() => handleUnPublishProject()} loading={isUnPublishing}>
+            <Button variant="danger" onClick={() => handleUnPublishView()} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
           )}

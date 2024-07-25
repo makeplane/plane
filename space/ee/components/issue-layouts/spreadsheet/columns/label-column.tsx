@@ -14,7 +14,9 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
 
   return (
     <div className="flex items-center h-11 border-b-[0.5px] border-custom-border-200 pl-2">
-      <IssueBlockLabels labelIds={issue.label_ids} shouldShowLabel />
+      <div className="flex items-center h-5">
+        <IssueBlockLabels labelIds={issue.label_ids} shouldShowLabel />
+      </div>
     </div>
   );
 });
