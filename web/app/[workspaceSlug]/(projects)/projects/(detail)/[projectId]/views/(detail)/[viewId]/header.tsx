@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Earth, Layers, Lock } from "lucide-react";
+import { Layers, Lock } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -23,6 +23,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
+import { getPublishViewLink } from "@/helpers/project-views.helpers";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -132,6 +133,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const publishLink = getPublishViewLink(viewDetails?.anchor);
 
   return (
     <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -206,11 +208,25 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           />
         </Breadcrumbs>
 
-        <div className="cursor-default text-custom-text-300">
-          <Tooltip tooltipContent={viewDetails?.access === EViewAccess.PUBLIC ? "Public" : "Private"}>
-            {viewDetails?.access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-          </Tooltip>
-        </div>
+        {viewDetails?.access === EViewAccess.PRIVATE && (
+          <div className="cursor-default text-custom-text-300">
+            <Tooltip tooltipContent={"Private"}>
+              <Lock className="h-4 w-4" />
+            </Tooltip>
+          </div>
+        )}
+
+        {viewDetails?.anchor && publishLink && (
+          <a
+            href={publishLink}
+            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+            Live
+          </a>
+        )}
       </div>
       <div className="flex items-center gap-2">
         {!viewDetails?.is_locked && (
