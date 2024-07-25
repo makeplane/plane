@@ -15,7 +15,7 @@ class ProjectFavoriteLiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ["id", "name", "logo_props", "project_id"]
+        fields = ["id", "name", "logo_props"]
 
 
 class PageFavoriteLiteSerializer(serializers.ModelSerializer):
