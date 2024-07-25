@@ -87,7 +87,7 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
         </div>
       </div>
       <div className="w-full space-y-1.5">
-        <div className="w-full truncate relative flex ">
+        <div className="w-full relative flex ">
           <div className="w-full truncate space-y-1">
             <div>
               <div className="text-xs">
