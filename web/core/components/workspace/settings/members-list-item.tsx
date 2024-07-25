@@ -1,10 +1,11 @@
 "use client";
 
 import { FC } from "react";
+import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 // ui
 import { IWorkspaceMember } from "@plane/types";
-import { TOAST_TYPE, Table, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
@@ -79,6 +80,12 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   // 2. only admin or member can change role
   // 3. user cannot change role of higher role
 
+  if (isEmpty(columns))
+    return (
+      <Loader className="w-full">
+        <Loader.Item width="100%" height="200px" />
+      </Loader>
+    );
   return (
     <>
       {removeMemberModal && (
