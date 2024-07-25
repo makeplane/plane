@@ -262,9 +262,9 @@ function download() {
     fi
     
     echo ""
-    echo "Most recent Stable version is now available for you to use"
+    echo "Most recent version of Plane is now available for you to use"
     echo ""
-    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in 'plane.env 'file."
+    echo "In case of 'Upgrade', please check the 'plane.env 'file for any new variables and update them accordingly"
     echo ""
 }
 function startServices() {
