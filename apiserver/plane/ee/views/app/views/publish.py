@@ -35,11 +35,6 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if issue_view.access == 0:
-            return Response(
-                {"error": "Only public views can be published"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check if the view is already published
         comments = request.data.get("is_comments_enabled", False)
@@ -134,11 +129,6 @@ class IssueViewsPublishEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if issue_view.access == 0:
-            return Response(
-                {"error": "Only public views can be published"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check if the view is already published
         comments = request.data.get("is_comments_enabled", False)
