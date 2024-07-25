@@ -116,6 +116,20 @@ class WorkspaceViewViewSet(BaseViewSet):
             pk=pk,
             workspace__slug=slug,
         )
+        if (
+            WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role__in=[15, 10, 5],
+                is_active=True,
+            ).exists()
+            and workspace_view.owned_by != request.user
+        ):
+            return Response(
+                {"error": "You do not have permission to delete this view"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         workspace_member = WorkspaceMember.objects.filter(
             workspace__slug=slug,
             member=request.user,
@@ -412,14 +426,16 @@ class IssueViewViewSet(BaseViewSet):
             project_id=project_id,
             workspace__slug=slug,
         )
-        project_member = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=20,
-            is_active=True,
-        )
-        if project_member.exists() or project_view.owned_by == request.user:
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=20,
+                is_active=True,
+            ).exists()
+            or project_view.owned_by == request.user
+        ):
             project_view.delete()
         else:
             return Response(

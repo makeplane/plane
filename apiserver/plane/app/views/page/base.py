@@ -333,6 +333,21 @@ class PageViewSet(BaseViewSet):
             pk=pk, workspace__slug=slug, projects__id=project_id
         )
 
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role__in=[15, 10, 5],
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+            and page.owned_by != request.user
+        ):
+            return Response(
+                {"error": "Only admin or owner can delete the page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # only the owner and admin can delete the page
         if (
             ProjectMember.objects.filter(

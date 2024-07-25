@@ -48,6 +48,7 @@ from plane.db.models import (
     ModuleLink,
     ModuleUserProperties,
     Project,
+    ProjectMember,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
@@ -737,6 +738,22 @@ class ModuleViewSet(BaseViewSet):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role__in=[15, 10, 5],
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+            and module.created_by != request.user
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the module"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list(
                 "issue", flat=True
