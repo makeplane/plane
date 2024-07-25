@@ -396,15 +396,14 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             issue = Issue.objects.filter(
                 workspace__slug=slug, project_id=project_id, pk=issue_id
             ).first()
-            if (
-                ProjectMember.objects.filter(
+            if issue.created_by_id != request.user.id and (
+                not ProjectMember.objects.filter(
                     workspace__slug=slug,
                     member=request.user,
-                    role__in=[15, 10, 5],
+                    role=20,
                     project_id=project_id,
                     is_active=True,
                 ).exists()
-                and issue.created_by != request.user
             ):
                 return Response(
                     {"error": "Only admin or creator can delete the issue"},

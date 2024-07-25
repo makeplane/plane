@@ -367,18 +367,17 @@ class CycleAPIEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
-        if (
-            ProjectMember.objects.filter(
+        if cycle.owned_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
-                role__in=[15, 10, 5],
+                role=20,
                 project_id=project_id,
                 is_active=True,
             ).exists()
-            and cycle.owned_by != request.user
         ):
             return Response(
-                {"error": "Only admin or creator can delete the issue"},
+                {"error": "Only admin or creator can delete the cycle"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
