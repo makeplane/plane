@@ -69,9 +69,9 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
     <form onSubmit={formSubmit} className="space-y-2">
       <div className="space-y-2">
         {/* Timer */}
-        <div className="inline-flex justify-between items-center gap-1 bg-custom-background-90 text-custom-text-300 rounded-full p-2 py-0.5 ">
+        <div className="inline-flex justify-between items-center gap-1 bg-custom-background-90 text-custom-text-300 rounded-full p-2 py-1 ">
           <Timer className="w-3 h-3" />
-          <div className="font-medium">
+          <div className="font-medium text-xs leading-3">
             {formData?.hours || 0}h {formData?.minutes || 0}m
           </div>
         </div>
@@ -100,7 +100,7 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
             value={formData?.minutes}
             onChange={(e) => handleFormData("minutes", e.target.value)}
             hasError={(errors && Boolean(errors.minutes)) || false}
-            className="w-full rounded-l-none"
+            className="w-full border-l-0 rounded-l-none"
             min={0}
           />
         </div>
@@ -120,7 +120,7 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
       {/* buttons */}
       <div className="flex justify-end items-center gap-2">
         <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
-          cancel
+          Cancel
         </Button>
         <Button type="submit" variant="primary" size="sm" disabled={buttonDisabled}>
           {buttonTitle}
