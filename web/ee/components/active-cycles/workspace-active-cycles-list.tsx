@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
 // ui
@@ -49,7 +50,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   );
 
   const handleLoadMore = () => {
-    setPageCount(pageCount + 1);
+    setPageCount((state) => state + 1);
     loadMoreCycles();
   };
 
@@ -64,8 +65,11 @@ export const WorkspaceActiveCyclesList = observer(() => {
   useEffect(() => {
     if (workspaceActiveCycles) {
       !totalPages && updateTotalPages(workspaceActiveCycles.total_pages);
-      setCycles((state) => (state ? [...state, ...workspaceActiveCycles.results] : workspaceActiveCycles.results));
+      setCycles((state) =>
+        state ? uniqBy([...state, ...workspaceActiveCycles.results], "id") : workspaceActiveCycles.results
+      );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceActiveCycles]);
 
   useIntersectionObserver(containerRef, elementRef, loadMoreCycles);
