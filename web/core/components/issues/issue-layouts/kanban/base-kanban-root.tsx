@@ -26,6 +26,7 @@ import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types"
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
+import { IssuePaginationOptions } from "@plane/types";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -53,7 +54,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     membership: { currentProjectRole },
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
-  const { issueMap, issuesFilter, issues } = useIssues(storeType);
+  const { issueMap, issuesFilter, issues } = useIssues(EIssuesStoreType.PROJECT);
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -67,7 +68,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     archiveIssue,
     restoreIssue,
     updateFilters,
-  } = useIssuesActions(storeType);
+  } = useIssuesActions(EIssuesStoreType.PROJECT);
 
   const deleteAreaRef = useRef<HTMLDivElement | null>(null);
   const [isDragOverDelete, setIsDragOverDelete] = useState(false);
@@ -82,24 +83,21 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const orderBy = displayFilters?.order_by;
 
-  useEffect(() => {
-    fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);
-  }, [fetchIssues, storeType, group_by, sub_group_by, viewId]);
+  // useEffect(() => {
+  //   fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);
+  // }, [fetchIssues, storeType, group_by, sub_group_by, viewId]);
 
   const fetchMoreIssues = useCallback(
-    (groupId?: string, subgroupId?: string) => {
+    (groupId?: string, subgroupId?: string, options?: IssuePaginationOptions) => {
       if (issues?.getIssueLoader(groupId, subgroupId) !== "pagination") {
-        fetchNextIssues(groupId, subgroupId);
+        fetchNextIssues(groupId, subgroupId, options);
       }
     },
     [fetchNextIssues]
   );
 
-  const debouncedFetchMoreIssues = debounce(
-    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
-    300,
-    { leading: true, trailing: false }
-  );
+  const debouncedFetchMoreIssues = (groupId?: string, subgroupId?: string, options?: IssuePaginationOptions) =>
+    fetchMoreIssues(groupId, subgroupId, options);
 
   const groupedIssueIds = issues?.groupedIssueIds;
 
@@ -222,7 +220,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+    <>
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}
@@ -279,6 +277,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           </div>
         </div>
       </div>
-    </IssueLayoutHOC>
+    </>
   );
 });

@@ -11,6 +11,7 @@ import {
   TIssueKanbanFilters,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
+  IssuePaginationOptions,
 } from "@plane/types";
 // constants
 // hooks
@@ -43,7 +44,7 @@ export interface IKanBan {
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
-  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
+  loadMoreIssues: (groupId?: string, subGroupId?: string, options?: IssuePaginationOptions) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;

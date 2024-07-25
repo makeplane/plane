@@ -21,7 +21,11 @@ interface IssueActions {
     options: IssuePaginationOptions,
     viewId?: string
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (groupId?: string, subGroupId?: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (
+    groupId?: string,
+    subGroupId?: string,
+    options?: IssuePaginationOptions
+  ) => Promise<TIssuesResponse | undefined>;
   removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   createIssue?: (projectId: string | undefined | null, data: Partial<TIssue>) => Promise<TIssue | undefined>;
   quickAddIssue?: (projectId: string | undefined | null, data: TIssue) => Promise<TIssue | undefined>;
@@ -76,16 +80,16 @@ const useProjectIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
+    async (loadType: TLoader, options: IssuePaginationOptions, groupId?: string, subGroupId?: string) => {
       if (!workspaceSlug || !projectId) return;
       return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options);
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
   const fetchNextIssues = useCallback(
-    async (groupId?: string, subGroupId?: string) => {
+    async (groupId?: string, subGroupId?: string, options?: IssuePaginationOptions) => {
       if (!workspaceSlug || !projectId) return;
-      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId, options);
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );

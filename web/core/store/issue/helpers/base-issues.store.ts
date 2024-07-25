@@ -482,7 +482,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param groupId
    * @param subGroupId
    */
-  onfetchNexIssues(issuesResponse: TIssuesResponse, groupId?: string, subGroupId?: string) {
+  onfetchNexIssues(
+    issuesResponse: TIssuesResponse,
+    groupId?: string,
+    subGroupId?: string,
+    options?: IssuePaginationOptions
+  ) {
     // Process the Issue Response to get the following data from it
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
 
@@ -496,7 +501,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     });
 
     // store Pagination data like next cursor etc
-    this.storePreviousPaginationValues(issuesResponse, undefined, groupId, subGroupId);
+    this.storePreviousPaginationValues(issuesResponse, options, groupId, subGroupId);
   }
 
   /**

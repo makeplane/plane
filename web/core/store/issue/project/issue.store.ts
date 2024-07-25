@@ -15,7 +15,9 @@ export interface IProjectIssues extends IBaseIssuesStore {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
-    option: IssuePaginationOptions
+    option: IssuePaginationOptions,
+    groupId?: string,
+    subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
   fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
@@ -26,7 +28,8 @@ export interface IProjectIssues extends IBaseIssuesStore {
     workspaceSlug: string,
     projectId: string,
     groupId?: string,
-    subGroupId?: string
+    subGroupId?: string,
+    options?: IssuePaginationOptions
   ) => Promise<TIssuesResponse | undefined>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
@@ -83,6 +86,8 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     projectId: string,
     loadType: TLoader = "init-loader",
     options: IssuePaginationOptions,
+    groupId?: string,
+    subGroupId?: string,
     isExistingPaginationOptions: boolean = false
   ) => {
     try {
@@ -93,14 +98,14 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, groupId, subGroupId);
       // call the fetch issues API with the params
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchNexIssues(response, groupId, subGroupId, options);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -119,17 +124,23 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
    * @param subGroupId
    * @returns
    */
-  fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
+  fetchNextIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    groupId?: string,
+    subGroupId?: string,
+    options?: IssuePaginationOptions
+  ) => {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     // if there are no pagination options and the next page results do not exist the return
-    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
+    if (!this.paginationOptions && !options) return;
     try {
       // set Loader
       this.setLoader("pagination", groupId, subGroupId);
 
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
-        this.paginationOptions,
+        options ?? this.paginationOptions!,
         projectId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
@@ -139,7 +150,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
-      this.onfetchNexIssues(response, groupId, subGroupId);
+      this.onfetchNexIssues(response, groupId, subGroupId, options);
       return response;
     } catch (error) {
       // set Loader as undefined if errored out
@@ -162,7 +173,15 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     loadType: TLoader = "mutation"
   ) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
+    return await this.fetchIssues(
+      workspaceSlug,
+      projectId,
+      loadType,
+      this.paginationOptions,
+      undefined,
+      undefined,
+      true
+    );
   };
 
   // Using aliased names as they cannot be overridden in other stores

@@ -11,6 +11,7 @@ import {
   TIssueKanbanFilters,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
+  IssuePaginationOptions,
 } from "@plane/types";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
@@ -104,7 +105,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
+  loadMoreIssues: (groupId?: string, subGroupId?: string, options?: IssuePaginationOptions) => void;
 }
 
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
@@ -223,7 +224,7 @@ export interface IKanBanSwimLanes {
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
+  loadMoreIssues: (groupId?: string, subGroupId?: string, options?: IssuePaginationOptions) => void;
   showEmptyGroup: boolean;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;

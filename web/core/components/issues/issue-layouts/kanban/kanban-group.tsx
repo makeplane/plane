@@ -14,6 +14,7 @@ import {
   TSubGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
+  IssuePaginationOptions,
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
@@ -32,7 +33,7 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -44,7 +45,7 @@ groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
+  loadMoreIssues: (groupId?: string, subGroupId?: string, options?: IssuePaginationOptions) => void;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
@@ -88,9 +89,15 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
 
   const loadMoreIssuesInThisGroup = useCallback(() => {
-    loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
-  }, [loadMoreIssues, groupId, sub_group_id])
+    loadMoreIssues(groupId, sub_group_id === "null" ? undefined : sub_group_id);
+  }, [loadMoreIssues, groupId, sub_group_id, sub_group_by]);
 
+  useEffect(() => {
+    loadMoreIssues(groupId, sub_group_id === "null" ? undefined : sub_group_id, {
+      canGroup: true,
+      perPageCount: sub_group_by ? 10 : 30,
+    });
+  }, [loadMoreIssues, groupId, sub_group_id, sub_group_by]);
   const isPaginating = !!getIssueLoader(groupId, sub_group_id);
 
   useIntersectionObserver(
@@ -222,7 +229,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
-
   const loadMore = isPaginating ? (
     <KanbanIssueBlockLoader />
   ) : (
@@ -235,8 +241,13 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     </div>
   );
 
-  const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
-      const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const shouldLoadMore =
+    nextPageResults === undefined
+      ? groupIssueCount !== undefined
+        ? issueIds?.length < groupIssueCount
+        : true
+      : !!nextPageResults;
+  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
@@ -270,7 +281,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canDropOverIssue={!canOverlayBeVisible}
       />
 
-{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
