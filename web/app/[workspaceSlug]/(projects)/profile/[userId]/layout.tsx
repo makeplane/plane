@@ -59,8 +59,8 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
     <>
       {/* Passing the type prop from the current route value as we need the header as top most component.
       TODO: We are depending on the route path to handle the mobile header type. If the path changes, this logic will break. */}
-      <div className="h-full w-full md:flex md:overflow-hidden">
-        <div className="h-full w-full md:overflow-hidden">
+      <div className="h-full w-full flex flex-col md:flex-row overflow-hidden">
+        <div className="h-full w-full flex flex-col overflow-hidden">
           <AppHeader
             header={
               <UserProfileHeader
