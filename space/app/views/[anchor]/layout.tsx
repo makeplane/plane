@@ -5,6 +5,7 @@ import Image from "next/image";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
+import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
 import { usePublish, usePublishList } from "@/hooks/store";
 // Plane web
@@ -28,24 +29,21 @@ const IssuesLayout = observer((props: Props) => {
   const { fetchPublishSettings } = usePublishList();
   const { viewData, fetchViewDetails } = useView();
   const publishSettings = usePublish(anchor);
-  // fetch publish settings
-  useSWR(
-    anchor ? `PUBLISH_SETTINGS_${anchor}` : null,
+
+  // fetch publish settings && view details
+  const { error } = useSWR(
+    anchor ? `PUBLISHED_VIEW_SETTINGS_${anchor}` : null,
     anchor
       ? async () => {
-          await fetchPublishSettings(anchor);
+          const promises = [];
+          promises.push(fetchPublishSettings(anchor));
+          promises.push(fetchViewDetails(anchor));
+          await Promise.all(promises);
         }
       : null
   );
-  // fetch view data
-  useSWR(
-    anchor ? `VIEW_DETAILS_${anchor}` : null,
-    anchor
-      ? async () => {
-          await fetchViewDetails(anchor);
-        }
-      : null
-  );
+
+  if (error) return <SomethingWentWrongError />;
 
   if (!publishSettings || !viewData) return <LogoSpinner />;
 
