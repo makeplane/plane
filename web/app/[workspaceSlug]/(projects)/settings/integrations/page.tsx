@@ -109,7 +109,7 @@ const WorkspaceIntegrationsPage = observer(() => {
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
           {appIntegrations ? (
-            appIntegrations.map((integration) => (
+            appIntegrations?.map((integration) => (
               <SingleIntegrationCard key={integration.id} integration={integration} />
             ))
           ) : (
