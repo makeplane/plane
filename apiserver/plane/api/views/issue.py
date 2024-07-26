@@ -22,9 +22,11 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from plane.api.serializers import (
+    IssueAttachmentSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssueLinkSerializer,
@@ -182,7 +184,6 @@ class IssueAPIEndpoint(BaseAPIView):
         issue_queryset = (
             self.get_queryset()
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -308,6 +309,14 @@ class IssueAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
+            # Refetch the issue
+            issue = Issue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk=serializer.data["id"],
+            ).first()
+            issue.created_at = request.data.get("created_at")
+            issue.save(update_fields=["created_at"])
 
             # Track the issue
             issue_activity.delay(
@@ -380,6 +389,19 @@ class IssueAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if issue.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
@@ -875,3 +897,83 @@ class IssueActivityAPIEndpoint(BaseAPIView):
                 expand=self.expand,
             ).data,
         )
+
+
+class IssueAttachmentEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    model = IssueAttachment
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, slug, project_id, issue_id):
+        serializer = IssueAttachmentSerializer(data=request.data)
+        if (
+            request.data.get("external_id")
+            and request.data.get("external_source")
+            and IssueAttachment.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                issue_id=issue_id,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+            ).exists()
+        ):
+            issue_attachment = IssueAttachment.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                external_id=request.data.get("external_id"),
+                external_source=request.data.get("external_source"),
+            ).first()
+            return Response(
+                {
+                    "error": "Issue attachment with the same external id and external source already exists",
+                    "id": str(issue_attachment.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        if serializer.is_valid():
+            serializer.save(project_id=project_id, issue_id=issue_id)
+            issue_activity.delay(
+                type="attachment.activity.created",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    serializer.data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = IssueAttachment.objects.get(pk=pk)
+        issue_attachment.asset.delete(save=False)
+        issue_attachment.delete()
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, slug, project_id, issue_id):
+        issue_attachments = IssueAttachment.objects.filter(
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

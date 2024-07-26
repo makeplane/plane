@@ -3,10 +3,11 @@ name: Build and Lint on Pull Request
 on:
   workflow_dispatch:
   pull_request:
-    types: ["opened", "synchronize"]
+    types: ["opened", "synchronize", "ready_for_review"]
 
 jobs:
   get-changed-files:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     outputs:
       apiserver_changed: ${{ steps.changed-files.outputs.apiserver_any_changed }}

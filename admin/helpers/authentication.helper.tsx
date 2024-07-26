@@ -1,5 +1,24 @@
 import { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { KeyRound, Mails } from "lucide-react";
+// types
+import { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
+// components
+import {
+  EmailCodesConfiguration,
+  GithubConfiguration,
+  GitlabConfiguration,
+  GoogleConfiguration,
+  PasswordLoginConfiguration,
+} from "@/components/authentication";
+// helpers
+import { SUPPORT_EMAIL, resolveGeneralTheme } from "@/helpers/common.helper";
+// images
+import githubLightModeImage from "@/public/logos/github-black.png";
+import githubDarkModeImage from "@/public/logos/github-white.png";
+import GitlabLogo from "@/public/logos/gitlab-logo.svg";
+import GoogleLogo from "@/public/logos/google-logo.svg";
 
 export enum EPageTypes {
   PUBLIC = "PUBLIC",
@@ -38,6 +57,7 @@ export enum EAuthenticationErrorCodes {
   ADMIN_AUTHENTICATION_FAILED = "5175",
   ADMIN_USER_ALREADY_EXIST = "5180",
   ADMIN_USER_DOES_NOT_EXIST = "5185",
+  ADMIN_USER_DEACTIVATED = "5190",
 }
 
 export type TAuthErrorInfo = {
@@ -99,6 +119,10 @@ const errorCodeMessages: {
       </div>
     ),
   },
+  [EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED]: {
+    title: `User account deactivated`,
+    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+  },
 };
 
 export const authErrorHandler = (
@@ -106,6 +130,7 @@ export const authErrorHandler = (
   email?: string | undefined
 ): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
+    EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST,
     EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
     EAuthenticationErrorCodes.INVALID_ADMIN_EMAIL,
     EAuthenticationErrorCodes.INVALID_ADMIN_PASSWORD,
@@ -113,6 +138,7 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
+    EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))
@@ -125,3 +151,53 @@ export const authErrorHandler = (
 
   return undefined;
 };
+
+export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps) => TInstanceAuthenticationModes[] = ({
+  disabled,
+  updateConfig,
+  resolvedTheme,
+}) => [
+    {
+      key: "unique-codes",
+      name: "Unique codes",
+      description:
+        "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
+      icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
+      config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    },
+    {
+      key: "passwords-login",
+      name: "Passwords",
+      description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
+      icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
+      config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    },
+    {
+      key: "google",
+      name: "Google",
+      description: "Allow members to log in or sign up for Plane with their Google accounts.",
+      icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+      config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    },
+    {
+      key: "github",
+      name: "GitHub",
+      description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
+      icon: (
+        <Image
+          src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
+          height={20}
+          width={20}
+          alt="GitHub Logo"
+        />
+      ),
+      config: <GithubConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    },
+    {
+      key: "gitlab",
+      name: "GitLab",
+      description: "Allow members to log in or sign up to plane with their GitLab accounts.",
+      icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+      config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    },
+  ];

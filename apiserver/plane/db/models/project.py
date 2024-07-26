@@ -72,6 +72,7 @@ class Project(BaseModel):
     identifier = models.CharField(
         max_length=12,
         verbose_name="Project Identifier",
+        db_index=True,
     )
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -94,6 +95,8 @@ class Project(BaseModel):
     issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     inbox_view = models.BooleanField(default=False)
+    is_time_tracking_enabled = models.BooleanField(default=False)
+    is_issue_type_enabled = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate",
@@ -217,7 +220,7 @@ class ProjectIdentifier(AuditModel):
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
     )
-    name = models.CharField(max_length=12)
+    name = models.CharField(max_length=12, db_index=True)
 
     class Meta:
         unique_together = ["name", "workspace"]
@@ -261,6 +264,8 @@ def get_default_views():
     }
 
 
+# DEPRECATED TODO:
+# used to get the old anchors for the project deploy boards
 class ProjectDeployBoard(ProjectBaseModel):
     anchor = models.CharField(
         max_length=255, default=get_anchor, unique=True, db_index=True

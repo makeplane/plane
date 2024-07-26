@@ -4,7 +4,7 @@ from .common import (
     SetUserPasswordEndpoint,
 )
 
-from .app.check import EmailCheckSignInEndpoint, EmailCheckSignUpEndpoint
+from .app.check import EmailCheckEndpoint
 
 from .app.email import (
     SignInAuthEndpoint,
@@ -13,6 +13,10 @@ from .app.email import (
 from .app.github import (
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
+)
+from .app.gitlab import (
+    GitLabCallbackEndpoint,
+    GitLabOauthInitiateEndpoint,
 )
 from .app.google import (
     GoogleCallbackEndpoint,
@@ -34,6 +38,11 @@ from .space.github import (
     GitHubOauthInitiateSpaceEndpoint,
 )
 
+from .space.gitlab import (
+    GitLabCallbackSpaceEndpoint,
+    GitLabOauthInitiateSpaceEndpoint,
+)
+
 from .space.google import (
     GoogleCallbackSpaceEndpoint,
     GoogleOauthInitiateSpaceEndpoint,
@@ -47,7 +56,7 @@ from .space.magic import (
 
 from .space.signout import SignOutAuthSpaceEndpoint
 
-from .space.check import EmailCheckEndpoint
+from .space.check import EmailCheckSpaceEndpoint
 
 from .space.password_management import (
     ForgotPasswordSpaceEndpoint,

@@ -1,17 +1,22 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // types
 import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
-  TIssueLayouts,
   TIssueOrderByOptions,
   TIssueParams,
   TStateGroups,
+  TSubGroupedIssues,
+  TUnGroupedIssues,
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
@@ -90,7 +95,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 };
 
 export const handleIssueQueryParamsByLayout = (
-  layout: TIssueLayouts | undefined,
+  layout: EIssueLayoutTypes | undefined,
   viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues"
 ): TIssueParams[] | null => {
   const queryParams: TIssueParams[] = [];
@@ -166,14 +171,13 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is overdue, highlight the due date
   return targetDateDistance <= 0;
 };
-export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
-  blocks?.map((block) => ({
-    data: block,
-    id: block.id,
-    sort_order: block.sort_order,
-    start_date: getDate(block.start_date),
-    target_date: getDate(block.target_date),
-  }));
+export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
+  data: block,
+  id: block?.id,
+  sort_order: block?.sort_order,
+  start_date: getDate(block?.start_date),
+  target_date: getDate(block?.target_date),
+});
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
   const changedFields: Partial<TIssue> = {};
@@ -181,7 +185,7 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
   const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
   for (const dirtyField of dirtyFieldKeys) {
     if (!!dirtyFields[dirtyField]) {
-      changedFields[dirtyField] = formData[dirtyField];
+      set(changedFields, [dirtyField], formData[dirtyField]);
     }
   }
 
@@ -211,3 +215,94 @@ export const getDescriptionPlaceholder = (isFocused: boolean, description: strin
   if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
   else return "Click to add description";
 };
+
+export const issueCountBasedOnFilters = (
+  issueIds: TGroupedIssues | TUnGroupedIssues | TSubGroupedIssues,
+  layout: EIssueLayoutTypes,
+  groupBy: string | undefined,
+  subGroupBy: string | undefined
+): number => {
+  let issuesCount = 0;
+  if (!layout) return issuesCount;
+
+  if (["spreadsheet", "gantt_chart"].includes(layout)) {
+    issuesCount = (issueIds as TUnGroupedIssues)?.length;
+  } else if (layout === "calendar") {
+    Object.keys(issueIds || {}).map((groupId) => {
+      issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+    });
+  } else if (layout === "list") {
+    if (groupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+      });
+    } else {
+      issuesCount = (issueIds as TUnGroupedIssues)?.length;
+    }
+  } else if (layout === "kanban") {
+    if (groupBy && subGroupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        Object.keys((issueIds as TSubGroupedIssues)?.[groupId] || {}).map((subGroupId) => {
+          issuesCount += (issueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId]?.length || 0;
+        });
+      });
+    } else if (groupBy) {
+      Object.keys(issueIds || {}).map((groupId) => {
+        issuesCount += (issueIds as TGroupedIssues)?.[groupId]?.length;
+      });
+    }
+  }
+
+  return issuesCount;
+};
+
+/**
+ * @description This method is used to apply the display filters on the issues
+ * @param {IIssueDisplayFilterOptions} displayFilters
+ * @returns {IIssueDisplayFilterOptions}
+ */
+export const getComputedDisplayFilters = (
+  displayFilters: IIssueDisplayFilterOptions = {},
+  defaultValues?: IIssueDisplayFilterOptions
+): IIssueDisplayFilterOptions => {
+  const filters = displayFilters || defaultValues;
+
+  return {
+    calendar: {
+      show_weekends: filters?.calendar?.show_weekends || false,
+      layout: filters?.calendar?.layout || "month",
+    },
+    layout: filters?.layout || EIssueLayoutTypes.LIST,
+    order_by: filters?.order_by || "sort_order",
+    group_by: filters?.group_by || null,
+    sub_group_by: filters?.sub_group_by || null,
+    type: filters?.type || null,
+    sub_issue: filters?.sub_issue || false,
+    show_empty_groups: filters?.show_empty_groups || false,
+  };
+};
+
+/**
+ * @description This method is used to apply the display properties on the issues
+ * @param {IIssueDisplayProperties} displayProperties
+ * @returns {IIssueDisplayProperties}
+ */
+export const getComputedDisplayProperties = (
+  displayProperties: IIssueDisplayProperties = {}
+): IIssueDisplayProperties => ({
+  assignee: displayProperties?.assignee ?? true,
+  start_date: displayProperties?.start_date ?? true,
+  due_date: displayProperties?.due_date ?? true,
+  labels: displayProperties?.labels ?? true,
+  priority: displayProperties?.priority ?? true,
+  state: displayProperties?.state ?? true,
+  sub_issue_count: displayProperties?.sub_issue_count ?? true,
+  attachment_count: displayProperties?.attachment_count ?? true,
+  link: displayProperties?.link ?? true,
+  estimate: displayProperties?.estimate ?? true,
+  key: displayProperties?.key ?? true,
+  created_on: displayProperties?.created_on ?? true,
+  updated_on: displayProperties?.updated_on ?? true,
+  modules: displayProperties?.modules ?? true,
+  cycle: displayProperties?.cycle ?? true,
+});

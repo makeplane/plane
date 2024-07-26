@@ -115,7 +115,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                   onClick={toggleDropdown}
                 >
                   {label}
-                  {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+                  {!noChevron && !disabled && <ChevronDown className="h-3 w-3 flex-shrink-0" aria-hidden="true" />}
                 </button>
               </Combobox.Button>
             )}

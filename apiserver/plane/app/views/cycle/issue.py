@@ -2,43 +2,50 @@
 import json
 
 # Django imports
-from django.db.models import (
-    Func,
-    F,
-    Q,
-    OuterRef,
-    Value,
-    UUIDField,
-)
 from django.core import serializers
+from django.db.models import (
+    F,
+    Func,
+    OuterRef,
+    Q,
+)
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Coalesce
 
 # Third party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
 
+from plane.app.permissions import (
+    ProjectEntityPermission,
+)
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import (
-    IssueSerializer,
     CycleIssueSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
     Issue,
-    IssueLink,
     IssueAttachment,
+    IssueLink,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
 from plane.utils.issue_filters import issue_filters
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.paginator import (
+    GroupedOffsetPaginator,
+    SubGroupedOffsetPaginator,
+)
+
+# Module imports
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
@@ -86,14 +93,9 @@ class CycleIssueViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id, cycle_id):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-        order_by = request.GET.get("order_by", "created_at")
+        order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
-        queryset = (
+        issue_queryset = (
             Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
@@ -105,7 +107,6 @@ class CycleIssueViewSet(BaseViewSet):
                 "issue_module__module",
                 "issue_cycle__cycle",
             )
-            .order_by(order_by)
             .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
@@ -130,73 +131,112 @@ class CycleIssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-            .order_by(order_by)
         )
-        if self.fields:
-            issues = IssueSerializer(
-                queryset, many=True, fields=fields if fields else None
-            ).data
-        else:
-            issues = queryset.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            )
-            datetime_fields = ["created_at", "updated_at"]
-            issues = user_timezone_converter(
-                issues, datetime_fields, request.user.user_timezone
-            )
+        filters = issue_filters(request.query_params, "GET")
 
-        return Response(issues, status=status.HTTP_200_OK)
+        order_by_param = request.GET.get("order_by", "-created_at")
+        issue_queryset = issue_queryset.filter(**filters)
+        # Issue queryset
+        issue_queryset, order_by_param = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
+
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        # issue queryset
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset,
+            group_by=group_by,
+            sub_group_by=sub_group_by,
+        )
+
+        if group_by:
+            # Check group and sub group value paginate
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {
+                            "error": "Group by and sub group by cannot have same parameters"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    # group and sub group pagination
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            filters=filters,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            filters=filters,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_inbox__status=1)
+                            | Q(issue_inbox__status=-1)
+                            | Q(issue_inbox__status=2)
+                            | Q(issue_inbox__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            # Group Paginate
+            else:
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        project_id=project_id,
+                        filters=filters,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_inbox__status=1)
+                        | Q(issue_inbox__status=-1)
+                        | Q(issue_inbox__status=2)
+                        | Q(issue_inbox__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+        else:
+            # List Paginate
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                ),
+            )
 
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])

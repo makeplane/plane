@@ -18,7 +18,7 @@ from plane.db.models import (
     State,
     IssueLink,
     IssueAttachment,
-    ProjectDeployBoard,
+    DeployBoard,
 )
 from plane.app.serializers import (
     IssueSerializer,
@@ -39,7 +39,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        project_deploy_board = DeployBoard.objects.get(
             workspace__slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
         )
@@ -58,9 +58,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
             )
         return InboxIssue.objects.none()
 
-    def list(self, request, slug, project_id, inbox_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def list(self, request, anchor, inbox_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
         if project_deploy_board.inbox is None:
             return Response(
@@ -72,8 +72,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
         issues = (
             Issue.objects.filter(
                 issue_inbox__inbox_id=inbox_id,
-                workspace__slug=slug,
-                project_id=project_id,
+                workspace_id=project_deploy_board.workspace_id,
+                project_id=project_deploy_board.project_id,
             )
             .filter(**filters)
             .annotate(bridge_id=F("issue_inbox__id"))
@@ -117,9 +117,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def create(self, request, slug, project_id, inbox_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def create(self, request, anchor, inbox_id):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
         if project_deploy_board.inbox is None:
             return Response(
@@ -151,7 +151,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
             name="Triage",
             group="backlog",
             description="Default state for managing all Inbox Issues",
-            project_id=project_id,
+            project_id=project_deploy_board.project_id,
             color="#ff7700",
         )
 
@@ -163,7 +163,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 "description_html", "<p></p>"
             ),
             priority=request.data.get("issue", {}).get("priority", "low"),
-            project_id=project_id,
+            project_id=project_deploy_board.project_id,
             state=state,
         )
 
@@ -173,14 +173,14 @@ class InboxIssuePublicViewSet(BaseViewSet):
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
-            project_id=str(project_id),
+            project_id=str(project_deploy_board.project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
         # create an inbox issue
         InboxIssue.objects.create(
             inbox_id=inbox_id,
-            project_id=project_id,
+            project_id=project_deploy_board.project_id,
             issue=issue,
             source=request.data.get("source", "in-app"),
         )
@@ -188,9 +188,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
         serializer = IssueStateInboxSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def partial_update(self, request, slug, project_id, inbox_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def partial_update(self, request, anchor, inbox_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
         if project_deploy_board.inbox is None:
             return Response(
@@ -200,8 +200,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
         inbox_issue = InboxIssue.objects.get(
             pk=pk,
-            workspace__slug=slug,
-            project_id=project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
             inbox_id=inbox_id,
         )
         # Get the project member
@@ -216,8 +216,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
         issue = Issue.objects.get(
             pk=inbox_issue.issue_id,
-            workspace__slug=slug,
-            project_id=project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
         )
         # viewers and guests since only viewers and guests
         issue_data = {
@@ -242,7 +242,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                     requested_data=requested_data,
                     actor_id=str(request.user.id),
                     issue_id=str(issue.id),
-                    project_id=str(project_id),
+                    project_id=str(project_deploy_board.project_id),
                     current_instance=json.dumps(
                         IssueSerializer(current_instance).data,
                         cls=DjangoJSONEncoder,
@@ -255,9 +255,9 @@ class InboxIssuePublicViewSet(BaseViewSet):
             issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
 
-    def retrieve(self, request, slug, project_id, inbox_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def retrieve(self, request, anchor, inbox_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
         if project_deploy_board.inbox is None:
             return Response(
@@ -267,21 +267,21 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
         inbox_issue = InboxIssue.objects.get(
             pk=pk,
-            workspace__slug=slug,
-            project_id=project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
             inbox_id=inbox_id,
         )
         issue = Issue.objects.get(
             pk=inbox_issue.issue_id,
-            workspace__slug=slug,
-            project_id=project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
         )
         serializer = IssueStateInboxSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, slug, project_id, inbox_id, pk):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+    def destroy(self, request, anchor, inbox_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            anchor=anchor, entity_name="project"
         )
         if project_deploy_board.inbox is None:
             return Response(
@@ -291,8 +291,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
         inbox_issue = InboxIssue.objects.get(
             pk=pk,
-            workspace__slug=slug,
-            project_id=project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
             inbox_id=inbox_id,
         )
 

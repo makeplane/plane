@@ -2,13 +2,14 @@ from django.urls import path
 
 from .views import (
     CSRFTokenEndpoint,
-    EmailCheckSignInEndpoint,
-    EmailCheckSignUpEndpoint,
     ForgotPasswordEndpoint,
     SetUserPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
     # App
+    EmailCheckEndpoint,
+    GitLabCallbackEndpoint,
+    GitLabOauthInitiateEndpoint,
     GitHubCallbackEndpoint,
     GitHubOauthInitiateEndpoint,
     GoogleCallbackEndpoint,
@@ -22,7 +23,9 @@ from .views import (
     ForgotPasswordSpaceEndpoint,
     ResetPasswordSpaceEndpoint,
     # Space
-    EmailCheckEndpoint,
+    EmailCheckSpaceEndpoint,
+    GitLabCallbackSpaceEndpoint,
+    GitLabOauthInitiateSpaceEndpoint,
     GitHubCallbackSpaceEndpoint,
     GitHubOauthInitiateSpaceEndpoint,
     GoogleCallbackSpaceEndpoint,
@@ -152,20 +155,36 @@ urlpatterns = [
         GitHubCallbackSpaceEndpoint.as_view(),
         name="github-callback",
     ),
-    # Email Check
+    ## Gitlab Oauth
     path(
-        "sign-up/email-check/",
-        EmailCheckSignUpEndpoint.as_view(),
-        name="email-check-sign-up",
+        "gitlab/",
+        GitLabOauthInitiateEndpoint.as_view(),
+        name="gitlab-initiate",
     ),
     path(
-        "sign-in/email-check/",
-        EmailCheckSignInEndpoint.as_view(),
-        name="email-check-sign-in",
+        "gitlab/callback/",
+        GitLabCallbackEndpoint.as_view(),
+        name="gitlab-callback",
+    ),
+    path(
+        "spaces/gitlab/",
+        GitLabOauthInitiateSpaceEndpoint.as_view(),
+        name="gitlab-initiate",
+    ),
+    path(
+        "spaces/gitlab/callback/",
+        GitLabCallbackSpaceEndpoint.as_view(),
+        name="gitlab-callback",
+    ),
+    # Email Check
+    path(
+        "email-check/",
+        EmailCheckEndpoint.as_view(),
+        name="email-check",
     ),
     path(
         "spaces/email-check/",
-        EmailCheckEndpoint.as_view(),
+        EmailCheckSpaceEndpoint.as_view(),
         name="email-check",
     ),
     # Password

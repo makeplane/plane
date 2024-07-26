@@ -19,10 +19,10 @@ from plane.app.permissions import ProjectBasePermission
 from plane.db.models import (
     Cycle,
     Inbox,
-    IssueProperty,
+    IssueUserProperty,
     Module,
     Project,
-    ProjectDeployBoard,
+    DeployBoard,
     ProjectMember,
     State,
     Workspace,
@@ -99,7 +99,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 is_deployed=Exists(
-                    ProjectDeployBoard.objects.filter(
+                    DeployBoard.objects.filter(
                         project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
                     )
@@ -165,7 +165,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     role=20,
                 )
                 # Also create the issue property for the user
-                _ = IssueProperty.objects.create(
+                _ = IssueUserProperty.objects.create(
                     project_id=serializer.data["id"],
                     user=request.user,
                 )
@@ -179,7 +179,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                         role=20,
                     )
                     # Also create the issue property for the user
-                    IssueProperty.objects.create(
+                    IssueUserProperty.objects.create(
                         project_id=serializer.data["id"],
                         user_id=serializer.data["project_lead"],
                     )
@@ -240,6 +240,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+
                 # Model activity
                 model_activity.delay(
                     model_name="project",

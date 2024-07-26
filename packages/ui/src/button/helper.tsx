@@ -44,9 +44,9 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-10 text-custom-primary-100`,
-    hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
-    pressed: `focus:bg-custom-primary-20`,
+    default: `bg-custom-primary-100/20 text-custom-primary-100`,
+    hover: `hover:bg-custom-primary-100/10 hover:text-custom-primary-200`,
+    pressed: `focus:bg-custom-primary-100/10`,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {

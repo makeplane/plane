@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
+import { AuthenticationMethodCard } from "@/components/authentication";
+import { PageHeader } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
 import GoogleLogo from "@/public/logos/google-logo.svg";
 // local components
-import { AuthenticationMethodCard } from "../components";
 import { InstanceGoogleConfigForm } from "./form";
 
 const InstanceGoogleAuthenticationPage = observer(() => {
@@ -57,9 +57,9 @@ const InstanceGoogleAuthenticationPage = observer(() => {
   };
   return (
     <>
-      <PageHeader title="Authentication - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+      <PageHeader title="Google Authentication - Plane Web" />
+      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
             name="Google"
             description="Allow members to login or sign up to plane with their Google
@@ -81,7 +81,7 @@ const InstanceGoogleAuthenticationPage = observer(() => {
             withBorder={false}
           />
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-auto">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceGoogleConfigForm config={formattedConfig} />
           ) : (

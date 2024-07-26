@@ -1,5 +1,6 @@
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+import {EUserWorkspaceRoles} from "@/constants/workspace";
 import type {
+  ICycle,
   IProjectMember,
   IUser,
   IUserLite,
@@ -46,7 +47,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: EUserWorkspaceRoles }[];
+  emails: {email: string; role: EUserWorkspaceRoles}[];
 }
 
 export type Properties = {
@@ -69,6 +70,13 @@ export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
   role: EUserWorkspaceRoles;
+  created_at?: string;
+  avatar?: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  joining_date?: string;
+  display_name?: string;
 }
 
 export interface IWorkspaceMemberMe {
@@ -112,6 +120,14 @@ export interface IWorkspaceIssueSearchResult {
   workspace__slug: string;
 }
 
+export interface IWorkspacePageSearchResult {
+  id: string;
+  name: string;
+  project_ids: string[];
+  project__identifiers: string[];
+  workspace__slug: string;
+}
+
 export interface IWorkspaceProjectSearchResult {
   id: string;
   identifier: string;
@@ -127,7 +143,7 @@ export interface IWorkspaceSearchResults {
     cycle: IWorkspaceDefaultSearchResult[];
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
-    page: IWorkspaceDefaultSearchResult[];
+    page: IWorkspacePageSearchResult[];
   };
 }
 
@@ -181,4 +197,26 @@ export interface IProductUpdateResponse {
     rocket: number;
     eyes: number;
   };
+}
+
+export interface IWorkspaceActiveCyclesResponse {
+  count: number;
+  extra_stats: null;
+  next_cursor: string;
+  next_page_results: boolean;
+  prev_cursor: string;
+  prev_page_results: boolean;
+  results: ICycle[];
+  total_pages: number;
+}
+
+export interface IWorkspaceProgressResponse {
+  completed_issues: number;
+  total_issues: number;
+  started_issues: number;
+  cancelled_issues: number;
+  unstarted_issues: number;
+}
+export interface IWorkspaceAnalyticsResponse {
+  completion_chart: any;
 }

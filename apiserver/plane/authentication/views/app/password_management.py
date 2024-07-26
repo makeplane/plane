@@ -32,7 +32,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-
+from plane.authentication.rate_limit import AuthenticationThrottle
 
 def generate_password_token(user):
     uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
@@ -44,6 +44,10 @@ def generate_password_token(user):
 class ForgotPasswordEndpoint(APIView):
     permission_classes = [
         AllowAny,
+    ]
+
+    throttle_classes = [
+        AuthenticationThrottle,
     ]
 
     def post(self, request):

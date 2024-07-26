@@ -23,6 +23,8 @@ from plane.license.utils.instance_value import (
     get_configuration_value,
 )
 from plane.utils.cache import cache_response, invalidate_cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 
 
 class InstanceEndpoint(BaseAPIView):
@@ -36,6 +38,7 @@ class InstanceEndpoint(BaseAPIView):
         ]
 
     @cache_response(60 * 60 * 2, user=False)
+    @method_decorator(cache_control(private=True, max_age=12))
     def get(self, request):
         instance = Instance.objects.first()
 
@@ -54,6 +57,7 @@ class InstanceEndpoint(BaseAPIView):
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
+            IS_GITLAB_ENABLED,
             EMAIL_HOST,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
@@ -75,6 +79,10 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "GITHUB_APP_NAME",
                     "default": os.environ.get("GITHUB_APP_NAME", ""),
+                },
+                {
+                    "key": "IS_GITLAB_ENABLED",
+                    "default": os.environ.get("IS_GITLAB_ENABLED", "0"),
                 },
                 {
                     "key": "EMAIL_HOST",
@@ -115,6 +123,7 @@ class InstanceEndpoint(BaseAPIView):
         # Authentication
         data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
+        data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
 
@@ -148,7 +157,7 @@ class InstanceEndpoint(BaseAPIView):
         data["app_base_url"] = settings.APP_BASE_URL
 
         instance_data = serializer.data
-        instance_data["workspaces_exist"] = Workspace.objects.count() > 1
+        instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 
         response_data = {"config": data, "instance": instance_data}
         return Response(response_data, status=status.HTTP_200_OK)

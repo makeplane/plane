@@ -5,8 +5,7 @@ export interface IEmailCheckData {
 }
 
 export interface IEmailCheckResponse {
-  is_password_autoset: boolean;
-  status: boolean;
+  status: "MAGIC_CODE" | "CREDENTIAL";
   existing: boolean;
 }
 

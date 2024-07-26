@@ -19,8 +19,8 @@ export interface IInstance {
   whitelist_emails: string | undefined;
   instance_id: string | undefined;
   license_key: string | undefined;
-  api_key: string | undefined;
-  version: string | undefined;
+  current_version: string | undefined;
+  latest_version: string | undefined;
   last_checked_at: string | undefined;
   namespace: string | undefined;
   is_telemetry_enabled: boolean;
@@ -38,6 +38,7 @@ export interface IInstance {
 export interface IInstanceConfig {
   is_google_enabled: boolean;
   is_github_enabled: boolean;
+  is_gitlab_enabled: boolean;
   is_magic_login_enabled: boolean;
   is_email_password_enabled: boolean;
   github_app_name: string | undefined;

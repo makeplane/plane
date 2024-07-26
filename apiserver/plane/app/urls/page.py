@@ -6,6 +6,8 @@ from plane.app.views import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
+    PagesDescriptionViewSet,
+    PageVersionEndpoint,
 )
 
 
@@ -64,6 +66,16 @@ urlpatterns = [
         ),
         name="project-pages-lock-unlock",
     ),
+    # private and public page
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/access/",
+        PageViewSet.as_view(
+            {
+                "post": "access",
+            }
+        ),
+        name="project-pages-access",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/",
         PageLogEndpoint.as_view(),
@@ -78,5 +90,25 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/sub-pages/",
         SubPagesEndpoint.as_view(),
         name="sub-page",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
+        PagesDescriptionViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+            }
+        ),
+        name="page-description",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/",
+        PageVersionEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/<uuid:pk>/",
+        PageVersionEndpoint.as_view(),
+        name="page-versions",
     ),
 ]

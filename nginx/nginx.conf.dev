@@ -53,7 +53,6 @@ http {
         }
 
         location /spaces/ {
-            rewrite ^/spaces/?$ /spaces/login break;            
             proxy_http_version 1.1;
             proxy_set_header Upgrade ${dollar}http_upgrade;
             proxy_set_header Connection "upgrade";

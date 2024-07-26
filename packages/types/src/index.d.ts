@@ -15,12 +15,10 @@ export * from "./importer";
 export * from "./inbox";
 export * from "./analytics";
 export * from "./api_token";
-export * from "./app";
 export * from "./auth";
 export * from "./calendar";
 export * from "./instance";
 export * from "./issues/base"; // TODO: Remove this after development and the refactor/mobx-store-issue branch is stable
-export * from "./notifications";
 export * from "./reaction";
 export * from "./view-props";
 export * from "./waitlist";
@@ -28,3 +26,5 @@ export * from "./webhook";
 export * from "./workspace-views";
 export * from "./common";
 export * from "./pragmatic";
+export * from "./publish";
+export * from "./workspace-notifications";

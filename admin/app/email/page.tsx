@@ -1,10 +1,8 @@
 "use client";
 
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
-// components
-import { PageHeader } from "@/components/core";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
@@ -18,9 +16,8 @@ const InstanceEmailPage = observer(() => {
 
   return (
     <>
-      <PageHeader title="Email - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">Secure emails from your own instance</div>
           <div className="text-sm font-normal text-custom-text-300">
             Plane can send useful emails to you and your users from your own instance without talking to the Internet.
@@ -30,7 +27,7 @@ const InstanceEmailPage = observer(() => {
             </div>
           </div>
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-auto">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceEmailForm config={formattedConfig} />
           ) : (

@@ -5,6 +5,7 @@ from django.db import models
 
 # Module imports
 from .base import BaseModel
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 ROLE_CHOICES = (
     (20, "Owner"),
@@ -112,19 +113,7 @@ def get_issue_props():
 
 
 def slug_validator(value):
-    if value in [
-        "404",
-        "accounts",
-        "api",
-        "create-workspace",
-        "god-mode",
-        "installations",
-        "invitations",
-        "onboarding",
-        "profile",
-        "spaces",
-        "workspace-invitations",
-    ]:
+    if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
 
 
@@ -244,6 +233,7 @@ class Team(BaseModel):
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="workspace_team"
     )
+    logo_props = models.JSONField(default=dict)
 
     def __str__(self):
         """Return name of the team"""

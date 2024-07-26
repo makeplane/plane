@@ -4,7 +4,7 @@ export type TCurrentUserAccount = {
   user: string | undefined;
 
   provider_account_id: string | undefined;
-  provider: "google" | "github" | string | undefined;
+  provider: "google" | "github" | "gitlab" | string | undefined;
   access_token: string | undefined;
   access_token_expired_at: Date | undefined;
   refresh_token: string | undefined;

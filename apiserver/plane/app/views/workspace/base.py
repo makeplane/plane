@@ -44,6 +44,10 @@ from plane.db.models import (
     WorkspaceTheme,
 )
 from plane.utils.cache import cache_response, invalidate_cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -118,7 +122,7 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if serializer.is_valid():
+            if serializer.is_valid(raise_exception=True):
                 serializer.save(owner=request.user)
                 # Create Workspace member
                 _ = WorkspaceMember.objects.create(
@@ -171,6 +175,8 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     @cache_response(60 * 60 * 2)
+    @method_decorator(cache_control(private=True, max_age=12))
+    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [
             field
@@ -231,7 +237,10 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = Workspace.objects.filter(slug=slug).exists()
+        workspace = (
+            Workspace.objects.filter(slug=slug).exists()
+            or slug in RESTRICTED_WORKSPACE_SLUGS
+        )
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 

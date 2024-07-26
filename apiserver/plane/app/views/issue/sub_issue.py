@@ -99,6 +99,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 ),
             )
             .annotate(state_group=F("state__group"))
+            .order_by("-created_at")
         )
 
         # create's a dict with state group name with their respective issue id's

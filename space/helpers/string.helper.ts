@@ -3,7 +3,7 @@ import DOMPurify from "dompurify";
 export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
 
 const fallbackCopyTextToClipboard = (text: string) => {
-  var textArea = document.createElement("textarea");
+  const textArea = document.createElement("textarea");
   textArea.value = text;
 
   // Avoid scrolling to bottom
@@ -18,7 +18,7 @@ const fallbackCopyTextToClipboard = (text: string) => {
   try {
     // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
-    var successful = document.execCommand("copy");
+    document.execCommand("copy");
   } catch (err) {}
 
   document.body.removeChild(textArea);
@@ -56,3 +56,7 @@ export const isEmptyHtmlString = (htmlString: string) => {
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
+
+export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
+
+export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);

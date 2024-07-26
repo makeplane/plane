@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/core";
+import { AuthenticationMethodCard } from "@/components/authentication";
+import { PageHeader } from "@/components/common";
 // helpers
 import { resolveGeneralTheme } from "@/helpers/common.helper";
 // hooks
@@ -16,7 +17,6 @@ import { useInstance } from "@/hooks/store";
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
 // local components
-import { AuthenticationMethodCard } from "../components";
 import { InstanceGithubConfigForm } from "./form";
 
 const InstanceGithubAuthenticationPage = observer(() => {
@@ -63,9 +63,9 @@ const InstanceGithubAuthenticationPage = observer(() => {
   };
   return (
     <>
-      <PageHeader title="Authentication - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-8 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 pb-3 space-y-1 flex-shrink-0">
+      <PageHeader title="GitHub Authentication - Plane Web" />
+      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
+        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
             name="Github"
             description="Allow members to login or sign up to plane with their Github accounts."
@@ -93,7 +93,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
             withBorder={false}
           />
         </div>
-        <div className="flex-grow overflow-hidden overflow-y-auto">
+        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <InstanceGithubConfigForm config={formattedConfig} />
           ) : (

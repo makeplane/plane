@@ -3,14 +3,13 @@ from django.urls import path
 
 from plane.space.views import (
     InboxIssuePublicViewSet,
-    IssueVotePublicViewSet,
     WorkspaceProjectDeployBoardEndpoint,
 )
 
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/project-boards/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/",
+        "anchor/<str:anchor>/inboxes/<uuid:inbox_id>/inbox-issues/",
         InboxIssuePublicViewSet.as_view(
             {
                 "get": "list",
@@ -20,7 +19,7 @@ urlpatterns = [
         name="inbox-issue",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/<uuid:pk>/",
+        "anchor/<str:anchor>/inboxes/<uuid:inbox_id>/inbox-issues/<uuid:pk>/",
         InboxIssuePublicViewSet.as_view(
             {
                 "get": "retrieve",
@@ -29,17 +28,6 @@ urlpatterns = [
             }
         ),
         name="inbox-issue",
-    ),
-    path(
-        "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/votes/",
-        IssueVotePublicViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-                "delete": "destroy",
-            }
-        ),
-        name="issue-vote-project-board",
     ),
     path(
         "workspaces/<str:slug>/project-boards/",

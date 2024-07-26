@@ -36,8 +36,8 @@ export const convertResponseToBarGraphData = (
         name: DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(key)
           : params.x_axis === "priority" || params.x_axis === "state__group"
-          ? capitalizeFirstLetter(key)
-          : key,
+            ? capitalizeFirstLetter(key)
+            : key,
         ...segments,
       });
     } else {
@@ -49,8 +49,8 @@ export const convertResponseToBarGraphData = (
         name: DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(item.dimension)
           : params.x_axis === "priority" || params.x_axis === "state__group"
-          ? capitalizeFirstLetter(item.dimension ?? "None")
-          : item.dimension ?? "None",
+            ? capitalizeFirstLetter(item.dimension ?? "None")
+            : item.dimension ?? "None",
         [yAxisKey]: item[yAxisKey] ?? 0,
       });
     }
@@ -84,12 +84,12 @@ export const generateBarColor = (
       priority === "urgent"
         ? "#ef4444"
         : priority === "high"
-        ? "#f97316"
-        : priority === "medium"
-        ? "#eab308"
-        : priority === "low"
-        ? "#22c55e"
-        : "#ced4da";
+          ? "#f97316"
+          : priority === "medium"
+            ? "#eab308"
+            : priority === "low"
+              ? "#22c55e"
+              : "#ced4da";
   }
 
   return color ?? generateRandomColor(value);
@@ -138,4 +138,16 @@ export const renderMonthAndYear = (date: string | number | null): string => {
   const year = `${date}`.split("-")[0];
 
   return (MONTHS_LIST[monthNumber]?.shortTitle ?? "None") + ` ${year}` ?? "";
+};
+
+export const MAX_CHART_LABEL_LENGTH = 15;
+export const renderChartDynamicLabel = (
+  label: string,
+  length: number = MAX_CHART_LABEL_LENGTH
+): { label: string; length: number } => {
+  const currentLabel = label.substring(0, length);
+  return {
+    label: `${label.length > MAX_CHART_LABEL_LENGTH ? `${currentLabel.substring(0, MAX_CHART_LABEL_LENGTH - 3)}...` : currentLabel}`,
+    length: currentLabel.length,
+  };
 };

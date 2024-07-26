@@ -1,3 +1,6 @@
+# Python imports
+import uuid
+
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
@@ -26,11 +29,17 @@ from plane.db.models import (
     User,
     WorkspaceMember,
     WorkspaceMemberInvite,
+    Session,
 )
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
+from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
+from plane.utils.host import base_host
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
 
 
 class UserEndpoint(BaseViewSet):
@@ -41,6 +50,8 @@ class UserEndpoint(BaseViewSet):
         return self.request.user
 
     @cache_response(60 * 60)
+    @method_decorator(cache_control(private=True, max_age=12))
+    @method_decorator(vary_on_cookie)
     def retrieve(self, request):
         serialized_data = UserMeSerializer(request.user).data
         return Response(
@@ -49,6 +60,8 @@ class UserEndpoint(BaseViewSet):
         )
 
     @cache_response(60 * 60)
+    @method_decorator(cache_control(private=True, max_age=12))
+    @method_decorator(vary_on_cookie)
     def retrieve_user_settings(self, request):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
@@ -73,6 +86,9 @@ class UserEndpoint(BaseViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     @invalidate_cache(path="/api/users/me/")
+    @invalidate_cache(
+        path="/api/users/me/workspaces/", multiple=True, user=False
+    )
     def deactivate(self, request):
         # Check all workspace user is active
         user = self.get_object()
@@ -160,12 +176,13 @@ class UserEndpoint(BaseViewSet):
             email=user.email,
         ).delete()
 
-        # Deactivate the user
-        user.is_active = False
+        # Delete all sessions
+        Session.objects.filter(user_id=request.user.id).delete()
 
         # Profile updates
         profile = Profile.objects.get(user=user)
 
+        # Reset onboarding
         profile.last_workspace_id = None
         profile.is_tour_completed = False
         profile.is_onboarded = False
@@ -177,10 +194,20 @@ class UserEndpoint(BaseViewSet):
         }
         profile.save()
 
-        # User log out
+        # Reset password
+        user.is_password_autoset = True
+        user.set_password(uuid.uuid4().hex)
+
+        # Deactivate the user
+        user.is_active = False
         user.last_logout_ip = user_ip(request=request)
         user.last_logout_time = timezone.now()
         user.save()
+
+        # Send an email to the user
+        user_deactivation_email.delay(
+            base_host(request=request, is_app=True), user.id
+        )
 
         # Logout the user
         logout(request)
@@ -240,6 +267,7 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
         ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
             on_results=lambda issue_activities: IssueActivitySerializer(
@@ -270,6 +298,8 @@ class AccountEndpoint(BaseAPIView):
 
 
 class ProfileEndpoint(BaseAPIView):
+    @method_decorator(cache_control(private=True, max_age=12))
+    @method_decorator(vary_on_cookie)
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile)

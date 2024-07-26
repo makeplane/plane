@@ -7,9 +7,9 @@ interface ImageLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Images Settings - God Mode",
+  title: "Images Settings - Plane Web",
 };
 
-const ImageLayout = ({ children }: ImageLayoutProps) => <AdminLayout>{children}</AdminLayout>;
-
-export default ImageLayout;
+export default function ImageLayout({ children }: ImageLayoutProps) {
+  return <AdminLayout>{children}</AdminLayout>;
+}

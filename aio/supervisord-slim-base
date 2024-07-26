@@ -1,0 +1,14 @@
+[supervisord]
+user=root
+nodaemon=true
+stderr_logfile=/app/logs/error/supervisor.err.log
+stdout_logfile=/app/logs/access/supervisor.log
+
+[program:nginx]
+directory=/app/data/nginx
+command=/app/nginx-start.sh
+autostart=true
+autorestart=true
+stderr_logfile=/app/logs/error/nginx.err.log
+stdout_logfile=/app/logs/access/nginx.log
+

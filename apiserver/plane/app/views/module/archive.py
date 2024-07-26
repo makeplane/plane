@@ -12,8 +12,9 @@ from django.db.models import (
     Subquery,
     UUIDField,
     Value,
+    Sum
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Cast
 from django.utils import timezone
 
 # Third party imports
@@ -25,7 +26,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     ModuleDetailSerializer,
 )
-from plane.db.models import Issue, Module, ModuleLink, UserFavorite
+from plane.db.models import Issue, Module, ModuleLink, UserFavorite, Project
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
 
@@ -217,8 +218,118 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     .values("count")
                 )
             )
+
+            estimate_type = Project.objects.filter(
+                workspace__slug=slug,
+                pk=project_id,
+                estimate__isnull=False,
+                estimate__type="points",
+            ).exists()
+
+            data = ModuleDetailSerializer(queryset.first()).data
+            modules = queryset.first()
+
+            data["estimate_distribution"] = {}
+
+            if estimate_type:
+                label_distribution = (
+                    Issue.issue_objects.filter(
+                        issue_module__module_id=pk,
+                        workspace__slug=slug,
+                        project_id=project_id,
+                    )
+                    .annotate(first_name=F("assignees__first_name"))
+                    .annotate(last_name=F("assignees__last_name"))
+                    .annotate(assignee_id=F("assignees__id"))
+                    .annotate(display_name=F("assignees__display_name"))
+                    .annotate(avatar=F("assignees__avatar"))
+                    .values(
+                        "first_name",
+                        "last_name",
+                        "assignee_id",
+                        "avatar",
+                        "display_name",
+                    )
+                    .annotate(
+                        total_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField())
+                        ),
+                    )
+                    .annotate(
+                        completed_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=False,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=True,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .order_by("first_name", "last_name")
+                )
+
+                assignee_distribution = (
+                    Issue.issue_objects.filter(
+                        issue_module__module_id=pk,
+                        workspace__slug=slug,
+                        project_id=project_id,
+                    )
+                    .annotate(label_name=F("labels__name"))
+                    .annotate(color=F("labels__color"))
+                    .annotate(label_id=F("labels__id"))
+                    .values("label_name", "color", "label_id")
+                    .annotate(
+                        total_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField())
+                        ),
+                    )
+                    .annotate(
+                        completed_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=False,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_estimates=Sum(
+                            Cast("estimate_point__value", IntegerField()),
+                            filter=Q(
+                                completed_at__isnull=True,
+                                archived_at__isnull=True,
+                                is_draft=False,
+                            ),
+                        )
+                    )
+                    .order_by("label_name")
+                )
+                data["estimate_distribution"]["assignee"] = assignee_distribution
+                data["estimate_distribution"]["label"] = label_distribution
+
+                if modules and modules.start_date and modules.target_date:
+                    data["estimate_distribution"]["completion_chart"] = (
+                        burndown_plot(
+                            queryset=modules,
+                            slug=slug,
+                            project_id=project_id,
+                            plot_type="points",
+                            module_id=pk,
+                        )
+                    )
             assignee_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -268,7 +379,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
 
             label_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_module__module_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -309,7 +420,6 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 .order_by("label_name")
             )
 
-            data = ModuleDetailSerializer(queryset.first()).data
             data["distribution"] = {
                 "assignees": assignee_distribution,
                 "labels": label_distribution,
@@ -317,12 +427,12 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             }
 
             # Fetch the modules
-            modules = queryset.first()
             if modules and modules.start_date and modules.target_date:
                 data["distribution"]["completion_chart"] = burndown_plot(
                     queryset=modules,
                     slug=slug,
                     project_id=project_id,
+                    plot_type="issues",
                     module_id=pk,
                 )
 

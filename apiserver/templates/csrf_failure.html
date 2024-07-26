@@ -1,0 +1,66 @@
+<!-- templates/csrf_failure.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSRF Verification Failed</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .card {
+        max-width: 400px;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .card-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="card-header">
+        <h3>CSRF Verification Failed</h3>
+      </div>
+      <div class="card-body">
+        <p>
+          It looks like your form submission has expired or there was a problem
+          with your request.
+        </p>
+        <p>Please try the following:</p>
+        <ul>
+          <li>Refresh the page and try submitting the form again.</li>
+          <li>Ensure that cookies are enabled in your browser.</li>
+        </ul>
+        <a href="{{ root_url }}" class="btn-primary">Go to Home Page</a>
+      </div>
+    </div>
+  </body>
+</html>

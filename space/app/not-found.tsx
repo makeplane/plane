@@ -2,22 +2,22 @@
 
 import Image from "next/image";
 // assets
-import UserLoggedInImage from "public/user-logged-in.svg";
+import SomethingWentWrongImage from "public/something-went-wrong.svg";
 
-export default function NotFound() {
-  return (
-    <div className="flex h-screen w-screen flex-col">
-      <div className="grid h-full w-full place-items-center p-6">
-        <div className="text-center">
-          <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
-            <div className="h-32 w-32">
-              <Image src={UserLoggedInImage} alt="User already logged in" />
-            </div>
-          </div>
-          <h1 className="mt-12 text-3xl font-semibold">Not Found</h1>
-          <p className="mt-4">Please enter the appropriate project URL to view the issue board.</p>
+const NotFound = () => (
+  <div className="h-screen w-screen grid place-items-center">
+    <div className="text-center">
+      <div className="mx-auto size-32 md:size-52 grid place-items-center rounded-full bg-custom-background-80">
+        <div className="size-16 md:size-32 grid place-items-center">
+          <Image src={SomethingWentWrongImage} alt="User already logged in" />
         </div>
       </div>
+      <h1 className="mt-8 md:mt-12 text-xl md:text-3xl font-semibold">That didn{"'"}t work</h1>
+      <p className="mt-2 md:mt-4 text-sm md:text-base">
+        Check the URL you are entering in the browser{"'"}s address bar and try again.
+      </p>
     </div>
-  );
-}
+  </div>
+);
+
+export default NotFound;

@@ -8,6 +8,10 @@ module.exports = {
   content: {
     relative: true,
     files: [
+      "./app/**/*.{js,ts,jsx,tsx}",
+      "./core/**/*.{js,ts,jsx,tsx}",
+      "./ce/**/*.{js,ts,jsx,tsx}",
+      "./ee/**/*.{js,ts,jsx,tsx}",
       "./components/**/*.tsx",
       "./constants/**/*.{js,ts,jsx,tsx}",
       "./layouts/**/*.tsx",
@@ -16,6 +20,7 @@ module.exports = {
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
       "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
+      "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -108,6 +113,7 @@ module.exports = {
             100: convertToRGB("--color-text-100"),
             200: convertToRGB("--color-text-200"),
             300: convertToRGB("--color-text-300"),
+            350: convertToRGB("--color-text-350"),
             400: convertToRGB("--color-text-400"),
             500: convertToRGB("--color-text-500"),
             600: convertToRGB("--color-text-600"),
@@ -264,7 +270,7 @@ module.exports = {
             "--tw-prose-headings": convertToRGB("--color-text-100"),
             "--tw-prose-lead": convertToRGB("--color-text-100"),
             "--tw-prose-links": convertToRGB("--color-primary-100"),
-            "--tw-prose-bold": convertToRGB("--color-text-100"),
+            "--tw-prose-bold": "inherit",
             "--tw-prose-counters": convertToRGB("--color-text-100"),
             "--tw-prose-bullets": convertToRGB("--color-text-100"),
             "--tw-prose-hr": convertToRGB("--color-text-100"),

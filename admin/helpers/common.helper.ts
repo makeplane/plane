@@ -10,6 +10,8 @@ export const SPACE_BASE_PATH = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";
 
 export const WEB_BASE_URL = process.env.NEXT_PUBLIC_WEB_BASE_URL || "";
 
+export const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "";
+
 export const ASSET_PREFIX = ADMIN_BASE_PATH;
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));

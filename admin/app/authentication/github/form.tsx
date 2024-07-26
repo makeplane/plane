@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Link from "next/link";
@@ -8,6 +10,7 @@ import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigura
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
 import {
+  CodeBlock,
   ConfirmDiscardModal,
   ControllerInput,
   CopyField,
@@ -100,7 +103,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       url: originURL,
       description: (
         <>
-          We will auto-generate this. Paste this into the Authorized origin URL field{" "}
+          We will auto-generate this. Paste this into the{" "}
+          <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -119,7 +123,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/github/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into your Authorized Callback URI field{" "}
+          We will auto-generate this. Paste this into your{" "}
+          <CodeBlock darkerShade>Authorized Callback URI</CodeBlock> field{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -141,8 +146,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       .then((response = []) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Github Configuration Settings updated successfully",
+          title: "Done!",
+          message: "Your GitHub authentication is configured. You should test it now.",
         });
         reset({
           GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
@@ -168,8 +173,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       />
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
-            <div className="pt-2 text-xl font-medium">Configuration</div>
+          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+            <div className="pt-2.5 text-xl font-medium">GitHub-provided details for Plane</div>
             {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -199,8 +204,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 py-4 my-2 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Service provider details</div>
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
+              <div className="pt-2 text-xl font-medium">Plane-provided details for GitHub</div>
               {GITHUB_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}

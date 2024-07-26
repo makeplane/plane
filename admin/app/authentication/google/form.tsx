@@ -1,3 +1,4 @@
+"use client";
 import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigura
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
 import {
+  CodeBlock,
   ConfirmDiscardModal,
   ControllerInput,
   CopyField,
@@ -100,7 +102,8 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
       url: originURL,
       description: (
         <p>
-          We will auto-generate this. Paste this into your Authorized JavaScript origins field. For this OAuth client{" "}
+          We will auto-generate this. Paste this into your{" "}
+          <CodeBlock darkerShade>Authorized JavaScript origins</CodeBlock> field. For this OAuth client{" "}
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
             target="_blank"
@@ -118,7 +121,8 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/google/callback/`,
       description: (
         <p>
-          We will auto-generate this. Paste this into your Authorized Redirect URI field. For this OAuth client{" "}
+          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Redirect URI</CodeBlock>{" "}
+          field. For this OAuth client{" "}
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
             target="_blank"
@@ -139,8 +143,8 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
       .then((response = []) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Google Configuration Settings updated successfully",
+          title: "Done!",
+          message: "Your Google authentication is configured. You should test it now.",
         });
         reset({
           GOOGLE_CLIENT_ID: response.find((item) => item.key === "GOOGLE_CLIENT_ID")?.value,
@@ -166,8 +170,8 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
       />
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
-            <div className="pt-2 text-xl font-medium">Configuration</div>
+          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+            <div className="pt-2.5 text-xl font-medium">Google-provided details for Plane</div>
             {GOOGLE_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -197,8 +201,8 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 py-4 my-2 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Service provider details</div>
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
+              <div className="pt-2 text-xl font-medium">Plane-provided details for Google</div>
               {GOOGLE_SERVICE_DETAILS.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}

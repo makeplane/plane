@@ -28,6 +28,7 @@ from plane.db.models import (
     Project,
     State,
     User,
+    EstimatePoint,
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
@@ -448,21 +449,37 @@ def track_estimate_points(
     if current_instance.get("estimate_point") != requested_data.get(
         "estimate_point"
     ):
+        old_estimate = (
+            EstimatePoint.objects.filter(
+                pk=current_instance.get("estimate_point")
+            ).first()
+            if current_instance.get("estimate_point") is not None
+            else None
+        )
+        new_estimate = (
+            EstimatePoint.objects.filter(
+                pk=requested_data.get("estimate_point")
+            ).first()
+            if requested_data.get("estimate_point") is not None
+            else None
+        )
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=(
+                old_identifier=(
                     current_instance.get("estimate_point")
                     if current_instance.get("estimate_point") is not None
-                    else ""
+                    else None
                 ),
-                new_value=(
+                new_identifier=(
                     requested_data.get("estimate_point")
                     if requested_data.get("estimate_point") is not None
-                    else ""
+                    else None
                 ),
+                old_value=old_estimate.value if old_estimate else None,
+                new_value=new_estimate.value if new_estimate else None,
                 field="estimate_point",
                 project_id=project_id,
                 workspace_id=workspace_id,
@@ -565,17 +582,18 @@ def create_issue_activity(
     issue_activities,
     epoch,
 ):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created the issue",
-            verb="created",
-            actor_id=actor_id,
-            epoch=epoch,
-        )
+    issue = Issue.objects.get(pk=issue_id)
+    issue_activity = IssueActivity.objects.create(
+        issue_id=issue_id,
+        project_id=project_id,
+        workspace_id=workspace_id,
+        comment="created the issue",
+        verb="created",
+        actor_id=actor_id,
+        epoch=epoch,
     )
+    issue_activity.created_at = issue.created_at
+    issue_activity.save(update_fields=["created_at"])
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
@@ -1374,6 +1392,7 @@ def create_issue_relation_activity(
                     workspace_id=workspace_id,
                     comment=f"added {requested_data.get('relation_type')} relation",
                     old_identifier=related_issue,
+                    epoch=epoch,
                 )
             )
             issue = Issue.objects.get(pk=issue_id)
@@ -1699,12 +1718,16 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue" if inbox else "issue"
+                        else "inbox_issue"
+                        if inbox
+                        else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox if inbox else activity.issue_id
+                        else inbox
+                        if inbox
+                        else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

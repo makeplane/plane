@@ -16,6 +16,7 @@ from django.core.management.utils import get_random_secret_key
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from corsheaders.defaults import default_headers
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -127,6 +128,8 @@ else:
     CORS_ALLOW_ALL_ORIGINS = True
     secure_origins = False
 
+CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
+
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
 ASGI_APPLICATION = "plane.asgi.application"
@@ -225,6 +228,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # Storage Settings
+# Use Minio settings
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -243,7 +249,7 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_S3_ENDPOINT_URL = os.environ.get(
     "AWS_S3_ENDPOINT_URL", None
 ) or os.environ.get("MINIO_ENDPOINT_URL", None)
-if AWS_S3_ENDPOINT_URL:
+if AWS_S3_ENDPOINT_URL and USE_MINIO:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
@@ -288,7 +294,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
         profiles_sample_rate=float(
-            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0)
         ),
     )
 
@@ -307,8 +313,6 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
-# Use Minio settings
-USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 # Posthog settings
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
@@ -345,8 +349,9 @@ CSRF_COOKIE_SECURE = secure_origins
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
-APP_BASE_URL = os.environ.get("APP_BASE_URL") or os.environ.get("WEB_URL")
+APP_BASE_URL = os.environ.get("APP_BASE_URL")

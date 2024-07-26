@@ -30,14 +30,13 @@ from .project import (
     ProjectIdentifierSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
-    ProjectDeployBoardSerializer,
+    DeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import (
-    GlobalViewSerializer,
     IssueViewSerializer,
 )
 from .cycle import (
@@ -51,7 +50,7 @@ from .issue import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
-    IssuePropertySerializer,
+    IssueUserPropertySerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,
@@ -92,6 +91,7 @@ from .page import (
     PageLogSerializer,
     SubPageSerializer,
     PageDetailSerializer,
+    PageVersionSerializer,
 )
 
 from .estimate import (

@@ -3,8 +3,8 @@ from django.urls import path
 
 from plane.app.views import (
     IssueViewViewSet,
-    GlobalViewViewSet,
-    GlobalViewIssuesViewSet,
+    WorkspaceViewViewSet,
+    WorkspaceViewIssuesViewSet,
     IssueViewFavoriteViewSet,
 )
 
@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/views/",
-        GlobalViewViewSet.as_view(
+        WorkspaceViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -44,7 +44,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/views/<uuid:pk>/",
-        GlobalViewViewSet.as_view(
+        WorkspaceViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -56,7 +56,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/issues/",
-        GlobalViewIssuesViewSet.as_view(
+        WorkspaceViewIssuesViewSet.as_view(
             {
                 "get": "list",
             }

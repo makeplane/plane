@@ -6,9 +6,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.db import models, transaction
 from django.utils import timezone
 
 # Module imports
@@ -92,6 +90,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__isnull=True)
             )
             .filter(deleted_at__isnull=True)
+            .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
@@ -120,8 +119,15 @@ class Issue(ProjectBaseModel):
         blank=True,
         related_name="state_issue",
     )
-    estimate_point = models.IntegerField(
+    point = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(12)],
+        null=True,
+        blank=True,
+    )
+    estimate_point = models.ForeignKey(
+        "db.EstimatePoint",
+        on_delete=models.SET_NULL,
+        related_name="issue_estimates",
         null=True,
         blank=True,
     )
@@ -129,6 +135,7 @@ class Issue(ProjectBaseModel):
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
+    description_binary = models.BinaryField(null=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
@@ -156,6 +163,13 @@ class Issue(ProjectBaseModel):
     is_draft = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    type = models.ForeignKey(
+        "db.IssueType",
+        on_delete=models.SET_NULL,
+        related_name="issue_type",
+        null=True,
+        blank=True,
+    )
 
     objects = models.Manager()
     issue_objects = IssueManager()
@@ -167,7 +181,6 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        # This means that the model isn't saved to the database yet
         if self.state is None:
             try:
                 from plane.db.models import State
@@ -177,7 +190,6 @@ class Issue(ProjectBaseModel):
                     project=self.project,
                     default=True,
                 ).first()
-                # if there is no default state assign any random state
                 if default_state is None:
                     random_state = State.objects.filter(
                         ~models.Q(is_triage=True), project=self.project
@@ -191,7 +203,6 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State
 
-                # Check if the current issue state group is completed or not
                 if self.state.group == "completed":
                     self.completed_at = timezone.now()
                 else:
@@ -200,30 +211,44 @@ class Issue(ProjectBaseModel):
                 pass
 
         if self._state.adding:
-            # Get the maximum display_id value from the database
-            last_id = IssueSequence.objects.filter(
-                project=self.project
-            ).aggregate(largest=models.Max("sequence"))["largest"]
-            # aggregate can return None! Check it first.
-            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id:
-                self.sequence_id = last_id + 1
-            else:
-                self.sequence_id = 1
+            with transaction.atomic():
+                last_sequence = (
+                    IssueSequence.objects.filter(project=self.project)
+                    .select_for_update()
+                    .aggregate(largest=models.Max("sequence"))["largest"]
+                )
+                self.sequence_id = last_sequence + 1 if last_sequence else 1
+                # Strip the html tags using html parser
+                self.description_stripped = (
+                    None
+                    if (
+                        self.description_html == ""
+                        or self.description_html is None
+                    )
+                    else strip_tags(self.description_html)
+                )
+                largest_sort_order = Issue.objects.filter(
+                    project=self.project, state=self.state
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+                if largest_sort_order is not None:
+                    self.sort_order = largest_sort_order + 10000
 
-            largest_sort_order = Issue.objects.filter(
-                project=self.project, state=self.state
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
-            if largest_sort_order is not None:
-                self.sort_order = largest_sort_order + 10000
+                super(Issue, self).save(*args, **kwargs)
 
-        # Strip the html tags using html parser
-        self.description_stripped = (
-            None
-            if (self.description_html == "" or self.description_html is None)
-            else strip_tags(self.description_html)
-        )
-        super(Issue, self).save(*args, **kwargs)
+                IssueSequence.objects.create(
+                    issue=self, sequence=self.sequence_id, project=self.project
+                )
+        else:
+            # Strip the html tags using html parser
+            self.description_stripped = (
+                None
+                if (
+                    self.description_html == ""
+                    or self.description_html is None
+                )
+                else strip_tags(self.description_html)
+            )
+            super(Issue, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return name of the issue"""
@@ -360,6 +385,8 @@ class IssueAttachment(ProjectBaseModel):
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
     )
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Issue Attachment"
@@ -467,7 +494,7 @@ class IssueComment(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueProperty(ProjectBaseModel):
+class IssueUserProperty(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -480,9 +507,9 @@ class IssueProperty(ProjectBaseModel):
     )
 
     class Meta:
-        verbose_name = "Issue Property"
-        verbose_name_plural = "Issue Properties"
-        db_table = "issue_properties"
+        verbose_name = "Issue User Property"
+        verbose_name_plural = "Issue User Properties"
+        db_table = "issue_user_properties"
         ordering = ("-created_at",)
         unique_together = ["user", "project"]
 
@@ -552,9 +579,9 @@ class IssueSequence(ProjectBaseModel):
         Issue,
         on_delete=models.SET_NULL,
         related_name="issue_sequence",
-        null=True,
+        null=True,  # This is set to null because we want to keep the sequence even if the issue is deleted
     )
-    sequence = models.PositiveBigIntegerField(default=1)
+    sequence = models.PositiveBigIntegerField(default=1, db_index=True)
     deleted = models.BooleanField(default=False)
 
     class Meta:
@@ -660,14 +687,3 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
-
-
-# TODO: Find a better method to save the model
-@receiver(post_save, sender=Issue)
-def create_issue_sequence(sender, instance, created, **kwargs):
-    if created:
-        IssueSequence.objects.create(
-            issue=instance,
-            sequence=instance.sequence_id,
-            project=instance.project,
-        )

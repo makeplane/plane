@@ -59,9 +59,8 @@ const calculateShades = (hexValue: string): TShades => {
   return shades as TShades;
 };
 
-export const applyTheme = (palette: string, isDarkPalette: boolean) => {
+export const applyTheme = (palette: string, isDarkPalette: boolean, dom: HTMLElement | null) => {
   if (!palette) return;
-  const dom = document?.querySelector<HTMLElement>("[data-theme='custom']");
   // palette: [bg, text, primary, sidebarBg, sidebarText]
   const values: string[] = palette.split(",");
   values.push(isDarkPalette ? "dark" : "light");

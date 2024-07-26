@@ -9,3 +9,15 @@ export type TPaginationInfo = {
   per_page?: number;
   total_results: number;
 };
+
+export type TLogoProps = {
+  in_use: "emoji" | "icon";
+  emoji?: {
+    value?: string;
+    url?: string;
+  };
+  icon?: {
+    name?: string;
+    color?: string;
+  };
+};

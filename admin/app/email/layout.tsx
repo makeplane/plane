@@ -7,9 +7,9 @@ interface EmailLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Email Settings - God Mode",
+  title: "Email Settings - Plane Web",
 };
 
-const EmailLayout = ({ children }: EmailLayoutProps) => <AdminLayout>{children}</AdminLayout>;
-
-export default EmailLayout;
+export default function EmailLayout({ children }: EmailLayoutProps) {
+  return <AdminLayout>{children}</AdminLayout>;
+}

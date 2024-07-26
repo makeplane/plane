@@ -44,6 +44,7 @@ class APIToken(BaseModel):
         null=True,
     )
     expired_at = models.DateTimeField(blank=True, null=True)
+    is_service = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "API Token"

@@ -107,22 +107,6 @@ class SignInAuthEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        if not existing_user.is_active:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "USER_ACCOUNT_DEACTIVATED"
-                ],
-                error_message="USER_ACCOUNT_DEACTIVATED",
-            )
-            params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
         try:
             provider = EmailProvider(
                 request=request,
@@ -222,22 +206,6 @@ class SignUpAuthEndpoint(View):
 
         if existing_user:
             # Existing User
-            if not existing_user.is_active:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_ACCOUNT_DEACTIVATED"
-                    ],
-                    error_message="USER_ACCOUNT_DEACTIVATED",
-                )
-                params = exc.get_error_dict()
-                if next_path:
-                    params["next_path"] = str(next_path)
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
-
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
                 error_message="USER_ALREADY_EXIST",

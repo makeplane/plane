@@ -278,7 +278,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
 
             # Assignee Distribution
             assignee_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -326,7 +326,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
 
             # Label Distribution
             label_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -375,6 +375,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     queryset=queryset,
                     slug=slug,
                     project_id=project_id,
+                    plot_type="issues",
                     cycle_id=pk,
                 )
 

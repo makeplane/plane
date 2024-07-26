@@ -2,7 +2,7 @@ name: Bug report
 description: Create a bug report to help us improve Plane
 title: "[bug]: "
 labels: [🐛bug]
-assignees: [srinivaspendem, pushya22]
+assignees: [vihar, pushya22]
 body:
 - type: markdown
   attributes:

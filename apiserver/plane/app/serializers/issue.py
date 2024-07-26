@@ -17,7 +17,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    IssueProperty,
+    IssueUserProperty,
     IssueAssignee,
     IssueSubscriber,
     IssueLabel,
@@ -135,7 +135,11 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        # Create Issue
+        issue = Issue.objects.create(
+            **validated_data,
+            project_id=project_id,
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -248,9 +252,9 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssuePropertySerializer(BaseSerializer):
+class IssueUserPropertySerializer(BaseSerializer):
     class Meta:
-        model = IssueProperty
+        model = IssueUserProperty
         fields = "__all__"
         read_only_fields = [
             "user",
@@ -459,10 +463,14 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
@@ -509,7 +517,7 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
             "attributes",
             "issue_id",
             "updated_at",
-            "updated_by_id",
+            "updated_by",
         ]
         read_only_fields = fields
 
