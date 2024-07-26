@@ -2,6 +2,9 @@
 from rest_framework import status
 from rest_framework.response import Response
 
+# Django modules
+from django.db.models import Q
+
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import UserFavorite, Workspace
@@ -15,10 +18,18 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
+        # the second filter is to check if the user is a member of the project
         favorites = UserFavorite.objects.filter(
             user=request.user,
             workspace__slug=slug,
             parent__isnull=True,
+        ).filter(
+            Q(project__isnull=True)
+            | (
+                Q(project__isnull=False)
+                & Q(project__project_projectmember__member=request.user)
+                & Q(project__project_projectmember__is_active=True)
+            )
         )
         serializer = UserFavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
