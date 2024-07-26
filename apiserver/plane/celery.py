@@ -38,7 +38,7 @@ app.conf.beat_schedule = {
     },
     "check-every-day-to-delete-hard-delete": {
         "task": "plane.bgtasks.deletion_task.hard_delete",
-        "schedule": crontab(hour=11, minute=9),
+        "schedule": crontab(hour=0, minute=0),
     },
 }
 
