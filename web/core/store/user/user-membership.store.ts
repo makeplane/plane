@@ -1,7 +1,7 @@
-import { set } from "lodash";
+import { set, update } from "lodash";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // types
-import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/types";
+import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole, IProjectMemberLite } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
@@ -253,6 +253,15 @@ export class UserMembershipStore implements IUserMembershipStore {
       set(this.hasPermissionToProject, [projectId], false);
       // update the project member list with the new permissions
       set(this.store.projectRoot.project.projectMap, [projectId, "is_member"], false);
+      // remove user from project members list
+      update(this.store.projectRoot.project.projectMap, projectId, (project) => {
+        if (project) {
+          project.members = project.members.filter(
+            (member: IProjectMemberLite) => member.member_id !== this.store.user?.data?.id
+          );
+        }
+        return project;
+      });
     });
 
   /**
