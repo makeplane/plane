@@ -36,7 +36,7 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = observer((props) => {
         <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
           <ActiveCycleProgress cycle={cycle} />
-          <ActiveCycleProductivity cycle={cycle} />
+          <ActiveCycleProductivity cycle={cycle} workspaceSlug={workspaceSlug} />
           <ActiveCycleStats cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
         </div>
       </div>

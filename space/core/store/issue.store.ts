@@ -27,7 +27,7 @@ export class IssueStore extends BaseIssuesStore implements IIssueStore {
   issueService: IssueService;
 
   constructor(_rootStore: CoreRootStore) {
-    super(_rootStore, _rootStore.issueFilter);
+    super(_rootStore);
     makeObservable(this, {
       // actions
       fetchPublicIssues: action,

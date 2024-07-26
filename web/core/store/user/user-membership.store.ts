@@ -249,14 +249,10 @@ export class UserMembershipStore implements IUserMembershipStore {
    */
   leaveProject = async (workspaceSlug: string, projectId: string) =>
     await this.userService.leaveProject(workspaceSlug, projectId).then(() => {
-      const newPermissions: { [projectId: string]: boolean } = {};
-      newPermissions[projectId] = false;
-      runInAction(() => {
-        this.hasPermissionToProject = {
-          ...this.hasPermissionToProject,
-          ...newPermissions,
-        };
-      });
+      // remove the user membership for a project
+      set(this.hasPermissionToProject, [projectId], false);
+      // update the project member list with the new permissions
+      set(this.store.projectRoot.project.projectMap, [projectId, "is_member"], false);
     });
 
   /**

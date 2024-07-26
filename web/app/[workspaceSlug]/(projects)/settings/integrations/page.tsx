@@ -14,7 +14,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser, useWorkspace, useInstance } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -24,7 +24,6 @@ const WorkspaceIntegrationsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { instance } = useInstance();
   const {
     userProfile: { data: userProfile },
     membership: { currentWorkspaceRole },
@@ -50,7 +49,7 @@ const WorkspaceIntegrationsPage = observer(() => {
       </>
     );
 
-  if (instance?.product === "plane-one")
+  if (true)
     return (
       <div className="flex h-full flex-col gap-10 rounded-xl px-8">
         <div className="flex items-center border-b border-custom-border-100 py-3.5">
@@ -110,7 +109,7 @@ const WorkspaceIntegrationsPage = observer(() => {
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
           {appIntegrations ? (
-            appIntegrations.map((integration) => (
+            appIntegrations?.map((integration) => (
               <SingleIntegrationCard key={integration.id} integration={integration} />
             ))
           ) : (

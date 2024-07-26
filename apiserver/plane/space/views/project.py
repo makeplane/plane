@@ -80,6 +80,11 @@ class ProjectMembersEndpoint(BaseAPIView):
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        if not deploy_board:
+            return Response(
+                {"error": "Invalid anchor"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         members = ProjectMember.objects.filter(
             project=deploy_board.project,
@@ -91,6 +96,7 @@ class ProjectMembersEndpoint(BaseAPIView):
             "member__first_name",
             "member__last_name",
             "member__display_name",
+            "member__avatar",
             "project",
             "workspace",
         )

@@ -16,6 +16,7 @@ import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -37,6 +38,11 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   // auth
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = !!currentProjectRole && currentProjectRole == EUserProjectRoles.ADMIN;
+
+  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
+    !!view.anchor,
+    isAdmin || isOwner
+  );
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
   const handleCopyText = () =>
@@ -78,6 +84,8 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
     },
   ];
 
+  if (publishContextMenu) MENU_ITEMS.splice(2, 0, publishContextMenu);
+
   return (
     <>
       <CreateUpdateProjectViewModal
@@ -88,6 +96,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
         data={view}
       />
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
+      <PublishViewModal isOpen={isPublishModalOpen} onClose={() => setPublishModalOpen(false)} view={view} />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
         {MENU_ITEMS.map((item) => {

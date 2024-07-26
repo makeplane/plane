@@ -35,11 +35,6 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if issue_view.access == 0:
-            return Response(
-                {"error": "Only public views can be published"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check if the view is already published
         comments = request.data.get("is_comments_enabled", False)
@@ -120,10 +115,10 @@ class IssueViewsPublishEndpoint(BaseAPIView):
     ]
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
-    def post(self, request, slug, project_id, view_id):
+    def post(self, request, slug, project_id, pk):
         # Fetch the view
         issue_view = IssueView.objects.get(
-            pk=view_id,
+            pk=pk,
             workspace__slug=slug,
             project_id=project_id,
         )
@@ -134,11 +129,6 @@ class IssueViewsPublishEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if issue_view.access == 0:
-            return Response(
-                {"error": "Only public views can be published"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check if the view is already published
         comments = request.data.get("is_comments_enabled", False)
@@ -149,8 +139,9 @@ class IssueViewsPublishEndpoint(BaseAPIView):
 
         # Create a deploy board for the views
         deploy_board, _ = DeployBoard.objects.get_or_create(
-            entity_identifier=view_id,
+            entity_identifier=pk,
             entity_name="view",
+            project_id=project_id,
             defaults={
                 "is_comments_enabled": comments,
                 "is_reactions_enabled": reactions,
@@ -159,15 +150,16 @@ class IssueViewsPublishEndpoint(BaseAPIView):
                 "view_props": view_props,
             },
         )
+        issue_view.save()
 
         # Return the deploy board
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
-    def patch(self, request, slug, project_id, view_id):
+    def patch(self, request, slug, project_id, pk):
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=view_id,
+            entity_identifier=pk,
             entity_name="view",
             workspace__slug=slug,
             project_id=project_id,
@@ -198,9 +190,9 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
-    def get(self, request, slug, project_id, view_id):
+    def get(self, request, slug, project_id, pk):
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=view_id,
+            entity_identifier=pk,
             entity_name="view",
             workspace__slug=slug,
             project_id=project_id,
@@ -209,9 +201,9 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
-    def delete(self, request, slug, project_id, view_id):
+    def delete(self, request, slug, project_id, pk):
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=view_id,
+            entity_identifier=pk,
             entity_name="view",
             workspace__slug=slug,
             project_id=project_id,

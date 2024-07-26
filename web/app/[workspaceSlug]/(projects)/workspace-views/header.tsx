@@ -4,9 +4,10 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { Layers } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
@@ -108,9 +109,7 @@ export const GlobalIssuesHeader = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={
-                <BreadcrumbLink label={`All Issues`} icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              link={<BreadcrumbLink label={`Views`} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>

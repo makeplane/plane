@@ -37,6 +37,8 @@ export interface IIssue
   extends Pick<
     TIssue,
     | "description_html"
+    | "created_at"
+    | "updated_at"
     | "created_by"
     | "id"
     | "name"
@@ -51,6 +53,10 @@ export interface IIssue
     | "module_ids"
     | "label_ids"
     | "assignee_ids"
+    | "attachment_count"
+    | "sub_issues_count"
+    | "link_count"
+    | "estimate_point"
   > {
   comments: Comment[];
   reaction_items: IIssueReaction[];

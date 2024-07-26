@@ -3,6 +3,7 @@ from .cycle import urlpatterns as cycles_patterns
 from .issue import urlpatterns as issue_patterns
 from .page import urlpatterns as page_patterns
 from .views import urlpatterns as views_patterns
+from .workspace import urlpatterns as workspace_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -10,4 +11,5 @@ urlpatterns = [
     *issue_patterns,
     *page_patterns,
     *views_patterns,
+    *workspace_patterns,
 ]

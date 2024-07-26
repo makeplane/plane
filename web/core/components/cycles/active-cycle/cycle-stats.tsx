@@ -30,11 +30,12 @@ import useLocalStorage from "@/hooks/use-local-storage";
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: ICycle | null;
+  cycleId?: string | null;
 };
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
-  const { workspaceSlug, projectId, cycle } = props;
+  const { workspaceSlug, projectId, cycle, cycleId } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
@@ -63,22 +64,29 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { currentProjectDetails } = useProject();
 
   useSWR(
-    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id
-      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycle.id)
-      : null,
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
+    workspaceSlug && projectId && cycleId ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycleId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const cycleIssueDetails = getActiveCycleById(cycle.id);
+  const cycleIssueDetails = cycleId ? getActiveCycleById(cycleId) : { nextPageResults: false };
 
   const loadMoreIssues = useCallback(() => {
-    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);
-  }, [workspaceSlug, projectId, cycle.id, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
+    if (!cycleId) return;
+    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycleId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceSlug, projectId, cycleId, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
 
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
-  return (
+  const loaders = (
+    <Loader className="space-y-3">
+      <Loader.Item height="30px" />
+      <Loader.Item height="30px" />
+      <Loader.Item height="30px" />
+    </Loader>
+  );
+  return cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <Tab.Group
         as={Fragment}
@@ -154,7 +162,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               ref={issuesContainerRef}
               className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
             >
-              {cycleIssueDetails && cycleIssueDetails.issueIds ? (
+              {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
                 cycleIssueDetails.issueCount > 0 ? (
                   <>
                     {cycleIssueDetails.issueIds.map((issueId: string) => {
@@ -229,11 +237,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                   </div>
                 )
               ) : (
-                <Loader className="space-y-3">
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                </Loader>
+                loaders
               )}
             </div>
           </Tab.Panel>
@@ -242,44 +246,52 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
-              cycle.distribution?.assignees?.map((assignee, index) => {
-                if (assignee.assignee_id)
-                  return (
-                    <SingleProgressStats
-                      key={assignee.assignee_id}
-                      title={
-                        <div className="flex items-center gap-2">
-                          <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+            {cycle ? (
+              cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
+                cycle.distribution?.assignees?.map((assignee, index) => {
+                  if (assignee.assignee_id)
+                    return (
+                      <SingleProgressStats
+                        key={assignee.assignee_id}
+                        title={
+                          <div className="flex items-center gap-2">
+                            <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
 
-                          <span>{assignee.display_name}</span>
-                        </div>
-                      }
-                      completed={assignee.completed_issues}
-                      total={assignee.total_issues}
-                    />
-                  );
-                else
-                  return (
-                    <SingleProgressStats
-                      key={`unassigned-${index}`}
-                      title={
-                        <div className="flex items-center gap-2">
-                          <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                            <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            <span>{assignee.display_name}</span>
                           </div>
-                          <span>No assignee</span>
-                        </div>
-                      }
-                      completed={assignee.completed_issues}
-                      total={assignee.total_issues}
-                    />
-                  );
-              })
+                        }
+                        completed={assignee.completed_issues}
+                        total={assignee.total_issues}
+                      />
+                    );
+                  else
+                    return (
+                      <SingleProgressStats
+                        key={`unassigned-${index}`}
+                        title={
+                          <div className="flex items-center gap-2">
+                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            </div>
+                            <span>No assignee</span>
+                          </div>
+                        }
+                        completed={assignee.completed_issues}
+                        total={assignee.total_issues}
+                      />
+                    );
+                })
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  <EmptyState
+                    type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE}
+                    layout="screen-simple"
+                    size="sm"
+                  />
+                </div>
+              )
             ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE} layout="screen-simple" size="sm" />
-              </div>
+              loaders
             )}
           </Tab.Panel>
 
@@ -287,33 +299,41 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
-              cycle.distribution.labels?.map((label, index) => (
-                <SingleProgressStats
-                  key={label.label_id ?? `no-label-${index}`}
-                  title={
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="block h-3 w-3 rounded-full"
-                        style={{
-                          backgroundColor: label.color ?? "#000000",
-                        }}
-                      />
-                      <span className="text-xs">{label.label_name ?? "No labels"}</span>
-                    </div>
-                  }
-                  completed={label.completed_issues}
-                  total={label.total_issues}
-                />
-              ))
+            {cycle ? (
+              cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
+                cycle.distribution.labels?.map((label, index) => (
+                  <SingleProgressStats
+                    key={label.label_id ?? `no-label-${index}`}
+                    title={
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="block h-3 w-3 rounded-full"
+                          style={{
+                            backgroundColor: label.color ?? "#000000",
+                          }}
+                        />
+                        <span className="text-xs">{label.label_name ?? "No labels"}</span>
+                      </div>
+                    }
+                    completed={label.completed_issues}
+                    total={label.total_issues}
+                  />
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
+                </div>
+              )
             ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
-              </div>
+              loaders
             )}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>
+  ) : (
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+      <Loader.Item width="100%" height="17rem" />
+    </Loader>
   );
 });

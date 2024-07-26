@@ -11,6 +11,7 @@ class ViewsPublicSerializer(BaseSerializer):
             "id",
             "name",
             "filters",
+            "logo_props",
             "display_filters",
             "display_properties",
             "created_at",

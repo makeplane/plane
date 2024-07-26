@@ -25,8 +25,20 @@ export interface IProjectView {
   workspace: string;
   logo_props: TLogoProps | undefined;
   is_locked: boolean;
+  anchor?: string;
   owned_by: string;
 }
+
+export type TPublishViewSettings = {
+  is_comments_enabled: boolean;
+  is_reactions_enabled: boolean;
+  is_votes_enabled: boolean;
+};
+
+export type TPublishViewDetails = TPublishViewSettings & {
+  id: string;
+  anchor: string;
+};
 
 export type TViewFiltersSortKey = "name" | "created_at" | "updated_at";
 

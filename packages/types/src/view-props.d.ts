@@ -202,4 +202,6 @@ export interface IssuePaginationOptions {
   before?: string;
   after?: string;
   groupedBy?: TIssueGroupByOptions;
+  subGroupedBy?: TIssueGroupByOptions;
+  orderBy?: TIssueOrderByOptions;
 }

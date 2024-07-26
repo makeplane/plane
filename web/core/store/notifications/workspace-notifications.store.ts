@@ -373,6 +373,13 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       };
       await workspaceNotificationService.markAllNotificationsAsRead(workspaceSlug, params);
       runInAction(() => {
+        update(
+          this.unreadNotificationsCount,
+          this.currentNotificationTab === ENotificationTab.ALL
+            ? "total_unread_notifications_count"
+            : "mention_unread_notifications_count",
+          () => 0
+        );
         Object.values(this.notifications).forEach((notification) =>
           notification.mutateNotification({
             read_at: new Date().toUTCString(),

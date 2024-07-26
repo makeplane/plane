@@ -37,6 +37,14 @@
     "@atlaskit/pragmatic-drag-and-drop" "^1.1.0"
     "@babel/runtime" "^7.0.0"
 
+"@atlaskit/pragmatic-drag-and-drop-auto-scroll@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/pragmatic-drag-and-drop-auto-scroll/-/pragmatic-drag-and-drop-auto-scroll-1.4.0.tgz#99be18a428c93996b2cde3b97e88db85753aa5a5"
+  integrity sha512-5GoikoTSW13UX76F9TDeWB8x3jbbGlp/Y+3aRkHe1MOBMkrWkwNpJ42MIVhhX/6NSeaZiPumP0KbGJVs2tOWSQ==
+  dependencies:
+    "@atlaskit/pragmatic-drag-and-drop" "^1.2.0"
+    "@babel/runtime" "^7.0.0"
+
 "@atlaskit/pragmatic-drag-and-drop-hitbox@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@atlaskit/pragmatic-drag-and-drop-hitbox/-/pragmatic-drag-and-drop-hitbox-1.0.3.tgz#fcce42f5e2c5a26007f4422397acad29608d3784"
@@ -49,6 +57,15 @@
   version "1.1.12"
   resolved "https://registry.yarnpkg.com/@atlaskit/pragmatic-drag-and-drop/-/pragmatic-drag-and-drop-1.1.12.tgz#9b2a094af99eacc592eb18e9111e41a36730a3a9"
   integrity sha512-mg9fDg0T8XnxIbjnwUYL4U+zlpEJO24iS61FI071JFYaiX3A2J+zGMYzu3EyiWpamU8R7yeLoROtw1Fbs7MX6Q==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    bind-event-listener "^3.0.0"
+    raf-schd "^4.0.3"
+
+"@atlaskit/pragmatic-drag-and-drop@^1.2.0":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@atlaskit/pragmatic-drag-and-drop/-/pragmatic-drag-and-drop-1.2.1.tgz#8e9e90749fdbaf8fc2363b75e7256c7a940e48fa"
+  integrity sha512-gW2wJblFAeg94YXITHg0YdhFM2nmFAdDmX0LKYBIm79yEbIrOiuHHukgSjII07M4U5JpJ0Ff/4BaADjN23ix+A==
   dependencies:
     "@babel/runtime" "^7.0.0"
     bind-event-listener "^3.0.0"
@@ -4974,10 +4991,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@vitest/expect@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-1.3.1.tgz#d4c14b89c43a25fd400a6b941f51ba27fe0cb918"
-  integrity sha512-xofQFwIzfdmLLlHa6ag0dPV8YsnKOCP1KdAeVVh34vSjN2dcUiXYCD9htu/9eM7t8Xln4v03U9HLxLpPlsXdZw==
+"@vitest/expect@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-1.6.0.tgz#0b3ba0914f738508464983f4d811bc122b51fb30"
+  integrity sha512-ixEvFVQjycy/oNgHjqsL6AZCDduC+tflRluaHIzKIsdbzkLn2U/iBnVeJwB6HsIjQBdfMR8Z0tRxKUsvFJEeWQ==
   dependencies:
     "@vitest/spy" "1.6.0"
     "@vitest/utils" "1.6.0"
@@ -13052,47 +13069,47 @@ tsutils@^3.21.0:
   dependencies:
     tslib "^1.8.1"
 
-turbo-darwin-64@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo-darwin-64/-/turbo-darwin-64-2.0.6.tgz#b916d810bb10b2abdf6da5a830b9db67ff783b2b"
-  integrity sha512-XpgBwWj3Ggmz/gQVqXdMKXHC1iFPMDiuwugLwSzE7Ih0O13JuNtYZKhQnopvbDQnFQCeRq2Vsm5OTWabg/oB/g==
+turbo-darwin-64@2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo-darwin-64/-/turbo-darwin-64-2.0.9.tgz#dc7bb92060a41b92155195dba5850c9669fa765a"
+  integrity sha512-owlGsOaExuVGBUfrnJwjkL1BWlvefjSKczEAcpLx4BI7Oh6ttakOi+JyomkPkFlYElRpjbvlR2gP8WIn6M/+xQ==
 
-turbo-darwin-arm64@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo-darwin-arm64/-/turbo-darwin-arm64-2.0.6.tgz#61877ed515513ccdc39d750d88fa6ec2cd61af26"
-  integrity sha512-RfeZYXIAkiA21E8lsvfptGTqz/256YD+eI1x37fedfvnHFWuIMFZGAOwJxtZc6QasQunDZ9TRRREbJNI68tkIw==
+turbo-darwin-arm64@2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo-darwin-arm64/-/turbo-darwin-arm64-2.0.9.tgz#6e5ce2c0f03999c6ec0116d5525841107da3078b"
+  integrity sha512-XAXkKkePth5ZPPE/9G9tTnPQx0C8UTkGWmNGYkpmGgRr8NedW+HrPsi9N0HcjzzIH9A4TpNYvtiV+WcwdaEjKA==
 
-turbo-linux-64@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo-linux-64/-/turbo-linux-64-2.0.6.tgz#a80a3edbf58fa351593d5f0535ad5c4aef71deb4"
-  integrity sha512-92UDa0xNQQbx0HdSp9ag3YSS3xPdavhc7q9q9mxIAcqyjjD6VElA4Y85m4F/DDGE5SolCrvBz2sQhVmkOd6Caw==
+turbo-linux-64@2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo-linux-64/-/turbo-linux-64-2.0.9.tgz#e00e5e1b1cffab23c58888e7c397e108dc24fe2f"
+  integrity sha512-l9wSgEjrCFM1aG16zItBsZ206ZlhSSx1owB8Cgskfv0XyIXRGHRkluihiaxkp+UeU5WoEfz4EN5toc+ICA0q0w==
 
-turbo-linux-arm64@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo-linux-arm64/-/turbo-linux-arm64-2.0.6.tgz#a0366816c0a9c08966b6cc5358fd9097c153722a"
-  integrity sha512-eQKu6utCVUkIH2kqOzD8OS6E0ba6COjWm6PRDTNCHQRljZW503ycaTUIdMOiJrVg1MkEjDyOReUg8s8D18aJ4Q==
+turbo-linux-arm64@2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo-linux-arm64/-/turbo-linux-arm64-2.0.9.tgz#d240e4f0a784d03f1a79fd9e6c4e83abd9aa57c7"
+  integrity sha512-gRnjxXRne18B27SwxXMqL3fJu7jw/8kBrOBTBNRSmZZiG1Uu3nbnP7b4lgrA/bCku6C0Wligwqurvtpq6+nFHA==
 
-turbo-windows-64@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo-windows-64/-/turbo-windows-64-2.0.6.tgz#4ea229c9e615ad9d56faa9cacf9afa9f5eb43cd4"
-  integrity sha512-+9u4EPrpoeHYCQ46dRcou9kbkSoelhOelHNcbs2d86D6ruYD/oIAHK9qgYK8LeARRz0jxhZIA/dWYdYsxJJWkw==
+turbo-windows-64@2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo-windows-64/-/turbo-windows-64-2.0.9.tgz#d52835302e722cc7de670b90aca55ce2b3516879"
+  integrity sha512-ZVo0apxUvaRq4Vm1qhsfqKKhtRgReYlBVf9MQvVU1O9AoyydEQvLDO1ryqpXDZWpcHoFxHAQc9msjAMtE5K2lA==
 
-turbo-windows-arm64@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo-windows-arm64/-/turbo-windows-arm64-2.0.6.tgz#466fa8ae4b43b29feefddff22384299d7482aef9"
-  integrity sha512-rdrKL+p+EjtdDVg0wQ/7yTbzkIYrnb0Pw4IKcjsy3M0RqUM9UcEi67b94XOAyTa5a0GqJL1+tUj2ebsFGPgZbg==
+turbo-windows-arm64@2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo-windows-arm64/-/turbo-windows-arm64-2.0.9.tgz#45f0aa685514ec1cc753a559924e003b22b24bb7"
+  integrity sha512-sGRz7c5Pey6y7y9OKi8ypbWNuIRPF9y8xcMqL56OZifSUSo+X2EOsOleR9MKxQXVaqHPGOUKWsE6y8hxBi9pag==
 
-turbo@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/turbo/-/turbo-2.0.6.tgz#2ba513ed5f060d3e03b3ba9ef1e43a4a39cfe64a"
-  integrity sha512-/Ftmxd5Mq//a9yMonvmwENNUN65jOVTwhhBPQjEtNZutYT9YKyzydFGLyVM1nzhpLWahQSMamRc/RDBv5EapzA==
+turbo@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/turbo/-/turbo-2.0.9.tgz#fa0ab576c4cb9a8fc9db648e9ac9adfe10a22ae5"
+  integrity sha512-QaLaUL1CqblSKKPgLrFW3lZWkWG4pGBQNW+q1ScJB5v1D/nFWtsrD/yZljW/bdawg90ihi4/ftQJ3h6fz1FamA==
   optionalDependencies:
-    turbo-darwin-64 "2.0.6"
-    turbo-darwin-arm64 "2.0.6"
-    turbo-linux-64 "2.0.6"
-    turbo-linux-arm64 "2.0.6"
-    turbo-windows-64 "2.0.6"
-    turbo-windows-arm64 "2.0.6"
+    turbo-darwin-64 "2.0.9"
+    turbo-darwin-arm64 "2.0.9"
+    turbo-linux-64 "2.0.9"
+    turbo-linux-arm64 "2.0.9"
+    turbo-windows-64 "2.0.9"
+    turbo-windows-arm64 "2.0.9"
 
 tween-functions@^1.2.0:
   version "1.2.0"

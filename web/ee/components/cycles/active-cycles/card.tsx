@@ -1,4 +1,5 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
+import useSWR from "swr";
 // types
 import { IActiveCycle } from "@plane/types";
 // plane web components
@@ -9,6 +10,10 @@ import {
   ActiveCycleProductivity,
   ActiveCyclePriorityIssues,
 } from "@/plane-web/components/cycles/active-cycles";
+// services
+import { CycleService } from "@/services/cycle.service";
+
+const cycleService = new CycleService();
 
 export type ActiveCycleInfoCardProps = {
   cycle: IActiveCycle;
@@ -18,6 +23,24 @@ export type ActiveCycleInfoCardProps = {
 
 export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
+
+  const { data: progress } = useSWR(
+    `PROJECTS_${cycle.project_detail.id}_PROGRESS_${cycle.id}`,
+    workspaceSlug && cycle
+      ? () => cycleService.workspaceActiveCyclesProgress(workspaceSlug.toString(), cycle.project_detail.id, cycle.id)
+      : null,
+    {
+      revalidateOnFocus: false,
+    }
+  );
+
+  const cycleData = useMemo(() => {
+    const cycleDetails = {
+      ...cycle,
+      ...progress,
+    };
+    return cycleDetails;
+  }, [progress, cycle]);
 
   return (
     <div
@@ -29,8 +52,8 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
       <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
-        <ActiveCycleProgress cycle={cycle} />
-        <ActiveCycleProductivity cycle={cycle} />
+        <ActiveCycleProgress cycle={cycleData} />
+        <ActiveCycleProductivity cycle={cycleData} workspaceSlug={workspaceSlug} />
         <ActiveCyclePriorityIssues cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </div>

@@ -32,6 +32,16 @@ export const getPaginationParams = (
     paginationParams.group_by = EIssueGroupByToServerOptions[options.groupedBy];
   }
 
+  // If group by is specifically sent through options, like that for calendar layout, use that to group
+  if (options.subGroupedBy) {
+    paginationParams.sub_group_by = EIssueGroupByToServerOptions[options.subGroupedBy];
+  }
+
+  // If group by is specifically sent through options, like that for calendar layout, use that to group
+  if (options.orderBy) {
+    paginationParams.order_by = options.orderBy;
+  }
+
   // If before and after dates are sent from option to filter by then, add them to filter the options
   if (options.after && options.before) {
     paginationParams["target_date"] = `${options.after};after,${options.before};before`;

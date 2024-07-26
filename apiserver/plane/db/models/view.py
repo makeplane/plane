@@ -110,7 +110,6 @@ class IssueView(WorkspaceBaseModel):
     )
     is_locked = models.BooleanField(default=False)
 
-
     class Meta:
         verbose_name = "Issue View"
         verbose_name_plural = "Issue Views"

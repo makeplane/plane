@@ -4,6 +4,7 @@ from django.urls import path
 from plane.ee.views import (
     IssueViewEEViewSet,
     WorkspaceViewEEViewSet,
+    IssueViewsPublishEndpoint,
 )
 
 
@@ -46,5 +47,9 @@ urlpatterns = [
             }
         ),
         name="project-views-lock-unlock",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/publish/",
+        IssueViewsPublishEndpoint.as_view(),
     ),
 ]

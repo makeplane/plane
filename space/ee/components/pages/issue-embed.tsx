@@ -3,7 +3,7 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { IssueBlockDueDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
+import { IssueBlockDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
 // hooks
 import { usePublish, useStates } from "@/hooks/store";
 // plane web hooks
@@ -77,7 +77,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
         {/* due date */}
         {issueDetails?.target_date && (
           <div className="flex-shrink-0">
-            <IssueBlockDueDate due_date={issueDetails?.target_date} stateId={stateDetails?.id} />
+            <IssueBlockDate due_date={issueDetails?.target_date} stateId={stateDetails?.id} />
           </div>
         )}
       </div>
