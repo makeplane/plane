@@ -19,10 +19,17 @@ class ProjectFavoriteLiteSerializer(serializers.ModelSerializer):
 
 
 class PageFavoriteLiteSerializer(serializers.ModelSerializer):
+    project_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Page
         fields = ["id", "name", "logo_props", "project_id"]
+
+    def get_project_id(self, obj):
+        project = (
+            obj.projects.first()
+        )  # This gets the first project related to the Page
+        return project.id if project else None
 
 
 class CycleFavoriteLiteSerializer(serializers.ModelSerializer):
