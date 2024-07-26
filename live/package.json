@@ -2,11 +2,11 @@
   "name": "live",
   "version": "0.22.0",
   "description": "",
-  "main": "./src/index.ts",
+  "main": "./src/server.ts",
   "scripts": {
-    "build": "tsup",
-    "start": "node dist/index.js",
-    "dev": "tsup --watch"
+    "build": "tsc",
+    "dev": "nodemon --exec \"node -r esbuild-register ./src/server.ts\" -e .ts",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "type": "module",

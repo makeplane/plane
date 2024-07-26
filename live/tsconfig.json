@@ -4,15 +4,15 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "CommonJS",
     "noImplicitAny": true,
-    "outDir": "dist",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "rootDir": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "removeComments": true,
     "resolveJsonModule": true,
@@ -21,5 +21,6 @@
     "strict": true,
     "target": "ES2022"
   },
+  "include": ["src/**/*.ts"],
   "exclude": ["./dist", "./build", "./node_modules"]
 }

@@ -1,8 +1,9 @@
 import { ConnectionConfiguration } from "@hocuspocus/server";
 // services
-import { UserService } from "./services/user.service.js";
+import { UserService } from "@/services/user.service";
 // types
-import { TDocumentTypes } from "./types/common.js";
+import { TDocumentTypes } from "@/types/common";
+
 const userService = new UserService();
 
 type Props = {
@@ -35,13 +36,13 @@ export const handleAuthentication = async (props: Props) => {
   if (documentType === "project_page") {
     if (!workspaceSlug || !projectId) {
       throw Error(
-        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing.",
+        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing."
       );
     }
     // fetch current user's roles
     const workspaceRoles = await userService.getUserAllProjectsRole(
       workspaceSlug,
-      cookie,
+      cookie
     );
     const currentProjectRole = workspaceRoles[projectId];
     // make the connection read only for roles lower than a member

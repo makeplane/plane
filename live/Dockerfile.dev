@@ -9,5 +9,5 @@ RUN yarn global add turbo
 RUN yarn install
 EXPOSE 3003
 
-VOLUME [ "/app/node_modules", "/app/channel/node_modules"]
+VOLUME [ "/app/node_modules", "/app/live/node_modules"]
 CMD ["yarn","dev", "--filter=live"]

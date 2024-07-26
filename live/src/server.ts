@@ -4,11 +4,11 @@ import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
 import expressWs, { Application } from "express-ws";
 // page actions
-import { fetchPageDescriptionBinary, updatePageDescription } from "./page.js";
+import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
 // types
 import { TDocumentTypes } from "./types/common.js";
 // helpers
-import { handleAuthentication } from "./authentication.js";
+import { handleAuthentication } from "@/lib/authentication";
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -59,7 +59,7 @@ const server = Server.configure({
             const fetchedData = await fetchPageDescriptionBinary(
               params,
               pageId,
-              cookie,
+              cookie
             );
             resolve(fetchedData);
           }
