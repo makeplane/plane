@@ -31,12 +31,12 @@ export const NotificationFilterOptionItem: FC<{ label: string; value: ENotificat
       onClick={() => handleFilterTypeChange(value, !isSelected)}
     >
       <div
-        className={cn(
-          "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all",
-          isSelected ? "bg-custom-primary-100" : "bg-custom-background-90"
-        )}
+        className={cn("flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all", {
+          "bg-custom-primary text-white": isSelected,
+          "bg-custom-background-90": !isSelected,
+        })}
       >
-        {isSelected && <Check className="h-2 w-2" />}
+        {isSelected && <Check className="h-2.5 w-2.5" />}
       </div>
       <div className={cn("whitespace-nowrap text-sm", isSelected ? "text-custom-text-100" : "text-custom-text-200")}>
         {label}
