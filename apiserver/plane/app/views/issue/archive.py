@@ -25,7 +25,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     IssueFlatSerializer,
     IssueSerializer,
-    IssueDetailSerializer
+    IssueDetailSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
@@ -46,6 +46,7 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
+from plane.utils.error_codes import ERROR_CODES
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
@@ -341,8 +342,10 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
             if issue.state.group not in ["completed", "cancelled"]:
                 return Response(
                     {
-                        "error_code": 4091,
-                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
+                        "error_code": ERROR_CODES[
+                            "INVALID_ARCHIVE_STATE_GROUP"
+                        ],
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

@@ -1,35 +1,16 @@
 import React, { useState } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// extensions
+import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useDocumentEditor } from "@/hooks/use-document-editor";
-import { TFileHandler } from "@/hooks/use-editor";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
+import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
+import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
-interface IDocumentEditor {
-  containerClassName?: string;
-  editorClassName?: string;
-  embedHandler: TEmbedConfig;
-  fileHandler: TFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions: () => Promise<IMentionSuggestion[]>;
-  };
-  onChange: (updates: Uint8Array) => void;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  tabIndex?: number;
-  value: Uint8Array;
-}
-
-const DocumentEditor = (props: IDocumentEditor) => {
+const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
     containerClassName,
     editorClassName = "",
@@ -39,10 +20,10 @@ const DocumentEditor = (props: IDocumentEditor) => {
     handleEditorReady,
     id,
     mentionHandler,
-    onChange,
     placeholder,
+    realtimeConfig,
     tabIndex,
-    value,
+    user,
   } = props;
   // states
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
@@ -52,20 +33,30 @@ const DocumentEditor = (props: IDocumentEditor) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
 
+  const extensions = [];
+  if (embedHandler?.issue) {
+    extensions.push(
+      IssueWidget({
+        widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
   // use document editor
-  const { editor, isIndexedDbSynced } = useDocumentEditor({
+  const { editor } = useCollaborativeEditor({
     id,
     editorClassName,
     embedHandler,
+    extensions,
     fileHandler,
-    value,
-    onChange,
     handleEditorReady,
     forwardedRef,
     mentionHandler,
     placeholder,
+    realtimeConfig,
     setHideDragHandleFunction,
     tabIndex,
+    user,
   });
 
   const editorContainerClassNames = getEditorClassNames({
@@ -74,7 +65,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     containerClassName,
   });
 
-  if (!editor || !isIndexedDbSynced) return null;
+  if (!editor) return null;
 
   return (
     <PageRenderer
@@ -86,10 +77,12 @@ const DocumentEditor = (props: IDocumentEditor) => {
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-));
+const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditor>(
+  (props, ref) => (
+    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+  )
+);
 
-DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
+CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 
-export { DocumentEditorWithRef };
+export { CollaborativeDocumentEditorWithRef };

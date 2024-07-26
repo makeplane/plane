@@ -9,8 +9,6 @@ import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
-// plane editor providers
-import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
@@ -47,7 +45,6 @@ export interface CustomEditorProps {
   };
   onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  provider?: CollaborationProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -67,10 +64,14 @@ export const useEditor = ({
   mentionHandler,
   onChange,
   placeholder,
-  provider,
   tabIndex,
   value,
 }: CustomEditorProps) => {
+  // states
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+  // refs
+  const editorRef: MutableRefObject<Editor | null> = useRef(null);
+  const savedSelectionRef = useRef(savedSelection);
   const editor = useCustomEditor({
     editorProps: {
       ...CoreEditorProps(editorClassName),
@@ -108,14 +109,6 @@ export const useEditor = ({
       handleEditorReady?.(false);
     },
   });
-
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
-
-  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
-
-  // Inside your component or hook
-  const savedSelectionRef = useRef(savedSelection);
-
   // Update the ref whenever savedSelection changes
   useEffect(() => {
     savedSelectionRef.current = savedSelection;
@@ -201,18 +194,6 @@ export const useEditor = ({
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
-      },
-      setSynced: () => {
-        if (provider) {
-          provider.setSynced();
-        }
-      },
-      hasUnsyncedChanges: () => {
-        if (provider) {
-          return provider.hasUnsyncedChanges();
-        } else {
-          return false;
-        }
       },
       isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
