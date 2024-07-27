@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC,useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
@@ -88,7 +88,12 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
-
+  useEffect(() => {
+    const storedPeekMode = localStorage.getItem(`issue-${props.issueId}-peek-mode`);
+    if (storedPeekMode ) {
+      setPeekMode(storedPeekMode);
+    }
+  }, [props.issueId]);
   const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archives/" : ""}issues/${issueId}`;
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -129,7 +134,9 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           <div className="flex flex-shrink-0 items-center gap-2">
             <CustomSelect
               value={currentMode}
-              onChange={(val: any) => setPeekMode(val)}
+              onChange={(val: any) => {
+                localStorage.setItem(`issue-${props.issueId}-peek-mode`, val);
+                setPeekMode(val)}}
               customButton={
                 <Tooltip tooltipContent="Toggle peek view layout" isMobile={isMobile}>
                   <button type="button" className="">
