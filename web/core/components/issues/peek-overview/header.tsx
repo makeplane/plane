@@ -90,7 +90,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
   useEffect(() => {
     const storedPeekMode = localStorage.getItem(`issue-${props.issueId}-peek-mode`);
-    if (storedPeekMode ) {
+    if (storedPeekMode && PEEK_OPTIONS.some(option => option.key === storedPeekMode)) {
       setPeekMode(storedPeekMode);
     }
   }, [props.issueId]);
@@ -135,7 +135,8 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             <CustomSelect
               value={currentMode}
               onChange={(val: any) => {
-                localStorage.setItem(`issue-${props.issueId}-peek-mode`, val);
+                if (PEEK_OPTIONS.some(option => option.key === val)) {
+                  localStorage.setItem(`issue-${props.issueId}-peek-mode`, val);}
                 setPeekMode(val)}}
               customButton={
                 <Tooltip tooltipContent="Toggle peek view layout" isMobile={isMobile}>
