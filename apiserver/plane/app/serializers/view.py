@@ -9,6 +9,7 @@ from plane.utils.issue_filters import issue_filters
 
 class IssueViewSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueView
