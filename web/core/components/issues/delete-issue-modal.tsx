@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 
@@ -52,14 +54,18 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
           });
           onClose();
         })
-        .catch(() => {
+        .catch((errors) => {
+          const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
+          const currentError = isPermissionError
+            ? PROJECT_ERROR_MESSAGES.permissionError
+            : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
-            title: "Error",
+            title: currentError.title,
             type: TOAST_TYPE.ERROR,
-            message: "Failed to delete issue",
+            message: currentError.message,
           });
         })
-        .finally(() => setIsDeleting(false));
+        .finally(() => onClose());
   };
 
   return (

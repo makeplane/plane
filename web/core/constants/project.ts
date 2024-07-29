@@ -168,3 +168,22 @@ export const PROJECT_DISPLAY_FILTER_OPTIONS: {
     label: "Archived",
   },
 ];
+
+export const PROJECT_ERROR_MESSAGES = {
+  permissionError: {
+    title: "You don't have permission to perform this action.",
+    message: undefined,
+  },
+  cycleDeleteError: {
+    title: "Error",
+    message: "Failed to delete project",
+  },
+  moduleDeleteError: {
+    title: "Error",
+    message: "Failed to delete module",
+  },
+  issueDeleteError: {
+    title: "Error",
+    message: "Failed to delete issue",
+  },
+};
