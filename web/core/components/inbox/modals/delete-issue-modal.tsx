@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+// constants
+import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -39,12 +41,13 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       })
       .catch((errors) => {
         const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
-        const toastTitle = isPermissionError ? "You don't have permission to perform this action." : "Error";
-        const toastMessage = isPermissionError ? undefined : "Failed to delete issue";
+        const currentError = isPermissionError
+          ? PROJECT_ERROR_MESSAGES.permissionError
+          : PROJECT_ERROR_MESSAGES.issueDeleteError;
         setToast({
-          title: toastTitle,
+          title: currentError.title,
           type: TOAST_TYPE.ERROR,
-          message: toastMessage,
+          message: currentError.message,
         });
       })
       .finally(() => handleClose());

@@ -9,6 +9,7 @@ import { ICycle } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { CYCLE_DELETED } from "@/constants/event-tracker";
+import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useEventTracker, useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -53,12 +54,13 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
         })
         .catch((errors) => {
           const isPermissionError = errors?.error === "Only admin or owner can delete the cycle";
-          const toastTitle = isPermissionError ? "You don't have permission to perform this action." : "Error";
-          const toastMessage = isPermissionError ? undefined : "Failed to delete cycle";
+          const currentError = isPermissionError
+            ? PROJECT_ERROR_MESSAGES.permissionError
+            : PROJECT_ERROR_MESSAGES.cycleDeleteError;
           setToast({
-            title: toastTitle,
+            title: currentError.title,
             type: TOAST_TYPE.ERROR,
-            message: toastMessage,
+            message: currentError.message,
           });
           captureCycleEvent({
             eventName: CYCLE_DELETED,

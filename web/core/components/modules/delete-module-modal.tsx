@@ -9,6 +9,7 @@ import type { IModule } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MODULE_DELETED } from "@/constants/event-tracker";
+import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useEventTracker, useModule } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -56,12 +57,13 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
       })
       .catch((errors) => {
         const isPermissionError = errors?.error === "Only admin or creator can delete the module";
-        const toastTitle = isPermissionError ? "You don't have permission to perform this action." : "Error!";
-        const toastMessage = isPermissionError ? undefined : "Module could not be deleted. Please try again.";
+        const currentError = isPermissionError
+          ? PROJECT_ERROR_MESSAGES.permissionError
+          : PROJECT_ERROR_MESSAGES.moduleDeleteError;
         setToast({
-          title: toastTitle,
+          title: currentError.title,
           type: TOAST_TYPE.ERROR,
-          message: toastMessage,
+          message: currentError.message,
         });
         captureModuleEvent({
           eventName: MODULE_DELETED,
