@@ -21,7 +21,7 @@ import { FavouriteItem } from "./favourite-item";
 import { NewFavouriteFolder } from "./new-fav-folder";
 export const SidebarFavouritesMenu = observer(() => {
   //state
-  const [createNewFolder, setCreateNewFolder] = useState(false);
+  const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
 
   // store hooks
@@ -111,7 +111,7 @@ export const SidebarFavouritesMenu = observer(() => {
               {createNewFolder && <NewFavouriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
               {favouriteIds
                 .filter((id) => !favouriteMap[id].parent)
-                .map((id) => (
+                .map((id, index) => (
                   <Tooltip
                     key={favouriteMap[id].id}
                     tooltipContent={
@@ -123,7 +123,7 @@ export const SidebarFavouritesMenu = observer(() => {
                     isMobile={isMobile}
                   >
                     {favouriteMap[id].is_folder ? (
-                      <FavouriteFolder favourite={favouriteMap[id]} />
+                      <FavouriteFolder favourite={favouriteMap[id]} isLastChild={index === favouriteIds.length - 1} />
                     ) : (
                       <FavouriteItem favourite={favouriteMap[id]} />
                     )}

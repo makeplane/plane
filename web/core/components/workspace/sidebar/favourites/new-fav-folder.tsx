@@ -13,7 +13,7 @@ type TForm = {
   is_folder: boolean;
 };
 type TProps = {
-  setCreateNewFolder: (value: boolean | string) => void;
+  setCreateNewFolder: (value: boolean | string | null) => void;
   actionType: "create" | "rename";
   defaultName?: string;
   favouriteId?: string;

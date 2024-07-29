@@ -35,10 +35,10 @@ export const FavouriteItem = observer(({ favourite }: { favourite: IFavourite })
   const elementRef = useRef<HTMLAnchorElement>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
 
-  const getIcon = (type: string) => {
+  const getIcon = () => {
     const className = `flex-shrink-0 size-4 stroke-[1.5]`;
 
-    switch (type) {
+    switch (favourite.entity_type) {
       case "page":
         return <FileText className={className} />;
       case "project":
@@ -55,6 +55,23 @@ export const FavouriteItem = observer(({ favourite }: { favourite: IFavourite })
         return <FavouriteFolderIcon className={className} />;
       default:
         return <FileText />;
+    }
+  };
+
+  const getLink = () => {
+    switch (favourite.entity_type) {
+      case "project":
+        return `/${workspaceSlug}/projects/${favourite.project_id}/issues`;
+      case "cycle":
+        return `/${workspaceSlug}/projects/${favourite.project_id}/cycles/${favourite.entity_identifier}`;
+      case "module":
+        return `/${workspaceSlug}/projects/${favourite.project_id}/modules/${favourite.entity_identifier}`;
+      case "view":
+        return `/${workspaceSlug}/projects/${favourite.project_id}/views/${favourite.entity_identifier}`;
+      case "page":
+        return `/${workspaceSlug}/projects/${favourite.project_id}/pages/${favourite.entity_identifier}`;
+      default:
+        return `/${workspaceSlug}`;
     }
   };
 
@@ -81,7 +98,7 @@ export const FavouriteItem = observer(({ favourite }: { favourite: IFavourite })
   }, [elementRef?.current, isDragging]);
 
   return (
-    <Link ref={elementRef} href={`/${workspaceSlug}`}>
+    <Link ref={elementRef} href={getLink()}>
       <SidebarNavItem
         key={favourite.id}
         className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
@@ -109,7 +126,7 @@ export const FavouriteItem = observer(({ favourite }: { favourite: IFavourite })
             </button>
           </Tooltip>
 
-          {getIcon(favourite.entity_type)}
+          {getIcon()}
 
           {!sidebarCollapsed && (
             <p className="text-sm leading-5 font-medium">

@@ -37,7 +37,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
-  const [folderToRename, setFolderToRename] = useState<string | null>(null);
+  const [folderToRename, setFolderToRename] = useState<string | boolean | null>(null);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
