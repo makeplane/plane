@@ -660,7 +660,6 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
-        print("cycle name", cycle.name)
 
         if (
             cycle.end_date is not None

@@ -156,32 +156,20 @@ class IssueAPIEndpoint(BaseAPIView):
         external_source = request.GET.get("external_source")
 
         if external_id and external_source:
-            try:
-                issue = Issue.objects.get(
-                    external_id=external_id,
-                    external_source=external_source,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                return Response(
-                    IssueSerializer(
-                        issue,
-                        fields=self.fields,
-                        expand=self.expand,
-                    ).data,
-                    status=status.HTTP_200_OK,
-                )
-            except ObjectDoesNotExist:
-                return Response(
-                    {"detail": "Issue not found."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            except MultipleObjectsReturned:
-                return Response(
-                    {"detail": "Multiple issues found."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
+            issue = Issue.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            return Response(
+                IssueSerializer(
+                    issue,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
+                status=status.HTTP_200_OK,
+            )
         if pk:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
