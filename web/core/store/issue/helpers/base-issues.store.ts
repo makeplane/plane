@@ -892,9 +892,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
     const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
+
+    if (issueCycleId === cycleId) return;
+
     try {
       // Update issueIds from current store
       runInAction(() => {
+        // If cycle Id before update is the same as current cycle Id then, remove issueId from list
+        if (this.cycleId === issueCycleId) this.removeIssueFromList(issueId);
         // If cycle Id is the current cycle Id, then, add issue to list of issueIds
         if (this.cycleId === cycleId) this.addIssueToList(issueId);
         // For Each issue update cycle Id by calling current store's update Issue, without making an API call
