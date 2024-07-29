@@ -80,7 +80,8 @@ class UserFavoriteSerializer(serializers.ModelSerializer):
             "is_folder",
             "sequence",
             "parent",
-            "workspace",
+            "workspace_id",
+            "project_id",
         ]
         read_only_fields = ["workspace", "created_by", "updated_by"]
 

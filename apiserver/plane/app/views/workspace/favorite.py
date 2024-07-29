@@ -38,7 +38,11 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         serializer = UserFavoriteSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user_id=request.user.id, workspace=workspace)
+            serializer.save(
+                user_id=request.user.id,
+                workspace=workspace,
+                project_id=request.data.get("project_id", None),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
