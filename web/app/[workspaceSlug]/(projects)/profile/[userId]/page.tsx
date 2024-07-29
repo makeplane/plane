@@ -39,7 +39,7 @@ export default function ProfileOverviewPage() {
 
   return (
     <>
-      <PageHead title="Profile - Summary" />
+      <PageHead title="Your work" />
       <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9 vertical-scrollbar scrollbar-md">
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />

@@ -306,7 +306,7 @@ export class IssueDetailStore implements IIssueDetailStore {
             ...this.details[issueID].reaction_items,
             {
               reaction: reactionHex,
-              actor_detail: this.rootStore.user.currentActor,
+              actor_details: this.rootStore.user.currentActor,
             },
           ]
         );

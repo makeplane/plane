@@ -117,7 +117,8 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     });
   };
 
-  const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
+  // add a placeholder object instead of appliedFilters if it is undefined
+  const areFiltersEqual = getAreFiltersEqual(appliedFilters ?? {}, issueFilters, viewDetails);
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 

@@ -44,6 +44,7 @@ from plane.db.models import (
     IssueReaction,
     IssueSubscriber,
     Project,
+    ProjectMember,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -165,6 +166,7 @@ class IssueListEndpoint(BaseAPIView):
                 "link_count",
                 "is_draft",
                 "archived_at",
+                "deleted_at",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -399,6 +401,7 @@ class IssueViewSet(BaseViewSet):
                     "link_count",
                     "is_draft",
                     "archived_at",
+                    "deleted_at",
                 )
                 .first()
             )
@@ -549,6 +552,20 @@ class IssueViewSet(BaseViewSet):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if issue.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         issue.delete()
         issue_activity.delay(
             type="issue.activity.deleted",
@@ -602,6 +619,19 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
     ]
 
     def delete(self, request, slug, project_id):
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member=request.user,
+            role=20,
+            project_id=project_id,
+            is_active=True,
+        ).exists():
+
+            return Response(
+                {"error": "Only admin can perform this action"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         issue_ids = request.data.get("issue_ids", [])
 
         if not len(issue_ids):

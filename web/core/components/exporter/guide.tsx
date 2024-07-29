@@ -17,7 +17,7 @@ import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
-import { EXPORTERS_LIST } from "@/constants/workspace";
+import { EUserWorkspaceRoles, EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -37,7 +37,11 @@ const IntegrationGuide = observer(() => {
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");
   // store hooks
-  const { data: currentUser } = useUser();
+  const {
+    data: currentUser,
+    canPerformAnyCreateAction,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { workspaceProjectIds } = useProject();
 
   const { data: exporterServices } = useSWR(
@@ -52,6 +56,7 @@ const IntegrationGuide = observer(() => {
   };
 
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   return (
     <>
@@ -76,7 +81,11 @@ const IntegrationGuide = observer(() => {
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <span>
-                        <Button variant="primary" className="capitalize" disabled={!hasProjects}>
+                        <Button
+                          variant="primary"
+                          className="capitalize"
+                          disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+                        >
                           {service.type}
                         </Button>
                       </span>
