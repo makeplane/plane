@@ -1,6 +1,7 @@
 # Django imports
 from django.utils import timezone
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 # Third party imports
@@ -38,7 +39,7 @@ def restore_related_objects(app_label, model_name, instance_pk, using=None):
 
 
 @shared_task
-def hard_delete():
+def days():
 
     from plane.db.models import (
         Workspace,
@@ -58,88 +59,89 @@ def hard_delete():
         ModuleIssue,
         CycleIssue,
         Estimate,
-        EstimatePoint
+        EstimatePoint,
     )
 
+    days = settings.days_AFTER_DAYS
     # check delete workspace
     _ = Workspace.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete project
     _ = Project.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete cycle
     _ = Cycle.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete module
     _ = Module.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete issue
     _ = Issue.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete page
     _ = Page.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete view
     _ = IssueView.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete label
     _ = Label.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # check delete state
     _ = State.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = IssueActivity.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = IssueComment.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = IssueLink.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = IssueReaction.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = UserFavorite.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = ModuleIssue.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = CycleIssue.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = Estimate.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     _ = EstimatePoint.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
     ).delete()
 
     # at last, check for every thing which ever is left and delete it
@@ -152,7 +154,8 @@ def hard_delete():
         if hasattr(model, "deleted_at"):
             # Get all instances where 'deleted_at' is greater than 30 days ago
             _ = model.all_objects.filter(
-                deleted_at__lt=timezone.now() - timezone.timedelta(days=30)
+                deleted_at__lt=timezone.now()
+                - timezone.timedelta(days=days)
             ).delete()
 
     return
