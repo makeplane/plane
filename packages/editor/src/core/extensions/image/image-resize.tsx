@@ -30,7 +30,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
   return (
     <>
       <Moveable
-        target={document.querySelector(".ProseMirror-selectednode") as HTMLElement}
+        target={document.querySelector(".active-editor .ProseMirror-selectednode") as HTMLElement}
         container={null}
         origin={false}
         edge={false}
@@ -39,7 +39,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
         resizable
         throttleResize={0}
         onResizeStart={() => {
-          const imageInfo = document.querySelector(".ProseMirror-selectednode") as HTMLImageElement;
+          const imageInfo = document.querySelector(".active-editor .ProseMirror-selectednode") as HTMLImageElement;
           if (imageInfo) {
             const originalWidth = Number(imageInfo.width);
             const originalHeight = Number(imageInfo.height);
