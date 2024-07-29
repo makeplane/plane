@@ -4,6 +4,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import IntegrityError
 from django.db.models import (
     Case,
@@ -38,7 +39,7 @@ from plane.app.permissions import (
     ProjectLitePermission,
     ProjectMemberPermission,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -151,6 +152,36 @@ class IssueAPIEndpoint(BaseAPIView):
         ).distinct()
 
     def get(self, request, slug, project_id, pk=None):
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            try:
+                issue = Issue.objects.get(
+                    external_id=external_id,
+                    external_source=external_source,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                return Response(
+                    IssueSerializer(
+                        issue,
+                        fields=self.fields,
+                        expand=self.expand,
+                    ).data,
+                    status=status.HTTP_200_OK,
+                )
+            except ObjectDoesNotExist:
+                return Response(
+                    {"detail": "Issue not found."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            except MultipleObjectsReturned:
+                return Response(
+                    {"detail": "Multiple issues found."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         if pk:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
@@ -316,7 +347,8 @@ class IssueAPIEndpoint(BaseAPIView):
                 pk=serializer.data["id"],
             ).first()
             issue.created_at = request.data.get("created_at")
-            issue.save(update_fields=["created_at"])
+            issue.created_by_id = request.data.get("created_by")
+            issue.save(update_fields=["created_at", "created_by"])
 
             # Track the issue
             issue_activity.delay(
@@ -610,12 +642,18 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_id=issue_id,
             )
+
+            # Get the issue for fetching the created_by id
+            issue = Issue.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=issue_id
+            )
+
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(
                     serializer.data, cls=DjangoJSONEncoder
                 ),
-                actor_id=str(self.request.user.id),
+                actor_id=issue.created_by_id,
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
@@ -771,12 +809,20 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 issue_id=issue_id,
                 actor=request.user,
             )
+            issue_comment = IssueComment.objects.get(
+                pk=serializer.data.get("id")
+            )
+            # Update the created_at and the created_by and save the comment
+            issue_comment.created_at = request.data.get("created_at")
+            issue_comment.created_by_id = request.data.get("created_by")
+            issue_comment.save(update_fields=["created_at", "created_by"])
+
             issue_activity.delay(
                 type="comment.activity.created",
                 requested_data=json.dumps(
                     serializer.data, cls=DjangoJSONEncoder
                 ),
-                actor_id=str(self.request.user.id),
+                actor_id=str(issue_comment.created_by_id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
@@ -977,3 +1023,4 @@ class IssueAttachmentEndpoint(BaseAPIView):
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
