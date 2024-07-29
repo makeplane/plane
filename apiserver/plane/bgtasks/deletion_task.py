@@ -16,9 +16,9 @@ def soft_delete_related_objects(
     instance = model_class.all_objects.get(pk=instance_pk)
     related_fields = instance._meta.get_fields()
     for field in related_fields:
-        if field.one_to_many or field.one_to_one or field.many_to_many:
+        if field.one_to_many or field.one_to_one:
             try:
-                if field.one_to_many or field.many_to_many:
+                if field.one_to_many:
                     related_objects = getattr(instance, field.name).all()
                 elif field.one_to_one:
                     related_object = getattr(instance, field.name)
