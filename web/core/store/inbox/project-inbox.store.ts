@@ -55,7 +55,7 @@ export interface IProjectInboxStore {
     paginationCursor: string
   ) => Partial<Record<keyof TInboxIssueFilter, string>>;
   createOrUpdateInboxIssue: (inboxIssues: TInboxIssue[], workspaceSlug: string, projectId: string) => void;
-  initializeQueryParams: (projectId: string, tab: TInboxIssueCurrentTab) => void;
+  initializeDefaultFilters: (projectId: string, tab: TInboxIssueCurrentTab) => void;
   // actions
   handleCurrentTab: (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
@@ -279,7 +279,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     }
   };
 
-  initializeQueryParams = (projectId: string, tab: TInboxIssueCurrentTab) => {
+  initializeDefaultFilters = (projectId: string, tab: TInboxIssueCurrentTab) => {
     if (!projectId || !tab) return;
     if (isEmpty(this.inboxFilters)) {
       set(this.filtersMap, [projectId], {
@@ -306,7 +306,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     tab: TInboxIssueCurrentTab | undefined = undefined
   ) => {
     try {
-      if (loadingType === undefined && tab) this.initializeQueryParams(projectId, tab);
+      if (loadingType === undefined && tab) this.initializeDefaultFilters(projectId, tab);
 
       if (this.currentInboxProjectId != projectId) {
         runInAction(() => {
