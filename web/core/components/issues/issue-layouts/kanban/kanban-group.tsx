@@ -28,11 +28,12 @@ import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
+import isNil from "lodash/isNil";
 
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -88,8 +89,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
 
   const loadMoreIssuesInThisGroup = useCallback(() => {
-    loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
-  }, [loadMoreIssues, groupId, sub_group_id])
+    loadMoreIssues(groupId, sub_group_id === "null" ? undefined : sub_group_id);
+  }, [loadMoreIssues, groupId, sub_group_id]);
 
   const isPaginating = !!getIssueLoader(groupId, sub_group_id);
 
@@ -218,10 +219,9 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? []
     : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
 
-  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false) ?? 0;
+  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false);
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
-
 
   const loadMore = isPaginating ? (
     <KanbanIssueBlockLoader />
@@ -235,8 +235,9 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     </div>
   );
 
-  const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
-      const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const shouldLoadMore =
+    nextPageResults === undefined ? isNil(groupIssueCount) || issueIds?.length < groupIssueCount : !!nextPageResults;
+  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
@@ -270,7 +271,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canDropOverIssue={!canOverlayBeVisible}
       />
 
-{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">

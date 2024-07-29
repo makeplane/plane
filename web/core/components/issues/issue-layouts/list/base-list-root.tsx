@@ -107,27 +107,25 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   return (
-    <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
-      <div className={`relative size-full bg-custom-background-90`}>
-        <List
-          issuesMap={issueMap}
-          displayProperties={displayProperties}
-          group_by={group_by}
-          orderBy={orderBy}
-          updateIssue={updateIssue}
-          quickActions={renderQuickActions}
-          groupedIssueIds={groupedIssueIds ?? {}}
-          loadMoreIssues={loadMoreIssues}
-          showEmptyGroup={showEmptyGroup}
-          quickAddCallback={quickAddIssue}
-          enableIssueQuickAdd={!!enableQuickAdd}
-          canEditProperties={canEditProperties}
-          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-          addIssuesToView={addIssuesToView}
-          isCompletedCycle={isCompletedCycle}
-          handleOnDrop={handleOnDrop}
-        />
-      </div>
-    </IssueLayoutHOC>
+    <div className={`relative size-full bg-custom-background-90`}>
+      <List
+        issuesMap={issueMap}
+        displayProperties={displayProperties}
+        group_by={group_by}
+        orderBy={orderBy}
+        updateIssue={updateIssue}
+        quickActions={renderQuickActions}
+        groupedIssueIds={groupedIssueIds ?? {}}
+        loadMoreIssues={loadMoreIssues}
+        showEmptyGroup={showEmptyGroup}
+        quickAddCallback={quickAddIssue}
+        enableIssueQuickAdd={!!enableQuickAdd}
+        canEditProperties={canEditProperties}
+        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+        addIssuesToView={addIssuesToView}
+        isCompletedCycle={isCompletedCycle}
+        handleOnDrop={handleOnDrop}
+      />
+    </div>
   );
 });

@@ -59,37 +59,37 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project labels
-  useSWR(
+  const { isLoading: isLabelsLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project members
-  useSWR(
+  const { isLoading: isMembersLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project states
-  useSWR(
+  const { isLoading: isStateLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
-  useSWR(
+  const { isLoading: isEstimatesLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => getProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project cycles
-  useSWR(
+  const { isLoading: isCyclesLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project modules
-  useSWR(
+  const { isLoading: isModulesLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchModules(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -102,8 +102,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
+  const isLoading =
+    isLabelsLoading || isMembersLoading || isStateLoading || isEstimatesLoading || isCyclesLoading || isModulesLoading;
+
   // check if the project member apis is loading
-  if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)
+  if ((!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null) || isLoading)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
