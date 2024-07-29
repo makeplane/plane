@@ -1,4 +1,5 @@
-import { set, update } from "lodash";
+import set from "lodash/set";
+import update from "lodash/update";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // types
 import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole, IProjectMemberLite } from "@plane/types";
