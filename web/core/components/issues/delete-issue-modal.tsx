@@ -52,14 +52,17 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
           });
           onClose();
         })
-        .catch(() => {
+        .catch((errors) => {
+          const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
+          const toastTitle = isPermissionError ? "You don't have permission to perform this action." : "Error";
+          const toastMessage = isPermissionError ? undefined : "Failed to delete issue";
           setToast({
-            title: "Error",
+            title: toastTitle,
             type: TOAST_TYPE.ERROR,
-            message: "Failed to delete issue",
+            message: toastMessage,
           });
         })
-        .finally(() => setIsDeleting(false));
+        .finally(() => onClose());
   };
 
   return (

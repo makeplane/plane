@@ -51,16 +51,23 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             payload: { ...cycle, state: "SUCCESS" },
           });
         })
-        .catch(() => {
+        .catch((errors) => {
+          const isPermissionError = errors?.error === "Only admin or owner can delete the cycle";
+          const toastTitle = isPermissionError ? "You don't have permission to perform this action." : "Error";
+          const toastMessage = isPermissionError ? undefined : "Failed to delete cycle";
+          setToast({
+            title: toastTitle,
+            type: TOAST_TYPE.ERROR,
+            message: toastMessage,
+          });
           captureCycleEvent({
             eventName: CYCLE_DELETED,
             payload: { ...cycle, state: "FAILED" },
           });
-        });
+        })
+        .finally(() => handleClose());
 
       if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
-
-      handleClose();
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,

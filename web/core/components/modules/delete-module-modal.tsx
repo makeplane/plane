@@ -54,20 +54,21 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           payload: { ...data, state: "SUCCESS" },
         });
       })
-      .catch(() => {
+      .catch((errors) => {
+        const isPermissionError = errors?.error === "Only admin or creator can delete the module";
+        const toastTitle = isPermissionError ? "You don't have permission to perform this action." : "Error!";
+        const toastMessage = isPermissionError ? undefined : "Module could not be deleted. Please try again.";
         setToast({
+          title: toastTitle,
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Module could not be deleted. Please try again.",
+          message: toastMessage,
         });
         captureModuleEvent({
           eventName: MODULE_DELETED,
           payload: { ...data, state: "FAILED" },
         });
       })
-      .finally(() => {
-        setIsDeleteLoading(false);
-      });
+      .finally(() => handleClose());
   };
 
   return (
