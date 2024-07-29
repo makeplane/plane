@@ -47,8 +47,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching feature flags
   const { isLoading: featureFlagsLoader } = useSWR(
-    workspaceSlug && currentUser ? `WORKSPACE_FEATURE_FLAGS_${workspaceSlug}_${currentUser.id}` : null,
-    workspaceSlug && currentUser ? () => fetchFeatureFlags(workspaceSlug.toString(), currentUser.id) : null,
+    workspaceSlug ? `WORKSPACE_FEATURE_FLAGS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false }
   );
 

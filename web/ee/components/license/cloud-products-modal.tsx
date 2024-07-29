@@ -56,10 +56,8 @@ export const CloudProductsModal: FC<CloudProductsModalProps> = (props) => {
   } = useUser();
   // fetch products
   const { data } = useSWR(
-    workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL ? "CLOUD_PAYMENT_PRODUCTS" : null,
-    workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL
-      ? () => paymentService.listProducts(workspaceSlug.toString())
-      : null,
+    workspaceSlug ? "CLOUD_PAYMENT_PRODUCTS" : null,
+    workspaceSlug ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,
     }

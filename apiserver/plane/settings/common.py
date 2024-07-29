@@ -364,6 +364,10 @@ ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
+# Prime Server Base url
+PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
+PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")
+
 # payment server base url
 PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
 PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")

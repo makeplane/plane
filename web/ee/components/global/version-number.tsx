@@ -5,13 +5,13 @@ import { useInstance } from "@/hooks/store";
 import packageJson from "package.json";
 
 export const PlaneVersionNumber = observer(() => {
-  const { instance } = useInstance();
+  const { instance, config } = useInstance();
 
-  if (process.env.NEXT_PUBLIC_DISCO_BASE_URL) {
+  if (config?.payment_server_base_url) {
     return <span>Version: Latest</span>;
   }
 
-  if (instance?.product === "plane-one") {
+  if (instance?.current_version) {
     return <span>Version: {instance.current_version || "Stable"}</span>;
   }
 

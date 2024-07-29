@@ -63,6 +63,9 @@ export interface IInstanceConfig {
   oidc_provider_name: string | undefined;
   is_saml_enabled: boolean;
   saml_provider_name: string | undefined;
+  payment_server_base_url?: string;
+  prime_server_base_url?: string;
+  feature_flag_server_base_url?: string;
 }
 
 export interface IInstanceAdmin {

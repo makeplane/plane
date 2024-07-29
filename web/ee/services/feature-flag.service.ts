@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -9,11 +10,11 @@ export type TFeatureFlagsResponse = {
 
 export class FeatureFlagService extends APIService {
   constructor() {
-    super("");
+    super(API_BASE_URL);
   }
 
-  async getFeatureFlags(data = {}): Promise<TFeatureFlagsResponse> {
-    return this.post(`/flags/`, data)
+  async getFeatureFlags(workspaceSlug: string): Promise<TFeatureFlagsResponse> {
+    return this.get(`/api/payments/workspaces/${workspaceSlug}/feature-flags/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

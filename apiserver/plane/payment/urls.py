@@ -7,6 +7,7 @@ from .views import (
     WebsitePaymentLinkEndpoint,
     WebsiteUserWorkspaceEndpoint,
     SubscriptionEndpoint,
+    FeatureFlagProxyEndpoint,
 )
 
 urlpatterns = [
@@ -39,5 +40,10 @@ urlpatterns = [
         "workspaces/<str:slug>/subscriptions/",
         SubscriptionEndpoint.as_view(),
         name="subscription",
+    ),
+    path(
+        "workspaces/<str:slug>/feature-flags/",
+        FeatureFlagProxyEndpoint.as_view(),
+        name="feature-flags",
     ),
 ]

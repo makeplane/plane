@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -24,10 +24,8 @@ export const CloudEditionBadge = observer(() => {
     useWorkspaceSubscription();
   // fetch workspace current plane information
   useSWR(
-    workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL ? `WORKSPACE_CURRENT_PLAN_${workspaceSlug}` : null,
-    workspaceSlug && process.env.NEXT_PUBLIC_DISCO_BASE_URL
-      ? () => fetchWorkspaceSubscribedPlan(workspaceSlug.toString())
-      : null,
+    workspaceSlug ? `WORKSPACE_CURRENT_PLAN_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceSubscribedPlan(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,
       revalidateOnFocus: false,
