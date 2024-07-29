@@ -230,6 +230,7 @@ class ProjectIdentifier(AuditModel):
         ordering = ("-created_at",)
 
 
+# DEPRECATED TODO: - Remove in next release
 class ProjectFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

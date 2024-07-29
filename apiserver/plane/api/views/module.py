@@ -27,6 +27,7 @@ from plane.db.models import (
     ModuleIssue,
     ModuleLink,
     Project,
+    ProjectMember,
 )
 
 from .base import BaseAPIView
@@ -265,6 +266,20 @@ class ModuleAPIEndpoint(BaseAPIView):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if module.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the module"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list(
                 "issue", flat=True

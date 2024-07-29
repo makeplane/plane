@@ -119,6 +119,7 @@ class PageLog(BaseModel):
         return f"{self.page.name} {self.entity_name}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class PageBlock(ProjectBaseModel):
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, related_name="blocks"
@@ -175,6 +176,7 @@ class PageBlock(ProjectBaseModel):
         return f"{self.page.name} <{self.name}>"
 
 
+# DEPRECATED TODO: - Remove in next release
 class PageFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

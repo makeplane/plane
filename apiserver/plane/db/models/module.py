@@ -169,6 +169,7 @@ class ModuleLink(ProjectBaseModel):
         return f"{self.module.name} {self.url}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class ModuleFavorite(ProjectBaseModel):
     """_summary_
     ModuleFavorite (model): To store all the module favorite of the user

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
@@ -6,7 +7,7 @@ import { IUser, IWorkspaceMember } from "@plane/types";
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
-import { useMember } from "@/hooks/store";
+import { useMember, useUser } from "@/hooks/store";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -79,63 +80,75 @@ export const NameColumn: React.FC<NameProps> = (props) => {
   );
 };
 
-export const AccountTypeColumn: React.FC<AccountTypeProps> = (props) => {
+export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
   const { rowData, currentWorkspaceRole, workspaceSlug } = props;
   // form info
   const {
     control,
     formState: { errors },
   } = useForm();
+  // store hooks
   const {
     workspace: { updateMember },
   } = useMember();
-  return rowData.role === EUserWorkspaceRoles.ADMIN || currentWorkspaceRole !== EUserWorkspaceRoles.ADMIN ? (
-    <div className="w-32 flex ">
-      <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
-    </div>
-  ) : (
-    <Controller
-      name="role"
-      control={control}
-      rules={{ required: "Role is required." }}
-      render={({ field: { value } }) => (
-        <CustomSelect
-          value={value}
-          onChange={(value: EUserProjectRoles) => {
-            console.log({ value, workspaceSlug }, "onChange");
-            if (!workspaceSlug) return;
+  const { data: currentUser } = useUser();
 
-            updateMember(workspaceSlug.toString(), rowData.member.id, {
-              role: value as unknown as EUserWorkspaceRoles, // Cast value to unknown first, then to EUserWorkspaceRoles
-            }).catch((err) => {
-              console.log(err, "err");
-              const error = err.error;
-              const errorString = Array.isArray(error) ? error[0] : error;
+  // derived values
+  const isCurrentUser = currentUser?.id === rowData.member.id;
+  const isAdminRole = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isRoleEditable = isCurrentUser && isAdminRole;
 
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: errorString ?? "An error occurred while updating member role. Please try again.",
-              });
-            });
-          }}
-          label={
-            <div className="flex ">
-              <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
-            </div>
-          }
-          buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
-          className="rounded-md p-0 w-32"
-          optionsClassName="w-full"
-          input
-        >
-          {Object.keys(ROLE).map((item) => (
-            <CustomSelect.Option key={item} value={item as unknown as EUserProjectRoles}>
-              {ROLE[item as unknown as keyof typeof ROLE]}
-            </CustomSelect.Option>
-          ))}
-        </CustomSelect>
+  return (
+    <>
+      {isRoleEditable ? (
+        <div className="w-32 flex ">
+          <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+        </div>
+      ) : (
+        <Controller
+          name="role"
+          control={control}
+          rules={{ required: "Role is required." }}
+          render={({ field: { value } }) => (
+            <CustomSelect
+              value={value}
+              onChange={(value: EUserProjectRoles) => {
+                console.log({ value, workspaceSlug }, "onChange");
+                if (!workspaceSlug) return;
+
+                updateMember(workspaceSlug.toString(), rowData.member.id, {
+                  role: value as unknown as EUserWorkspaceRoles, // Cast value to unknown first, then to EUserWorkspaceRoles
+                }).catch((err) => {
+                  console.log(err, "err");
+                  const error = err.error;
+                  const errorString = Array.isArray(error) ? error[0] : error;
+
+                  setToast({
+                    type: TOAST_TYPE.ERROR,
+                    title: "Error!",
+                    message: errorString ?? "An error occurred while updating member role. Please try again.",
+                  });
+                });
+              }}
+              label={
+                <div className="flex ">
+                  <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+                </div>
+              }
+              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
+              className="rounded-md p-0 w-32"
+              optionsClassName="w-full"
+              input
+            >
+              {Object.keys(ROLE).map((item) => (
+                <CustomSelect.Option key={item} value={item as unknown as EUserProjectRoles}>
+                  {ROLE[item as unknown as keyof typeof ROLE]}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          )}
+        />
       )}
-    />
+    </>
   );
-};
+});

@@ -40,6 +40,7 @@ from plane.db.models import (
     IssueReaction,
     IssueSubscriber,
     Project,
+    ProjectMember,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -380,6 +381,19 @@ class IssueDraftViewSet(BaseViewSet):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if issue.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         issue.delete()
         issue_activity.delay(
             type="issue_draft.activity.deleted",
