@@ -3,8 +3,13 @@ import json
 from datetime import datetime
 
 # Django imports
-from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.db.models.functions import Coalesce
+from django.db.models import Q, Value, UUIDField, F
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 # Third Party imports
 from rest_framework.response import Response
@@ -23,6 +28,8 @@ from plane.db.models import (
     IssueAssignee,
     Workspace,
     IssueSubscriber,
+    CycleIssue,
+    ModuleIssue,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
@@ -50,7 +57,35 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 workspace__slug=slug, project_id=project_id, pk__in=issue_ids
             )
             .select_related("state")
-            .prefetch_related("labels", "assignees")
+            .prefetch_related("labels", "assignees", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         )
         # Current epoch
         epoch = int(timezone.now().timestamp())
@@ -64,6 +99,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         bulk_update_issues = []
         bulk_issue_activities = []
         bulk_update_issue_labels = []
+        bulk_update_issue_modules = []
         bulk_update_issue_assignees = []
 
         properties = request.data.get("properties", {})
@@ -271,6 +307,104 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     }
                 )
 
+            # Module
+            if properties.get("module_ids", []):
+                for module_id in properties.get(
+                    "module_ids",
+                ):
+                    issue_module_ids = [str(uuid) for uuid in issue.module_ids]
+                    if module_id not in issue_module_ids:
+                        bulk_update_issue_modules.append(
+                            ModuleIssue(
+                                issue=issue,
+                                module_id=module_id,
+                                project_id=project_id,
+                                workspace_id=project.workspace_id,
+                                created_by=request.user,
+                            )
+                        )
+                        issue_activities.append(
+                            {
+                                "type": "module.activity.created",
+                                "requested_data": json.dumps(
+                                    {"module_id": module_id}
+                                ),
+                                "current_instance": None,
+                                "issue_id": str(issue.id),
+                                "actor_id": str(request.user.id),
+                                "project_id": str(project_id),
+                                "epoch": epoch,
+                            }
+                        )
+
+            # Cycles
+            if properties.get("cycle_id", False):
+                if str(issue.cycle_id) != properties.get("cycle_id"):
+                    if issue.cycle_id is not None:
+                        # Old cycle issue to delete
+                        CycleIssue.objects.filter(
+                            issue_id=issue.id, cycle_id=issue.cycle_id
+                        ).delete()
+                    # New issues to create
+                    _ = CycleIssue.objects.create(
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                        cycle_id=properties.get("cycle_id"),
+                        issue=issue,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                    )
+                    bulk_issue_activities.append(
+                        {
+                            "type": "cycle.activity.created",
+                            "requested_data": json.dumps(
+                                {"cycle_id": properties.get("cycle_id")}
+                            ),
+                            "current_instance": json.dumps(
+                                {
+                                    "cycle_id": (
+                                        str(issue.cycle_id)
+                                        if issue.cycle_id
+                                        else None
+                                    )
+                                }
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+
+            # Estimate Point
+            if properties.get("estimate_point", False):
+                issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {
+                                "estimate_point": properties.get(
+                                    "estimate_point"
+                                )
+                            }
+                        ),
+                        "current_instance": json.dumps(
+                            {
+                                "estimate_point": (
+                                    str(issue.estimate_point_id)
+                                    if issue.estimate_point_id
+                                    else issue.estimate_point_id
+                                )
+                            }
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.estimate_point_id = properties.get("estimate_point")
+
         # Bulk update all the objects
         Issue.objects.bulk_update(
             bulk_update_issues,
@@ -280,6 +414,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 "target_date",
                 "state_id",
                 "completed_at",
+                "estimate_point_id",
             ],
             batch_size=100,
         )
@@ -294,6 +429,13 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         # Create new assignees
         IssueAssignee.objects.bulk_create(
             bulk_update_issue_assignees,
+            ignore_conflicts=True,
+            batch_size=100,
+        )
+
+        # Create new modules
+        ModuleIssue.objects.bulk_create(
+            bulk_update_issue_modules,
             ignore_conflicts=True,
             batch_size=100,
         )

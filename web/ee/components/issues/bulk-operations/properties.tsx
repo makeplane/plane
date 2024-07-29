@@ -10,7 +10,15 @@ import { TBulkIssueProperties } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { DateDropdown, MemberDropdown, PriorityDropdown, StateDropdown } from "@/components/dropdowns";
+import {
+  DateDropdown,
+  MemberDropdown,
+  PriorityDropdown,
+  StateDropdown,
+  EstimateDropdown,
+  CycleDropdown,
+  ModuleDropdown,
+} from "@/components/dropdowns";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // constants
@@ -18,6 +26,7 @@ import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
+import { useProjectEstimates } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 
@@ -34,6 +43,9 @@ const defaultValues: TBulkIssueProperties = {
   start_date: null,
   target_date: null,
   label_ids: [],
+  cycle_id: "",
+  module_ids: [],
+  estimate_point: null,
 };
 
 export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
@@ -46,6 +58,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   const {
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
+  const { currentActiveEstimateId } = useProjectEstimates();
   // form info
   const {
     control,
@@ -213,10 +226,71 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                     projectId={projectId.toString()}
                     onChange={onChange}
                     setIsOpen={() => setCreateLabelModal(true)}
-                    buttonClassName="text-custom-text-300"
+                    buttonClassName="text-custom-text-300 "
                     placement="top-start"
                   />
                 </div>
+              </>
+            )}
+          />
+        )}
+        {projectId && (
+          <Controller
+            name="cycle_id"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <>
+                <CycleDropdown
+                  value={value as string | null}
+                  onChange={onChange}
+                  projectId={projectId.toString()}
+                  buttonVariant="border-with-text"
+                  buttonClassName="text-custom-text-300 py-1 rounded"
+                  disabled={isUpdateDisabled}
+                  placement="top-start"
+                  placeholder="Cycle"
+                />
+              </>
+            )}
+          />
+        )}
+        {projectId && currentActiveEstimateId && (
+          <Controller
+            name="estimate_point"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <EstimateDropdown
+                value={value as string | null}
+                onChange={onChange}
+                projectId={projectId.toString()}
+                buttonVariant="border-with-text"
+                buttonClassName="text-custom-text-300 py-1"
+                disabled={isUpdateDisabled}
+                placement="top-start"
+                placeholder="Estimates"
+              />
+            )}
+          />
+        )}
+        {projectId && (
+          <Controller
+            name="module_ids"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <>
+                <ModuleDropdown
+                  value={value}
+                  onChange={onChange}
+                  projectId={projectId.toString()}
+                  buttonVariant="border-with-text"
+                  buttonClassName="text-custom-text-300 border-none  px-2 py-1"
+                  buttonContainerClassName="border-[0.5px] border-custom-border-300 rounded"
+                  disabled={isUpdateDisabled}
+                  placement="top-start"
+                  placeholder="Module"
+                  showCount
+                  multiple
+                />
               </>
             )}
           />
