@@ -119,12 +119,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      let filterParams = this.getAppliedFilters(moduleId);
-
-      if (!filterParams) {
-        filterParams = {};
-      }
-      filterParams["module"] = moduleId;
+      const filterParams = this.getAppliedFilters(moduleId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;

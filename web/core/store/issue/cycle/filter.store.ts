@@ -119,12 +119,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      let filterParams = this.getAppliedFilters(cycleId);
-
-      if (!filterParams) {
-        filterParams = {};
-      }
-      filterParams["cycle"] = cycleId;
+      const filterParams = this.getAppliedFilters(cycleId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
