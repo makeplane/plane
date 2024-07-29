@@ -39,7 +39,7 @@ def restore_related_objects(app_label, model_name, instance_pk, using=None):
 
 
 @shared_task
-def days():
+def hard_delete():
 
     from plane.db.models import (
         Workspace,
@@ -62,7 +62,7 @@ def days():
         EstimatePoint,
     )
 
-    days = settings.days_AFTER_DAYS
+    days = settings.HARD_DELETE_AFTER_DAYS
     # check delete workspace
     _ = Workspace.all_objects.filter(
         deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
