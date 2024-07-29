@@ -1,12 +1,17 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
+// editor
 import { EditorRefApi, useEditorMarkings } from "@plane/editor";
+// types
 import { TPage } from "@plane/types";
+// ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
+// components
 import { PageEditorHeaderRoot, PageEditorBody } from "@/components/pages";
+// hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePageDescription } from "@/hooks/use-page-description";
+// store
 import { IPage } from "@/store/pages/page";
 
 type TPageRootProps = {
@@ -16,34 +21,22 @@ type TPageRootProps = {
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  // router
-  const router = useAppRouter();
   const { projectId, workspaceSlug, page } = props;
-  const { createPage } = useProjectPages();
-  const { access, description_html, name } = page;
-
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
-
+  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
-
+  // router
+  const router = useAppRouter();
+  // store hooks
+  const { createPage } = useProjectPages();
+  // derived values
+  const { access, description_html, name } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
-
-  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768 ? true : false);
-
-  // project-description
-  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS, handleSaveDescription } = usePageDescription(
-    {
-      editorRef,
-      page,
-      projectId,
-      workspaceSlug,
-    }
-  );
 
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
@@ -73,7 +66,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         editorReady={editorReady}
         readOnlyEditorReady={readOnlyEditorReady}
         handleDuplicatePage={handleDuplicatePage}
-        handleSaveDescription={handleSaveDescription}
         markings={markings}
         page={page}
         sidePeekVisible={sidePeekVisible}
@@ -88,9 +80,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         page={page}
         sidePeekVisible={sidePeekVisible}
         updateMarkings={updateMarkings}
-        handleDescriptionChange={handleDescriptionChange}
-        isDescriptionReady={isDescriptionReady}
-        pageDescriptionYJS={pageDescriptionYJS}
       />
     </>
   );

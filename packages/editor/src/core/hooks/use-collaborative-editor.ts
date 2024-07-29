@@ -1,24 +1,25 @@
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
+import { HocuspocusProvider } from "@hocuspocus/provider";
+import { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
 import { EditorProps } from "@tiptap/pm/view";
-import * as Y from "yjs";
+import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
-import { DragAndDrop, IssueWidget } from "@/extensions";
+import { DragAndDrop } from "@/extensions";
 // hooks
 import { TFileHandler, useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
-// plane editor provider
-import { CollaborationProvider } from "@/plane-editor/providers";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TRealtimeConfig, TUserDetails } from "@/types";
 
-type DocumentEditorProps = {
+type CollaborativeEditorProps = {
   editorClassName: string;
   editorProps?: EditorProps;
   embedHandler?: TEmbedConfig;
+  extensions?: Extensions;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
@@ -27,61 +28,57 @@ type DocumentEditorProps = {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
-  onChange: (updates: Uint8Array) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  realtimeConfig: TRealtimeConfig;
   setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
-  value: Uint8Array;
+  user: TUserDetails;
 };
 
-export const useDocumentEditor = (props: DocumentEditorProps) => {
+export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
   const {
     editorClassName,
     editorProps = {},
     embedHandler,
+    extensions,
     fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
     mentionHandler,
-    onChange,
     placeholder,
+    realtimeConfig,
     setHideDragHandleFunction,
     tabIndex,
-    value,
+    user,
   } = props;
-
+  // initialize Hocuspocus provider
   const provider = useMemo(
     () =>
-      new CollaborationProvider({
+      new HocuspocusProvider({
         name: id,
-        onChange,
+        parameters: realtimeConfig.queryParams,
+        // using user id as a token to verify the user on the server
+        token: user.id,
+        url: realtimeConfig.url,
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id]
+    [id, realtimeConfig, user.id]
   );
-
-  const [isIndexedDbSynced, setIndexedDbIsSynced] = useState(false);
-
-  // update document on value change from server
+  // destroy and disconnect connection on unmount
+  useEffect(
+    () => () => {
+      provider.destroy();
+      provider.disconnect();
+    },
+    [provider]
+  );
+  // indexed db integration for offline support
   useLayoutEffect(() => {
-    if (value.length > 0) {
-      Y.applyUpdate(provider.document, value);
-    }
-  }, [value, provider.document, id]);
-
-  // watch for indexedDb to complete syncing, only after which the editor is
-  // rendered
-  useLayoutEffect(() => {
-    async function checkIndexDbSynced() {
-      const hasSynced = await provider.hasIndexedDBSynced();
-      setIndexedDbIsSynced(hasSynced);
-    }
-    checkIndexDbSynced();
+    const localProvider = new IndexeddbPersistence(id, provider.document);
     return () => {
-      setIndexedDbIsSynced(false);
+      localProvider?.destroy();
     };
-  }, [provider]);
+  }, [provider, id]);
 
   const editor = useEditor({
     id,
@@ -94,22 +91,18 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     mentionHandler,
     extensions: [
       DragAndDrop(setHideDragHandleFunction),
-      embedHandler?.issue &&
-        IssueWidget({
-          widgetCallback: embedHandler.issue.widgetCallback,
-        }),
       Collaboration.configure({
         document: provider.document,
       }),
+      ...(extensions ?? []),
       ...DocumentEditorAdditionalExtensions({
         fileHandler,
         issueEmbedConfig: embedHandler?.issue,
       }),
     ],
     placeholder,
-    provider,
     tabIndex,
   });
 
-  return { editor, isIndexedDbSynced };
+  return { editor };
 };

@@ -3,28 +3,20 @@ import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-import { Markdown } from "tiptap-markdown";
 // extensions
-import {
-  CustomCodeBlockExtension,
-  CustomCodeInlineExtension,
-  CustomCodeMarkPlugin,
-  CustomHorizontalRule,
-  CustomKeymap,
-  CustomLinkExtension,
-  CustomMentionWithoutProps,
-  CustomQuoteExtension,
-  CustomTypographyExtension,
-  ImageExtensionWithoutProps,
-  Table,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
+import { CustomCodeInlineExtension } from "./code-inline";
+import { CustomLinkExtension } from "./custom-link";
+import { CustomHorizontalRule } from "./horizontal-rule";
+import { ImageExtensionWithoutProps } from "./image";
+import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props";
+import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
+import { CustomQuoteExtension } from "./quote";
+import { TableHeader, TableCell, TableRow, Table } from "./table";
 
-export const CoreEditorExtensionsWithoutProps = () => [
+export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -53,7 +45,6 @@ export const CoreEditorExtensionsWithoutProps = () => [
       class: "my-4 border-custom-border-400",
     },
   }),
-  CustomKeymap,
   CustomLinkExtension.configure({
     openOnClick: true,
     autolink: true,
@@ -65,7 +56,6 @@ export const CoreEditorExtensionsWithoutProps = () => [
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  CustomTypographyExtension,
   ImageExtensionWithoutProps().configure({
     HTMLAttributes: {
       class: "rounded-md",
@@ -84,20 +74,13 @@ export const CoreEditorExtensionsWithoutProps = () => [
     },
     nested: true,
   }),
-  CustomCodeBlockExtension.configure({
-    HTMLAttributes: {
-      class: "",
-    },
-  }),
-  CustomCodeMarkPlugin,
   CustomCodeInlineExtension,
-  Markdown.configure({
-    html: true,
-    transformPastedText: true,
-  }),
+  CustomCodeBlockExtensionWithoutProps,
   Table,
   TableHeader,
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
 ];
+
+export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

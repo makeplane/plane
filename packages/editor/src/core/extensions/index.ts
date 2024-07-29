@@ -8,7 +8,6 @@ export * from "./mentions";
 export * from "./table";
 export * from "./typography";
 export * from "./core-without-props";
-export * from "./document-without-props";
 export * from "./custom-code-inline";
 export * from "./drag-drop";
 export * from "./drop";

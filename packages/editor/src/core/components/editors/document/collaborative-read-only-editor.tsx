@@ -6,19 +6,21 @@ import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+import { useReadOnlyCollaborativeEditor } from "@/hooks/use-read-only-collaborative-editor";
 // types
-import { EditorReadOnlyRefApi, IDocumentReadOnlyEditor } from "@/types";
+import { EditorReadOnlyRefApi, ICollaborativeDocumentReadOnlyEditor } from "@/types";
 
-const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
+const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOnlyEditor) => {
   const {
     containerClassName,
     editorClassName = "",
     embedHandler,
     forwardedRef,
     handleEditorReady,
-    initialValue,
+    id,
     mentionHandler,
+    realtimeConfig,
+    user,
   } = props;
   const extensions = [];
   if (embedHandler?.issue) {
@@ -29,13 +31,15 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     );
   }
 
-  const editor = useReadOnlyEditor({
+  const { editor } = useReadOnlyCollaborativeEditor({
     editorClassName,
     extensions,
     forwardedRef,
     handleEditorReady,
-    initialValue,
+    id,
     mentionHandler,
+    realtimeConfig,
+    user,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -46,10 +50,13 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   return <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} />;
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
-  <DocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
+const CollaborativeDocumentReadOnlyEditorWithRef = forwardRef<
+  EditorReadOnlyRefApi,
+  ICollaborativeDocumentReadOnlyEditor
+>((props, ref) => (
+  <CollaborativeDocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 
-DocumentReadOnlyEditorWithRef.displayName = "DocumentReadOnlyEditorWithRef";
+CollaborativeDocumentReadOnlyEditorWithRef.displayName = "CollaborativeDocumentReadOnlyEditorWithRef";
 
-export { DocumentReadOnlyEditorWithRef };
+export { CollaborativeDocumentReadOnlyEditorWithRef };

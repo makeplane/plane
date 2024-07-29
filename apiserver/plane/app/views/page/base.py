@@ -33,7 +33,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
 )
-
+from plane.utils.error_codes import ERROR_CODES
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 
@@ -514,14 +514,20 @@ class PagesDescriptionViewSet(BaseViewSet):
 
         if page.is_locked:
             return Response(
-                {"error": "Page is locked"},
-                status=471,
+                {
+                    "error_code": ERROR_CODES["PAGE_LOCKED"],
+                    "error_message": "PAGE_LOCKED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         if page.archived_at:
             return Response(
-                {"error": "Page is archived"},
-                status=472,
+                {
+                    "error_code": ERROR_CODES["PAGE_ARCHIVED"],
+                    "error_message": "PAGE_ARCHIVED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Serialize the existing instance
@@ -549,6 +555,7 @@ class PagesDescriptionViewSet(BaseViewSet):
             # Store the updated binary data
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
+            page.description = request.data.get("description")
             page.save()
             # Return a success response
             page_version.delay(

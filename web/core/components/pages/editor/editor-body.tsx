@@ -1,20 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
 import {
-  DocumentEditorWithRef,
-  DocumentReadOnlyEditorWithRef,
+  CollaborativeDocumentEditorWithRef,
+  CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TRealtimeConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, LIVE_BASE_URL } from "@/helpers/common.helper";
+import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -36,9 +38,6 @@ type Props = {
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
   updateMarkings: (description_html: string) => void;
-  handleDescriptionChange: (update: Uint8Array, source?: string | undefined) => void;
-  isDescriptionReady: boolean;
-  pageDescriptionYJS: Uint8Array | undefined;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -51,9 +50,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     page,
     sidePeekVisible,
     updateMarkings,
-    handleDescriptionChange,
-    isDescriptionReady,
-    pageDescriptionYJS,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -93,8 +89,19 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
-  if (pageId === undefined || pageDescription === undefined || !pageDescriptionYJS || !isDescriptionReady)
-    return <PageContentLoader />;
+  const realtimeConfig: TRealtimeConfig = useMemo(
+    () => ({
+      url: `${LIVE_BASE_URL}/collaboration`,
+      queryParams: {
+        workspaceSlug: workspaceSlug?.toString(),
+        projectId: projectId?.toString(),
+        documentType: "project_page",
+      },
+    }),
+    [projectId, workspaceSlug]
+  );
+
+  if (pageId === undefined) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -128,7 +135,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           </div>
           {isContentEditable ? (
-            <DocumentEditorWithRef
+            <CollaborativeDocumentEditorWithRef
               id={pageId}
               fileHandler={{
                 cancel: fileService.cancelUpload,
@@ -137,11 +144,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
               }}
               handleEditorReady={handleEditorReady}
-              value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
               editorClassName="pl-10"
-              onChange={handleDescriptionChange}
               mentionHandler={{
                 highlights: mentionHighlights,
                 suggestions: mentionSuggestions,
@@ -149,11 +154,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               embedHandler={{
                 issue: issueEmbedProps,
               }}
+              realtimeConfig={realtimeConfig}
+              user={{
+                id: currentUser?.id ?? "",
+                name: currentUser?.display_name ?? "",
+                color: generateRandomColor(currentUser?.id ?? ""),
+              }}
             />
           ) : (
-            <DocumentReadOnlyEditorWithRef
+            <CollaborativeDocumentReadOnlyEditorWithRef
+              id={pageId}
               ref={readOnlyEditorRef}
-              initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
               editorClassName="pl-10"
@@ -162,6 +173,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
               embedHandler={{
                 issue: issueEmbedReadOnlyProps,
+              }}
+              realtimeConfig={realtimeConfig}
+              user={{
+                id: currentUser?.id ?? "",
+                name: currentUser?.display_name ?? "",
+                color: generateRandomColor(currentUser?.id ?? ""),
               }}
             />
           )}

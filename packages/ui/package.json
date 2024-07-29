@@ -6,14 +6,15 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "type": "module",
   "sideEffects": false,
   "license": "MIT",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -49,6 +50,7 @@
     "@storybook/react": "^8.1.1",
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
+    "@types/lodash": "^4.17.6",
     "@types/node": "^20.5.2",
     "@types/react": "^18.2.42",
     "@types/react-color": "^3.0.9",
@@ -63,7 +65,7 @@
     "tailwind-config-custom": "*",
     "tailwindcss": "^3.4.3",
     "tsconfig": "*",
-    "tsup": "^5.10.1",
+    "tsup": "^7.2.0",
     "typescript": "4.7.4"
   }
 }

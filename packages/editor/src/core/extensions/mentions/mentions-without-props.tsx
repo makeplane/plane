@@ -1,8 +1,12 @@
 import { mergeAttributes } from "@tiptap/core";
-import Mention from "@tiptap/extension-mention";
-import { ReactNodeViewRenderer } from "@tiptap/react";
-// extensions
-import { CustomMentionOptions, MentionNodeView } from "@/extensions";
+import Mention, { MentionOptions } from "@tiptap/extension-mention";
+// types
+import { IMentionHighlight } from "@/types";
+
+interface CustomMentionOptions extends MentionOptions {
+  mentionHighlights: () => Promise<IMentionHighlight[]>;
+  readonly?: boolean;
+}
 
 export const CustomMentionWithoutProps = () =>
   Mention.extend<CustomMentionOptions>({
@@ -30,9 +34,6 @@ export const CustomMentionWithoutProps = () =>
           default: null,
         },
       };
-    },
-    addNodeView() {
-      return ReactNodeViewRenderer(MentionNodeView);
     },
     parseHTML() {
       return [

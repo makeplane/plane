@@ -182,10 +182,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   }, [projectId]);
 
   useEffect(() => {
-    if (data?.description_html) setValue("description_html", data?.description_html);
+    if (data?.description_html) setValue("description_html" as const, data?.description_html);
   }, [data?.description_html]);
 
-  const issueName = watch("name");
+  const issueName = watch("name" as const);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
@@ -327,7 +327,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           handleClose={() => setLabelModal(false)}
           projectId={projectId}
           onSuccess={(response) => {
-            setValue("label_ids", [...watch("label_ids"), response.id]);
+            setValue("label_ids" as const, [...watch("label_ids"), response.id]);
             handleFormChange();
           }}
         />
