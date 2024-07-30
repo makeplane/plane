@@ -91,9 +91,9 @@ const useProjectIssueActions = () => {
   );
 
   const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data);
+    async (issueProjectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !issueProjectId) return;
+      return await issues.createIssue(workspaceSlug, issueProjectId, data, "", issueProjectId === projectId);
     },
     [issues.createIssue, workspaceSlug]
   );
