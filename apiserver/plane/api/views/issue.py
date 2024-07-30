@@ -4,7 +4,6 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import IntegrityError
 from django.db.models import (
     Case,
