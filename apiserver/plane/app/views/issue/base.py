@@ -35,7 +35,7 @@ from plane.app.serializers import (
     IssueUserPropertySerializer,
     IssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,

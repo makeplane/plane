@@ -19,8 +19,6 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkIssueOperationsEndpoint,
-    BulkArchiveIssuesEndpoint,
 )
 
 urlpatterns = [
@@ -82,11 +80,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
-        BulkArchiveIssuesEndpoint.as_view(),
-        name="bulk-archive-issues",
     ),
     ##
     path(
@@ -304,10 +297,5 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
-        BulkIssueOperationsEndpoint.as_view(),
-        name="bulk-operations-issues",
     ),
 ]
