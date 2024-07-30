@@ -139,7 +139,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     e.stopPropagation();
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
-    if (searchParams.has("peekCycle")) {
+    if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);

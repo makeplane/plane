@@ -113,7 +113,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
 
     const query = generateQueryParams(searchParams, ["peekModule"]);
-    if (searchParams.has("peekModule")) {
+    if (searchParams.has("peekModule") && searchParams.get("peekModule") === moduleId) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query && `${query}&`}peekModule=${moduleId}`);
