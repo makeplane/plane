@@ -14,10 +14,11 @@ import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, usePublish } from "@/hooks/store";
-
+//
 import { IIssue } from "@/types/issue";
 import { IssueProperties } from "../properties/all-properties";
 import { getIssueBlockId } from "../utils";
+import { BlockReactions } from "./block-reactions";
 
 interface IssueBlockProps {
   issueId: string;
@@ -83,17 +84,22 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
 
   return (
     <div className={cn("group/kanban-block relative p-1.5")}>
-      <Link
-        id={getIssueBlockId(issueId, groupId, subGroupId)}
+      <div
         className={cn(
-          "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+          "relative block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
           { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) }
         )}
-        href={`?${queryParam}`}
-        onClick={handleIssuePeekOverview}
       >
-        <KanbanIssueDetailsBlock issue={issue} displayProperties={displayProperties} />
-      </Link>
+        <Link
+          id={getIssueBlockId(issueId, groupId, subGroupId)}
+          className="w-full"
+          href={`?${queryParam}`}
+          onClick={handleIssuePeekOverview}
+        >
+          <KanbanIssueDetailsBlock issue={issue} displayProperties={displayProperties} />
+        </Link>
+        <BlockReactions issueId={issueId} />
+      </div>
     </div>
   );
 });
