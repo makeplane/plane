@@ -13,7 +13,7 @@ import { useMember } from "@/hooks/store";
 
 export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }> = observer((props) => {
   const { searchQuery, isAdmin } = props;
-  const [showPendingInvites, setShowPendingInvites] = useState<boolean>(false);
+  const [showPendingInvites, setShowPendingInvites] = useState<boolean>(true);
 
   // router
   const { workspaceSlug } = useParams();

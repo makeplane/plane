@@ -122,7 +122,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
       <RenderIfVisible
         key={`${issueId}`}
-        defaultHeight="inherit"
+        defaultHeight="3rem"
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}

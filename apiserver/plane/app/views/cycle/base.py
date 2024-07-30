@@ -47,6 +47,7 @@ from plane.db.models import (
     Label,
     User,
     Project,
+    ProjectMember,
 )
 from plane.utils.analytics_plot import burndown_plot
 
@@ -1039,13 +1040,27 @@ class CycleViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, pk):
+        cycle = Cycle.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        if cycle.owned_by_id != request.user.id and not (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or owner can delete the cycle"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         cycle_issues = list(
             CycleIssue.objects.filter(
                 cycle_id=self.kwargs.get("pk")
             ).values_list("issue", flat=True)
-        )
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
         )
 
         issue_activity.delay(
