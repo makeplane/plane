@@ -150,3 +150,27 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     icon: Microscope,
   },
 ];
+
+// ee
+export const WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS = [
+  {
+    key: "completed_issues",
+    title: "Completed",
+    color: "#6490FE",
+  },
+  {
+    key: "started_issues",
+    title: "Started",
+    color: "#FDD97F",
+  },
+  {
+    key: "unstarted_issues",
+    title: "Unstarted",
+    color: "#FEB055",
+  },
+  {
+    key: "backlog_issues",
+    title: "Backlog",
+    color: "#F0F0F3",
+  },
+];

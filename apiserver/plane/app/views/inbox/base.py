@@ -35,7 +35,7 @@ from plane.app.serializers import (
     InboxIssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class InboxViewSet(BaseViewSet):
