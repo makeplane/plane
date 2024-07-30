@@ -13,10 +13,12 @@ import { useIssueDetails, useUser } from "@/hooks/store";
 
 type IssueEmojiReactionsProps = {
   anchor: string;
+  issueIdFromProps?: string;
+  size?: "md" | "sm";
 };
 
 export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
-  const { anchor } = props;
+  const { anchor, issueIdFromProps, size = "md" } = props;
   // router
   const router = useRouter();
   const pathName = usePathname();
@@ -31,7 +33,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
   const issueDetailsStore = useIssueDetails();
   const { data: user } = useUser();
 
-  const issueId = issueDetailsStore.peekId;
+  const issueId = issueIdFromProps ?? issueDetailsStore.peekId;
   const reactions = issueDetailsStore.details[issueId ?? ""]?.reaction_items ?? [];
   const groupedReactions = groupReactions(reactions, "reaction");
 
@@ -55,6 +57,7 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
 
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+  const reactionDimensions = size === "sm" ? "h-6 px-2 py-1" : "h-full px-2 py-1";
 
   return (
     <>
@@ -64,54 +67,52 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
           else router.push(`/?next_path=${pathName}?${queryParam}`);
         }}
         selected={userReactions?.map((r) => r.reaction)}
-        size="md"
+        size={size}
       />
-      <div className="flex flex-wrap items-center gap-2">
-        {Object.keys(groupedReactions || {}).map((reaction) => {
-          const reactions = groupedReactions?.[reaction] ?? [];
-          const REACTIONS_LIMIT = 1000;
+      {Object.keys(groupedReactions || {}).map((reaction) => {
+        const reactions = groupedReactions?.[reaction] ?? [];
+        const REACTIONS_LIMIT = 1000;
 
-          if (reactions.length > 0)
-            return (
-              <Tooltip
-                key={reaction}
-                tooltipContent={
-                  <div>
-                    {reactions
-                      ?.map((r) => r?.actor_details?.display_name)
-                      ?.splice(0, REACTIONS_LIMIT)
-                      ?.join(", ")}
-                    {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
-                  </div>
-                }
+        if (reactions.length > 0)
+          return (
+            <Tooltip
+              key={reaction}
+              tooltipContent={
+                <div>
+                  {reactions
+                    ?.map((r) => r?.actor_details?.display_name)
+                    ?.splice(0, REACTIONS_LIMIT)
+                    ?.join(", ")}
+                  {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
+                </div>
+              }
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  if (user) handleReactionClick(reaction);
+                  else router.push(`/?next_path=${pathName}?${queryParam}`);
+                }}
+                className={`flex items-center gap-1 rounded-md text-sm text-custom-text-100 ${
+                  reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
+                    ? "bg-custom-primary-100/10"
+                    : "bg-custom-background-80"
+                } ${reactionDimensions}`}
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (user) handleReactionClick(reaction);
-                    else router.push(`/?next_path=${pathName}?${queryParam}`);
-                  }}
-                  className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
+                <span>{renderEmoji(reaction)}</span>
+                <span
+                  className={
                     reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
-                      ? "bg-custom-primary-100/10"
-                      : "bg-custom-background-80"
-                  }`}
+                      ? "text-custom-primary-100"
+                      : ""
+                  }
                 >
-                  <span>{renderEmoji(reaction)}</span>
-                  <span
-                    className={
-                      reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
-                        ? "text-custom-primary-100"
-                        : ""
-                    }
-                  >
-                    {groupedReactions?.[reaction].length}{" "}
-                  </span>
-                </button>
-              </Tooltip>
-            );
-        })}
-      </div>
+                  {groupedReactions?.[reaction].length}{" "}
+                </span>
+              </button>
+            </Tooltip>
+          );
+      })}
     </>
   );
 });

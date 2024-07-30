@@ -13,10 +13,12 @@ import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type TIssueVotes = {
   anchor: string;
+  issueIdFromProps?: string;
+  size?: "md" | "sm";
 };
 
 export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
-  const { anchor } = props;
+  const { anchor, issueIdFromProps, size = "md" } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
@@ -35,7 +37,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
 
   const isInIframe = useIsInIframe();
 
-  const issueId = issueDetailsStore.peekId;
+  const issueId = issueIdFromProps ?? issueDetailsStore.peekId;
 
   const votes = issueDetailsStore.details[issueId ?? ""]?.vote_items ?? [];
 
@@ -66,6 +68,7 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
 
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+  const votingDimensions = size === "sm" ? "px-1 h-6 min-w-9" : "px-2 h-7";
 
   return (
     <div className="flex items-center gap-2">
@@ -96,7 +99,8 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 h-7 focus:outline-none",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            votingDimensions,
             {
               "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
               "border-custom-border-300": !isUpVotedByUser,
@@ -136,7 +140,8 @@ export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 h-7 overflow-hidden rounded border px-2 focus:outline-none",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            votingDimensions,
             {
               "border-red-600 text-red-600": isDownVotedByUser,
               "border-custom-border-300": !isDownVotedByUser,

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { IssueEmojiReactions, IssueVotes } from "@/components/issues/peek-overview";
+import { IssueEmojiReactions, IssueVotes } from "@/components/issues/reactions";
 // hooks
 import { usePublish } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
