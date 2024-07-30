@@ -105,6 +105,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     workspaceSlug={workspaceSlug?.toString() ?? ""}
                     onEnterKeyPress={() => handleSubmit(handleCommentUpdate)()}
                     ref={editorRef}
+                    id={comment.id}
                     initialValue={value}
                     value={null}
                     onChange={(comment_json, comment_html) => onChange(comment_html)}
@@ -132,7 +133,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html} />
+            <LiteTextReadOnlyEditor ref={showEditorRef} id={comment.id} initialValue={comment.comment_html} />
             <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>
         </div>
