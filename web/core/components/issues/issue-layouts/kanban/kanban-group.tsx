@@ -32,7 +32,7 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -88,8 +88,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
 
   const loadMoreIssuesInThisGroup = useCallback(() => {
-    loadMoreIssues(groupId, sub_group_id === "null"? undefined: sub_group_id)
-  }, [loadMoreIssues, groupId, sub_group_id])
+    loadMoreIssues(groupId, sub_group_id === "null" ? undefined : sub_group_id);
+  }, [loadMoreIssues, groupId, sub_group_id]);
 
   const isPaginating = !!getIssueLoader(groupId, sub_group_id);
 
@@ -222,12 +222,11 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
-
   const loadMore = isPaginating ? (
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-text-350 hover:text-custom-text-300 hover:underline cursor-pointer"
+      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
     >
       {" "}
@@ -236,7 +235,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   );
 
   const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
-      const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
@@ -270,7 +269,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canDropOverIssue={!canOverlayBeVisible}
       />
 
-{shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">

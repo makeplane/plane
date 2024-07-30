@@ -593,7 +593,8 @@ def create_issue_activity(
         epoch=epoch,
     )
     issue_activity.created_at = issue.created_at
-    issue_activity.save(update_fields=["created_at"])
+    issue_activity.actor_id = issue.created_by_id
+    issue_activity.save(update_fields=["created_at", "actor_id"])
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
@@ -1773,3 +1774,4 @@ def issue_activity(
     except Exception as e:
         log_exception(e)
         return
+

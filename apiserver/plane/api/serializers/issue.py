@@ -53,7 +53,6 @@ class IssueSerializer(BaseSerializer):
             "id",
             "workspace",
             "project",
-            "created_by",
             "updated_by",
             "updated_at",
         ]
@@ -338,9 +337,7 @@ class IssueAttachmentSerializer(BaseSerializer):
             "workspace",
             "project",
             "issue",
-            "created_by",
             "updated_by",
-            "created_at",
             "updated_at",
         ]
 
@@ -433,3 +430,4 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+

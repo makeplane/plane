@@ -455,11 +455,12 @@ export class ProjectInboxStore implements IProjectInboxStore {
         );
       });
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
-    } catch {
+    } catch (error) {
       console.error("Error removing the intake issue");
       set(this.inboxIssues, [inboxIssueId], currentIssue);
       set(this, ["inboxIssuePaginationInfo", "total_results"], (this.inboxIssuePaginationInfo?.total_results || 0) + 1);
       set(this, ["inboxIssueIds"], [...this.inboxIssueIds, inboxIssueId]);
+      throw error;
     }
   };
 }
