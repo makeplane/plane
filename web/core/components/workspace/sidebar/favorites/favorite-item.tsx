@@ -8,8 +8,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, FileText, Layers, MoreHorizontal, Star } from "lucide-react";
 // ui
-import { IFavourite } from "@plane/types";
-import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavouriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
+import { IFavorite } from "@plane/types";
+import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 
@@ -20,13 +20,13 @@ import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const FavouriteItem = observer(
+export const FavoriteItem = observer(
   ({
-    favourite,
+    favorite,
     handleRemoveFromFavorites,
   }: {
-    favourite: IFavourite;
-    handleRemoveFromFavorites: (favourite: IFavourite) => void;
+    favorite: IFavorite;
+    handleRemoveFromFavorites: (favorite: IFavorite) => void;
   }) => {
     // store hooks
     const { sidebarCollapsed } = useAppTheme();
@@ -47,7 +47,7 @@ export const FavouriteItem = observer(
     const getIcon = () => {
       const className = `flex-shrink-0 size-4 stroke-[1.5]`;
 
-      switch (favourite.entity_type) {
+      switch (favorite.entity_type) {
         case "page":
           return <FileText className={className} />;
         case "project":
@@ -61,24 +61,24 @@ export const FavouriteItem = observer(
         case "issue":
           return <LayersIcon className={className} />;
         case "folder":
-          return <FavouriteFolderIcon className={className} />;
+          return <FavoriteFolderIcon className={className} />;
         default:
           return <FileText />;
       }
     };
 
     const getLink = () => {
-      switch (favourite.entity_type) {
+      switch (favorite.entity_type) {
         case "project":
-          return `/${workspaceSlug}/projects/${favourite.project_id}/issues`;
+          return `/${workspaceSlug}/projects/${favorite.project_id}/issues`;
         case "cycle":
-          return `/${workspaceSlug}/projects/${favourite.project_id}/cycles/${favourite.entity_identifier}`;
+          return `/${workspaceSlug}/projects/${favorite.project_id}/cycles/${favorite.entity_identifier}`;
         case "module":
-          return `/${workspaceSlug}/projects/${favourite.project_id}/modules/${favourite.entity_identifier}`;
+          return `/${workspaceSlug}/projects/${favorite.project_id}/modules/${favorite.entity_identifier}`;
         case "view":
-          return `/${workspaceSlug}/projects/${favourite.project_id}/views/${favourite.entity_identifier}`;
+          return `/${workspaceSlug}/projects/${favorite.project_id}/views/${favorite.entity_identifier}`;
         case "page":
-          return `/${workspaceSlug}/projects/${favourite.project_id}/pages/${favourite.entity_identifier}`;
+          return `/${workspaceSlug}/projects/${favorite.project_id}/pages/${favorite.entity_identifier}`;
         default:
           return `/${workspaceSlug}`;
       }
@@ -94,7 +94,7 @@ export const FavouriteItem = observer(
           element,
           dragHandle: element,
           canDrag: () => true,
-          getInitialData: () => ({ id: favourite.id, type: "CHILD" }),
+          getInitialData: () => ({ id: favorite.id, type: "CHILD" }),
           onDragStart: () => {
             setIsDragging(true);
           },
@@ -110,13 +110,13 @@ export const FavouriteItem = observer(
     return (
       <div ref={elementRef} className="group/project-item">
         <SidebarNavItem
-          key={favourite.id}
+          key={favorite.id}
           className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
         >
           <div className="flex flex-between items-center gap-1.5 py-[1px] w-full">
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={favourite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+              tooltipContent={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
               position="top-right"
               disabled={isDragging}
             >
@@ -125,7 +125,7 @@ export const FavouriteItem = observer(
                 className={cn(
                   "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                   {
-                    "cursor-not-allowed opacity-60": favourite.sort_order === null,
+                    "cursor-not-allowed opacity-60": favorite.sort_order === null,
                     "cursor-grabbing": isDragging,
                     "!hidden": sidebarCollapsed,
                   }
@@ -140,7 +140,7 @@ export const FavouriteItem = observer(
 
             {!sidebarCollapsed && (
               <Link href={getLink()} className="text-sm leading-5 font-medium flex-1">
-                {favourite.entity_data ? favourite.entity_data.name : favourite.name}
+                {favorite.entity_data ? favorite.entity_data.name : favorite.name}
               </Link>
             )}
 
@@ -163,7 +163,7 @@ export const FavouriteItem = observer(
               customButtonClassName="grid place-items-center"
               placement="bottom-start"
             >
-              <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favourite)}>
+              <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                 <span className="flex items-center justify-start gap-2">
                   <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
                   <span>Remove from favorites</span>

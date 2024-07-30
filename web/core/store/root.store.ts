@@ -6,7 +6,7 @@ import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
-import { FavouriteStore, IFavouriteStore } from "./favourite.store";
+import { FavoriteStore, IFavoriteStore } from "./favorite.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IProjectInboxStore, ProjectInboxStore } from "./inbox/project-inbox.store";
 import { InstanceStore, IInstanceStore } from "./instance.store";
@@ -53,7 +53,7 @@ export class CoreRootStore {
   projectEstimate: IProjectEstimateStore;
   multipleSelect: IMultipleSelectStore;
   workspaceNotification: IWorkspaceNotificationStore;
-  favourite: IFavouriteStore;
+  favorite: IFavoriteStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -80,7 +80,7 @@ export class CoreRootStore {
     this.projectPages = new ProjectPageStore(this);
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
-    this.favourite = new FavouriteStore();
+    this.favorite = new FavoriteStore();
   }
 
   resetOnSignOut() {

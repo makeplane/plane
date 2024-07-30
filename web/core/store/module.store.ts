@@ -486,7 +486,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "is_favorite"], true);
       });
-      await this.rootStore.favourite.addFavourite(workspaceSlug.toString(), {
+      await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
         entity_type: "module",
         entity_identifier: moduleId,
         project_id: projectId,
@@ -513,7 +513,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "is_favorite"], false);
       });
-      await this.rootStore.favourite.removeFavouriteEntity(workspaceSlug, moduleId);
+      await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, moduleId);
     } catch (error) {
       console.error("Failed to remove module from favorites in module store", error);
       runInAction(() => {

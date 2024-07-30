@@ -552,7 +552,7 @@ export class CycleStore implements ICycleStore {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
       });
       // updating through api.
-      const response = await this.rootStore.favourite.addFavourite(workspaceSlug.toString(), {
+      const response = await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
         entity_type: "cycle",
         entity_identifier: cycleId,
         project_id: projectId,
@@ -579,7 +579,7 @@ export class CycleStore implements ICycleStore {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
       });
-      const response = await this.rootStore.favourite.removeFavouriteEntity(workspaceSlug, cycleId);
+      const response = await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, cycleId);
       return response;
     } catch (error) {
       runInAction(() => {

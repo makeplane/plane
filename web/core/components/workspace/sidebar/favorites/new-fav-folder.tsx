@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { FavouriteFolderIcon, Input, setToast, TOAST_TYPE } from "@plane/ui";
-import { useFavourite } from "@/hooks/store/use-favourite";
+import { FavoriteFolderIcon, Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type TForm = {
@@ -16,12 +16,12 @@ type TProps = {
   setCreateNewFolder: (value: boolean | string | null) => void;
   actionType: "create" | "rename";
   defaultName?: string;
-  favouriteId?: string;
+  favoriteId?: string;
 };
-export const NewFavouriteFolder = (props: TProps) => {
-  const { setCreateNewFolder, actionType, defaultName, favouriteId } = props;
+export const NewFavoriteFolder = (props: TProps) => {
+  const { setCreateNewFolder, actionType, defaultName, favoriteId } = props;
   const { workspaceSlug } = useParams();
-  const { addFavourite, updateFavourite } = useFavourite();
+  const { addFavorite, updateFavorite } = useFavorite();
 
   // ref
   const ref = useRef(null);
@@ -42,12 +42,12 @@ export const NewFavouriteFolder = (props: TProps) => {
       parent: null,
       project_id: null,
     };
-    addFavourite(workspaceSlug.toString(), formData)
+    addFavorite(workspaceSlug.toString(), formData)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Favourite created successfully.",
+          message: "Favorite created successfully.",
         });
       })
       .catch((err) => {
@@ -64,15 +64,15 @@ export const NewFavouriteFolder = (props: TProps) => {
   };
 
   const handleRenameFolder: SubmitHandler<TForm> = (formData) => {
-    if (!favouriteId) return;
+    if (!favoriteId) return;
     const payload = {
       name: formData.name,
     };
-    updateFavourite(workspaceSlug.toString(), favouriteId, payload).then(() => {
+    updateFavorite(workspaceSlug.toString(), favoriteId, payload).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "Favourite updated successfully.",
+        message: "Favorite updated successfully.",
       });
     });
     setCreateNewFolder(false);
@@ -88,7 +88,7 @@ export const NewFavouriteFolder = (props: TProps) => {
   });
   return (
     <div className="flex items-center gap-1.5 py-[1px] px-2" ref={ref}>
-      <FavouriteFolderIcon />
+      <FavoriteFolderIcon />
       <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
         <Controller
           name="name"

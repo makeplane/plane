@@ -479,8 +479,8 @@ export class Page implements IPage {
     runInAction(() => {
       this.is_favorite = true;
     });
-    await this.rootStore.favourite
-      .addFavourite(workspaceSlug.toString(), {
+    await this.rootStore.favorite
+      .addFavorite(workspaceSlug.toString(), {
         entity_type: "page",
         entity_identifier: this.id,
         project_id: projectId,
@@ -505,7 +505,7 @@ export class Page implements IPage {
       this.is_favorite = false;
     });
 
-    await this.rootStore.favourite.removeFavouriteEntity(workspaceSlug, this.id).catch((error) => {
+    await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, this.id).catch((error) => {
       runInAction(() => {
         this.is_favorite = pageIsFavorite;
       });

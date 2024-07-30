@@ -1,4 +1,4 @@
-export type IFavourite = {
+export type IFavorite = {
 	id: string;
 	name: string;
 	entity_type: string;
@@ -9,6 +9,6 @@ export type IFavourite = {
 	sort_order: number;
 	parent: string | null;
 	entity_identifier?: string | null;
-	children: IFavourite[];
+	children: IFavorite[];
 	project_id: string | null;
 };

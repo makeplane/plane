@@ -358,7 +358,7 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });
-      await this.rootStore.favourite.addFavourite(workspaceSlug.toString(), {
+      await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
         entity_type: "view",
         entity_identifier: viewId,
         project_id: projectId,
@@ -385,7 +385,7 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], false);
       });
-      await this.rootStore.favourite.removeFavouriteEntity(workspaceSlug, viewId);
+      await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, viewId);
     } catch (error) {
       console.error("Failed to remove view from favorites in view store", error);
       runInAction(() => {

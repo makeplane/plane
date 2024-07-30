@@ -8,33 +8,33 @@ import { useParams } from "next/navigation";
 import { PenSquare, Star, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { IFavourite } from "@plane/types";
-import { CustomMenu, Tooltip, DropIndicator, setToast, TOAST_TYPE, FavouriteFolderIcon } from "@plane/ui";
+import { IFavorite } from "@plane/types";
+import { CustomMenu, Tooltip, DropIndicator, setToast, TOAST_TYPE, FavoriteFolderIcon } from "@plane/ui";
 
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-import { useFavourite } from "@/hooks/store/use-favourite";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
-import { FavouriteItem } from "./favourite-item";
-import { NewFavouriteFolder } from "./new-fav-folder";
+import { FavoriteItem } from "./favorite-item";
+import { NewFavoriteFolder } from "./new-fav-folder";
 
 type Props = {
   isLastChild: boolean;
-  favourite: IFavourite;
-  handleRemoveFromFavorites: (favourite: IFavourite) => void;
+  favorite: IFavorite;
+  handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
-export const FavouriteFolder: React.FC<Props> = (props) => {
-  const { isLastChild, favourite, handleRemoveFromFavorites } = props;
+export const FavoriteFolder: React.FC<Props> = (props) => {
+  const { isLastChild, favorite, handleRemoveFromFavorites } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
   const { isMobile } = usePlatformOS();
-  const { moveFavourite, getGroupedFavourites } = useFavourite();
+  const { moveFavorite, getGroupedFavorites } = useFavorite();
   const { workspaceSlug } = useParams();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -45,10 +45,10 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
 
-  !favourite.children && getGroupedFavourites(workspaceSlug.toString(), favourite.id);
+  !favorite.children && getGroupedFavorites(workspaceSlug.toString(), favorite.id);
 
   const handleOnDrop = (source: string, destination: string) => {
-    moveFavourite(workspaceSlug.toString(), source, {
+    moveFavorite(workspaceSlug.toString(), source, {
       parent: destination,
     })
       .then((res) => {
@@ -56,7 +56,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Favourite moved successfully.",
+          message: "Favorite moved successfully.",
         });
       })
       .catch((err) => {
@@ -64,7 +64,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Failed to move favourite.",
+          message: "Failed to move favorite.",
         });
       });
   };
@@ -77,7 +77,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
     return combine(
       dropTargetForElements({
         element,
-        getData: () => ({ type: "PARENT", id: favourite.id }),
+        getData: () => ({ type: "PARENT", id: favorite.id }),
         onDragEnter: () => {
           setIsDragging(true);
         },
@@ -100,20 +100,20 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementRef.current, isDragging, favourite.id, handleOnDrop]);
+  }, [elementRef.current, isDragging, favorite.id, handleOnDrop]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return folderToRename ? (
-    <NewFavouriteFolder
+    <NewFavoriteFolder
       setCreateNewFolder={setFolderToRename}
       actionType="rename"
-      defaultName={favourite.name}
-      favouriteId={favourite.id}
+      defaultName={favorite.name}
+      favoriteId={favorite.id}
     />
   ) : (
     <>
-      <Disclosure key={`${favourite.id}`} ref={elementRef} defaultOpen={false}>
+      <Disclosure key={`${favorite.id}`} ref={elementRef} defaultOpen={false}>
         {({ open }) => (
           <div
             // id={`sidebar-${projectId}-${projectListType}`}
@@ -139,14 +139,14 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
                 >
                   <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
                     <div className="size-4 grid place-items-center flex-shrink-0">
-                      <FavouriteFolderIcon />
+                      <FavoriteFolderIcon />
                     </div>
                   </Disclosure.Button>
                 </div>
               ) : (
                 <>
                   <Tooltip
-                    tooltipContent={`${favourite.name}`}
+                    tooltipContent={`${favorite.name}`}
                     position="right"
                     disabled={!isSidebarCollapsed}
                     isMobile={isMobile}
@@ -160,9 +160,9 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
                         })}
                       >
                         <div className="size-4 grid place-items-center flex-shrink-0">
-                          <FavouriteFolderIcon />
+                          <FavoriteFolderIcon />
                         </div>
-                        <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favourite.name}</p>
+                        <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
                       </Disclosure.Button>
                     </div>
                   </Tooltip>
@@ -185,13 +185,13 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
                     customButtonClassName="grid place-items-center"
                     placement="bottom-start"
                   >
-                    <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favourite)}>
+                    <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                       <span className="flex items-center justify-start gap-2">
                         <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem onClick={() => setFolderToRename(favourite.id)}>
+                    <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
                       <div className="flex items-center justify-start gap-2">
                         <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                         <span>Rename Folder</span>
@@ -217,7 +217,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
                 </>
               )}
             </div>
-            {favourite.children && favourite.children.length > 0 && (
+            {favorite.children && favorite.children.length > 0 && (
               <Transition
                 enter="transition duration-100 ease-out"
                 enterFrom="transform scale-95 opacity-0"
@@ -227,10 +227,10 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
                 leaveTo="transform scale-95 opacity-0"
               >
                 <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1 px-2">
-                  {favourite.children.map((child) => (
-                    <FavouriteItem
+                  {favorite.children.map((child) => (
+                    <FavoriteItem
                       key={child.id}
-                      favourite={child}
+                      favorite={child}
                       handleRemoveFromFavorites={handleRemoveFromFavorites}
                     />
                   ))}

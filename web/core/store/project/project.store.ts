@@ -279,7 +279,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         set(this.projectMap, [projectId, "is_favorite"], true);
       });
-      const response = await this.rootStore.favourite.addFavourite(workspaceSlug.toString(), {
+      const response = await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
         entity_type: "project",
         entity_identifier: projectId,
         project_id: projectId,
@@ -304,7 +304,7 @@ export class ProjectStore implements IProjectStore {
     try {
       const currentProject = this.getProjectById(projectId);
       if (!currentProject.is_favorite) return;
-      const response = await this.rootStore.favourite.removeFavouriteEntity(workspaceSlug.toString(), projectId);
+      const response = await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug.toString(), projectId);
 
       runInAction(() => {
         set(this.projectMap, [projectId, "is_favorite"], false);

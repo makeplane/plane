@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { IFavourite } from "@plane/types";
+import { IFavorite } from "@plane/types";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // constants
 
@@ -14,39 +14,39 @@ import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-import { useFavourite } from "@/hooks/store/use-favourite";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { FavouriteFolder } from "./favourite-folder";
-import { FavouriteItem } from "./favourite-item";
-import { NewFavouriteFolder } from "./new-fav-folder";
-export const SidebarFavouritesMenu = observer(() => {
+import { FavoriteFolder } from "./favorite-folder";
+import { FavoriteItem } from "./favorite-item";
+import { NewFavoriteFolder } from "./new-fav-folder";
+export const SidebarFavoritesMenu = observer(() => {
   //state
   const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
 
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { favouriteIds, favouriteMap, deleteFavourite } = useFavourite();
+  const { favoriteIds, favoriteMap, deleteFavorite } = useFavorite();
   const { workspaceSlug } = useParams();
 
   const { isMobile } = usePlatformOS();
 
   // local storage
-  const { setValue: toggleFavouriteMenu, storedValue } = useLocalStorage<boolean>("is_favourite_menu_open", false);
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>("is_favorite_menu_open", false);
   // derived values
-  const isFavouriteMenuOpen = !!storedValue;
+  const isFavoriteMenuOpen = !!storedValue;
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleRemoveFromFavorites = (favourite: IFavourite) => {
-    deleteFavourite(workspaceSlug.toString(), favourite.id)
+  const handleRemoveFromFavorites = (favorite: IFavorite) => {
+    deleteFavorite(workspaceSlug.toString(), favorite.id)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Favourite removed successfully.",
+          message: "Favorite removed successfully.",
         });
       })
       .catch((err) => {
@@ -60,8 +60,8 @@ export const SidebarFavouritesMenu = observer(() => {
       });
   };
   useEffect(() => {
-    if (sidebarCollapsed) toggleFavouriteMenu(true);
-  }, [sidebarCollapsed, toggleFavouriteMenu]);
+    if (sidebarCollapsed) toggleFavoriteMenu(true);
+  }, [sidebarCollapsed, toggleFavoriteMenu]);
 
   /**
    * Implementing scroll animation styles based on the scroll length of the container
@@ -88,7 +88,7 @@ export const SidebarFavouritesMenu = observer(() => {
       ref={containerRef}
       className={cn("-mr-3 -ml-4 pl-4", {
         "border-t border-custom-sidebar-border-300": isScrolled,
-        "vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm": isFavouriteMenuOpen,
+        "vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm": isFavoriteMenuOpen,
       })}
     >
       <Disclosure as="div" defaultOpen>
@@ -97,28 +97,28 @@ export const SidebarFavouritesMenu = observer(() => {
             as="button"
             className="group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
           >
-            <span onClick={() => toggleFavouriteMenu(!isFavouriteMenuOpen)} className="flex-1 text-start">
-              MY FAVOURITES
+            <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
+              MY FAVORITES
             </span>
             <span className="flex gap-2 flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
               <FolderPlus
                 onClick={() => {
                   setCreateNewFolder(true);
-                  !isFavouriteMenuOpen && toggleFavouriteMenu(!isFavouriteMenuOpen);
+                  !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
                 }}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
               />
               <ChevronRight
-                onClick={() => toggleFavouriteMenu(!isFavouriteMenuOpen)}
+                onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                  "rotate-90": isFavouriteMenuOpen,
+                  "rotate-90": isFavoriteMenuOpen,
                 })}
               />
             </span>
           </Disclosure.Button>
         )}
         <Transition
-          show={isFavouriteMenuOpen}
+          show={isFavoriteMenuOpen}
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"
           enterTo="transform scale-100 opacity-100"
@@ -126,7 +126,7 @@ export const SidebarFavouritesMenu = observer(() => {
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-          {isFavouriteMenuOpen && (
+          {isFavoriteMenuOpen && (
             <Disclosure.Panel
               as="div"
               className={cn("flex flex-col mt-0.5 gap-0.5", {
@@ -134,31 +134,28 @@ export const SidebarFavouritesMenu = observer(() => {
               })}
               static
             >
-              {createNewFolder && <NewFavouriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {favouriteIds
-                .filter((id) => !favouriteMap[id].parent)
+              {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
+              {favoriteIds
+                .filter((id) => !favoriteMap[id].parent)
                 .map((id, index) => (
                   <Tooltip
-                    key={favouriteMap[id].id}
+                    key={favoriteMap[id].id}
                     tooltipContent={
-                      favouriteMap[id].entity_data ? favouriteMap[id].entity_data.name : favouriteMap[id].name
+                      favoriteMap[id].entity_data ? favoriteMap[id].entity_data.name : favoriteMap[id].name
                     }
                     position="right"
                     className="ml-2"
                     disabled={!sidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    {favouriteMap[id].is_folder ? (
-                      <FavouriteFolder
-                        favourite={favouriteMap[id]}
-                        isLastChild={index === favouriteIds.length - 1}
+                    {favoriteMap[id].is_folder ? (
+                      <FavoriteFolder
+                        favorite={favoriteMap[id]}
+                        isLastChild={index === favoriteIds.length - 1}
                         handleRemoveFromFavorites={handleRemoveFromFavorites}
                       />
                     ) : (
-                      <FavouriteItem
-                        favourite={favouriteMap[id]}
-                        handleRemoveFromFavorites={handleRemoveFromFavorites}
-                      />
+                      <FavoriteItem favorite={favoriteMap[id]} handleRemoveFromFavorites={handleRemoveFromFavorites} />
                     )}
                   </Tooltip>
                 ))}

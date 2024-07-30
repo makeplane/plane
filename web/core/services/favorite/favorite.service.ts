@@ -1,17 +1,17 @@
-import type { IFavourite } from "@plane/types";
+import type { IFavorite } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 // types
 
-export class FavouriteService extends APIService {
+export class FavoriteService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async addFavourite(workspaceSlug: string, data: Partial<IFavourite>): Promise<IFavourite> {
-    console.log("addFavourite", data);
+  async addFavorite(workspaceSlug: string, data: Partial<IFavorite>): Promise<IFavorite> {
+    console.log("addFavorite", data);
     return this.post(`/api/workspaces/${workspaceSlug}/user-favorites/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -19,24 +19,24 @@ export class FavouriteService extends APIService {
       });
   }
 
-  async updateFavourite(workspaceSlug: string, favouriteId: string, data: Partial<IFavourite>): Promise<IFavourite> {
-    console.log("updateFavourite", data);
-    return this.patch(`/api/workspaces/${workspaceSlug}/user-favorites/${favouriteId}/`, data)
+  async updateFavorite(workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>): Promise<IFavorite> {
+    console.log("updateFavorite", data);
+    return this.patch(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteFavourite(workspaceSlug: string, favouriteId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/user-favorites/${favouriteId}/`)
+  async deleteFavorite(workspaceSlug: string, favoriteId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async getFavourites(workspaceSlug: string): Promise<IFavourite[]> {
+  async getFavorites(workspaceSlug: string): Promise<IFavorite[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-favorites/`, {
       params: {
         all: true,
@@ -48,8 +48,8 @@ export class FavouriteService extends APIService {
       });
   }
 
-  async getGroupedFavourites(workspaceSlug: string, favouriteId: string): Promise<IFavourite[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-favorites/${favouriteId}/group/`)
+  async getGroupedFavorites(workspaceSlug: string, favoriteId: string): Promise<IFavorite[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/group/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
