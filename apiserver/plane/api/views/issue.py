@@ -334,7 +334,7 @@ class IssueAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 pk=serializer.data["id"],
             ).first()
-            issue.created_at = request.data.get("created_at")
+            issue.created_at = request.data.get("created_at", timezone.now())
             issue.created_by_id = request.data.get(
                 "created_by", request.user.id
             )
@@ -803,7 +803,9 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 pk=serializer.data.get("id")
             )
             # Update the created_at and the created_by and save the comment
-            issue_comment.created_at = request.data.get("created_at")
+            issue_comment.created_at = request.data.get(
+                "created_at", timezone.now()
+            )
             issue_comment.created_by_id = request.data.get(
                 "created_by", request.user.id
             )
