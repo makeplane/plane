@@ -25,6 +25,14 @@ export class PaymentService extends APIService {
       });
   }
 
+  async upgradeCurrentWorkspaceSubscription(workspaceSlug: string, data = {}) {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/upgrade/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getWorkspaceCurrentPlan(workspaceSlug: string): Promise<IWorkspaceProductSubscription> {
     return this.get(`/api/payments/workspaces/${workspaceSlug}/current-plan/`)
       .then((response) => response?.data)
