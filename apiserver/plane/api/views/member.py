@@ -21,11 +21,19 @@ from plane.db.models import (
     ProjectMember,
 )
 
+from plane.app.permissions import (
+    ProjectMemberPermission,
+)
+
 
 # API endpoint to get and insert users inside the workspace
-class WorkspaceMemberAPIEndpoint(BaseAPIView):
+class ProjectMemberAPIEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectMemberPermission,
+    ]
+
     # Get all the users that are present inside the workspace
-    def get(self, request, slug):
+    def get(self, request, slug, project_id):
         # Check if the workspace exists
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
@@ -34,14 +42,14 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
             )
 
         # Get the workspace members that are present inside the workspace
-        workspace_members = WorkspaceMember.objects.filter(
-            workspace__slug=slug
-        )
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id, workspace__slug=slug
+        ).values_list("member_id", flat=True)
 
         # Get all the users that are present inside the workspace
         users = UserLiteSerializer(
             User.objects.filter(
-                id__in=workspace_members.values_list("member_id", flat=True)
+                id__in=project_members,
             ),
             many=True,
         ).data
@@ -49,14 +57,13 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         return Response(users, status=status.HTTP_200_OK)
 
     # Insert a new user inside the workspace, and assign the user to the project
-    def post(self, request, slug):
+    def post(self, request, slug, project_id):
         # Check if user with email already exists, and send bad request if it's
         # not present, check for workspace and valid project mandat
         # ------------------- Validation -------------------
         if (
             request.data.get("email") is None
             or request.data.get("display_name") is None
-            or request.data.get("project_id") is None
         ):
             return Response(
                 {
@@ -76,9 +83,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
             )
 
         workspace = Workspace.objects.filter(slug=slug).first()
-        project = Project.objects.filter(
-            pk=request.data.get("project_id")
-        ).first()
+        project = Project.objects.filter(pk=project_id).first()
 
         if not all([workspace, project]):
             return Response(
@@ -145,3 +150,4 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         user_data = UserLiteSerializer(user).data
 
         return Response(user_data, status=status.HTTP_201_CREATED)
+
