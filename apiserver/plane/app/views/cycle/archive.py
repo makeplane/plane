@@ -375,6 +375,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     "assignee_ids",
                     "status",
                     "created_by",
+                    "archived_at",
                 )
                 .first()
             )
