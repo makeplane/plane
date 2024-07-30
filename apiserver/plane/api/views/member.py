@@ -33,17 +33,15 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = Workspace.objects.filter(slug=slug).first()
-
         # Get the workspace members that are present inside the workspace
         project_members = ProjectMember.objects.filter(
-            project_id=project_id, workspace_id=workspace.id
-        )
+            project_id=project_id, workspace__slug=slug
+        ).values_list("member_id", flat=True)
 
         # Get all the users that are present inside the workspace
         users = UserLiteSerializer(
             User.objects.filter(
-                id__in=project_members.values_list("member_id", flat=True)
+                id__in=project_members,
             ),
             many=True,
         ).data
