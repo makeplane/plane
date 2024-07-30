@@ -39,7 +39,8 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
   const peekModule = searchParams.get("peekModule") || undefined;
   // hooks
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const { getPlotTypeByModuleId, setPlotType, getModuleById, fetchModuleDetails } = useModule();
+  const { getPlotTypeByModuleId, setPlotType, getModuleById, fetchModuleDetails, fetchArchivedModuleDetails } =
+    useModule();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.MODULE);
@@ -92,6 +93,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
   const isModuleStartDateValid = moduleStartDate && moduleStartDate <= new Date();
   const isModuleEndDateValid = moduleStartDate && moduleEndDate && moduleEndDate >= moduleStartDate;
   const isModuleDateValid = isModuleStartDateValid && isModuleEndDateValid;
+  const isArchived = !!moduleDetails?.archived_at;
 
   // handlers
   const onChange = async (value: TModulePlotType) => {
@@ -99,7 +101,11 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
     if (!workspaceSlug || !projectId || !moduleId) return;
     try {
       setLoader(true);
-      await fetchModuleDetails(workspaceSlug, projectId, moduleId);
+      if (isArchived) {
+        await fetchArchivedModuleDetails(workspaceSlug, projectId, moduleId);
+      } else {
+        await fetchModuleDetails(workspaceSlug, projectId, moduleId);
+      }
       setLoader(false);
     } catch (error) {
       setLoader(false);
