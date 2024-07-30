@@ -153,6 +153,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           ) : (
             <DocumentReadOnlyEditorWithRef
               ref={readOnlyEditorRef}
+              id={pageId}
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
