@@ -143,6 +143,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}
+              id={comment.id}
               initialValue={watch("comment_html") ?? ""}
               value={null}
               onChange={(comment_json, comment_html) => setValue("comment_html", comment_html)}
@@ -190,7 +191,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               )}
             </div>
           )}
-          <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html ?? ""} />
+          <LiteTextReadOnlyEditor ref={showEditorRef} id={comment.id} initialValue={comment.comment_html ?? ""} />
 
           <IssueCommentReaction
             workspaceSlug={workspaceSlug}

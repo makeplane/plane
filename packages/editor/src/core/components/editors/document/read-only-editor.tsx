@@ -13,6 +13,7 @@ import { TEmbedConfig } from "@/plane-editor/types";
 import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
 
 interface IDocumentReadOnlyEditor {
+  id: string;
   initialValue: string;
   containerClassName: string;
   editorClassName?: string;
@@ -30,6 +31,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     containerClassName,
     editorClassName = "",
     embedHandler,
+    id,
     initialValue,
     forwardedRef,
     tabIndex,
@@ -58,7 +60,9 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     containerClassName,
   });
 
-  return <PageRenderer tabIndex={tabIndex} editor={editor} editorContainerClassName={editorContainerClassName} />;
+  return (
+    <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} id={id} tabIndex={tabIndex} />
+  );
 };
 
 const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (

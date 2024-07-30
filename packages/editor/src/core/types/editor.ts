@@ -29,7 +29,7 @@ export interface IEditorProps {
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
-  id?: string;
+  id: string;
   initialValue: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
@@ -52,6 +52,7 @@ export interface IReadOnlyEditorProps {
   containerClassName?: string;
   editorClassName?: string;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  id: string;
   initialValue: string;
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
