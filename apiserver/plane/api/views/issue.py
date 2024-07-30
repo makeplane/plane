@@ -169,6 +169,7 @@ class IssueAPIEndpoint(BaseAPIView):
                 ).data,
                 status=status.HTTP_200_OK,
             )
+
         if pk:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
@@ -334,7 +335,9 @@ class IssueAPIEndpoint(BaseAPIView):
                 pk=serializer.data["id"],
             ).first()
             issue.created_at = request.data.get("created_at")
-            issue.created_by_id = request.data.get("created_by")
+            issue.created_by_id = request.data.get(
+                "created_by", request.user.id
+            )
             issue.save(update_fields=["created_at", "created_by"])
 
             # Track the issue
@@ -630,19 +633,19 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                 issue_id=issue_id,
             )
 
-            # Get the issue for fetching the created_by id
-            issue = Issue.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=issue_id
+            link = IssueLink.objects.get(pk=serializer.data["id"])
+            link.created_by_id = request.data.get(
+                "created_by", request.user.id
             )
-
+            link.save(update_fields=["created_by"])
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(
                     serializer.data, cls=DjangoJSONEncoder
                 ),
-                actor_id=issue.created_by_id,
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
+                actor_id=str(link.created_by_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
@@ -801,7 +804,9 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             )
             # Update the created_at and the created_by and save the comment
             issue_comment.created_at = request.data.get("created_at")
-            issue_comment.created_by_id = request.data.get("created_by")
+            issue_comment.created_by_id = request.data.get(
+                "created_by", request.user.id
+            )
             issue_comment.save(update_fields=["created_at", "created_by"])
 
             issue_activity.delay(
