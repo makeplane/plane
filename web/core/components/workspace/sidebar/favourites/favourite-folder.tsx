@@ -16,22 +16,25 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useFavourite } from "@/hooks/store/use-favourite";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { FavouriteItem } from "./favourite-item";
 import { NewFavouriteFolder } from "./new-fav-folder";
+
 type Props = {
   isLastChild: boolean;
   favourite: IFavourite;
+  handleRemoveFromFavorites: (favourite: IFavourite) => void;
 };
 
 export const FavouriteFolder: React.FC<Props> = (props) => {
-  const { isLastChild, favourite } = props;
+  const { isLastChild, favourite, handleRemoveFromFavorites } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
   const { isMobile } = usePlatformOS();
-  const { deleteFavourite, moveFavourite, getGroupedFavourites } = useFavourite();
+  const { moveFavourite, getGroupedFavourites } = useFavourite();
   const { workspaceSlug } = useParams();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -43,28 +46,6 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
   const elementRef = useRef<HTMLDivElement | null>(null);
 
   !favourite.children && getGroupedFavourites(workspaceSlug.toString(), favourite.id);
-
-  const handleRemoveFromFavorites = () => {
-    console.log(favourite.id, "handleRemoveFromFavorites");
-    deleteFavourite(workspaceSlug.toString(), favourite.id)
-      .then((res) => {
-        console.log(res, "res");
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favourite removed successfully.",
-        });
-      })
-      .catch((err) => {
-        Object.keys(err.data).map((key) => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: err.data[key],
-          });
-        });
-      });
-  };
 
   const handleOnDrop = (source: string, destination: string) => {
     moveFavourite(workspaceSlug.toString(), source, {
@@ -121,8 +102,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef.current, isDragging, favourite.id, handleOnDrop]);
 
-  // useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
-  // useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
+  useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return folderToRename ? (
     <NewFavouriteFolder
@@ -205,7 +185,7 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
                     customButtonClassName="grid place-items-center"
                     placement="bottom-start"
                   >
-                    <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
+                    <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favourite)}>
                       <span className="flex items-center justify-start gap-2">
                         <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
                         <span>Remove from favorites</span>
@@ -248,7 +228,11 @@ export const FavouriteFolder: React.FC<Props> = (props) => {
               >
                 <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1 px-2">
                   {favourite.children.map((child) => (
-                    <FavouriteItem key={child.id} favourite={child} />
+                    <FavouriteItem
+                      key={child.id}
+                      favourite={child}
+                      handleRemoveFromFavorites={handleRemoveFromFavorites}
+                    />
                   ))}
                 </Disclosure.Panel>
               </Transition>

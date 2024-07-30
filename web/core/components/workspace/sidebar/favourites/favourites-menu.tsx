@@ -2,10 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { Tooltip } from "@plane/ui";
+import { IFavourite } from "@plane/types";
+import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // constants
 
 // helpers
@@ -26,17 +28,37 @@ export const SidebarFavouritesMenu = observer(() => {
 
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { favouriteIds, favouriteMap } = useFavourite();
+  const { favouriteIds, favouriteMap, deleteFavourite } = useFavourite();
+  const { workspaceSlug } = useParams();
 
   const { isMobile } = usePlatformOS();
 
   // local storage
-  const { setValue: toggleFavouriteMenu, storedValue } = useLocalStorage<boolean>("is_favourite_menu_open", true);
+  const { setValue: toggleFavouriteMenu, storedValue } = useLocalStorage<boolean>("is_favourite_menu_open", false);
   // derived values
   const isFavouriteMenuOpen = !!storedValue;
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const handleRemoveFromFavorites = (favourite: IFavourite) => {
+    deleteFavourite(workspaceSlug.toString(), favourite.id)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Favourite removed successfully.",
+        });
+      })
+      .catch((err) => {
+        Object.keys(err.data).map((key) => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: err.data[key],
+          });
+        });
+      });
+  };
   useEffect(() => {
     if (sidebarCollapsed) toggleFavouriteMenu(true);
   }, [sidebarCollapsed, toggleFavouriteMenu]);
@@ -64,8 +86,9 @@ export const SidebarFavouritesMenu = observer(() => {
   return (
     <div
       ref={containerRef}
-      className={cn("vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+      className={cn("-mr-3 -ml-4 pl-4", {
         "border-t border-custom-sidebar-border-300": isScrolled,
+        "vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm": isFavouriteMenuOpen,
       })}
     >
       <Disclosure as="div" defaultOpen>
@@ -79,7 +102,10 @@ export const SidebarFavouritesMenu = observer(() => {
             </span>
             <span className="flex gap-2 flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
               <FolderPlus
-                onClick={() => setCreateNewFolder((state) => !state)}
+                onClick={() => {
+                  setCreateNewFolder(true);
+                  !isFavouriteMenuOpen && toggleFavouriteMenu(!isFavouriteMenuOpen);
+                }}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
               />
               <ChevronRight
@@ -123,9 +149,16 @@ export const SidebarFavouritesMenu = observer(() => {
                     isMobile={isMobile}
                   >
                     {favouriteMap[id].is_folder ? (
-                      <FavouriteFolder favourite={favouriteMap[id]} isLastChild={index === favouriteIds.length - 1} />
+                      <FavouriteFolder
+                        favourite={favouriteMap[id]}
+                        isLastChild={index === favouriteIds.length - 1}
+                        handleRemoveFromFavorites={handleRemoveFromFavorites}
+                      />
                     ) : (
-                      <FavouriteItem favourite={favouriteMap[id]} />
+                      <FavouriteItem
+                        favourite={favouriteMap[id]}
+                        handleRemoveFromFavorites={handleRemoveFromFavorites}
+                      />
                     )}
                   </Tooltip>
                 ))}
