@@ -38,7 +38,7 @@ from plane.app.permissions import (
     ProjectLitePermission,
     ProjectMemberPermission,
 )
-from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -1017,4 +1017,3 @@ class IssueAttachmentEndpoint(BaseAPIView):
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
