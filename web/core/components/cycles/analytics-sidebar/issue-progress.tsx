@@ -55,7 +55,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   const peekCycle = searchParams.get("peekCycle") || undefined;
   // hooks
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const { getPlotTypeByCycleId, setPlotType, getCycleById, fetchCycleDetails } = useCycle();
+  const { getPlotTypeByCycleId, setPlotType, getCycleById, fetchCycleDetails, fetchArchivedCycleDetails } = useCycle();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -108,6 +108,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   const isCycleStartDateValid = cycleStartDate && cycleStartDate <= new Date();
   const isCycleEndDateValid = cycleStartDate && cycleEndDate && cycleEndDate >= cycleStartDate;
   const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
+  const isArchived = !!cycleDetails?.archived_at;
 
   // handlers
   const onChange = async (value: TCyclePlotType) => {
@@ -115,7 +116,11 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
     if (!workspaceSlug || !projectId || !cycleId) return;
     try {
       setLoader(true);
-      await fetchCycleDetails(workspaceSlug, projectId, cycleId);
+      if (isArchived) {
+        await fetchArchivedCycleDetails(workspaceSlug, projectId, cycleId);
+      } else {
+        await fetchCycleDetails(workspaceSlug, projectId, cycleId);
+      }
       setLoader(false);
     } catch (error) {
       setLoader(false);
