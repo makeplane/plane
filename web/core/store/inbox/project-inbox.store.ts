@@ -55,11 +55,17 @@ export interface IProjectInboxStore {
     paginationCursor: string
   ) => Partial<Record<keyof TInboxIssueFilter, string>>;
   createOrUpdateInboxIssue: (inboxIssues: TInboxIssue[], workspaceSlug: string, projectId: string) => void;
+  initializeDefaultFilters: (projectId: string, tab: TInboxIssueCurrentTab) => void;
   // actions
   handleCurrentTab: (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => void;
   handleInboxIssueFilters: <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => void; // if user sends me undefined, I will remove the value from the filter key
   handleInboxIssueSorting: <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => void; // if user sends me undefined, I will remove the value from the filter key
-  fetchInboxIssues: (workspaceSlug: string, projectId: string, loadingType?: TLoader) => Promise<void>;
+  fetchInboxIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    loadingType?: TLoader,
+    tab?: TInboxIssueCurrentTab | undefined
+  ) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
   createInboxIssue: (
@@ -121,11 +127,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   get inboxFilters() {
     const { projectId } = this.store.router;
     if (!projectId) return {} as TInboxIssueFilter;
-    return isEmpty(this.filtersMap?.[projectId])
-      ? this.currentTab === EInboxIssueCurrentTab.OPEN
-        ? { status: [EInboxIssueStatus.PENDING] }
-        : { status: [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE] }
-      : this.filtersMap?.[projectId];
+    return this.filtersMap?.[projectId];
   }
 
   /**
@@ -134,9 +136,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   get inboxSorting() {
     const { projectId } = this.store.router;
     if (!projectId) return {} as TInboxIssueSorting;
-    return isEmpty(this.sortingMap?.[projectId])
-      ? ({ order_by: "issue__created_at", sort_by: "desc" } as TInboxIssueSorting)
-      : this.sortingMap?.[projectId];
+    return this.sortingMap?.[projectId];
   }
 
   get getAppliedFiltersCount() {
@@ -240,17 +240,21 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   // actions
   handleCurrentTab = (workspaceSlug: string, projectId: string, tab: TInboxIssueCurrentTab) => {
-    runInAction(() => {
-      set(this, "currentTab", tab);
-      set(this, ["inboxIssueIds"], []);
-      set(this, ["inboxIssuePaginationInfo"], undefined);
-      set(this, ["sorting", projectId, "order_by"], "issue__created_at");
-      set(this, ["sorting", projectId, "sort_by"], "desc");
-      set(this, "filters", undefined);
-      if (tab === "closed") set(this, ["filters", projectId, "status"], [-1, 1, 2]);
-      else set(this, ["filters", projectId, "status"], [-2]);
-    });
-    if (workspaceSlug && projectId) this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    if (workspaceSlug && projectId) {
+      runInAction(() => {
+        set(this, "currentTab", tab);
+        set(this, ["inboxIssueIds"], []);
+        set(this, ["inboxIssuePaginationInfo"], undefined);
+        set(this.sortingMap, [projectId], { order_by: "issue__created_at", sort_by: "desc" });
+        set(this.filtersMap, [projectId], {
+          status:
+            tab === EInboxIssueCurrentTab.OPEN
+              ? [EInboxIssueStatus.PENDING]
+              : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE],
+        });
+      });
+      this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    }
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
@@ -275,13 +279,35 @@ export class ProjectInboxStore implements IProjectInboxStore {
     }
   };
 
+  initializeDefaultFilters = (projectId: string, tab: TInboxIssueCurrentTab) => {
+    if (!projectId || !tab) return;
+    if (isEmpty(this.inboxFilters)) {
+      set(this.filtersMap, [projectId], {
+        status:
+          tab === EInboxIssueCurrentTab.OPEN
+            ? [EInboxIssueStatus.PENDING]
+            : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE],
+      });
+    }
+    if (isEmpty(this.inboxSorting)) {
+      set(this.sortingMap, [projectId], { order_by: "issue__created_at", sort_by: "desc" });
+    }
+  };
+
   /**
    * @description fetch intake issues with paginated data
    * @param workspaceSlug
    * @param projectId
    */
-  fetchInboxIssues = async (workspaceSlug: string, projectId: string, loadingType: TLoader = undefined) => {
+  fetchInboxIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    loadingType: TLoader = undefined,
+    tab: TInboxIssueCurrentTab | undefined = undefined
+  ) => {
     try {
+      if (loadingType === undefined && tab) this.initializeDefaultFilters(projectId, tab);
+
       if (this.currentInboxProjectId != projectId) {
         runInAction(() => {
           set(this, ["currentInboxProjectId"], projectId);
