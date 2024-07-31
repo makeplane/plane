@@ -40,6 +40,7 @@ class CycleSerializer(BaseSerializer):
             "workspace",
             "project",
             "owned_by",
+            "deleted_at",
         ]
 
 

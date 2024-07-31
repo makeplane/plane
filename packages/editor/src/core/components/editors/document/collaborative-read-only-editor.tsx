@@ -47,7 +47,7 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
   });
 
   if (!editor) return null;
-  return <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} />;
+  return <PageRenderer id={id} editor={editor} editorContainerClassName={editorContainerClassName} />;
 };
 
 const CollaborativeDocumentReadOnlyEditorWithRef = forwardRef<

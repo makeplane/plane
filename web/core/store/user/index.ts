@@ -43,6 +43,7 @@ export interface IUserStore {
   signOut: () => Promise<void>;
   // computed
   canPerformProjectCreateActions: boolean;
+  canPerformProjectAdminActions: boolean;
   canPerformWorkspaceCreateActions: boolean;
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
@@ -92,6 +93,7 @@ export class UserStore implements IUserStore {
       signOut: action,
       // computed
       canPerformProjectCreateActions: computed,
+      canPerformProjectAdminActions: computed,
       canPerformWorkspaceCreateActions: computed,
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
@@ -276,6 +278,14 @@ export class UserStore implements IUserStore {
    */
   get canPerformProjectCreateActions() {
     return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.MEMBER;
+  }
+
+  /**
+   * @description tells if user has project admin actions permissions
+   * @returns {boolean}
+   */
+  get canPerformProjectAdminActions() {
+    return !!this.membership.currentProjectRole && this.membership.currentProjectRole === EUserProjectRoles.ADMIN;
   }
 
   /**

@@ -47,13 +47,15 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROFILE}>
-      <ProfileIssuesAppliedFiltersRoot />
-      <div className="-z-1 relative h-full w-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ProfileIssuesListLayout />
-        ) : activeLayout === "kanban" ? (
-          <ProfileIssuesKanBanLayout />
-        ) : null}
+      <div className="flex flex-col h-full w-full">
+        <ProfileIssuesAppliedFiltersRoot />
+        <div className="-z-1 relative h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <ProfileIssuesListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ProfileIssuesKanBanLayout />
+          ) : null}
+        </div>
       </div>
       {/* peek overview */}
       <IssuePeekOverview />

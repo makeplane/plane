@@ -24,7 +24,7 @@ import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
-  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;

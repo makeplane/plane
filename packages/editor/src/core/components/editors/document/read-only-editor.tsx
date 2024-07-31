@@ -8,13 +8,28 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { EditorReadOnlyRefApi, IDocumentReadOnlyEditor } from "@/types";
+import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
+
+interface IDocumentReadOnlyEditor {
+  id: string;
+  initialValue: string;
+  containerClassName: string;
+  editorClassName?: string;
+  embedHandler: any;
+  tabIndex?: number;
+  handleEditorReady?: (value: boolean) => void;
+  mentionHandler: {
+    highlights: () => Promise<IMentionHighlight[]>;
+  };
+  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+}
 
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   const {
     containerClassName,
     editorClassName = "",
     embedHandler,
+    id,
     forwardedRef,
     handleEditorReady,
     initialValue,
@@ -43,7 +58,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   });
 
   if (!editor) return null;
-  return <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} />;
+  return <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} id={id} />;
 };
 
 const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (

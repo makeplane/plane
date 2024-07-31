@@ -593,7 +593,8 @@ def create_issue_activity(
         epoch=epoch,
     )
     issue_activity.created_at = issue.created_at
-    issue_activity.save(update_fields=["created_at"])
+    issue_activity.actor_id = issue.created_by_id
+    issue_activity.save(update_fields=["created_at", "actor_id"])
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
@@ -671,6 +672,7 @@ def delete_issue_activity(
         IssueActivity(
             project_id=project_id,
             workspace_id=workspace_id,
+            issue_id=issue_id,
             comment="deleted the issue",
             verb="deleted",
             actor_id=actor_id,
@@ -878,7 +880,6 @@ def delete_cycle_issue_activity(
     cycle_name = requested_data.get("cycle_name", "")
     cycle = Cycle.objects.filter(pk=cycle_id).first()
     issues = requested_data.get("issues")
-
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
         if issue:

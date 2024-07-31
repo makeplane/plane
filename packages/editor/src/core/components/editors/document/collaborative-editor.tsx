@@ -69,10 +69,11 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   return (
     <PageRenderer
-      tabIndex={tabIndex}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
       hideDragHandle={hideDragHandleOnMouseLeave}
+      id={id}
+      tabIndex={tabIndex}
     />
   );
 };

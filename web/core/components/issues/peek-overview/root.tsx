@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
-import { IssueView } from "@/components/issues";
+import { IssueView, TIssueOperations } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -21,29 +21,6 @@ interface IIssuePeekOverview {
   is_archived?: boolean;
   is_draft?: boolean;
 }
-
-export type TIssuePeekOperations = {
-  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  restore: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
-  removeIssueFromModule?: (
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    issueId: string
-  ) => Promise<void>;
-  removeModulesFromIssue?: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleIds: string[]
-  ) => Promise<void>;
-};
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, is_draft = false } = props;
@@ -66,11 +43,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const [loader, setLoader] = useState(true);
   const [error, setError] = useState(false);
 
-  const issueOperations: TIssuePeekOperations = useMemo(
+  const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string, loader = true) => {
         try {
-          setLoader(true);
+          setLoader(loader);
           setError(false);
           await fetchIssue(
             workspaceSlug,

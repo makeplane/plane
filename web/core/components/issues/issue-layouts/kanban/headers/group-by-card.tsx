@@ -112,7 +112,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         </div>
 
         <div
-          className={`relative flex items-center gap-1 ${
+          className={`relative flex items-baseline gap-1 ${
             verticalAlignPosition ? `flex-col` : `w-full flex-row overflow-hidden`
           }`}
         >

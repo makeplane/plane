@@ -118,6 +118,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
               />
             ) : (
               <RichTextReadOnlyEditor
+                id={issueId}
                 initialValue={localIssueDescription.description_html ?? ""}
                 containerClassName={containerClassName}
               />

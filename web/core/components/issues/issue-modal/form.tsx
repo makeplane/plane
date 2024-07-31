@@ -460,6 +460,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditor
+                        id="issue-modal-editor"
                         initialValue={value ?? ""}
                         value={data.description_html}
                         workspaceSlug={workspaceSlug?.toString() as string}

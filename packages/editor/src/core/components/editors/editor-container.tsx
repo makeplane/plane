@@ -4,14 +4,15 @@ import { Editor } from "@tiptap/react";
 import { cn } from "@/helpers/common";
 
 interface EditorContainerProps {
+  children: ReactNode;
   editor: Editor | null;
   editorContainerClassName: string;
-  children: ReactNode;
   hideDragHandle?: () => void;
+  id: string;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { editor, editorContainerClassName, hideDragHandle, children } = props;
+  const { children, editor, editorContainerClassName, hideDragHandle, id } = props;
 
   const handleContainerClick = () => {
     if (!editor) return;
@@ -54,7 +55,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
 
   return (
     <div
-      id="editor-container"
+      id={`editor-container-${id}`}
       onClick={handleContainerClick}
       onMouseLeave={hideDragHandle}
       className={cn(

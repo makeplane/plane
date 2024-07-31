@@ -166,6 +166,7 @@ class IssueListEndpoint(BaseAPIView):
                 "link_count",
                 "is_draft",
                 "archived_at",
+                "deleted_at",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -400,6 +401,7 @@ class IssueViewSet(BaseViewSet):
                     "link_count",
                     "is_draft",
                     "archived_at",
+                    "deleted_at",
                 )
                 .first()
             )
@@ -620,7 +622,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         if ProjectMember.objects.filter(
             workspace__slug=slug,
             member=request.user,
-            role=20,
+            role__in=[15, 10, 5],
             project_id=project_id,
             is_active=True,
         ).exists():

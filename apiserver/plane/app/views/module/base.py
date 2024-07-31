@@ -555,7 +555,7 @@ class ModuleViewSet(BaseViewSet):
                 )
 
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_module__module_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -605,7 +605,7 @@ class ModuleViewSet(BaseViewSet):
         )
 
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_module__module_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -773,6 +773,10 @@ class ModuleViewSet(BaseViewSet):
             for issue in module_issues
         ]
         module.delete()
+        # Delete the module issues
+        ModuleIssue.objects.filter(
+            module=pk,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
