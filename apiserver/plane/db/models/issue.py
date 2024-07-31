@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
+from django.db.models import Q
 
 # Module imports
 from plane.utils.html_processor import strip_tags
@@ -534,7 +535,14 @@ class Label(ProjectBaseModel):
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'project'],
+                condition=Q(deleted_at__isnull=True),
+                name='label_unique_name_project_when_deleted_at_null'
+            )
+        ]
         verbose_name = "Label"
         verbose_name_plural = "Labels"
         db_table = "labels"
