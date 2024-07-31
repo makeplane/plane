@@ -154,12 +154,14 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         />
       )}
       {workspaceSlug && projectId && (
-        <ModuleQuickActions
-          parentRef={parentRef}
-          moduleId={moduleId}
-          projectId={projectId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
-        />
+        <div className="hidden md:block">
+          <ModuleQuickActions
+            parentRef={parentRef}
+            moduleId={moduleId}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       )}
     </>
   );
