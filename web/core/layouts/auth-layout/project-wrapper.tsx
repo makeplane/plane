@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -20,6 +20,8 @@ import {
   useCommandPalette,
 } from "@/hooks/store";
 // images
+import { loadIssues } from "@/local-db/load-issues";
+import { initializeSQLite } from "@/local-db/sqlite";
 import emptyProject from "@/public/empty-state/project.svg";
 
 interface IProjectAuthWrapper {
@@ -48,6 +50,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
 
+  useEffect(() => {
+    (async () => {
+      await initializeSQLite();
+      await loadIssues(workspaceSlug.toString(), projectId.toString());
+    })();
+  }, [workspaceSlug, projectId]);
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${workspaceSlug.toString()}_${projectId.toString()}` : null,

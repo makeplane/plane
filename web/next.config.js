@@ -18,6 +18,8 @@ const nextConfig = {
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
           },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
         ],
       },
     ];
@@ -56,7 +58,7 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com"
+    const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
     const rewrites = [
       {
         source: "/ingest/static/:path*",
@@ -74,7 +76,7 @@ const nextConfig = {
       rewrites.push({
         source: "/god-mode",
         destination: `${GOD_MODE_BASE_URL}/`,
-      })
+      });
       rewrites.push({
         source: "/god-mode/:path*",
         destination: `${GOD_MODE_BASE_URL}/:path*`,
@@ -113,8 +115,7 @@ const sentryConfig = {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
-}
-
+};
 
 if (parseInt(process.env.SENTRY_MONITORING_ENABLED || "0", 10)) {
   module.exports = withSentryConfig(nextConfig, sentryConfig);
