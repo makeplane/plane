@@ -1,10 +1,12 @@
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries) => {
-  const { order_by, cursor, per_page, labels, sub_issue, state, cycle, group_by, module, ...otherProps } = queries;
+  const { order_by, cursor, per_page, labels, sub_issue, assignees, state, cycle, group_by, module, ...otherProps } =
+    queries;
 
   if (state) otherProps.state_id = state;
   if (cycle) otherProps.cycle_id = cycle;
   if (module) otherProps.module_ids = module;
   if (labels) otherProps.label_ids = labels;
+  if (assignees) otherProps.assignee_ids = assignees;
 
   const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
   let sql = `SELECT * FROM issues i LEFT JOIN issue_meta im ON i.id = im.issue_id WHERE 1=1 AND project_id='${projectId}' `;
@@ -43,9 +45,9 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectId: string, queries) => {
   let sql = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
 
-  sql = sql.replace("SELECT *", "SELECT COUNT(*) as total_count");
+  sql = sql.replace("SELECT *", "SELECT COUNT(DISTINCT i.id) as total_count");
   // Remove everything after group by i.id
-  sql = `${sql.split("group by i.id")[0]} group by i.id`;
+  sql = `${sql.split("group by i.id")[0]};`;
 
   return sql;
 };

@@ -9,7 +9,7 @@ declare module "@sqlite.org/sqlite-wasm" {
 const log = console.log;
 const error = console.error;
 
-const SQL = {};
+const SQL = { initialized: false };
 const start = async (sqlite3: any) => {
   log("Running SQLite3 version", sqlite3.version.libVersion);
   SQL.db = new sqlite3.oo1.DB("/mydb.sqlite3", "ct");
@@ -31,7 +31,7 @@ const initializeSQLiteMemory = async () => {
 };
 
 const initializeSQLite = async () => {
-  if (SQL.db) {
+  if (SQL.initialized) {
     console.info("Instance already initialized");
     return;
   }
@@ -66,6 +66,7 @@ const initializeSQLite = async () => {
       "OPFS is available, created persisted database at",
       openResponse.result.filename.replace(/^file:(.*?)\?vfs=opfs$/, "$1")
     );
+    SQL.initialized = true;
     // Your SQLite code here.
     await createTables(SQL.db);
   } catch (err) {
