@@ -401,7 +401,7 @@ class PageFavoriteViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         )
-        page_favorite.delete()
+        page_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
