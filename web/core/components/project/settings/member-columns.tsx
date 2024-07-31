@@ -97,11 +97,11 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
   const isAdminRole = currentProjectRole === EUserProjectRoles.ADMIN;
-  const isRoleEditable = isCurrentUser && isAdminRole;
+  const isRoleNonEditable = isCurrentUser || !isAdminRole;
 
   return (
     <>
-      {isRoleEditable ? (
+      {isRoleNonEditable ? (
         <div className="w-32 flex ">
           <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
         </div>
