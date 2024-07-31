@@ -158,20 +158,22 @@ export class ProjectInboxStore implements IProjectInboxStore {
     appliedFilters = appliedFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
     const currentTime = new Date().getTime();
 
-    return this.inboxIssueIds.filter((id) => {
-      if (appliedFilters.length == 2) return true;
-      if (appliedFilters.includes(EInboxIssueStatus.SNOOZED))
-        return (
-          this.inboxIssues[id].status === EInboxIssueStatus.SNOOZED &&
-          currentTime < new Date(this.inboxIssues[id].snoozed_till!).getTime()
-        );
-      if (appliedFilters.includes(EInboxIssueStatus.PENDING))
-        return (
-          appliedFilters.includes(this.inboxIssues[id].status) ||
-          (this.inboxIssues[id].status === EInboxIssueStatus.SNOOZED &&
-            currentTime > new Date(this.inboxIssues[id].snoozed_till!).getTime())
-        );
-    });
+    return this.currentTab === EInboxIssueCurrentTab.OPEN
+      ? this.inboxIssueIds.filter((id) => {
+          if (appliedFilters.length == 2) return true;
+          if (appliedFilters[0] === EInboxIssueStatus.SNOOZED)
+            return (
+              this.inboxIssues[id].status === EInboxIssueStatus.SNOOZED &&
+              currentTime < new Date(this.inboxIssues[id].snoozed_till!).getTime()
+            );
+          if (appliedFilters[0] === EInboxIssueStatus.PENDING)
+            return (
+              appliedFilters.includes(this.inboxIssues[id].status) ||
+              (this.inboxIssues[id].status === EInboxIssueStatus.SNOOZED &&
+                currentTime > new Date(this.inboxIssues[id].snoozed_till!).getTime())
+            );
+        })
+      : this.inboxIssueIds.filter((id) => appliedFilters.includes(this.inboxIssues[id].status));
   }
 
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId]);
