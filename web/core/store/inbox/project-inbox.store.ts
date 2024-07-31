@@ -156,8 +156,24 @@ export class ProjectInboxStore implements IProjectInboxStore {
         ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
         : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE];
     appliedFilters = appliedFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
+    const currentTime = new Date().getTime();
 
-    return this.inboxIssueIds.filter((id) => appliedFilters.includes(this.inboxIssues[id].status));
+    return this.currentTab === EInboxIssueCurrentTab.OPEN
+      ? this.inboxIssueIds.filter((id) => {
+          if (appliedFilters.length == 2) return true;
+          if (appliedFilters[0] === EInboxIssueStatus.SNOOZED)
+            return (
+              this.inboxIssues[id].status === EInboxIssueStatus.SNOOZED &&
+              currentTime < new Date(this.inboxIssues[id].snoozed_till!).getTime()
+            );
+          if (appliedFilters[0] === EInboxIssueStatus.PENDING)
+            return (
+              appliedFilters.includes(this.inboxIssues[id].status) ||
+              (this.inboxIssues[id].status === EInboxIssueStatus.SNOOZED &&
+                currentTime > new Date(this.inboxIssues[id].snoozed_till!).getTime())
+            );
+        })
+      : this.inboxIssueIds.filter((id) => appliedFilters.includes(this.inboxIssues[id].status));
   }
 
   getIssueInboxByIssueId = computedFn((issueId: string) => this.inboxIssues?.[issueId]);
@@ -320,8 +336,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
       else this.loader = "mutation-loading";
       if (loadingType) this.loader = loadingType;
 
+      const status = this.inboxFilters.status && uniq([...this.inboxFilters.status, EInboxIssueStatus.SNOOZED]);
       const queryParams = this.inboxIssueQueryParams(
-        this.inboxFilters,
+        { ...this.inboxFilters, status },
         this.inboxSorting,
         this.PER_PAGE_COUNT,
         `${this.PER_PAGE_COUNT}:0:0`
