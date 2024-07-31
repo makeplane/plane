@@ -404,6 +404,10 @@ class CycleAPIEndpoint(BaseAPIView):
         )
         # Delete the cycle
         cycle.delete()
+        # Delete the cycle issues
+        CycleIssue.objects.filter(
+            cycle_id=self.kwargs.get("pk"),
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
