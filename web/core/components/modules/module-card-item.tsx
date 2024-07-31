@@ -6,11 +6,13 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
-import { FavoriteStar, LayersIcon, Tooltip, setPromiseToast } from "@plane/ui";
+import { IModule } from "@plane/types";
+import { FavoriteStar, LayersIcon, LinearProgressIndicator, Tooltip, setPromiseToast } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
@@ -145,8 +147,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? moduleDetails?.completed_estimate_points || 0
     : moduleDetails.completed_issues;
 
-  const completionPercentage = (moduleCompletedIssues / moduleTotalIssues) * 100;
-
   const endDate = getDate(moduleDetails.target_date);
   const startDate = getDate(moduleDetails.start_date);
 
@@ -165,6 +165,13 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     : `0 ${isEstimateEnabled ? `Point` : `Issue`}`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
+
+  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
+    id: index,
+    name: group.title,
+    value: moduleTotalIssues > 0 ? (moduleDetails[group.key as keyof IModule] as number) : 0,
+    color: group.color,
+  }));
 
   return (
     <div className="relative">
@@ -210,29 +217,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
             </div>
-
-            <Tooltip
-              isMobile={isMobile}
-              tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
-              position="top-left"
-            >
-              <div className="flex w-full items-center">
-                <div
-                  className="bar relative h-1.5 w-full rounded bg-custom-background-90"
-                  style={{
-                    boxShadow: "1px 1px 4px 0px rgba(161, 169, 191, 0.35) inset",
-                  }}
-                >
-                  <div
-                    className="absolute left-0 top-0 h-1.5 rounded bg-blue-600 duration-300"
-                    style={{
-                      width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </Tooltip>
-
+            <LinearProgressIndicator size="lg" data={progressIndicatorData} />
             <div className="flex items-center justify-between py-0.5">
               {isDateValid ? (
                 <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
