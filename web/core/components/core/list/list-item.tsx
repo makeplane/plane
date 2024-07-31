@@ -62,21 +62,21 @@ export const ListItem: FC<IListItemProps> = (props) => {
         )}
       >
         <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
-          <div className="relative flex w-full items-center gap-3 overflow-hidden">
-            <ControlLink
-              href={itemLink}
-              target="_self"
-              className="flex items-center gap-4 truncate"
-              onClick={handleControlLinkClick}
-              disabled={disableLink}
-            >
+          <ControlLink
+            className="relative flex w-full items-center gap-3 overflow-hidden"
+            href={itemLink}
+            target="_self"
+            onClick={handleControlLinkClick}
+            disabled={disableLink}
+          >
+            <div className="flex items-center gap-4 truncate">
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
               <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
                 <span className="truncate text-sm">{title}</span>
               </Tooltip>
-            </ControlLink>
+            </div>
             {appendTitleElement && <span className="flex items-center flex-shrink-0">{appendTitleElement}</span>}
-          </div>
+          </ControlLink>
           {quickActionElement && quickActionElement}
         </div>
         {actionableItems && (
