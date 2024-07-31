@@ -107,7 +107,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: node live/server.js
+    command: node live/dist/server.js
 
   plane-db:
     container_name: plane-db

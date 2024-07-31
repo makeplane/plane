@@ -34,9 +34,7 @@ x-app-env: &app-env
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
-    # Admin and Space URLs
-    - ADMIN_BASE_URL=${ADMIN_BASE_URL}
-    - SPACE_BASE_URL=${SPACE_BASE_URL}
+    # Domain settings
     - APP_BASE_URL=${APP_BASE_URL}
 
 services:
@@ -76,6 +74,19 @@ services:
     command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
+  live:
+    <<: *app-env
+    image: ${DOCKERHUB_USER:-makeplane}/plane-live:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    command: node live/dist/server.js live
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
     depends_on:
       - api
       - web
