@@ -672,6 +672,7 @@ def delete_issue_activity(
         IssueActivity(
             project_id=project_id,
             workspace_id=workspace_id,
+            issue_id=issue_id,
             comment="deleted the issue",
             verb="deleted",
             actor_id=actor_id,
@@ -879,7 +880,6 @@ def delete_cycle_issue_activity(
     cycle_name = requested_data.get("cycle_name", "")
     cycle = Cycle.objects.filter(pk=cycle_id).first()
     issues = requested_data.get("issues")
-
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
         if issue:
@@ -1774,4 +1774,3 @@ def issue_activity(
     except Exception as e:
         log_exception(e)
         return
-

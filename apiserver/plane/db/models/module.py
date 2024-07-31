@@ -1,6 +1,7 @@
 # Django imports
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
@@ -96,7 +97,14 @@ class Module(ProjectBaseModel):
     logo_props = models.JSONField(default=dict)
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'project'],
+                condition=Q(deleted_at__isnull=True),
+                name='module_unique_name_project_when_deleted_at_null'
+            )
+        ]
         verbose_name = "Module"
         verbose_name_plural = "Modules"
         db_table = "modules"
