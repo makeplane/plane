@@ -9,7 +9,7 @@ import { Check, Info } from "lucide-react";
 import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
-import { ModuleListItemAction } from "@/components/modules";
+import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 // helpers
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
@@ -109,6 +109,16 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         </button>
       }
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
+      quickActionElement={
+        <div className="block md:hidden">
+          <ModuleQuickActions
+            parentRef={parentRef}
+            moduleId={moduleId}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
+      }
       isMobile={isMobile}
       parentRef={parentRef}
     />
