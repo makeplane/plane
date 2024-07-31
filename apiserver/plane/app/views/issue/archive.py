@@ -60,12 +60,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
+            Issue.objects
             .filter(deleted_at__isnull=True)
             .filter(archived_at__isnull=False)
             .filter(project_id=self.kwargs.get("project_id"))
@@ -88,8 +83,9 @@ class IssueArchiveViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
+                sub_issues_count=Issue.objects.filter(
+                    parent=OuterRef("id"),
+                    archived_at__isnull=False,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
