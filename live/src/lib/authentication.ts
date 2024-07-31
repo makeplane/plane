@@ -1,8 +1,8 @@
 import { ConnectionConfiguration } from "@hocuspocus/server";
 // services
-import { UserService } from "@/services/user.service";
+import { UserService } from "../services/user.service.js";
 // types
-import { TDocumentTypes } from "@/types/common";
+import { TDocumentTypes } from "../types/common.js";
 
 const userService = new UserService();
 

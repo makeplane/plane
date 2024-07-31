@@ -39,3 +39,6 @@ RUN adduser --system --uid 1001 expressjs
 USER expressjs
 
 COPY --from=installer /app .
+# COPY --from=installer /app/live/node_modules ./node_modules
+
+EXPOSE 3000

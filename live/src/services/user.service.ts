@@ -28,7 +28,7 @@ export class UserService extends APIService {
 
   async getUserAllProjectsRole(
     workspaceSlug: string,
-    cookie: string,
+    cookie: string
   ): Promise<IUserProjectsRole> {
     return this.get(
       `/api/users/me/workspaces/${workspaceSlug}/project-roles/`,
@@ -36,7 +36,7 @@ export class UserService extends APIService {
         headers: {
           Cookie: cookie,
         },
-      },
+      }
     )
       .then((response) => response?.data)
       .catch((error) => {

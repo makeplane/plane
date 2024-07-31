@@ -4,11 +4,14 @@ import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
 import expressWs, { Application } from "express-ws";
 // page actions
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
+import {
+  fetchPageDescriptionBinary,
+  updatePageDescription,
+} from "./lib/page.js";
 // types
 import { TDocumentTypes } from "./types/common.js";
 // helpers
-import { handleAuthentication } from "@/lib/authentication";
+import { handleAuthentication } from "./lib/authentication.js";
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -90,6 +93,8 @@ const server = Server.configure({
 });
 const { app }: { app: Application } = expressWs(express());
 
+app.set("port", process.env.PORT || 3000);
+
 app.get("/health", (_request, response) => {
   response.status(200);
 });
@@ -98,4 +103,6 @@ app.ws("/collaboration", (websocket, request) => {
   server.handleConnection(websocket, request);
 });
 
-app.listen(3003);
+app.listen(3000, () => {
+  console.log(`Live Server is Started`);
+});

@@ -11,7 +11,7 @@ import {
   DocumentEditorExtensionsWithoutProps,
 } from "@plane/editor/lib";
 // services
-import { PageService } from "./services/page.service.js";
+import { PageService } from "../services/page.service.js";
 const pageService = new PageService();
 
 const DOCUMENT_EDITOR_EXTENSIONS = [
@@ -24,11 +24,11 @@ export const updatePageDescription = async (
   params: URLSearchParams,
   pageId: string,
   updatedDescription: Uint8Array,
-  cookie: string | undefined,
+  cookie: string | undefined
 ) => {
   if (!(updatedDescription instanceof Uint8Array)) {
     throw new Error(
-      "Invalid updatedDescription: must be an instance of Uint8Array",
+      "Invalid updatedDescription: must be an instance of Uint8Array"
     );
   }
 
@@ -43,7 +43,7 @@ export const updatePageDescription = async (
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(
     type,
-    documentEditorSchema,
+    documentEditorSchema
   ).toJSON();
   // convert to HTML
   const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
@@ -60,7 +60,7 @@ export const updatePageDescription = async (
       projectId,
       pageId,
       payload,
-      cookie,
+      cookie
     );
   } catch (error) {
     console.error("Update error:", error);
@@ -72,7 +72,7 @@ const fetchDescriptionHTMLAndTransform = async (
   workspaceSlug: string,
   projectId: string,
   pageId: string,
-  cookie: string,
+  cookie: string
 ) => {
   if (!workspaceSlug || !projectId || !cookie) return;
 
@@ -81,12 +81,12 @@ const fetchDescriptionHTMLAndTransform = async (
       workspaceSlug,
       projectId,
       pageId,
-      cookie,
+      cookie
     );
     // convert already existing html to json
     const contentJSON = generateJSON(
       pageDetails.description_html ?? "<p></p>",
-      DOCUMENT_EDITOR_EXTENSIONS,
+      DOCUMENT_EDITOR_EXTENSIONS
     );
     // get editor schema from the DOCUMENT_EDITOR_EXTENSIONS array
     const schema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
@@ -94,7 +94,7 @@ const fetchDescriptionHTMLAndTransform = async (
     const transformedData = prosemirrorJSONToYDoc(
       schema,
       contentJSON,
-      "default",
+      "default"
     );
     // convert Y.Doc to Uint8Array format
     const encodedData = Y.encodeStateAsUpdate(transformedData);
@@ -109,7 +109,7 @@ const fetchDescriptionHTMLAndTransform = async (
 export const fetchPageDescriptionBinary = async (
   params: URLSearchParams,
   pageId: string,
-  cookie: string | undefined,
+  cookie: string | undefined
 ) => {
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   const projectId = params.get("projectId")?.toString();
@@ -120,7 +120,7 @@ export const fetchPageDescriptionBinary = async (
       workspaceSlug,
       projectId,
       pageId,
-      cookie,
+      cookie
     );
     const binaryData = new Uint8Array(response);
 
@@ -129,7 +129,7 @@ export const fetchPageDescriptionBinary = async (
         workspaceSlug,
         projectId,
         pageId,
-        cookie,
+        cookie
       );
       if (binary) {
         return binary;

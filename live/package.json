@@ -3,13 +3,14 @@
   "version": "0.22.0",
   "description": "",
   "main": "./src/server.ts",
+  "private": true,
+  "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon --exec \"node -r esbuild-register ./src/server.ts\" -e .ts",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "dev": "PORT=3003 nodemon --exec \"node -r esbuild-register ./src/server.ts\" -e .ts"
   },
   "keywords": [],
-  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {
