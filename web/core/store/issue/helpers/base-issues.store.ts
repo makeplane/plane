@@ -520,7 +520,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       // add Issue to Store
-      shouldUpdateList && this.addIssue(response, shouldUpdateList);
+      this.addIssue(response, shouldUpdateList);
 
       // If shouldUpdateList is true, call fetchParentStats
       shouldUpdateList && this.fetchParentStats(workspaceSlug, projectId);

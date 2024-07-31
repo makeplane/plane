@@ -36,13 +36,7 @@ export interface IProjectIssues extends IBaseIssuesStore {
     subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
 
-  createIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    id?: string | undefined,
-    shouldUpdateList?: boolean
-  ) => Promise<TIssue>;
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
@@ -57,6 +51,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  router;
 
   // filter store
   issueFilterStore: IProjectIssuesFilter;
@@ -72,6 +67,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     });
     // filter store
     this.issueFilterStore = issueFilterStore;
+    this.router = _rootStore.rootStore.router;
   }
 
   /**
@@ -176,6 +172,18 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
   ) => {
     if (!this.paginationOptions) return;
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
+  };
+
+  /**
+   * Override inherited create issue, to update list only if user is on current project
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns
+   */
+  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
+    const response = await super.createIssue(workspaceSlug, projectId, data, "", projectId === this.router.projectId);
+    return response;
   };
 
   // Using aliased names as they cannot be overridden in other stores
