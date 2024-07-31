@@ -52,6 +52,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  router;
 
   // filter store
   issueFilterStore: IProjectIssuesFilter;
@@ -68,6 +69,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     });
     // filter store
     this.issueFilterStore = issueFilterStore;
+    this.router = _rootStore.rootStore.router;
   }
 
   /**
@@ -174,6 +176,18 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
   };
 
+  /**
+   * Override inherited create issue, to update list only if user is on current project
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns
+   */
+  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
+    const response = await super.createIssue(workspaceSlug, projectId, data, "", projectId === this.router.projectId);
+    return response;
+  };
+
   subscribeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
     try {
       await this.issueService.bulkSubscribeIssues(workspaceSlug, projectId, { issue_ids: issueIds });
@@ -181,6 +195,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       throw error;
     }
   };
+
   // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;
