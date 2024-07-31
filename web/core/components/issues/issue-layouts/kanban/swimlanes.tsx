@@ -56,9 +56,9 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
       {list &&
         list.length > 0 &&
         list.map((_list: IGroupByColumn) => {
-          const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
+          const groupCount = getGroupIssueCount(_list?.id, undefined, false);
 
-          const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
+          const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount ?? 0, showEmptyGroup);
 
           if (subGroupByVisibilityToggle === false) return <></>;
 

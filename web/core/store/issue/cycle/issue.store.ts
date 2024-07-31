@@ -155,21 +155,77 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     isExistingPaginationOptions: boolean = false
   ) => {
     try {
-      // set loader and clear store
-      runInAction(() => {
-        this.setLoader(loadType);
-      });
+      const groups = this.getGroups();
+      const subGroups = this.getSubGroups();
+
       this.clear(!isExistingPaginationOptions);
 
+      if (!groups || (!groups && !subGroups))
+        return await this.fetchParallelIssues(workspaceSlug, projectId, loadType, options, cycleId);
+
+      const promises = [];
+
+      for (const group of groups) {
+        if (!subGroups) {
+          promises.push(this.fetchParallelIssues(workspaceSlug, projectId, loadType, options, cycleId, group.id));
+          continue;
+        }
+
+        for (const subGroup of subGroups) {
+          promises.push(
+            this.fetchParallelIssues(workspaceSlug, projectId, loadType, options, cycleId, group.id, subGroup.id)
+          );
+        }
+      }
+
+      await Promise.all(promises);
+
+      // fetch parent stats if required, to be handled in the Implemented class
+      this.fetchParentStats(workspaceSlug, projectId, cycleId);
+    } catch (error) {
+      // set loader to undefined if errored out
+      this.setLoader(undefined);
+      throw error;
+    }
+  };
+
+  /**
+   * This method is called to fetch the first issues of pagination
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @param options
+   * @returns
+   */
+  fetchParallelIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    loadType: TLoader = "init-loader",
+    options: IssuePaginationOptions,
+    cycleId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => {
+    try {
+      // set loader and clear store
+      runInAction(() => {
+        // set Loader
+        if (groupId || subGroupId) {
+          this.setLoader("pagination", groupId, subGroupId);
+        } else {
+          this.setLoader(loadType);
+        }
+      });
+
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, cycleId, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, cycleId, undefined, groupId, subGroupId);
       // call the fetch issues API with the params
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId);
+      this.onfetchIssues(response, options, groupId, subGroupId);
       return response;
     } catch (error) {
       // set loader to undefined once errored out

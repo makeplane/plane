@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -34,6 +34,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // const { fetchInboxes } = useInbox();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
+  const [areIssuesLoading, setIssuesLoading] = useState(false);
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
@@ -52,8 +53,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   useEffect(() => {
     (async () => {
+      setIssuesLoading(true);
       await initializeSQLite();
       await loadIssues(workspaceSlug.toString(), projectId.toString());
+      setIssuesLoading(false);
     })();
   }, [workspaceSlug, projectId]);
   // fetching project details
@@ -67,37 +70,37 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project labels
-  useSWR(
+  const { isLoading: isLabelsLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project members
-  useSWR(
+  const { isLoading: isMembersLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project states
-  useSWR(
+  const { isLoading: isStateLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
-  useSWR(
+  const { isLoading: isEstimatesLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => getProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project cycles
-  useSWR(
+  const { isLoading: isCyclesLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project modules
-  useSWR(
+  const { isLoading: isModulesLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchModules(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -110,8 +113,17 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
+  const isLoading =
+    isLabelsLoading ||
+    isMembersLoading ||
+    isStateLoading ||
+    isEstimatesLoading ||
+    isCyclesLoading ||
+    isModulesLoading ||
+    areIssuesLoading;
+
   // check if the project member apis is loading
-  if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)
+  if ((!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null) || isLoading)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
