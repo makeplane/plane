@@ -15,7 +15,7 @@ import { IUserLite } from "@plane/types";
 // components
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { cn, LIVE_BASE_URL } from "@/helpers/common.helper";
+import { cn, LIVE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
@@ -91,7 +91,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const realtimeConfig: TRealtimeConfig = useMemo(
     () => ({
-      url: `${LIVE_BASE_URL}/collaboration`,
+      url: `${LIVE_URL}/collaboration`,
       queryParams: {
         workspaceSlug: workspaceSlug?.toString(),
         projectId: projectId?.toString(),
