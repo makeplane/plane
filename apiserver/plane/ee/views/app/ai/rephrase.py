@@ -1,5 +1,6 @@
 # Python imports
 import os
+from enum import Enum
 
 # Third party imports
 from openai import OpenAI
@@ -12,6 +13,20 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceEntityPermission
 
 
+class Task(Enum):
+    PARAPHRASE = "PARAPHRASE"
+    SIMPLIFY = "SIMPLIFY"
+    ELABORATE = "ELABORATE"
+    SUMMARIZE = "SUMMARIZE"
+    GET_TITLE = "GET_TITLE"
+    TONE = "TONE"
+
+
+class Tone(Enum):
+    CASUAL = "CASUAL"
+    FORMAL = "FORMAL"
+
+
 class RephraseGrammarEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceEntityPermission,
@@ -19,7 +34,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
 
     # Function to get system prompt based on task
     def get_system_prompt(task, tone=None):
-        if task == "paraphrase":
+        if task == Task.PARAPHRASE:
             return """
             Correct the grammar of the following text, strictly following these instructions:
             1. Ensure the new text is grammatically correct.
@@ -28,7 +43,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             4. Do not provide any unrelated data apart from the grammatically correct original text.
             """
 
-        elif task == "simplify":
+        elif task == Task.SIMPLIFY:
             return """
             Simplify the following text, strictly adhering to these guidelines:
             1. Make the text more concise without losing its core meaning.
@@ -39,7 +54,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             6. Do not add any new information not present in the original text.
             """
 
-        elif task == "elaborate":
+        elif task == Task.ELABORATE:
             return """
             Elaborate on the following text, carefully following these instructions:
             1. Add relevant details, examples, or explanations to enrich the content.
@@ -50,7 +65,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             6. Do not contradict any information in the original text.
             """
 
-        elif task == "summarize":
+        elif task == Task.SUMMARIZE:
             return """
             Summarize the following text, strictly adhering to these guidelines:
             1. Condense the text into a highly concise summary that is approximately 10-15 percent of the length of the input text.
@@ -63,7 +78,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             8. If the input text is very short (less than 100 words), aim for a summary of 1-2 sentences.
             """
 
-        elif task == "get_title":
+        elif task == Task.GET_TITLE:
             return """
             Generate an appropriate title for the following text, strictly following these instructions:
             1. Create a concise and engaging title that captures the main theme or purpose of the content.
@@ -74,7 +89,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             6. If the text is clearly part of a larger work or series, reflect that in the title if appropriate.
             """
 
-        elif task == "tone":
+        elif task == Task.TONE:
             base_instructions = """
             Rewrite the following text in the specified tone, strictly adhering to these guidelines:
 
@@ -90,7 +105,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             7. Adjust sentence structure and vocabulary to fit the desired tone without changing the core message.
             """
 
-            if tone == "casual":
+            if tone == Tone.CASUAL:
                 return (
                     base_instructions
                     + """
@@ -104,7 +119,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Aim for a Flesch-Kincaid grade level of 6-8.
                 """
                 )
-            elif tone == "formal":
+            elif tone == Tone.FORMAL:
                 return (
                     base_instructions
                     + """
