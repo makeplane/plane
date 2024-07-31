@@ -5,30 +5,21 @@ import { runQuery } from "../query-executor";
 const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 
 export const getIssues = async (workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> => {
-  //   {
-  //     "priority": "urgent,high,medium",
-  //     "state": "5d572a70-aa2f-409c-ade0-6a49e3c052c7,f0c8572a-164a-4ae0-98b4-329e89e22d86",
-  //     "order_by": "-created_at",
-  //     "sub_issue": true,
-  //     "cursor": "100:0:0",
-  //     "per_page": "100"
-  // }
-  // https://dexie.org/docs/MultiEntry-Index
-
-  // console.log("#### queries", queries);
   const { cursor } = queries;
 
-  const start = performance.now();
   const query = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
   const countQuery = issueFilterCountQueryConstructor(workspaceSlug, projectId, queries);
+  const start = performance.now();
   let issues = await runQuery(query);
-  const { total_count } = (await runQuery(countQuery))[0];
   const end = performance.now();
 
-  console.log("#### Local time", end - start);
+  const countStart = performance.now();
+  const { total_count } = (await runQuery(countQuery))[0];
+  const countEnd = performance.now();
 
   const [pageSize, page, offset] = cursor.split(":");
 
+  const parsingStart = performance.now();
   issues = issues.map((issue: TIssue) => {
     arrayFields.forEach((field) => {
       issue[field] = JSON.parse(issue[field]);
@@ -36,6 +27,16 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
 
     return issue;
   });
+
+  const parsingEnd = performance.now();
+
+  const times = {
+    IssueQuery: end - start,
+    Count: countEnd - countStart,
+    Parsing: parsingEnd - parsingStart,
+  };
+
+  console.table(times);
 
   const out = {
     results: issues,
