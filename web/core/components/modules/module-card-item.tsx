@@ -12,8 +12,9 @@ import { FavoriteStar, LayersIcon, LinearProgressIndicator, Tooltip, setPromiseT
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
-import { MODULE_STATE_GROUPS_DETAILS, MODULE_STATUS } from "@/constants/module";
+import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
@@ -165,7 +166,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
-  const progressIndicatorData = MODULE_STATE_GROUPS_DETAILS.map((group, index) => ({
+  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: moduleTotalIssues > 0 ? (moduleDetails[group.key as keyof IModule] as number) : 0,
