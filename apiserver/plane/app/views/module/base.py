@@ -773,6 +773,10 @@ class ModuleViewSet(BaseViewSet):
             for issue in module_issues
         ]
         module.delete()
+        # Delete the module issues
+        ModuleIssue.objects.filter(
+            module=pk,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
