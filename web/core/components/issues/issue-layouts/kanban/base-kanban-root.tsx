@@ -222,7 +222,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+    <>
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}
@@ -279,6 +279,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           </div>
         </div>
       </div>
-    </IssueLayoutHOC>
+    </>
   );
 });
