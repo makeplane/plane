@@ -11,6 +11,7 @@ import type {
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
+import { getIssues } from "@/local-db/queries/issues";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -26,7 +27,12 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+  async getIssuesFromServer(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`,
       {
@@ -38,6 +44,10 @@ export class IssueService extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+    return await getIssues(workspaceSlug, projectId, queries, config);
   }
 
   async getIssuesWithParams(
