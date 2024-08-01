@@ -50,13 +50,11 @@ export const NewFavoriteFolder = (props: TProps) => {
           message: "Favorite created successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err.data).map((key) => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: err.data[key],
-          });
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Something went wrong!",
         });
       });
     setCreateNewFolder(false);

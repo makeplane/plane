@@ -11,7 +11,6 @@ export class FavoriteService extends APIService {
   }
 
   async addFavorite(workspaceSlug: string, data: Partial<IFavorite>): Promise<IFavorite> {
-    console.log("addFavorite", data);
     return this.post(`/api/workspaces/${workspaceSlug}/user-favorites/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -20,7 +19,6 @@ export class FavoriteService extends APIService {
   }
 
   async updateFavorite(workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>): Promise<IFavorite> {
-    console.log("updateFavorite", data);
     return this.patch(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {

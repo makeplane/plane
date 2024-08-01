@@ -72,7 +72,7 @@ export class FavoriteStore implements IFavoriteStore {
       });
       return response;
     } catch (error) {
-      console.log("Failed to create favorite from favorite store");
+      console.error("Failed to create favorite from favorite store");
       throw error;
     }
   };
@@ -92,7 +92,7 @@ export class FavoriteStore implements IFavoriteStore {
       });
       return response;
     } catch (error) {
-      console.log("Failed to update favorite from favorite store");
+      console.error("Failed to update favorite from favorite store");
       throw error;
     }
   };
@@ -110,28 +110,23 @@ export class FavoriteStore implements IFavoriteStore {
       runInAction(() => {
         // add the favorite to the new parent
         if (!data.parent) return;
-        set(this.favoriteMap, [data.parent], {
-          ...this.favoriteMap[data.parent],
-          children: [response, ...this.favoriteMap[data.parent].children],
-        });
+        set(this.favoriteMap, [data.parent, "children"], [response, ...this.favoriteMap[data.parent].children]);
 
         // remove the favorite from the old parent
         const oldParent = this.favoriteMap[favoriteId].parent;
         if (oldParent) {
-          set(this.favoriteMap, [oldParent], {
-            ...this.favoriteMap[oldParent],
-            children: this.favoriteMap[oldParent].children.filter((child) => child.id !== favoriteId),
-          });
+          set(
+            this.favoriteMap,
+            [oldParent, "children"],
+            this.favoriteMap[oldParent].children.filter((child) => child.id !== favoriteId)
+          );
         }
 
         // add parent of the favorite
-        set(this.favoriteMap, [favoriteId], {
-          ...this.favoriteMap[favoriteId],
-          parent: data.parent,
-        });
+        set(this.favoriteMap, [favoriteId, "parent"], data.parent);
       });
     } catch (error) {
-      console.log("Failed to move favorite from favorite store");
+      console.error("Failed to move favorite from favorite store");
       throw error;
     }
   };
@@ -148,16 +143,17 @@ export class FavoriteStore implements IFavoriteStore {
       runInAction(() => {
         const parent = this.favoriteMap[favoriteId].parent;
         if (parent) {
-          set(this.favoriteMap, [parent], {
-            ...this.favoriteMap[parent],
-            children: this.favoriteMap[parent].children.filter((child) => child.id !== favoriteId),
-          });
+          set(
+            this.favoriteMap,
+            [parent, "children"],
+            this.favoriteMap[parent].children.filter((child) => child.id !== favoriteId)
+          );
         }
         delete this.favoriteMap[favoriteId];
         this.favoriteIds = this.favoriteIds.filter((id) => id !== favoriteId);
       });
     } catch (error) {
-      console.log("Failed to delete favorite from favorite store");
+      console.error("Failed to delete favorite from favorite store");
       throw error;
     }
   };
@@ -176,7 +172,7 @@ export class FavoriteStore implements IFavoriteStore {
         delete this.entityMap[entityId];
       });
     } catch (error) {
-      console.log("Failed to remove favorite entity from favorite store");
+      console.error("Failed to remove favorite entity from favorite store");
       throw error;
     }
   };
@@ -191,7 +187,7 @@ export class FavoriteStore implements IFavoriteStore {
       const response = await this.favoriteService.getGroupedFavorites(workspaceSlug, favoriteId);
       runInAction(() => {
         // add children to the favorite
-        set(this.favoriteMap, [favoriteId], { ...this.favoriteMap[favoriteId], children: response });
+        set(this.favoriteMap, [favoriteId, "children"], response);
         // add the favorites to the map
         response.forEach((favorite) => {
           set(this.favoriteMap, [favorite.id], favorite);
@@ -203,7 +199,7 @@ export class FavoriteStore implements IFavoriteStore {
 
       return response;
     } catch (error) {
-      console.log("Failed to get grouped favorites from favorite store");
+      console.error("Failed to get grouped favorites from favorite store");
       throw error;
     }
   };
@@ -226,7 +222,7 @@ export class FavoriteStore implements IFavoriteStore {
       });
       return favorites;
     } catch (error) {
-      console.log("Failed to fetch favorites from workspace store");
+      console.error("Failed to fetch favorites from workspace store");
       throw error;
     }
   };

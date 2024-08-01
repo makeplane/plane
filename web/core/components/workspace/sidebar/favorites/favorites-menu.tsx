@@ -49,13 +49,11 @@ export const SidebarFavoritesMenu = observer(() => {
           message: "Favorite removed successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err.data).map((key) => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: err.data[key],
-          });
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Something went wrong!",
         });
       });
   };
