@@ -21,11 +21,12 @@ type IPageRenderer = {
   editor: Editor;
   editorContainerClassName: string;
   hideDragHandle?: () => void;
+  id: string;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { tabIndex, editor, hideDragHandle, editorContainerClassName } = props;
+  const { editor, editorContainerClassName, hideDragHandle, id, tabIndex } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -130,10 +131,11 @@ export const PageRenderer = (props: IPageRenderer) => {
       <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
         <EditorContainer
           editor={editor}
-          hideDragHandle={hideDragHandle}
           editorContainerClassName={editorContainerClassName}
+          hideDragHandle={hideDragHandle}
+          id={id}
         >
-          <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
+          <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
           {editor && editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>

@@ -161,7 +161,14 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           selected={!!cycleDetails.is_favorite}
         />
       )}
-      <CycleQuickActions parentRef={parentRef} cycleId={cycleId} projectId={projectId} workspaceSlug={workspaceSlug} />
+      <div className="hidden md:block">
+        <CycleQuickActions
+          parentRef={parentRef}
+          cycleId={cycleId}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+        />
+      </div>
     </>
   );
 });

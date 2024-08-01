@@ -8,7 +8,7 @@ import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 import { IReadOnlyEditorProps } from "@/types";
 
 export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
-  const { containerClassName, editorClassName = "", initialValue, forwardedRef, mentionHandler } = props;
+  const { containerClassName, editorClassName = "", id, initialValue, forwardedRef, mentionHandler } = props;
 
   const editor = useReadOnlyEditor({
     initialValue,
@@ -24,9 +24,9 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
   if (!editor) return null;
 
   return (
-    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName}>
+    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName} id={id}>
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} />
+        <EditorContentWrapper editor={editor} id={id} />
       </div>
     </EditorContainer>
   );

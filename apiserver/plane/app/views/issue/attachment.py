@@ -14,7 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import IssueAttachment
+from plane.db.models import IssueAttachment, ProjectMember
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -49,6 +49,19 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = IssueAttachment.objects.get(pk=pk)
+        if issue_attachment.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(

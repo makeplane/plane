@@ -34,7 +34,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
     if (navigationTab && navigationTab !== currentTab) {
       handleCurrentTab(workspaceSlug, projectId, navigationTab);
     } else {
-      fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+      fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), undefined, navigationTab);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inboxAccessible, workspaceSlug, projectId]);

@@ -78,10 +78,11 @@ const DocumentEditor = (props: IDocumentEditor) => {
 
   return (
     <PageRenderer
-      tabIndex={tabIndex}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
       hideDragHandle={hideDragHandleOnMouseLeave}
+      id={id}
+      tabIndex={tabIndex}
     />
   );
 };

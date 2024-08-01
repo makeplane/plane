@@ -64,22 +64,15 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   if (!groupList) return null;
 
   const visibilityGroupBy = (_list: IGroupByColumn): { showGroup: boolean; showIssues: boolean } => {
-    if (subGroupBy) {
-      const groupVisibility = {
-        showGroup: true,
-        showIssues: true,
-      };
-      if (!showEmptyGroup) {
-        groupVisibility.showGroup = (getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0;
-      }
-      return groupVisibility;
-    } else {
-      const groupVisibility = {
-        showGroup: true,
-        showIssues: true,
-      };
-      return groupVisibility;
+    const groupVisibility = {
+      showGroup: true,
+      showIssues: true,
+    };
+
+    if (!showEmptyGroup) {
+      groupVisibility.showGroup = (getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0;
     }
+    return groupVisibility;
   };
 
   return (

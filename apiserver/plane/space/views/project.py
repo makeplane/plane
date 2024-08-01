@@ -69,7 +69,7 @@ class WorkspaceProjectAnchorEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
+            workspace__slug=slug, project_id=project_id, entity_name="project"
         )
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -128,6 +128,12 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
       }
 
+      if (subIssues) {
+        this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentIssueId, {
+          sub_issues_count: subIssues.length,
+        });
+      }
+
       runInAction(() => {
         set(this.subIssuesStateDistribution, parentIssueId, subIssuesStateDistribution);
         set(
