@@ -62,7 +62,7 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
         favorite = UserFavorite.objects.get(
             user=request.user, workspace__slug=slug, pk=favorite_id
         )
-        favorite.delete()
+        favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
