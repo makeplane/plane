@@ -78,6 +78,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorReady={readOnlyEditorReady}
           markings={markings}
           handleDuplicatePage={handleDuplicatePage}
+          hasConnectionFailed={hasConnectionFailed}
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

@@ -8,28 +8,30 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
+  editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
+  hasConnectionFailed: boolean;
   markings: IMarking[];
   page: IPage;
-  sidePeekVisible: boolean;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
-  editorReady: boolean;
   readOnlyEditorReady: boolean;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  setSidePeekVisible: (sidePeekState: boolean) => void;
+  sidePeekVisible: boolean;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
   const {
-    editorRef,
-    readOnlyEditorRef,
     editorReady,
-    markings,
-    readOnlyEditorReady,
+    editorRef,
     handleDuplicatePage,
+    hasConnectionFailed,
+    markings,
     page,
-    sidePeekVisible,
+    readOnlyEditorReady,
+    readOnlyEditorRef,
     setSidePeekVisible,
+    sidePeekVisible,
   } = props;
   // derived values
   const { isContentEditable } = page;
@@ -53,6 +55,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
+          hasConnectionFailed={hasConnectionFailed}
           page={page}
           readOnlyEditorRef={readOnlyEditorRef}
         />
