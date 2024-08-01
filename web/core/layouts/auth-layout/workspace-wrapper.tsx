@@ -69,6 +69,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  if (window.navigator.userAgent.indexOf("iPhone") > -1) {
+    const viewportMeta = document.querySelector("[name=viewport]");
+    if (viewportMeta) {
+      viewportMeta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
+    }
+  }
+
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({

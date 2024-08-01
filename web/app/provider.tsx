@@ -33,12 +33,6 @@ const ToastWithTheme = () => {
 export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
 
-  if (window.navigator.userAgent.indexOf("iPhone") > -1) {
-    const viewportMeta = document.querySelector("[name=viewport]");
-    if (viewportMeta) {
-      viewportMeta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
-    }
-  }
   // themes
   return (
     <>
