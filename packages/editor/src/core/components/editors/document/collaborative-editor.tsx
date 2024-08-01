@@ -22,6 +22,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     mentionHandler,
     placeholder,
     realtimeConfig,
+    serverHandler,
     tabIndex,
     user,
   } = props;
@@ -54,6 +55,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     mentionHandler,
     placeholder,
     realtimeConfig,
+    serverHandler,
     setHideDragHandleFunction,
     tabIndex,
     user,

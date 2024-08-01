@@ -25,6 +25,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
+  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -61,23 +62,25 @@ export const PageRoot = observer((props: TPageRootProps) => {
   return (
     <>
       <PageEditorHeaderRoot
-        editorRef={editorRef}
-        readOnlyEditorRef={readOnlyEditorRef}
         editorReady={editorReady}
-        readOnlyEditorReady={readOnlyEditorReady}
+        editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
+        hasConnectionFailed={hasConnectionFailed}
         markings={markings}
         page={page}
-        sidePeekVisible={sidePeekVisible}
+        readOnlyEditorReady={readOnlyEditorReady}
+        readOnlyEditorRef={readOnlyEditorRef}
         setSidePeekVisible={(state) => setSidePeekVisible(state)}
+        sidePeekVisible={sidePeekVisible}
       />
       <PageEditorBody
         editorRef={editorRef}
+        handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
-        readOnlyEditorRef={readOnlyEditorRef}
         handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
         markings={markings}
         page={page}
+        readOnlyEditorRef={readOnlyEditorRef}
         sidePeekVisible={sidePeekVisible}
         updateMarkings={updateMarkings}
       />

@@ -1,41 +1,17 @@
 import { useEffect, useLayoutEffect, useMemo } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
-import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
 import { DragAndDrop } from "@/extensions";
 // hooks
-import { TFileHandler, useEditor } from "@/hooks/use-editor";
+import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TRealtimeConfig, TUserDetails } from "@/types";
+import { TCollaborativeEditorProps } from "@/types";
 
-type CollaborativeEditorProps = {
-  editorClassName: string;
-  editorProps?: EditorProps;
-  embedHandler?: TEmbedConfig;
-  extensions?: Extensions;
-  fileHandler: TFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
-  };
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  realtimeConfig: TRealtimeConfig;
-  setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
-  tabIndex?: number;
-  user: TUserDetails;
-};
-
-export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
+export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
     editorClassName,
     editorProps = {},
@@ -48,6 +24,7 @@ export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
     mentionHandler,
     placeholder,
     realtimeConfig,
+    serverHandler,
     setHideDragHandleFunction,
     tabIndex,
     user,
@@ -61,9 +38,14 @@ export const useCollaborativeEditor = (props: CollaborativeEditorProps) => {
         // using user id as a token to verify the user on the server
         token: user.id,
         url: realtimeConfig.url,
+        onConnect: () => serverHandler?.onConnect?.(),
+        onClose: (data) => {
+          if (data.event.code === 1006) serverHandler?.onServerError?.();
+        },
       }),
-    [id, realtimeConfig, user.id]
+    [id, realtimeConfig, serverHandler, user.id]
   );
+
   // destroy and disconnect connection on unmount
   useEffect(
     () => () => {

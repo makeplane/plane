@@ -1,29 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
-import { EditorProps } from "@tiptap/pm/view";
 import { IndexeddbPersistence } from "y-indexeddb";
-// types
-import { EditorReadOnlyRefApi, IMentionHighlight, TRealtimeConfig, TUserDetails } from "@/types";
 // hooks
-import { useReadOnlyEditor } from "./use-read-only-editor";
+import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// types
+import { TReadOnlyCollaborativeEditorProps } from "@/types";
 
-type ReadOnlyCollaborativeEditorProps = {
-  editorClassName: string;
-  editorProps?: EditorProps;
-  extensions?: Extensions;
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
-  realtimeConfig: TRealtimeConfig;
-  user: TUserDetails;
-};
-
-export const useReadOnlyCollaborativeEditor = (props: ReadOnlyCollaborativeEditorProps) => {
+export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEditorProps) => {
   const {
     editorClassName,
     editorProps = {},
@@ -33,6 +17,7 @@ export const useReadOnlyCollaborativeEditor = (props: ReadOnlyCollaborativeEdito
     id,
     mentionHandler,
     realtimeConfig,
+    serverHandler,
     user,
   } = props;
   // initialize Hocuspocus provider
@@ -43,6 +28,10 @@ export const useReadOnlyCollaborativeEditor = (props: ReadOnlyCollaborativeEdito
         name: id,
         token: user.id,
         parameters: realtimeConfig.queryParams,
+        onConnect: () => serverHandler?.onConnect?.(),
+        onClose: (data) => {
+          if (data.event.code === 1006) serverHandler?.onServerError?.();
+        },
       }),
     [id, realtimeConfig, user.id]
   );

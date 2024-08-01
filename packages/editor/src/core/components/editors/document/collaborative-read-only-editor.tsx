@@ -20,6 +20,7 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
     id,
     mentionHandler,
     realtimeConfig,
+    serverHandler,
     user,
   } = props;
   const extensions = [];
@@ -39,6 +40,7 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
     id,
     mentionHandler,
     realtimeConfig,
+    serverHandler,
     user,
   });
 

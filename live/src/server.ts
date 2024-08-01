@@ -58,13 +58,17 @@ const server = Server.configure({
           | undefined;
 
         return new Promise(async (resolve) => {
-          if (documentType === "project_page") {
-            const fetchedData = await fetchPageDescriptionBinary(
-              params,
-              pageId,
-              cookie
-            );
-            resolve(fetchedData);
+          try {
+            if (documentType === "project_page") {
+              const fetchedData = await fetchPageDescriptionBinary(
+                params,
+                pageId,
+                cookie
+              );
+              resolve(fetchedData);
+            }
+          } catch (error) {
+            console.error("Error in fetching document", error)
           }
         });
       },
@@ -83,8 +87,12 @@ const server = Server.configure({
           | undefined;
 
         return new Promise(async () => {
-          if (documentType === "project_page") {
-            await updatePageDescription(params, pageId, state, cookie);
+          try {
+            if (documentType === "project_page") {
+              await updatePageDescription(params, pageId, state, cookie);
+            }
+          } catch (error) {
+            console.error("Error in updating document", error)
           }
         });
       },
@@ -103,6 +111,6 @@ app.ws("/collaboration", (websocket, request) => {
   server.handleConnection(websocket, request);
 });
 
-app.listen(3000, () => {
+app.listen(3003, () => {
   console.log("Live server has started");
 });

@@ -3,7 +3,7 @@ import { IMarking } from "@/helpers/scroll-to-node";
 // hooks
 import { TFileHandler } from "@/hooks/use-editor";
 // types
-import { IMentionHighlight, IMentionSuggestion, TEditorCommands, TEmbedConfig } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TEditorCommands, TEmbedConfig, TServerHandler } from "@/types";
 
 // editor refs
 export type EditorReadOnlyRefApi = {
@@ -54,6 +54,7 @@ export interface ICollaborativeDocumentEditor
   handleEditorReady?: (value: boolean) => void;
   id: string;
   realtimeConfig: TRealtimeConfig;
+  serverHandler?: TServerHandler;
   user: TUserDetails;
 }
 
@@ -78,6 +79,7 @@ export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEdit
   handleEditorReady?: (value: boolean) => void;
   id: string;
   realtimeConfig: TRealtimeConfig;
+  serverHandler?: TServerHandler;
   user: TUserDetails;
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -9,6 +9,7 @@ import {
   EditorRefApi,
   IMarking,
   TRealtimeConfig,
+  TServerHandler,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
@@ -31,23 +32,25 @@ const fileService = new FileService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  markings: IMarking[];
-  page: IPage;
-  sidePeekVisible: boolean;
+  handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
+  markings: IMarking[];
+  page: IPage;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  sidePeekVisible: boolean;
   updateMarkings: (description_html: string) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
-    handleReadOnlyEditorReady,
-    handleEditorReady,
     editorRef,
+    handleConnectionStatus,
+    handleEditorReady,
+    handleReadOnlyEditorReady,
     markings,
-    readOnlyEditorRef,
     page,
+    readOnlyEditorRef,
     sidePeekVisible,
     updateMarkings,
   } = props;
@@ -83,6 +86,21 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
     workspaceSlug?.toString() ?? "",
     projectId?.toString() ?? ""
+  );
+
+  const handleServerConnect = useCallback(() => {
+    handleConnectionStatus(false);
+  }, []);
+  const handleServerError = useCallback(() => {
+    handleConnectionStatus(true);
+  }, []);
+
+  const serverHandler: TServerHandler = useMemo(
+    () => ({
+      onConnect: handleServerConnect,
+      onServerError: handleServerError,
+    }),
+    []
   );
 
   useEffect(() => {
@@ -155,6 +173,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 issue: issueEmbedProps,
               }}
               realtimeConfig={realtimeConfig}
+              serverHandler={serverHandler}
               user={{
                 id: currentUser?.id ?? "",
                 name: currentUser?.display_name ?? "",
@@ -175,6 +194,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 issue: issueEmbedReadOnlyProps,
               }}
               realtimeConfig={realtimeConfig}
+              serverHandler={serverHandler}
               user={{
                 id: currentUser?.id ?? "",
                 name: currentUser?.display_name ?? "",

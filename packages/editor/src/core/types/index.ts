@@ -1,3 +1,4 @@
+export * from "./collaboration";
 export * from "./editor";
 export * from "./embed";
 export * from "./image";
