@@ -5,6 +5,8 @@ import "@/styles/globals.css";
 import "@/styles/command-pallette.css";
 import "@/styles/emoji.css";
 import "@/styles/react-day-picker.css";
+// meta data info
+import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // local
@@ -12,8 +14,7 @@ import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
   title: "Plane | Simple, extensible, open-source project management tool.",
-  description:
-    "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
+  description: SITE_DESCRIPTION,
   openGraph: {
     title: "Plane | Simple, extensible, open-source project management tool.",
     description:
@@ -39,6 +40,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest.json" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
+        {/* Meta info for PWA */}
+        <meta name="application-name" content="Plane" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/touch-icon-ipad.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/touch-icon-iphone-retina.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+        />
         {/* preloading */}
         <link rel="preload" href={`${API_BASE_URL}/api/instances/`} as="fetch" crossOrigin="use-credentials" />
         <link rel="preload" href={`${API_BASE_URL}/api/users/me/ `} as="fetch" crossOrigin="use-credentials" />
