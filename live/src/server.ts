@@ -104,5 +104,5 @@ app.ws("/collaboration", (websocket, request) => {
 });
 
 app.listen(3000, () => {
-  console.log(`Live Server is Started`);
+  console.log("Live server has started");
 });
