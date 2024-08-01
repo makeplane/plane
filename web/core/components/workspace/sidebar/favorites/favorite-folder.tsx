@@ -88,6 +88,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           setIsDragging(true);
         },
         onDrop: ({ self, source }) => {
+          setInstruction(undefined);
           setIsDragging(false);
           const sourceId = source?.data?.id as string | undefined;
           const destinationId = self?.data?.id as string | undefined;
