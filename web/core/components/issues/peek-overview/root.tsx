@@ -66,7 +66,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         issues?.updateIssue &&
           (await issues
-            .updateIssue(workspaceSlug, projectId, issueId, data)
+            .updateIssue(workspaceSlug, projectId, issueId, data, true)
             .then(() => {
               captureIssueEvent({
                 eventName: ISSUE_UPDATED,
@@ -161,7 +161,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId, true);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -190,7 +190,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds, true);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
@@ -219,7 +219,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const removeFromCyclePromise = issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          const removeFromCyclePromise = issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId, true);
           setPromiseToast(removeFromCyclePromise, {
             loading: "Removing issue from the cycle...",
             success: {
@@ -265,7 +265,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           projectId,
           issueId,
           addModuleIds,
-          removeModuleIds
+          removeModuleIds,
+          true
         );
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -280,7 +281,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
-          const removeFromModulePromise = issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
+          const removeFromModulePromise = issues.removeIssuesFromModule(
+            workspaceSlug,
+            projectId,
+            moduleId,
+            [issueId],
+            true
+          );
           setPromiseToast(removeFromModulePromise, {
             loading: "Removing issue from the module...",
             success: {
