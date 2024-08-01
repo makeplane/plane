@@ -35,9 +35,9 @@ x-app-env: &app-env
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
     # Domain settings
-    - APP_BASE_URL=${APP_BASE_URL:-"http://localhost"}
+    - APP_BASE_URL=${APP_BASE_URL:-http://localhost}
     # Live server env
-    - API_BASE_URL=${API_BASE_URL:-"http://api:8000"}
+    - API_BASE_URL=${API_BASE_URL:-http://api:8000}
 
 services:
   web:
