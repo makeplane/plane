@@ -843,7 +843,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param issueIds
    * @param fetchAddedIssues If True we make an additional call to fetch all the issues from their Ids, Since the addIssueToCycle API does not return them
    */
-  // G2G
   async addIssueToCycle(
     workspaceSlug: string,
     projectId: string,
@@ -888,7 +887,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param cycleId
    * @param issueId
    */
-  // G2G
   async removeIssueFromCycle(
     workspaceSlug: string,
     projectId: string,
@@ -915,7 +913,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     }
   }
 
-  // G2G
   addCycleToIssue = async (
     workspaceSlug: string,
     projectId: string,
@@ -1046,7 +1043,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param issueIds
    * @returns
    */
-  // G2G
   async removeIssuesFromModule(
     workspaceSlug: string,
     projectId: string,
@@ -1131,7 +1127,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param addModuleIds array of modules to be added
    * @param removeModuleIds array of modules to be removed
    */
-  // G2G
   async changeModulesInIssue(
     workspaceSlug: string,
     projectId: string,
