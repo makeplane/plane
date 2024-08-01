@@ -35,7 +35,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <meta name="theme-color" content="#fff" />
-        <link rel="apple-touch-icon" sizes="512x512" href="/plane-logos/plane-mobile-pwa.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest.json" />
@@ -48,8 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/icons/touch-icon-ipad.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icons/touch-icon-iphone-retina.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
+        <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta
           name="viewport"
