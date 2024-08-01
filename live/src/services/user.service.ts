@@ -22,7 +22,7 @@ export class UserService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response;
+        throw error;
       });
   }
 
