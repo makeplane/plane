@@ -29,6 +29,7 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { useProjectEstimates } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   selectionHelpers: TSelectionHelper;
@@ -59,6 +60,8 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
   const { currentActiveEstimateId } = useProjectEstimates();
+  const isAdvancedBulkOpsEnabled = useFlag("BULK_OPS_ADVANCED");
+
   // form info
   const {
     control,
@@ -234,66 +237,70 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
             )}
           />
         )}
-        {projectId && (
-          <Controller
-            name="cycle_id"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <>
-                <CycleDropdown
-                  value={value as string | null}
-                  onChange={onChange}
-                  projectId={projectId.toString()}
-                  buttonVariant="border-with-text"
-                  buttonClassName="text-custom-text-300 py-1 rounded"
-                  disabled={isUpdateDisabled}
-                  placement="top-start"
-                  placeholder="Cycle"
-                />
-              </>
-            )}
-          />
-        )}
-        {projectId && currentActiveEstimateId && (
-          <Controller
-            name="estimate_point"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <EstimateDropdown
-                value={value as string | null}
-                onChange={onChange}
-                projectId={projectId.toString()}
-                buttonVariant="border-with-text"
-                buttonClassName="text-custom-text-300 py-1"
-                disabled={isUpdateDisabled}
-                placement="top-start"
-                placeholder="Estimates"
+        {!isAdvancedBulkOpsEnabled && (
+          <>
+            {projectId && (
+              <Controller
+                name="cycle_id"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <>
+                    <CycleDropdown
+                      value={value as string | null}
+                      onChange={onChange}
+                      projectId={projectId.toString()}
+                      buttonVariant="border-with-text"
+                      buttonClassName="text-custom-text-300 py-1 rounded"
+                      disabled={isUpdateDisabled}
+                      placement="top-start"
+                      placeholder="Cycle"
+                    />
+                  </>
+                )}
               />
             )}
-          />
-        )}
-        {projectId && (
-          <Controller
-            name="module_ids"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <>
-                <ModuleDropdown
-                  value={value}
-                  onChange={onChange}
-                  projectId={projectId.toString()}
-                  buttonVariant="border-with-text"
-                  buttonClassName="text-custom-text-300 border-none  px-2 py-1"
-                  buttonContainerClassName="border-[0.5px] border-custom-border-300 rounded"
-                  disabled={isUpdateDisabled}
-                  placement="top-start"
-                  placeholder="Module"
-                  showCount
-                  multiple
-                />
-              </>
+            {projectId && currentActiveEstimateId && (
+              <Controller
+                name="estimate_point"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <EstimateDropdown
+                    value={value as string | null}
+                    onChange={onChange}
+                    projectId={projectId.toString()}
+                    buttonVariant="border-with-text"
+                    buttonClassName="text-custom-text-300 py-1"
+                    disabled={isUpdateDisabled}
+                    placement="top-start"
+                    placeholder="Estimates"
+                  />
+                )}
+              />
             )}
-          />
+            {projectId && (
+              <Controller
+                name="module_ids"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <>
+                    <ModuleDropdown
+                      value={value}
+                      onChange={onChange}
+                      projectId={projectId.toString()}
+                      buttonVariant="border-with-text"
+                      buttonClassName="text-custom-text-300 border-none  px-2 py-1"
+                      buttonContainerClassName="border-[0.5px] border-custom-border-300 rounded"
+                      disabled={isUpdateDisabled}
+                      placement="top-start"
+                      placeholder="Module"
+                      showCount
+                      multiple
+                    />
+                  </>
+                )}
+              />
+            )}
+          </>
         )}
       </div>
       {isDirty && (
