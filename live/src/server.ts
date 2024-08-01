@@ -111,6 +111,6 @@ app.ws("/collaboration", (websocket, request) => {
   server.handleConnection(websocket, request);
 });
 
-app.listen(3003, () => {
+app.listen(3000, () => {
   console.log("Live server has started");
 });
