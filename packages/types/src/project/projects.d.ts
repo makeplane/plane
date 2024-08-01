@@ -34,6 +34,7 @@ export interface IProject {
   identifier: string;
   anchor: string | null;
   is_favorite: boolean;
+  is_issue_type_enabled: boolean;
   is_member: boolean;
   is_time_tracking_enabled: boolean;
   logo_props: TLogoProps;
@@ -58,6 +59,7 @@ export interface IProjectLite {
   id: string;
   name: string;
   identifier: string;
+  logo_props: TLogoProps;
 }
 
 type ProjectPreferences = {

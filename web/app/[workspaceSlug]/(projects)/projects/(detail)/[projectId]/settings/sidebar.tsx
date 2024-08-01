@@ -8,9 +8,11 @@ import { Loader } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // constants
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useUser } from "@/hooks/store";
+// plane web constants
+import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 
 export const ProjectSettingsSidebar = () => {
   const { workspaceSlug, projectId } = useParams();

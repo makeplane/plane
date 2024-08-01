@@ -25,6 +25,7 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
+  formatToken?: string;
 };
 
 export const DateDropdown: React.FC<Props> = (props) => {
@@ -48,6 +49,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     showTooltip = false,
     tabIndex,
     value,
+    formatToken,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -126,13 +128,15 @@ export const DateDropdown: React.FC<Props> = (props) => {
             className={buttonClassName}
             isActive={isOpen}
             tooltipHeading={placeholder}
-            tooltipContent={value ? renderFormattedDate(value) : "None"}
+            tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
             showTooltip={showTooltip}
             variant={buttonVariant}
           >
             {!hideIcon && icon}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">{value ? renderFormattedDate(value) : placeholder}</span>
+              <span className="flex-grow truncate">
+                {value ? renderFormattedDate(value, formatToken) : placeholder}
+              </span>
             )}
             {isClearable && !disabled && isDateSelected && (
               <X
