@@ -1,6 +1,7 @@
 import { uniqBy } from "lodash";
 import set from "lodash/set";
 import { action, observable, makeObservable, runInAction } from "mobx";
+import { v4 as uuidv4 } from "uuid";
 import { IFavorite } from "@plane/types";
 import { FavoriteService } from "@/services/favorite";
 
@@ -62,16 +63,31 @@ export class FavoriteStore implements IFavoriteStore {
    * @returns Promise<IFavorite>
    */
   addFavorite = async (workspaceSlug: string, data: Partial<IFavorite>) => {
+    const id = uuidv4();
+    data = { ...data, parent: null, is_folder: data.entity_type === "folder" };
+
     try {
-      data = { ...data, parent: null, is_folder: data.entity_type === "folder" };
-      const response = await this.favoriteService.addFavorite(workspaceSlug, data);
+      // optimistic addition
       runInAction(() => {
+        set(this.favoriteMap, [id], data);
+        data.entity_identifier && set(this.entityMap, [data.entity_identifier], data);
+        this.favoriteIds = [id, ...this.favoriteIds];
+      });
+      const response = await this.favoriteService.addFavorite(workspaceSlug, data);
+
+      // overwrite the temp id
+      runInAction(() => {
+        delete this.favoriteMap[id];
         set(this.favoriteMap, [response.id], response);
         response.entity_identifier && set(this.entityMap, [response.entity_identifier], response);
-        this.favoriteIds = [response.id, ...this.favoriteIds];
+        this.favoriteIds = [response.id, ...this.favoriteIds.filter((favId) => favId !== id)];
       });
       return response;
     } catch (error) {
+      delete this.favoriteMap[id];
+      data.entity_identifier && delete this.entityMap[data.entity_identifier];
+      this.favoriteIds = this.favoriteIds.filter((favId) => favId !== id);
+
       console.error("Failed to create favorite from favorite store");
       throw error;
     }

@@ -283,6 +283,7 @@ export class ProjectStore implements IProjectStore {
         entity_type: "project",
         entity_identifier: projectId,
         project_id: projectId,
+        entity_data: { name: this.projectMap[projectId].name || "" },
       });
       return response;
     } catch (error) {

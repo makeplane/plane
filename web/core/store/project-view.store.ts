@@ -362,6 +362,7 @@ export class ProjectViewStore implements IProjectViewStore {
         entity_type: "view",
         entity_identifier: viewId,
         project_id: projectId,
+        entity_data: { name: this.viewMap[viewId].name || "" },
       });
     } catch (error) {
       console.error("Failed to add view to favorites in view store", error);

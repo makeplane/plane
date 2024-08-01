@@ -484,6 +484,7 @@ export class Page implements IPage {
         entity_type: "page",
         entity_identifier: this.id,
         project_id: projectId,
+        entity_data: { name: this.name || "" },
       })
       .catch((error) => {
         runInAction(() => {

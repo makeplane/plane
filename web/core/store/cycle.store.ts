@@ -556,6 +556,7 @@ export class CycleStore implements ICycleStore {
         entity_type: "cycle",
         entity_identifier: cycleId,
         project_id: projectId,
+        entity_data: { name: this.cycleMap[cycleId].name || "" },
       });
       return response;
     } catch (error) {

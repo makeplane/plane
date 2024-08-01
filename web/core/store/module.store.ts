@@ -490,6 +490,7 @@ export class ModulesStore implements IModuleStore {
         entity_type: "module",
         entity_identifier: moduleId,
         project_id: projectId,
+        entity_data: { name: this.moduleMap[moduleId].name || "" },
       });
     } catch (error) {
       console.error("Failed to add module to favorites in module store", error);
