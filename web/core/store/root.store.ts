@@ -22,6 +22,7 @@ import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
 import { IStateStore, StateStore } from "./state.store";
 import { ThemeStore, IThemeStore } from "./theme.store";
+import { TransientStore, ITransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 
@@ -52,9 +53,11 @@ export class CoreRootStore {
   projectEstimate: IProjectEstimateStore;
   multipleSelect: IMultipleSelectStore;
   workspaceNotification: IWorkspaceNotificationStore;
+  transient: ITransientStore;
 
   constructor() {
     this.router = new RouterStore();
+    this.transient = new TransientStore();
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
@@ -85,6 +88,7 @@ export class CoreRootStore {
     localStorage.setItem("theme", "system");
 
     this.router = new RouterStore();
+    this.transient = new TransientStore();
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
