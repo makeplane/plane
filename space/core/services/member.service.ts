@@ -8,7 +8,7 @@ export class MemberService extends APIService {
   }
 
   async getAnchorMembers(anchor: string): Promise<TPublicMember[]> {
-    return this.get(`api/public/anchor/${anchor}/members/`)
+    return this.get(`/api/public/anchor/${anchor}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -25,6 +25,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     Workspace,
+    IssueAttachment,
 )
 
 
@@ -257,3 +258,27 @@ class IssueUserPropertyMutation:
 
         await sync_to_async(issue_properties.save)()
         return issue_properties
+
+
+@strawberry.type
+class IssueAttachmentMutation:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def deleteIssueAttachment(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        issue: strawberry.ID,
+        attachment: strawberry.ID,
+    ) -> bool:
+
+        issue_attachment = await sync_to_async(IssueAttachment.objects.get)(
+            id=attachment,
+            issue_id=issue,
+            project_id=project,
+            workspace__slug=slug,
+        )
+        await sync_to_async(issue_attachment.delete)()
+        return True

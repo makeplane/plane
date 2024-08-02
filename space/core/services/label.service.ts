@@ -8,7 +8,7 @@ export class LabelService extends APIService {
   }
 
   async getLabels(anchor: string): Promise<IIssueLabel[]> {
-    return this.get(`api/public/anchor/${anchor}/labels/`)
+    return this.get(`/api/public/anchor/${anchor}/labels/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

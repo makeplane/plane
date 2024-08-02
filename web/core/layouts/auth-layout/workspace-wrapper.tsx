@@ -12,6 +12,7 @@ import { LogOut } from "lucide-react";
 import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
@@ -33,6 +34,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // store hooks
   const { membership, signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();
+  const { fetchFavorite } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
@@ -76,6 +78,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && currentWorkspace
       ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString())
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetch workspace favorite
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_FAVORITE_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchFavorite(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

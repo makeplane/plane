@@ -39,6 +39,7 @@ class ModuleWriteSerializer(BaseSerializer):
             "created_at",
             "updated_at",
             "archived_at",
+            "deleted_at",
         ]
 
     def to_representation(self, instance):
