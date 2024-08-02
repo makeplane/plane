@@ -131,7 +131,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             onClick={handleOnClick}
           >
             <DropdownButton
-              className={buttonClassName}
+              className={cn("text-xs", buttonClassName)}
               isActive={isOpen}
               tooltipHeading={placeholder}
               tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
@@ -140,7 +140,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate text-xs leading-5">
+                <span className="flex-grow truncate leading-5">
                   {getDisplayName(value, showUserDetails, placeholder)}
                 </span>
               )}
