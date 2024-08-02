@@ -1,6 +1,7 @@
 # Django imports
 from django.db import models
 from django.conf import settings
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.contrib.postgres.fields import ArrayField
 
@@ -54,7 +55,14 @@ class IssueProperty(WorkspaceBaseModel):
 
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["name", "issue_type"]
+        unique_together = ["name", "issue_type", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "issue_type"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_unique_name_project_when_deleted_at_null",
+            )
+        ]
         db_table = "issue_properties"
 
     def save(self, *args, **kwargs):
@@ -95,7 +103,14 @@ class IssuePropertyOption(WorkspaceBaseModel):
 
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["name", "property"]
+        unique_together = ["name", "property", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "property"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_option_unique_name_project_when_deleted_at_null",
+            )
+        ]
         db_table = "issue_property_options"
 
     def save(self, *args, **kwargs):
