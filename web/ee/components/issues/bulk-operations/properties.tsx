@@ -237,7 +237,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
             )}
           />
         )}
-        {!isAdvancedBulkOpsEnabled && (
+        {isAdvancedBulkOpsEnabled && (
           <>
             {projectId && (
               <Controller
