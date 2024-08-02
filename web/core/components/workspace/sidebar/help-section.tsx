@@ -13,8 +13,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useCommandPalette } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-import { PlaneVersionNumber } from "@/plane-web/components/global";
+// plane web components
+import { PlaneChangelogs, PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 
 const HELP_OPTIONS = [
@@ -148,6 +148,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                     </span>
                   </Link>
                 ))}
+                <PlaneChangelogs />
                 {process.env.NEXT_PUBLIC_CRISP_ID && (
                   <button
                     type="button"
