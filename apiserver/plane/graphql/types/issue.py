@@ -47,6 +47,7 @@ class IssueType:
     updated_by: strawberry.ID
     created_at: datetime
     updated_at: datetime
+    sequence_id: int
 
     @strawberry.field
     def state(self) -> int:
@@ -187,3 +188,21 @@ class IssueCommentActivityType:
     @strawberry.field
     def issue(self) -> int:
         return self.issue_id
+
+
+@strawberry_django.type(Issue)
+class IssueLiteType:
+    id: strawberry.ID
+    name: str
+    sequence_id: int
+    workspace: strawberry.ID
+    project: strawberry.ID
+    project__identifier: str
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id
+
+    # @strawberry.field
+    # def project(self) -> int:
+    #     return self.project_id
