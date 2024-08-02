@@ -42,4 +42,5 @@ class IssueType(WorkspaceBaseModel):
             # If there are issue types, set the sort order to the largest + 10000
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
+
         super(IssueType, self).save(*args, **kwargs)

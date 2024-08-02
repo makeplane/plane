@@ -49,9 +49,9 @@ export type TWorklogQueryParams = TWorklogFilterQueryParams & {
 };
 
 // worklog downloads
-type TWorklogDownloadFormat = "csv" | "xlsx";
+export type TWorklogDownloadFormat = "csv" | "xlsx";
 
-type TWorklogDownloadStatus = "queued" | "processing" | "completed" | "failed" | "expired";
+export type TWorklogDownloadStatus = "queued" | "processing" | "completed" | "failed" | "expired";
 
 export type TWorklogDownload = {
   id: string | undefined;

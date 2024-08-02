@@ -50,7 +50,6 @@ from plane.utils.paginator import (
 )
 
 
-
 class IssueArchiveViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
@@ -318,4 +317,3 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-

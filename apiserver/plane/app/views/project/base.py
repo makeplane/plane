@@ -47,6 +47,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
+    IssueType,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity

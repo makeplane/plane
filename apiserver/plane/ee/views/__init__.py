@@ -28,6 +28,8 @@ from plane.ee.views.app.workspace import (
     WorkspaceExportWorkLogsEndpoint,
 )
 
+from plane.ee.views.app.issue_property import IssuePropertyEndpoint
+
 # Space imports
 from plane.ee.views.space.page import (
     PagePublicEndpoint,

@@ -18,7 +18,6 @@ from plane.db.models import (
 
 
 def issue_queryset_grouper(queryset, group_by, sub_group_by):
-
     FIELD_MAPPER = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
@@ -51,7 +50,6 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
 
 
 def issue_on_results(issues, group_by, sub_group_by):
-
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
@@ -84,6 +82,7 @@ def issue_on_results(issues, group_by, sub_group_by):
         "is_draft",
         "archived_at",
         "state__group",
+        "type_id",
     ]
 
     if group_by in FIELD_MAPPER:
