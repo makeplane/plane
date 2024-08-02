@@ -1,8 +1,8 @@
-type TIssueExtraPropertyValuesUpdateProps = {
+type TIssueAdditionalPropertyValuesUpdateProps = {
   issueId: string;
   issueTypeId: string;
   projectId: string;
   workspaceSlug: string;
 };
 
-export const IssueExtraPropertyValuesUpdate: React.FC<TIssueExtraPropertyValuesUpdateProps> = () => <></>;
+export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = () => <></>;

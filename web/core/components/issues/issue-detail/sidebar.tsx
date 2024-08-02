@@ -22,7 +22,7 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
-import { IssueExtraPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
+import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
@@ -291,7 +291,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             />
 
             {issue.type_id && (
-              <IssueExtraPropertyValuesUpdate
+              <IssueAdditionalPropertyValuesUpdate
                 issueId={issueId}
                 issueTypeId={issue.type_id}
                 projectId={projectId}
