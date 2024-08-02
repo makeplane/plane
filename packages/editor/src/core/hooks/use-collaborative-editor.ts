@@ -38,6 +38,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         // using user id as a token to verify the user on the server
         token: user.id,
         url: realtimeConfig.url,
+        onAuthenticationFailed: () => serverHandler?.onServerError?.(),
         onConnect: () => serverHandler?.onConnect?.(),
         onClose: (data) => {
           if (data.event.code === 1006) serverHandler?.onServerError?.();
