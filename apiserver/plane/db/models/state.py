@@ -1,6 +1,7 @@
 # Django imports
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
@@ -36,7 +37,14 @@ class State(ProjectBaseModel):
         return f"{self.name} <{self.project.name}>"
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="state_unique_name_project_when_deleted_at_null",
+            )
+        ]
         verbose_name = "State"
         verbose_name_plural = "States"
         db_table = "states"

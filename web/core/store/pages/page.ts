@@ -72,7 +72,8 @@ export class Page implements IPage {
   disposers: Array<() => void> = [];
   // services
   pageService: ProjectPageService;
-
+  // root store
+  rootStore: CoreRootStore;
   constructor(
     private store: CoreRootStore,
     page: TPage
@@ -149,7 +150,7 @@ export class Page implements IPage {
     });
 
     this.pageService = new ProjectPageService();
-
+    this.rootStore = store;
     const titleDisposer = reaction(
       () => this.name,
       (name) => {
@@ -385,7 +386,7 @@ export class Page implements IPage {
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
     try {
-      await this.pageService.updateAccess (workspaceSlug, projectId, this.id, {
+      await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PRIVATE,
       });
     } catch (error) {
@@ -478,13 +479,19 @@ export class Page implements IPage {
     runInAction(() => {
       this.is_favorite = true;
     });
-
-    await this.pageService.addToFavorites(workspaceSlug, projectId, this.id).catch((error) => {
-      runInAction(() => {
-        this.is_favorite = pageIsFavorite;
+    await this.rootStore.favorite
+      .addFavorite(workspaceSlug.toString(), {
+        entity_type: "page",
+        entity_identifier: this.id,
+        project_id: projectId,
+        entity_data: { name: this.name || "" },
+      })
+      .catch((error) => {
+        runInAction(() => {
+          this.is_favorite = pageIsFavorite;
+        });
+        throw error;
       });
-      throw error;
-    });
   };
 
   /**
@@ -499,7 +506,7 @@ export class Page implements IPage {
       this.is_favorite = false;
     });
 
-    await this.pageService.removeFromFavorites(workspaceSlug, projectId, this.id).catch((error) => {
+    await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, this.id).catch((error) => {
       runInAction(() => {
         this.is_favorite = pageIsFavorite;
       });
