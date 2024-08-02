@@ -840,7 +840,7 @@ class ModuleFavoriteViewSet(BaseViewSet):
             entity_type="module",
             entity_identifier=module_id,
         )
-        module_favorite.delete(soft=False)
+        module_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

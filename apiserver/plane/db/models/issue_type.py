@@ -1,5 +1,6 @@
 # Django imports
 from django.db import models
+from django.db.models import Q
 
 # Module imports
 from .workspace import WorkspaceBaseModel
@@ -15,7 +16,14 @@ class IssueType(WorkspaceBaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ["project", "name"]
+        unique_together = ["project", "name", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_type_unique_name_project_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Type"
         verbose_name_plural = "Issue Types"
         db_table = "issue_types"

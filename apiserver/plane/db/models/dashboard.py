@@ -88,7 +88,14 @@ class DashboardWidget(BaseModel):
         return f"{self.dashboard.name} {self.widget.key}"
 
     class Meta:
-        unique_together = ("widget", "dashboard")
+        unique_together = ("widget", "dashboard", "deleted_at")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["widget", "dashboard"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="dashboard_widget_unique_widget_dashboard_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Dashboard Widget"
         verbose_name_plural = "Dashboard Widgets"
         db_table = "dashboard_widgets"

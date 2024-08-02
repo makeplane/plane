@@ -31,7 +31,14 @@ class UserFavorite(WorkspaceBaseModel):
     )
 
     class Meta:
-        unique_together = ["entity_type", "user", "entity_identifier"]
+        unique_together = ["entity_type", "user", "entity_identifier", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["entity_type", "entity_identifier", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="user_favorite_unique_entity_type_entity_identifier_user_when_deleted_at_null",
+            )
+        ]
         verbose_name = "User Favorite"
         verbose_name_plural = "User Favorites"
         db_table = "user_favorites"

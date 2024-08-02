@@ -347,21 +347,6 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # only the owner and admin can delete the page
-        if (
-            ProjectMember.objects.filter(
-                project_id=project_id,
-                member=request.user,
-                is_active=True,
-                role__gt=20,
-            ).exists()
-            or request.user.id != page.owned_by_id
-        ):
-            return Response(
-                {"error": "Only the owner and admin can delete the page"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         if page.archived_at is None:
             return Response(
                 {"error": "The page should be archived before deleting"},
@@ -401,7 +386,7 @@ class PageFavoriteViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         )
-        page_favorite.delete(soft=False)
+        page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
