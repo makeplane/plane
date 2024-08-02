@@ -10,6 +10,7 @@ import {
   SidebarWorkspaceMenu,
 } from "@/components/workspace";
 // helpers
+import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
@@ -40,7 +41,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
     else sidebarCollapsed && toggleSidebar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
-
 
   return (
     <div
@@ -73,6 +73,12 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
           })}
         />
         <SidebarWorkspaceMenu />
+        <hr
+          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
+            "opacity-0": !sidebarCollapsed,
+          })}
+        />
+        <SidebarFavoritesMenu />
         <hr
           className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
             "opacity-0": !sidebarCollapsed,

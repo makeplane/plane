@@ -279,7 +279,12 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         set(this.projectMap, [projectId, "is_favorite"], true);
       });
-      const response = await this.projectService.addProjectToFavorites(workspaceSlug, projectId);
+      const response = await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
+        entity_type: "project",
+        entity_identifier: projectId,
+        project_id: projectId,
+        entity_data: { name: this.projectMap[projectId].name || "" },
+      });
       return response;
     } catch (error) {
       console.log("Failed to add project to favorite");
@@ -300,10 +305,11 @@ export class ProjectStore implements IProjectStore {
     try {
       const currentProject = this.getProjectById(projectId);
       if (!currentProject.is_favorite) return;
+      const response = await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug.toString(), projectId);
+
       runInAction(() => {
         set(this.projectMap, [projectId, "is_favorite"], false);
       });
-      const response = await this.projectService.removeProjectFromFavorites(workspaceSlug, projectId);
       await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
