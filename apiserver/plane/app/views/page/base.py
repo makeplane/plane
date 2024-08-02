@@ -333,8 +333,14 @@ class PageViewSet(BaseViewSet):
             pk=pk, workspace__slug=slug, projects__id=project_id
         )
 
-        if not page.owned_by_id != request.user.id and not (
-            ProjectMember.objects.filter(
+        if page.archived_at is None:
+            return Response(
+                {"error": "The page should be archived before deleting"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if page.owned_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
                 role=20,
@@ -345,12 +351,6 @@ class PageViewSet(BaseViewSet):
             return Response(
                 {"error": "Only admin or owner can delete the page"},
                 status=status.HTTP_403_FORBIDDEN,
-            )
-
-        if page.archived_at is None:
-            return Response(
-                {"error": "The page should be archived before deleting"},
-                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # remove parent from all the children
