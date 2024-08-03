@@ -1,5 +1,5 @@
+import orderBy from "lodash/orderBy";
 import { IFavorite } from "@plane/types";
-import { orderBy } from "lodash";
 
 export const getDestinationStateSequence = (
   favoriteMap: Record<string, IFavorite>,

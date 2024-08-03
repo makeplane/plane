@@ -109,7 +109,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             const edge = extractClosestEdge(destinationData) || undefined;
             const payload = {
               id: favorite.id,
-              sequence: getDestinationStateSequence(favoriteMap, destinationData.id, edge),
+              sequence: getDestinationStateSequence(favoriteMap, destinationData.id as string, edge),
             };
 
             handleOnDropFolder(payload);
