@@ -38,7 +38,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleDecline}
       isSubmitting={isDeclining}
       isOpen={isOpen}
-      title="Decline Issue"
+      title="Decline issue"
       content={
         <>
           {" "}

@@ -48,7 +48,7 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
         disabled={disableSelect}
         buttonVariant="transparent-with-text"
         className="group w-full"
-        buttonContainerClassName="w-full text-left"
+        buttonContainerClassName="w-full text-left rounded"
         buttonClassName={`text-sm justify-between  ${issue?.cycle_id ? "" : "text-custom-text-400"}`}
         placeholder="No cycle"
         hideIcon

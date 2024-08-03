@@ -70,7 +70,7 @@ export const PagesListHeader = observer(() => {
               });
             }}
           >
-            Add Page
+            Add page
           </Button>
         </div>
       )}

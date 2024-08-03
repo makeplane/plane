@@ -68,7 +68,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete View"
+      title="Delete view"
       content={
         <>
           Are you sure you want to delete view-{" "}
