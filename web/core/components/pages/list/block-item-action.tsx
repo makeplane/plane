@@ -26,7 +26,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
   // derived values
-  const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = page;
+  const { access, created_at, is_favorite, owned_by, addToFavorites, removePageFromFavorites } = page;
 
   // derived values
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
@@ -34,7 +34,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   // handlers
   const handleFavorites = () => {
     if (is_favorite)
-      removeFromFavorites().then(() =>
+      removePageFromFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
