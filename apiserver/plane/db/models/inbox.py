@@ -19,7 +19,14 @@ class Inbox(ProjectBaseModel):
         return f"{self.name} <{self.project.name}>"
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="inbox_unique_name_project_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Inbox"
         verbose_name_plural = "Inboxes"
         db_table = "inboxes"

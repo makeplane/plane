@@ -234,7 +234,14 @@ class ProjectPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "page"]
+        unique_together = ["project", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_page_unique_project_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Page"
         verbose_name_plural = "Project Pages"
         db_table = "project_pages"
@@ -256,7 +263,14 @@ class TeamPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["team", "page"]
+        unique_together = ["team", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_page_unique_team_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team Page"
         verbose_name_plural = "Team Pages"
         db_table = "team_pages"

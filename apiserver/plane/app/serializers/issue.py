@@ -533,6 +533,7 @@ class IssueReactionSerializer(BaseSerializer):
             "project",
             "issue",
             "actor",
+            "deleted_at"
         ]
 
 
@@ -551,7 +552,7 @@ class CommentReactionSerializer(BaseSerializer):
     class Meta:
         model = CommentReaction
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "comment", "actor"]
+        read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at"]
 
 
 class IssueVoteSerializer(BaseSerializer):
