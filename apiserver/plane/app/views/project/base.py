@@ -599,7 +599,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             user=request.user,
             workspace__slug=slug,
         )
-        project_favorite.delete()
+        project_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

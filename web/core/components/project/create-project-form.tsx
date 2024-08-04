@@ -330,12 +330,12 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                 const currentNetwork = NETWORK_CHOICES.find((n) => n.key === value);
 
                 return (
-                  <div className="flex-shrink-0" tabIndex={4}>
+                  <div className="flex-shrink-0 h-7" tabIndex={4}>
                     <CustomSelect
                       value={value}
                       onChange={onChange}
                       label={
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 h-full">
                           {currentNetwork ? (
                             <>
                               <currentNetwork.icon className="h-3 w-3" />
@@ -347,6 +347,8 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                         </div>
                       }
                       placement="bottom-start"
+                      className="h-full"
+                      buttonClassName="h-full"
                       noChevron
                       tabIndex={4}
                     >
@@ -372,7 +374,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
               render={({ field: { value, onChange } }) => {
                 if (value === undefined || value === null || typeof value === "string")
                   return (
-                    <div className="flex-shrink-0" tabIndex={5}>
+                    <div className="flex-shrink-0 h-7" tabIndex={5}>
                       <MemberDropdown
                         value={value}
                         onChange={(lead) => onChange(lead === value ? null : lead)}

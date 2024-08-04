@@ -1155,7 +1155,7 @@ class CycleFavoriteViewSet(BaseViewSet):
             workspace__slug=slug,
             entity_identifier=cycle_id,
         )
-        cycle_favorite.delete()
+        cycle_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

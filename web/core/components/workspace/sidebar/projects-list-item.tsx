@@ -367,22 +367,19 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     customButtonClassName="grid place-items-center"
                     placement="bottom-start"
                   >
-                    {!project.is_favorite && (
-                      <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                        <span className="flex items-center justify-start gap-2">
-                          <Star className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Add to favorites</span>
-                        </span>
-                      </CustomMenu.MenuItem>
-                    )}
-                    {project.is_favorite && (
-                      <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                        <span className="flex items-center justify-start gap-2">
-                          <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
-                          <span>Remove from favorites</span>
-                        </span>
-                      </CustomMenu.MenuItem>
-                    )}
+                    <CustomMenu.MenuItem
+                      onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}
+                    >
+                      <span className="flex items-center justify-start gap-2">
+                        <Star
+                          className={cn("h-3.5 w-3.5 ", {
+                            "fill-yellow-500 stroke-yellow-500": project.is_favorite,
+                          })}
+                        />
+                        <span>{project.is_favorite ? "Remove from favorites" : "Add to favorites"}</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+
                     {/* publish project settings */}
                     {isAdmin && (
                       <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
