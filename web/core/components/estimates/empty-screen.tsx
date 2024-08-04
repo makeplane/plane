@@ -37,7 +37,7 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
         </p>
       </div>
       <div>
-        <Button onClick={onButtonClick}>Add Estimate System</Button>
+        <Button onClick={onButtonClick}>Add estimate system</Button>
       </div>
     </div>
   );
