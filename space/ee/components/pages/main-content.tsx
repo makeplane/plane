@@ -42,7 +42,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
     }
   );
 
-  if (!publishSettings || !pageDetails) return null;
+  if (!publishSettings || !pageDetails || !pageDetails.id) return null;
 
   return (
     <div className="size-full flex justify-center overflow-y-auto vertical-scrollbar scrollbar-md">
@@ -60,6 +60,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
         <div className="ml-5">
           <DocumentReadOnlyEditorWithRef
             ref={editorRef}
+            id={pageDetails.id}
             initialValue={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
             mentionHandler={{

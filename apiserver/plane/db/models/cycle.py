@@ -116,6 +116,7 @@ class CycleIssue(ProjectBaseModel):
         return f"{self.cycle}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class CycleFavorite(ProjectBaseModel):
     """_summary_
     CycleFavorite (model): To store all the cycle favorite of the user
@@ -160,7 +161,14 @@ class CycleUserProperties(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["cycle", "user"]
+        unique_together = ["cycle", "user", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["cycle", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="cycle_user_properties_unique_cycle_user_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Cycle User Property"
         verbose_name_plural = "Cycle User Properties"
         db_table = "cycle_user_properties"

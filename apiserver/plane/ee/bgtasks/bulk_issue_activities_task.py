@@ -1,6 +1,5 @@
 # Python imports
 import json
-
 import requests
 
 # Third Party imports
@@ -22,6 +21,7 @@ from plane.db.models import (
     Label,
     Project,
     User,
+    Cycle,
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
@@ -128,6 +128,67 @@ def track_assignees(
     )
 
 
+def create_cycle_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    if requested_data.get("cycle_id") and current_instance.get("cycle_id"):
+        new_cycle = Cycle.objects.filter(
+            pk=requested_data.get("cycle_id")
+        ).first()
+        old_cycle = Cycle.objects.filter(
+            pk=current_instance.get("cycle_id")
+        ).first()
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_cycle.name,
+                new_value=new_cycle.name,
+                field="cycles",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"updated cycle from {old_cycle.name} to {new_cycle.name}",
+                old_identifier=old_cycle.id,
+                new_identifier=new_cycle.id,
+                epoch=epoch,
+            )
+        )
+
+    if requested_data.get("cycle_id"):
+        cycle = Cycle.objects.filter(pk=requested_data.get("cycle_id")).first()
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="created",
+                old_value="",
+                new_value=cycle.name,
+                field="cycles",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"added cycle {cycle.name}",
+                new_identifier=cycle.id,
+                epoch=epoch,
+            )
+        )
+
+
 def update_issue_activity(
     requested_data,
     current_instance,
@@ -201,6 +262,7 @@ def bulk_issue_activity(
 
         ACTIVITY_MAPPER = {
             "issue.activity.updated": update_issue_activity,
+            "cycle.activity.created": create_cycle_issue_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

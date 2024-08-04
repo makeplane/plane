@@ -65,7 +65,7 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="p-4">
+    <div className="p-4 flex-shrink-0">
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}

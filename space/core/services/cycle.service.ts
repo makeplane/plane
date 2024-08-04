@@ -8,7 +8,7 @@ export class CycleService extends APIService {
   }
 
   async getCycles(anchor: string): Promise<TPublicCycle[]> {
-    return this.get(`api/public/anchor/${anchor}/cycles/`)
+    return this.get(`/api/public/anchor/${anchor}/cycles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

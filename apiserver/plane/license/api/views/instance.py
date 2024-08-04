@@ -179,6 +179,11 @@ class InstanceEndpoint(BaseAPIView):
         data["admin_base_url"] = settings.ADMIN_BASE_URL
         data["space_base_url"] = settings.SPACE_BASE_URL
         data["app_base_url"] = settings.APP_BASE_URL
+        data["payment_server_base_url"] = settings.PAYMENT_SERVER_BASE_URL
+        data["prime_server_base_url"] = settings.PRIME_SERVER_BASE_URL
+        data["feature_flag_server_base_url"] = (
+            settings.FEATURE_FLAG_SERVER_BASE_URL
+        )
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

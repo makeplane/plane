@@ -221,7 +221,6 @@ def notifications(
             else None
         )
         if type not in [
-            "issue.activity.deleted",
             "cycle.activity.created",
             "cycle.activity.deleted",
             "module.activity.created",

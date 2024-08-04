@@ -1,6 +1,7 @@
 # Django imports
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
@@ -96,7 +97,14 @@ class Module(ProjectBaseModel):
     logo_props = models.JSONField(default=dict)
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'project'],
+                condition=Q(deleted_at__isnull=True),
+                name='module_unique_name_project_when_deleted_at_null'
+            )
+        ]
         verbose_name = "Module"
         verbose_name_plural = "Modules"
         db_table = "modules"
@@ -122,7 +130,14 @@ class ModuleMember(ProjectBaseModel):
     member = models.ForeignKey("db.User", on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ["module", "member"]
+        unique_together = ["module", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["module", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="module_member_unique_module_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Module Member"
         verbose_name_plural = "Module Members"
         db_table = "module_members"
@@ -141,7 +156,14 @@ class ModuleIssue(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "module"]
+        unique_together = ["issue", "module", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "module"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="module_issue_unique_issue_module_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Module Issue"
         verbose_name_plural = "Module Issues"
         db_table = "module_issues"
@@ -169,6 +191,7 @@ class ModuleLink(ProjectBaseModel):
         return f"{self.module.name} {self.url}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class ModuleFavorite(ProjectBaseModel):
     """_summary_
     ModuleFavorite (model): To store all the module favorite of the user
@@ -213,7 +236,14 @@ class ModuleUserProperties(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["module", "user"]
+        unique_together = ["module", "user", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["module", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="module_user_properties_unique_module_user_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Module User Property"
         verbose_name_plural = "Module User Property"
         db_table = "module_user_properties"

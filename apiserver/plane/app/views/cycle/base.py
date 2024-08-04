@@ -48,6 +48,7 @@ from plane.db.models import (
     Label,
     User,
     Project,
+    ProjectMember,
 )
 from plane.utils.analytics_plot import burndown_plot
 
@@ -385,7 +386,7 @@ class CycleViewSet(BaseViewSet):
                 data[0]["estimate_distribution"] = {}
                 if estimate_type:
                     assignee_distribution = (
-                        Issue.objects.filter(
+                        Issue.issue_objects.filter(
                             issue_cycle__cycle_id=data[0]["id"],
                             workspace__slug=slug,
                             project_id=project_id,
@@ -423,7 +424,7 @@ class CycleViewSet(BaseViewSet):
                     )
 
                     label_distribution = (
-                        Issue.objects.filter(
+                        Issue.issue_objects.filter(
                             issue_cycle__cycle_id=data[0]["id"],
                             workspace__slug=slug,
                             project_id=project_id,
@@ -477,7 +478,7 @@ class CycleViewSet(BaseViewSet):
                         )
 
                 assignee_distribution = (
-                    Issue.objects.filter(
+                    Issue.issue_objects.filter(
                         issue_cycle__cycle_id=data[0]["id"],
                         workspace__slug=slug,
                         project_id=project_id,
@@ -519,7 +520,7 @@ class CycleViewSet(BaseViewSet):
                 )
 
                 label_distribution = (
-                    Issue.objects.filter(
+                    Issue.issue_objects.filter(
                         issue_cycle__cycle_id=data[0]["id"],
                         workspace__slug=slug,
                         project_id=project_id,
@@ -834,7 +835,7 @@ class CycleViewSet(BaseViewSet):
         data["estimate_distribution"] = {}
         if estimate_type:
             assignee_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -872,7 +873,7 @@ class CycleViewSet(BaseViewSet):
             )
 
             label_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
@@ -927,7 +928,7 @@ class CycleViewSet(BaseViewSet):
 
         # Assignee Distribution
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -978,7 +979,7 @@ class CycleViewSet(BaseViewSet):
 
         # Label Distribution
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -1040,13 +1041,27 @@ class CycleViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, pk):
+        cycle = Cycle.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        if cycle.owned_by_id != request.user.id and not (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or owner can delete the cycle"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         cycle_issues = list(
             CycleIssue.objects.filter(
                 cycle_id=self.kwargs.get("pk")
             ).values_list("issue", flat=True)
-        )
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
         )
 
         issue_activity.delay(
@@ -1068,6 +1083,10 @@ class CycleViewSet(BaseViewSet):
         )
         # Delete the cycle
         cycle.delete()
+        # Delete the cycle issues
+        CycleIssue.objects.filter(
+            cycle_id=self.kwargs.get("pk"),
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -1136,7 +1155,7 @@ class CycleFavoriteViewSet(BaseViewSet):
             workspace__slug=slug,
             entity_identifier=cycle_id,
         )
-        cycle_favorite.delete()
+        cycle_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -13,14 +13,17 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Django Imports
-from django.db.models import Q
+from django.db.models import Q, Value, UUIDField, CharField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 
 # Module Imports
 from plane.graphql.types.search import ProjectSearchType
-from plane.db.models import (
-    Issue,
-    Project,
-)
+from plane.db.models import Issue, Project, Page
+from plane.graphql.types.project import ProjectLiteType
+from plane.graphql.types.issue import IssueLiteType
+from plane.graphql.types.page import PageLiteType
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 
 
@@ -28,32 +31,34 @@ async def filter_projects(
     query: str,
     slug: str,
     user,
-) -> list[ProjectSearchType]:
+) -> list[ProjectLiteType]:
     fields = ["name", "identifier"]
     q = Q()
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
     projects = await sync_to_async(
-        Project.objects.filter(
-            q,
-            project_projectmember__member=user,
-            project_projectmember__is_active=True,
-            archived_at__isnull=True,
-            workspace__slug=slug,
+        lambda: list(
+            Project.objects.filter(
+                q,
+                project_projectmember__member=user,
+                project_projectmember__is_active=True,
+                archived_at__isnull=True,
+                workspace__slug=slug,
+            )
+            .distinct()
+            .values("id", "name", "identifier")
         )
-        .distinct()
-        .values("name", "id", "identifier", "workspace__slug")
     )()
 
-    return projects
+    return [ProjectLiteType(**project) for project in projects]
 
 
 async def filter_issues(
     query: str,
     slug: str,
     user,
-) -> list[ProjectSearchType]:
+) -> list[IssueLiteType]:
     fields = ["name", "sequence_id", "project__identifier"]
     q = Q()
     for field in fields:
@@ -66,25 +71,73 @@ async def filter_issues(
             q |= Q(**{f"{field}__icontains": query})
 
     issues = await sync_to_async(
-        Issue.issue_objects.filter(
-            q,
-            project__project_projectmember__member=user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            workspace__slug=slug,
+        lambda: list(
+            Issue.issue_objects.filter(
+                q,
+                project__project_projectmember__member=user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+                workspace__slug=slug,
+            )
+            .distinct()
+            .values(
+                "name",
+                "id",
+                "sequence_id",
+                "project__identifier",
+                "project",
+            )
         )
+    )()
+    return [IssueLiteType(**issue) for issue in issues]
+
+
+async def filter_pages(query: str, slug: str, user) -> list[PageLiteType]:
+    fields = ["name"]
+    q = Q()
+    for field in fields:
+        q |= Q(**{f"{field}__icontains": query})
+
+    pages = await sync_to_async(
+        lambda: list(
+            Page.objects.filter(
+                q,
+                projects__project_projectmember__member=user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
+                workspace__slug=slug,
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .annotate(
+                project_identifiers=Coalesce(
+                    ArrayAgg(
+                        "projects__identifier",
+                        distinct=True,
+                        filter=~Q(projects__id=True),
+                    ),
+                    Value([], output_field=ArrayField(CharField())),
+                ),
+            )
         .distinct()
         .values(
             "name",
             "id",
-            "sequence_id",
-            "project__identifier",
-            "project_id",
-            "workspace__slug",
+            "project_ids",
+            # "project_identifiers",
+            # "workspace__slug",
         )
-    )
-
-    return issues
+        )
+    )()
+    return [PageLiteType(**page) for page in pages]
 
 
 @strawberry.type
@@ -95,31 +148,20 @@ class ProjectSearchQuery:
             PermissionExtension(permissions=[WorkspaceBasePermission()])
         ]
     )
-    async def projectSearch(
+    async def globalSearch(
         self,
         info: Info,
         slug: str,
         query: Optional[str] = None,
-    ) -> list[ProjectSearchType]:
+    ) -> ProjectSearchType:
 
         user = info.context.user
         if not query:
-            return {
-                "results": {
-                    "project": [],
-                    "issue": [],
-                }
-            }
+            return ProjectSearchType(projects=[], issues=[])
 
-        MODELS_MAPPER = {
-            "project": filter_projects,
-            "issue": filter_issues,
-        }
+        projects = await filter_projects(query, slug, user)
+        issues = await filter_issues(query, slug, user)
+        pages = await filter_pages(query, slug, user)
 
-        results = []
-
-        for model, func in MODELS_MAPPER.items():
-            async_func = sync_to_async(func)
-            results.extend(await async_func(query, slug, user))
-
-        return results
+        # Return the ProjectSearchType with the list of ProjectLiteType objects
+        return ProjectSearchType(projects=projects, issues=issues, pages=pages)

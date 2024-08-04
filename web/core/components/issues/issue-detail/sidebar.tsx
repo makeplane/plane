@@ -222,7 +222,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Module</span>
+                  <span>Modules</span>
                 </div>
                 <IssueModuleSelect
                   className="w-3/5 flex-grow"

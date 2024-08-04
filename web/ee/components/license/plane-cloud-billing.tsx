@@ -23,6 +23,9 @@ export const PlaneCloudBilling: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // hooks
   const { currentWorkspaceSubscribedPlanDetail, toggleProPlanModal } = useWorkspaceSubscription();
+  // derived values
+  const endDate = currentWorkspaceSubscribedPlanDetail?.current_period_end_date;
+  const isSubscriptionCancelled = currentWorkspaceSubscribedPlanDetail?.is_canceled;
 
   const handleSubscriptionPageRedirection = () => {
     setIsLoading(true);
@@ -99,9 +102,15 @@ export const PlaneCloudBilling: React.FC = observer(() => {
               <div className="flex items-center gap-2">
                 <Image src={PlaneLogo} alt="Plane pro" width={24} height={24} />
                 <h4 className="text-2xl mb-1 leading-6 font-bold">Plane Pro</h4>
-                <div className="text-center text-sm text-custom-text-200 font-medium">
-                  (Renew on: {renderFormattedDate(currentWorkspaceSubscribedPlanDetail.current_period_end_date)})
-                </div>
+                {isSubscriptionCancelled ? (
+                  <div className="text-center text-sm text-red-500 font-medium">
+                    (Expires on: {renderFormattedDate(endDate)})
+                  </div>
+                ) : (
+                    <div className="text-center text-sm text-custom-text-200 font-medium">
+                      (Renew on: {renderFormattedDate(endDate)})
+                    </div>
+                )}
               </div>
               <div>
                 <Button

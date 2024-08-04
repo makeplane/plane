@@ -17,6 +17,7 @@ export const EnterKeyExtension = (onEnterKeyPress?: (descriptionHTML: string) =>
           editor.commands.first(({ commands }) => [
             () => commands.newlineInCode(),
             () => commands.splitListItem("listItem"),
+            () => commands.splitListItem("taskItem"),
             () => commands.createParagraphNear(),
             () => commands.liftEmptyBlock(),
             () => commands.splitBlock(),

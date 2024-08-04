@@ -411,6 +411,19 @@ class IssueAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if issue.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )

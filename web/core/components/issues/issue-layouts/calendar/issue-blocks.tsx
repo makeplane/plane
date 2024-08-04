@@ -91,7 +91,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         <div className="flex items-center px-2.5 py-1">
           <button
             type="button"
-            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 font-medium  hover:bg-custom-background-80 text-custom-primary-100 hover:text-custom-primary-200"
             onClick={() => loadMoreIssues(formattedDatePayload)}
           >
             Load More

@@ -284,7 +284,7 @@ class ModuleIssueViewSet(BaseViewSet):
             ]
 
         for module_id in removed_modules:
-            module_issue = ModuleIssue.objects.get(
+            module_issue = ModuleIssue.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 module_id=module_id,
@@ -297,7 +297,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=json.dumps(
-                    {"module_name": module_issue.module.name}
+                    {"module_name": module_issue.first().module.name}
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
@@ -308,7 +308,7 @@ class ModuleIssueViewSet(BaseViewSet):
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, slug, project_id, module_id, issue_id):
-        module_issue = ModuleIssue.objects.get(
+        module_issue = ModuleIssue.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             module_id=module_id,
@@ -321,7 +321,7 @@ class ModuleIssueViewSet(BaseViewSet):
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=json.dumps(
-                {"module_name": module_issue.module.name}
+                {"module_name": module_issue.first().module.name}
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
