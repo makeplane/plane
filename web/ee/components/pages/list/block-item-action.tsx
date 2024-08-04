@@ -26,15 +26,13 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
   const page = useWorkspacePageDetails(pageId);
   const { getUserDetails } = useMember();
   // derived values
-  const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = page;
-
-  // derived values
+  const { access, created_at, is_favorite, owned_by, addToFavorites, removePageFromFavorites } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers
   const handleFavorites = () => {
     if (is_favorite)
-      removeFromFavorites().then(() =>
+      removePageFromFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
