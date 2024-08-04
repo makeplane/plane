@@ -41,7 +41,7 @@ export interface IPage extends TPage {
   restore: () => Promise<void>;
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
-  removeFromFavorites: () => Promise<void>;
+  removePageFromFavorites: () => Promise<void>;
 }
 
 export class Page implements IPage {
@@ -146,7 +146,7 @@ export class Page implements IPage {
       restore: action,
       updatePageLogo: action,
       addToFavorites: action,
-      removeFromFavorites: action,
+      removePageFromFavorites: action,
     });
 
     this.pageService = new ProjectPageService();
@@ -497,7 +497,7 @@ export class Page implements IPage {
   /**
    * @description remove the page from favorites
    */
-  removeFromFavorites = async () => {
+  removePageFromFavorites = async () => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 

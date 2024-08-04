@@ -474,5 +474,5 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             entity_type="view",
             entity_identifier=view_id,
         )
-        view_favorite.delete()
+        view_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
