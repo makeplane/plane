@@ -551,6 +551,7 @@ export class CycleStore implements ICycleStore {
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
+        this.rootStore.favorite.removeFavoriteFromStore(cycleId);
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
       });

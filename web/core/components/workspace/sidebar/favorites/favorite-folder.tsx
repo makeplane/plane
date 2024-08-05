@@ -93,12 +93,12 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
     const element = elementRef.current;
 
     if (!element) return;
-    const initialData = { type: "PARENT", id: favorite.id };
+    const initialData = { type: "PARENT", id: favorite.id, is_folder: favorite.is_folder };
 
     return combine(
       draggable({
         element,
-        // getInitialData: () => initialData,
+        getInitialData: () => initialData,
         onDragStart: () => setIsDragging(true),
         onDrop: (data) => {
           setIsDraggedOver(false);
@@ -109,7 +109,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             const edge = extractClosestEdge(destinationData) || undefined;
             const payload = {
               id: favorite.id,
-              sequence: getDestinationStateSequence(favoriteMap, destinationData.id as string, edge),
+              sequence: Math.round(getDestinationStateSequence(favoriteMap, destinationData.id as string, edge) || 0),
             };
 
             handleOnDropFolder(payload);
@@ -127,7 +127,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
         onDragEnter: (args) => {
           setIsDragging(true);
           setIsDraggedOver(true);
-          setClosestEdge(extractClosestEdge(args.self.data));
+          args.source.data.is_folder && setClosestEdge(extractClosestEdge(args.self.data));
         },
         onDragLeave: () => {
           setIsDragging(false);
@@ -142,7 +142,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           setIsDraggedOver(false);
           const sourceId = source?.data?.id as string | undefined;
           const destinationId = self?.data?.id as string | undefined;
-
+          if (source.data.is_folder) return;
           if (sourceId === destinationId) return;
           if (!sourceId || !destinationId) return;
           if (favoriteMap[sourceId].parent === destinationId) return;

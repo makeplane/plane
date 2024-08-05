@@ -139,7 +139,7 @@ export const FavoriteItem = observer(
             {getIcon()}
 
             {!sidebarCollapsed && (
-              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1">
+              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1 truncate">
                 {favorite.entity_data ? favorite.entity_data.name : favorite.name}
               </Link>
             )}
