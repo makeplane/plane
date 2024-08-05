@@ -360,9 +360,8 @@ class PageViewSet(BaseViewSet):
 
         page.delete()
         # Delete the user favorite page
-        UserFavorite.objects.get(
+        UserFavorite.objects.filter(
             project=project_id,
-            user=request.user,
             workspace__slug=slug,
             entity_identifier=pk,
             entity_type="page",

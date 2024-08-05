@@ -358,8 +358,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     def delete(self, request, slug, pk):
         project = Project.objects.get(pk=pk, workspace__slug=slug)
         # Delete the user favorite cycle
-        UserFavorite.objects.get(
-            user=request.user,
+        UserFavorite.objects.filter(
             entity_type="project",
             entity_identifier=pk,
             project_id=pk,

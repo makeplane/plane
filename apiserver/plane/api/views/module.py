@@ -308,8 +308,7 @@ class ModuleAPIEndpoint(BaseAPIView):
             project_id=project_id,
         ).delete()
         # Delete the user favorite module
-        UserFavorite.objects.get(
-            user=request.user,
+        UserFavorite.objects.filter(
             entity_type="module",
             entity_identifier=pk,
             project_id=project_id,

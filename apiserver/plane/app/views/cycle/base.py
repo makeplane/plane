@@ -1087,7 +1087,7 @@ class CycleViewSet(BaseViewSet):
             cycle_id=self.kwargs.get("pk"),
         ).delete()
         # Delete the user favorite cycle
-        UserFavorite.objects.get(
+        UserFavorite.objects.filter(
             user=request.user,
             entity_type="cycle",
             entity_identifier=pk,

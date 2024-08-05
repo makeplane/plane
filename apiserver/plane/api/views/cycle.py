@@ -410,8 +410,7 @@ class CycleAPIEndpoint(BaseAPIView):
             cycle_id=self.kwargs.get("pk"),
         ).delete()
         # Delete the user favorite cycle
-        UserFavorite.objects.get(
-            user=request.user,
+        UserFavorite.objects.filter(
             entity_type="cycle",
             entity_identifier=pk,
             project_id=project_id,

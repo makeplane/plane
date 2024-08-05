@@ -142,8 +142,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         ):
             workspace_view.delete()
             # Delete the user favorite view
-            UserFavorite.objects.get(
-                user=request.user,
+            UserFavorite.objects.filter(
                 workspace__slug=slug,
                 entity_identifier=pk,
                 project__isnull=True,
@@ -447,7 +446,6 @@ class IssueViewViewSet(BaseViewSet):
             project_view.delete()
             # Delete the user favorite view
             UserFavorite.objects.filter(
-                user=request.user,
                 project_id=project_id,
                 workspace__slug=slug,
                 entity_identifier=pk,

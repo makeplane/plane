@@ -785,7 +785,7 @@ class ModuleViewSet(BaseViewSet):
             project_id=project_id,
         ).delete()
         # Delete the user favorite module
-        UserFavorite.objects.get(
+        UserFavorite.objects.filter(
             user=request.user,
             entity_type="module",
             entity_identifier=pk,
