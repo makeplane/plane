@@ -184,9 +184,15 @@ export const SidebarFavoritesMenu = observer(() => {
                         favorite={fav}
                         isLastChild={index === favoriteIds.length - 1}
                         handleRemoveFromFavorites={handleRemoveFromFavorites}
+                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
                       />
                     ) : (
-                      <FavoriteItem favorite={fav} handleRemoveFromFavorites={handleRemoveFromFavorites} />
+                      <FavoriteItem
+                        favorite={fav}
+                        handleRemoveFromFavorites={handleRemoveFromFavorites}
+                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                        favoriteMap={favoriteMap}
+                      />
                     )}
                   </Tooltip>
                 ))}
