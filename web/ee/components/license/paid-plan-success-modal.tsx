@@ -8,8 +8,8 @@ import { cn } from "@/helpers/common.helper";
 // plane web constants
 import { PRO_PLAN_FEATURES } from "@/plane-web/constants/license";
 // assets
+import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 import PlaneOneLogo from "@/public/plane-logos/plane-one-silver.svg";
-import PlaneProLogo from "@/public/plane-logos/plane-pro-without-text.svg";
 
 export type PaidPlanSuccessModalProps = {
   variant: "PRO" | "ONE";
@@ -24,7 +24,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = (props) => {
       <div className="py-10 px-10 ">
         <div className="flex items-center justify-center">
           {variant === "PRO" ? (
-            <Image src={PlaneProLogo} alt="Plane Pro Logo" width={44} />
+            <Image src={PlaneLogo} alt="Plane Logo" width={44} />
           ) : (
             <Image src={PlaneOneLogo} alt="Plane One Logo" width={44} />
           )}
