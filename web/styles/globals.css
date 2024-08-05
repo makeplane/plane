@@ -636,6 +636,15 @@ div.web-view-spinner div.bar12 {
   margin-top: 44px;
 }
 
+/* scrollbar xs size */
+.scrollbar-xs::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.scrollbar-xs::-webkit-scrollbar-thumb {
+  border: 3px solid rgba(0, 0, 0, 0);
+}
+
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {
   height: 12px;
