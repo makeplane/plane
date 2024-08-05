@@ -336,7 +336,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       else this.loader = "mutation-loading";
       if (loadingType) this.loader = loadingType;
 
-      const status = this.inboxFilters.status && uniq([...this.inboxFilters.status, EInboxIssueStatus.SNOOZED]);
+      const status = this.inboxFilters?.status && uniq([...this.inboxFilters.status, EInboxIssueStatus.SNOOZED]);
       const queryParams = this.inboxIssueQueryParams(
         { ...this.inboxFilters, status },
         this.inboxSorting,

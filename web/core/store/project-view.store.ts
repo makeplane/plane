@@ -271,6 +271,7 @@ export class ProjectViewStore implements IProjectViewStore {
     await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
       runInAction(() => {
         delete this.viewMap[viewId];
+        this.rootStore.favorite.removeFavoriteFromStore(viewId);
       });
     });
   };
@@ -358,8 +359,11 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });
-      await this.viewService.addViewToFavorites(workspaceSlug, projectId, {
-        view: viewId,
+      await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
+        entity_type: "view",
+        entity_identifier: viewId,
+        project_id: projectId,
+        entity_data: { name: this.viewMap[viewId].name || "" },
       });
     } catch (error) {
       console.error("Failed to add view to favorites in view store", error);
@@ -383,7 +387,7 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], false);
       });
-      await this.viewService.removeViewFromFavorites(workspaceSlug, projectId, viewId);
+      await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, viewId);
     } catch (error) {
       console.error("Failed to remove view from favorites in view store", error);
       runInAction(() => {

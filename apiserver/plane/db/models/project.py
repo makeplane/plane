@@ -214,7 +214,14 @@ class ProjectMember(ProjectBaseModel):
         super(ProjectMember, self).save(*args, **kwargs)
 
     class Meta:
-        unique_together = ["project", "member"]
+        unique_together = ["project", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "member"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_member_unique_project_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Member"
         verbose_name_plural = "Project Members"
         db_table = "project_members"
@@ -324,7 +331,14 @@ class ProjectPublicMember(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "member"]
+        unique_together = ["project", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_public_member_unique_project_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Public Member"
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"
