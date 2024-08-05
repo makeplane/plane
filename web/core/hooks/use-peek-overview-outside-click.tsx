@@ -33,7 +33,7 @@ const usePeekOverviewOutsideClickDetector = (
           // if the click target is any of the elements with attribute name data-delay-outside-click, delay the callback
           setTimeout(() => {
             callback();
-          }, 200);
+          }, 1);
           return;
         }
       }
