@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "file": "sw.js",
+  "sources": [
+    "../../../../../private/tmp/50f50ba014f4feaeaa3ddc8366af217e/sw.js"
+  ],
+  "sourcesContent": [
+    "import {registerRoute as workbox_routing_registerRoute} from '/Users/aaryan610/Desktop/plane/node_modules/workbox-routing/registerRoute.mjs';\nimport {NetworkFirst as workbox_strategies_NetworkFirst} from '/Users/aaryan610/Desktop/plane/node_modules/workbox-strategies/NetworkFirst.mjs';\nimport {NetworkOnly as workbox_strategies_NetworkOnly} from '/Users/aaryan610/Desktop/plane/node_modules/workbox-strategies/NetworkOnly.mjs';\nimport {clientsClaim as workbox_core_clientsClaim} from '/Users/aaryan610/Desktop/plane/node_modules/workbox-core/clientsClaim.mjs';/**\n * Welcome to your Workbox-powered service worker!\n *\n * You'll need to register this file in your web app.\n * See https://goo.gl/nhQhGp\n *\n * The rest of the code is auto-generated. Please don't update this file\n * directly; instead, make changes to your Workbox build configuration\n * and re-run your build process.\n * See https://goo.gl/2aRDsh\n */\n\n\nimportScripts(\n  \n);\n\n\n\n\n\n\n\nself.skipWaiting();\n\nworkbox_core_clientsClaim();\n\n\n\nworkbox_routing_registerRoute(\"/\", new workbox_strategies_NetworkFirst({ \"cacheName\":\"start-url\", plugins: [{ cacheWillUpdate: async ({ request, response, event, state }) => { if (response && response.type === 'opaqueredirect') { return new Response(response.body, { status: 200, statusText: 'OK', headers: response.headers }) } return response } }] }), 'GET');\nworkbox_routing_registerRoute(/.*/i, new workbox_strategies_NetworkOnly({ \"cacheName\":\"dev\", plugins: [] }), 'GET');\n\n\n\n\n"
+  ],
+  "names": [
+    "importScripts",
+    "self",
+    "skipWaiting",
+    "workbox_core_clientsClaim",
+    "workbox_routing_registerRoute",
+    "workbox_strategies_NetworkFirst",
+    "plugins",
+    "cacheWillUpdate",
+    "request",
+    "response",
+    "event",
+    "state",
+    "type",
+    "Response",
+    "body",
+    "status",
+    "statusText",
+    "headers",
+    "workbox_strategies_NetworkOnly"
+  ],
+  "mappings": "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"
+}

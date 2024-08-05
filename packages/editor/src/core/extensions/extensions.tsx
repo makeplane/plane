@@ -73,8 +73,7 @@ export const CoreEditorExtensions = ({
     horizontalRule: false,
     blockquote: false,
     dropcursor: {
-      color: "rgba(var(--color-text-100))",
-      width: 1,
+      class: "text-custom-text-300",
     },
     ...(enableHistory ? {} : { history: false }),
   }),

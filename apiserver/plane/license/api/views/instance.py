@@ -70,6 +70,8 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
             OPENAI_API_KEY,
+            IS_INTERCOM_ENABLED,
+            INTERCOM_APP_ID,
         ) = get_configuration_value(
             [
                 {
@@ -136,6 +138,15 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "OPENAI_API_KEY",
                     "default": os.environ.get("OPENAI_API_KEY", ""),
                 },
+                # Intercom settings
+                {
+                    "key": "IS_INTERCOM_ENABLED",
+                    "default": os.environ.get("IS_INTERCOM_ENABLED", "1"),
+                },
+                {
+                    "key": "INTERCOM_APP_ID",
+                    "default": os.environ.get("INTERCOM_APP_ID", ""),
+                },
             ]
         )
 
@@ -174,6 +185,10 @@ class InstanceEndpoint(BaseAPIView):
 
         # is smtp configured
         data["is_smtp_configured"] = bool(EMAIL_HOST)
+
+        # Intercom settings
+        data["is_intercom_enabled"] = IS_INTERCOM_ENABLED == "1"
+        data["intercom_app_id"] = INTERCOM_APP_ID
 
         # Base URL
         data["admin_base_url"] = settings.ADMIN_BASE_URL
