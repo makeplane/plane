@@ -28,6 +28,7 @@ from plane.db.models import (
     ModuleLink,
     Project,
     ProjectMember,
+    UserFavorite,
 )
 
 from .base import BaseAPIView
@@ -304,6 +305,13 @@ class ModuleAPIEndpoint(BaseAPIView):
         # Delete the module issues
         ModuleIssue.objects.filter(
             module=pk,
+            project_id=project_id,
+        ).delete()
+        # Delete the user favorite module
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

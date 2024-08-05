@@ -26,6 +26,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
+    UserFavorite,
 )
 from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
@@ -356,6 +357,12 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, pk):
         project = Project.objects.get(pk=pk, workspace__slug=slug)
+        # Delete the user favorite cycle
+        UserFavorite.objects.filter(
+            entity_type="project",
+            entity_identifier=pk,
+            project_id=pk,
+        ).delete()
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
