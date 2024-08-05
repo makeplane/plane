@@ -4,7 +4,7 @@ import React, { FC, useEffect } from "react";
 import Intercom from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";
 // store hooks
-import { useUser, useTransientSettings } from "@/hooks/store";
+import { useUser, useInstance } from "@/hooks/store";
 
 export type IntercomProviderProps = {
   children: React.ReactNode;
@@ -12,19 +12,20 @@ export type IntercomProviderProps = {
 
 const IntercomProvider: FC<IntercomProviderProps> = observer((props) => {
   const { children } = props;
+  // hooks
   const { data: user } = useUser();
-  const { chatWindowEnabled } = useTransientSettings();
+  const { config } = useInstance();
 
   useEffect(() => {
-    if (user && chatWindowEnabled) {
+    if (user && config?.is_intercom_enabled && config.intercom_app_id) {
       Intercom({
-        app_id: process.env.NEXT_PUBLIC_INTERCOM_APP_ID || "",
+        app_id: config.intercom_app_id || "",
         user_id: user.id,
         name: `${user.first_name} ${user.last_name}`,
         email: user.email,
       });
     }
-  }, [user, chatWindowEnabled]);
+  }, [user, config]);
 
   return <>{children}</>;
 });

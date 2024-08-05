@@ -149,7 +149,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                     </span>
                   </Link>
                 ))}
-                {config?.intercom_app_id && config?.intercom_enabled && (
+                {config?.intercom_app_id && config?.is_intercom_enabled && (
                   <button
                     type="button"
                     onClick={handleCrispWindowShow}
