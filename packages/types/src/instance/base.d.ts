@@ -92,12 +92,9 @@ export type TInstanceConfigurationKeys =
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
-<<<<<<< HEAD
-  | TInstanceIntercomConfigurationKeys;
-=======
+  | TInstanceIntercomConfigurationKeys
   // enterprise
   | TInstanceEnterpriseAuthenticationKeys;
->>>>>>> 9ef8ffa78681bf69e8068584fbad52f5043f7756
 
 export interface IInstanceConfiguration {
   id: string;
