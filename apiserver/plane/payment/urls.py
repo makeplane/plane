@@ -48,8 +48,8 @@ urlpatterns = [
         name="subscription",
     ),
     path(
-        "workspaces/<str:slug>/feature-flags/",
+        "workspaces/<str:slug>/flags/",
         FeatureFlagProxyEndpoint.as_view(),
-        name="feature-flags",
+        name="flags",
     ),
 ]

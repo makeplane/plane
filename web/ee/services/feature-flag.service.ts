@@ -14,7 +14,7 @@ export class FeatureFlagService extends APIService {
   }
 
   async getFeatureFlags(workspaceSlug: string): Promise<TFeatureFlagsResponse> {
-    return this.get(`/api/payments/workspaces/${workspaceSlug}/feature-flags/`)
+    return this.get(`/api/payments/workspaces/${workspaceSlug}/flags/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
