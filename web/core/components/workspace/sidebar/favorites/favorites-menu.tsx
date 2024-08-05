@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { orderBy } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
@@ -21,14 +24,16 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteItem } from "./favorite-item";
 import { NewFavoriteFolder } from "./new-fav-folder";
+
 export const SidebarFavoritesMenu = observer(() => {
   //state
   const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
+
+  const [isDragging, setIsDragging] = useState(false);
 
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { favoriteIds, favoriteMap, deleteFavorite } = useFavorite();
+  const { favoriteIds, favoriteMap, deleteFavorite, removeFromFavoriteFolder } = useFavorite();
   const { workspaceSlug } = useParams();
 
   const { isMobile } = usePlatformOS();
@@ -39,6 +44,7 @@ export const SidebarFavoritesMenu = observer(() => {
   const isFavoriteMenuOpen = !!storedValue;
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const elementRef = useRef(null);
 
   const handleRemoveFromFavorites = (favorite: IFavorite) => {
     deleteFavorite(workspaceSlug.toString(), favorite.id)
@@ -57,43 +63,72 @@ export const SidebarFavoritesMenu = observer(() => {
         });
       });
   };
+  const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
+    removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId, {
+      id: favoriteId,
+      parent: null,
+    })
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Favorite moved successfully.",
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to move favorite.",
+        });
+      });
+  };
   useEffect(() => {
     if (sidebarCollapsed) toggleFavoriteMenu(true);
   }, [sidebarCollapsed, toggleFavoriteMenu]);
 
-  /**
-   * Implementing scroll animation styles based on the scroll length of the container
-   */
   useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const scrollTop = containerRef.current.scrollTop;
-        setIsScrolled(scrollTop > 0);
-      }
-    };
-    const currentContainerRef = containerRef.current;
-    if (currentContainerRef) {
-      currentContainerRef.addEventListener("scroll", handleScroll);
-    }
-    return () => {
-      if (currentContainerRef) {
-        currentContainerRef.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [containerRef]);
+    const element = elementRef.current;
+
+    if (!element) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        onDragEnter: () => {
+          setIsDragging(true);
+        },
+        onDragLeave: () => {
+          setIsDragging(false);
+        },
+        onDragStart: () => {
+          setIsDragging(true);
+        },
+        onDrop: ({ source }) => {
+          setIsDragging(false);
+          const sourceId = source?.data?.id as string | undefined;
+          console.log({ sourceId });
+          if (!sourceId || !favoriteMap[sourceId].parent) return;
+          handleRemoveFromFavoritesFolder(sourceId);
+        },
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elementRef.current, isDragging]);
+
   return (
-    <div
-      ref={containerRef}
-      className={cn("-mr-3 -ml-4 pl-4", {
-        "border-t border-custom-sidebar-border-300": isScrolled,
-        "vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm": isFavoriteMenuOpen,
-      })}
-    >
-      <Disclosure as="div" defaultOpen>
+    <>
+      <Disclosure as="div" defaultOpen ref={containerRef}>
         {!sidebarCollapsed && (
           <Disclosure.Button
+            ref={elementRef}
             as="button"
-            className="group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+            className={cn(
+              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold",
+              {
+                "bg-custom-sidebar-background-80 opacity-60": isDragging,
+              }
+            )}
           >
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
               MY FAVORITES
@@ -133,27 +168,25 @@ export const SidebarFavoritesMenu = observer(() => {
               static
             >
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {favoriteIds
-                .filter((id) => !favoriteMap[id].parent)
-                .map((id, index) => (
+              {orderBy(Object.values(favoriteMap), "sequence", "desc")
+                .filter((fav) => !fav.parent)
+                .map((fav, index) => (
                   <Tooltip
-                    key={favoriteMap[id].id}
-                    tooltipContent={
-                      favoriteMap[id].entity_data ? favoriteMap[id].entity_data.name : favoriteMap[id].name
-                    }
+                    key={fav.id}
+                    tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
                     position="right"
                     className="ml-2"
                     disabled={!sidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    {favoriteMap[id].is_folder ? (
+                    {fav.is_folder ? (
                       <FavoriteFolder
-                        favorite={favoriteMap[id]}
+                        favorite={fav}
                         isLastChild={index === favoriteIds.length - 1}
                         handleRemoveFromFavorites={handleRemoveFromFavorites}
                       />
                     ) : (
-                      <FavoriteItem favorite={favoriteMap[id]} handleRemoveFromFavorites={handleRemoveFromFavorites} />
+                      <FavoriteItem favorite={fav} handleRemoveFromFavorites={handleRemoveFromFavorites} />
                     )}
                   </Tooltip>
                 ))}
@@ -161,6 +194,12 @@ export const SidebarFavoritesMenu = observer(() => {
           )}
         </Transition>
       </Disclosure>
-    </div>
+
+      <hr
+        className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
+          "opacity-0": !sidebarCollapsed || favoriteIds.length === 0,
+        })}
+      />
+    </>
   );
 });

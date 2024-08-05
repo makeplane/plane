@@ -80,7 +80,7 @@ export class CoreRootStore {
     this.projectPages = new ProjectPageStore(this);
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
-    this.favorite = new FavoriteStore();
+    this.favorite = new FavoriteStore(this);
   }
 
   resetOnSignOut() {

@@ -66,25 +66,23 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
             "opacity-0": !sidebarCollapsed,
           })}
         />
-        <SidebarUserMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
+        <div
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2.5", {
+            "vertical-scrollbar": !sidebarCollapsed,
           })}
-        />
-        <SidebarWorkspaceMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
-          })}
-        />
-        <SidebarFavoritesMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
-          })}
-        />
-        <SidebarProjectsList />
+        >
+          <SidebarUserMenu />
+
+          <SidebarWorkspaceMenu />
+          <hr
+            className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
+              "opacity-0": !sidebarCollapsed,
+            })}
+          />
+          <SidebarFavoritesMenu />
+
+          <SidebarProjectsList />
+        </div>
         <SidebarHelpSection />
       </div>
     </div>

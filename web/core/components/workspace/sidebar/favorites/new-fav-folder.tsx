@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { FavoriteFolderIcon, Input, setToast, TOAST_TYPE } from "@plane/ui";
@@ -18,10 +19,10 @@ type TProps = {
   defaultName?: string;
   favoriteId?: string;
 };
-export const NewFavoriteFolder = (props: TProps) => {
+export const NewFavoriteFolder = observer((props: TProps) => {
   const { setCreateNewFolder, actionType, defaultName, favoriteId } = props;
   const { workspaceSlug } = useParams();
-  const { addFavorite, updateFavorite } = useFavorite();
+  const { addFavorite, updateFavorite, existingFolders } = useFavorite();
 
   // ref
   const ref = useRef(null);
@@ -35,6 +36,12 @@ export const NewFavoriteFolder = (props: TProps) => {
   });
 
   const handleAddNewFolder: SubmitHandler<TForm> = (formData) => {
+    if (existingFolders.includes(formData.name))
+      return setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Folder already exists",
+      });
     formData = {
       entity_type: "folder",
       is_folder: true,
@@ -63,6 +70,12 @@ export const NewFavoriteFolder = (props: TProps) => {
 
   const handleRenameFolder: SubmitHandler<TForm> = (formData) => {
     if (!favoriteId) return;
+    if (existingFolders.includes(formData.name))
+      return setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Folder already exists",
+      });
     const payload = {
       name: formData.name,
     };
@@ -86,14 +99,15 @@ export const NewFavoriteFolder = (props: TProps) => {
   });
   return (
     <div className="flex items-center gap-1.5 py-[1px] px-2" ref={ref}>
-      <FavoriteFolderIcon />
+      <FavoriteFolderIcon className="w-[16px]" />
       <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
         <Controller
           name="name"
           control={control}
-          render={({ field }) => <Input placeholder="New folder" {...field} />}
+          rules={{ required: true }}
+          render={({ field }) => <Input className="w-full" placeholder="New folder" {...field} />}
         />
       </form>
     </div>
   );
-};
+});
