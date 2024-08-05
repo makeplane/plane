@@ -1,11 +1,11 @@
 "use client";
 
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { MessageSquare } from "lucide-react";
 import useSWR from "swr";
+import { MessageSquare } from "lucide-react";
 import { IFormattedInstanceConfiguration } from "@plane/types";
-import { Button, Input, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -16,7 +16,7 @@ type TIntercomConfig = {
 export const IntercomConfig: FC<TIntercomConfig> = observer((props) => {
   const { isTelemetryEnabled } = props;
   // hooks
-  const { instanceConfigurations, instance, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();
+  const { instanceConfigurations, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
