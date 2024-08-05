@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { orderBy } from "lodash";
+import { orderBy, uniqBy } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
@@ -131,7 +131,7 @@ export const SidebarFavoritesMenu = observer(() => {
             )}
           >
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
-              MY FAVORITES
+              YOUR FAVORITES
             </span>
             <span className="flex gap-2 flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
               <FolderPlus
@@ -168,7 +168,7 @@ export const SidebarFavoritesMenu = observer(() => {
               static
             >
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {orderBy(Object.values(favoriteMap), "sequence", "desc")
+              {uniqBy(orderBy(Object.values(favoriteMap), "sequence", "desc"), "id")
                 .filter((fav) => !fav.parent)
                 .map((fav, index) => (
                   <Tooltip
