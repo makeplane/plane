@@ -118,10 +118,8 @@ export const FavoriteItem = observer(
             setIsDragging(false);
           },
           onDrop: ({ source }) => {
-            console.log(source);
             setIsDragging(false);
             const sourceId = source?.data?.id as string | undefined;
-            console.log({ sourceId });
             if (!sourceId || !favoriteMap[sourceId].parent) return;
             handleRemoveFromFavoritesFolder(sourceId);
           },
