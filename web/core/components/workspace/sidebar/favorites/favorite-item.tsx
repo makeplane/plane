@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -22,11 +22,15 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const FavoriteItem = observer(
   ({
+    favoriteMap,
     favorite,
     handleRemoveFromFavorites,
+    handleRemoveFromFavoritesFolder,
   }: {
     favorite: IFavorite;
+    favoriteMap: Record<string, IFavorite>;
     handleRemoveFromFavorites: (favorite: IFavorite) => void;
+    handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
   }) => {
     // store hooks
     const { sidebarCollapsed } = useAppTheme();
@@ -101,6 +105,24 @@ export const FavoriteItem = observer(
           onDrop: () => {
             setIsDragging(false);
           },
+        }),
+        dropTargetForElements({
+          element,
+          onDragStart: () => {
+            setIsDragging(true);
+          },
+          onDragEnter: () => {
+            setIsDragging(true);
+          },
+          onDragLeave: () => {
+            setIsDragging(false);
+          },
+          onDrop: ({ source }) => {
+            setIsDragging(false);
+            const sourceId = source?.data?.id as string | undefined;
+            if (!sourceId || !favoriteMap[sourceId].parent) return;
+            handleRemoveFromFavoritesFolder(sourceId);
+          },
         })
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,7 +161,7 @@ export const FavoriteItem = observer(
             {getIcon()}
 
             {!sidebarCollapsed && (
-              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1">
+              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1 truncate">
                 {favorite.entity_data ? favorite.entity_data.name : favorite.name}
               </Link>
             )}

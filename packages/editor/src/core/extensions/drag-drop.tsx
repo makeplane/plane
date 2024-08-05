@@ -28,17 +28,18 @@ export const DragAndDrop = (setHideDragHandle?: (hideDragHandlerFromDragDrop: ()
     },
   });
 
-function createDragHandleElement(): HTMLElement {
-  const dragHandleElement = document.createElement("div");
+const createDragHandleElement = (): HTMLElement => {
+  const dragHandleElement = document.createElement("button");
+  dragHandleElement.type = "button";
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.add("drag-handle");
 
-  const dragHandleContainer = document.createElement("div");
+  const dragHandleContainer = document.createElement("span");
   dragHandleContainer.classList.add("drag-handle-container");
   dragHandleElement.appendChild(dragHandleContainer);
 
-  const dotsContainer = document.createElement("div");
+  const dotsContainer = document.createElement("span");
   dotsContainer.classList.add("drag-handle-dots");
 
   for (let i = 0; i < 6; i++) {
@@ -50,9 +51,9 @@ function createDragHandleElement(): HTMLElement {
   dragHandleContainer.appendChild(dotsContainer);
 
   return dragHandleElement;
-}
+};
 
-function absoluteRect(node: Element) {
+const absoluteRect = (node: Element) => {
   const data = node.getBoundingClientRect();
 
   return {
@@ -60,9 +61,9 @@ function absoluteRect(node: Element) {
     left: data.left,
     width: data.width,
   };
-}
+};
 
-function nodeDOMAtCoords(coords: { x: number; y: number }) {
+const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
   const generalSelectors = [
     "li",
@@ -73,6 +74,7 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
     "h1, h2, h3, h4, h5, h6",
     "[data-type=horizontalRule]",
     ".table-wrapper",
+    ".issue-embed",
   ].join(", ");
 
   for (const elem of elements) {
@@ -94,27 +96,27 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
     }
   }
   return null;
-}
+};
 
-function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOptions) {
+const nodePosAtDOM = (node: Element, view: EditorView, options: DragHandleOptions) => {
   const boundingRect = node.getBoundingClientRect();
 
   return view.posAtCoords({
     left: boundingRect.left + 50 + options.dragHandleWidth,
     top: boundingRect.top + 1,
   })?.inside;
-}
+};
 
-function nodePosAtDOMForBlockquotes(node: Element, view: EditorView) {
+const nodePosAtDOMForBlockQuotes = (node: Element, view: EditorView) => {
   const boundingRect = node.getBoundingClientRect();
 
   return view.posAtCoords({
     left: boundingRect.left + 1,
     top: boundingRect.top + 1,
   })?.inside;
-}
+};
 
-function calcNodePos(pos: number, view: EditorView, node: Element) {
+const calcNodePos = (pos: number, view: EditorView, node: Element) => {
   const maxPos = view.state.doc.content.size;
   const safePos = Math.max(0, Math.min(pos, maxPos));
   const $pos = view.state.doc.resolve(safePos);
@@ -128,11 +130,11 @@ function calcNodePos(pos: number, view: EditorView, node: Element) {
   }
 
   return safePos;
-}
+};
 
-function DragHandle(options: DragHandleOptions) {
+const DragHandle = (options: DragHandleOptions) => {
   let listType = "";
-  function handleDragStart(event: DragEvent, view: EditorView) {
+  const handleDragStart = (event: DragEvent, view: EditorView) => {
     view.focus();
 
     if (!event.dataTransfer) return;
@@ -159,6 +161,7 @@ function DragHandle(options: DragHandleOptions) {
     // Check if nodePos points to the top level node
     if (nodePos.node().type.name === "doc") differentNodeSelected = true;
     else {
+      // TODO FIX ERROR
       const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
       // Check if the node where the drag event started is part of the current selection
       differentNodeSelected = !(
@@ -171,6 +174,7 @@ function DragHandle(options: DragHandleOptions) {
       const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
       view.dispatch(view.state.tr.setSelection(multiNodeSelection));
     } else {
+      // TODO FIX ERROR
       const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
       view.dispatch(view.state.tr.setSelection(nodeSelection));
     }
@@ -181,14 +185,15 @@ function DragHandle(options: DragHandleOptions) {
     }
 
     if (node.matches("blockquote")) {
-      let nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view);
-      if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
+      let nodePosForBlockQuotes = nodePosAtDOMForBlockQuotes(node, view);
+      if (nodePosForBlockQuotes === null || nodePosForBlockQuotes === undefined) return;
 
       const docSize = view.state.doc.content.size;
-      nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
+      nodePosForBlockQuotes = Math.max(0, Math.min(nodePosForBlockQuotes, docSize));
 
-      if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
-        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
+      if (nodePosForBlockQuotes >= 0 && nodePosForBlockQuotes <= docSize) {
+        // TODO FIX ERROR
+        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockQuotes);
         view.dispatch(view.state.tr.setSelection(nodeSelection));
       }
     }
@@ -204,9 +209,9 @@ function DragHandle(options: DragHandleOptions) {
     event.dataTransfer.setDragImage(node, 0, 0);
 
     view.dragging = { slice, move: event.ctrlKey };
-  }
+  };
 
-  function handleClick(event: MouseEvent, view: EditorView) {
+  const handleClick = (event: MouseEvent, view: EditorView) => {
     view.focus();
 
     const node = nodeDOMAtCoords({
@@ -217,13 +222,14 @@ function DragHandle(options: DragHandleOptions) {
     if (!(node instanceof Element)) return;
 
     if (node.matches("blockquote")) {
-      let nodePosForBlockquotes = nodePosAtDOMForBlockquotes(node, view);
+      let nodePosForBlockquotes = nodePosAtDOMForBlockQuotes(node, view);
       if (nodePosForBlockquotes === null || nodePosForBlockquotes === undefined) return;
 
       const docSize = view.state.doc.content.size;
       nodePosForBlockquotes = Math.max(0, Math.min(nodePosForBlockquotes, docSize));
 
       if (nodePosForBlockquotes >= 0 && nodePosForBlockquotes <= docSize) {
+        // TODO FIX ERROR
         const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockquotes);
         view.dispatch(view.state.tr.setSelection(nodeSelection));
       }
@@ -237,26 +243,18 @@ function DragHandle(options: DragHandleOptions) {
     // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
     nodePos = calcNodePos(nodePos, view, node);
 
+    // TODO FIX ERROR
     // Use NodeSelection to select the node at the calculated position
     const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
 
     // Dispatch the transaction to update the selection
     view.dispatch(view.state.tr.setSelection(nodeSelection));
-  }
+  };
 
   let dragHandleElement: HTMLElement | null = null;
-
-  function hideDragHandle() {
-    if (dragHandleElement) {
-      dragHandleElement.classList.add("hidden");
-    }
-  }
-
-  function showDragHandle() {
-    if (dragHandleElement) {
-      dragHandleElement.classList.remove("hidden");
-    }
-  }
+  // drag handle view actions
+  const hideDragHandle = () => dragHandleElement?.classList.add("drag-handle-hidden");
+  const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
 
   options.setHideDragHandle?.(hideDragHandle);
 
@@ -264,24 +262,18 @@ function DragHandle(options: DragHandleOptions) {
     key: new PluginKey("dragHandle"),
     view: (view) => {
       dragHandleElement = createDragHandleElement();
-      dragHandleElement.addEventListener("dragstart", (e) => {
-        handleDragStart(e, view);
-      });
-      dragHandleElement.addEventListener("click", (e) => {
-        handleClick(e, view);
-      });
-      dragHandleElement.addEventListener("contextmenu", (e) => {
-        handleClick(e, view);
-      });
+      dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
+      dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
+      dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
       dragHandleElement.addEventListener("drag", (e) => {
         hideDragHandle();
-        const a = document.querySelector(".frame-renderer");
-        if (!a) return;
+        const frameRenderer = document.querySelector(".frame-renderer");
+        if (!frameRenderer) return;
         if (e.clientY < options.scrollThreshold.up) {
-          a.scrollBy({ top: -70, behavior: "smooth" });
+          frameRenderer.scrollBy({ top: -70, behavior: "smooth" });
         } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
-          a.scrollBy({ top: 70, behavior: "smooth" });
+          frameRenderer.scrollBy({ top: 70, behavior: "smooth" });
         }
       });
 
@@ -299,9 +291,7 @@ function DragHandle(options: DragHandleOptions) {
     props: {
       handleDOMEvents: {
         mousemove: (view, event) => {
-          if (!view.editable) {
-            return;
-          }
+          if (!view.editable) return;
 
           const node = nodeDOMAtCoords({
             x: event.clientX + 50 + options.dragHandleWidth,
@@ -411,4 +401,4 @@ function DragHandle(options: DragHandleOptions) {
       },
     },
   });
-}
+};

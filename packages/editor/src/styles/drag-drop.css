@@ -2,15 +2,20 @@
 .drag-handle {
   position: fixed;
   opacity: 1;
-  transition: opacity ease-in 0.2s;
   height: 20px;
-  width: 15px;
+  width: 20px;
+  aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
   z-index: 5;
   cursor: grab;
   border-radius: 2px;
-  transition: background-color 0.2s;
+  outline: none !important;
+  transition:
+    opacity 0.2s ease 0.2s,
+    background-color 0.2s ease,
+    top 0.2s ease,
+    left 0.2s ease;
 
   &:hover {
     background-color: rgba(var(--color-background-80));
@@ -21,7 +26,7 @@
     cursor: grabbing;
   }
 
-  &.hidden {
+  &.drag-handle-hidden {
     opacity: 0;
     pointer-events: none;
   }
@@ -62,25 +67,33 @@
   cursor: grab;
   outline: none !important;
   box-shadow: none;
+
+  --horizontal-offset: 5px;
+
+  &:has(.issue-embed),
+  &.table-wrapper {
+    --horizontal-offset: 0px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(-1 * var(--horizontal-offset));
+    height: 100%;
+    width: calc(100% + (var(--horizontal-offset) * 2));
+    background-color: rgba(var(--color-primary-100), 0.2);
+    border-radius: 4px;
+    pointer-events: none;
+  }
 }
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -5px;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(var(--color-primary-100), 0.2);
-  border-radius: 4px;
-}
-
-/* for targetting the taks list items */
+/* for targeting the task list items */
 li.ProseMirror-selectednode:not(.dragging)[data-checked]::after {
   margin-left: -5px;
 }
 
-/* for targetting the unordered list items */
+/* for targeting the unordered list items */
 ul > li.ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -10px; /* Adjust as needed */
 }
@@ -90,18 +103,18 @@ ol {
   counter-reset: item;
 }
 
-/* for targetting the ordered list items */
+/* for targeting the ordered list items */
 ol > li.ProseMirror-selectednode:not(.dragging)::after {
   counter-increment: item;
   margin-left: -18px;
 }
 
-/* for targetting the ordered list items after the 9th item */
+/* for targeting the ordered list items after the 9th item */
 ol > li:nth-child(n + 10).ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -25px;
 }
 
-/* for targetting the ordered list items after the 99th item */
+/* for targeting the ordered list items after the 99th item */
 ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -35px;
 }
@@ -117,10 +130,4 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
   &.ProseMirror-selectednode {
     filter: brightness(90%);
   }
-}
-
-:not(.dragging) .ProseMirror-selectednode.table-wrapper {
-  padding: 4px 2px;
-  background-color: rgba(var(--color-primary-300), 0.1) !important;
-  box-shadow: rgba(var(--color-primary-100)) 0px 0px 0px 2px inset !important;
 }
