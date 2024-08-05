@@ -10,7 +10,7 @@ import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useInstance } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -44,6 +44,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
+  const { config } = useInstance();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -148,7 +149,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                     </span>
                   </Link>
                 ))}
-                {process.env.NEXT_PUBLIC_CRISP_ID && (
+                {config?.intercom_app_id && config?.is_intercom_enabled && (
                   <button
                     type="button"
                     onClick={handleCrispWindowShow}
