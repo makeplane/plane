@@ -7,7 +7,7 @@ import { GeneralConfigurationForm } from "./form";
 
 function GeneralPage() {
   const { instance, instanceAdmins } = useInstance();
-  console.log("instance", instance);
+
   return (
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
