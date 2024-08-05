@@ -23,7 +23,6 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     ModuleIssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
@@ -45,6 +44,8 @@ from plane.utils.paginator import (
 
 # Module imports
 from .. import BaseViewSet
+from plane.bgtasks.issue_activities_task import issue_activity
+
 
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
