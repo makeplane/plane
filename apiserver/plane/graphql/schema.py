@@ -22,6 +22,7 @@ from .queries.issue import (
 )
 from .queries.page import PageQuery
 from .queries.search import ProjectSearchQuery
+from .queries.attachment import IssueAttachmentQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -30,7 +31,11 @@ from .mutations.project import (
     ProjectInviteMutation,
     ProjectFavoriteMutation,
 )
-from .mutations.issue import IssueMutation, IssueUserPropertyMutation
+from .mutations.issue import (
+    IssueMutation,
+    IssueUserPropertyMutation,
+    IssueAttachmentMutation,
+)
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
 from .mutations.page import PageFavoriteMutation
@@ -58,6 +63,7 @@ class Query(
     WorkspaceLabelQuery,
     WorkspaceStateQuery,
     ProjectSearchQuery,
+    IssueAttachmentQuery,
 ):
     pass
 
@@ -75,6 +81,7 @@ class Mutation(
     NotificationMutation,
     ProfileMutation,
     PageFavoriteMutation,
+    IssueAttachmentMutation,
 ):
     pass
 

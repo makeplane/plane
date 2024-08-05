@@ -1,6 +1,7 @@
 # Django imports
 from django.db import models
 from django.conf import settings
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.contrib.postgres.fields import ArrayField
 
@@ -9,7 +10,6 @@ from plane.db.models import WorkspaceBaseModel
 
 
 class PropertyTypeEnum(models.TextChoices):
-
     TEXT = "TEXT", "Text"
     DATETIME = "DATETIME", "Datetime"
     DECIMAL = "DECIMAL", "Decimal"
@@ -54,7 +54,14 @@ class IssueProperty(WorkspaceBaseModel):
 
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["name", "issue_type"]
+        unique_together = ["name", "issue_type", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "issue_type"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_unique_name_project_when_deleted_at_null",
+            )
+        ]
         db_table = "issue_properties"
 
     def save(self, *args, **kwargs):
@@ -75,7 +82,6 @@ class IssueProperty(WorkspaceBaseModel):
 
 
 class IssuePropertyOption(WorkspaceBaseModel):
-
     name = models.CharField(max_length=255)
     sort_order = models.FloatField(default=65535)
     property = models.ForeignKey(
@@ -95,14 +101,21 @@ class IssuePropertyOption(WorkspaceBaseModel):
 
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["name", "property"]
+        unique_together = ["name", "property", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "property"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_option_unique_name_project_when_deleted_at_null",
+            )
+        ]
         db_table = "issue_property_options"
 
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
             last_id = IssuePropertyOption.objects.filter(
-                project=self.project
+                project=self.project, property=self.property
             ).aggregate(largest=models.Max("sort_order"))["largest"]
             # if last_id is not None
             if last_id is not None:
@@ -143,7 +156,6 @@ class IssuePropertyValue(WorkspaceBaseModel):
 
 
 class IssuePropertyActivity(WorkspaceBaseModel):
-
     old_value = models.TextField(blank=True)
     new_value = models.TextField(blank=True)
     old_identifier = models.UUIDField(blank=True, null=True)

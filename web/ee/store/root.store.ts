@@ -1,5 +1,6 @@
 // plane web store
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
+import { IIssueTypesStore, IssueTypes } from "@/plane-web/store/issue-types";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import {
@@ -22,6 +23,7 @@ export class RootStore extends CoreRootStore {
   workspaceWorklogs: IWorkspaceWorklogStore;
   workspaceWorklogDownloads: IWorkspaceWorklogDownloadStore;
   featureFlags: IFeatureFlagsStore;
+  issueTypes: IIssueTypesStore;
 
   constructor() {
     super();
@@ -31,6 +33,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
+    this.issueTypes = new IssueTypes(this);
   }
 
   resetOnSignOut() {
@@ -41,5 +44,6 @@ export class RootStore extends CoreRootStore {
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
+    this.issueTypes = new IssueTypes(this);
   }
 }

@@ -18,6 +18,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { CycleQuickActions } from "../quick-actions";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -122,8 +123,19 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           parentRef={parentRef}
         />
       }
+      quickActionElement={
+        <div className="block md:hidden">
+          <CycleQuickActions
+            parentRef={parentRef}
+            cycleId={cycleId}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+          />
+        </div>
+      }
       isMobile={isMobile}
       parentRef={parentRef}
+      isSidebarOpen={searchParams.has("peekCycle")}
     />
   );
 });

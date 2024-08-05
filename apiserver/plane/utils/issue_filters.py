@@ -524,28 +524,6 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
-def filter_logged_by(params, filter, method, prefix=""):
-    if method == "GET":
-        logged_bys = [
-            item
-            for item in params.get("logged_by").split(",")
-            if item != "null"
-        ]
-        if "None" in logged_bys:
-            filter[f"{prefix}logged_by__isnull"] = True
-        logged_bys = filter_valid_uuids(logged_bys)
-        if len(logged_bys) and "" not in logged_bys:
-            filter[f"{prefix}logged_by__in"] = logged_bys
-    else:
-        if (
-            params.get("logged_by", None)
-            and len(params.get("logged_by"))
-            and params.get("logged_by") != "null"
-        ):
-            filter[f"{prefix}logged_by__in"] = params.get("logged_by")
-    return filter
-
-
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 

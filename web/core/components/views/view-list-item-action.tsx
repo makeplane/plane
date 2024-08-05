@@ -95,12 +95,14 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
         />
       )}
       {projectId && workspaceSlug && (
-        <ViewQuickActions
-          parentRef={parentRef}
-          projectId={projectId.toString()}
-          view={view}
-          workspaceSlug={workspaceSlug.toString()}
-        />
+        <div className="hidden md:block">
+          <ViewQuickActions
+            parentRef={parentRef}
+            projectId={projectId.toString()}
+            view={view}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       )}
     </>
   );

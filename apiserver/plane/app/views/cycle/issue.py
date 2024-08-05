@@ -46,7 +46,6 @@ from plane.utils.paginator import (
     SubGroupedOffsetPaginator,
 )
 
-# Module imports
 
 
 class CycleIssueViewSet(BaseViewSet):
@@ -336,7 +335,7 @@ class CycleIssueViewSet(BaseViewSet):
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
-        cycle_issue = CycleIssue.objects.get(
+        cycle_issue = CycleIssue.objects.filter(
             issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,

@@ -2,6 +2,9 @@
 from typing import Optional
 from datetime import date, datetime
 
+# Third-party library imports
+from asgiref.sync import sync_to_async
+
 # Strawberry imports
 import strawberry
 import strawberry_django
@@ -33,8 +36,7 @@ class PageType:
     is_favorite: bool
     created_at: datetime
     updated_at: datetime
-    is_favorite: bool
-    # projects: list[strawberry.ID]
+    projects: list[strawberry.ID]
     # teams: list[strawberry.ID]
     # labels: list[strawberry.ID]
 
@@ -54,12 +56,20 @@ class PageType:
     def parent(self) -> int:
         return self.parent_id
 
-    # @strawberry.field
-    # async def projects(self) -> list[strawberry.ID]:
-    #     projects = await sync_to_async(list)(self.projects.all())
-    #     return [project.id for project in projects]
+    @strawberry.field
+    async def projects(self) -> list[strawberry.ID]:
+        projects = await sync_to_async(list)(self.projects.all())
+        return [project.id for project in projects]
 
     # @strawberry.field
     # async def labels(self) -> list[strawberry.ID]:
     #     labels = await sync_to_async(list)(self.labels.all())
     #     return [label.id for label in labels]
+
+
+@strawberry_django.type(Page)
+class PageLiteType:
+    id: strawberry.ID
+    name: str
+    project_ids: list[strawberry.ID]
+    # owned_by: strawberry.ID
