@@ -35,6 +35,7 @@ from plane.db.models import (
     IssueAttachment,
     IssueLink,
     ProjectMember,
+    UserFavorite,
 )
 from plane.utils.analytics_plot import burndown_plot
 
@@ -407,6 +408,13 @@ class CycleAPIEndpoint(BaseAPIView):
         # Delete the cycle issues
         CycleIssue.objects.filter(
             cycle_id=self.kwargs.get("pk"),
+        ).delete()
+        # Delete the user favorite cycle
+        UserFavorite.objects.get(
+            user=request.user,
+            entity_type="cycle",
+            entity_identifier=pk,
+            project_id=project_id,
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

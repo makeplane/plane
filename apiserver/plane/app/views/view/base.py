@@ -34,6 +34,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     ProjectMember,
+    DeployBoard,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -141,6 +142,14 @@ class WorkspaceViewViewSet(BaseViewSet):
             or workspace_view.owned_by == request.user
         ):
             workspace_view.delete()
+            # Delete the user favorite view
+            UserFavorite.objects.get(
+                user=request.user,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_type="view",
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
@@ -437,6 +446,21 @@ class IssueViewViewSet(BaseViewSet):
             or project_view.owned_by_id == request.user.id
         ):
             project_view.delete()
+            # Delete the user favorite view
+            UserFavorite.objects.filter(
+                user=request.user,
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_type="view",
+            ).delete()
+            # Delete the view from the deploy board
+            DeployBoard.objects.get(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
