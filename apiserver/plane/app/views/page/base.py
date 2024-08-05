@@ -32,7 +32,6 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     ProjectPage,
-    DeployBoard,
 )
 
 # Module imports
@@ -360,12 +359,6 @@ class PageViewSet(BaseViewSet):
         ).update(parent=None)
 
         page.delete()
-        # Delete the deploy board
-        DeployBoard.objects.get(
-            entity_name="page",
-            entity_identifier=pk,
-            workspace__slug=slug,
-        ).delete()
         # Delete the user favorite page
         UserFavorite.objects.get(
             project=project_id,

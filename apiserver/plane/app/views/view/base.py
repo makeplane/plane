@@ -34,7 +34,6 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     ProjectMember,
-    DeployBoard,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -453,13 +452,6 @@ class IssueViewViewSet(BaseViewSet):
                 workspace__slug=slug,
                 entity_identifier=pk,
                 entity_type="view",
-            ).delete()
-            # Delete the view from the deploy board
-            DeployBoard.objects.get(
-                entity_name="view",
-                entity_identifier=pk,
-                project_id=project_id,
-                workspace__slug=slug,
             ).delete()
         else:
             return Response(
