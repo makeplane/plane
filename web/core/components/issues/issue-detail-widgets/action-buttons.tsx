@@ -25,7 +25,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
         issueId={issueId}
         customButton={
           <IssueDetailWidgetButton
-            title="Add sub-issues"
+            title="Add sub-issue"
             icon={<Layers className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
             disabled={disabled}
           />
@@ -36,7 +36,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
         issueId={issueId}
         customButton={
           <IssueDetailWidgetButton
-            title="Add Relation"
+            title="Add relation"
             icon={<Waypoints className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
             disabled={disabled}
           />
@@ -46,7 +46,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
       <IssueLinksActionButton
         customButton={
           <IssueDetailWidgetButton
-            title="Add Links"
+            title="Add link"
             icon={<Link className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
             disabled={disabled}
           />

@@ -87,7 +87,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
       handleSubmit={formSubmit}
       isSubmitting={loader}
       isOpen={isOpen}
-      title="Delete Cycle"
+      title="Delete cycle"
       content={
         <>
           Are you sure you want to delete cycle{' "'}

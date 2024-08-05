@@ -185,7 +185,14 @@ class WorkspaceMember(BaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ["workspace", "member"]
+        unique_together = ["workspace", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_member_unique_workspace_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace Member"
         verbose_name_plural = "Workspace Members"
         db_table = "workspace_members"
@@ -210,7 +217,14 @@ class WorkspaceMemberInvite(BaseModel):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
 
     class Meta:
-        unique_together = ["email", "workspace"]
+        unique_together = ["email", "workspace", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["email", "workspace"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_member_invite_unique_email_workspace_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace Member Invite"
         verbose_name_plural = "Workspace Member Invites"
         db_table = "workspace_member_invites"
@@ -240,7 +254,14 @@ class Team(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
     class Meta:
-        unique_together = ["name", "workspace"]
+        unique_together = ["name", "workspace", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "workspace"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_unique_name_workspace_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team"
         verbose_name_plural = "Teams"
         db_table = "teams"
@@ -264,7 +285,14 @@ class TeamMember(BaseModel):
         return self.team.name
 
     class Meta:
-        unique_together = ["team", "member"]
+        unique_together = ["team", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_member_unique_team_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team Member"
         verbose_name_plural = "Team Members"
         db_table = "team_members"
@@ -287,7 +315,14 @@ class WorkspaceTheme(BaseModel):
         return str(self.name) + str(self.actor.email)
 
     class Meta:
-        unique_together = ["workspace", "name"]
+        unique_together = ["workspace", "name", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_theme_unique_workspace_name_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace Theme"
         verbose_name_plural = "Workspace Themes"
         db_table = "workspace_themes"
@@ -312,7 +347,14 @@ class WorkspaceUserProperties(BaseModel):
     )
 
     class Meta:
-        unique_together = ["workspace", "user"]
+        unique_together = ["workspace", "user", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_user_properties_unique_workspace_user_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace User Property"
         verbose_name_plural = "Workspace User Property"
         db_table = "workspace_user_properties"

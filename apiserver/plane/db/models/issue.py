@@ -295,7 +295,14 @@ class IssueRelation(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "related_issue"]
+        unique_together = ["issue", "related_issue", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "related_issue"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_relation_unique_issue_related_issue_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Relation"
         verbose_name_plural = "Issue Relations"
         db_table = "issue_relations"
@@ -316,7 +323,14 @@ class IssueMention(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "mention"]
+        unique_together = ["issue", "mention", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "mention"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_mention_unique_issue_mention_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Mention"
         verbose_name_plural = "Issue Mentions"
         db_table = "issue_mentions"
@@ -337,7 +351,14 @@ class IssueAssignee(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "assignee"]
+        unique_together = ["issue", "assignee", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "assignee"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_assignee_unique_issue_assignee_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Assignee"
         verbose_name_plural = "Issue Assignees"
         db_table = "issue_assignees"
@@ -512,7 +533,14 @@ class IssueUserProperty(ProjectBaseModel):
         verbose_name_plural = "Issue User Properties"
         db_table = "issue_user_properties"
         ordering = ("-created_at",)
-        unique_together = ["user", "project"]
+        unique_together = ["user", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_user_property_unique_user_project_when_deleted_at_null",
+            )
+        ]
 
     def __str__(self):
         """Return properties status of the issue"""
@@ -538,9 +566,9 @@ class Label(ProjectBaseModel):
         unique_together = ["name", "project", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'project'],
+                fields=["name", "project"],
                 condition=Q(deleted_at__isnull=True),
-                name='label_unique_name_project_when_deleted_at_null'
+                name="label_unique_name_project_when_deleted_at_null",
             )
         ]
         verbose_name = "Label"
@@ -610,7 +638,14 @@ class IssueSubscriber(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "subscriber"]
+        unique_together = ["issue", "subscriber", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "subscriber"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_subscriber_unique_issue_subscriber_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Subscriber"
         verbose_name_plural = "Issue Subscribers"
         db_table = "issue_subscribers"
@@ -632,7 +667,14 @@ class IssueReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=20)
 
     class Meta:
-        unique_together = ["issue", "actor", "reaction"]
+        unique_together = ["issue", "actor", "reaction", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "actor", "reaction"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_reaction_unique_issue_actor_reaction_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Reaction"
         verbose_name_plural = "Issue Reactions"
         db_table = "issue_reactions"
@@ -656,7 +698,14 @@ class CommentReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=20)
 
     class Meta:
-        unique_together = ["comment", "actor", "reaction"]
+        unique_together = ["comment", "actor", "reaction", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["comment", "actor", "reaction"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="comment_reaction_unique_comment_actor_reaction_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Comment Reaction"
         verbose_name_plural = "Comment Reactions"
         db_table = "comment_reactions"
@@ -687,6 +736,14 @@ class IssueVote(ProjectBaseModel):
         unique_together = [
             "issue",
             "actor",
+            "deleted_at",
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "actor"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_vote_unique_issue_actor_when_deleted_at_null",
+            )
         ]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
