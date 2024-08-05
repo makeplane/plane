@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { DayPicker, Matcher } from "react-day-picker";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -151,28 +152,30 @@ export const DateDropdown: React.FC<Props> = (props) => {
           </DropdownButton>
         </button>
       </Combobox.Button>
-      {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
-          <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <DayPicker
-              selected={getDate(value)}
-              defaultMonth={getDate(value)}
-              onSelect={(date) => {
-                dropdownOnChange(date ?? null);
-              }}
-              showOutsideDays
-              initialFocus
-              disabled={disabledDays}
-              mode="single"
-            />
-          </div>
-        </Combobox.Options>
-      )}
+      {isOpen &&
+        createPortal(
+          <Combobox.Options data-prevent-outside-click static>
+            <div
+              className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20"
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
+              <DayPicker
+                selected={getDate(value)}
+                defaultMonth={getDate(value)}
+                onSelect={(date) => {
+                  dropdownOnChange(date ?? null);
+                }}
+                showOutsideDays
+                initialFocus
+                disabled={disabledDays}
+                mode="single"
+              />
+            </div>
+          </Combobox.Options>,
+          document.body
+        )}
     </Combobox>
   );
 };

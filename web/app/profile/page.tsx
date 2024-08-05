@@ -387,7 +387,6 @@ const ProfileSettingsPage = observer(() => {
                       label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                       options={timeZoneOptions}
                       onChange={onChange}
-                      optionsClassName="w-full"
                       buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       input
