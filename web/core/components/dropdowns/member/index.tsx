@@ -140,17 +140,8 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-<<<<<<< HEAD
                 <span className="flex-grow truncate leading-5">
                   {getDisplayName(value, showUserDetails, placeholder)}
-=======
-                <span className="flex-grow truncate">
-                  {Array.isArray(value) && value.length > 0
-                    ? value.length === 1
-                      ? getUserDetails(value[0])?.display_name
-                      : ""
-                    : placeholder}
->>>>>>> 071d1d35cdcca2b200a6d0bf3e38cc63067de759
                 </span>
               )}
               {dropdownArrow && (
