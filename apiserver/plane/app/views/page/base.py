@@ -466,6 +466,14 @@ class PagesDescriptionViewSet(BaseViewSet):
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .first()
         )
+
+        # If the page is not found
+        if page is None:
+            return Response(
+                {"error": "Page not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         binary_data = page.description_binary
 
         def stream_data():
