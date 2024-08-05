@@ -28,10 +28,11 @@ type Props = {
   isLastChild: boolean;
   favorite: IFavorite;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
+  handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
 };
 
 export const FavoriteFolder: React.FC<Props> = (props) => {
-  const { favorite, handleRemoveFromFavorites } = props;
+  const { favorite, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
@@ -317,6 +318,8 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       key={child.id}
                       favorite={child}
                       handleRemoveFromFavorites={handleRemoveFromFavorites}
+                      handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                      favoriteMap={favoriteMap}
                     />
                   ))}
                 </Disclosure.Panel>
