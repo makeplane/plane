@@ -9,9 +9,9 @@ import { IInstance, IInstanceAdmin } from "@plane/types";
 import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common";
+import { useInstance } from "@/hooks/store";
 import { IntercomConfig } from "./intercom";
 // hooks
-import { useInstance } from "@/hooks/store";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;

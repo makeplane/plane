@@ -306,7 +306,12 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 leaveFrom="transform scale-100 opacity-100"
                 leaveTo="transform scale-95 opacity-0"
               >
-                <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1 px-2">
+                <Disclosure.Panel
+                  as="div"
+                  className={cn("flex flex-col gap-0.5 mt-1", {
+                    "px-2": !isSidebarCollapsed,
+                  })}
+                >
                   {favorite.children.map((child) => (
                     <FavoriteItem
                       key={child.id}
