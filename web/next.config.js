@@ -56,6 +56,11 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/signin",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
