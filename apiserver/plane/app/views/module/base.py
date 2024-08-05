@@ -444,6 +444,12 @@ class ModuleViewSet(BaseViewSet):
             )
         )
 
+        if not queryset.exists():
+            return Response(
+                {"error": "Module not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
             pk=project_id,
@@ -776,6 +782,14 @@ class ModuleViewSet(BaseViewSet):
         # Delete the module issues
         ModuleIssue.objects.filter(
             module=pk,
+            project_id=project_id,
+        ).delete()
+        # Delete the user favorite module
+        UserFavorite.objects.filter(
+            user=request.user,
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
