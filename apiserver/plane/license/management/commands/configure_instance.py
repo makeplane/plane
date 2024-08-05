@@ -146,7 +146,7 @@ class Command(BaseCommand):
             # intercom settings
             {
                 "key": "IS_INTERCOM_ENABLED",
-                "value": os.environ.get("IS_INTERCOM_ENABLED", "0"),
+                "value": os.environ.get("IS_INTERCOM_ENABLED", "1"),
                 "category": "INTERCOM",
                 "is_encrypted": False,
             },

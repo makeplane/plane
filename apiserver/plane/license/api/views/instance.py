@@ -121,7 +121,7 @@ class InstanceEndpoint(BaseAPIView):
                 # Intercom settings
                 {
                     "key": "IS_INTERCOM_ENABLED",
-                    "default": os.environ.get("IS_INTERCOM_ENABLED", "0"),
+                    "default": os.environ.get("IS_INTERCOM_ENABLED", "1"),
                 },
                 {
                     "key": "INTERCOM_APP_ID",
