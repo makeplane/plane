@@ -48,10 +48,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
 
   // fetching feature flags
-  const { isLoading: featureFlagsLoader } = useSWR(
-    workspaceSlug ? `WORKSPACE_FEATURE_FLAGS_${workspaceSlug}` : null,
+  const { isLoading: flagsLoader, error: flagsError } = useSWR(
+    workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false, errorRetryCount: 1 }
   );
 
   // fetching user workspace information
@@ -98,7 +98,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (featureFlagsLoader || allWorkspaces === undefined) {
+  if ((flagsLoader && !flagsError) || allWorkspaces === undefined) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

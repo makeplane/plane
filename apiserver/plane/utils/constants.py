@@ -27,4 +27,9 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "channels",
     "upgrade",
     "billing",
+    "sign-in",
+    "sign-up",
+    "signin",
+    "signup",
+    "config",
 ]

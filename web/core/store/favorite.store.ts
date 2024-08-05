@@ -1,9 +1,10 @@
 import { uniqBy } from "lodash";
 import set from "lodash/set";
-import { action, observable, makeObservable, runInAction } from "mobx";
+import { action, observable, makeObservable, runInAction, computed } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 import { IFavorite } from "@plane/types";
 import { FavoriteService } from "@/services/favorite";
+import { CoreRootStore } from "./root.store";
 
 export interface IFavoriteStore {
   // observables
@@ -16,6 +17,7 @@ export interface IFavoriteStore {
     [entityId: string]: IFavorite;
   };
   // computed actions
+  existingFolders: string[];
   // actions
   fetchFavorite: (workspaceSlug: string) => Promise<IFavorite[]>;
   // CRUD actions
@@ -25,6 +27,8 @@ export interface IFavoriteStore {
   getGroupedFavorites: (workspaceSlug: string, favoriteId: string) => Promise<IFavorite[]>;
   moveFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
   removeFavoriteEntity: (workspaceSlug: string, entityId: string) => Promise<void>;
+  moveFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
 }
 
 export class FavoriteStore implements IFavoriteStore {
@@ -38,13 +42,20 @@ export class FavoriteStore implements IFavoriteStore {
   } = {};
   // service
   favoriteService;
+  viewStore;
+  projectStore;
+  pageStore;
+  cycleStore;
+  moduleStore;
 
-  constructor() {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observable
       favoriteMap: observable,
       entityMap: observable,
       favoriteIds: observable,
+      //computed
+      existingFolders: computed,
       // action
       fetchFavorite: action,
       // CRUD actions
@@ -52,8 +63,20 @@ export class FavoriteStore implements IFavoriteStore {
       getGroupedFavorites: action,
       moveFavorite: action,
       removeFavoriteEntity: action,
+      moveFavoriteFolder: action,
+      removeFavoriteEntityFromStore: action,
+      removeFromFavoriteFolder: action,
     });
     this.favoriteService = new FavoriteService();
+    this.viewStore = _rootStore.projectView;
+    this.projectStore = _rootStore.projectRoot.project;
+    this.moduleStore = _rootStore.module;
+    this.cycleStore = _rootStore.cycle;
+    this.pageStore = _rootStore.projectPages;
+  }
+
+  get existingFolders() {
+    return Object.values(this.favoriteMap).map((fav) => fav.name);
   }
 
   /**
@@ -147,6 +170,65 @@ export class FavoriteStore implements IFavoriteStore {
     }
   };
 
+  moveFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+    const initialSequence = this.favoriteMap[favoriteId].sequence;
+    try {
+      runInAction(() => {
+        set(this.favoriteMap, [favoriteId, "sequence"], data.sequence);
+      });
+      console.log(JSON.parse(JSON.stringify(this.favoriteMap)), "getDestinationStateSequence");
+
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+    } catch (error) {
+      runInAction(() => {
+        set(this.favoriteMap, [favoriteId, "sequence"], initialSequence);
+        console.error("Failed to move favorite folder");
+        throw error;
+      });
+    }
+  };
+
+  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+    try {
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+      runInAction(() => {
+        const parent = this.favoriteMap[favoriteId].parent;
+
+        //remove parent
+        set(this.favoriteMap, [favoriteId, "parent"], null);
+
+        //remove children from parent
+        if (parent) {
+          set(
+            this.favoriteMap,
+            [parent, "children"],
+            this.favoriteMap[parent].children.filter((child) => child.id !== favoriteId)
+          );
+        }
+      });
+    } catch (error) {
+      console.error("Failed to move favorite");
+      throw error;
+    }
+  };
+
+  removeFavoriteEntityFromStore = (entity_identifier: string, entity_type: string) => {
+    switch (entity_type) {
+      case "view":
+        return (this.viewStore.viewMap[entity_identifier].is_favorite = false);
+      case "module":
+        return (this.moduleStore.moduleMap[entity_identifier].is_favorite = false);
+      case "page":
+        return (this.pageStore.data[entity_identifier].is_favorite = false);
+      case "cycle":
+        return (this.cycleStore.cycleMap[entity_identifier].is_favorite = false);
+      case "project":
+        return (this.projectStore.projectMap[entity_identifier].is_favorite = false);
+      default:
+        return;
+    }
+  };
+
   /**
    * Deletes a favorite from the workspace and updates the store
    * @param workspaceSlug
@@ -158,6 +240,10 @@ export class FavoriteStore implements IFavoriteStore {
       await this.favoriteService.deleteFavorite(workspaceSlug, favoriteId);
       runInAction(() => {
         const parent = this.favoriteMap[favoriteId].parent;
+        const children = this.favoriteMap[favoriteId].children;
+        const entity_identifier = this.favoriteMap[favoriteId].entity_identifier;
+        entity_identifier &&
+          this.removeFavoriteEntityFromStore(entity_identifier, this.favoriteMap[favoriteId].entity_type);
         if (parent) {
           set(
             this.favoriteMap,
@@ -165,7 +251,16 @@ export class FavoriteStore implements IFavoriteStore {
             this.favoriteMap[parent].children.filter((child) => child.id !== favoriteId)
           );
         }
+        if (children) {
+          children.forEach((child) => {
+            console.log(child.entity_type);
+            if (!child.entity_identifier) return;
+            this.removeFavoriteEntityFromStore(child.entity_identifier, child.entity_type);
+          });
+        }
         delete this.favoriteMap[favoriteId];
+        entity_identifier && delete this.entityMap[entity_identifier];
+
         this.favoriteIds = this.favoriteIds.filter((id) => id !== favoriteId);
       });
     } catch (error) {

@@ -91,7 +91,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
                   <div>
                     <div className="space-y-5">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        {preloadedData?.id ? "Update Link" : "Add Link"}
+                        {preloadedData?.id ? "Update link" : "Add link"}
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
@@ -152,11 +152,11 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
                     <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                       {preloadedData?.id
                         ? isSubmitting
-                          ? "Updating Link..."
-                          : "Update Link"
+                          ? "Updating link..."
+                          : "Update link"
                         : isSubmitting
-                          ? "Adding Link..."
-                          : "Add Link"}
+                          ? "Adding link..."
+                          : "Add link"}
                     </Button>
                   </div>
                 </form>

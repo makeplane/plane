@@ -7,6 +7,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
 // helpers
+import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // services
 import { ModuleService } from "@/services/module.service";
@@ -35,6 +36,7 @@ export interface IModuleStore {
   // actions
   setPlotType: (moduleId: string, plotType: TModulePlotType) => void;
   // fetch
+  updateModuleDistribution: (distributionUpdates: DistributionUpdates, moduleId: string) => void;
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
@@ -318,6 +320,22 @@ export class ModulesStore implements IModuleStore {
       });
       return response;
     });
+
+  /**
+   * This method updates the module's stats locally without fetching the updated stats from backend
+   * @param distributionUpdates
+   * @param moduleId
+   * @returns
+   */
+  updateModuleDistribution = (distributionUpdates: DistributionUpdates, moduleId: string) => {
+    const moduleInfo = this.moduleMap[moduleId];
+
+    if (!moduleInfo) return;
+
+    runInAction(() => {
+      updateDistribution(moduleInfo, distributionUpdates);
+    });
+  };
 
   /**
    * @description fetch module details

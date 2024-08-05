@@ -285,6 +285,7 @@ export class ProjectStore implements IProjectStore {
         project_id: projectId,
         entity_data: { name: this.projectMap[projectId].name || "" },
       });
+      await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
       console.log("Failed to add project to favorite");

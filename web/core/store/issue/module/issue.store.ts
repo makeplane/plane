@@ -8,10 +8,10 @@ import {
   TIssuesResponse,
   TBulkOperationsPayload,
 } from "@plane/types";
+// helpers
+import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-// services
-// types
-// store
+//
 import { IIssueRootStore } from "../root.store";
 import { IModuleIssuesFilter } from "./filter.store";
 
@@ -89,6 +89,26 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
     projectId &&
       moduleId &&
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+  };
+
+  /**
+   * Update Parent stats before fetching from server
+   * @param prevIssueState
+   * @param nextIssueState
+   * @param id
+   */
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+    // get distribution updates
+    const distributionUpdates = getDistributionPathsPostUpdate(
+      prevIssueState,
+      nextIssueState,
+      this.rootIssueStore.rootStore.state.stateMap,
+      this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
+    );
+
+    const moduleId = id ?? this.moduleId;
+
+    moduleId && this.rootIssueStore.rootStore.module.updateModuleDistribution(distributionUpdates, moduleId);
   };
 
   /**

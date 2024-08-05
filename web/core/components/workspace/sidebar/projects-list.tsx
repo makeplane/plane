@@ -140,107 +140,105 @@ export const SidebarProjectsList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={cn("vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+        className={cn({
           "border-t border-custom-sidebar-border-300": isScrolled,
         })}
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <>
-              <div
+            <div
+              className={cn(
+                "group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                {
+                  "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
+                    isCollapsed,
+                }
+              )}
+            >
+              <Disclosure.Button
+                as="button"
+                type="button"
                 className={cn(
-                  "group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                  "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
                   {
-                    "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
-                      isCollapsed,
+                    "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
                   }
                 )}
+                onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
               >
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className={cn(
-                    "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
-                    {
-                      "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
-                    }
-                  )}
-                  onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
-                >
-                  <Tooltip tooltipHeading="YOUR PROJECTS" tooltipContent="" position="right" disabled={!isCollapsed}>
-                    <>
-                      {isCollapsed ? (
-                        <Briefcase className="flex-shrink-0 size-3" />
-                      ) : (
-                        <span className="text-xs font-semibold">YOUR PROJECTS</span>
-                      )}
-                    </>
-                  </Tooltip>
-                </Disclosure.Button>
-                {!isCollapsed && (
-                  <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
-                    {isAuthorizedUser && (
-                      <Tooltip tooltipHeading="Create project" tooltipContent="">
-                        <button
-                          type="button"
-                          className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                          onClick={() => {
-                            setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
-                            setIsProjectModalOpen(true);
-                          }}
-                        >
-                          <Plus className="size-3" />
-                        </button>
-                      </Tooltip>
+                <Tooltip tooltipHeading="YOUR PROJECTS" tooltipContent="" position="right" disabled={!isCollapsed}>
+                  <>
+                    {isCollapsed ? (
+                      <Briefcase className="flex-shrink-0 size-3" />
+                    ) : (
+                      <span className="text-xs font-semibold">YOUR PROJECTS</span>
                     )}
-                    <Disclosure.Button
-                      as="button"
-                      type="button"
-                      className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                      onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
-                    >
-                      <ChevronRight
-                        className={cn("flex-shrink-0 size-4 transition-all", {
-                          "rotate-90": isAllProjectsListOpen,
-                        })}
-                      />
-                    </Disclosure.Button>
-                  </div>
-                )}
-              </div>
-              <Transition
-                show={isAllProjectsListOpen}
-                enter="transition duration-100 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-75 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-              >
-                {isAllProjectsListOpen && (
-                  <Disclosure.Panel
-                    as="div"
-                    className={cn("space-y-1", {
-                      "space-y-0 ml-0": isCollapsed,
-                    })}
-                    static
+                  </>
+                </Tooltip>
+              </Disclosure.Button>
+              {!isCollapsed && (
+                <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                  {isAuthorizedUser && (
+                    <Tooltip tooltipHeading="Create project" tooltipContent="">
+                      <button
+                        type="button"
+                        className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                        onClick={() => {
+                          setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
+                          setIsProjectModalOpen(true);
+                        }}
+                      >
+                        <Plus className="size-3" />
+                      </button>
+                    </Tooltip>
+                  )}
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                    onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                   >
-                    {joinedProjects.map((projectId, index) => (
-                      <SidebarProjectsListItem
-                        key={projectId}
-                        projectId={projectId}
-                        handleCopyText={() => handleCopyText(projectId)}
-                        projectListType={"JOINED"}
-                        disableDrag={false}
-                        disableDrop={false}
-                        isLastChild={index === joinedProjects.length - 1}
-                        handleOnProjectDrop={handleOnProjectDrop}
-                      />
-                    ))}
-                  </Disclosure.Panel>
-                )}
-              </Transition>
-            </>
+                    <ChevronRight
+                      className={cn("flex-shrink-0 size-4 transition-all", {
+                        "rotate-90": isAllProjectsListOpen,
+                      })}
+                    />
+                  </Disclosure.Button>
+                </div>
+              )}
+            </div>
+            <Transition
+              show={isAllProjectsListOpen}
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+            >
+              {isAllProjectsListOpen && (
+                <Disclosure.Panel
+                  as="div"
+                  className={cn("space-y-1", {
+                    "space-y-0 ml-0": isCollapsed,
+                  })}
+                  static
+                >
+                  {joinedProjects.map((projectId, index) => (
+                    <SidebarProjectsListItem
+                      key={projectId}
+                      projectId={projectId}
+                      handleCopyText={() => handleCopyText(projectId)}
+                      projectListType={"JOINED"}
+                      disableDrag={false}
+                      disableDrop={false}
+                      isLastChild={index === joinedProjects.length - 1}
+                      handleOnProjectDrop={handleOnProjectDrop}
+                    />
+                  ))}
+                </Disclosure.Panel>
+              )}
+            </Transition>
           </Disclosure>
         </>
 
