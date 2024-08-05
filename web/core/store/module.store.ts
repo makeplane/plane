@@ -405,6 +405,7 @@ export class ModulesStore implements IModuleStore {
     await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId).then(() => {
       runInAction(() => {
         delete this.moduleMap[moduleId];
+        this.rootStore.favorite.removeFavoriteFromStore(moduleId);
       });
     });
   };
