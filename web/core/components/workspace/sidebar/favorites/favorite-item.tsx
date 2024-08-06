@@ -162,7 +162,7 @@ export const FavoriteItem = observer(
               </button>
             </Tooltip>
 
-            {getIcon()}
+            <Link href={getLink()}>{getIcon()}</Link>
 
             {!sidebarCollapsed && (
               <Link href={getLink()} className="text-sm leading-5 font-medium flex-1 truncate">
