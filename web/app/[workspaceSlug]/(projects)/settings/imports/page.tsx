@@ -49,11 +49,11 @@ const ImportsPage = observer(() => {
           })}
         >
           <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">
-            <div className="flex max-w-96 flex-col gap-2">
+            <div className="flex max-w-[26rem] flex-col gap-2">
               <h2 className="text-2xl font-semibold">Imports are coming soon!</h2>
-              <p className="text-base font-medium text-custom-text-300">
-                Get your issues, sprints, components, docs, and anything else with Plane One-only imports coming very
-                soon.
+              <p className="text-base font-medium text-custom-text-300 break-keep">
+                Get your issues, sprints, components, docs, and anything else with imports from Jira, GitHub, and
+                more—coming very soon to all editions and plans.
               </p>
             </div>
             <div className="flex items-center gap-3">
