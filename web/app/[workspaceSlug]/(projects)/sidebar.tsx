@@ -54,10 +54,14 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       <div
         ref={ref}
         className={cn("size-full flex flex-col flex-1 pt-4 pb-0", {
-          "p-2": sidebarCollapsed,
+          "p-2 pt-4": sidebarCollapsed,
         })}
       >
-        <div className="px-4">
+        <div
+          className={cn("px-2", {
+            "px-4": !sidebarCollapsed,
+          })}
+        >
           <SidebarDropdown />
           <div className="flex-shrink-0 h-4" />
           <SidebarAppSwitcher />
@@ -69,8 +73,8 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
           })}
         />
         <div
-          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-4", {
-            "vertical-scrollbar": !sidebarCollapsed,
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2", {
+            "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
         >
           <SidebarUserMenu />
