@@ -234,10 +234,15 @@ class IssueViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
+        extra_filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            extra_filters = {
+                "updated_at__gt": request.GET.get("updated_at__gt")
+            }
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -652,3 +657,18 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             {"message": f"{total_issues} issues were deleted"},
             status=status.HTTP_200_OK,
         )
+
+
+class DeletedIssuesListViewSet(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        deleted_issues = Issue.all_objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            deleted_at__isnull=False,
+        ).values_list("id", flat=True)
+
+        return Response(deleted_issues, status=status.HTTP_200_OK)
