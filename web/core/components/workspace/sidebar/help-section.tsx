@@ -10,7 +10,7 @@ import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useInstance } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useInstance, useTransient } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -45,15 +45,14 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   const { config } = useInstance();
+  const { isIntercomToggle, toggleIntercom } = useTransient();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
   const handleCrispWindowShow = () => {
-    if (window) {
-      window.$crisp.push(["do", "chat:show"]);
-    }
+    toggleIntercom(!isIntercomToggle);
   };
 
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
