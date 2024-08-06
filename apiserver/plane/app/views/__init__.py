@@ -174,8 +174,10 @@ from .module.archive import (
     ModuleArchiveUnarchiveEndpoint,
 )
 
-from .api import ApiTokenEndpoint
-
+from .api import (
+    ApiTokenEndpoint,
+    ServiceApiTokenEndpoint,
+)
 
 from .page.base import (
     PageViewSet,
