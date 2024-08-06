@@ -64,7 +64,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
     <>
       <div
         className={cn(
-          "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-14 flex-shrink-0",
+          "flex w-full items-center justify-between px-4 gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-14 flex-shrink-0",
           {
             "flex-col h-auto py-1.5": isCollapsed,
           }
