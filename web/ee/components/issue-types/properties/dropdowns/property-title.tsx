@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // ui
 import { Input, TextArea, Tooltip } from "@plane/ui";
@@ -46,7 +46,7 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
         <button
           type="button"
           className={cn(
-            "w-full flex items-center justify-between px-2 py-1 text-sm gap-1 bg-custom-background-100 hover:bg-custom-background-80 border-[0.5px] border-custom-border-300 rounded cursor-pointer outline-none",
+            "w-full flex items-center justify-between px-1.5 py-1 text-sm gap-1 bg-custom-background-100 hover:bg-custom-background-80 border-[0.5px] border-custom-border-300 rounded cursor-pointer outline-none",
             Boolean(error) && "border-red-500",
             !propertyDetail.display_name && "py-2"
           )}
@@ -64,27 +64,35 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
           {...attributes.popper}
         >
           <div>
-            <div className="text-xs font-medium text-custom-text-300">Name</div>
-            <Input
-              id="display_name"
-              type="text"
-              value={propertyDetail.display_name}
-              onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}
-              className={cn("w-full resize-none text-sm px-1.5 py-0.5 bg-custom-background-100 border-[0.5px] rounded")}
-              tabIndex={1}
-              hasError={Boolean(error)}
-              placeholder={error}
-              required
-              autoFocus
-            />
+            <div className="text-xs font-medium text-custom-text-300">Name your property</div>
+            <div className="relative flex items-center">
+              <Input
+                id="display_name"
+                type="text"
+                value={propertyDetail.display_name}
+                onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}
+                className={cn("w-full resize-none text-sm bg-custom-background-100 border-[0.5px] rounded")}
+                tabIndex={1}
+                hasError={Boolean(error)}
+                inputSize="xs"
+                required
+                autoFocus
+              />
+              {Boolean(error) && (
+                <Tooltip tooltipContent={error} className="text-xs" position="left">
+                  <Info className="absolute right-1.5 h-3 w-3 stroke-red-600 hover:cursor-pointer" />
+                </Tooltip>
+              )}
+            </div>
           </div>
           <div>
-            <div className="text-xs font-medium text-custom-text-300">Description (optional)</div>
+            <div className="text-xs font-medium text-custom-text-300">Describe your property</div>
             <TextArea
               id="description"
               value={propertyDetail.description}
               onChange={(e) => onPropertyDetailChange("description", e.target.value)}
-              className={cn("w-full resize-none text-sm px-1.5 py-0.5 bg-custom-background-100 border-[0.5px] rounded")}
+              className={cn("w-full resize-none text-sm bg-custom-background-100 border-[0.5px] rounded")}
+              textAreaSize="xs"
               tabIndex={2}
             />
           </div>

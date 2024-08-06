@@ -79,7 +79,7 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
         issuePropertyOptionCreateList={issuePropertyOptionCreateList}
         handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
       />
-      <div className="pt-4 px-1">
+      <div className="pt-2 px-1">
         <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
         {dropdownPropertyDetail.id ? (
           <OptionValueSelect

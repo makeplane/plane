@@ -37,7 +37,7 @@ export const PropertyMandatoryFieldToggle = (props: TPropertyMandatoryFieldToggl
         content={
           <p>
             There seems to be a default option for this property. Making the property mandatory will remove the default
-            value and let your users a value of their choice.
+            value and let your users input a value of their choice.
           </p>
         }
         primaryButtonText={{

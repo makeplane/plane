@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 // ui
 import { Input } from "@plane/ui";
@@ -12,6 +12,7 @@ type TNumberValueInputProps = {
   propertyId: string | undefined;
   value: string[];
   variant: TPropertyValueVariant;
+  numberInputSize?: "xs" | "sm" | "md";
   isRequired?: boolean;
   isDisabled?: boolean;
   className?: string;
@@ -23,6 +24,7 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
     propertyId,
     value,
     variant,
+    numberInputSize = "sm",
     isRequired = false,
     isDisabled = false,
     className = "",
@@ -54,9 +56,19 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
         },
         className
       )}
+      onClick={() => {
+        // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+        document.body?.setAttribute("data-delay-outside-click", "true");
+      }}
       onWheel={(e) => e.currentTarget.blur()}
-      onBlur={() => !isEqual(data, value) && onNumberValueChange(data)}
+      onBlur={() => {
+        if (!isEqual(value, data)) {
+          onNumberValueChange(data);
+        }
+        document.body?.removeAttribute("data-delay-outside-click");
+      }}
       placeholder="Enter a number"
+      inputSize={numberInputSize}
       required={isRequired}
       disabled={isDisabled}
     />

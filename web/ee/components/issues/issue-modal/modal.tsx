@@ -289,14 +289,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Custom properties created successfully.",
+          message: "Additional properties created successfully.",
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Custom properties could not be created. Please try again.",
+          message: "Additional properties could not be created. Please try again.",
         });
       });
   };

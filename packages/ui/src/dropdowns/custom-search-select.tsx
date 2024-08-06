@@ -94,10 +94,11 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <button
                   ref={setReferenceElement}
                   type="button"
-                  className={`flex w-full items-center justify-between gap-1 text-xs ${disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
-                    }  ${customButtonClassName}`}
+                  className={`flex w-full items-center justify-between gap-1 text-xs ${
+                    disabled
+                      ? "cursor-not-allowed text-custom-text-200"
+                      : "cursor-pointer hover:bg-custom-background-80"
+                  }  ${customButtonClassName}`}
                   onClick={toggleDropdown}
                 >
                   {customButton}

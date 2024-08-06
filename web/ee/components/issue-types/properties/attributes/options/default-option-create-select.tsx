@@ -53,7 +53,6 @@ export const DefaultOptionCreateSelect = observer((props: TDefaultOptionCreateSe
     label: getDisplayName(),
     options: customSearchOptions,
     className: "group w-full h-full flex",
-    optionsClassName: "w-full",
     chevronClassName: "h-3.5 w-3.5 hidden group-hover:inline",
     buttonClassName: cn("rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300", {
       "text-custom-text-400": !data.length,

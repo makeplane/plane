@@ -68,7 +68,7 @@ export const PropertyTypeDropdown = (props: TPropertyTypeDropdownProps) => {
       label={propertyType ? getIssuePropertyTypeDisplayName(propertyType, propertyRelationType) : "Select type"}
       options={issuePropertyTypeOptions}
       onChange={onPropertyTypeChange}
-      optionsClassName="w-full"
+      optionsClassName="w-48"
       buttonClassName={cn(
         "rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300",
         Boolean(error) && "border-red-500"

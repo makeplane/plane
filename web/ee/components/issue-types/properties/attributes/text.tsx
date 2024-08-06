@@ -50,9 +50,9 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
             id="default_value"
             value={textPropertyDetail.default_value?.[0]}
             onChange={(e) => onTextDetailChange("default_value", [e.target.value])}
-            className="w-full max-h-28 resize-none text-sm px-1 py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300 rounded"
+            className="w-full max-h-28 resize-none text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300 rounded"
             tabIndex={1}
-            required
+            textAreaSize="xs"
             autoFocus
           />
         </div>

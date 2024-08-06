@@ -21,6 +21,7 @@ class IssueTypeSerializer(BaseSerializer):
             "workspace",
             "project",
             "is_default",
+            "deleted_at",
         ]
 
 
@@ -34,6 +35,7 @@ class IssuePropertySerializer(BaseSerializer):
             "issue_type",
             "workspace",
             "project",
+            "deleted_at",
         ]
 
 
@@ -46,6 +48,7 @@ class IssuePropertyOptionSerializer(BaseSerializer):
             "property",
             "workspace",
             "project",
+            "deleted_at",
         ]
 
 
@@ -58,4 +61,5 @@ class IssuePropertyActivitySerializer(BaseSerializer):
             "workspace",
             "project",
             "issue",
+            "deleted_at",
         ]

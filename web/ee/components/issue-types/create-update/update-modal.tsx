@@ -43,7 +43,7 @@ export const UpdateIssueTypeModal: FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: `Issue type ${data?.name} updated successfully.`,
+          message: `Issue type ${issueTypeFormData?.name} updated successfully.`,
         });
       })
       .catch(() => {

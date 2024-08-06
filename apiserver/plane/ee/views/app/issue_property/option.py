@@ -70,23 +70,6 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check defaults
-        # if (
-        #     not issue_property.is_multi
-        #     and len(
-        #         [
-        #             option
-        #             for option in request.data.get("options", [])
-        #             if option.get("is_default", False)
-        #         ]
-        #     )
-        #     > 1
-        # ):
-        #     return Response(
-        #         {"error": "Property is not multi, only one value allowed"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
-
         last_id = IssuePropertyOption.objects.filter(
             project=project_id, property_id=issue_property_id
         ).aggregate(largest=models.Max("sort_order"))["largest"]
@@ -147,20 +130,6 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check defaults
-        # if (
-        #     not issue_property.is_multi
-        #     and IssuePropertyOption.objects.filter(
-        #         property_id=issue_property_id, is_default=True
-        #     ).count()
-        #     == 1
-        #     and request.data.get("is_default")
-        # ):
-        #     return Response(
-        #         {"error": "Property is not multi, only one value allowed"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
-
         serializer = IssuePropertyOptionSerializer(
             issue_property_option, data=request.data, partial=True
         )
@@ -168,9 +137,6 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         serializer.is_valid(raise_exception=True)
         # Save the data
         serializer.save()
-        # If the option is default, add it to the default value
-        # issue_property.default_value.append(str(serializer.data["id"]))
-        # issue_property.save()
 
         # Return the data
         return Response(serializer.data, status=status.HTTP_200_OK)

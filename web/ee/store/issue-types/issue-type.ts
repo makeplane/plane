@@ -1,4 +1,7 @@
+import concat from "lodash/concat";
 import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
@@ -18,8 +21,6 @@ export interface IIssueType extends TIssueType {
   activeProperties: IIssueProperty<EIssuePropertyType>[];
   // computed function
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
-  // helper actions
-  sortAndUpdateProperties: (propertyData: IIssueProperty<EIssuePropertyType>) => void;
   // actions
   updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   addProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions?: TIssuePropertyOption[]) => void;
@@ -31,21 +32,21 @@ export interface IIssueType extends TIssueType {
 
 export class IssueType implements IIssueType {
   // properties
-  id: string | undefined;
-  name: string | undefined;
-  description: string | undefined;
-  logo_props: TLogoProps | undefined;
-  sort_order: number | undefined;
-  is_active: boolean | undefined;
-  is_default: boolean | undefined;
-  issue_exists: boolean | undefined;
-  weight: number | undefined;
-  project: string | undefined;
-  workspace: string | undefined;
-  created_at: Date | undefined;
-  created_by: string | undefined;
-  updated_at: Date | undefined;
-  updated_by: string | undefined;
+  id: string | undefined = undefined;
+  name: string | undefined = undefined;
+  description: string | undefined = undefined;
+  logo_props: TLogoProps | undefined = undefined;
+  sort_order: number | undefined = undefined;
+  is_active: boolean | undefined = undefined;
+  is_default: boolean | undefined = undefined;
+  issue_exists: boolean | undefined = undefined;
+  weight: number | undefined = undefined;
+  project: string | undefined = undefined;
+  workspace: string | undefined = undefined;
+  created_at: Date | undefined = undefined;
+  created_by: string | undefined = undefined;
+  updated_at: Date | undefined = undefined;
+  updated_by: string | undefined = undefined;
   // issue properties
   properties: IIssueProperty<EIssuePropertyType>[] = [];
   // service
@@ -56,26 +57,6 @@ export class IssueType implements IIssueType {
     private store: RootStore,
     issueTypeData: TIssueType
   ) {
-    this.id = issueTypeData.id ?? undefined;
-    this.name = issueTypeData.name ?? undefined;
-    this.description = issueTypeData.description ?? undefined;
-    this.logo_props = issueTypeData.logo_props ?? undefined;
-    this.sort_order = issueTypeData.sort_order ?? undefined;
-    this.is_active = issueTypeData.is_active ?? undefined;
-    this.is_default = issueTypeData.is_default ?? undefined;
-    this.issue_exists = issueTypeData.issue_exists ?? undefined;
-    this.weight = issueTypeData.weight ?? undefined;
-    this.project = issueTypeData.project ?? undefined;
-    this.workspace = issueTypeData.workspace ?? undefined;
-    this.created_at = issueTypeData.created_at ?? undefined;
-    this.created_by = issueTypeData.created_by ?? undefined;
-    this.updated_at = issueTypeData.updated_at ?? undefined;
-    this.updated_by = issueTypeData.updated_by ?? undefined;
-    this.properties = [];
-    // service
-    this.service = new IssueTypesService();
-    this.issuePropertyService = new IssuePropertiesService();
-
     makeObservable(this, {
       id: observable.ref,
       name: observable.ref,
@@ -94,14 +75,32 @@ export class IssueType implements IIssueType {
       // computed
       asJSON: computed,
       activeProperties: computed,
-      // helper actions
-      sortAndUpdateProperties: action,
       // actions
       updateType: action,
       addProperty: action,
       createProperty: action,
       deleteProperty: action,
     });
+
+    this.id = issueTypeData.id;
+    this.name = issueTypeData.name;
+    this.description = issueTypeData.description;
+    this.logo_props = issueTypeData.logo_props;
+    this.sort_order = issueTypeData.sort_order;
+    this.is_active = issueTypeData.is_active;
+    this.is_default = issueTypeData.is_default;
+    this.issue_exists = issueTypeData.issue_exists;
+    this.weight = issueTypeData.weight;
+    this.project = issueTypeData.project;
+    this.workspace = issueTypeData.workspace;
+    this.created_at = issueTypeData.created_at;
+    this.created_by = issueTypeData.created_by;
+    this.updated_at = issueTypeData.updated_at;
+    this.updated_by = issueTypeData.updated_by;
+    this.properties = [];
+    // service
+    this.service = new IssueTypesService();
+    this.issuePropertyService = new IssuePropertiesService();
   }
 
   // computed
@@ -146,20 +145,6 @@ export class IssueType implements IIssueType {
       this.properties.find((property) => property.id === propertyId) as IIssueProperty<T> | undefined
   );
 
-  // helper actions
-  /**
-   * @description Sort and update properties
-   * @param propertyData Issue property data
-   */
-  // TODO: remove if not required
-  sortAndUpdateProperties = (propertyData: IIssueProperty<EIssuePropertyType>) => {
-    const updatedProperties = [...this.properties, propertyData].sort((a, b) => {
-      if (a.sort_order && b.sort_order) return a.sort_order - b.sort_order;
-      return 0;
-    });
-    set(this, "properties", updatedProperties);
-  };
-
   // actions
   /**
    * @description Update issue type
@@ -195,7 +180,7 @@ export class IssueType implements IIssueType {
   ) => {
     try {
       const issueProperty = new IssueProperty<EIssuePropertyType>(this.store, issuePropertyData);
-      this.sortAndUpdateProperties(issueProperty);
+      update(this, "properties", (properties) => uniq(concat(properties, issueProperty)));
       if (propertyOptions && propertyOptions.length) {
         for (const propertyOptionData of propertyOptions) {
           issueProperty.addPropertyOption(propertyOptionData);

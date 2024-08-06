@@ -43,7 +43,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
 
   useEffect(() => {
     if (lastElementRef.current) {
-      lastElementRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      lastElementRef.current.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
     }
   }, [issuePropertyCreateList]);
 

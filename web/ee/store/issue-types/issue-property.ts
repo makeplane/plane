@@ -1,4 +1,7 @@
+import concat from "lodash/concat";
 import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
@@ -20,12 +23,10 @@ import {
 export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProperty<T> {
   propertyOptions: IIssuePropertyOption[];
   // computed
-  asJSON: TIssueProperty<T> | undefined;
-  activePropertyOptions: IIssuePropertyOption[];
+  asJSON: TIssueProperty<T>;
+  sortedActivePropertyOptions: IIssuePropertyOption[];
   // computed function
   getPropertyOptionById: (propertyOptionId: string) => IIssuePropertyOption | undefined;
-  // helper actions
-  sortAndUpdatePropertyOptions: (propertyOptionData: IIssuePropertyOption) => void;
   // actions
   updateProperty: (issueTypeId: string, propertyData: Partial<TIssueProperty<T>>) => Promise<void>;
   addPropertyOption: (propertyOptionData: TIssuePropertyOption) => void;
@@ -37,24 +38,24 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
 
 export class IssueProperty<T extends EIssuePropertyType> implements IIssueProperty<T> {
   // properties
-  id: string | undefined;
-  name: string | undefined;
-  display_name: string | undefined;
-  description: string | undefined;
-  logo_props: TLogoProps | undefined;
-  sort_order: number | undefined;
-  property_type: T | undefined;
-  relation_type: EIssuePropertyRelationType | undefined;
-  is_required: boolean | undefined;
-  default_value: string[] | undefined;
-  settings: TIssuePropertySettingsMap[T] | undefined;
-  is_active: boolean | undefined;
-  issue_type: string | undefined;
-  is_multi: boolean | undefined;
-  created_at: Date | undefined;
-  created_by: string | undefined;
-  updated_at: Date | undefined;
-  updated_by: string | undefined;
+  id: string | undefined = undefined;
+  name: string | undefined = undefined;
+  display_name: string | undefined = undefined;
+  description: string | undefined = undefined;
+  logo_props: TLogoProps | undefined = undefined;
+  sort_order: number | undefined = undefined;
+  property_type: T | undefined = undefined;
+  relation_type: EIssuePropertyRelationType | undefined = undefined;
+  is_required: boolean | undefined = undefined;
+  default_value: string[] | undefined = undefined;
+  settings: TIssuePropertySettingsMap[T] | undefined = undefined;
+  is_active: boolean | undefined = undefined;
+  issue_type: string | undefined = undefined;
+  is_multi: boolean | undefined = undefined;
+  created_at: Date | undefined = undefined;
+  created_by: string | undefined = undefined;
+  updated_at: Date | undefined = undefined;
+  updated_by: string | undefined = undefined;
   // property options
   propertyOptions: IIssuePropertyOption[] = [];
   // service
@@ -65,28 +66,6 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     private store: RootStore,
     propertyData: TIssueProperty<T>
   ) {
-    this.id = propertyData.id ?? undefined;
-    this.name = propertyData.name ?? undefined;
-    this.display_name = propertyData.display_name ?? undefined;
-    this.description = propertyData.description ?? undefined;
-    this.logo_props = propertyData.logo_props ?? undefined;
-    this.sort_order = propertyData.sort_order ?? undefined;
-    this.property_type = propertyData.property_type ?? undefined;
-    this.relation_type = propertyData.relation_type ?? undefined;
-    this.is_required = propertyData.is_required ?? undefined;
-    this.default_value = propertyData.default_value ?? undefined;
-    this.settings = propertyData.settings ?? undefined;
-    this.is_active = propertyData.is_active ?? undefined;
-    this.issue_type = propertyData.issue_type ?? undefined;
-    this.is_multi = propertyData.is_multi ?? undefined;
-    this.created_at = propertyData.created_at ?? undefined;
-    this.created_by = propertyData.created_by ?? undefined;
-    this.updated_at = propertyData.updated_at ?? undefined;
-    this.updated_by = propertyData.updated_by ?? undefined;
-    // service
-    this.service = new IssuePropertiesService();
-    this.propertyOptionService = new IssuePropertyOptionsService();
-
     makeObservable(this, {
       id: observable.ref,
       name: observable.ref,
@@ -109,15 +88,35 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       propertyOptions: observable,
       // computed
       asJSON: computed,
-      activePropertyOptions: computed,
-      // helper actions
-      sortAndUpdatePropertyOptions: action,
+      sortedActivePropertyOptions: computed,
       // actions
       updateProperty: action,
       addPropertyOption: action,
       createPropertyOptions: action,
       deletePropertyOption: action,
     });
+
+    this.id = propertyData.id;
+    this.name = propertyData.name;
+    this.display_name = propertyData.display_name;
+    this.description = propertyData.description;
+    this.logo_props = propertyData.logo_props;
+    this.sort_order = propertyData.sort_order;
+    this.property_type = propertyData.property_type;
+    this.relation_type = propertyData.relation_type;
+    this.is_required = propertyData.is_required;
+    this.default_value = propertyData.default_value;
+    this.settings = propertyData.settings;
+    this.is_active = propertyData.is_active;
+    this.issue_type = propertyData.issue_type;
+    this.is_multi = propertyData.is_multi;
+    this.created_at = propertyData.created_at;
+    this.created_by = propertyData.created_by;
+    this.updated_at = propertyData.updated_at;
+    this.updated_by = propertyData.updated_by;
+    // service
+    this.service = new IssuePropertiesService();
+    this.propertyOptionService = new IssuePropertyOptionsService();
   }
 
   // computed
@@ -149,11 +148,16 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
   }
 
   /**
-   * @description Get active property options
+   * @description Get sorted active property options
    * @returns {IIssuePropertyOption[]}
    */
-  get activePropertyOptions(): IIssuePropertyOption[] {
-    return this.propertyOptions.filter((option) => option.is_active);
+  get sortedActivePropertyOptions(): IIssuePropertyOption[] {
+    return this.propertyOptions
+      ?.filter((option) => option.is_active)
+      .sort((a, b) => {
+        if (a.sort_order && b.sort_order) return a.sort_order - b.sort_order;
+        return 0;
+      });
   }
 
   // computed function
@@ -165,20 +169,6 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
   getPropertyOptionById = computedFn((propertyOptionId: string): IIssuePropertyOption | undefined =>
     this.propertyOptions.find((option) => option.id === propertyOptionId)
   );
-
-  // helper actions
-  /**
-   * @description Sort and update property options
-   * @param {IIssuePropertyOption} propertyOptionData
-   */
-  // TODO: remove if not required
-  sortAndUpdatePropertyOptions = (propertyOptionData: IIssuePropertyOption) => {
-    const updatedPropertyOptions = [...this.propertyOptions, propertyOptionData].sort((a, b) => {
-      if (a.sort_order && b.sort_order) return a.sort_order - b.sort_order;
-      return 0;
-    });
-    set(this, "propertyOptions", updatedPropertyOptions);
-  };
 
   // actions
   /**
@@ -211,7 +201,8 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    */
   addPropertyOption = (propertyOptionData: TIssuePropertyOption) => {
     try {
-      this.sortAndUpdatePropertyOptions(new IssuePropertyOption(this.store, propertyOptionData));
+      const issuePropertyOption = new IssuePropertyOption(this.store, propertyOptionData);
+      update(this, "propertyOptions", (propertyOptions) => uniq(concat(propertyOptions, issuePropertyOption)));
     } catch (error) {
       console.error("IssueProperty -> addPropertyOption -> error", error);
       throw error;
