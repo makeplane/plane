@@ -45,7 +45,7 @@ class ApiTokenEndpoint(BaseAPIView):
     def get(self, request, slug, pk=None):
         if pk is None:
             api_tokens = APIToken.objects.filter(
-                user=request.user, workspace__slug=slug
+                user=request.user, workspace__slug=slug, is_service=False
             )
             serializer = APITokenReadSerializer(api_tokens, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -113,7 +113,6 @@ class ServiceApiTokenEndpoint(BaseAPIView):
                 user_type=user_type,
                 is_service=True,
             )
-            # Token will be only visible while creating
             return Response(
                 {
                     "token": str(api_token.token),
