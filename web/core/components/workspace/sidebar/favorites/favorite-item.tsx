@@ -135,7 +135,11 @@ export const FavoriteItem = observer(
           key={favorite.id}
           className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
         >
-          <div className="flex flex-between items-center gap-1.5 py-[1px] w-full">
+          <div
+            className={cn("flex flex-between items-center gap-1.5 py-[1px]", {
+              "w-full": !sidebarCollapsed,
+            })}
+          >
             <Tooltip
               isMobile={isMobile}
               tooltipContent={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
