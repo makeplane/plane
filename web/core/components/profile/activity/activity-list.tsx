@@ -68,6 +68,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                       </div>
                       <div className="issue-comments-section p-0">
                         <RichTextReadOnlyEditor
+                          id={activityItem.id}
                           initialValue={
                             activityItem?.new_value !== ""
                               ? (activityItem.new_value?.toString() as string)

@@ -46,6 +46,7 @@ export const CommandPalette: FC = observer(() => {
     canPerformProjectCreateActions,
     canPerformWorkspaceCreateActions,
     canPerformAnyCreateAction,
+    canPerformProjectAdminActions,
   } = useUser();
   const {
     issues: { removeIssue },
@@ -111,6 +112,19 @@ export const CommandPalette: FC = observer(() => {
       return canPerformProjectCreateActions;
     },
     [canPerformProjectCreateActions]
+  );
+
+  const performProjectBulkDeleteActions = useCallback(
+    (showToast: boolean = true) => {
+      if (!canPerformProjectAdminActions && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+
+      return canPerformProjectAdminActions;
+    },
+    [canPerformProjectAdminActions]
   );
 
   const performWorkspaceCreateActions = useCallback(
@@ -210,6 +224,7 @@ export const CommandPalette: FC = observer(() => {
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
       const shiftClicked = shiftKey;
+      const deleteKey = keyPressed === "backspace" || keyPressed === "delete";
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
@@ -229,7 +244,11 @@ export const CommandPalette: FC = observer(() => {
         toggleShortcutModal(true);
       }
 
-      if (cmdClicked) {
+      if (deleteKey) {
+        if (performProjectBulkDeleteActions()) {
+          shortcutsList.project.delete.action();
+        }
+      } else if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
@@ -266,6 +285,7 @@ export const CommandPalette: FC = observer(() => {
     [
       performAnyProjectCreateActions,
       performProjectCreateActions,
+      performProjectBulkDeleteActions,
       performWorkspaceCreateActions,
       copyIssueUrlToClipboard,
       isAnyModalOpen,

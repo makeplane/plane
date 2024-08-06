@@ -369,7 +369,7 @@ const ProfileSettingsPage = observer(() => {
                     />
                   )}
                 />
-                {errors?.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
+                {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
               </div>
 
               <div className="flex flex-col gap-1">

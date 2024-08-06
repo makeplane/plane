@@ -66,7 +66,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 onEnterKeyPress={(commentHTML) => {
-                  console.log("commentHTML", commentHTML);
                   const isEmpty =
                     commentHTML?.trim() === "" ||
                     commentHTML === "<p></p>" ||

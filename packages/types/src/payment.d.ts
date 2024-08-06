@@ -19,5 +19,7 @@ export type IPaymentProduct = {
 
 export type IWorkspaceProductSubscription = {
   product: TProductSubscriptionType;
+  is_canceled?: boolean;
+  interval?: "month" | "year" | null;
   current_period_end_date: string | null;
 };

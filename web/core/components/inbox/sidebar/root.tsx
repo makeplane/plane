@@ -2,7 +2,6 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { TInboxIssueCurrentTab } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -22,6 +21,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 type IInboxSidebarProps = {
   workspaceSlug: string;
   projectId: string;
+  inboxIssueId: string | undefined;
   setIsMobileSidebar: (value: boolean) => void;
 };
 
@@ -37,7 +37,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
 ];
 
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
-  const { workspaceSlug, projectId, setIsMobileSidebar } = props;
+  const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
@@ -54,7 +54,6 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   } = useProjectInbox();
 
   const router = useAppRouter();
-  const { inboxIssueId } = useParams();
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -65,11 +64,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
 
   useEffect(() => {
-    if (inboxIssueId) return;
-    router.push(
-      `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
-    );
-  }, []);
+    if (workspaceSlug && projectId && currentTab && filteredInboxIssueIds.length > 0) {
+      if (inboxIssueId === undefined) {
+        router.push(
+          `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
+        );
+      }
+    }
+  }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
 
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">

@@ -374,7 +374,8 @@ const renderItems = () => {
         editor: props.editor,
       });
 
-      const tippyContainer = document.querySelector(".active-editor") ?? document.querySelector("#editor-container");
+      const tippyContainer =
+        document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
 
       // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {

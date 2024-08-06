@@ -91,6 +91,9 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
   fetchParentStats = () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug

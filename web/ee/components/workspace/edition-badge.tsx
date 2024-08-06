@@ -12,11 +12,9 @@ import packageJson from "package.json";
 export const WorkspaceEditionBadge = observer(() => {
   // hooks
   const { isMobile } = usePlatformOS();
-  const { instance } = useInstance();
+  const { instance, config } = useInstance();
 
-  const DISCO_BASE_URL = process.env.NEXT_PUBLIC_DISCO_BASE_URL || "";
-
-  if (DISCO_BASE_URL.length > 0) {
+  if (config?.payment_server_base_url) {
     return <CloudEditionBadge />;
   }
 

@@ -8,7 +8,7 @@ export class ViewService extends APIService {
   }
 
   async getViewDetails(anchor: string): Promise<IProjectView> {
-    return this.get(`api/public/anchor/${anchor}/views/`)
+    return this.get(`/api/public/anchor/${anchor}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -16,7 +16,7 @@ export class ViewService extends APIService {
   }
 
   async getViewIssues(anchor: string, params: any): Promise<any> {
-    return this.get(`api/public/anchor/${anchor}/view-issues/`, {
+    return this.get(`/api/public/anchor/${anchor}/view-issues/`, {
       params,
     })
       .then((response) => response?.data)

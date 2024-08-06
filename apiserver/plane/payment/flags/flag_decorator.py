@@ -19,7 +19,7 @@ class ErrorCodes(Enum):
     PAYMENT_REQUIRED = 1999
 
 
-def check_feature_flag(feature_key, default_value=True):
+def check_feature_flag(feature_key, default_value=False):
     """decorator to feature flag"""
 
     def decorator(view_func):
@@ -53,7 +53,7 @@ def check_feature_flag(feature_key, default_value=True):
 
 
 def check_workspace_feature_flag(
-    feature_key, slug, user_id=None, default_value=True
+    feature_key, slug, user_id=None, default_value=False
 ):
     """Function to check workspace feature flag"""
     # Function to generate cache key

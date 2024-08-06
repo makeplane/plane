@@ -12,7 +12,7 @@ type TFeatureFlagsMaps = {
 
 export interface IFeatureFlagsStore {
   flags: TFeatureFlagsMaps;
-  fetchFeatureFlags: (workspaceSlug: string, userId: string) => Promise<TFeatureFlagsResponse>;
+  fetchFeatureFlags: (workspaceSlug: string) => Promise<TFeatureFlagsResponse>;
 }
 
 export class FeatureFlagsStore implements IFeatureFlagsStore {
@@ -25,9 +25,9 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
     });
   }
 
-  fetchFeatureFlags = async (workspaceSlug: string, userId: string) => {
+  fetchFeatureFlags = async (workspaceSlug: string) => {
     try {
-      const response = await featureFlagService.getFeatureFlags({ workspace_slug: workspaceSlug, user_id: userId });
+      const response = await featureFlagService.getFeatureFlags(workspaceSlug);
       runInAction(() => {
         if (response.values) {
           Object.keys(response.values).forEach((key) => {

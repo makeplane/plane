@@ -553,28 +553,27 @@ class InboxIssueViewSet(BaseViewSet):
             project_id=project_id,
             inbox_id=inbox_id,
         )
-        # Get the project member
-        project_member = ProjectMember.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            is_active=True,
-        )
-
-        if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
-            request.user.id
-        ):
-            return Response(
-                {"error": "You cannot delete inbox issue"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check the issue status
         if inbox_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
-            Issue.objects.filter(
+            issue = Issue.objects.filter(
                 workspace__slug=slug, project_id=project_id, pk=issue_id
-            ).delete()
+            ).first()
+            if issue.created_by_id != request.user.id and (
+                not ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    member=request.user,
+                    role=20,
+                    project_id=project_id,
+                    is_active=True,
+                ).exists()
+            ):
+                return Response(
+                    {"error": "Only admin or creator can delete the issue"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            issue.delete()
 
         inbox_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

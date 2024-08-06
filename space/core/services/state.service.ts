@@ -8,7 +8,7 @@ export class StateService extends APIService {
   }
 
   async getStates(anchor: string): Promise<IState[]> {
-    return this.get(`api/public/anchor/${anchor}/states/`)
+    return this.get(`/api/public/anchor/${anchor}/states/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

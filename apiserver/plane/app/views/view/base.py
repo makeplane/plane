@@ -117,6 +117,20 @@ class WorkspaceViewViewSet(BaseViewSet):
             pk=pk,
             workspace__slug=slug,
         )
+        if not (
+            WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                is_active=True,
+            ).exists()
+            and workspace_view.owned_by_id != request.user.id
+        ):
+            return Response(
+                {"error": "You do not have permission to delete this view"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         workspace_member = WorkspaceMember.objects.filter(
             workspace__slug=slug,
             member=request.user,
@@ -128,6 +142,13 @@ class WorkspaceViewViewSet(BaseViewSet):
             or workspace_view.owned_by == request.user
         ):
             workspace_view.delete()
+            # Delete the user favorite view
+            UserFavorite.objects.filter(
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_type="view",
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
@@ -421,15 +442,24 @@ class IssueViewViewSet(BaseViewSet):
             project_id=project_id,
             workspace__slug=slug,
         )
-        project_member = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=20,
-            is_active=True,
-        )
-        if project_member.exists() or project_view.owned_by == request.user:
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=20,
+                is_active=True,
+            ).exists()
+            or project_view.owned_by_id == request.user.id
+        ):
             project_view.delete()
+            # Delete the user favorite view
+            UserFavorite.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_type="view",
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
@@ -467,5 +497,5 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             entity_type="view",
             entity_identifier=view_id,
         )
-        view_favorite.delete()
+        view_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)

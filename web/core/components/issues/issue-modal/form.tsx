@@ -363,7 +363,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 }
               />
             )}
-            <h3 className="text-xl font-medium text-custom-text-200">{data?.id ? "Update" : "Create"} Issue</h3>
+            <h3 className="text-xl font-medium text-custom-text-200">{data?.id ? "Update" : "Create"} issue</h3>
           </div>
           {watch("parent_id") && selectedParentIssue && (
             <Controller
@@ -460,6 +460,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditor
+                        id="issue-modal-editor"
                         initialValue={value ?? ""}
                         value={data.description_html}
                         workspaceSlug={workspaceSlug?.toString() as string}

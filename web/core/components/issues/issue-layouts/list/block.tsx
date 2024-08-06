@@ -16,7 +16,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -65,6 +65,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const projectId = routerProjectId?.toString();
   // hooks
+  const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
@@ -133,13 +134,15 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     <div
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent",
+        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent",
         {
           "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "border-custom-border-400": isIssueActive,
           "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
           "bg-custom-background-80": isCurrentBlockDragging,
+          "md:flex-row md:items-center": isSidebarCollapsed,
+          "lg:flex-row lg:items-center": !isSidebarCollapsed,
         }
       )}
       onDragStart={() => {
@@ -229,7 +232,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               id={`issue-${issue.id}`}
               href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
                 issue.id
-                }`}
+              }`}
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
@@ -241,7 +244,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           )}
         </div>
         {!issue?.tempId && (
-          <div className="block md:hidden border border-custom-border-300 rounded">
+          <div
+            className={cn("block border border-custom-border-300 rounded", {
+              "md:hidden": isSidebarCollapsed,
+              "lg:hidden": !isSidebarCollapsed,
+            })}
+          >
             {quickActions({
               issue,
               parentRef: issueRef,
@@ -253,14 +261,19 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         {!issue?.tempId ? (
           <>
             <IssueProperties
-              className="relative flex flex-wrap md:flex-grow md:flex-shrink-0 items-center gap-2 whitespace-nowrap"
+              className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
               issue={issue}
               isReadOnly={!canEditIssueProperties}
               updateIssue={updateIssue}
               displayProperties={displayProperties}
               activeLayout="List"
             />
-            <div className="hidden md:block">
+            <div
+              className={cn("hidden", {
+                "md:flex": isSidebarCollapsed,
+                "lg:flex": !isSidebarCollapsed,
+              })}
+            >
               {quickActions({
                 issue,
                 parentRef: issueRef,

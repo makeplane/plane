@@ -12,6 +12,7 @@ import { LogOut } from "lucide-react";
 import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
@@ -33,6 +34,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // store hooks
   const { membership, signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();
+  const { fetchFavorite } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
@@ -46,10 +48,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
 
   // fetching feature flags
-  const { isLoading: featureFlagsLoader } = useSWR(
-    workspaceSlug && currentUser ? `WORKSPACE_FEATURE_FLAGS_${workspaceSlug}_${currentUser.id}` : null,
-    workspaceSlug && currentUser ? () => fetchFeatureFlags(workspaceSlug.toString(), currentUser.id) : null,
-    { revalidateOnFocus: false }
+  const { isLoading: flagsLoader, error: flagsError } = useSWR(
+    workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false, errorRetryCount: 1 }
   );
 
   // fetching user workspace information
@@ -78,6 +80,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+  // fetch workspace favorite
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_FAVORITE_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchFavorite(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   const handleSignOut = async () => {
     await signOut().catch(() =>
@@ -90,7 +98,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (featureFlagsLoader || allWorkspaces === undefined) {
+  if ((flagsLoader && !flagsError) || allWorkspaces === undefined) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

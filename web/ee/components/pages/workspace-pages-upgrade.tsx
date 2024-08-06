@@ -9,7 +9,7 @@ import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
-import { CloudProductsModal } from "@/plane-web/components/license";
+import { ProPlanCloudUpgradeModal } from "@/plane-web/components/license";
 
 export const WorkspacePagesUpgrade: FC = observer(() => {
   // router
@@ -19,7 +19,7 @@ export const WorkspacePagesUpgrade: FC = observer(() => {
 
   return (
     <>
-      <CloudProductsModal isOpen={isProPlanModalOpen} handleClose={() => toggleProPlanModal(false)} />
+      <ProPlanCloudUpgradeModal isOpen={isProPlanModalOpen} handleClose={() => toggleProPlanModal(false)} />
       <div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
         <div className="text-center px-4">
           <h3 className="text-2xl font-medium mb-4">Workspace Pages are on our Pro plan.</h3>

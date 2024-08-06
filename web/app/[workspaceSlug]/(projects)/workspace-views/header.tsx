@@ -144,7 +144,7 @@ export const GlobalIssuesHeader = observer(() => {
           )}
           {isAuthorizedUser && (
             <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
-              Add View
+              Add view
             </Button>
           )}
         </div>

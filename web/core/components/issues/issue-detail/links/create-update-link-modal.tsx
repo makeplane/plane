@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useEffect, Fragment } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import type { TIssueLinkEditableFields } from "@plane/types";
@@ -27,7 +28,7 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props) => {
+export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
   // props
   const { isModalOpen, handleOnClose, linkOperations } = props;
 
@@ -45,6 +46,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
 
   const onClose = () => {
     setIssueLinkData(null);
+    reset(defaultValues);
     if (handleOnClose) handleOnClose();
   };
 
@@ -55,8 +57,8 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
   };
 
   useEffect(() => {
-    reset({ ...defaultValues, ...preloadedData });
-  }, [preloadedData, reset]);
+    if (isModalOpen) reset({ ...defaultValues, ...preloadedData });
+  }, [preloadedData, reset, isModalOpen]);
 
   return (
     <Transition.Root show={isModalOpen} as={Fragment}>
@@ -89,7 +91,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
                   <div>
                     <div className="space-y-5">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        {preloadedData?.id ? "Update Link" : "Add Link"}
+                        {preloadedData?.id ? "Update link" : "Add link"}
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
@@ -150,11 +152,11 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
                     <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                       {preloadedData?.id
                         ? isSubmitting
-                          ? "Updating Link..."
-                          : "Update Link"
+                          ? "Updating link..."
+                          : "Update link"
                         : isSubmitting
-                          ? "Adding Link..."
-                          : "Add Link"}
+                          ? "Adding link..."
+                          : "Add link"}
                     </Button>
                   </div>
                 </form>
@@ -165,4 +167,4 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
       </Dialog>
     </Transition.Root>
   );
-};
+});

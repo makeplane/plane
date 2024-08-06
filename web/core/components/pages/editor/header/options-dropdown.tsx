@@ -108,7 +108,10 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "copy-page-link",
       action: () => {
-        copyUrlToClipboard(`${workspaceSlug?.toString()}/projects/${projectId?.toString()}/pages/${id}`).then(() =>
+        const pageLink = projectId
+          ? `${workspaceSlug?.toString()}/projects/${projectId?.toString()}/pages/${id}`
+          : `${workspaceSlug?.toString()}/pages/${id}`;
+        copyUrlToClipboard(pageLink).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",

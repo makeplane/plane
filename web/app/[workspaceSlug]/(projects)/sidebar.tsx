@@ -10,6 +10,7 @@ import {
   SidebarWorkspaceMenu,
 } from "@/components/workspace";
 // helpers
+import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
@@ -41,7 +42,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
-
   return (
     <div
       className={cn(
@@ -53,32 +53,38 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
     >
       <div
         ref={ref}
-        className={cn("size-full flex flex-col flex-1 p-4 pb-0", {
+        className={cn("size-full flex flex-col flex-1 pt-4 pb-0", {
           "p-2": sidebarCollapsed,
         })}
       >
-        <SidebarDropdown />
-        <div className="flex-shrink-0 h-4" />
-        <SidebarAppSwitcher />
-        <SidebarQuickActions />
+        <div className="px-4">
+          <SidebarDropdown />
+          <div className="flex-shrink-0 h-4" />
+          <SidebarAppSwitcher />
+          <SidebarQuickActions />
+        </div>
         <hr
           className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
             "opacity-0": !sidebarCollapsed,
           })}
         />
-        <SidebarUserMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
+        <div
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-4", {
+            "vertical-scrollbar": !sidebarCollapsed,
           })}
-        />
-        <SidebarWorkspaceMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
-          })}
-        />
-        <SidebarProjectsList />
+        >
+          <SidebarUserMenu />
+
+          <SidebarWorkspaceMenu />
+          <hr
+            className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
+              "opacity-0": !sidebarCollapsed,
+            })}
+          />
+          <SidebarFavoritesMenu />
+
+          <SidebarProjectsList />
+        </div>
         <SidebarHelpSection />
       </div>
     </div>

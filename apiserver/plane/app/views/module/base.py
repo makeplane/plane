@@ -48,6 +48,7 @@ from plane.db.models import (
     ModuleLink,
     ModuleUserProperties,
     Project,
+    ProjectMember,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
@@ -443,6 +444,12 @@ class ModuleViewSet(BaseViewSet):
             )
         )
 
+        if not queryset.exists():
+            return Response(
+                {"error": "Module not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
             pk=project_id,
@@ -554,7 +561,7 @@ class ModuleViewSet(BaseViewSet):
                 )
 
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_module__module_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -604,7 +611,7 @@ class ModuleViewSet(BaseViewSet):
         )
 
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_module__module_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -737,6 +744,21 @@ class ModuleViewSet(BaseViewSet):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+
+        if module.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the module"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list(
                 "issue", flat=True
@@ -757,6 +779,18 @@ class ModuleViewSet(BaseViewSet):
             for issue in module_issues
         ]
         module.delete()
+        # Delete the module issues
+        ModuleIssue.objects.filter(
+            module=pk,
+            project_id=project_id,
+        ).delete()
+        # Delete the user favorite module
+        UserFavorite.objects.filter(
+            user=request.user,
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -820,7 +854,7 @@ class ModuleFavoriteViewSet(BaseViewSet):
             entity_type="module",
             entity_identifier=module_id,
         )
-        module_favorite.delete()
+        module_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

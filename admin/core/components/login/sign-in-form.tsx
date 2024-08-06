@@ -57,8 +57,6 @@ export const InstanceSignInForm: FC = (props) => {
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
-  console.log("csrfToken", csrfToken);
-
   useEffect(() => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));

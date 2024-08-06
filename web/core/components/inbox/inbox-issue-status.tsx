@@ -17,9 +17,9 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const { inboxIssue, iconSize = 16, showDescription = false } = props;
   // derived values
   const inboxIssueStatusDetail = INBOX_STATUS.find((s) => s.status === inboxIssue.status);
-  if (!inboxIssueStatusDetail) return <></>;
 
   const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
+  if (!inboxIssueStatusDetail || isSnoozedDatePassed) return <></>;
 
   const description = inboxIssueStatusDetail.description(new Date(inboxIssue.snoozed_till ?? ""));
 

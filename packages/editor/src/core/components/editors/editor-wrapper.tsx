@@ -21,7 +21,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     editorClassName = "",
     extensions,
     hideDragHandleOnMouseLeave,
-    id = "",
+    id,
     initialValue,
     fileHandler,
     forwardedRef,
@@ -57,13 +57,14 @@ export const EditorWrapper: React.FC<Props> = (props) => {
 
   return (
     <EditorContainer
-      hideDragHandle={hideDragHandleOnMouseLeave}
       editor={editor}
       editorContainerClassName={editorContainerClassName}
+      id={id}
+      hideDragHandle={hideDragHandleOnMouseLeave}
     >
       {children?.(editor)}
       <div className="flex flex-col">
-        <EditorContentWrapper tabIndex={tabIndex} editor={editor} />
+        <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
       </div>
     </EditorContainer>
   );

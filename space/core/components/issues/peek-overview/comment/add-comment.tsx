@@ -72,6 +72,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               workspaceId={workspaceID?.toString() ?? ""}
               workspaceSlug={workspaceSlug?.toString() ?? ""}
               ref={editorRef}
+              id="peek-overview-add-comment"
               initialValue={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                   ? watch("comment_html")
