@@ -136,7 +136,7 @@ export const FavoriteItem = observer(
           className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
         >
           <div
-            className={cn("flex flex-between items-center gap-1.5 py-[1px]", {
+            className={cn("flex justify-between items-center gap-1.5 py-[1px]", {
               "w-full": !sidebarCollapsed,
             })}
           >
@@ -162,13 +162,14 @@ export const FavoriteItem = observer(
               </button>
             </Tooltip>
 
-            <Link href={getLink()}>{getIcon()}</Link>
-
-            {!sidebarCollapsed && (
-              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1 truncate">
-                {favorite.entity_data ? favorite.entity_data.name : favorite.name}
-              </Link>
-            )}
+            <Link href={getLink()} className="flex items-center gap-1.5 truncate">
+              {getIcon()}
+              {!sidebarCollapsed && (
+                <span className="text-sm leading-5 font-medium flex-1 truncate">
+                  {favorite.entity_data ? favorite.entity_data.name : favorite.name}
+                </span>
+              )}
+            </Link>
 
             {!sidebarCollapsed && (
               <CustomMenu
