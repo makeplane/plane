@@ -6,28 +6,20 @@ declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
 }
 
+type TSQL = {
+  db?: any;
+  initialized: boolean;
+  syncInProgress: boolean | Promise<any>;
+};
+
 const log = console.log;
 const error = console.error;
 
-const SQL = { initialized: false };
+const SQL: TSQL = { initialized: false, syncInProgress: false };
 const start = async (sqlite3: any) => {
   log("Running SQLite3 version", sqlite3.version.libVersion);
   SQL.db = new sqlite3.oo1.DB("/mydb.sqlite3", "ct");
   createTables(SQL.db);
-};
-
-const initializeSQLiteMemory = async () => {
-  try {
-    log("Loading and initializing SQLite3 module...");
-    const sqlite3 = await sqlite3InitModule({
-      print: log,
-      printErr: error,
-    });
-    log("Done initializing. Running demo...");
-    await start(sqlite3);
-  } catch (err) {
-    error("Initialization error:", err.name, err.message);
-  }
 };
 
 const initializeSQLite = async () => {

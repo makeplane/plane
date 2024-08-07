@@ -67,7 +67,7 @@ export const updateIssue = async (issue: any) => {
   await deleteIssueFromLocal(issue_id);
   addIssue(issue);
 };
-export const loadIssues = async (workspaceId: string, projectId: string) => {
+export const loadIssuesPrivate = async (workspaceId: string, projectId: string) => {
   // Load issues from the API
   const issueService = new IssueService();
 
@@ -94,11 +94,15 @@ export const loadIssues = async (workspaceId: string, projectId: string) => {
         }
       });
     } while (results.length >= PAGE_SIZE && !breakLoop);
+    createIndexes();
   } else {
     syncLocalData(workspaceId, projectId);
   }
+};
 
-  createIndexes();
+export const loadIssues = async (workspaceId: string, projectId: string) => {
+  SQL.syncInProgress = loadIssuesPrivate(workspaceId, projectId);
+  await SQL.syncInProgress;
 };
 
 export const syncUpdatesToLocal = async (workspaceId: string, projectId: string) => {
@@ -138,5 +142,10 @@ export const syncDeletesToLocal = async (workspaceId: string, projectId: string)
 };
 
 export const syncLocalData = async (workspaceId: string, projectId: string) => {
-  await Promise.all([syncDeletesToLocal(workspaceId, projectId), syncUpdatesToLocal(workspaceId, projectId)]);
+  SQL.syncInProgress = Promise.all([
+    syncDeletesToLocal(workspaceId, projectId),
+    syncUpdatesToLocal(workspaceId, projectId),
+  ]);
+
+  await SQL.syncInProgress;
 };

@@ -1,12 +1,14 @@
 import { TIssue } from "@plane/types";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "../query-constructor";
 import { runQuery } from "../query-executor";
+import { SQL } from "../sqlite";
 
 const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 
 export const getIssues = async (workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> => {
   const { cursor } = queries;
 
+  await SQL.syncInProgress;
   const query = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
   const countQuery = issueFilterCountQueryConstructor(workspaceSlug, projectId, queries);
   const start = performance.now();
