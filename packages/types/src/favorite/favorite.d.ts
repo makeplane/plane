@@ -16,7 +16,7 @@ export type IFavorite = {
   entity_type: string;
   entity_data: {
     name: string;
-    logo_props: TLogoProps | undefined;
+    logo_props?: TLogoProps | undefined;
   };
   is_folder: boolean;
   sort_order: number;
