@@ -4,12 +4,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Briefcase, FileText, Layers, MoreHorizontal, Star } from "lucide-react";
 // ui
 import { IFavorite } from "@plane/types";
-import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
+import {
+  ContrastIcon,
+  ControlLink,
+  CustomMenu,
+  DiceIcon,
+  DragHandle,
+  FavoriteFolderIcon,
+  LayersIcon,
+  Tooltip,
+} from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { SidebarNavItem } from "@/components/sidebar";
@@ -52,6 +60,7 @@ export const FavoriteItem = observer(
     const [isMenuActive, setIsMenuActive] = useState(false);
 
     // router params
+    const router = useRouter();
     const { workspaceSlug } = useParams();
     // derived values
 
@@ -141,14 +150,15 @@ export const FavoriteItem = observer(
       <>
         {sidebarCollapsed ? (
           <div ref={elementRef}>
-            <Link
+            <ControlLink
               href={getLink()}
+              onClick={() => router.push(getLink())}
               className={cn(
                 "group/project-item cursor-pointer relative group w-full flex items-center justify-center gap-1.5 rounded px-2 py-1 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90 truncate p-0 size-8 aspect-square mx-auto"
               )}
             >
               <span className="flex items-center justify-center size-5">{getIcon()}</span>
-            </Link>
+            </ControlLink>
           </div>
         ) : (
           <div
@@ -180,12 +190,16 @@ export const FavoriteItem = observer(
                 <DragHandle className="bg-transparent" />
               </button>
             </Tooltip>
-            <Link href={getLink()} className="flex items-center gap-1.5 truncate w-full">
+            <ControlLink
+              onClick={() => router.push(getLink())}
+              href={getLink()}
+              className="flex items-center gap-1.5 truncate w-full"
+            >
               <div className="flex items-center justify-center size-5">{getIcon()}</div>
               <span className="text-sm leading-5 font-medium flex-1 truncate">
                 {favorite.entity_data ? favorite.entity_data.name : favorite.name}
               </span>
-            </Link>
+            </ControlLink>
             <CustomMenu
               customButton={
                 <span
