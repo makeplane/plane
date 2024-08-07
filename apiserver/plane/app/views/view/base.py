@@ -460,6 +460,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_type="view",
             ).delete()
+            # Delete the view from the deploy board
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
