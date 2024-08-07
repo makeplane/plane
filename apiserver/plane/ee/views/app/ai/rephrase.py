@@ -556,6 +556,19 @@ class RephraseGrammarEndpoint(BaseAPIView):
         casual_score = int(request.data.get("casual_score", 5))
         formal_score = int(request.data.get("formal_score", 5))
 
+        # Check the scores
+        if (
+            casual_score + formal_score != 10
+            or casual_score < 0
+            or formal_score < 0
+        ):
+            return Response(
+                {
+                    "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Check the text input
         if not text_input:
             return Response(
