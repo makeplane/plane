@@ -9,17 +9,9 @@ import { useParams } from "next/navigation";
 import { Briefcase, FileText, Layers, MoreHorizontal, Star } from "lucide-react";
 // ui
 import { IFavorite } from "@plane/types";
-import {
-  ContrastIcon,
-  CustomMenu,
-  DiceIcon,
-  DragHandle,
-  FavoriteFolderIcon,
-  LayersIcon,
-  Logo,
-  Tooltip,
-} from "@plane/ui";
+import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
 // components
+import { Logo } from "@/components/common";
 import { SidebarNavItem } from "@/components/sidebar";
 
 // helpers
@@ -70,10 +62,16 @@ export const FavoriteItem = observer(
 
     const getIcon = () => (
       <>
-        <div className="hidden group-hover:block">{ICONS[favorite.entity_type] || <FileText />}</div>
-        <div className="block group-hover:hidden">
+        <div className="hidden group-hover:flex items-center justify-center size-5">
+          {ICONS[favorite.entity_type] || <FileText />}
+        </div>
+        <div className="flex items-center justify-center size-5 group-hover:hidden">
           {favorite.entity_data?.logo_props?.in_use ? (
-            <Logo logo={favorite.entity_data?.logo_props} size={16} type="lucide" />
+            <Logo
+              logo={favorite.entity_data?.logo_props}
+              size={16}
+              type={favorite.entity_type === "project" ? "material" : "lucide"}
+            />
           ) : (
             ICONS[favorite.entity_type] || <FileText />
           )}
@@ -176,7 +174,7 @@ export const FavoriteItem = observer(
             </Tooltip>
 
             <Link href={getLink()} className="flex items-center gap-1.5 truncate">
-              {getIcon()}
+              <div className="flex items-center justify-center size-5">{getIcon()}</div>
               {!sidebarCollapsed && (
                 <span className="text-sm leading-5 font-medium flex-1 truncate">
                   {favorite.entity_data ? favorite.entity_data.name : favorite.name}
