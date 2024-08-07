@@ -41,7 +41,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = (props) => {
           <a
             href={variant === "PRO" ? "https://plane.so/pro" : "https://docs.plane.so/plane-one/introduction"}
             target="_blank"
-            className="text-custom-primary-200 text-center text-sm font-semibold underline cursor-default outline-none focus:outline-none"
+            className="text-custom-primary-200 text-center text-sm font-semibold underline outline-none focus:outline-none"
           >
             {variant === "PRO" ? "Recap what Pro packs anytime" : "See how to upgrade your workspace to One."}
           </a>
