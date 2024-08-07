@@ -133,7 +133,7 @@ export const SidebarFavoritesMenu = observer(() => {
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
               YOUR FAVORITES
             </span>
-            <span className="flex gap-2 flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
+            <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
               <FolderPlus
                 onClick={() => {
                   setCreateNewFolder(true);
