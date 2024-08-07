@@ -9,17 +9,9 @@ import { useParams } from "next/navigation";
 import { Briefcase, FileText, Layers, MoreHorizontal, Star } from "lucide-react";
 // ui
 import { IFavorite } from "@plane/types";
-import {
-  ContrastIcon,
-  CustomMenu,
-  DiceIcon,
-  DragHandle,
-  FavoriteFolderIcon,
-  LayersIcon,
-  Logo,
-  Tooltip,
-} from "@plane/ui";
+import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
 // components
+import { Logo } from "@/components/common";
 import { SidebarNavItem } from "@/components/sidebar";
 
 // helpers
@@ -70,10 +62,16 @@ export const FavoriteItem = observer(
 
     const getIcon = () => (
       <>
-        <div className="hidden group-hover:block">{ICONS[favorite.entity_type] || <FileText />}</div>
-        <div className="block group-hover:hidden">
+        <div className="hidden group-hover:flex items-center justify-center size-5">
+          {ICONS[favorite.entity_type] || <FileText />}
+        </div>
+        <div className="flex items-center justify-center size-5 group-hover:hidden">
           {favorite.entity_data?.logo_props?.in_use ? (
-            <Logo logo={favorite.entity_data?.logo_props} size={16} type="lucide" />
+            <Logo
+              logo={favorite.entity_data?.logo_props}
+              size={16}
+              type={favorite.entity_type === "project" ? "material" : "lucide"}
+            />
           ) : (
             ICONS[favorite.entity_type] || <FileText />
           )}
@@ -140,18 +138,27 @@ export const FavoriteItem = observer(
     useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
     return (
-      <div ref={elementRef} className="group/project-item">
-        <SidebarNavItem
-          key={favorite.id}
-          className={cn({
-            "bg-custom-sidebar-background-90": isMenuActive,
-            "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
-          })}
-        >
+      <>
+        {sidebarCollapsed ? (
+          <div ref={elementRef}>
+            <Link
+              href={getLink()}
+              className={cn(
+                "group/project-item cursor-pointer relative group w-full flex items-center justify-center gap-1.5 rounded px-2 py-1 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90 truncate p-0 size-8 aspect-square mx-auto"
+              )}
+            >
+              <span className="flex items-center justify-center size-5">{getIcon()}</span>
+            </Link>
+          </div>
+        ) : (
           <div
-            className={cn("flex justify-between items-center gap-1.5 py-[1px]", {
-              "w-full": !sidebarCollapsed,
-            })}
+            ref={elementRef}
+            className={cn(
+              "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded px-2 py-1 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90",
+              {
+                "bg-custom-sidebar-background-90": isMenuActive,
+              }
+            )}
           >
             <Tooltip
               isMobile={isMobile}
@@ -166,7 +173,6 @@ export const FavoriteItem = observer(
                   {
                     "cursor-not-allowed opacity-60": favorite.sort_order === null,
                     "cursor-grabbing": isDragging,
-                    "!hidden": sidebarCollapsed,
                   }
                 )}
                 ref={dragHandleRef}
@@ -174,47 +180,41 @@ export const FavoriteItem = observer(
                 <DragHandle className="bg-transparent" />
               </button>
             </Tooltip>
-
-            <Link href={getLink()} className="flex items-center gap-1.5 truncate">
-              {getIcon()}
-              {!sidebarCollapsed && (
-                <span className="text-sm leading-5 font-medium flex-1 truncate">
-                  {favorite.entity_data ? favorite.entity_data.name : favorite.name}
-                </span>
-              )}
+            <Link href={getLink()} className="flex items-center gap-1.5 truncate w-full">
+              <div className="flex items-center justify-center size-5">{getIcon()}</div>
+              <span className="text-sm leading-5 font-medium flex-1 truncate">
+                {favorite.entity_data ? favorite.entity_data.name : favorite.name}
+              </span>
             </Link>
-
-            {!sidebarCollapsed && (
-              <CustomMenu
-                customButton={
-                  <span
-                    ref={actionSectionRef}
-                    className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                    onClick={() => setIsMenuActive(!isMenuActive)}
-                  >
-                    <MoreHorizontal className="size-4" />
-                  </span>
+            <CustomMenu
+              customButton={
+                <span
+                  ref={actionSectionRef}
+                  className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                  onClick={() => setIsMenuActive(!isMenuActive)}
+                >
+                  <MoreHorizontal className="size-4" />
+                </span>
+              }
+              className={cn(
+                "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                {
+                  "opacity-100 pointer-events-auto": isMenuActive,
                 }
-                className={cn(
-                  "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
-                  {
-                    "opacity-100 pointer-events-auto": isMenuActive,
-                  }
-                )}
-                customButtonClassName="grid place-items-center"
-                placement="bottom-start"
-              >
-                <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
-                  <span className="flex items-center justify-start gap-2">
-                    <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
-                    <span>Remove from favorites</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            )}
+              )}
+              customButtonClassName="grid place-items-center"
+              placement="bottom-start"
+            >
+              <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
+                <span className="flex items-center justify-start gap-2">
+                  <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
+                  <span>Remove from favorites</span>
+                </span>
+              </CustomMenu.MenuItem>
+            </CustomMenu>
           </div>
-        </SidebarNavItem>
-      </div>
+        )}
+      </>
     );
   }
 );
