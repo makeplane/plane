@@ -9,7 +9,16 @@ import { useParams } from "next/navigation";
 import { Briefcase, FileText, Layers, MoreHorizontal, Star } from "lucide-react";
 // ui
 import { IFavorite } from "@plane/types";
-import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
+import {
+  ContrastIcon,
+  CustomMenu,
+  DiceIcon,
+  DragHandle,
+  FavoriteFolderIcon,
+  LayersIcon,
+  Logo,
+  Tooltip,
+} from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 
@@ -19,6 +28,17 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+
+const iconClassName = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
+const ICONS: Record<string, JSX.Element> = {
+  page: <FileText className={iconClassName} />,
+  project: <Briefcase className={iconClassName} />,
+  view: <Layers className={iconClassName} />,
+  module: <DiceIcon className={iconClassName} />,
+  cycle: <ContrastIcon className={iconClassName} />,
+  issue: <LayersIcon className={iconClassName} />,
+  folder: <FavoriteFolderIcon className={iconClassName} />,
+};
 
 export const FavoriteItem = observer(
   ({
@@ -48,28 +68,18 @@ export const FavoriteItem = observer(
     const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-    const getIcon = () => {
-      const className = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
-
-      switch (favorite.entity_type) {
-        case "page":
-          return <FileText className={className} />;
-        case "project":
-          return <Briefcase className={className} />;
-        case "view":
-          return <Layers className={className} />;
-        case "module":
-          return <DiceIcon className={className} />;
-        case "cycle":
-          return <ContrastIcon className={className} />;
-        case "issue":
-          return <LayersIcon className={className} />;
-        case "folder":
-          return <FavoriteFolderIcon className={className} />;
-        default:
-          return <FileText />;
-      }
-    };
+    const getIcon = () => (
+      <>
+        <div className="hidden group-hover:block">{ICONS[favorite.entity_type] || <FileText />}</div>
+        <div className="block group-hover:hidden">
+          {favorite.entity_data?.logo_props?.in_use ? (
+            <Logo logo={favorite.entity_data?.logo_props} size={16} type="lucide" />
+          ) : (
+            ICONS[favorite.entity_type] || <FileText />
+          )}
+        </div>
+      </>
+    );
 
     const getLink = () => {
       switch (favorite.entity_type) {
@@ -133,7 +143,10 @@ export const FavoriteItem = observer(
       <div ref={elementRef} className="group/project-item">
         <SidebarNavItem
           key={favorite.id}
-          className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
+          className={cn({
+            "bg-custom-sidebar-background-90": isMenuActive,
+            "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
+          })}
         >
           <div
             className={cn("flex justify-between items-center gap-1.5 py-[1px]", {
