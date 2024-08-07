@@ -1,5 +1,5 @@
 // import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
-import { sqlite3Worker1Promiser } from "@sqlite.org/sqlite-wasm";
+// import { sqlite3Worker1Promiser } from "@sqlite.org/sqlite-wasm";
 import { createTables } from "./tables";
 
 declare module "@sqlite.org/sqlite-wasm" {
@@ -22,6 +22,8 @@ const initializeSQLite = async () => {
     console.info("Instance already initialized");
     return;
   }
+  const { sqlite3Worker1Promiser } = await import("@sqlite.org/sqlite-wasm");
+
   try {
     log("Loading and initializing SQLite3 module...");
 
