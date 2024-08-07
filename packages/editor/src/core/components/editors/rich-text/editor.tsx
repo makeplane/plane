@@ -19,11 +19,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
   };
 
   const getExtensions = useCallback(() => {
-    const extensions = [
-      SlashCommand(fileHandler.upload),
-      // TODO; add the extension conditionally for forms that don't require it
-      // EnterKeyExtension(onEnterKeyPress),
-    ];
+    const extensions = [SlashCommand(fileHandler.upload)];
 
     if (dragDropEnabled) extensions.push(DragAndDrop(setHideDragHandleFunction));
 
