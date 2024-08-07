@@ -29,6 +29,17 @@ import { useAppTheme } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
+const iconClassName = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
+const ICONS: Record<string, JSX.Element> = {
+  page: <FileText className={iconClassName} />,
+  project: <Briefcase className={iconClassName} />,
+  view: <Layers className={iconClassName} />,
+  module: <DiceIcon className={iconClassName} />,
+  cycle: <ContrastIcon className={iconClassName} />,
+  issue: <LayersIcon className={iconClassName} />,
+  folder: <FavoriteFolderIcon className={iconClassName} />,
+};
+
 export const FavoriteItem = observer(
   ({
     favoriteMap,
@@ -57,31 +68,18 @@ export const FavoriteItem = observer(
     const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-    const getIcon = () => {
-      const className = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
-
-      const icons: Record<string, JSX.Element> = {
-        page: <FileText className={className} />,
-        project: <Briefcase className={className} />,
-        view: <Layers className={className} />,
-        module: <DiceIcon className={className} />,
-        cycle: <ContrastIcon className={className} />,
-        issue: <LayersIcon className={className} />,
-        folder: <FavoriteFolderIcon className={className} />,
-      };
-      return (
-        <>
-          <div className="hidden group-hover:block">
-            {favorite.entity_data?.logo_props?.in_use ? (
-              <Logo logo={favorite.entity_data?.logo_props} size={16} type="lucide" />
-            ) : (
-              icons[favorite.entity_type] || <FileText />
-            )}
-          </div>
-          <div className="block group-hover:hidden">{icons[favorite.entity_type] || <FileText />}</div>
-        </>
-      );
-    };
+    const getIcon = () => (
+      <>
+        <div className="hidden group-hover:block">{ICONS[favorite.entity_type] || <FileText />}</div>
+        <div className="block group-hover:hidden">
+          {favorite.entity_data?.logo_props?.in_use ? (
+            <Logo logo={favorite.entity_data?.logo_props} size={16} type="lucide" />
+          ) : (
+            ICONS[favorite.entity_type] || <FileText />
+          )}
+        </div>
+      </>
+    );
 
     const getLink = () => {
       switch (favorite.entity_type) {
