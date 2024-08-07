@@ -33,41 +33,52 @@ class RephraseGrammarEndpoint(BaseAPIView):
     ]
 
     # Function to get system prompt based on task
-    def get_system_prompt(task, tone=None):
-        if task == Task.PARAPHRASE:
-            return """
-            Correct the grammar of the following text, strictly following these instructions:
+    def get_system_prompt(self, task, tone=None):
+        if task == Task.PARAPHRASE.value:
+            return (
+                True,
+                """
+            Correct the grammar of the following text and return the output in same structure as input but just changing the text by strictly following these instructions:
             1. Ensure the new text is grammatically correct.
             2. Maintain the original meaning of the text.
             3. Keep the same person in the text. First person remains first person, etc. If no person is mentioned, keep it the same as in the input text, whether third person or neutral.
             4. Do not provide any unrelated data apart from the grammatically correct original text.
-            """
+            """,
+            )
 
-        elif task == Task.SIMPLIFY:
-            return """
-            Simplify the following text, strictly adhering to these guidelines:
+        elif task == Task.SIMPLIFY.value:
+            return (
+                True,
+                """
+            Simplify the following text and return the output in same structure as input but just changing the text by strictly adhering to these guidelines:
             1. Make the text more concise without losing its core meaning.
             2. Remove unnecessary words and phrases.
             3. Break down complex sentences into simpler ones.
             4. Use simpler vocabulary where appropriate, without changing the overall tone.
             5. Ensure the simplified text is still grammatically correct.
             6. Do not add any new information not present in the original text.
-            """
+            """,
+            )
 
-        elif task == Task.ELABORATE:
-            return """
-            Elaborate on the following text, carefully following these instructions:
+        elif task == Task.ELABORATE.value:
+            return (
+                True,
+                """
+            Elaborate on the following text and return the output in same structure as input but just changing the text by carefully following these instructions:
             1. Add relevant details, examples, or explanations to enrich the content.
             2. Expand on the main ideas while maintaining the original meaning and tone.
             3. Provide context where needed to enhance understanding.
             4. Ensure that your elaborations flow naturally with the existing text.
             5. Keep the overall structure and key points of the original text intact.
             6. Do not contradict any information in the original text.
-            """
+            """,
+            )
 
-        elif task == Task.SUMMARIZE:
-            return """
-            Summarize the following text, strictly adhering to these guidelines:
+        elif task == Task.SUMMARIZE.value:
+            return (
+                True,
+                """
+            Summarize the following text and return the output in same structure as input but just changing the text by strictly adhering to these guidelines:
             1. Condense the text into a highly concise summary that is approximately 10-15 percent of the length of the input text.
             2. Capture only the most essential information and main ideas.
             3. Use clear, straightforward language.
@@ -76,22 +87,26 @@ class RephraseGrammarEndpoint(BaseAPIView):
             6. Do not introduce any new information not present in the original text.
             7. Ensure the summary provides a quick, easily digestible overview of the text's content.
             8. If the input text is very short (less than 100 words), aim for a summary of 1-2 sentences.
-            """
+            """,
+            )
 
-        elif task == Task.GET_TITLE:
-            return """
-            Generate an appropriate title for the following text, strictly following these instructions:
+        elif task == Task.GET_TITLE.value:
+            return (
+                True,
+                """
+            Generate an appropriate title for the following text and return the output in same structure as input but just changing the text by strictly following these instructions:
             1. Create a concise and engaging title that captures the main theme or purpose of the content.
             2. Ensure the title is relevant and accurately represents the text's subject matter.
             3. Make the title attention-grabbing while maintaining accuracy.
             4. Keep the title brief, ideally no more than 6-8 words.
             5. Do not include any information in the title that is not present in or implied by the text.
             6. If the text is clearly part of a larger work or series, reflect that in the title if appropriate.
-            """
+            """,
+            )
 
-        elif task == Task.TONE:
+        elif task == Task.TONE.value:
             base_instructions = """
-            Rewrite the following text in the specified tone, strictly adhering to these guidelines:
+            Rewrite the following text in the specified tone and return the output in same structure as input but just changing the text by strictly adhering to these guidelines:
 
             1. Maintain the original meaning and key information of the text.
             2. Ensure the rewritten text is grammatically correct and coherent.
@@ -105,8 +120,8 @@ class RephraseGrammarEndpoint(BaseAPIView):
             7. Adjust sentence structure and vocabulary to fit the desired tone without changing the core message.
             """
 
-            if tone == Tone.CASUAL:
-                return (
+            if tone == Tone.CASUAL.value:
+                return True, (
                     base_instructions
                     + """
                 For a casual tone:
@@ -119,8 +134,8 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Aim for a Flesch-Kincaid grade level of 6-8.
                 """
                 )
-            elif tone == Tone.FORMAL:
-                return (
+            elif tone == Tone.FORMAL.value:
+                return True, (
                     base_instructions
                     + """
                 For a formal tone:
@@ -136,16 +151,14 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 """
                 )
             else:
-                return Response(
-                    {"error": "Invalid tone. Must be 'formal' or 'casual'."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return False, {
+                    "error": "Invalid tone. Must be 'formal' or 'casual'."
+                }
 
         else:
-            return Response(
-                {"error": "Invalid task. Please provide a correct task name."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return False, {
+                "error": "Invalid task. Please provide a correct task name."
+            }
 
     def post(self, request, slug):
         # Get the task and text input
@@ -153,7 +166,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         text_input = request.data.get("text_input", "")
 
         # tone may be formal or casual
-        tone = request.data.get("tone") if task == "tone" else None
+        tone = request.data.get("tone") if task == Task.TONE else None
 
         # Check the text input
         if not text_input:
@@ -191,13 +204,19 @@ class RephraseGrammarEndpoint(BaseAPIView):
             api_key=OPENAI_API_KEY,
         )
 
+        processed, response = self.get_system_prompt(task, tone)
+
+        # If error
+        if not processed:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
         # Create the completion
         completion = client.chat.completions.create(
             model=GPT_ENGINE,
             messages=[
                 {
                     "role": "system",
-                    "content": self.get_system_prompt(task, tone),
+                    "content": response,
                 },
                 *message_list,
             ],
