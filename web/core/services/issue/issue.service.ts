@@ -1,17 +1,19 @@
 // types
 import type {
-  TIssue,
   IIssueDisplayProperties,
-  TIssueLink,
-  TIssueSubIssues,
-  TIssueActivity,
-  TIssuesResponse,
   TBulkOperationsPayload,
+  TIssue,
+  TIssueActivity,
+  TIssueLink,
+  TIssuesResponse,
+  TIssueSubIssues,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
+import { deleteIssueFromLocal } from "@/local-db/load-issues";
 import { getIssues } from "@/local-db/queries/issues";
+import { updatePersistentLayer } from "@/local-db/utils";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -21,7 +23,10 @@ export class IssueService extends APIService {
 
   async createIssue(workspaceSlug: string, projectId: string, data: Partial<TIssue>): Promise<TIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        updatePersistentLayer(response?.data?.id);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -48,6 +53,16 @@ export class IssueService extends APIService {
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
     return await getIssues(workspaceSlug, projectId, queries, config);
+  }
+
+  async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/deleted-issues/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async getIssuesWithParams(
@@ -100,6 +115,7 @@ export class IssueService extends APIService {
       issues: string[];
     }
   ) {
+    updatePersistentLayer(data.issues);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -129,6 +145,7 @@ export class IssueService extends APIService {
       relation?: "blocking" | null;
     }
   ) {
+    updatePersistentLayer(issueId);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -169,6 +186,7 @@ export class IssueService extends APIService {
   }
 
   async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>): Promise<any> {
+    updatePersistentLayer(issueId);
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -177,6 +195,7 @@ export class IssueService extends APIService {
   }
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
+    deleteIssueFromLocal(issuesId);
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -198,6 +217,7 @@ export class IssueService extends APIService {
     issueId: string,
     data: { sub_issue_ids: string[] }
   ): Promise<TIssueSubIssues> {
+    updatePersistentLayer([issueId, ...data.sub_issue_ids]);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -219,6 +239,7 @@ export class IssueService extends APIService {
     issueId: string,
     data: Partial<TIssueLink>
   ): Promise<TIssueLink> {
+    updatePersistentLayer(issueId);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -233,6 +254,7 @@ export class IssueService extends APIService {
     linkId: string,
     data: Partial<TIssueLink>
   ): Promise<TIssueLink> {
+    updatePersistentLayer(issueId);
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,
       data
@@ -244,6 +266,7 @@ export class IssueService extends APIService {
   }
 
   async deleteIssueLink(workspaceSlug: string, projectId: string, issueId: string, linkId: string): Promise<any> {
+    updatePersistentLayer(issueId);
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`
     )

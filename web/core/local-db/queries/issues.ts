@@ -7,24 +7,20 @@ const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 export const getIssues = async (workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> => {
   const { cursor } = queries;
 
-  console.log("## queries", queries);
   const query = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
-  console.log("SQL", query);
   const countQuery = issueFilterCountQueryConstructor(workspaceSlug, projectId, queries);
   const start = performance.now();
-  let issues = await runQuery(query);
+  const [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
   const end = performance.now();
 
-  const countStart = performance.now();
-  const { total_count } = (await runQuery(countQuery))[0];
-  const countEnd = performance.now();
+  const { total_count } = count[0];
 
   const [pageSize, page, offset] = cursor.split(":");
 
   const parsingStart = performance.now();
-  issues = issues.map((issue: TIssue) => {
+  const issues = issuesRaw.map((issue: TIssue) => {
     arrayFields.forEach((field) => {
-      issue[field] = JSON.parse(issue[field]);
+      issue[field] = issue[field] ? JSON.parse(issue[field]) : [];
     });
 
     return issue;
@@ -34,7 +30,6 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
 
   const times = {
     IssueQuery: end - start,
-    Count: countEnd - countStart,
     Parsing: parsingEnd - parsingStart,
   };
 
@@ -54,6 +49,5 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
     total_pages,
   };
 
-  console.log(out);
   return out;
 };

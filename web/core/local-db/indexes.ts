@@ -1,5 +1,6 @@
 import { SQL } from "./sqlite";
 
+const log = console.log;
 export const createIssueIndexes = async () => {
   const columns = [
     "state_id",
@@ -37,10 +38,10 @@ export const createIssueMetaIndexes = async () => {
 };
 
 const createIndexes = async () => {
-  console.log("### Creating indexes");
+  log("### Creating indexes");
   const promises = [createIssueIndexes(), createIssueMetaIndexes()];
   await Promise.all(promises);
-  console.log("### Indexes created");
+  log("### Indexes created");
 };
 
 export default createIndexes;

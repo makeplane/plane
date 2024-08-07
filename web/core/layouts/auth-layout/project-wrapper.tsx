@@ -34,7 +34,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // const { fetchInboxes } = useInbox();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const [areIssuesLoading, setIssuesLoading] = useState(false);
+  // const [areIssuesLoading, setIssuesLoading] = useState(false);
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
@@ -51,14 +51,28 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
 
-  useEffect(() => {
-    (async () => {
-      setIssuesLoading(true);
+  const { isLoading: seedingInProgress, isValidating } = useSWR(
+    workspaceSlug && projectId ? `PROJECT_${workspaceSlug}_${projectId}` : null,
+    async () => {
       await initializeSQLite();
       await loadIssues(workspaceSlug.toString(), projectId.toString());
-      setIssuesLoading(false);
-    })();
-  }, [workspaceSlug, projectId]);
+    },
+    {
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      refreshInterval: 5 * 60 * 1000,
+    }
+  );
+  // useEffect(() => {
+  //   (async () => {
+  //     setIssuesLoading(true);
+  //     await initializeSQLite();
+
+  //     await loadIssues(workspaceSlug.toString(), projectId.toString());
+  //     setIssuesLoading(false);
+  //   })();
+  // }, [workspaceSlug, projectId]);
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -120,7 +134,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     isEstimatesLoading ||
     isCyclesLoading ||
     isModulesLoading ||
-    areIssuesLoading;
+    seedingInProgress;
 
   // check if the project member apis is loading
   if ((!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null) || isLoading)

@@ -239,6 +239,8 @@ class IssueViewSet(BaseViewSet):
             extra_filters = {
                 "updated_at__gt": request.GET.get("updated_at__gt")
             }
+
+            print (extra_filters)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 

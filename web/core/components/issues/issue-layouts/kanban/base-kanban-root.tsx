@@ -10,7 +10,7 @@ import { useParams, usePathname } from "next/navigation";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 //hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
@@ -20,7 +20,6 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 // ui
 // types
-import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "../utils";
