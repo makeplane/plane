@@ -9,7 +9,16 @@ import { useParams } from "next/navigation";
 import { Briefcase, FileText, Layers, MoreHorizontal, Star } from "lucide-react";
 // ui
 import { IFavorite } from "@plane/types";
-import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
+import {
+  ContrastIcon,
+  CustomMenu,
+  DiceIcon,
+  DragHandle,
+  FavoriteFolderIcon,
+  LayersIcon,
+  Logo,
+  Tooltip,
+} from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 
@@ -51,24 +60,27 @@ export const FavoriteItem = observer(
     const getIcon = () => {
       const className = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
 
-      switch (favorite.entity_type) {
-        case "page":
-          return <FileText className={className} />;
-        case "project":
-          return <Briefcase className={className} />;
-        case "view":
-          return <Layers className={className} />;
-        case "module":
-          return <DiceIcon className={className} />;
-        case "cycle":
-          return <ContrastIcon className={className} />;
-        case "issue":
-          return <LayersIcon className={className} />;
-        case "folder":
-          return <FavoriteFolderIcon className={className} />;
-        default:
-          return <FileText />;
-      }
+      const icons: Record<string, JSX.Element> = {
+        page: <FileText className={className} />,
+        project: <Briefcase className={className} />,
+        view: <Layers className={className} />,
+        module: <DiceIcon className={className} />,
+        cycle: <ContrastIcon className={className} />,
+        issue: <LayersIcon className={className} />,
+        folder: <FavoriteFolderIcon className={className} />,
+      };
+      return (
+        <>
+          <div className="hidden group-hover:block">
+            {favorite.entity_data?.logo_props?.in_use ? (
+              <Logo logo={favorite.entity_data?.logo_props} size={16} type="lucide" />
+            ) : (
+              icons[favorite.entity_type] || <FileText />
+            )}
+          </div>
+          <div className="block group-hover:hidden">{icons[favorite.entity_type] || <FileText />}</div>
+        </>
+      );
     };
 
     const getLink = () => {
