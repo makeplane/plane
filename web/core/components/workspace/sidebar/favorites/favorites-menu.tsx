@@ -134,13 +134,15 @@ export const SidebarFavoritesMenu = observer(() => {
               YOUR FAVORITES
             </span>
             <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
-              <FolderPlus
-                onClick={() => {
-                  setCreateNewFolder(true);
-                  !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
-                }}
-                className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
-              />
+              <Tooltip tooltipHeading="Create folder" tooltipContent="">
+                <FolderPlus
+                  onClick={() => {
+                    setCreateNewFolder(true);
+                    !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
+                  }}
+                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
+                />
+              </Tooltip>
               <ChevronRight
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
