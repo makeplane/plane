@@ -1,4 +1,4 @@
-export const createIssuesTable = (SQLITE) => {
+export const createIssuesTable = (SQLITE: any) => {
   const sqlstr = `CREATE TABLE IF NOT EXISTS issues (
       id TEXT, 
       name TEXT, 
@@ -29,14 +29,14 @@ export const createIssuesTable = (SQLITE) => {
   SQLITE.exec(sqlstr);
 };
 
-export const createIssueMetaTable = (SQLITE) => {
+export const createIssueMetaTable = (SQLITE: any) => {
   const sqlstr = `CREATE TABLE IF NOT EXISTS issue_meta (
       issue_id TEXT, 
       key TEXT, 
       value TEXT);`;
   SQLITE.exec(sqlstr);
 };
-export const createTables = async (SQLITE) => {
+export const createTables = async (SQLITE: any) => {
   await createIssuesTable(SQLITE);
   await createIssueMetaTable(SQLITE);
 };

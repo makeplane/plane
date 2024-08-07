@@ -16,11 +16,6 @@ const log = console.log;
 const error = console.error;
 
 const SQL: TSQL = { initialized: false, syncInProgress: false };
-const start = async (sqlite3: any) => {
-  log("Running SQLite3 version", sqlite3.version.libVersion);
-  SQL.db = new sqlite3.oo1.DB("/mydb.sqlite3", "ct");
-  createTables(SQL.db);
-};
 
 const initializeSQLite = async () => {
   if (SQL.initialized) {
@@ -30,7 +25,7 @@ const initializeSQLite = async () => {
   try {
     log("Loading and initializing SQLite3 module...");
 
-    const promiser = await new Promise((resolve) => {
+    const promiser: any = await new Promise((resolve) => {
       const _promiser = sqlite3Worker1Promiser({
         onready: () => resolve(_promiser),
       });
@@ -47,7 +42,7 @@ const initializeSQLite = async () => {
     const { dbId } = openResponse;
     SQL.db = {
       dbId,
-      exec: async (val) => {
+      exec: async (val: any) => {
         if (typeof val === "string") {
           val = { sql: val };
         }
@@ -62,10 +57,7 @@ const initializeSQLite = async () => {
     // Your SQLite code here.
     await createTables(SQL.db);
   } catch (err) {
-    if (!(err instanceof Error)) {
-      err = new Error(err.result.message);
-    }
-    error(err.name, err.message);
+    error(err);
   }
 };
 

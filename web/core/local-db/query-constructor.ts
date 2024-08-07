@@ -1,4 +1,4 @@
-export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries) => {
+export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   const { order_by, cursor, per_page, labels, sub_issue, assignees, state, cycle, group_by, module, ...otherProps } =
     queries;
 
@@ -42,7 +42,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   return sql;
 };
 
-export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectId: string, queries) => {
+export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   let sql = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
 
   sql = sql.replace("SELECT *", "SELECT COUNT(DISTINCT i.id) as total_count");

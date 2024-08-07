@@ -35,7 +35,7 @@ export const addIssue = async (issue: any) => {
   arrayFields.forEach((field) => {
     const values = issue[field];
     if (values) {
-      values.forEach((val) => {
+      values.forEach((val: any) => {
         // promises.push(
         SQL.db.exec({
           sql: `insert into issue_meta(issue_id,key,value) values (?,?,?)`,
@@ -138,7 +138,9 @@ export const syncUpdatesToLocal = async (workspaceId: string, projectId: string)
 export const syncDeletesToLocal = async (workspaceId: string, projectId: string) => {
   const issueService = new IssueService();
   const response = await issueService.getDeletedIssues(workspaceId, projectId);
-  response.map(async (issue) => deleteIssueFromLocal(issue));
+  if (Array.isArray(response)) {
+    response.map(async (issue) => deleteIssueFromLocal(issue));
+  }
 };
 
 export const syncLocalData = async (workspaceId: string, projectId: string) => {

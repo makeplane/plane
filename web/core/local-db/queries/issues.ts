@@ -1,4 +1,3 @@
-import { TIssue } from "@plane/types";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "../query-constructor";
 import { runQuery } from "../query-executor";
 import { SQL } from "../sqlite";
@@ -20,8 +19,8 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
   const [pageSize, page, offset] = cursor.split(":");
 
   const parsingStart = performance.now();
-  const issues = issuesRaw.map((issue: TIssue) => {
-    arrayFields.forEach((field) => {
+  const issues = issuesRaw.map((issue: any) => {
+    arrayFields.forEach((field: string) => {
       issue[field] = issue[field] ? JSON.parse(issue[field]) : [];
     });
 
