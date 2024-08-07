@@ -62,9 +62,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
             />
           )}
         />
-        <span className="text-xs text-red-500">
-          <>{errors?.name?.message}</>
-        </span>
+        <span className="text-xs text-red-500">{errors?.name?.message}</span>
       </div>
       <div className="relative">
         <Controller

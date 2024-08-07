@@ -2,21 +2,23 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
-import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
+import { IWorkspace, TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
 import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
+import { useProject, useProjectFilter } from "@/hooks/store";
 
-const ProjectsPage = observer(() => {
+type Props = {
+  currentWorkspace: IWorkspace | null;
+  workspaceSlug: string | null;
+};
+const ProjectsPageRoot: React.FC<Props> = observer((props) => {
+  const { currentWorkspace, workspaceSlug } = props;
   // store
-  const { workspaceSlug } = useParams();
-  const { currentWorkspace } = useWorkspace();
   const { totalProjectIds, filteredProjectIds } = useProject();
   const {
     currentWorkspaceFilters,
@@ -81,4 +83,4 @@ const ProjectsPage = observer(() => {
   );
 });
 
-export default ProjectsPage;
+export default ProjectsPageRoot;
