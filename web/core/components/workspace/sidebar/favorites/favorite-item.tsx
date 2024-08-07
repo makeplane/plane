@@ -145,7 +145,10 @@ export const FavoriteItem = observer(
       <div ref={elementRef} className="group/project-item">
         <SidebarNavItem
           key={favorite.id}
-          className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
+          className={cn({
+            "bg-custom-sidebar-background-90": isMenuActive,
+            "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
+          })}
         >
           <div
             className={cn("flex justify-between items-center gap-1.5 py-[1px]", {
