@@ -1,5 +1,5 @@
 // editor
-import { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TReadOnlyEmbedConfig } from "@plane/editor";
+import { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
 // types
 import { TPageEmbedResponse, TPageEmbedType } from "@plane/types";
 // ui
@@ -59,32 +59,12 @@ export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryTyp
 
   const upgradeCallback = () => <IssueEmbedUpgradeCard />;
 
-  const issueEmbedProps: TEmbedConfig["issue"] = {
-    searchCallback,
-    widgetCallback,
+  const issueEmbedProps: TIssueEmbedConfig = {
+    searchCallback: isIssueEmbedEnabled ? searchCallback : undefined,
+    widgetCallback: isIssueEmbedEnabled ? widgetCallback : upgradeCallback,
   };
-
-  const issueEmbedReadOnlyProps: TReadOnlyEmbedConfig["issue"] = {
-    widgetCallback,
-  };
-
-  const issueEmbedUpgradeProps: TEmbedConfig["issue"] = {
-    widgetCallback: upgradeCallback,
-  };
-
-  const issueEmbedReadOnlyUpgradeProps: TReadOnlyEmbedConfig["issue"] = {
-    widgetCallback: upgradeCallback,
-  };
-
-  if (isIssueEmbedEnabled) {
-    return {
-      issueEmbedProps,
-      issueEmbedReadOnlyProps,
-    };
-  }
 
   return {
-    issueEmbedProps: issueEmbedUpgradeProps,
-    issueEmbedReadOnlyProps: issueEmbedReadOnlyUpgradeProps,
+    issueEmbedProps,
   };
 };
