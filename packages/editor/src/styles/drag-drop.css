@@ -1,5 +1,5 @@
 /* side menu */
-.editor-side-menu {
+#editor-side-menu {
   position: fixed;
   display: flex;
   align-items: center;

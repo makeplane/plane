@@ -97,7 +97,7 @@ const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 const SideMenu = (options: SideMenuPluginProps) => {
   const { handlesConfig } = options;
   const editorSideMenu: HTMLDivElement | null = document.createElement("div");
-  editorSideMenu.classList.value = "editor-side-menu";
+  editorSideMenu.id = "editor-side-menu";
   // side menu view actions
   const hideSideMenu = () => {
     if (!editorSideMenu?.classList.contains("side-menu-hidden")) editorSideMenu?.classList.add("side-menu-hidden");

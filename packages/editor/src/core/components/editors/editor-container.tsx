@@ -53,8 +53,10 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
   };
 
   const handleContainerMouseLeave = () => {
-    const dragHandleElement = document.querySelector(".editor-side-menu");
-    dragHandleElement?.classList.add("side-menu-hidden");
+    const dragHandleElement = document.querySelector("#editor-side-menu");
+    if (!dragHandleElement?.classList.contains("side-menu-hidden")) {
+      dragHandleElement?.classList.add("side-menu-hidden");
+    }
   };
 
   return (
