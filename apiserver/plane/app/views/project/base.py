@@ -459,7 +459,7 @@ class ProjectViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         project = Project.objects.get(pk=pk)
         project.delete()
-        DeployBoard.objects.get(
+        DeployBoard.objects.filter(
             entity_name="project",
             entity_identifier=pk,
             workspace__slug=slug,
