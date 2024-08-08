@@ -15,12 +15,11 @@ import {
 } from "@/components/workspace/sidebar/favorites";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type Props = {
-  itemIcon: JSX.Element;
-  itemTitle: string;
-  itemLink: string;
+  workspaceSlug: string;
   favorite: IFavorite;
   favoriteMap: Record<string, IFavorite>;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
@@ -29,15 +28,7 @@ type Props = {
 
 export const FavoriteRoot: FC<Props> = observer((props) => {
   // props
-  const {
-    itemIcon,
-    itemTitle,
-    itemLink,
-    favorite,
-    favoriteMap,
-    handleRemoveFromFavorites,
-    handleRemoveFromFavoritesFolder,
-  } = props;
+  const { workspaceSlug, favorite, favoriteMap, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
 
@@ -49,6 +40,8 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleQuickAction = (value: boolean) => setIsMenuActive(value);
+
+  const { itemLink, itemIcon, itemTitle } = useFavoriteItemDetails(workspaceSlug, favorite);
 
   // drag and drop
   useEffect(() => {
