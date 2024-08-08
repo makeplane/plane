@@ -20,7 +20,8 @@ export type TEditorCommands =
   | "code"
   | "table"
   | "image"
-  | "divider";
+  | "divider"
+  | "issue-embed";
 
 export type CommandProps = {
   editor: Editor;
