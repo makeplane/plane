@@ -15,7 +15,7 @@ export type IFavorite = {
   name: string;
   entity_type: string;
   entity_data: {
-    id: string;
+    id?: string;
     name: string;
     logo_props?: TLogoProps | undefined;
   };
