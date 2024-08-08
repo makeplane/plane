@@ -16,10 +16,11 @@ mkdir -p $PLANE_INSTALL_DIR/archive
 DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
 DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
 
-# required for macos support
-SED_PREFIX=""
-if [ "$OS_NAME" == "Darwin" ];then
-  SED_PREFIX="''"
+SED_PREFIX=()
+if [ "$OS_NAME" == "Darwin" ]; then
+  SED_PREFIX=("-i" "")
+else
+  SED_PREFIX=("-i")
 fi
 
 function print_header() {
@@ -130,7 +131,7 @@ function updateEnvFile() {
             return
         else 
             # if key exists, update the value
-            sed -i $SED_PREFIX "s/^$key=.*/$key=$value/g" "$file"
+            sed "${SED_PREFIX[@]}" "s/^$key=.*/$key=$value/g" "$file"
         fi
     else
         echo "File not found: $file"
