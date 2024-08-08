@@ -20,7 +20,7 @@ import { useFavorite } from "@/hooks/store/use-favorite";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
-import { FavoriteItem } from "./favorite-item";
+import { FavoriteRoot } from "./favorite-items";
 import { getDestinationStateSequence } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
@@ -314,8 +314,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                   })}
                 >
                   {favorite.children.map((child) => (
-                    <FavoriteItem
+                    <FavoriteRoot
                       key={child.id}
+                      workspaceSlug={workspaceSlug.toString()}
                       favorite={child}
                       handleRemoveFromFavorites={handleRemoveFromFavorites}
                       handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
