@@ -72,6 +72,7 @@ class InstanceEndpoint(BaseAPIView):
             OPENAI_API_KEY,
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
+            SILO_BASE_URL,
         ) = get_configuration_value(
             [
                 {
@@ -147,6 +148,10 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "INTERCOM_APP_ID",
                     "default": os.environ.get("INTERCOM_APP_ID", ""),
                 },
+                {
+                    "key": "SILO_BASE_URL",
+                    "default": os.environ.get("SILO_BASE_URL", ""),
+                },
             ]
         )
 
@@ -199,6 +204,7 @@ class InstanceEndpoint(BaseAPIView):
         data["feature_flag_server_base_url"] = (
             settings.FEATURE_FLAG_SERVER_BASE_URL
         )
+        data["silo_base_url"] = SILO_BASE_URL
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
