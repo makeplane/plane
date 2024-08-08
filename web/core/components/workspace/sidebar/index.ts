@@ -1,4 +1,5 @@
 export * from "./dropdown";
+export * from "./favorites";
 export * from "./help-section";
 export * from "./projects-list-item";
 export * from "./projects-list";
