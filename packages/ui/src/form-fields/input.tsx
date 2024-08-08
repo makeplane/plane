@@ -31,6 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         },
         className
       )}
+      autoComplete="off"
       {...rest}
     />
   );
