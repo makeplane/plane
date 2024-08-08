@@ -12,7 +12,6 @@ import { IFavorite } from "@plane/types";
 import { ContrastIcon, CustomMenu, DiceIcon, DragHandle, FavoriteFolderIcon, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { SidebarNavItem } from "@/components/sidebar";
 
 // helpers
 import { cn } from "@/helpers/common.helper";

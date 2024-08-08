@@ -100,7 +100,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
         />
         <Tooltip
           isMobile={isMobile}
-          tooltipContent="Helps you identify issues in the project uniquely, (e.g. APP-123). Max 5 characters."
+          tooltipContent="Helps you identify issues in the project uniquely. Max 5 characters."
           className="text-sm"
           position="right-top"
         >
