@@ -11,7 +11,7 @@ export const IssueWorklogPropertyButton: FC<TIssueWorklogPropertyButton> = (prop
   const { content, isLoading } = props;
 
   return (
-    <div className="flex justify-between items-center text-sm p-2 rounded transition-all bg-custom-background-90 cursor-not-allowed w-full">
+    <div className="flex justify-between items-center text-sm p-2 rounded transition-all cursor-not-allowed w-full">
       <div
         className={cn({
           "text-custom-text-300": !content,
