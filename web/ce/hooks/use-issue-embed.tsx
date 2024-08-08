@@ -1,5 +1,5 @@
 // editor
-import { TEmbedConfig, TReadOnlyEmbedConfig } from "@plane/editor";
+import { TEmbedConfig } from "@plane/editor";
 // types
 import { TPageEmbedType } from "@plane/types";
 // plane web components
@@ -13,12 +13,7 @@ export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryTyp
     widgetCallback,
   };
 
-  const issueEmbedReadOnlyProps: TReadOnlyEmbedConfig["issue"] = {
-    widgetCallback,
-  };
-
   return {
     issueEmbedProps,
-    issueEmbedReadOnlyProps,
   };
 };

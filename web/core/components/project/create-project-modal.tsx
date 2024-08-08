@@ -1,7 +1,7 @@
 import { useEffect, Fragment, FC, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // components
-import { CreateProjectForm } from "./create-project-form";
+import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 import { ProjectFeatureUpdate } from "./project-feature-update";
 
 type Props = {

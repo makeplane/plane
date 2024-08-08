@@ -7,12 +7,11 @@ interface EditorContainerProps {
   children: ReactNode;
   editor: Editor | null;
   editorContainerClassName: string;
-  hideDragHandle?: () => void;
   id: string;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { children, editor, editorContainerClassName, hideDragHandle, id } = props;
+  const { children, editor, editorContainerClassName, id } = props;
 
   const handleContainerClick = () => {
     if (!editor) return;
@@ -53,11 +52,18 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
     }
   };
 
+  const handleContainerMouseLeave = () => {
+    const dragHandleElement = document.querySelector("#editor-side-menu");
+    if (!dragHandleElement?.classList.contains("side-menu-hidden")) {
+      dragHandleElement?.classList.add("side-menu-hidden");
+    }
+  };
+
   return (
     <div
       id={`editor-container-${id}`}
       onClick={handleContainerClick}
-      onMouseLeave={hideDragHandle}
+      onMouseLeave={handleContainerMouseLeave}
       className={cn(
         "cursor-text relative",
         {

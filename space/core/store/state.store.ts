@@ -1,11 +1,15 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import clone from "lodash/clone";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { IState } from "@plane/types";
+import { sortStates } from "@/helpers/state.helper";
 import { StateService } from "@/services/state.service";
 import { CoreRootStore } from "./root.store";
 
 export interface IStateStore {
   // observables
   states: IState[] | undefined;
+  //computed
+  sortedStates: IState[] | undefined;
   // computed actions
   getStateById: (stateId: string | undefined) => IState | undefined;
   // fetch actions
@@ -21,11 +25,18 @@ export class StateStore implements IStateStore {
     makeObservable(this, {
       // observables
       states: observable,
+      // computed
+      sortedStates: computed,
       // fetch action
       fetchStates: action,
     });
     this.stateService = new StateService();
     this.rootStore = _rootStore;
+  }
+
+  get sortedStates() {
+    if (!this.states) return;
+    return sortStates(clone(this.states));
   }
 
   getStateById = (stateId: string | undefined) => this.states?.find((state) => state.id === stateId);

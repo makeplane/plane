@@ -109,10 +109,10 @@ const getModuleColumns = (moduleStore: IIssueModuleStore): IGroupByColumn[] | un
 };
 
 const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefined => {
-  const { states } = projectState;
-  if (!states) return;
+  const { sortedStates } = projectState;
+  if (!sortedStates) return;
 
-  return states.map((state) => ({
+  return sortedStates.map((state) => ({
     id: state.id,
     name: state.name,
     icon: (

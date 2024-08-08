@@ -399,6 +399,9 @@ export class FavoriteStore implements IFavoriteStore {
    */
   fetchFavorite = async (workspaceSlug: string) => {
     try {
+      this.favoriteIds = [];
+      this.favoriteMap = {};
+      this.entityMap = {};
       const favorites = await this.favoriteService.getFavorites(workspaceSlug);
       runInAction(() => {
         favorites.forEach((favorite) => {

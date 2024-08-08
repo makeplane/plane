@@ -133,14 +133,16 @@ export const SidebarFavoritesMenu = observer(() => {
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
               YOUR FAVORITES
             </span>
-            <span className="flex gap-2 flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
-              <FolderPlus
-                onClick={() => {
-                  setCreateNewFolder(true);
-                  !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
-                }}
-                className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
-              />
+            <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
+              <Tooltip tooltipHeading="Create folder" tooltipContent="">
+                <FolderPlus
+                  onClick={() => {
+                    setCreateNewFolder(true);
+                    !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
+                  }}
+                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
+                />
+              </Tooltip>
               <ChevronRight
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
@@ -168,34 +170,42 @@ export const SidebarFavoritesMenu = observer(() => {
               static
             >
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {uniqBy(orderBy(Object.values(favoriteMap), "sequence", "desc"), "id")
-                .filter((fav) => !fav.parent)
-                .map((fav, index) => (
-                  <Tooltip
-                    key={fav.id}
-                    tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
-                    position="right"
-                    className="ml-2"
-                    disabled={!sidebarCollapsed}
-                    isMobile={isMobile}
-                  >
-                    {fav.is_folder ? (
-                      <FavoriteFolder
-                        favorite={fav}
-                        isLastChild={index === favoriteIds.length - 1}
-                        handleRemoveFromFavorites={handleRemoveFromFavorites}
-                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                      />
-                    ) : (
-                      <FavoriteItem
-                        favorite={fav}
-                        handleRemoveFromFavorites={handleRemoveFromFavorites}
-                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                        favoriteMap={favoriteMap}
-                      />
-                    )}
-                  </Tooltip>
-                ))}
+              {Object.keys(favoriteMap).length === 0 ? (
+                <>
+                  {!sidebarCollapsed && (
+                    <span className="text-custom-text-400 text-xs text-center font-medium py-1">No favorites yet</span>
+                  )}
+                </>
+              ) : (
+                uniqBy(orderBy(Object.values(favoriteMap), "sequence", "desc"), "id")
+                  .filter((fav) => !fav.parent)
+                  .map((fav, index) => (
+                    <Tooltip
+                      key={fav.id}
+                      tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
+                      position="right"
+                      className="ml-2"
+                      disabled={!sidebarCollapsed}
+                      isMobile={isMobile}
+                    >
+                      {fav.is_folder ? (
+                        <FavoriteFolder
+                          favorite={fav}
+                          isLastChild={index === favoriteIds.length - 1}
+                          handleRemoveFromFavorites={handleRemoveFromFavorites}
+                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                        />
+                      ) : (
+                        <FavoriteItem
+                          favorite={fav}
+                          handleRemoveFromFavorites={handleRemoveFromFavorites}
+                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                          favoriteMap={favoriteMap}
+                        />
+                      )}
+                    </Tooltip>
+                  ))
+              )}
             </Disclosure.Panel>
           )}
         </Transition>

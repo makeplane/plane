@@ -160,7 +160,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       />
 
       <div className="pb-12 pl-3">
-        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} />
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
       </div>
     </>
   );

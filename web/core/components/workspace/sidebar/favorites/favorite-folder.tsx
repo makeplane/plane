@@ -240,7 +240,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                             <DragHandle className="bg-transparent" />
                           </button>
                         </Tooltip>
-                        <div className="size-4 grid place-items-center flex-shrink-0">
+                        <div className="size-5 grid place-items-center flex-shrink-0">
                           <FavoriteFolderIcon />
                         </div>
                         <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>

@@ -1,19 +1,21 @@
 "use client";
 import { Command } from "cmdk";
+import { observer } from "mobx-react";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // ui
 import { DiscordIcon } from "@plane/ui";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette, useTransient } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
 };
 
-export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
+export const CommandPaletteHelpActions: React.FC<Props> = observer((props) => {
   const { closePalette } = props;
   // hooks
   const { toggleShortcutModal } = useCommandPalette();
+  const { toggleIntercom } = useTransient();
 
   return (
     <Command.Group heading="Help">
@@ -68,9 +70,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
       <Command.Item
         onSelect={() => {
           closePalette();
-          if (window) {
-            window.$crisp.push(["do", "chat:show"]);
-          }
+          toggleIntercom(true);
         }}
         className="focus:outline-none"
       >
@@ -81,4 +81,4 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
       </Command.Item>
     </Command.Group>
   );
-};
+});

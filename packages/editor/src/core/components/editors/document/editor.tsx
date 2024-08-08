@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 // components
 import { PageRenderer } from "@/components/editors";
 // helpers
@@ -9,10 +9,11 @@ import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
 
 interface IDocumentEditor {
   containerClassName?: string;
+  disabledExtensions?: TExtensions[];
   editorClassName?: string;
   embedHandler: TEmbedConfig;
   fileHandler: TFileHandler;
@@ -32,6 +33,7 @@ interface IDocumentEditor {
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -44,16 +46,10 @@ const DocumentEditor = (props: IDocumentEditor) => {
     tabIndex,
     value,
   } = props;
-  // states
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
-  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
-    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
-  };
 
   // use document editor
   const { editor, isIndexedDbSynced } = useDocumentEditor({
+    disabledExtensions,
     id,
     editorClassName,
     embedHandler,
@@ -64,7 +60,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     mentionHandler,
     placeholder,
-    setHideDragHandleFunction,
     tabIndex,
   });
 
@@ -77,13 +72,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   if (!editor || !isIndexedDbSynced) return null;
 
   return (
-    <PageRenderer
-      editor={editor}
-      editorContainerClassName={editorContainerClassNames}
-      hideDragHandle={hideDragHandleOnMouseLeave}
-      id={id}
-      tabIndex={tabIndex}
-    />
+    <PageRenderer editor={editor} editorContainerClassName={editorContainerClassNames} id={id} tabIndex={tabIndex} />
   );
 };
 

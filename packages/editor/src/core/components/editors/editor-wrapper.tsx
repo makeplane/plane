@@ -11,7 +11,6 @@ import { EditorContentWrapper } from "./editor-content";
 type Props = IEditorProps & {
   children?: (editor: Editor) => React.ReactNode;
   extensions: Extension<any, any>[];
-  hideDragHandleOnMouseLeave: () => void;
 };
 
 export const EditorWrapper: React.FC<Props> = (props) => {
@@ -20,7 +19,6 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     containerClassName,
     editorClassName = "",
     extensions,
-    hideDragHandleOnMouseLeave,
     id,
     initialValue,
     fileHandler,
@@ -56,12 +54,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
   if (!editor) return null;
 
   return (
-    <EditorContainer
-      editor={editor}
-      editorContainerClassName={editorContainerClassName}
-      id={id}
-      hideDragHandle={hideDragHandleOnMouseLeave}
-    >
+    <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName} id={id}>
       {children?.(editor)}
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
