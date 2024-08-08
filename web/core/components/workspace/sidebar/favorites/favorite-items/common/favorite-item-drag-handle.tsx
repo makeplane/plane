@@ -25,8 +25,7 @@ export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
       position="top-right"
       disabled={isDragging}
     >
-      <button
-        type="button"
+      <div
         className={cn(
           "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
           {
@@ -36,7 +35,7 @@ export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
         )}
       >
         <DragHandle className="bg-transparent" />
-      </button>
+      </div>
     </Tooltip>
   );
 });

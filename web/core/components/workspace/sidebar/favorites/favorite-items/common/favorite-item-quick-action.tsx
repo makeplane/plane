@@ -11,19 +11,19 @@ type Props = {
   ref: React.MutableRefObject<HTMLDivElement | null>;
   isMenuActive: boolean;
   favorite: IFavorite;
-  setIsMenuActive: React.Dispatch<React.SetStateAction<boolean>>;
+  onChange: (value: boolean) => void;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
 export const FavoriteItemQuickAction: FC<Props> = (props) => {
-  const { ref, isMenuActive, setIsMenuActive, handleRemoveFromFavorites, favorite } = props;
+  const { ref, isMenuActive, onChange, handleRemoveFromFavorites, favorite } = props;
   return (
     <CustomMenu
       customButton={
         <span
           ref={ref}
           className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-          onClick={() => setIsMenuActive(!isMenuActive)}
+          onClick={() => onChange(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
         </span>
@@ -39,7 +39,7 @@ export const FavoriteItemQuickAction: FC<Props> = (props) => {
     >
       <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
         <span className="flex items-center justify-start gap-2">
-          <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
+          <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500 flex-shrink-0" />
           <span>Remove from favorites</span>
         </span>
       </CustomMenu.MenuItem>

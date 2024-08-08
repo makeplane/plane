@@ -15,23 +15,19 @@ export const FavoriteItemWrapper: FC<Props> = (props) => {
   return (
     <>
       {sidebarCollapsed ? (
-        <>
-          <div ref={elementRef}>{children}</div>
-        </>
+        <div ref={elementRef}>{children}</div>
       ) : (
-        <>
-          <div
-            ref={elementRef}
-            className={cn(
-              "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded px-2 py-1 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90",
-              {
-                "bg-custom-sidebar-background-90": isMenuActive,
-              }
-            )}
-          >
-            {children}
-          </div>
-        </>
+        <div
+          ref={elementRef}
+          className={cn(
+            "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded px-2 py-1 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90",
+            {
+              "bg-custom-sidebar-background-90": isMenuActive,
+            }
+          )}
+        >
+          {children}
+        </div>
       )}
     </>
   );

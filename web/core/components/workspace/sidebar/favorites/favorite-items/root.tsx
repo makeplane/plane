@@ -48,6 +48,8 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
   const elementRef = useRef<HTMLDivElement>(null);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
+  const handleQuickAction = (value: boolean) => setIsMenuActive(value);
+
   // drag and drop
   useEffect(() => {
     const element = elementRef.current;
@@ -101,7 +103,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
             favorite={favorite}
             ref={actionSectionRef}
             isMenuActive={isMenuActive}
-            setIsMenuActive={setIsMenuActive}
+            onChange={handleQuickAction}
             handleRemoveFromFavorites={handleRemoveFromFavorites}
           />
         )}
