@@ -9,7 +9,7 @@ import { Logo } from "@/components/common";
 
 const iconClassName = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
 
-export const FAVORITE_ITEM: Record<string, JSX.Element> = {
+export const FAVORITE_ITEM_ICON: Record<string, JSX.Element> = {
   page: <FileText className={iconClassName} />,
   project: <Briefcase className={iconClassName} />,
   view: <Layers className={iconClassName} />,
@@ -21,13 +21,13 @@ export const FAVORITE_ITEM: Record<string, JSX.Element> = {
 export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined) => (
   <>
     <div className="hidden group-hover:flex items-center justify-center size-5">
-      {FAVORITE_ITEM[type] || <FileText />}
+      {FAVORITE_ITEM_ICON[type] || <FileText />}
     </div>
     <div className="flex items-center justify-center size-5 group-hover:hidden">
       {logo?.in_use ? (
         <Logo logo={logo} size={16} type={type === "project" ? "material" : "lucide"} />
       ) : (
-        FAVORITE_ITEM[type] || <FileText />
+        FAVORITE_ITEM_ICON[type] || <FileText />
       )}
     </div>
   </>
