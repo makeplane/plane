@@ -456,6 +456,16 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
 
+    def destroy(self, request, slug, pk):
+        project = Project.objects.get(pk=pk)
+        project.delete()
+        DeployBoard.objects.get(
+            entity_name="project",
+            entity_identifier=pk,
+            workspace__slug=slug,
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
