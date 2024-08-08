@@ -19,6 +19,7 @@ import { cn } from "@/helpers/common.helper";
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
@@ -72,7 +73,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -80,14 +80,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // editor flaggings
+  const { documentEditor } = useEditorFlagging();
 
   // page filters
   const { isFullWidth } = usePageFilters();
   // issue-embed
-  const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
-    workspaceSlug?.toString() ?? "",
-    projectId?.toString() ?? ""
-  );
+  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -149,6 +148,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               embedHandler={{
                 issue: issueEmbedProps,
               }}
+              disabledExtensions={documentEditor}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -162,7 +162,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 highlights: mentionHighlights,
               }}
               embedHandler={{
-                issue: issueEmbedReadOnlyProps,
+                issue: {
+                  widgetCallback: issueEmbedProps.widgetCallback,
+                },
               }}
             />
           )}
