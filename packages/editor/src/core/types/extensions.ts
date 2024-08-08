@@ -1,1 +1,1 @@
-export type TExtensions = "issue-embed";
+export type TExtensions = "ai" | "issue-embed";
