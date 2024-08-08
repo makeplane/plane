@@ -20,13 +20,12 @@ import { BlockMenu } from "@/components/menus";
 type IPageRenderer = {
   editor: Editor;
   editorContainerClassName: string;
-  hideDragHandle?: () => void;
   id: string;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { editor, editorContainerClassName, hideDragHandle, id, tabIndex } = props;
+  const { editor, editorContainerClassName, id, tabIndex } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -129,14 +128,9 @@ export const PageRenderer = (props: IPageRenderer) => {
   return (
     <>
       <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
-        <EditorContainer
-          editor={editor}
-          editorContainerClassName={editorContainerClassName}
-          hideDragHandle={hideDragHandle}
-          id={id}
-        >
+        <EditorContainer editor={editor} editorContainerClassName={editorContainerClassName} id={id}>
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor && editor.isEditable && <BlockMenu editor={editor} />}
+          {editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (
