@@ -58,6 +58,9 @@ export interface IInstanceConfig {
   app_base_url: string | undefined;
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
+  // intercom
+  is_intercom_enabled: boolean;
+  intercom_app_id: string | undefined;
   // enterprise
   is_oidc_enabled: boolean;
   oidc_provider_name: string | undefined;
@@ -80,11 +83,16 @@ export interface IInstanceAdmin {
   user_detail: IUserLite;
 }
 
+export type TInstanceIntercomConfigurationKeys =
+  | "IS_INTERCOM_ENABLED"
+  | "INTERCOM_APP_ID";
+
 export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
+  | TInstanceIntercomConfigurationKeys
   // enterprise
   | TInstanceEnterpriseAuthenticationKeys;
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -22,11 +22,15 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const FavoriteItem = observer(
   ({
+    favoriteMap,
     favorite,
     handleRemoveFromFavorites,
+    handleRemoveFromFavoritesFolder,
   }: {
     favorite: IFavorite;
+    favoriteMap: Record<string, IFavorite>;
     handleRemoveFromFavorites: (favorite: IFavorite) => void;
+    handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
   }) => {
     // store hooks
     const { sidebarCollapsed } = useAppTheme();
@@ -45,7 +49,7 @@ export const FavoriteItem = observer(
     const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
     const getIcon = () => {
-      const className = `flex-shrink-0 size-4 stroke-[1.5]`;
+      const className = `flex-shrink-0 size-4 stroke-[1.5] m-auto`;
 
       switch (favorite.entity_type) {
         case "page":
@@ -92,7 +96,7 @@ export const FavoriteItem = observer(
       return combine(
         draggable({
           element,
-          dragHandle: element,
+          // dragHandle: element,
           canDrag: () => true,
           getInitialData: () => ({ id: favorite.id, type: "CHILD" }),
           onDragStart: () => {
@@ -100,6 +104,24 @@ export const FavoriteItem = observer(
           },
           onDrop: () => {
             setIsDragging(false);
+          },
+        }),
+        dropTargetForElements({
+          element,
+          onDragStart: () => {
+            setIsDragging(true);
+          },
+          onDragEnter: () => {
+            setIsDragging(true);
+          },
+          onDragLeave: () => {
+            setIsDragging(false);
+          },
+          onDrop: ({ source }) => {
+            setIsDragging(false);
+            const sourceId = source?.data?.id as string | undefined;
+            if (!sourceId || !favoriteMap[sourceId].parent) return;
+            handleRemoveFromFavoritesFolder(sourceId);
           },
         })
       );
@@ -139,37 +161,39 @@ export const FavoriteItem = observer(
             {getIcon()}
 
             {!sidebarCollapsed && (
-              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1">
+              <Link href={getLink()} className="text-sm leading-5 font-medium flex-1 truncate">
                 {favorite.entity_data ? favorite.entity_data.name : favorite.name}
               </Link>
             )}
 
-            <CustomMenu
-              customButton={
-                <span
-                  ref={actionSectionRef}
-                  className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                  onClick={() => setIsMenuActive(!isMenuActive)}
-                >
-                  <MoreHorizontal className="size-4" />
-                </span>
-              }
-              className={cn(
-                "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
-                {
-                  "opacity-100 pointer-events-auto": isMenuActive,
+            {!sidebarCollapsed && (
+              <CustomMenu
+                customButton={
+                  <span
+                    ref={actionSectionRef}
+                    className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                    onClick={() => setIsMenuActive(!isMenuActive)}
+                  >
+                    <MoreHorizontal className="size-4" />
+                  </span>
                 }
-              )}
-              customButtonClassName="grid place-items-center"
-              placement="bottom-start"
-            >
-              <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
-                <span className="flex items-center justify-start gap-2">
-                  <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
-                  <span>Remove from favorites</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+                className={cn(
+                  "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                  {
+                    "opacity-100 pointer-events-auto": isMenuActive,
+                  }
+                )}
+                customButtonClassName="grid place-items-center"
+                placement="bottom-start"
+              >
+                <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
+                  <span className="flex items-center justify-start gap-2">
+                    <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
+                    <span>Remove from favorites</span>
+                  </span>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
           </div>
         </SidebarNavItem>
       </div>

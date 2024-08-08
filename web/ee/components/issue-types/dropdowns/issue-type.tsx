@@ -61,7 +61,7 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
       options={issuePropertyTypeOptions}
       onChange={handleIssueTypeChange}
       className="w-full h-full flex"
-      optionsClassName="w-full"
+      optionsClassName="w-48"
       buttonClassName="rounded text-sm py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300"
       noChevron
     />

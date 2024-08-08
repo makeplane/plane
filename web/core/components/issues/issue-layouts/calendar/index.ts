@@ -9,4 +9,4 @@ export * from "./issue-block-root";
 export * from "./issue-block";
 export * from "./week-days";
 export * from "./week-header";
-export * from "./quick-add-issue-form";
+export * from "./quick-add-issue-actions";

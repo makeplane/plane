@@ -11,49 +11,33 @@ import { TIssuePropertyOption } from "@/plane-web/types";
 
 export interface IIssuePropertyOption extends TIssuePropertyOption {
   // computed
-  asJSON: TIssuePropertyOption | undefined;
+  asJSON: TIssuePropertyOption;
   // actions
   updatePropertyOption: (issuePropertyId: string, propertyOptionData: Partial<TIssuePropertyOption>) => Promise<void>;
 }
 
 export class IssuePropertyOption implements IIssuePropertyOption {
   // properties
-  id: string | undefined;
-  name: string | undefined;
-  sort_order: number | undefined;
-  property: string | undefined;
-  description: string | undefined;
-  logo_props: TLogoProps | undefined;
-  is_active: boolean | undefined;
-  parent: string | undefined;
-  is_default: boolean | undefined;
-  created_at: Date | undefined;
-  created_by: string | undefined;
-  updated_at: Date | undefined;
-  updated_by: string | undefined;
+  id: string | undefined = undefined;
+  name: string | undefined = undefined;
+  sort_order: number | undefined = undefined;
+  property: string | undefined = undefined;
+  description: string | undefined = undefined;
+  logo_props: TLogoProps | undefined = undefined;
+  is_active: boolean | undefined = undefined;
+  parent: string | undefined = undefined;
+  is_default: boolean | undefined = undefined;
+  created_at: Date | undefined = undefined;
+  created_by: string | undefined = undefined;
+  updated_at: Date | undefined = undefined;
+  updated_by: string | undefined = undefined;
   // service
   service: IssuePropertyOptionsService;
 
   constructor(
     private store: RootStore,
-    propertyOptionData: TIssuePropertyOption
+    protected propertyOptionData: TIssuePropertyOption
   ) {
-    this.id = propertyOptionData.id ?? undefined;
-    this.name = propertyOptionData.name ?? undefined;
-    this.sort_order = propertyOptionData.sort_order ?? undefined;
-    this.property = propertyOptionData.property ?? undefined;
-    this.description = propertyOptionData.description ?? undefined;
-    this.logo_props = propertyOptionData.logo_props ?? undefined;
-    this.is_active = propertyOptionData.is_active ?? undefined;
-    this.parent = propertyOptionData.parent ?? undefined;
-    this.is_default = propertyOptionData.is_default ?? undefined;
-    this.created_at = propertyOptionData.created_at ?? undefined;
-    this.created_by = propertyOptionData.created_by ?? undefined;
-    this.updated_at = propertyOptionData.updated_at ?? undefined;
-    this.updated_by = propertyOptionData.updated_by ?? undefined;
-    // service
-    this.service = new IssuePropertyOptionsService();
-
     makeObservable(this, {
       id: observable.ref,
       name: observable.ref,
@@ -73,6 +57,22 @@ export class IssuePropertyOption implements IIssuePropertyOption {
       // actions
       updatePropertyOption: action,
     });
+
+    this.id = propertyOptionData.id;
+    this.name = propertyOptionData.name;
+    this.sort_order = propertyOptionData.sort_order;
+    this.property = propertyOptionData.property;
+    this.description = propertyOptionData.description;
+    this.logo_props = propertyOptionData.logo_props;
+    this.is_active = propertyOptionData.is_active;
+    this.parent = propertyOptionData.parent;
+    this.is_default = propertyOptionData.is_default;
+    this.created_at = propertyOptionData.created_at;
+    this.created_by = propertyOptionData.created_by;
+    this.updated_at = propertyOptionData.updated_at;
+    this.updated_by = propertyOptionData.updated_by;
+    // service
+    this.service = new IssuePropertyOptionsService();
   }
 
   // computed
@@ -106,8 +106,8 @@ export class IssuePropertyOption implements IIssuePropertyOption {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !issuePropertyId || !this.id) return undefined;
 
+    const beforeUpdateData = this.asJSON;
     try {
-      await this.service.update(workspaceSlug, projectId, issuePropertyId, this.id, propertyOptionData);
       runInAction(() => {
         for (const key in propertyOptionData) {
           if (propertyOptionData.hasOwnProperty(key)) {
@@ -116,8 +116,18 @@ export class IssuePropertyOption implements IIssuePropertyOption {
           }
         }
       });
+      await this.service.update(workspaceSlug, projectId, issuePropertyId, this.id, propertyOptionData);
     } catch (error) {
       console.error("IssuePropertyOption -> updatePropertyOption -> error", error);
+      // rollback the changes
+      runInAction(() => {
+        for (const key in beforeUpdateData) {
+          if (beforeUpdateData.hasOwnProperty(key)) {
+            const propertyKey = key as keyof TIssuePropertyOption;
+            set(this, propertyKey, beforeUpdateData[propertyKey] ?? undefined);
+          }
+        }
+      });
       throw error;
     }
   };

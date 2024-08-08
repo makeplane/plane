@@ -1,7 +1,5 @@
 export * from "./root";
 export * from "./create-update";
-export * from "./enable-disable";
-export * from "./delete";
 export * from "./empty-state";
 export * from "./issue-types-list";
 export * from "./issue-type-list-item";

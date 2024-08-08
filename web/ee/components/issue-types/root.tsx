@@ -18,7 +18,7 @@ export const IssueTypesRoot = observer(() => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
-    <div className="container mx-auto h-full pb-20">
+    <div className="container mx-auto h-full pb-8">
       <div className="flex items-center justify-between border-b border-custom-border-100 py-3.5 pr-4 gap-14">
         <h3 className="text-xl font-medium">Issue types</h3>
         {currentProjectDetails?.is_issue_type_enabled && (

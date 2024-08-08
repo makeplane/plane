@@ -35,6 +35,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const {
     peekIssue,
     issue: { fetchIssue },
+    fetchActivities,
   } = useIssueDetail();
 
   const { issues } = useIssuesStore();
@@ -67,7 +68,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issues?.updateIssue &&
           (await issues
             .updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(() => {
+            .then(async () => {
+              fetchActivities(workspaceSlug, projectId, issueId);
               captureIssueEvent({
                 eventName: ISSUE_UPDATED,
                 payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -162,6 +164,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -232,6 +235,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
           });
           await removeFromCyclePromise;
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -267,6 +271,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           addModuleIds,
           removeModuleIds
         );
+        fetchActivities(workspaceSlug, projectId, issueId);
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -293,6 +298,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
           });
           await removeFromModulePromise;
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },

@@ -60,8 +60,8 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   )}
                 </div>
                 <div className="flex flex-col w-full items-start justify-start">
-                  <div className="flex gap-4 items-center">
-                    <div className="text-sm text-custom-text-100 font-medium">{issueTypeDetail?.name}</div>
+                  <div className="flex gap-4 text-left">
+                    <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
                   </div>
                   <Tooltip tooltipContent={issueTypeDetail?.description} position="bottom-left">
                     <div className="text-sm text-custom-text-300 text-left line-clamp-1">

@@ -72,7 +72,7 @@ export const RadioInput = ({
               disabled={disabled}
               checked={selected === value}
             />
-            <label htmlFor={`${name}_${index}`} className="cursor-pointer">
+            <label htmlFor={`${name}_${index}`} className="cursor-pointer w-full">
               {label}
             </label>
           </div>

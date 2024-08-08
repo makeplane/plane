@@ -13,9 +13,10 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
 
 type DocumentEditorProps = {
+  disabledExtensions?: TExtensions[];
   editorClassName: string;
   editorProps?: EditorProps;
   embedHandler?: TEmbedConfig;
@@ -36,6 +37,7 @@ type DocumentEditorProps = {
 
 export const useDocumentEditor = (props: DocumentEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     embedHandler,
@@ -102,6 +104,7 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
         document: provider.document,
       }),
       ...DocumentEditorAdditionalExtensions({
+        disabledExtensions,
         fileHandler,
         issueEmbedConfig: embedHandler?.issue,
       }),
@@ -111,5 +114,8 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     tabIndex,
   });
 
-  return { editor, isIndexedDbSynced };
+  return {
+    editor,
+    isIndexedDbSynced,
+  };
 };

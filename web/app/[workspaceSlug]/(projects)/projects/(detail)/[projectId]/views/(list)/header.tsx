@@ -86,7 +86,7 @@ export const ProjectViewsHeader = observer(() => {
           {canUserCreateView && (
             <div>
               <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
-                Add View
+                Add view
               </Button>
             </div>
           )}

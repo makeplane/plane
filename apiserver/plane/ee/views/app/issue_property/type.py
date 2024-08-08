@@ -49,6 +49,9 @@ class IssueTypeEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         # Create a new issue type
         serializer = IssueTypeSerializer(data=request.data)
+        # check weight
+        if not request.data.get("weight"):
+            request.data["weight"] = 1
         # Validate the data
         serializer.is_valid(raise_exception=True)
         # Save the data
@@ -128,16 +131,16 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         # Create a new default issue type
         issue_type, _ = IssueType.objects.get_or_create(
             project_id=project_id,
-            name="Task",
+            name="Issue",
             is_default=True,
             defaults={
-                "description": "A work that needs to be done",
+                "description": "Default issue type with the option to add new properties",
                 "is_default": True,
                 "weight": 0,
                 "sort_order": 1,
                 "logo_props": {
                     "in_use": "icon",
-                    "icon": {"name": "AlignLeft", "color": "#6d7b8a"},
+                    "icon": {"name": "Layers", "color": "#6d7b8a"},
                 },
             },
         )

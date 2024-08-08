@@ -143,6 +143,18 @@ class Command(BaseCommand):
                 "category": "UNSPLASH",
                 "is_encrypted": True,
             },
+            # intercom settings
+            {
+                "key": "IS_INTERCOM_ENABLED",
+                "value": os.environ.get("IS_INTERCOM_ENABLED", "1"),
+                "category": "INTERCOM",
+                "is_encrypted": False,
+            },
+            {
+                "key": "INTERCOM_APP_ID",
+                "value": os.environ.get("INTERCOM_APP_ID", ""),
+                "category": "INTERCOM",
+            },
             ## OIDC
             {
                 "key": "OIDC_CLIENT_ID",
@@ -351,7 +363,11 @@ class Command(BaseCommand):
                             ]
                         )
                     )
-                    if bool(GITLAB_HOST) and bool(GITLAB_CLIENT_ID) and bool(GITLAB_CLIENT_SECRET):
+                    if (
+                        bool(GITLAB_HOST)
+                        and bool(GITLAB_CLIENT_ID)
+                        and bool(GITLAB_CLIENT_SECRET)
+                    ):
                         value = "1"
                     else:
                         value = "0"

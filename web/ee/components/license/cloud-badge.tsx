@@ -74,14 +74,13 @@ export const CloudEditionBadge = observer(() => {
         isOpen={isProPlanSuccessModalOpen}
         handleClose={() => setProPlanSuccessModalOpen(false)}
       />
-      {(subscriptionDetail.product === "FREE" ||
-        (subscriptionDetail.product === "PRO" && subscriptionDetail.interval === "month")) && (
+      {subscriptionDetail.product === "FREE" && (
         <>
           {/* This modal is intentionally placed inside the condition to avoid unnecessary calls to list product endpoint.  */}
           <ProPlanCloudUpgradeModal
             isOpen={isProPlanModalOpen}
             handleClose={() => toggleProPlanModal(false)}
-            yearlyPlan={subscriptionDetail.product === "PRO"}
+            yearlyPlan={false}
           />
           <Button
             tabIndex={-1}
@@ -93,7 +92,7 @@ export const CloudEditionBadge = observer(() => {
           </Button>
         </>
       )}
-      {subscriptionDetail.product === "PRO" && subscriptionDetail.interval === "year" && (
+      {subscriptionDetail.product === "PRO" && (
         <>
           <Button
             tabIndex={-1}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import isEqual from "lodash/isEqual";
 // ui
 import { Input, TextArea } from "@plane/ui";
 // helpers
@@ -63,7 +64,16 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
           value={data?.[0]}
           onChange={handleInputChange}
           className={commonClassNames}
-          onBlur={() => data?.[0] !== value?.[0] && onTextValueChange(data)}
+          onClick={() => {
+            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+            document.body?.setAttribute("data-delay-outside-click", "true");
+          }}
+          onBlur={() => {
+            if (!isEqual(value, data)) {
+              onTextValueChange(data);
+            }
+            document.body?.removeAttribute("data-delay-outside-click");
+          }}
           placeholder="Enter some text"
           required={isRequired}
         />
@@ -76,10 +86,19 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
           onChange={handleTextAreaChange}
           className={cn(
             commonClassNames,
-            "max-h-52 vertical-scrollbar scrollbar-sm",
+            "min-h-10 max-h-52 vertical-scrollbar scrollbar-xs",
             variant === "create" && "min-h-28"
           )}
-          onBlur={() => data?.[0] !== value?.[0] && onTextValueChange(data)}
+          onClick={() => {
+            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+            document.body?.setAttribute("data-delay-outside-click", "true");
+          }}
+          onBlur={() => {
+            if (!isEqual(value, data)) {
+              onTextValueChange(data);
+            }
+            document.body?.removeAttribute("data-delay-outside-click");
+          }}
           placeholder="Describe..."
           required={isRequired}
         />

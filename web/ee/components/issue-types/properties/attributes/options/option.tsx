@@ -20,14 +20,8 @@ type TIssuePropertyOptionItem = {
 };
 
 export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((props) => {
-  const {
-    issueTypeId,
-    issuePropertyId,
-    optionId,
-    operationMode,
-    propertyOptionCreateListData,
-    updateCreateListData,
-  } = props;
+  const { issueTypeId, issuePropertyId, optionId, operationMode, propertyOptionCreateListData, updateCreateListData } =
+    props;
   // store hooks
   const issuePropertyOption = usePropertyOption(issueTypeId, issuePropertyId, optionId);
   // derived values
@@ -95,9 +89,10 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
       onKeyDown={(e) => e.key === "Enter" && !!optionData.name && e.currentTarget.blur()}
       onBlur={() => handleCreateUpdate()}
       placeholder={"Add option"}
-      className={cn("w-full text-sm px-1 py-0.5 bg-custom-background-100 border-[0.5px] rounded", {
+      className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {
         "border-custom-border-300": !Boolean(error),
       })}
+      inputSize="xs"
       hasError={Boolean(error)}
       autoFocus
     />

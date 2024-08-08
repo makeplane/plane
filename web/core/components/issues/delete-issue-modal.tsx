@@ -74,7 +74,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete Issue"
+      title="Delete issue"
       content={
         <>
           Are you sure you want to delete issue{" "}

@@ -43,13 +43,20 @@ export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
           ))}
         </div>
       )}
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-3">
         <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
-        <BooleanInput
-          value={booleanPropertyDetail.default_value ?? []}
-          onBooleanValueChange={async (value) => onBooleanDetailChange("default_value", value)}
-          isDisabled={!!booleanPropertyDetail.is_required}
-        />
+        <div className="flex items-center gap-2">
+          <BooleanInput
+            value={booleanPropertyDetail.default_value ?? []}
+            onBooleanValueChange={async (value) => onBooleanDetailChange("default_value", value)}
+            isDisabled={!!booleanPropertyDetail.is_required}
+          />
+          <div className="text-xs font-medium text-custom-text-200">
+            {booleanPropertyDetail.default_value?.[0] !== undefined
+              ? `${booleanPropertyDetail.default_value?.[0] === "true" ? "True" : "False"}`
+              : "No default value"}
+          </div>
+        </div>
       </div>
     </>
   );

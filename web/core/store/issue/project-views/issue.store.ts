@@ -70,6 +70,9 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
 
   fetchParentStats = async () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug

@@ -36,7 +36,7 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
   // store hooks
   const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
   // derived values
-  const activePropertyOptions = issueProperty?.activePropertyOptions;
+  const sortedActivePropertyOptions = issueProperty?.sortedActivePropertyOptions;
 
   useEffect(() => {
     setData(value);
@@ -60,7 +60,7 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
     }
   };
 
-  const customSearchOptions = activePropertyOptions?.map((option) => ({
+  const customSearchOptions = sortedActivePropertyOptions?.map((option) => ({
     value: option.id,
     query: option.name ?? "",
     content: option.name,
@@ -70,7 +70,7 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
     label: getDisplayName(),
     options: customSearchOptions,
     className: "group w-full h-full flex",
-    optionsClassName: "w-full",
+    optionsClassName: "w-48",
     chevronClassName: "h-3.5 w-3.5 hidden group-hover:inline",
     buttonClassName: cn("rounded text-sm bg-custom-background-100 border-custom-border-200", {
       "border-[0.5px]": variant === "create",
@@ -86,11 +86,16 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
         <CustomSearchSelect
           {...customSearchSelectProps}
           value={data || []}
-          onChange={(optionIds: string[]) => setData(optionIds)}
+          onChange={(optionIds: string[]) => {
+            setData(optionIds);
+            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+            document.body?.setAttribute("data-delay-outside-click", "true");
+          }}
           onClose={() => {
             if (!isEqual(data, value)) {
               onOptionValueChange(data);
             }
+            document.body?.removeAttribute("data-delay-outside-click");
           }}
           multiple
         />

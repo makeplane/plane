@@ -8,6 +8,7 @@ import { ICycle, CycleDateCheckData, TCyclePlotType } from "@plane/types";
 // helpers
 import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
 import { getDate } from "@/helpers/date-time.helper";
+import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { CycleArchiveService } from "@/services/cycle_archive.service";
@@ -44,6 +45,7 @@ export interface ICycleStore {
   getProjectCycleIds: (projectId: string) => string[] | null;
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
   // actions
+  updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
   // fetch
@@ -486,6 +488,22 @@ export class CycleStore implements ICycleStore {
     });
 
   /**
+   * This method updates the cycle's stats locally without fetching the updated stats from backend
+   * @param distributionUpdates
+   * @param cycleId
+   * @returns
+   */
+  updateCycleDistribution = (distributionUpdates: DistributionUpdates, cycleId: string) => {
+    const cycle = this.cycleMap[cycleId];
+
+    if (!cycle) return;
+
+    runInAction(() => {
+      updateDistribution(cycle, distributionUpdates);
+    });
+  };
+
+  /**
    * @description creates a new cycle
    * @param workspaceSlug
    * @param projectId
@@ -533,6 +551,7 @@ export class CycleStore implements ICycleStore {
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
+        this.rootStore.favorite.removeFavoriteFromStore(cycleId);
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
       });

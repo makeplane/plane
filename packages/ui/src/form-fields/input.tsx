@@ -4,7 +4,7 @@ import { cn } from "../../helpers";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   mode?: "primary" | "transparent" | "true-transparent";
-  inputSize?: "sm" | "md";
+  inputSize?: "xs" | "sm" | "md";
   hasError?: boolean;
   className?: string;
 }
@@ -26,6 +26,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             mode === "transparent",
           "rounded border-none bg-transparent ring-0": mode === "true-transparent",
           "border-red-500": hasError,
+          "px-1.5 py-1": inputSize === "xs",
           "px-3 py-2": inputSize === "sm",
           "p-3": inputSize === "md",
         },

@@ -49,7 +49,8 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
         value={numberPropertyDetail.default_value ?? []}
         onNumberValueChange={async (value) => onNumberDetailChange("default_value", value)}
         variant="create"
-        className="w-full text-sm px-1.5 py-0.5 bg-custom-background-100 border-[0.5px] rounded"
+        className="w-full text-sm bg-custom-background-100 border-[0.5px] rounded"
+        numberInputSize="xs"
         isDisabled={!!numberPropertyDetail.is_required}
       />
     </>

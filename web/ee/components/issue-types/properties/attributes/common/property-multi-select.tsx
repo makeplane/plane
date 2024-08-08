@@ -35,7 +35,7 @@ export const PropertyMultiSelect = (props: TPropertyMultiSelectProps) => {
       selected={getSelectedValue() ?? ""}
       options={memberPickerAttributeOptions}
       onChange={(value) => onChange(value === "multi_select")}
-      className="z-50"
+      className="z-10"
       buttonClassName="size-3"
       fieldClassName="text-sm"
       wrapperClassName="gap-1"

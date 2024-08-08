@@ -367,6 +367,13 @@ class PageViewSet(BaseViewSet):
         ).update(parent=None)
 
         page.delete()
+        # Delete the user favorite page
+        UserFavorite.objects.filter(
+            project=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_type="page",
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -394,7 +401,7 @@ class PageFavoriteViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         )
-        page_favorite.delete()
+        page_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

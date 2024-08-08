@@ -9,10 +9,11 @@ import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion } from "@/types";
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
 
 interface IDocumentEditor {
   containerClassName?: string;
+  disabledExtensions?: TExtensions[];
   editorClassName?: string;
   embedHandler: TEmbedConfig;
   fileHandler: TFileHandler;
@@ -32,6 +33,7 @@ interface IDocumentEditor {
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -54,6 +56,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
 
   // use document editor
   const { editor, isIndexedDbSynced } = useDocumentEditor({
+    disabledExtensions,
     id,
     editorClassName,
     embedHandler,

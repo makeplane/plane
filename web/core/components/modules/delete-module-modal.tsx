@@ -79,7 +79,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete Module"
+      title="Delete module"
       content={
         <>
           Are you sure you want to delete module-{" "}

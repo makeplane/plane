@@ -47,6 +47,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
       if (!isEqual(data, value)) {
         onMemberValueChange(data);
       }
+      document.body?.removeAttribute("data-delay-outside-click");
     },
   };
 
@@ -57,7 +58,11 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
           {...memberPickerProps}
           projectId={projectId}
           value={data || []}
-          onChange={(memberIds) => setData(memberIds)}
+          onChange={(memberIds) => {
+            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+            document.body?.setAttribute("data-delay-outside-click", "true");
+            setData(memberIds);
+          }}
           buttonVariant={
             variant === "update"
               ? data.length > 1
@@ -73,7 +78,11 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
           {...memberPickerProps}
           projectId={projectId}
           value={data?.[0] || null}
-          onChange={(memberId) => setData(memberId && !data?.includes(memberId) ? [memberId] : [])}
+          onChange={(memberId) => {
+            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+            document.body?.setAttribute("data-delay-outside-click", "true");
+            setData(memberId && !data?.includes(memberId) ? [memberId] : []);
+          }}
           buttonVariant={
             variant === "update"
               ? data.length > 1

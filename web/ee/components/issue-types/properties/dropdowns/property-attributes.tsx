@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { ChevronDown } from "lucide-react";
 import { Popover } from "@headlessui/react";
+import { createPortal } from "react-dom";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
@@ -83,23 +84,26 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
           </button>
         </Popover.Button>
       </Tooltip>
-      <Popover.Panel className="fixed z-10">
-        <div
-          className="w-60 bg-custom-background-100 border-[0.5px] border-custom-border-300 rounded my-1 py-4 px-2 shadow-custom-shadow-rg"
-          ref={setPopperElement}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <SelectedAttributeProperties
-            issueTypeId={issueTypeId}
-            propertyDetail={propertyDetail}
-            currentOperationMode={currentOperationMode}
-            issuePropertyOptionCreateList={issuePropertyOptionCreateList}
-            onPropertyDetailChange={onPropertyDetailChange}
-            handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
-          />
-        </div>
-      </Popover.Panel>
+      {createPortal(
+        <Popover.Panel data-prevent-outside-click className="fixed z-10">
+          <div
+            className="w-60 bg-custom-background-100 border-[0.5px] border-custom-border-300 rounded my-1 py-4 px-2 shadow-custom-shadow-rg"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <SelectedAttributeProperties
+              issueTypeId={issueTypeId}
+              propertyDetail={propertyDetail}
+              currentOperationMode={currentOperationMode}
+              issuePropertyOptionCreateList={issuePropertyOptionCreateList}
+              onPropertyDetailChange={onPropertyDetailChange}
+              handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
+            />
+          </div>
+        </Popover.Panel>,
+        document.body
+      )}
     </Popover>
   );
 });
