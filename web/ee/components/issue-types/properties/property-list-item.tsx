@@ -66,17 +66,39 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   const [issuePropertyOptionCreateList, setIssuePropertyOptionCreateList] = useState<TIssuePropertyOptionCreateList[]>(
     []
   );
+  // derived values
+  // check if mandatory field is disabled for the property
+  const isMandatoryFieldDisabled =
+    issuePropertyData?.property_type === EIssuePropertyType.BOOLEAN ||
+    (issuePropertyData?.property_type === EIssuePropertyType.TEXT &&
+      issuePropertyData?.settings?.display_format === "readonly");
+
+  // get property default values
+  const getDefaultValues = () => {
+    // if property is option type and operation mode is create, return default values from issuePropertyOptionCreateList
+    if (issuePropertyData?.property_type === EIssuePropertyType.OPTION && issuePropertyOperationMode === "create") {
+      return (
+        issuePropertyOptionCreateList.filter((option) => option.is_default).map((option) => option.id as string) ?? []
+      );
+    }
+    // else return default values from issuePropertyData
+    return issuePropertyData?.default_value ?? [];
+  };
 
   // validators
   const validateIssueProperty = () => {
     let hasError = false;
     const error = { ...defaultIssuePropertyError };
     if (!issuePropertyData.display_name) {
-      error.display_name = "Property name is required";
+      error.display_name = "You must name your property.";
+      hasError = true;
+    }
+    if (issuePropertyData.display_name && issuePropertyData.display_name?.length > 255) {
+      error.display_name = "Property name should not exceed 255 characters.";
       hasError = true;
     }
     if (!issuePropertyData.property_type) {
-      error.property_type = "Property type is required";
+      error.property_type = "You must select a property type.";
       hasError = true;
     }
     setIssuePropertyError(error);
@@ -287,6 +309,21 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     setIssuePropertyError(defaultIssuePropertyError);
   };
 
+  const handleMandatoryFieldChange = (value: boolean) => {
+    // if mandatory field is enabled, remove default value
+    if (value) {
+      // if property is option type, set is_default to false for all options
+      if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
+        setIssuePropertyOptionCreateList((prevValue) => {
+          prevValue = prevValue ? [...prevValue] : [];
+          return prevValue.map((item) => ({ ...item, is_default: false }));
+        });
+      }
+      handlePropertyDataChange("default_value", []);
+    }
+    handlePropertyDataChange("is_required", value, true);
+  };
+
   return (
     <div
       className={cn(
@@ -335,16 +372,9 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       <div className="w-20 text-center">
         <PropertyMandatoryFieldToggle
           value={!!issuePropertyData.is_required}
-          defaultValue={issuePropertyData?.default_value ?? []}
-          onMandatoryFieldChange={(value) => {
-            // if mandatory field is enabled, set default value to empty array
-            if (value) handlePropertyDataChange("default_value", []);
-            handlePropertyDataChange("is_required", value, true);
-          }}
-          isDisabled={
-            issuePropertyData?.property_type === EIssuePropertyType.TEXT &&
-            issuePropertyData?.settings?.display_format === "readonly"
-          }
+          defaultValue={getDefaultValues()}
+          onMandatoryFieldChange={handleMandatoryFieldChange}
+          isDisabled={isMandatoryFieldDisabled}
         />
       </div>
       <div className="w-14 text-center whitespace-nowrap">

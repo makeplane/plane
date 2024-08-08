@@ -18,10 +18,34 @@ export class IssuePropertyValuesService extends APIService {
       });
   }
 
-  async createUpdate(workspaceSlug: string, projectId: string, issueId: string, data: TIssuePropertyValues): Promise<TIssuePropertyValues> {
+  async create(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: TIssuePropertyValues
+  ): Promise<TIssuePropertyValues> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/values/`, {
       property_values: data,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async update(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    propertyId: string,
+    data: string[]
+  ): Promise<void> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-properties/${propertyId}/values/`,
+      {
+        values: data,
+      }
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

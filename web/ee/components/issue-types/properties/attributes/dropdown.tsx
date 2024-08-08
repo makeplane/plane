@@ -54,7 +54,15 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
         <PropertyMultiSelect
           value={dropdownPropertyDetail.is_multi}
           variant="OPTION"
-          onChange={(value) => onDropdownDetailChange("is_multi", value)}
+          onChange={(value) => {
+            onDropdownDetailChange("is_multi", value);
+            if (!value) {
+              onDropdownDetailChange(
+                "default_value",
+                dropdownPropertyDetail.default_value?.[0] ? [dropdownPropertyDetail.default_value?.[0]] : []
+              );
+            }
+          }}
           isDisabled={currentOperationMode === "update" && isAnyIssueAttached}
         />
       </div>
@@ -83,12 +91,12 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
         <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
         {dropdownPropertyDetail.id ? (
           <OptionValueSelect
+            propertyDetail={dropdownPropertyDetail}
             value={dropdownPropertyDetail.default_value ?? []}
             issueTypeId={issueTypeId}
             issuePropertyId={dropdownPropertyDetail.id}
             variant="create"
             isMultiSelect={dropdownPropertyDetail.is_multi}
-            isRequired={false}
             isDisabled={isOptionDefaultDisabled}
             onOptionValueChange={async (value) => onDropdownDetailChange("default_value", value)}
           />

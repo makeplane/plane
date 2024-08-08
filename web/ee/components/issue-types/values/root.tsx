@@ -5,11 +5,17 @@ import { PropertyValueSelect } from "@/plane-web/components/issue-types/values";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
 // plane web types
-import { EIssuePropertyType, TIssuePropertyValues, TPropertyValueVariant } from "@/plane-web/types";
+import {
+  EIssuePropertyType,
+  TIssuePropertyValueErrors,
+  TIssuePropertyValues,
+  TPropertyValueVariant,
+} from "@/plane-web/types";
 
 type TIssueAdditionalPropertyValuesProps = {
   issueTypeId: string;
   issuePropertyValues: TIssuePropertyValues;
+  issuePropertyValueErrors?: TIssuePropertyValueErrors;
   projectId: string;
   variant: TPropertyValueVariant;
   isPropertyValuesLoading?: boolean;
@@ -20,6 +26,7 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
   const {
     issueTypeId,
     issuePropertyValues,
+    issuePropertyValueErrors,
     projectId,
     variant,
     isPropertyValuesLoading = false,
@@ -65,6 +72,7 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
               <PropertyValueSelect
                 propertyDetail={property}
                 propertyValue={issuePropertyValues[property.id] ?? []}
+                propertyValueError={issuePropertyValueErrors?.[property.id] ?? undefined}
                 projectId={projectId}
                 variant={variant}
                 isPropertyValuesLoading={isPropertyValuesLoading}

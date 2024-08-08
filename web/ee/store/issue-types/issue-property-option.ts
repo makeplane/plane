@@ -78,7 +78,8 @@ export class IssuePropertyOption implements IIssuePropertyOption {
   // computed
   /**
    * @description Get issue property option as JSON
-   * @returns {TIssuePropertyOption  */
+   * @returns {TIssuePropertyOption}
+   */
   get asJSON(): TIssuePropertyOption {
     return {
       id: this.id,

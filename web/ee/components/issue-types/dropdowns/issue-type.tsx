@@ -18,18 +18,26 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
   const issueTypeLoader = getProjectIssueTypeLoader(projectId);
   const issueTypes = getProjectActiveIssueTypes(projectId);
 
-  const issuePropertyTypeOptions = Object.entries(issueTypes).map(([issueTypeId, issueTypeDetail]) => ({
+  const issueTypeOptions = Object.entries(issueTypes).map(([issueTypeId, issueTypeDetail]) => ({
     value: issueTypeId,
     query: issueTypeDetail.name ?? "",
     content: (
       <div className="flex gap-2 items-center">
-        <div className="flex-shrink-0 grid h-5 w-5 place-items-center rounded bg-custom-background-80">
-          {issueTypeDetail?.logo_props?.in_use ? (
-            <Logo logo={issueTypeDetail.logo_props} size={12} type="lucide" />
+        <>
+          {issueTypeDetail?.is_default ? (
+            <div className="flex-shrink-0 grid h-5 w-5 place-items-center rounded bg-[#6695FF]">
+              <LayersIcon className="h-3 w-3 text-white" />
+            </div>
           ) : (
-            <LayersIcon className="h-3 w-3 text-custom-text-300" />
+              <div className="flex-shrink-0 grid h-5 w-5 place-items-center rounded bg-custom-background-80">
+                {issueTypeDetail?.logo_props?.in_use ? (
+                  <Logo logo={issueTypeDetail.logo_props} size={12} type="lucide" />
+                ) : (
+                  <LayersIcon className="h-3 w-3 text-custom-text-300" />
+                )}
+              </div>
           )}
-        </div>
+        </>
         <div className="text-sm font-medium text-custom-text-200">{issueTypeDetail.name}</div>
       </div>
     ),
@@ -47,18 +55,24 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
     <CustomSearchSelect
       value={issueTypeId}
       label={
-        <div className="flex gap-1 items-center">
-          <div className="flex-shrink-0 grid h-4 w-4 place-items-center">
-            {issueTypes[issueTypeId]?.logo_props?.in_use ? (
-              <Logo logo={issueTypes[issueTypeId].logo_props} size={12} type="lucide" />
-            ) : (
-              <LayersIcon className="h-3 w-3 text-custom-text-300" />
-            )}
-          </div>
+        <div className="flex gap-2 items-center">
+          {issueTypes[issueTypeId]?.is_default ? (
+            <div className="flex-shrink-0 grid h-5 w-5 place-items-center rounded bg-[#6695FF]">
+              <LayersIcon className="h-3 w-3 text-white" />
+            </div>
+          ) : (
+            <div className="flex-shrink-0 grid h-5 w-5 place-items-center rounded bg-custom-background-80">
+              {issueTypes[issueTypeId]?.logo_props?.in_use ? (
+                <Logo logo={issueTypes[issueTypeId].logo_props} size={12} type="lucide" />
+              ) : (
+                <LayersIcon className="h-3 w-3 text-custom-text-300" />
+              )}
+            </div>
+          )}
           <div className="text-sm font-medium text-custom-text-200">{issueTypes[issueTypeId]?.name}</div>
         </div>
       }
-      options={issuePropertyTypeOptions}
+      options={issueTypeOptions}
       onChange={handleIssueTypeChange}
       className="w-full h-full flex"
       optionsClassName="w-48"

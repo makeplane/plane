@@ -12,10 +12,11 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useProject, useKanbanView } from "@/hooks/store";
+import { useIssueDetail, useKanbanView } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
@@ -51,7 +52,6 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const { getProjectIdentifierById } = useProject();
 
   const handleEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,9 +62,15 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
     <>
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
-          <div className="line-clamp-1 text-xs text-custom-text-300">
-            {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
-          </div>
+          {issue.project_id && (
+            <IssueIdentifier
+              issueId={issue.id}
+              projectId={issue.project_id}
+              iconContainerClassName="size-[18px]"
+              iconSize={11}
+              textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
+            />
+          )}
           <div
             className={cn("absolute -top-1 right-0", {
               "hidden group-hover/kanban-block:block": !isMobile,

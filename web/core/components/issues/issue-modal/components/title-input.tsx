@@ -51,7 +51,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
           />
         )}
       />
-      <span className="text-xs text-red-500">{errors?.name?.message}</span>
+      <span className="text-xs font-medium text-red-500">{errors?.name?.message}</span>
     </>
   );
 });

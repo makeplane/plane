@@ -11,10 +11,11 @@ export const IssueTypesList = observer(() => {
   // router
   const { projectId } = useParams();
   // store hooks
-  const { getProjectIssueTypeLoader, getProjectIssueTypeIds } = useIssueTypes();
+  const { getProjectIssueTypeLoader, getProjectIssueTypeIds, getProjectDefaultIssueType } = useIssueTypes();
   // derived states
   const issueTypeLoader = getProjectIssueTypeLoader(projectId?.toString());
   const currentProjectIssueTypeIds = getProjectIssueTypeIds(projectId?.toString());
+  const currentProjectDefaultIssueType = getProjectDefaultIssueType(projectId?.toString());
 
   if (issueTypeLoader === "init-loader") {
     return (
@@ -33,7 +34,13 @@ export const IssueTypesList = observer(() => {
     <div>
       {currentProjectIssueTypeIds &&
         currentProjectIssueTypeIds.map((issueTypeId) => (
-          <IssueTypeListItem key={issueTypeId} issueTypeId={issueTypeId} />
+          <IssueTypeListItem
+            key={issueTypeId}
+            issueTypeId={issueTypeId}
+            isDefaultOpen={
+              issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1
+            }
+          />
         ))}
     </div>
   );

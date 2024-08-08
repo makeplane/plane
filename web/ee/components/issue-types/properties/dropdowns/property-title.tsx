@@ -65,25 +65,19 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
         >
           <div>
             <div className="text-xs font-medium text-custom-text-300">Name your property</div>
-            <div className="relative flex items-center">
-              <Input
-                id="display_name"
-                type="text"
-                value={propertyDetail.display_name}
-                onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}
-                className={cn("w-full resize-none text-sm bg-custom-background-100 border-[0.5px] rounded")}
-                tabIndex={1}
-                hasError={Boolean(error)}
-                inputSize="xs"
-                required
-                autoFocus
-              />
-              {Boolean(error) && (
-                <Tooltip tooltipContent={error} className="text-xs" position="left">
-                  <Info className="absolute right-1.5 h-3 w-3 stroke-red-600 hover:cursor-pointer" />
-                </Tooltip>
-              )}
-            </div>
+            <Input
+              id="display_name"
+              type="text"
+              value={propertyDetail.display_name}
+              onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}
+              className={cn("w-full resize-none text-sm bg-custom-background-100 border-[0.5px] rounded")}
+              tabIndex={1}
+              hasError={Boolean(error)}
+              inputSize="xs"
+              required
+              autoFocus
+            />
+            {Boolean(error) && <span className="text-xs text-red-500">{error}</span>}
           </div>
           <div>
             <div className="text-xs font-medium text-custom-text-300">Describe your property</div>

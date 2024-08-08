@@ -16,9 +16,11 @@ import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDe
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
-// components
+// plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+// plane web types
 import { TIssuePropertyValues } from "@/plane-web/types";
+// components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 
@@ -283,20 +285,20 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!projectDetails?.is_issue_type_enabled) return;
 
     await issuePropertyValuesService
-      .createUpdate(workspaceSlug.toString(), projectId, issueId, issuePropertyValues)
+      .create(workspaceSlug.toString(), projectId, issueId, issuePropertyValues)
       .then(() => {
         // TODO: remove
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Additional properties created successfully.",
+          message: "Custom properties created successfully.",
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Additional properties could not be created. Please try again.",
+          message: "Custom properties could not be created. Please try again.",
         });
       });
   };

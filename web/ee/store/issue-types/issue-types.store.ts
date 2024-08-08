@@ -30,12 +30,13 @@ export interface IIssueTypesStore {
   getProjectIssueTypeLoader: (projectId: string) => TLoader;
   getProjectIssueTypeIds: (projectId: string) => string[];
   getProjectActiveIssueTypes: (projectId: string) => Record<string, IIssueType>; // issue type id -> issue type
-  getProjectDefaultIssueTypeId: (projectId: string) => string | undefined;
+  getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
+  getIssueTypeProperties: (issueTypeId: string) => TIssueProperty<EIssuePropertyType>[];
   // helper actions
   fetchAllData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
   // actions
   enableIssueTypes: (workspaceSlug: string, projectId: string) => Promise<void>;
-  getAllTypesPropertiesOptions: (workspaceSlug: string, projectId: string) => Promise<TIssueType[] | undefined>;
+  fetchAllTypesPropertiesOptions: (workspaceSlug: string, projectId: string) => Promise<TIssueType[] | undefined>;
   createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   deleteType: (typeId: string) => Promise<void>;
 }
@@ -60,7 +61,7 @@ export class IssueTypes implements IIssueTypesStore {
       fetchAllData: action,
       // actions
       enableIssueTypes: action,
-      getAllTypesPropertiesOptions: action,
+      fetchAllTypesPropertiesOptions: action,
       createType: action,
       deleteType: action,
     });
@@ -107,11 +108,27 @@ export class IssueTypes implements IIssueTypesStore {
     return projectIssueTypes;
   });
 
-  getProjectDefaultIssueTypeId = computedFn((projectId: string) => {
+  /**
+   * @description Get project default issue type id of the project
+   * @param projectId
+   * @returns {string | undefined}
+   */
+  getProjectDefaultIssueType = computedFn((projectId: string) => {
     const projectIssueTypes = this.getProjectActiveIssueTypes(projectId);
 
     const defaultIssueType = Object.values(projectIssueTypes).find((issueType) => issueType.is_default);
-    return defaultIssueType?.id ?? undefined;
+    return defaultIssueType ?? undefined;
+  });
+
+  /**
+   * @description Get issue type properties by issue type id
+   * @param issueTypeId
+   * @returns {TIssueProperty<EIssuePropertyType>[]}
+   */
+  getIssueTypeProperties = computedFn((issueTypeId: string) => {
+    const issueType = this.data[issueTypeId];
+    if (!issueType) return [];
+    return issueType.properties;
   });
 
   // helper actions
@@ -144,7 +161,7 @@ export class IssueTypes implements IIssueTypesStore {
       this.loader[projectId] = "init-loader";
       await this.service.enableIssueTypes(workspaceSlug, projectId);
       await this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
-      await this.getAllTypesPropertiesOptions(workspaceSlug, projectId);
+      await this.fetchAllTypesPropertiesOptions(workspaceSlug, projectId);
     } catch (error) {
       this.loader[projectId] = "loaded";
       throw error;
@@ -156,7 +173,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @param workspaceSlug
    * @param projectId
    */
-  getAllTypesPropertiesOptions = async (workspaceSlug: string, projectId: string) => {
+  fetchAllTypesPropertiesOptions = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
 
     try {

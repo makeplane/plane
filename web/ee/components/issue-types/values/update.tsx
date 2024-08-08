@@ -9,6 +9,8 @@ import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-type
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+// plane web types
+import { TIssuePropertyValues } from "@/plane-web/types";
 
 type TIssueAdditionalPropertyValuesUpdateProps = {
   issueId: string;
@@ -23,10 +25,10 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
   (props) => {
     const { issueId, issueTypeId, projectId, workspaceSlug } = props;
     // states
-    const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
+    const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
-    const { getProjectIssueTypeLoader, getAllTypesPropertiesOptions } = useIssueTypes();
+    const { getProjectIssueTypeLoader, fetchAllTypesPropertiesOptions } = useIssueTypes();
     const issueType = useIssueType(issueTypeId);
     // derived values
     const issueTypeDetails = issueType?.asJSON;
@@ -38,7 +40,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       async function fetchIssuePropertyValues() {
         setIsLoading(true);
         // This is required when accessing the peek overview from workspace level.
-        await getAllTypesPropertiesOptions(workspaceSlug, projectId);
+        await fetchAllTypesPropertiesOptions(workspaceSlug, projectId);
         await issuePropertyValuesService
           .fetchAll(workspaceSlug, projectId, issueId)
           .then((data) => {
@@ -49,17 +51,17 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
           });
       }
       fetchIssuePropertyValues();
-    }, [getAllTypesPropertiesOptions, issueId, projectId, workspaceSlug]);
+    }, [fetchAllTypesPropertiesOptions, issueId, projectId, workspaceSlug]);
 
     const handlePropertyValueChange = async (propertyId: string, value: string[]) => {
+      const beforeUpdateValue = issuePropertyValues[propertyId];
       setIssuePropertyValues((prev) => ({
         ...prev,
         [propertyId]: value,
       }));
+      // update the property value
       await issuePropertyValuesService
-        .createUpdate(workspaceSlug, projectId, issueId, {
-          [propertyId]: value,
-        })
+        .update(workspaceSlug, projectId, issueId, propertyId, value)
         .then(() => {
           // TODO: remove
           setToast({
@@ -68,11 +70,16 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
             message: "Property update successfully.",
           });
         })
-        .catch(() => {
+        .catch((error) => {
+          // revert the value if update fails
+          setIssuePropertyValues((prev) => ({
+            ...prev,
+            [propertyId]: beforeUpdateValue,
+          }));
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Property could not be update. Please try again.",
+            message: error?.error ?? "Property could not be update. Please try again.",
           });
         });
     };
@@ -94,7 +101,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       <IssueAdditionalPropertyValues
         issueTypeId={issueTypeId}
         projectId={projectId}
-        issuePropertyValues={issuePropertyValues ?? {}}
+        issuePropertyValues={issuePropertyValues}
         variant="update"
         isPropertyValuesLoading={isLoading}
         handlePropertyValueChange={handlePropertyValueChange}

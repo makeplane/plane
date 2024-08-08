@@ -78,7 +78,12 @@ urlpatterns = [
         IssuePropertyValueEndpoint.as_view(),
         name="issue-property-values",
     ),
-    ## Issue property value
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/<uuid:property_id>/values/",
+        IssuePropertyValueEndpoint.as_view(),
+        name="issue-property-values",
+    ),
+    ## Issue property activity
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/property-activity/",
         IssuePropertyActivityEndpoint.as_view(),

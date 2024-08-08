@@ -22,6 +22,8 @@ from plane.ee.permissions import ProjectEntityPermission
 from plane.ee.utils.issue_property_validators import (
     property_validators,
     property_savers,
+    SAVE_MAPPER,
+    VALIDATOR_MAPPER,
 )
 from plane.ee.bgtasks.issue_property_activity_task import (
     issue_property_activity,
@@ -196,6 +198,91 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(status=status.HTTP_201_CREATED)
+        except (ValidationError, ValueError) as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def patch(self, request, slug, project_id, issue_id, property_id):
+        try:
+            # Get the issue property
+            issue_property = IssueProperty.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk=property_id,
+            )
+
+            existing_prop_queryset = IssuePropertyValue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=issue_id,
+                property_id=property_id,
+            )
+
+            # Get all issue property values
+            existing_prop_values = self.query_annotator(
+                existing_prop_queryset
+            ).values("property_id", "values")
+
+            # Get the value
+            values = request.data.get("values", [])
+
+            if issue_property.is_required and (
+                not values or not [v for v in values if v]
+            ):
+                return Response(
+                    {
+                        "error": issue_property.display_name
+                        + " is a required property"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Validate the values
+            validator = VALIDATOR_MAPPER.get(issue_property.property_type)
+
+            if validator:
+                for value in values:
+                    validator(issue_property=issue_property, value=value)
+            else:
+                raise ValidationError("Invalid property type")
+
+            # Save the values
+            saver = SAVE_MAPPER.get(issue_property.property_type)
+            if saver:
+                # Save the data
+                property_values = saver(
+                    values=values,
+                    issue_property=issue_property,
+                    issue_id=issue_id,
+                    existing_values=[],
+                    workspace_id=issue_property.workspace_id,
+                    project_id=issue_property.project_id,
+                )
+                # Delete the old values
+                existing_prop_queryset.filter(property_id=property_id).delete()
+                # Bulk create the issue property values
+                IssuePropertyValue.objects.bulk_create(
+                    property_values, batch_size=10
+                )
+
+            else:
+                raise ValidationError("Invalid property type")
+
+            # Log the activity
+            issue_property_activity.delay(
+                existing_values={
+                    str(prop["property_id"]): prop["values"]
+                    for prop in existing_prop_values
+                },
+                requested_values={str(property_id): values},
+                issue_id=issue_id,
+                user_id=str(request.user.id),
+                epoch=int(timezone.now().timestamp()),
+            )
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except (ValidationError, ValueError) as e:
             return Response(
                 {"error": str(e)},

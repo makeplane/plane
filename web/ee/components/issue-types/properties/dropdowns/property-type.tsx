@@ -57,8 +57,6 @@ export const PropertyTypeDropdown = (props: TPropertyTypeDropdownProps) => {
   const onPropertyTypeChange = (key: TIssuePropertyTypeKeys) => {
     handlePropertyObjectChange({
       ...ISSUE_PROPERTY_TYPE_DETAILS[key]?.dataToUpdate,
-      // reset other properties
-      default_value: undefined,
     });
   };
 

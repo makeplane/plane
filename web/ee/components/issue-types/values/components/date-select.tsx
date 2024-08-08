@@ -6,19 +6,36 @@ import { DateDropdown } from "@/components/dropdowns";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // plane web types
-import { TDateAttributeDisplayOptions, TPropertyValueVariant } from "@/plane-web/types/issue-types";
+import {
+  EIssuePropertyType,
+  EIssuePropertyValueError,
+  TDateAttributeDisplayOptions,
+  TIssueProperty,
+  TPropertyValueVariant,
+} from "@/plane-web/types/issue-types";
 
 type TDateValueSelectProps = {
+  propertyDetail: Partial<TIssueProperty<EIssuePropertyType.DATETIME>>;
   value: string[];
-  variant: TPropertyValueVariant
+  variant: TPropertyValueVariant;
   displayFormat: TDateAttributeDisplayOptions;
-  isRequired?: boolean; // TODO: remove if not required.
+  error?: EIssuePropertyValueError;
   isDisabled?: boolean;
+  buttonClassName?: string;
   onDateValueChange: (value: string[]) => Promise<void>;
 };
 
 export const DateValueSelect = observer((props: TDateValueSelectProps) => {
-  const { value, variant, displayFormat, isDisabled = false, onDateValueChange } = props;
+  const {
+    propertyDetail,
+    value,
+    variant,
+    displayFormat,
+    error,
+    isDisabled = false,
+    buttonClassName,
+    onDateValueChange,
+  } = props;
   // states
   const [data, setData] = useState<string[]>([]);
 
@@ -34,21 +51,33 @@ export const DateValueSelect = observer((props: TDateValueSelectProps) => {
   };
 
   return (
-    <DateDropdown
-      value={data?.[0]}
-      onChange={handleDateChange}
-      placeholder="Add date"
-      buttonVariant={variant === "update" ? "transparent-with-text" : "border-with-text"}
-      disabled={isDisabled}
-      className="w-full flex-grow group"
-      buttonContainerClassName="w-full text-left"
-      buttonClassName={cn("text-sm", {
-        "text-custom-text-400": !data?.length,
-        "border-custom-border-200": variant === "create",
-      })}
-      hideIcon
-      clearIconClassName="h-3 w-3 hidden group-hover:inline"
-      formatToken={displayFormat}
-    />
+    <>
+      <DateDropdown
+        value={data?.[0]}
+        onChange={handleDateChange}
+        placeholder="Add date"
+        buttonVariant={variant === "update" && !Boolean(error) ? "transparent-with-text" : "border-with-text"}
+        disabled={isDisabled}
+        className="w-full flex-grow group"
+        buttonContainerClassName="w-full text-left"
+        buttonClassName={cn(
+          "text-sm",
+          {
+            "text-custom-text-400": !data?.length,
+            "border-custom-border-200": variant === "create",
+            "border-red-500": Boolean(error),
+          },
+          buttonClassName
+        )}
+        hideIcon
+        clearIconClassName="h-3 w-3 hidden group-hover:inline"
+        formatToken={displayFormat}
+      />
+      {Boolean(error) && (
+        <span className="text-xs font-medium text-red-500">
+          {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+        </span>
+      )}
+    </>
   );
 });

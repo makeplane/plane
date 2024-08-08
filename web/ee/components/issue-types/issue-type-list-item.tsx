@@ -12,16 +12,17 @@ import { useIssueType } from "@/plane-web/hooks/store";
 
 type TIssueTypeListItem = {
   issueTypeId: string;
+  isDefaultOpen?: boolean;
 };
 
 export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
-  const { issueTypeId } = props;
+  const { issueTypeId, isDefaultOpen = false } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
   const issueTypeDetail = issueType?.asJSON;
   // state
-  const [isOpen, setIsOpen] = useState(issueTypeDetail?.is_default ?? false);
+  const [isOpen, setIsOpen] = useState(isDefaultOpen);
 
   if (!issueTypeDetail) return null;
 
@@ -47,18 +48,29 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                     })}
                   />
                 </div>
-                <div
-                  className={cn(
-                    "flex-shrink-0 grid h-10 w-10 place-items-center rounded-md bg-custom-background-80/70",
-                    !issueTypeDetail?.is_active && "opacity-60"
-                  )}
-                >
-                  {issueTypeDetail?.logo_props?.in_use ? (
-                    <Logo logo={issueTypeDetail.logo_props} size={20} type="lucide" />
-                  ) : (
-                    <LayersIcon className="h-5 w-5 text-custom-text-300" />
-                  )}
-                </div>
+                {issueTypeDetail?.is_default ? (
+                  <div
+                    className={cn(
+                      "flex-shrink-0 grid h-10 w-10 place-items-center rounded-md bg-[#6695FF]",
+                      !issueTypeDetail?.is_active && "opacity-60"
+                    )}
+                  >
+                    <LayersIcon className="h-5 w-5 text-white" />
+                  </div>
+                ) : (
+                    <div
+                      className={cn(
+                        "flex-shrink-0 grid h-10 w-10 place-items-center rounded-md bg-custom-background-80/70",
+                        !issueTypeDetail?.is_active && "opacity-60"
+                      )}
+                    >
+                      {issueTypeDetail?.logo_props?.in_use ? (
+                        <Logo logo={issueTypeDetail.logo_props} size={20} type="lucide" />
+                      ) : (
+                        <LayersIcon className="h-5 w-5 text-custom-text-300" />
+                      )}
+                    </div>
+                )}
                 <div className="flex flex-col w-full items-start justify-start">
                   <div className="flex gap-4 text-left">
                     <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>

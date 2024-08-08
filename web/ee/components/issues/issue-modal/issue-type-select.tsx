@@ -24,11 +24,11 @@ export const IssueTypeSelect: React.FC<TIssueTypeSelectProps> = observer((props)
   const { control, setValue, data, issueTypeId, projectId } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const { getProjectActiveIssueTypes, getProjectDefaultIssueTypeId } = useIssueTypes();
+  const { getProjectActiveIssueTypes, getProjectDefaultIssueType } = useIssueTypes();
   // derived values
   const projectDetails = getProjectById(projectId);
   const projectIssueTypes = getProjectActiveIssueTypes(projectId);
-  const defaultIssueTypeId = getProjectDefaultIssueTypeId(projectId);
+  const defaultIssueType = getProjectDefaultIssueType(projectId);
 
   // Update the issue type id when the project id changes
   useEffect(() => {
@@ -43,15 +43,15 @@ export const IssueTypeSelect: React.FC<TIssueTypeSelectProps> = observer((props)
 
     // if data is not present, set active type id to the default type id of the project
     if (projectId && projectIssueTypes) {
-      if (defaultIssueTypeId) {
-        setValue("type_id", defaultIssueTypeId, { shouldValidate: true });
+      if (defaultIssueType?.id) {
+        setValue("type_id", defaultIssueType.id, { shouldValidate: true });
       } else {
         const issueTypeId = Object.keys(projectIssueTypes)[0];
         if (issueTypeId) setValue("type_id", issueTypeId, { shouldValidate: true });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, issueTypeId, projectId, projectIssueTypes, defaultIssueTypeId]);
+  }, [data, issueTypeId, projectId, projectIssueTypes, defaultIssueType]);
 
   return (
     <>

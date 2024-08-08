@@ -45,7 +45,7 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
       )}
       <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
       <NumberValueInput
-        propertyId={numberPropertyDetail.id}
+        propertyDetail={numberPropertyDetail}
         value={numberPropertyDetail.default_value ?? []}
         onNumberValueChange={async (value) => onNumberDetailChange("default_value", value)}
         variant="create"

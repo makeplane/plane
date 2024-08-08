@@ -60,6 +60,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.TEXT,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: undefined,
       settings: {
         display_format: "single-line",
       } as TIssuePropertySettingsMap[EIssuePropertyType.TEXT],
@@ -79,6 +81,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.DECIMAL,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: undefined,
       settings: undefined,
     },
   },
@@ -96,6 +100,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.OPTION,
       relation_type: undefined,
       is_multi: false,
+      is_required: false,
+      default_value: undefined,
       settings: undefined,
     },
   },
@@ -113,6 +119,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.BOOLEAN,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: ["false"],
       settings: undefined,
     },
   },
@@ -130,6 +138,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.DATETIME,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: undefined,
       settings: {
         display_format: "MMM dd, yyyy",
       } as TIssuePropertySettingsMap[EIssuePropertyType.DATETIME],
@@ -149,24 +159,12 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.RELATION,
       relation_type: EIssuePropertyRelationType.USER,
       is_multi: false,
+      is_required: false,
+      default_value: undefined,
       settings: undefined,
     },
   },
 };
-
-// List of mandatory fields for each issue property type
-// type TIssuePropertyMandatoryFields = {
-//   [key in TIssuePropertyTypeKeys]: string[][];
-// };
-
-// export const ISSUE_PROPERTY_MANDATORY_FIELDS: Partial<TIssuePropertyMandatoryFields> = {
-//   TEXT: [["display_name"], ["settings", "display_format"]],
-//   DECIMAL: [["display_name"]],
-//   OPTION: [["display_name"], ["is_multi"]],
-//   BOOLEAN: [["display_name"]],
-//   DATETIME: [["display_name"], ["settings", "display_format"]],
-//   RELATION_USER: [["display_name"], ["is_multi"]],
-// };
 
 export const DROPDOWN_ATTRIBUTES: Partial<{
   [key in TIssuePropertyTypeKeys]: {
