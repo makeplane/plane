@@ -1,4 +1,6 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+"use client";
+
+import { FC, ReactNode, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -34,7 +36,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // const { fetchInboxes } = useInbox();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const [areIssuesLoading, setIssuesLoading] = useState(false);
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
@@ -54,11 +55,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   useSWR(
     workspaceSlug && projectId ? `PROJECT_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     workspaceSlug && projectId
-      ? () => {
-          (async () => {
-            await initializeSQLite();
-            await loadIssues(workspaceSlug.toString(), projectId.toString());
-          })();
+      ? async () => {
+          await initializeSQLite();
+          await loadIssues(workspaceSlug.toString(), projectId.toString());
         }
       : null,
     {

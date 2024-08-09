@@ -46,3 +46,12 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
     }
   });
 };
+
+export const wrapDateTime = (field: string) => {
+  const DATE_TIME_FIELDS = ["created_at", "updated_at", "completed_at", "start_date", "target_date"];
+
+  if (DATE_TIME_FIELDS.includes(field)) {
+    return `datetime(${field})`;
+  }
+  return field;
+};

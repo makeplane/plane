@@ -8,9 +8,9 @@ import { log } from "./utils";
 const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 const PAGE_SIZE = 1000;
 
+export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 export const addIssue = async (issue: any) => {
   const issue_id = issue.id;
-  const { label_ids, assignee_ids, module_ids, ...otherProps } = issue;
   const keys = Object.keys(issue).join(",");
   const values = Object.values(issue).map((val) => {
     if (val === null) {
@@ -36,19 +36,14 @@ export const addIssue = async (issue: any) => {
     const values = issue[field];
     if (values) {
       values.forEach((val: any) => {
-        // promises.push(
         SQL.db.exec({
           sql: `insert into issue_meta(issue_id,key,value) values (?,?,?)`,
           bind: [issue_id, field, val],
         });
-        // );
       });
     }
   });
   SQL.db.exec("COMMIT;");
-
-  // await Promise.all(promises);
-  // log("### Added issue", issue.id);
 };
 
 export const deleteIssueFromLocal = async (issue_id: any) => {
@@ -67,16 +62,22 @@ export const updateIssue = async (issue: any) => {
   await deleteIssueFromLocal(issue_id);
   addIssue(issue);
 };
+
 export const loadIssuesPrivate = async (workspaceId: string, projectId: string) => {
   // Load issues from the API
-  const issueService = new IssueService();
+  if (PROJECT_OFFLINE_STATUS[projectId] === undefined) {
+    PROJECT_OFFLINE_STATUS[projectId] = false;
+  } else {
+    // Load issues is already in progress
+    return;
+  }
 
   let count = await runQuery(`select count(*) as count from issues where project_id='${projectId}'`);
-  log("### Count", count);
   count = count[0]["count"];
 
-  log("### Count", count, typeof count);
   if (!count) {
+    log("### Loading issues from the server");
+    const issueService = new IssueService();
     let cursor = `${PAGE_SIZE}:0:0`;
     let results;
     let breakLoop = false;
@@ -84,7 +85,6 @@ export const loadIssuesPrivate = async (workspaceId: string, projectId: string) 
       const response = await issueService.getIssuesFromServer(workspaceId, projectId, { cursor });
       cursor = response.next_cursor;
       results = response.results as TBaseIssue[];
-      log("#### Loading issues", results.length);
       results.map(async (issue) => {
         try {
           await addIssue(issue);
@@ -94,10 +94,13 @@ export const loadIssuesPrivate = async (workspaceId: string, projectId: string) 
         }
       });
     } while (results.length >= PAGE_SIZE && !breakLoop);
-    createIndexes();
+    await createIndexes();
   } else {
+    log(`### issues already present in the db ${count}`);
     syncLocalData(workspaceId, projectId);
   }
+
+  PROJECT_OFFLINE_STATUS[projectId] = true;
 };
 
 export const loadIssues = async (workspaceId: string, projectId: string) => {
@@ -112,11 +115,14 @@ export const syncUpdatesToLocal = async (workspaceId: string, projectId: string)
 
   // get the last updated issue
   const lastUpdatedIssue = await runQuery(
-    `select id, name, updated_at , sequence_id from issues where project_id='${projectId}' order by date(updated_at) desc limit 1`
+    `select id, name, updated_at , sequence_id from issues where project_id='${projectId}' order by datetime(updated_at) desc limit 1`
   );
 
+  console.log("#### Last Updated Issue", lastUpdatedIssue);
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const updated_at__gt = lastUpdatedIssue[0]["updated_at"];
+  const { updated_at: updated_at__gt, sequence_id } = lastUpdatedIssue[0];
+  log("#### Last Updated Issue", sequence_id, updated_at__gt);
   const issueService = new IssueService();
 
   do {

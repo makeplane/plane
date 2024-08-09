@@ -1,3 +1,5 @@
+import { IssueService } from "@/services/issue/issue.service";
+import { PROJECT_OFFLINE_STATUS } from "../load-issues";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "../query-constructor";
 import { runQuery } from "../query-executor";
 import { SQL } from "../sqlite";
@@ -5,6 +7,12 @@ import { SQL } from "../sqlite";
 const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 
 export const getIssues = async (workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> => {
+  if (!PROJECT_OFFLINE_STATUS[projectId]) {
+    console.log(`Project ${projectId} is not offline, fetching from server.`);
+    const issueService = new IssueService();
+    return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+  }
+
   const { cursor } = queries;
 
   await SQL.syncInProgress;

@@ -1,3 +1,5 @@
+import { wrapDateTime } from "./utils";
+
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   const { order_by, cursor, per_page, labels, sub_issue, assignees, state, cycle, group_by, module, ...otherProps } =
     queries;
@@ -28,9 +30,9 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   if (order_by) {
     //if order_by starts with "-" then sort in descending order
     if (order_by.startsWith("-")) {
-      sql += ` ORDER BY ${order_by.slice(1)} DESC`;
+      sql += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC`;
     } else {
-      sql += ` ORDER BY ${order_by} ASC`;
+      sql += ` ORDER BY ${wrapDateTime(order_by)} ASC`;
     }
   }
 
