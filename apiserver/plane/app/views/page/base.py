@@ -375,7 +375,7 @@ class PageViewSet(BaseViewSet):
             entity_type="page",
         ).delete()
         # Delete the deploy board
-        DeployBoard.objects.get(
+        DeployBoard.objects.filter(
             entity_name="page",
             entity_identifier=pk,
             workspace__slug=slug,
