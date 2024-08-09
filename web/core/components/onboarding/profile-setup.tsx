@@ -372,6 +372,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           hasError={Boolean(errors.first_name)}
                           placeholder="Wilbur"
                           className="w-full border-onboarding-border-100"
+                          autoComplete="on"
                         />
                       )}
                     />
@@ -405,6 +406,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           hasError={Boolean(errors.last_name)}
                           placeholder="Wright"
                           className="w-full border-onboarding-border-100"
+                          autoComplete="on"
                         />
                       )}
                     />
@@ -438,6 +440,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                               className="w-full border-[0.5px] border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                               onFocus={() => setIsPasswordInputFocused(true)}
                               onBlur={() => setIsPasswordInputFocused(false)}
+                              autoComplete="on"
                             />
                             {showPassword.password ? (
                               <EyeOff
