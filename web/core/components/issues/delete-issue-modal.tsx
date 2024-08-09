@@ -55,7 +55,9 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
         message: PROJECT_ERROR_MESSAGES.permissionError.message,
       });
       onClose();
-    } else if (onSubmit)
+      return;
+    }
+    if (onSubmit)
       await onSubmit()
         .then(() => {
           setToast({
