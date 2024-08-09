@@ -7,7 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // components
 import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
 // hooks
-import { useIssue, useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store";
 
 type TIssuePeekOverview = {
   anchor: string;
@@ -29,15 +29,14 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
   // store
   const issueDetailStore = useIssueDetails();
-  const issueStore = useIssue();
 
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
 
   useEffect(() => {
-    if (anchor && peekId && issueStore.groupedIssueIds) {
+    if (anchor && peekId) {
       issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
     }
-  }, [anchor, issueDetailStore, peekId, issueStore.groupedIssueIds]);
+  }, [anchor, issueDetailStore, peekId]);
 
   const handleClose = () => {
     // if close logic is passed down, call that instead of the below logic
