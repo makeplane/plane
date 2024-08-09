@@ -21,7 +21,7 @@ class UserFavorite(WorkspaceBaseModel):
     entity_identifier = models.UUIDField(null=True, blank=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     is_folder = models.BooleanField(default=False)
-    sequence = models.IntegerField(default=65535)
+    sequence = models.FloatField(default=65535)
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -31,7 +31,12 @@ class UserFavorite(WorkspaceBaseModel):
     )
 
     class Meta:
-        unique_together = ["entity_type", "user", "entity_identifier", "deleted_at"]
+        unique_together = [
+            "entity_type",
+            "user",
+            "entity_identifier",
+            "deleted_at",
+        ]
         constraints = [
             models.UniqueConstraint(
                 fields=["entity_type", "entity_identifier", "user"],
