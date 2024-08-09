@@ -1,6 +1,8 @@
 import { forwardRef, MutableRefObject } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
 import { IssueWidget } from "@/extensions";
 // helpers
@@ -10,12 +12,13 @@ import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // plane web types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
+import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig } from "@/types";
 
 interface IDocumentReadOnlyEditor {
   id: string;
   initialValue: string;
   containerClassName: string;
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: TEmbedConfig;
   tabIndex?: number;
@@ -29,6 +32,7 @@ interface IDocumentReadOnlyEditor {
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   const {
     containerClassName,
+    displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
     id,
@@ -39,17 +43,17 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     mentionHandler,
   } = props;
   const editor = useReadOnlyEditor({
-    initialValue,
     editorClassName,
-    mentionHandler,
-    forwardedRef,
-    handleEditorReady,
     extensions: [
       embedHandler?.issue &&
         IssueWidget({
           widgetCallback: embedHandler?.issue.widgetCallback,
         }),
     ],
+    forwardedRef,
+    handleEditorReady,
+    initialValue,
+    mentionHandler,
   });
 
   if (!editor) {
@@ -61,7 +65,13 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   });
 
   return (
-    <PageRenderer editor={editor} editorContainerClassName={editorContainerClassName} id={id} tabIndex={tabIndex} />
+    <PageRenderer
+      displayConfig={displayConfig}
+      editor={editor}
+      editorContainerClassName={editorContainerClassName}
+      id={id}
+      tabIndex={tabIndex}
+    />
   );
 };
 
