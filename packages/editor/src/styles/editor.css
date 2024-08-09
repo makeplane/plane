@@ -1,12 +1,62 @@
+.editor-container {
+  &.large-font {
+    --font-size-h1: 1.5rem;
+    --font-size-h2: 1.3125rem;
+    --font-size-h3: 1.125rem;
+    --font-size-h4: 0.9375rem;
+    --font-size-h5: 0.8125rem;
+    --font-size-h6: 0.75rem;
+    --font-size-regular: 0.9375rem;
+    --font-size-list: var(--font-size-regular);
+    --font-size-code: var(--font-size-regular);
+  }
+
+  &.small-font {
+    --font-size-h1: 1.2rem;
+    --font-size-h2: 1.05rem;
+    --font-size-h3: 0.9rem;
+    --font-size-h4: 0.75rem;
+    --font-size-h5: 0.65rem;
+    --font-size-h6: 0.6rem;
+    --font-size-regular: 0.75rem;
+    --font-size-list: var(--font-size-regular);
+    --font-size-code: var(--font-size-regular);
+  }
+
+  &.sans-serif {
+    --font-style: sans-serif;
+  }
+
+  &.serif {
+    --font-style: serif;
+  }
+
+  &.monospace {
+    --font-style: monospace;
+  }
+}
+
 .ProseMirror {
-  --font-size-h1: 1.5rem;
-  --font-size-h2: 1.3125rem;
-  --font-size-h3: 1.125rem;
-  --font-size-h4: 0.9375rem;
-  --font-size-h5: 0.8125rem;
-  --font-size-h6: 0.75rem;
-  --font-size-regular: 0.9375rem;
-  --font-size-list: var(--font-size-regular);
+  position: relative;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  outline: none;
+  cursor: text;
+  font-family: var(--font-style);
+  font-size: var(--font-size-regular);
+  line-height: 1.2;
+  color: inherit;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  appearance: textfield;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
@@ -179,29 +229,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   max-width: 400px !important;
 }
 
-.ProseMirror {
-  position: relative;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  -moz-tab-size: 4;
-  tab-size: 4;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-  outline: none;
-  cursor: text;
-  line-height: 1.2;
-  font-family: inherit;
-  font-size: var(--font-size-regular);
-  color: inherit;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  appearance: textfield;
-  -webkit-appearance: textfield;
-  -moz-appearance: textfield;
-}
-
 .fade-in {
   opacity: 1;
   transition: opacity 0.3s ease-in;
@@ -248,6 +275,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   opacity: 0;
 }
 
+/* code block, inline code */
 .ProseMirror pre {
   font-family: JetBrainsMono, monospace;
   tab-size: 2;
@@ -256,9 +284,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .ProseMirror pre code {
   background: none;
   color: inherit;
-  font-size: 0.8rem;
   padding: 0;
 }
+
+.ProseMirror code {
+  font-size: var(--font-size-code);
+}
+/* end code block, inline code */
 
 div[data-type="horizontalRule"] {
   line-height: 0;

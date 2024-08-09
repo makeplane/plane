@@ -7,7 +7,10 @@ import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucid
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+// constants
+import { EDITOR_FONT_STYLES } from "@/constants/editor";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -39,7 +42,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // store hooks
   const { workspaceSlug, projectId } = useParams();
   // page filters
-  const { isFullWidth, handleFullWidth } = usePageFilters();
+  const { fontStyle, handleFontStyle, isFullWidth, handleFullWidth } = usePageFilters();
+
   const handleArchivePage = async () =>
     await archive().catch(() =>
       setToast({
@@ -148,6 +152,24 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
 
   return (
     <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
+      <div className="grid grid-cols-3 items-center gap-0.5 mb-1">
+        {EDITOR_FONT_STYLES.map((style) => (
+          <button
+            key={style.key}
+            type="button"
+            className={cn(
+              "flex flex-col items-center p-1 rounded text-custom-text-300 hover:bg-custom-background-80 transition-colors",
+              {
+                "bg-custom-background-80 text-custom-text-100": fontStyle === style.key,
+              }
+            )}
+            onClick={() => handleFontStyle(style.key)}
+          >
+            <style.icon className="size-6" />
+            <span className="text-xs">{style.label}</span>
+          </button>
+        ))}
+      </div>
       <CustomMenu.MenuItem
         className="hidden md:flex w-full items-center justify-between gap-2"
         onClick={() => handleFullWidth(!isFullWidth)}

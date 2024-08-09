@@ -8,6 +8,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TextArea } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { usePageFilters } from "@/hooks/use-page-filters";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -20,6 +21,8 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   const { editorRef, readOnly, title, updateTitle } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
+  // page filters
+  const { fontStyle } = usePageFilters();
 
   return (
     <>
@@ -28,6 +31,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           className="break-words bg-transparent text-[1.75rem] font-semibold"
           style={{
             lineHeight: "1.2",
+            fontFamily: fontStyle,
           }}
         >
           {title}
@@ -38,6 +42,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
             className="w-full bg-custom-background text-[1.75rem] font-semibold outline-none p-0 border-none resize-none rounded-none"
             style={{
               lineHeight: "1.2",
+              fontFamily: fontStyle,
             }}
             placeholder="Untitled"
             onKeyDown={(e) => {
