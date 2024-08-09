@@ -44,24 +44,29 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
     handlePropertyValueChange(propertyId, value);
   };
 
-  // Sort all multi-line text properties to the top
-  if (variant === "create") {
-    sortedProperties.sort((a, b) => {
-      // Check if `a` should come before `b`
-      if (a.property_type === EIssuePropertyType.TEXT && a.settings?.display_format === "multi-line") {
-        if (b.property_type !== EIssuePropertyType.TEXT || b.settings?.display_format !== "multi-line") {
-          return -1;
-        }
+  // sort all multi-line text properties to the top in create mode and to the bottom in update mode
+  sortedProperties.sort((a, b) => {
+    const isAMultiLineText = a.property_type === EIssuePropertyType.TEXT && a.settings?.display_format === "multi-line";
+    const isBMultiLineText = b.property_type === EIssuePropertyType.TEXT && b.settings?.display_format === "multi-line";
+    if (variant === "create") {
+      // Sort multi-line text properties to the top in create mode
+      if (isAMultiLineText && !isBMultiLineText) {
+        return -1;
       }
-      // Check if `b` should come before `a`
-      if (b.property_type === EIssuePropertyType.TEXT && b.settings?.display_format === "multi-line") {
-        if (a.property_type !== EIssuePropertyType.TEXT || a.settings?.display_format !== "multi-line") {
-          return 1;
-        }
+      if (!isAMultiLineText && isBMultiLineText) {
+        return 1;
       }
-      return 0; // No sorting preference
-    });
-  }
+    } else if (variant === "update") {
+      // Sort multi-line text properties to the bottom in update mode
+      if (isAMultiLineText && !isBMultiLineText) {
+        return 1;
+      }
+      if (!isAMultiLineText && isBMultiLineText) {
+        return -1;
+      }
+    }
+    return 0; // No sorting preference
+  });
 
   return (
     <div className="flex flex-col space-y-2">

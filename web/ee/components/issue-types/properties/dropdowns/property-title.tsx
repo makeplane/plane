@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown, InfoIcon } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // ui
 import { Input, TextArea, Tooltip } from "@plane/ui";
@@ -34,9 +34,18 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
 
   if (!currentOperationMode) {
     return (
-      <Tooltip tooltipContent={propertyDetail.description} position="top-left" disabled={!propertyDetail.description}>
+      <div className="flex gap-1 w-full items-center">
         <span className="px-1 truncate">{propertyDetail.display_name ?? ""}</span>
-      </Tooltip>
+        {propertyDetail.description && (
+          <Tooltip
+            tooltipContent={propertyDetail.description}
+            position="right"
+            disabled={!propertyDetail.description}
+          >
+            <InfoIcon className="w-3 h-3 text-custom-text-300 cursor-pointer" />
+          </Tooltip>
+        )}
+      </div>
     );
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { AlignLeft } from "lucide-react";
+import { AlignLeft, InfoIcon } from "lucide-react";
 // ui
 import { Loader, Logo, Tooltip } from "@plane/ui";
 // helpers
@@ -62,12 +62,21 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           <AlignLeft className={cn("w-4 h-4 text-custom-text-300")} />
         )}
       </div>
-      <Tooltip tooltipContent={propertyDetail?.description} position="top-left" disabled={!propertyDetail?.description}>
-        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
-          {propertyDetail?.display_name}
-          {propertyDetail?.is_required && <span className="px-0.5 text-red-500">*</span>}
+      <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
+        <span className="flex gap-0.5 items-center">
+          <span className="truncate">{propertyDetail?.display_name}</span>
+          {propertyDetail?.is_required && <span className="text-red-500">*</span>}
+          {propertyDetail.description && (
+            <Tooltip
+              tooltipContent={propertyDetail?.description}
+              position="right"
+              disabled={!propertyDetail?.description}
+            >
+              <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
+            </Tooltip>
+          )}
         </span>
-      </Tooltip>
+      </span>
     </>
   );
 

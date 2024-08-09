@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
@@ -10,14 +11,19 @@ import { useIssueTypes } from "@/plane-web/hooks/store";
 export const IssueTypesList = observer(() => {
   // router
   const { projectId } = useParams();
+  // states
+  const [openIssueTypeId, setOpenIssueTypeId] = useState<string | null>(null);
   // store hooks
-  const { getProjectIssueTypeLoader, getProjectIssueTypeIds, getProjectDefaultIssueType } = useIssueTypes();
+  const { loader: issueTypesLoader, getProjectIssueTypeIds, getProjectDefaultIssueType } = useIssueTypes();
   // derived states
-  const issueTypeLoader = getProjectIssueTypeLoader(projectId?.toString());
   const currentProjectIssueTypeIds = getProjectIssueTypeIds(projectId?.toString());
   const currentProjectDefaultIssueType = getProjectDefaultIssueType(projectId?.toString());
+  // handlers
+  const handleIssueTypeListToggle = (issueTypeId: string) => {
+    setOpenIssueTypeId((prev) => (prev === issueTypeId ? null : issueTypeId));
+  };
 
-  if (issueTypeLoader === "init-loader") {
+  if (issueTypesLoader === "init-loader") {
     return (
       <Loader className="space-y-6 py-2">
         <Loader className="space-y-2">
@@ -37,9 +43,11 @@ export const IssueTypesList = observer(() => {
           <IssueTypeListItem
             key={issueTypeId}
             issueTypeId={issueTypeId}
-            isDefaultOpen={
-              issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1
+            isOpen={
+              openIssueTypeId === issueTypeId ||
+              (issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1)
             }
+            onToggle={handleIssueTypeListToggle}
           />
         ))}
     </div>

@@ -56,7 +56,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   return (
     <div className="space-y-2">
-      <IssueIdentifier issueId={issueId} projectId={issue.project_id} />
+      <IssueIdentifier issueId={issueId} projectId={issue.project_id} iconSize={14} iconContainerSize={20} />
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}

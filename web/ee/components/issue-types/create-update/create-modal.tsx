@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
@@ -6,9 +6,11 @@ import { getRandomIconName } from "@/helpers/emoji.helper";
 // plane web components
 import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
 // hooks
+import { getRandomBackgroundColor } from "@/plane-web/helpers/issue-type.helper";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web types
 import { TIssueType } from "@/plane-web/types";
+// plane web helpers
 
 type Props = {
   isModalOpen: boolean;
@@ -17,13 +19,6 @@ type Props = {
 
 export const defaultIssueTypeData: Partial<TIssueType> = {
   id: undefined,
-  logo_props: {
-    in_use: "icon",
-    icon: {
-      name: getRandomIconName(),
-      color: "#6d7b8a",
-    },
-  },
   name: "",
   description: "",
 };
@@ -35,6 +30,22 @@ export const CreateIssueTypeModal: FC<Props> = (props) => {
   const [issueTypeFormData, setIssueTypeFormData] = useState<Partial<TIssueType>>(defaultIssueTypeData);
   // store hooks
   const { createType } = useIssueTypes();
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setIssueTypeFormData({
+        ...defaultIssueTypeData,
+        logo_props: {
+          in_use: "icon",
+          icon: {
+            name: getRandomIconName(),
+            color: "#ffffff",
+            background_color: getRandomBackgroundColor(),
+          },
+        },
+      });
+    }
+  }, [isModalOpen]);
 
   // handlers
   const handleFormDataChange = <T extends keyof TIssueType>(key: T, value: TIssueType[T]) =>

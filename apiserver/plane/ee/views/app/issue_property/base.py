@@ -1,8 +1,12 @@
+# Django imports
+from django.db import IntegrityError
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.db.models import Issue
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IssueProperty
 from plane.ee.permissions import ProjectEntityPermission
@@ -49,34 +53,42 @@ class IssuePropertyEndpoint(BaseAPIView):
         project_id,
         issue_type_id,
     ):
-        # Create a new issue properties
-        serializer = IssuePropertySerializer(data=request.data)
+        try:
+            # Create a new issue properties
+            serializer = IssuePropertySerializer(data=request.data)
 
-        # Check is_active
-        if not request.data.get("is_active"):
-            request.data["is_active"] = False
+            # Check is_active
+            if not request.data.get("is_active"):
+                request.data["is_active"] = False
 
-        # Check defaults
-        if (
-            not request.data.get("is_multi")
-            and len(request.data.get("default_value", [])) > 1
-        ):
+            # Check defaults
+            if (
+                not request.data.get("is_multi")
+                and len(request.data.get("default_value", [])) > 1
+            ):
+                return Response(
+                    {
+                        "error": "Default value must be a single value for non-multi properties"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Check if required and default_value
+            if request.data.get("is_required") is True:
+                request.data["default_value"] = []
+
+            # Validate the data
+            serializer.is_valid(raise_exception=True)
+            # Save the data
+            serializer.save(project_id=project_id, issue_type_id=issue_type_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except IntegrityError:
             return Response(
                 {
-                    "error": "Default value must be a single value for non-multi properties"
+                    "error": "A Property with the same name already exists in this issue type",
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_409_CONFLICT,
             )
-
-        # Check if required and default_value
-        if request.data.get("is_required") is True:
-            request.data["default_value"] = []
-
-        # Validate the data
-        serializer.is_valid(raise_exception=True)
-        # Save the data
-        serializer.save(project_id=project_id, issue_type_id=issue_type_id)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, slug, project_id, issue_type_id, pk):
         # Update an issue properties
@@ -86,6 +98,17 @@ class IssuePropertyEndpoint(BaseAPIView):
             issue_type_id=issue_type_id,
             pk=pk,
         )
+        if (
+            request.data.get("property_type")
+            or request.data.get("is_multi")
+            or request.data.get("settings")
+        ) and Issue.objects.filter(type_id=issue_type_id).exists():
+            return Response(
+                {
+                    "error": "Some fields cannot be updated as issues exist with this property"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check defaults
         if (

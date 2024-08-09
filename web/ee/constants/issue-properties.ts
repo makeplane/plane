@@ -28,20 +28,21 @@ export const getTextAttributeDisplayName = (display_format: TTextAttributeDispla
 };
 
 // Get the display name for the date attribute based on the display format
-export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) => {
-  switch (display_format) {
-    case "MMM dd, yyyy":
-      return "mmm. dd. yyyy";
-    case "dd/MM/yyyy":
-      return "dd. mm. yyyy";
-    case "MM/dd/yyyy":
-      return "mm. dd. yyyy";
-    case "yyyy/MM/dd":
-      return "yyyy. mm. dd";
-    default:
-      return "Invalid date format";
-  }
-};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) => "No attributes";
+// TODO: enable this in next phase of issue types
+// switch (display_format) {
+//   case "MMM dd, yyyy":
+//     return "mmm. dd. yyyy";
+//   case "dd/MM/yyyy":
+//     return "dd. mm. yyyy";
+//   case "MM/dd/yyyy":
+//     return "mm. dd. yyyy";
+//   case "yyyy/MM/dd":
+//     return "yyyy. mm. dd";
+//   default:
+//     return "Invalid date format";
+// }
 
 export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
   Record<TIssuePropertyTypeKeys, TissuePropertyTypeDetails<EIssuePropertyType>>
@@ -140,9 +141,7 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       is_multi: undefined,
       is_required: false,
       default_value: undefined,
-      settings: {
-        display_format: "MMM dd, yyyy",
-      } as TIssuePropertySettingsMap[EIssuePropertyType.DATETIME],
+      settings: undefined,
     },
   },
   RELATION_USER: {
@@ -185,11 +184,11 @@ export const DROPDOWN_ATTRIBUTES: Partial<{
   OPTION: [
     {
       key: "single_select",
-      label: "Single option",
+      label: "Single select",
     },
     {
       key: "multi_select",
-      label: "Multiple options",
+      label: "Multi select",
     },
   ],
 };

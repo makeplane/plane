@@ -46,7 +46,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-  const { fetchAllTypesPropertiesOptions } = useIssueTypes();
+  const { fetchAllPropertiesAndOptions } = useIssueTypes();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -106,7 +106,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   useSWR(
     workspaceSlug && projectId ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId
-      ? () => fetchAllTypesPropertiesOptions(workspaceSlug.toString(), projectId.toString())
+      ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

@@ -105,15 +105,9 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
           <IssueIdentifier
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
-            iconContainerClassName="size-[18px]"
-            iconSize={11}
             textContainerClassName="text-xs text-custom-text-300"
           />
         )}
-        {/* {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />} */}
-        {/* <div className="flex-shrink-0 text-xs text-custom-text-300">
-          {projectIdentifier} {issueDetails?.sequence_id}
-        </div> */}
         <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>

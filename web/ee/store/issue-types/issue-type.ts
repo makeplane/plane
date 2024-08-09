@@ -155,12 +155,12 @@ export class IssueType implements IIssueType {
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
-      await this.service.update(workspaceSlug, projectId, this.id, issueTypeData);
+      const issueType = await this.service.update(workspaceSlug, projectId, this.id, issueTypeData);
       runInAction(() => {
-        for (const key in issueTypeData) {
-          if (issueTypeData.hasOwnProperty(key)) {
+        for (const key in issueType) {
+          if (issueType.hasOwnProperty(key)) {
             const issueTypeKey = key as keyof TIssueType;
-            set(this, issueTypeKey, issueTypeData[issueTypeKey] ?? undefined);
+            set(this, issueTypeKey, issueType[issueTypeKey] ?? undefined);
           }
         }
       });

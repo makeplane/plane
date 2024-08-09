@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { ChevronDown } from "lucide-react";
 import { Popover } from "@headlessui/react";
-import { createPortal } from "react-dom";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
@@ -50,12 +50,17 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // derived values
   const attributeDisplayName = getIssuePropertyAttributeDisplayName(propertyDetail);
+  // list of property types that should not be allowed to change attributes
+  const DISABLE_ATTRIBUTE_CHANGE_LIST = [EIssuePropertyType.BOOLEAN, EIssuePropertyType.DATETIME];
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });
 
-  if (!currentOperationMode) {
+  if (
+    !currentOperationMode ||
+    (propertyDetail.property_type && DISABLE_ATTRIBUTE_CHANGE_LIST.includes(propertyDetail.property_type))
+  ) {
     return (
       <span className="px-2 py-0.5 font-medium text-custom-text-300 bg-custom-background-80/40 rounded">
         {attributeDisplayName ?? ""}

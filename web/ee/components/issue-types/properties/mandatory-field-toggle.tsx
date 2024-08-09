@@ -37,7 +37,7 @@ export const PropertyMandatoryFieldToggle = (props: TPropertyMandatoryFieldToggl
         content={
           <p>
             There seems to be a default option for this property. Making the property mandatory will remove the default
-            value and let your users input a value of their choice.
+            value and the users will have to add a value of their choice.
           </p>
         }
         primaryButtonText={{
@@ -48,10 +48,18 @@ export const PropertyMandatoryFieldToggle = (props: TPropertyMandatoryFieldToggl
       <div className="flex flex-shrink-0 items-center justify-center">
         <Tooltip
           className="w-52 shadow"
-          tooltipContent={value ? "Uncheck to mark the field as optional" : "Check to mark the field as mandatory"}
+          tooltipContent={
+            isDisabled
+              ? "This property type cannot be made mandatory"
+              : value
+                ? "Uncheck to mark the field as optional"
+                : "Check to mark the field as mandatory"
+          }
           position="bottom"
         >
-          <Checkbox checked={value} onChange={() => handleMandatoryFieldChange(!value)} disabled={isDisabled} />
+          <span>
+            <Checkbox checked={value} onChange={() => handleMandatoryFieldChange(!value)} disabled={isDisabled} />
+          </span>
         </Tooltip>
       </div>
     </>

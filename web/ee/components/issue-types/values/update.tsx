@@ -28,19 +28,19 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
-    const { getProjectIssueTypeLoader, fetchAllTypesPropertiesOptions } = useIssueTypes();
+    const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
     const issueType = useIssueType(issueTypeId);
     // derived values
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
-    const issueTypeLoader = getProjectIssueTypeLoader(projectId);
+    const issueProperties = getProjectIssuePropertiesLoader(projectId);
 
     // fetch issue custom property values
     useEffect(() => {
       async function fetchIssuePropertyValues() {
         setIsLoading(true);
         // This is required when accessing the peek overview from workspace level.
-        await fetchAllTypesPropertiesOptions(workspaceSlug, projectId);
+        await fetchAllPropertiesAndOptions(workspaceSlug, projectId);
         await issuePropertyValuesService
           .fetchAll(workspaceSlug, projectId, issueId)
           .then((data) => {
@@ -51,7 +51,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
           });
       }
       fetchIssuePropertyValues();
-    }, [fetchAllTypesPropertiesOptions, issueId, projectId, workspaceSlug]);
+    }, [fetchAllPropertiesAndOptions, issueId, projectId, workspaceSlug]);
 
     const handlePropertyValueChange = async (propertyId: string, value: string[]) => {
       const beforeUpdateValue = issuePropertyValues[propertyId];
@@ -84,7 +84,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
         });
     };
 
-    if (issueTypeLoader === "init-loader") {
+    if (issueProperties === "init-loader") {
       return (
         <Loader className="space-y-4 py-4">
           <Loader.Item height="30px" />

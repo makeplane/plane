@@ -8,10 +8,36 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, Project
-from plane.ee.permissions import ProjectEntityPermission
+from plane.ee.permissions import (
+    ProjectEntityPermission,
+    WorkspaceEntityPermission,
+)
 from plane.ee.serializers import IssueTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+
+
+class WorkspaceIssueTypeEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    def get(self, request, slug):
+        # Get all issue types for the workspace
+        issue_types = IssueType.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+        ).annotate(
+            issue_exists=Exists(
+                Issue.objects.filter(
+                    workspace__slug=slug, type_id=OuterRef("pk")
+                )
+            )
+        )
+        serializer = IssueTypeSerializer(issue_types, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueTypeEndpoint(BaseAPIView):
@@ -140,7 +166,11 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                 "sort_order": 1,
                 "logo_props": {
                     "in_use": "icon",
-                    "icon": {"name": "Layers", "color": "#6d7b8a"},
+                    "icon": {
+                        "name": "Layers",
+                        "color": "#ffffff",
+                        "background_color": "#6695FF",
+                    },
                 },
             },
         )
@@ -156,4 +186,4 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         project.save()
 
         # Serialize the data
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(str(issue_type.id), status=status.HTTP_201_CREATED)

@@ -321,7 +321,8 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       }
       handlePropertyDataChange("default_value", []);
     }
-    handlePropertyDataChange("is_required", value, true);
+    // sync with server only if operation mode is not create/ update
+    handlePropertyDataChange("is_required", value, !issuePropertyOperationMode);
   };
 
   return (
@@ -377,11 +378,13 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           isDisabled={isMandatoryFieldDisabled}
         />
       </div>
-      <div className="w-14 text-center whitespace-nowrap">
+      <div className="w-20 text-center whitespace-nowrap">
         <ToggleSwitch
           value={!!issuePropertyData.is_active}
-          onChange={() => handlePropertyDataChange("is_active", !issuePropertyData.is_active, true)}
-          className="mr-3"
+          onChange={() =>
+            // sync with server only if operation mode is not create/ update
+            handlePropertyDataChange("is_active", !issuePropertyData.is_active, !issuePropertyOperationMode)
+          }
         />
       </div>
       <div className="relative w-16 whitespace-nowrap text-right text-sm font-medium">

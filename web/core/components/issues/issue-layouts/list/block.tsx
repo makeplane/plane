@@ -193,8 +193,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                   <IssueIdentifier
                     issueId={issueId}
                     projectId={issue.project_id}
-                    iconContainerClassName="size-[18px]"
-                    iconSize={11}
                     textContainerClassName="text-xs font-medium text-custom-text-300"
                   />
                 )}

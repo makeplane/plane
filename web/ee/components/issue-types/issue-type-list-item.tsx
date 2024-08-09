@@ -1,28 +1,26 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // ui
-import { Collapsible, LayersIcon, Logo, Tooltip } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
-import { IssueTypeQuickActions, IssuePropertiesRoot } from "@/plane-web/components/issue-types";
+import { IssueTypeQuickActions, IssuePropertiesRoot, IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
 
 type TIssueTypeListItem = {
   issueTypeId: string;
-  isDefaultOpen?: boolean;
+  isOpen: boolean;
+  onToggle: (issueTypeId: string) => void;
 };
 
 export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
-  const { issueTypeId, isDefaultOpen = false } = props;
+  const { issueTypeId, isOpen, onToggle } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
   const issueTypeDetail = issueType?.asJSON;
-  // state
-  const [isOpen, setIsOpen] = useState(isDefaultOpen);
 
   if (!issueTypeDetail) return null;
 
@@ -36,7 +34,7 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
         <Collapsible
           key={issueTypeId}
           isOpen={isOpen}
-          onToggle={() => setIsOpen(!isOpen)}
+          onToggle={() => onToggle(issueTypeId)}
           title={
             <div className="flex items-center w-full px-2 gap-2 cursor-pointer">
               <div className={cn("flex w-full gap-2 items-center")}>
@@ -48,38 +46,19 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                     })}
                   />
                 </div>
-                {issueTypeDetail?.is_default ? (
-                  <div
-                    className={cn(
-                      "flex-shrink-0 grid h-10 w-10 place-items-center rounded-md bg-[#6695FF]",
-                      !issueTypeDetail?.is_active && "opacity-60"
-                    )}
-                  >
-                    <LayersIcon className="h-5 w-5 text-white" />
-                  </div>
-                ) : (
-                    <div
-                      className={cn(
-                        "flex-shrink-0 grid h-10 w-10 place-items-center rounded-md bg-custom-background-80/70",
-                        !issueTypeDetail?.is_active && "opacity-60"
-                      )}
-                    >
-                      {issueTypeDetail?.logo_props?.in_use ? (
-                        <Logo logo={issueTypeDetail.logo_props} size={20} type="lucide" />
-                      ) : (
-                        <LayersIcon className="h-5 w-5 text-custom-text-300" />
-                      )}
-                    </div>
-                )}
+                <IssueTypeLogo
+                  icon_props={issueTypeDetail?.logo_props?.icon}
+                  size={26}
+                  containerSize={38}
+                  isDefault={issueTypeDetail?.is_default}
+                />
                 <div className="flex flex-col w-full items-start justify-start">
                   <div className="flex gap-4 text-left">
                     <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
                   </div>
-                  <Tooltip tooltipContent={issueTypeDetail?.description} position="bottom-left">
-                    <div className="text-sm text-custom-text-300 text-left line-clamp-1">
-                      {issueTypeDetail?.description}
-                    </div>
-                  </Tooltip>
+                  <div className="text-sm text-custom-text-300 text-left line-clamp-1">
+                    {issueTypeDetail?.description}
+                  </div>
                 </div>
               </div>
               <div className="flex-shrink-0 flex gap-4">

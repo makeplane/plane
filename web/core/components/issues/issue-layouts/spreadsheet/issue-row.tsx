@@ -292,8 +292,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                     <IssueIdentifier
                       issueId={issueDetail.id}
                       projectId={issueDetail.project_id}
-                      iconContainerClassName="size-[18px]"
-                      iconSize={11}
                       textContainerClassName="text-sm md:text-xs text-custom-text-300"
                     />
                   )}

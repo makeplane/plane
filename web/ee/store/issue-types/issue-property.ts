@@ -180,12 +180,12 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     if (!workspaceSlug || !projectId || !issueTypeId || !this.id) return undefined;
 
     try {
-      await this.service.update(workspaceSlug, projectId, issueTypeId, this.id, propertyData);
+      const issueProperty = await this.service.update(workspaceSlug, projectId, issueTypeId, this.id, propertyData);
       runInAction(() => {
-        for (const key in propertyData) {
-          if (propertyData.hasOwnProperty(key)) {
+        for (const key in issueProperty) {
+          if (issueProperty.hasOwnProperty(key)) {
             const propertyKey = key as keyof TIssueProperty<T>;
-            set(this, propertyKey, propertyData[propertyKey] ?? undefined);
+            set(this, propertyKey, issueProperty[propertyKey] ?? undefined);
           }
         }
       });

@@ -1,11 +1,14 @@
 import { observer } from "mobx-react";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
-import { cn } from "@/helpers/common.helper";
 
 type TIssueIdentifierProps = {
   issueId: string;
   projectId: string;
+  iconSize?: number;
+  iconContainerSize?: number;
   textContainerClassName?: string;
 };
 

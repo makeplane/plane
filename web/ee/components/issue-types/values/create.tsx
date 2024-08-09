@@ -49,7 +49,7 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
-    const { fetchAllTypesPropertiesOptions } = useIssueTypes();
+    const { fetchAllPropertiesAndOptions } = useIssueTypes();
     const issueType = useIssueType(issueTypeId);
     // derived values
     const issueTypeDetail = issueType?.asJSON;
@@ -69,7 +69,7 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
           });
       }
       if (issueId) fetchIssuePropertyValues(issueId);
-    }, [fetchAllTypesPropertiesOptions, issueId, projectId, workspaceSlug]);
+    }, [fetchAllPropertiesAndOptions, issueId, projectId, workspaceSlug]);
 
     useEffect(() => {
       if (activeProperties?.length) {

@@ -34,15 +34,15 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
   } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const { getProjectIssueTypeLoader, fetchAllTypesPropertiesOptions } = useIssueTypes();
+  const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
   // derived values
   const projectDetails = getProjectById(projectId);
-  const issueTypeLoader = getProjectIssueTypeLoader(projectId);
+  const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
 
   // This has to be on root level because of global level issue update, where we haven't fetch the details yet.
   useEffect(() => {
     if (projectId) {
-      fetchAllTypesPropertiesOptions(workspaceSlug?.toString(), projectId);
+      fetchAllPropertiesAndOptions(workspaceSlug?.toString(), projectId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
@@ -53,7 +53,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
     <>
       {projectDetails?.is_issue_type_enabled && (
         <>
-          {!issueTypeId || issueTypeLoader === "init-loader" ? (
+          {!issueTypeId || issuePropertiesLoader === "init-loader" ? (
             <Loader className="space-y-4 py-2">
               <Loader.Item height="30px" />
               <Loader.Item height="30px" />

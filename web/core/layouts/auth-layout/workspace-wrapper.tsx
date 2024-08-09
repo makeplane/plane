@@ -15,6 +15,7 @@ import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
@@ -40,6 +41,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { fetchFeatureFlags } = useFeatureFlags();
+  const { fetchAllIssueTypes } = useIssueTypes();
   const { isMobile } = usePlatformOS();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
@@ -84,6 +86,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_FAVORITE_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchFavorite(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all issue types for the workspace
+  useSWR(
+    workspaceSlug ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchAllIssueTypes(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

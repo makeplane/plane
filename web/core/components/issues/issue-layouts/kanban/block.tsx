@@ -66,8 +66,6 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
             <IssueIdentifier
               issueId={issue.id}
               projectId={issue.project_id}
-              iconContainerClassName="size-[18px]"
-              iconSize={11}
               textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
             />
           )}
