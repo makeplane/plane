@@ -16,6 +16,17 @@
 }
 /* end side menu */
 
+/* drag handle */
+#drag-handle {
+  opacity: 100;
+
+  &.drag-handle-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+/* end drag handle */
+
 .ProseMirror:not(.dragging) .ProseMirror-selectednode {
   position: relative;
   cursor: grab;
