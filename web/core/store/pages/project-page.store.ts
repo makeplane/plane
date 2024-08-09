@@ -261,7 +261,7 @@ export class ProjectPageStore implements IProjectPageStore {
       await this.service.remove(workspaceSlug, projectId, pageId);
       runInAction(() => {
         unset(this.data, [pageId]);
-        this.rootStore.favorite.removeFavoriteFromStore(pageId);
+        if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
       });
     } catch (error) {
       runInAction(() => {

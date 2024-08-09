@@ -66,7 +66,7 @@ const WorkspaceIntegrationsPage = observer(() => {
               <h2 className="text-2xl font-semibold">Popular integrations are coming soon!</h2>
               <p className="text-base font-medium text-custom-text-300">
                 Send changes in issues to Slack, turn a Support email into a ticket in Plane, and more—coming soon to
-                Plane One.
+                Pro on Plane Cloud and One.
               </p>
             </div>
             <div className="flex items-center gap-3">

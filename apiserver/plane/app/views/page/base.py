@@ -374,6 +374,12 @@ class PageViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         ).delete()
+        # Delete the deploy board
+        DeployBoard.objects.filter(
+            entity_name="page",
+            entity_identifier=pk,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

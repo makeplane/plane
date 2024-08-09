@@ -51,6 +51,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         deploy_board, _ = DeployBoard.objects.get_or_create(
             entity_identifier=page_id,
             entity_name="page",
+            project_id=project_id,
             defaults={
                 "is_comments_enabled": comments,
                 "is_reactions_enabled": reactions,

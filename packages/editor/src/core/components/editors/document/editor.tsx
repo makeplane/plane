@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 // components
 import { PageRenderer } from "@/components/editors";
 // helpers
@@ -46,13 +46,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     tabIndex,
     value,
   } = props;
-  // states
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
-  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
-    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
-  };
 
   // use document editor
   const { editor, isIndexedDbSynced } = useDocumentEditor({
@@ -67,7 +60,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     mentionHandler,
     placeholder,
-    setHideDragHandleFunction,
     tabIndex,
   });
 
@@ -80,13 +72,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   if (!editor || !isIndexedDbSynced) return null;
 
   return (
-    <PageRenderer
-      editor={editor}
-      editorContainerClassName={editorContainerClassNames}
-      hideDragHandle={hideDragHandleOnMouseLeave}
-      id={id}
-      tabIndex={tabIndex}
-    />
+    <PageRenderer editor={editor} editorContainerClassName={editorContainerClassNames} id={id} tabIndex={tabIndex} />
   );
 };
 

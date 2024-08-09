@@ -5,24 +5,19 @@ import { Loader, Plus } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
-type TIssueWorklogPropertyButton = { content?: string; placeHolder?: string; disabled?: boolean; isLoading?: boolean };
+type TIssueWorklogPropertyButton = { content?: string; isLoading?: boolean };
 
 export const IssueWorklogPropertyButton: FC<TIssueWorklogPropertyButton> = (props) => {
-  const { content, placeHolder, disabled, isLoading } = props;
+  const { content, isLoading } = props;
 
   return (
-    <div
-      className={cn("flex justify-between items-center text-sm cursor-pointer p-2 rounded transition-all", {
-        "bg-custom-background-90 cursor-not-allowed": disabled,
-        "group hover:bg-custom-background-80": !disabled,
-      })}
-    >
+    <div className="flex justify-between items-center text-sm p-2 rounded transition-all cursor-not-allowed w-full">
       <div
         className={cn({
-          "text-custom-text-400": !content,
+          "text-custom-text-300": !content,
         })}
       >
-        {(content || "").length > 0 ? content : placeHolder ? placeHolder : "Add time tracking"}
+        {(content || "").length > 0 ? content : "0h 0m"}
       </div>
       {isLoading ? (
         <div className="transition-all flex-shrink-0 w-4 h-4 flex justify-center items-center text-custom-text-400 animate-spin">
