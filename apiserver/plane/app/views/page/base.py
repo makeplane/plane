@@ -39,6 +39,7 @@ from ..base import BaseAPIView, BaseViewSet
 
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -221,6 +222,13 @@ class PageViewSet(BaseViewSet):
             ).values_list("entity_identifier", flat=True)
             data = PageDetailSerializer(page).data
             data["issue_ids"] = issue_ids
+            recent_visited_task.delay(
+                slug=slug,
+                entity_name="page",
+                entity_identifier=pk,
+                user_id=request.user.id,
+                project_id=project_id,
+            )
             return Response(
                 data,
                 status=status.HTTP_200_OK,

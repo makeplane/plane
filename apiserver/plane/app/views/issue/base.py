@@ -59,8 +59,7 @@ from plane.utils.paginator import (
 )
 from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
-
-# Module imports
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -132,6 +131,14 @@ class IssueListEndpoint(BaseAPIView):
             queryset=issue_queryset,
             group_by=group_by,
             sub_group_by=sub_group_by,
+        )
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
         )
 
         if self.fields or self.expand:
@@ -254,6 +261,14 @@ class IssueViewSet(BaseViewSet):
             queryset=issue_queryset,
             group_by=group_by,
             sub_group_by=sub_group_by,
+        )
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
         )
 
         if group_by:
@@ -479,6 +494,14 @@ class IssueViewSet(BaseViewSet):
                 {"error": "The required object does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="issue",
+            entity_identifier=pk,
+            user_id=request.user.id,
+            project_id=project_id,
+        )
 
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
