@@ -18,12 +18,13 @@ import { cn } from "@/helpers/common.helper";
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import isNil from "lodash/isNil";
 
 interface IHeaderGroupByCard {
   groupID: string;
   icon?: React.ReactNode;
   title: string;
-  count: number;
+  count: number | undefined;
   issuePayload: Partial<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   toggleListGroup: () => void;
@@ -98,7 +99,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
               )}
               groupID={groupID}
               selectionHelpers={selectionHelpers}
-              disabled={count === 0}
+              disabled={!count}
             />
           </div>
         )}
@@ -106,10 +107,12 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
-        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
-        onClick={toggleListGroup}>
+        <div
+          className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
+          onClick={toggleListGroup}
+        >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
-          <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+          {!isNil(count) && <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>}
         </div>
 
         {!disableIssueCreation &&

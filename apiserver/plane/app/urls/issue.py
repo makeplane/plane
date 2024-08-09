@@ -21,6 +21,7 @@ from plane.app.views import (
     LabelViewSet,
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
+    DeletedIssuesListViewSet,
 )
 
 urlpatterns = [
@@ -309,5 +310,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
         BulkIssueOperationsEndpoint.as_view(),
         name="bulk-operations-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/deleted-issues/",
+        DeletedIssuesListViewSet.as_view(),
+        name="deleted-issues",
     ),
 ]

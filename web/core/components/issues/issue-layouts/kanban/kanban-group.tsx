@@ -28,6 +28,7 @@ import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
+import isNil from "lodash/isNil";
 
 interface IKanbanGroup {
   groupId: string;
@@ -218,7 +219,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? []
     : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
 
-  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false) ?? 0;
+  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false);
 
   const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
 
@@ -234,7 +235,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     </div>
   );
 
-  const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
+  const shouldLoadMore =
+    nextPageResults === undefined ? isNil(groupIssueCount) || issueIds?.length < groupIssueCount : !!nextPageResults;
   const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 

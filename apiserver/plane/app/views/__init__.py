@@ -112,6 +112,7 @@ from .issue.base import (
     IssueViewSet,
     IssueUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
+    DeletedIssuesListViewSet,
 )
 
 from .issue.activity import (
