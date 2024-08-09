@@ -16,17 +16,19 @@ import { Editor, ReactRenderer } from "@tiptap/react";
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { LinkView, LinkViewProps } from "@/components/links";
 import { BlockMenu } from "@/components/menus";
+// types
+import { TDisplayConfig } from "@/types";
 
 type IPageRenderer = {
+  displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
-  hideDragHandle?: () => void;
   id: string;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { editor, editorContainerClassName, hideDragHandle, id, tabIndex } = props;
+  const { displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -130,13 +132,13 @@ export const PageRenderer = (props: IPageRenderer) => {
     <>
       <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
         <EditorContainer
+          displayConfig={displayConfig}
           editor={editor}
           editorContainerClassName={editorContainerClassName}
-          hideDragHandle={hideDragHandle}
           id={id}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor && editor.isEditable && <BlockMenu editor={editor} />}
+          {editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

@@ -1,19 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useDocumentEditor } from "@/hooks/use-document-editor";
-import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
+import {
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TDisplayConfig,
+  TExtensions,
+  TFileHandler,
+} from "@/types";
 
 interface IDocumentEditor {
   containerClassName?: string;
   disabledExtensions?: TExtensions[];
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: TEmbedConfig;
   fileHandler: TFileHandler;
@@ -34,6 +43,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   const {
     containerClassName,
     disabledExtensions,
+    displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -46,13 +56,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     tabIndex,
     value,
   } = props;
-  // states
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
-  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
-    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
-  };
 
   // use document editor
   const { editor, isIndexedDbSynced } = useDocumentEditor({
@@ -67,7 +70,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     mentionHandler,
     placeholder,
-    setHideDragHandleFunction,
     tabIndex,
   });
 
@@ -81,9 +83,9 @@ const DocumentEditor = (props: IDocumentEditor) => {
 
   return (
     <PageRenderer
+      displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
-      hideDragHandle={hideDragHandleOnMouseLeave}
       id={id}
       tabIndex={tabIndex}
     />

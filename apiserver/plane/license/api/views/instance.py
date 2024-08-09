@@ -54,6 +54,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_activated"] = True
         # Get all the configuration
         (
+            ENABLE_SIGNUP,
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
             IS_OIDC_ENABLED,
@@ -72,8 +73,13 @@ class InstanceEndpoint(BaseAPIView):
             OPENAI_API_KEY,
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
+            SILO_BASE_URL,
         ) = get_configuration_value(
             [
+                {
+                    "key": "ENABLE_SIGNUP",
+                    "default": os.environ.get("ENABLE_SIGNUP", "0"),
+                },
                 {
                     "key": "IS_GOOGLE_ENABLED",
                     "default": os.environ.get("IS_GOOGLE_ENABLED", "0"),
@@ -147,11 +153,16 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "INTERCOM_APP_ID",
                     "default": os.environ.get("INTERCOM_APP_ID", ""),
                 },
+                {
+                    "key": "SILO_BASE_URL",
+                    "default": os.environ.get("SILO_BASE_URL", ""),
+                },
             ]
         )
 
         data = {}
         # Authentication
+        data["enable_signup"] = ENABLE_SIGNUP == "1"
         data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
@@ -199,6 +210,7 @@ class InstanceEndpoint(BaseAPIView):
         data["feature_flag_server_base_url"] = (
             settings.FEATURE_FLAG_SERVER_BASE_URL
         )
+        data["silo_base_url"] = SILO_BASE_URL
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

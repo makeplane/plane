@@ -1774,3 +1774,4 @@ def issue_activity(
     except Exception as e:
         log_exception(e)
         return
+

@@ -3,9 +3,9 @@ import Collaboration from "@tiptap/extension-collaboration";
 import { EditorProps } from "@tiptap/pm/view";
 import * as Y from "yjs";
 // extensions
-import { DragAndDrop, IssueWidget } from "@/extensions";
+import { IssueWidget, SideMenuExtension } from "@/extensions";
 // hooks
-import { TFileHandler, useEditor } from "@/hooks/use-editor";
+import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // plane editor provider
@@ -13,7 +13,7 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
 
 type DocumentEditorProps = {
   disabledExtensions?: TExtensions[];
@@ -30,7 +30,6 @@ type DocumentEditorProps = {
   };
   onChange: (updates: Uint8Array) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
   value: Uint8Array;
 };
@@ -48,7 +47,6 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     mentionHandler,
     onChange,
     placeholder,
-    setHideDragHandleFunction,
     tabIndex,
     value,
   } = props;
@@ -95,7 +93,10 @@ export const useDocumentEditor = (props: DocumentEditorProps) => {
     forwardedRef,
     mentionHandler,
     extensions: [
-      DragAndDrop(setHideDragHandleFunction),
+      SideMenuExtension({
+        aiEnabled: !disabledExtensions?.includes("ai"),
+        dragDropEnabled: true,
+      }),
       embedHandler?.issue &&
         IssueWidget({
           widgetCallback: embedHandler.issue.widgetCallback,

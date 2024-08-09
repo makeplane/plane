@@ -285,6 +285,7 @@ class LabelSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "deleted_at",
         ]
 
 
@@ -446,4 +447,3 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-

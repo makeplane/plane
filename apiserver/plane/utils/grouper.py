@@ -29,7 +29,10 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
         "label_ids": ("labels__id", ~Q(labels__id__isnull=True)),
         "module_ids": (
             "issue_module__module_id",
-            ~Q(issue_module__module_id__isnull=True),
+            (
+                ~Q(issue_module__module_id__isnull=True)
+                & Q(issue_module__module__archived_at__isnull=True)
+            ),
         ),
     }
     default_annotations = {

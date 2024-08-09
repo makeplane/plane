@@ -1,10 +1,12 @@
+// ce constants
+import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
 import { Timer } from "lucide-react";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
-// ce constants
-import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
+// logos
+import JiraLogo from "@/public/services/jira.svg";
 
 export const WORKSPACE_SETTINGS = {
   ...WORKSPACE_SETTINGS_CE,
@@ -21,7 +23,7 @@ export const WORKSPACE_SETTINGS = {
     label: "Imports",
     href: `/settings/imports`,
     access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/imports/`,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/imports/`),
     Icon: SettingIcon,
   },
   worklogs: {
@@ -44,4 +46,14 @@ export const WORKSPACE_SETTINGS_LINKS = [
   WORKSPACE_SETTINGS["webhooks"],
   WORKSPACE_SETTINGS["api-tokens"],
   WORKSPACE_SETTINGS["worklogs"],
+];
+
+export const IMPORTERS_LIST = [
+  {
+    provider: "jira",
+    type: "Import",
+    title: "Jira",
+    description: "Import your Jira data into Plane projects.",
+    logo: JiraLogo,
+  },
 ];

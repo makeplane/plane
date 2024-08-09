@@ -224,7 +224,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -459,6 +460,13 @@ class IssueViewViewSet(BaseViewSet):
                 workspace__slug=slug,
                 entity_identifier=pk,
                 entity_type="view",
+            ).delete()
+            # Delete the view from the deploy board
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
             ).delete()
         else:
             return Response(
