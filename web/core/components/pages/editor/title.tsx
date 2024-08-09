@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import { observer } from "mobx-react";
 // editor
 import { EditorRefApi } from "@plane/editor";
@@ -8,6 +8,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TextArea } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 
 type Props = {
@@ -22,28 +23,27 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
-  const { fontStyle } = usePageFilters();
+  const { fontSize, fontStyle } = usePageFilters();
+  // ui
+  const titleClassName = cn("bg-transparent tracking-[-2%] font-semibold", {
+    "text-[1.6rem] leading-[1.8rem]": fontSize === "small-font",
+    "text-[2rem] leading-[2.25rem]": fontSize === "large-font",
+  });
+  const titleStyle: CSSProperties = {
+    fontFamily: fontStyle,
+  };
 
   return (
     <>
       {readOnly ? (
-        <h6
-          className="break-words bg-transparent text-[1.75rem] font-semibold"
-          style={{
-            lineHeight: "1.2",
-            fontFamily: fontStyle,
-          }}
-        >
+        <h6 className={cn(titleClassName, "break-words")} style={titleStyle}>
           {title}
         </h6>
       ) : (
         <>
           <TextArea
-            className="w-full bg-custom-background text-[1.75rem] font-semibold outline-none p-0 border-none resize-none rounded-none"
-            style={{
-              lineHeight: "1.2",
-              fontFamily: fontStyle,
-            }}
+            className={cn(titleClassName, "w-full outline-none p-0 border-none resize-none rounded-none")}
+            style={titleStyle}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
