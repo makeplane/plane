@@ -38,7 +38,6 @@ export const Collapsible: FC<TCollapsibleProps> = (props) => {
       </Disclosure.Button>
       <Transition
         show={localIsOpen}
-        className="overflow-hidden"
         enter="transition-max-height duration-400 ease-in-out"
         enterFrom="max-h-0"
         enterTo="max-h-screen"

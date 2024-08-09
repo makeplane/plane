@@ -35,7 +35,9 @@ export const useReadOnlyEditor = ({
     editable: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     editorProps: {
-      ...CoreReadOnlyEditorProps(editorClassName),
+      ...CoreReadOnlyEditorProps({
+        editorClassName,
+      }),
       ...editorProps,
     },
     onCreate: async () => {
