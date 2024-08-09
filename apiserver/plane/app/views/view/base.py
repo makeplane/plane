@@ -223,7 +223,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
