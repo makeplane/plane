@@ -459,11 +459,19 @@ class ProjectViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         project = Project.objects.get(pk=pk)
         project.delete()
+
+        # Delete the project members
         DeployBoard.objects.filter(
-            entity_name="project",
-            entity_identifier=pk,
+            project_id=pk,
             workspace__slug=slug,
         ).delete()
+
+        # Delete the user favorite
+        UserFavorite.objects.filter(
+            project_id=pk,
+            workspace__slug=slug,
+        ).delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

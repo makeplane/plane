@@ -219,9 +219,7 @@ class WorkspacePageViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def access(self, request, slug, pk):
         access = request.data.get("access", 0)
-        page = Page.objects.filter(
-            pk=pk, workspace__slug=slug
-        ).first()
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
 
         # Only update access if the page owner is the requesting user
         if (
@@ -337,7 +335,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         page.delete()
         # Delete the deploy board
-        DeployBoard.objects.get(
+        DeployBoard.objects.filter(
             entity_name="page",
             entity_identifier=pk,
             workspace__slug=slug,
