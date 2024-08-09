@@ -86,6 +86,7 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer(
               value={instanceAdmins[0]?.user_detail?.email ?? ""}
               placeholder="Admin email"
               className="w-full cursor-not-allowed !text-custom-text-400"
+              autoComplete="on"
               disabled
             />
           </div>
