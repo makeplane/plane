@@ -35,7 +35,7 @@ const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
   if (restrictViewSettings) {
     return (
       <NotAuthorizedView
-        type="project"
+        section="settings"
         actionButton={
           //TODO: Create a new component called Button Link to handle such scenarios
           <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
@@ -44,6 +44,7 @@ const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
             </Button>
           </Link>
         }
+        isProjectView
       />
     );
   }
