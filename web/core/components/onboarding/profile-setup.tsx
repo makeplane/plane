@@ -22,8 +22,8 @@ import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.hel
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 // services
 // assets
-import ProfileSetupDark from "@/public/onboarding/profile-setup-dark.svg";
-import ProfileSetupLight from "@/public/onboarding/profile-setup-light.svg";
+import ProfileSetupDark from "@/public/onboarding/profile-setup-dark.webp";
+import ProfileSetupLight from "@/public/onboarding/profile-setup-light.webp";
 import UserPersonalizationDark from "@/public/onboarding/user-personalization-dark.svg";
 import UserPersonalizationLight from "@/public/onboarding/user-personalization-light.svg";
 import { AuthService } from "@/services/auth.service";

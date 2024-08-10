@@ -21,7 +21,7 @@ import {
 } from "@/hooks/store";
 // images
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import emptyProject from "@/public/empty-state/project.svg";
+import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
