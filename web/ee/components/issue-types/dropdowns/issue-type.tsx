@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // ui
-import { CustomSelect, Loader } from "@plane/ui";
+import { CustomSearchSelect, Loader } from "@plane/ui";
 // plane web types
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -9,11 +9,12 @@ import { useIssueTypes } from "@/plane-web/hooks/store";
 type TIssueTypeDropdownProps = {
   issueTypeId: string | null;
   projectId: string;
+  disabled?: boolean;
   handleIssueTypeChange: (value: string) => void;
 };
 
 export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
-  const { issueTypeId, projectId, handleIssueTypeChange } = props;
+  const { issueTypeId, projectId, disabled = false, handleIssueTypeChange } = props;
   // store hooks
   const { loader: issueTypesLoader, getProjectActiveIssueTypes } = useIssueTypes();
   // derived values
@@ -45,7 +46,7 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
   }
 
   return (
-    <CustomSelect
+    <CustomSearchSelect
       value={issueTypeId}
       label={
         <div className="flex w-full gap-2 items-center max-w-44">
@@ -58,17 +59,13 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
           <div className="text-sm font-medium text-custom-text-200 truncate">{issueTypes[issueTypeId]?.name}</div>
         </div>
       }
+      options={issueTypeOptions}
       onChange={handleIssueTypeChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
       buttonClassName="rounded text-sm py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300"
+      disabled={disabled}
       noChevron
-    >
-      {issueTypeOptions.map((option) => (
-        <CustomSelect.Option key={option.value} value={option.value}>
-          {option.content}
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
+    />
   );
 });

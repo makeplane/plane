@@ -29,8 +29,11 @@ import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// services
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
+// plane web services
 import { WorkspaceService } from "@/plane-web/services";
+// services
 import { IssueService } from "@/services/issue";
 
 // ui
@@ -44,7 +47,7 @@ const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
   // hooks
-  const { getProjectById, workspaceProjectIds } = useProject();
+  const { workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
   // states
@@ -141,8 +144,6 @@ export const CommandModal: React.FC = observer(() => {
     [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
   );
 
-  const projectDetails = getProjectById(issueDetails?.project_id ?? "");
-
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
       <Dialog as="div" className="relative z-30" onClose={() => closePalette()}>
@@ -198,8 +199,15 @@ export const CommandModal: React.FC = observer(() => {
                       }`}
                     >
                       {issueDetails && (
-                        <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
-                          {projectDetails?.identifier}-{issueDetails.sequence_id} {issueDetails.name}
+                        <div className="flex gap-2 items-center overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
+                          {issueDetails.project_id && (
+                            <IssueIdentifier
+                              issueId={issueDetails.id}
+                              projectId={issueDetails.project_id}
+                              textContainerClassName="text-xs font-medium text-custom-text-200"
+                            />
+                          )}
+                          {issueDetails.name}
                         </div>
                       )}
                       {projectId && (

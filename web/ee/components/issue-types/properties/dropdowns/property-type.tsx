@@ -1,5 +1,5 @@
 // ui
-import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web constants
@@ -62,22 +62,17 @@ export const PropertyTypeDropdown = (props: TPropertyTypeDropdownProps) => {
   };
 
   return isEditingAllowed ? (
-    <CustomSelect
+    <CustomSearchSelect
       value={getIssuePropertyTypeKey(propertyType, propertyRelationType)}
       label={propertyType ? getIssuePropertyTypeDisplayName(propertyType, propertyRelationType) : "Select type"}
+      options={issuePropertyTypeOptions}
       onChange={onPropertyTypeChange}
-      optionsClassName="w-48 space-y-0.5"
+      optionsClassName="w-48"
       buttonClassName={cn(
         "rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300",
         Boolean(error) && "border-red-500"
       )}
-    >
-      {issuePropertyTypeOptions.map((option) => (
-        <CustomSelect.Option key={option.value} value={option.value}>
-          {option.content}
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
+    />
   ) : (
     <span className="px-2">{getIssuePropertyTypeDisplayName(propertyType, propertyRelationType)}</span>
   );

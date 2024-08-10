@@ -49,8 +49,9 @@ export const getMultiSelectAttributeDisplayName = (
 };
 
 // Get the display name for the boolean attribute based on the default value
-export const getBooleanAttributeDisplayName = (default_value: string | undefined) =>
-  default_value !== undefined ? `${default_value === "true" ? "True" : "False"}` : "True | False";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getBooleanAttributeDisplayName = (default_value: string | undefined) => "True | False";
+// default_value !== undefined ? `${default_value === "true" ? "True" : "False"}` : "True | False";
 
 // Get the display name for the issue property attribute based on the property type
 export const getIssuePropertyAttributeDisplayName = (

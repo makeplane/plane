@@ -1,6 +1,7 @@
 // icons
 import { AlignLeft, Calendar, CircleChevronDown, Hash, ToggleLeft, UsersRound } from "lucide-react";
 // plane web types
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 import {
   EIssuePropertyRelationType,
   EIssuePropertyType,
@@ -29,7 +30,8 @@ export const getTextAttributeDisplayName = (display_format: TTextAttributeDispla
 
 // Get the display name for the date attribute based on the display format
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) => "No attributes";
+export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) =>
+  renderFormattedDate(new Date()) ?? "Invalid date format";
 // TODO: enable this in next phase of issue types
 // switch (display_format) {
 //   case "MMM dd, yyyy":
@@ -121,7 +123,7 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       relation_type: undefined,
       is_multi: undefined,
       is_required: false,
-      default_value: ["false"],
+      default_value: undefined,
       settings: undefined,
     },
   },

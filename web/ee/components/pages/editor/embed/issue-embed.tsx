@@ -12,6 +12,8 @@ import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useIssueDetail, useProject, useUser } from "@/hooks/store";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type Props = {
   issueId: string;
@@ -92,10 +94,12 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
         })
       }
     >
-      <h5 className="!text-xs !font-normal !mt-0 text-custom-text-300">
-        {projectDetails?.identifier}-{issueDetails?.sequence_id}
-      </h5>
-      <h4 className="!text-sm !font-medium !mt-1 line-clamp-2 break-words">{issueDetails?.name}</h4>
+      <IssueIdentifier
+        issueId={issueId}
+        projectId={projectId}
+        textContainerClassName="text-xs font-medium text-custom-text-300"
+      />
+      <h4 className="!text-sm !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
       {issueDetails && (
         <IssueProperties
           className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"

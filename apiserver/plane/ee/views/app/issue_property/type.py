@@ -78,6 +78,9 @@ class IssueTypeEndpoint(BaseAPIView):
         # check weight
         if not request.data.get("weight"):
             request.data["weight"] = 1
+        # Check is_active
+        if not request.data.get("is_active"):
+            request.data["is_active"] = False
         # Validate the data
         serializer.is_valid(raise_exception=True)
         # Save the data

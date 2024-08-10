@@ -33,7 +33,7 @@ export interface IIssueTypesStore {
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
   getIssueTypeProperties: (issueTypeId: string) => TIssueProperty<EIssuePropertyType>[];
   // helper actions
-  addIssueTypes: (issueTypes: TIssueType[]) => void;
+  addOrUpdateIssueTypes: (issueTypes: TIssueType[]) => void;
   fetchAllPropertyData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
   // actions
   enableIssueTypes: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -143,10 +143,16 @@ export class IssueTypes implements IIssueTypesStore {
    * @param issueTypes
    * @returns void
    */
-  addIssueTypes = (issueTypes: TIssueType[]) => {
+  addOrUpdateIssueTypes = (issueTypes: TIssueType[]) => {
     for (const issueType of issueTypes) {
       if (issueType.id) {
-        set(this.data, issueType.id, new IssueType(this.store, issueType));
+        if (this.data[issueType.id]) {
+          // update the issue type
+          this.data[issueType.id].updateType(issueType);
+        } else {
+        // create a new issue type
+          set(this.data, issueType.id, new IssueType(this.store, issueType));
+        }
       }
     }
   };
@@ -213,7 +219,7 @@ export class IssueTypes implements IIssueTypesStore {
         issueTypes = await this.service.fetchAll(workspaceSlug);
       }
       runInAction(() => {
-        this.addIssueTypes(issueTypes);
+        this.addOrUpdateIssueTypes(issueTypes);
         this.loader = "loaded";
       });
       return issueTypes;

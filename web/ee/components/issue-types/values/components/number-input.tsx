@@ -64,7 +64,11 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
         onWheel={(e) => e.currentTarget.blur()}
         onBlur={() => {
           if (!isEqual(value, data)) {
-            onNumberValueChange(data);
+            if (data[0].trim() === "") {
+              onNumberValueChange([]);
+            } else {
+              onNumberValueChange(data);
+            }
           }
           document.body?.removeAttribute("data-delay-outside-click");
         }}

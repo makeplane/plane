@@ -46,7 +46,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
 
   if (issueTypesLoader === "init-loader") {
     return (
-      <Loader className="flex w-20 h-5">
+      <Loader className="flex flex-shrink-0 w-20 h-5">
         <Loader.Item height="100%" width="100%" />
       </Loader>
     );
