@@ -40,6 +40,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
+
   const handleArchivePage = async () =>
     await archive().catch(() =>
       setToast({

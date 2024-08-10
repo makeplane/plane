@@ -34,11 +34,12 @@ def validate_uuid(issue_property, value):
 
 def validate_datetime(issue_property, value):
     try:
-        # Validate the date
-        datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+        datetime.strptime(value, "%Y-%m-%d")
     except ValueError:
-        # Raise a validation error
-        raise ValidationError(f"{value} is not a valid date")
+        try:
+            datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            raise ValidationError(f"{value} is not a valid datetime")
 
 
 def validate_decimal(issue_property, value):
@@ -292,25 +293,25 @@ def save_file(
     return bulk_issue_prop_values
 
 
+# Map the property type to the validator
+VALIDATOR_MAPPER = {
+    PropertyTypeEnum.TEXT: validate_text,
+    PropertyTypeEnum.DATETIME: validate_datetime,
+    PropertyTypeEnum.DECIMAL: validate_decimal,
+    PropertyTypeEnum.BOOLEAN: validate_boolean,
+    PropertyTypeEnum.OPTION: validate_option,
+    PropertyTypeEnum.RELATION: validate_relation,
+    PropertyTypeEnum.URL: validate_url,
+    PropertyTypeEnum.EMAIL: validate_email_value,
+    PropertyTypeEnum.FILE: validate_file,
+}
+
+
 def property_validators(
     properties,
     property_values,
     existing_prop_values,
 ):
-
-    # Map the property type to the validator
-    VALIDATOR_MAPPER = {
-        PropertyTypeEnum.TEXT: validate_text,
-        PropertyTypeEnum.DATETIME: validate_datetime,
-        PropertyTypeEnum.DECIMAL: validate_decimal,
-        PropertyTypeEnum.BOOLEAN: validate_boolean,
-        PropertyTypeEnum.OPTION: validate_option,
-        PropertyTypeEnum.RELATION: validate_relation,
-        PropertyTypeEnum.URL: validate_url,
-        PropertyTypeEnum.EMAIL: validate_email_value,
-        PropertyTypeEnum.FILE: validate_file,
-    }
-
     # Validate the property values
     for property in properties:
         # Fetch the validator
@@ -325,23 +326,31 @@ def property_validators(
         # Fetch the value
         values = property_values.get(str(property.id), [])
 
-        # Get the existing values
-        existing_values = [
-            prop_value.get("values")
-            for prop_value in existing_prop_values
-            if str(prop_value.get("property_id")) == str(property.id)
-        ]
-
         # Validate the value
-        if property.is_required and not values and not existing_values:
-            raise ValidationError(f"{property.display_name} is required")
+        if property.is_required and not values:
+            raise ValidationError(
+                f"{property.display_name} is a required property"
+            )
 
         # Validate the value
         for value in values:
             # Validate the value
             validator(issue_property=property, value=value)
 
-        return
+    return
+
+
+SAVE_MAPPER = {
+    PropertyTypeEnum.TEXT: save_text,
+    PropertyTypeEnum.DATETIME: save_datetime,
+    PropertyTypeEnum.DECIMAL: save_decimal,
+    PropertyTypeEnum.BOOLEAN: save_boolean,
+    PropertyTypeEnum.OPTION: save_option,
+    PropertyTypeEnum.RELATION: save_relation,
+    PropertyTypeEnum.URL: save_url,
+    PropertyTypeEnum.EMAIL: save_email,
+    PropertyTypeEnum.FILE: save_file,
+}
 
 
 def property_savers(
@@ -353,18 +362,6 @@ def property_savers(
     existing_prop_values,
 ):
     # Save the property values
-    SAVE_MAPPER = {
-        PropertyTypeEnum.TEXT: save_text,
-        PropertyTypeEnum.DATETIME: save_datetime,
-        PropertyTypeEnum.DECIMAL: save_decimal,
-        PropertyTypeEnum.BOOLEAN: save_boolean,
-        PropertyTypeEnum.OPTION: save_option,
-        PropertyTypeEnum.RELATION: save_relation,
-        PropertyTypeEnum.URL: save_url,
-        PropertyTypeEnum.EMAIL: save_email,
-        PropertyTypeEnum.FILE: save_file,
-    }
-
     bulk_issue_properties = []
     for property in properties:
         # Fetch the saver
@@ -388,16 +385,15 @@ def property_savers(
 
         # Save the value
         if values:
-            # Save the value
-            bulk_issue_properties.extend(
-                saver(
-                    issue_property=property,
-                    values=values,
-                    issue_id=issue_id,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    existing_values=existing_values,
-                )
+            saver_value = saver(
+                issue_property=property,
+                values=values,
+                existing_values=existing_values,
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
             )
+            # Save the value
+            bulk_issue_properties.extend(saver_value)
 
     return bulk_issue_properties  # Return the bulk issue properties

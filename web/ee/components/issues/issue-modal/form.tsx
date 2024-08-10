@@ -10,7 +10,7 @@ import { EditorRefApi } from "@plane/editor";
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
+// components
 import {
   IssueDefaultProperties,
   IssueDescriptionEditor,
@@ -19,6 +19,7 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
+// helpers
 import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 // hooks
@@ -26,9 +27,10 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
+// plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // services
-import { TIssuePropertyValues } from "@/plane-web/types";
-// local components
+import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -79,6 +81,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
+  const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -86,6 +89,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug, projectId: routeProjectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
+  // plane web hooks
+  const { getIssueTypeProperties } = useIssueTypes();
 
   const {
     issue: { getIssueById },
@@ -106,6 +111,35 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   });
 
   const projectId = watch("project_id");
+
+  const handlePropertyValuesValidation = () => {
+    const issueTypeId = watch("type_id");
+    // if no issue type id or no issue property values, return
+    if (!issueTypeId || !issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return true;
+    // all properties for the issue type
+    const properties = getIssueTypeProperties(issueTypeId);
+    // filter all active & required propertyIds
+    const activeRequiredPropertyIds = properties
+      ?.filter((property) => property.is_active && property.is_required)
+      .map((property) => property.id);
+    // filter missing required property based on property values
+    const missingRequiredPropertyIds = activeRequiredPropertyIds?.filter(
+      (propertyId) =>
+        propertyId &&
+        (!issuePropertyValues[propertyId] ||
+          !issuePropertyValues[propertyId].length ||
+          issuePropertyValues[propertyId][0].trim() === "")
+    );
+    // set error state
+    setIssuePropertyValueErrors(
+      missingRequiredPropertyIds?.reduce((acc, propertyId) => {
+        if (propertyId) acc[propertyId] = "REQUIRED";
+        return acc;
+      }, {} as TIssuePropertyValueErrors)
+    );
+    // return true if no missing required properties values
+    return missingRequiredPropertyIds.length === 0;
+  };
 
   //reset few fields on projectId change
   useEffect(() => {
@@ -138,6 +172,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       });
       return;
     }
+
+    // check for required properties validation
+    if (!handlePropertyValuesValidation()) return;
 
     const submitData = !data?.id
       ? formData
@@ -281,6 +318,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               projectId={projectId}
               workspaceSlug={workspaceSlug?.toString()}
               issuePropertyValues={issuePropertyValues}
+              issuePropertyValueErrors={issuePropertyValueErrors}
               setIssuePropertyValues={setIssuePropertyValues}
             />
           )}

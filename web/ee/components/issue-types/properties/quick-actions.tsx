@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X } from "lucide-react";
 // ui
-import { AlertModalCore, Spinner, Tooltip } from "@plane/ui";
+import { AlertModalCore, Button, Spinner, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web types
@@ -53,23 +53,23 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
         }
       />
       <div
-        className={cn("items-center justify-center gap-1.5", {
+        className={cn("items-center justify-end gap-1.5 pr-2", {
           "hidden group-hover:flex": !currentOperationMode,
           flex: currentOperationMode,
         })}
       >
         {currentOperationMode ? (
           <>
-            <Tooltip className="w-full shadow" tooltipContent="Confirm" position="bottom">
-              <button
-                className={cn(
-                  "p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
-                )}
+            <Tooltip className="w-full shadow" tooltipContent="Save your changes" position="bottom">
+              <Button
+                variant="outline-primary"
+                size="sm"
+                className="text-xs px-2 py-0 h-5 bg-custom-background-100"
                 onClick={handleCreateUpdate}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? <Spinner width="12px" height="12px" /> : <Check size={12} className="text-green-600" />}
-              </button>
+                {isSubmitting ? <Spinner width="12px" height="12px" /> : "Save"}
+              </Button>
             </Tooltip>
             <Tooltip className="w-full shadow" tooltipContent="Discard" position="bottom">
               <button

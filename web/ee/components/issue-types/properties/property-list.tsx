@@ -31,18 +31,12 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
       <div className="overflow-x-auto horizontal-scrollbar scrollbar-sm">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="w-full">
-            <div className="flex items-center mx-7 gap-2 border-b-[0.5px] border-custom-border-200">
-              <div className="w-48 grow py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">
-                Property title
-              </div>
-              <div className="w-36 py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">
-                Property type
-              </div>
+            <div className="flex items-center mx-7 px-1 gap-1.5 border-b-[0.5px] border-custom-border-200">
+              <div className="w-48 grow py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">Name</div>
+              <div className="w-36 py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">Type</div>
               <div className="w-36 py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">Attributes</div>
               <div className="w-20 py-1.5 text-center text-sm font-medium text-custom-text-300 truncate">Mandatory</div>
-              <div className="w-14 py-1.5">
-                <span className="sr-only">Active</span>
-              </div>
+              <div className="w-20 py-1.5 text-center text-sm font-medium text-custom-text-300 truncate">Active</div>
               <div className="relative w-16 py-1.5 sm:pr-0 truncate">
                 <span className="sr-only">Edit</span>
               </div>

@@ -8,27 +8,32 @@ import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useIssueProperty } from "@/plane-web/hooks/store";
 // plane web types
-import { TPropertyValueVariant } from "@/plane-web/types";
+import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@/plane-web/types";
 
 type TOptionValueSelectProps = {
+  propertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;
   value: string[];
   issueTypeId: string;
   issuePropertyId: string;
   variant: TPropertyValueVariant;
+  error?: EIssuePropertyValueError;
   isMultiSelect?: boolean;
-  isRequired?: boolean; // TODO: remove if not required.
   isDisabled?: boolean;
+  buttonClassName?: string;
   onOptionValueChange: (value: string[]) => Promise<void>;
 };
 
 export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
   const {
+    propertyDetail,
     value,
     issueTypeId,
     issuePropertyId,
     variant,
+    error,
     isMultiSelect = false,
     isDisabled = false,
+    buttonClassName = "",
     onOptionValueChange,
   } = props;
   // states
@@ -72,11 +77,16 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
     className: "group w-full h-full flex",
     optionsClassName: "w-48",
     chevronClassName: "h-3.5 w-3.5 hidden group-hover:inline",
-    buttonClassName: cn("rounded text-sm bg-custom-background-100 border-custom-border-200", {
-      "border-[0.5px]": variant === "create",
-      "border-0": variant === "update",
-      "text-custom-text-400": !data.length,
-    }),
+    buttonClassName: cn(
+      "rounded text-sm bg-custom-background-100 border-custom-border-200",
+      {
+        "border-[0.5px]": variant === "create" || Boolean(error),
+        "border-0": variant === "update",
+        "text-custom-text-400": !data.length,
+        "border-red-500": Boolean(error),
+      },
+      buttonClassName
+    ),
     disabled: isDisabled,
   };
 
@@ -112,6 +122,11 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
           }}
           multiple={false}
         />
+      )}
+      {Boolean(error) && (
+        <span className="text-xs font-medium text-red-500">
+          {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+        </span>
       )}
     </>
   );

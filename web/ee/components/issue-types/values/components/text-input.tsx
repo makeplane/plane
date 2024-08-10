@@ -1,32 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
+import { observer } from "mobx-react";
 // ui
 import { Input, TextArea } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web types
-import { TPropertyValueVariant, TTextAttributeDisplayOptions } from "@/plane-web/types";
+import {
+  EIssuePropertyType,
+  EIssuePropertyValueError,
+  TIssueProperty,
+  TPropertyValueVariant,
+  TTextAttributeDisplayOptions,
+} from "@/plane-web/types";
 
 type TTextValueInputProps = {
-  propertyId: string | undefined;
+  propertyDetail: Partial<TIssueProperty<EIssuePropertyType.TEXT>>;
   value: string[];
   variant: TPropertyValueVariant;
   display_format: TTextAttributeDisplayOptions;
   readOnlyData?: string;
-  isRequired?: boolean;
+  error?: EIssuePropertyValueError;
   className?: string;
   onTextValueChange: (value: string[]) => void;
 };
 
 export const TextValueInput = observer((props: TTextValueInputProps) => {
   const {
-    propertyId,
+    propertyDetail,
     value,
     variant,
     display_format = "single-line",
     readOnlyData,
-    isRequired = false,
+    error,
     className = "",
     onTextValueChange,
   } = props;
@@ -48,9 +54,9 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
   };
 
   const commonClassNames = cn(
-    "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0 border-custom-border-200",
+    "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0",
     {
-      "border-[0.5px]": variant === "create",
+      "border-[0.5px]": variant === "create" || Boolean(error),
     },
     className
   );
@@ -58,61 +64,74 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
   switch (display_format) {
     case "single-line":
       return (
-        <Input
-          id={`single_line_text_${propertyId}`}
-          type="text"
-          value={data?.[0]}
-          onChange={handleInputChange}
-          className={commonClassNames}
-          onClick={() => {
-            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
-            document.body?.setAttribute("data-delay-outside-click", "true");
-          }}
-          onBlur={() => {
-            if (!isEqual(value, data)) {
-              onTextValueChange(data);
-            }
-            document.body?.removeAttribute("data-delay-outside-click");
-          }}
-          placeholder="Enter some text"
-          required={isRequired}
-        />
+        <>
+          <Input
+            id={`single_line_text_${propertyDetail.id}`}
+            type="text"
+            value={data?.[0]}
+            onChange={handleInputChange}
+            className={commonClassNames}
+            onClick={() => {
+              // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+              document.body?.setAttribute("data-delay-outside-click", "true");
+            }}
+            onBlur={() => {
+              if (!isEqual(value, data)) {
+                onTextValueChange(data);
+              }
+              document.body?.removeAttribute("data-delay-outside-click");
+            }}
+            placeholder="Enter some text"
+            hasError={Boolean(error)}
+          />
+          {Boolean(error) && (
+            <span className="text-xs font-medium text-red-500">
+              {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+            </span>
+          )}
+        </>
       );
     case "multi-line":
       return (
-        <TextArea
-          id={`multi_line_text_${propertyId}`}
-          value={data?.[0]}
-          onChange={handleTextAreaChange}
-          className={cn(
-            commonClassNames,
-            "min-h-10 max-h-52 vertical-scrollbar scrollbar-xs",
-            variant === "create" && "min-h-28"
+        <>
+          <TextArea
+            id={`multi_line_text_${propertyDetail.id}`}
+            value={data?.[0]}
+            onChange={handleTextAreaChange}
+            className={cn(
+              commonClassNames,
+              "min-h-10 max-h-52 vertical-scrollbar scrollbar-xs",
+              variant === "create" && "min-h-28"
+            )}
+            onClick={() => {
+              // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
+              document.body?.setAttribute("data-delay-outside-click", "true");
+            }}
+            onBlur={() => {
+              if (!isEqual(value, data)) {
+                onTextValueChange(data);
+              }
+              document.body?.removeAttribute("data-delay-outside-click");
+            }}
+            placeholder="Describe..."
+            hasError={Boolean(error)}
+          />
+          {Boolean(error) && (
+            <span className="text-xs font-medium text-red-500">
+              {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+            </span>
           )}
-          onClick={() => {
-            // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
-            document.body?.setAttribute("data-delay-outside-click", "true");
-          }}
-          onBlur={() => {
-            if (!isEqual(value, data)) {
-              onTextValueChange(data);
-            }
-            document.body?.removeAttribute("data-delay-outside-click");
-          }}
-          placeholder="Describe..."
-          required={isRequired}
-        />
+        </>
       );
     case "readonly":
       return (
         <TextArea
-          id={`readonly_text_${propertyId}`}
+          id={`readonly_text_${propertyDetail.id}`}
           value={readOnlyData ?? "--"}
           className={cn(
             commonClassNames,
             "bg-custom-background-80 text-custom-text-100 border-custom-border-400 cursor-default"
           )}
-          required={isRequired}
           readOnly
         />
       );

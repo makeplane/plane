@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
-import { Info, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // ui
-import { Button, Tooltip } from "@plane/ui";
+import { Button } from "@plane/ui";
 // plane web components
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -72,11 +72,6 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
       <div className="pt-6">
         <div className="w-full flex gap-2 items-center px-6">
           <div className="text-base font-semibold">Properties</div>
-          <div className="flex-shrink-0">
-            <Tooltip tooltipContent="Default properties cannot be edited or removed." position="right">
-              <Info className="h-3.5 w-3.5 text-custom-text-300 cursor-pointer focus:outline-none" />
-            </Tooltip>
-          </div>
         </div>
         {(properties && properties?.length > 0) || issuePropertyCreateList.length > 0 ? (
           <IssuePropertyList

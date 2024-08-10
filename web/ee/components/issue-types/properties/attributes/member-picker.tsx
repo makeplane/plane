@@ -71,11 +71,11 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
       <div className="pt-4">
         <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
         <MemberValueSelect
+          propertyDetail={memberPickerPropertyDetail}
           value={memberPickerPropertyDetail.default_value ?? []}
           projectId={projectId?.toString()}
           variant="create"
           isMultiSelect={memberPickerPropertyDetail.is_multi}
-          isRequired={false}
           isDisabled={isMemberDropdownDisabled}
           onMemberValueChange={async (value) => onMemberPickerDetailChange("default_value", value)}
         />

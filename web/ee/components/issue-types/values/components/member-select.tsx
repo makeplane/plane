@@ -7,20 +7,32 @@ import { MemberDropdownProps } from "@/components/dropdowns/member/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web types
-import { TPropertyValueVariant } from "@/plane-web/types";
+import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@/plane-web/types";
 
 type TMemberValueSelectProps = {
+  propertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;
   value: string[];
   projectId: string;
   variant: TPropertyValueVariant;
+  error?: EIssuePropertyValueError;
   isMultiSelect?: boolean;
-  isRequired?: boolean; // TODO: remove if not required.
   isDisabled?: boolean;
+  buttonClassName?: string;
   onMemberValueChange: (value: string[]) => Promise<void>;
 };
 
 export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
-  const { value, projectId, variant, isMultiSelect = false, isDisabled = false, onMemberValueChange } = props;
+  const {
+    propertyDetail,
+    value,
+    projectId,
+    variant,
+    error,
+    isMultiSelect = false,
+    isDisabled = false,
+    buttonClassName,
+    onMemberValueChange,
+  } = props;
   // states
   const [data, setData] = useState<string[]>([]);
 
@@ -29,10 +41,15 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
   }, [value]);
 
   const memberPickerProps: Partial<MemberDropdownProps> = {
-    buttonClassName: cn("py-1 text-sm justify-between", {
-      "text-custom-text-400": !data?.length,
-      "border-custom-border-200": variant === "create",
-    }),
+    buttonClassName: cn(
+      "h-full py-1 text-sm justify-between",
+      {
+        "text-custom-text-400": !data?.length,
+        "border-custom-border-200": variant === "create",
+        "border-red-500": Boolean(error),
+      },
+      buttonClassName
+    ),
     buttonContainerClassName: cn("w-full text-left", {
       "bg-custom-background-90": isDisabled,
     }),
@@ -64,7 +81,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
             setData(memberIds);
           }}
           buttonVariant={
-            variant === "update"
+            variant === "update" && !Boolean(error)
               ? data.length > 1
                 ? "transparent-without-text"
                 : "transparent-with-text"
@@ -84,7 +101,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
             setData(memberId && !data?.includes(memberId) ? [memberId] : []);
           }}
           buttonVariant={
-            variant === "update"
+            variant === "update" && !Boolean(error)
               ? data.length > 1
                 ? "transparent-without-text"
                 : "transparent-with-text"
@@ -93,6 +110,11 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
           className="w-full flex-grow group"
           multiple={false}
         />
+      )}
+      {Boolean(error) && (
+        <span className="text-xs font-medium text-red-500">
+          {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+        </span>
       )}
     </>
   );

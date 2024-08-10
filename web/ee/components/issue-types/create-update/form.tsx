@@ -2,11 +2,9 @@
 
 import { FormEvent, useState } from "react";
 // ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, LayersIcon, TextArea } from "@plane/ui";
-// components
-import { Logo } from "@/components/common";
-// helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { Button, Input, TextArea } from "@plane/ui";
+// plane web components
+import { IssueTypeIconPicker } from "@/plane-web/components/issue-types";
 // plane web types
 import { TIssueType } from "@/plane-web/types";
 
@@ -50,47 +48,20 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = (props) => {
       <div className="space-y-3 p-5 pb-2">
         <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Issue type</h3>
         <div className="flex items-start gap-2 w-full">
-          <EmojiIconPicker
+          <IssueTypeIconPicker
             isOpen={isEmojiPickerOpen}
             handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
+            icon_props={formData?.logo_props?.icon}
             className="flex items-center justify-center flex-shrink0"
-            buttonClassName="flex items-center justify-center"
-            label={
-              <span className="grid h-10 w-10 place-items-center rounded-md bg-custom-background-80/70">
-                <>
-                  {formData?.logo_props?.in_use ? (
-                    <Logo logo={formData?.logo_props} size={20} type="lucide" />
-                  ) : (
-                    <LayersIcon className="h-5 w-5 text-custom-text-300" />
-                  )}
-                </>
-              </span>
-            }
-            onChange={(val) => {
-              let logoValue = {};
-              if (val?.type === "emoji")
-                logoValue = {
-                  value: convertHexEmojiToDecimal(val.value.unified),
-                  url: val.value.imageUrl,
-                };
-              else if (val?.type === "icon") logoValue = val.value;
+            iconContainerClassName="flex items-center justify-center"
+            onChange={(value) => {
               handleFormDataChange("logo_props", {
-                in_use: val?.type,
-                [val?.type]: logoValue,
+                in_use: "icon",
+                icon: value,
               });
-              setIsEmojiPickerOpen(false);
             }}
-            defaultIconColor={
-              formData?.logo_props?.in_use && formData?.logo_props?.in_use === "icon"
-                ? formData?.logo_props?.icon?.color
-                : undefined
-            }
-            defaultOpen={
-              formData?.logo_props?.in_use && formData?.logo_props?.in_use === "emoji"
-                ? EmojiIconPickerTypes.EMOJI
-                : EmojiIconPickerTypes.ICON
-            }
-            closeOnSelect={false}
+            size={28}
+            containerSize={40}
           />
           <div className="space-y-1 flew-grow w-full">
             <Input

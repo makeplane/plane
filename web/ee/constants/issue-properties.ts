@@ -28,20 +28,21 @@ export const getTextAttributeDisplayName = (display_format: TTextAttributeDispla
 };
 
 // Get the display name for the date attribute based on the display format
-export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) => {
-  switch (display_format) {
-    case "MMM dd, yyyy":
-      return "mmm. dd. yyyy";
-    case "dd/MM/yyyy":
-      return "dd. mm. yyyy";
-    case "MM/dd/yyyy":
-      return "mm. dd. yyyy";
-    case "yyyy/MM/dd":
-      return "yyyy. mm. dd";
-    default:
-      return "Invalid date format";
-  }
-};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) => "No attributes";
+// TODO: enable this in next phase of issue types
+// switch (display_format) {
+//   case "MMM dd, yyyy":
+//     return "mmm. dd. yyyy";
+//   case "dd/MM/yyyy":
+//     return "dd. mm. yyyy";
+//   case "MM/dd/yyyy":
+//     return "mm. dd. yyyy";
+//   case "yyyy/MM/dd":
+//     return "yyyy. mm. dd";
+//   default:
+//     return "Invalid date format";
+// }
 
 export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
   Record<TIssuePropertyTypeKeys, TissuePropertyTypeDetails<EIssuePropertyType>>
@@ -60,6 +61,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.TEXT,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: undefined,
       settings: {
         display_format: "single-line",
       } as TIssuePropertySettingsMap[EIssuePropertyType.TEXT],
@@ -79,6 +82,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.DECIMAL,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: undefined,
       settings: undefined,
     },
   },
@@ -96,6 +101,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.OPTION,
       relation_type: undefined,
       is_multi: false,
+      is_required: false,
+      default_value: undefined,
       settings: undefined,
     },
   },
@@ -113,6 +120,8 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.BOOLEAN,
       relation_type: undefined,
       is_multi: undefined,
+      is_required: false,
+      default_value: ["false"],
       settings: undefined,
     },
   },
@@ -130,9 +139,9 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.DATETIME,
       relation_type: undefined,
       is_multi: undefined,
-      settings: {
-        display_format: "MMM dd, yyyy",
-      } as TIssuePropertySettingsMap[EIssuePropertyType.DATETIME],
+      is_required: false,
+      default_value: undefined,
+      settings: undefined,
     },
   },
   RELATION_USER: {
@@ -149,24 +158,12 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       property_type: EIssuePropertyType.RELATION,
       relation_type: EIssuePropertyRelationType.USER,
       is_multi: false,
+      is_required: false,
+      default_value: undefined,
       settings: undefined,
     },
   },
 };
-
-// List of mandatory fields for each issue property type
-// type TIssuePropertyMandatoryFields = {
-//   [key in TIssuePropertyTypeKeys]: string[][];
-// };
-
-// export const ISSUE_PROPERTY_MANDATORY_FIELDS: Partial<TIssuePropertyMandatoryFields> = {
-//   TEXT: [["display_name"], ["settings", "display_format"]],
-//   DECIMAL: [["display_name"]],
-//   OPTION: [["display_name"], ["is_multi"]],
-//   BOOLEAN: [["display_name"]],
-//   DATETIME: [["display_name"], ["settings", "display_format"]],
-//   RELATION_USER: [["display_name"], ["is_multi"]],
-// };
 
 export const DROPDOWN_ATTRIBUTES: Partial<{
   [key in TIssuePropertyTypeKeys]: {
@@ -187,11 +184,11 @@ export const DROPDOWN_ATTRIBUTES: Partial<{
   OPTION: [
     {
       key: "single_select",
-      label: "Single option",
+      label: "Single select",
     },
     {
       key: "multi_select",
-      label: "Multiple options",
+      label: "Multi select",
     },
   ],
 };

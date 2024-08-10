@@ -1,3 +1,4 @@
+export * from "./config";
 export * from "./editor";
 export * from "./embed";
 export * from "./extensions";

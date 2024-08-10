@@ -3,6 +3,7 @@ from django.urls import path
 
 # Module imports
 from plane.ee.views.app.issue_property import (
+    WorkspaceIssueTypeEndpoint,
     IssueTypeEndpoint,
     DefaultIssueTypeEndpoint,
     IssuePropertyValueEndpoint,
@@ -13,6 +14,11 @@ from plane.ee.views.app.issue_property import (
 
 urlpatterns = [
     # Issue types
+    path(
+        "workspaces/<str:slug>/issue-types/",
+        WorkspaceIssueTypeEndpoint.as_view(),
+        name="workspace-issue-types",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/",
         IssueTypeEndpoint.as_view(),
@@ -78,7 +84,12 @@ urlpatterns = [
         IssuePropertyValueEndpoint.as_view(),
         name="issue-property-values",
     ),
-    ## Issue property value
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/<uuid:property_id>/values/",
+        IssuePropertyValueEndpoint.as_view(),
+        name="issue-property-values",
+    ),
+    ## Issue property activity
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/property-activity/",
         IssuePropertyActivityEndpoint.as_view(),

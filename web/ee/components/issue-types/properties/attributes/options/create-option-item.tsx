@@ -20,7 +20,7 @@ export const IssuePropertyCreateOptionItem = observer(
     const { issueTypeId, issuePropertyId, propertyOptionCreateListData, updateCreateListData } = props;
 
     return (
-      <div ref={ref} className="w-full px-1">
+      <div ref={ref} className="w-full px-1 pr-2">
         <IssuePropertyOptionItem
           issueTypeId={issueTypeId}
           issuePropertyId={issuePropertyId}

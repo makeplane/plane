@@ -16,34 +16,38 @@ import { RootStore } from "@/plane-web/store/root.store";
 import { EIssuePropertyType, TIssueProperty, TIssuePropertyOptionsPayload, TIssueType } from "@/plane-web/types";
 
 type TIssueTypesPropertiesOptions = {
-  issueTypes: TIssueType[];
   issueProperties: TIssueProperty<EIssuePropertyType>[];
   issuePropertyOptions: TIssuePropertyOptionsPayload;
 };
 
 export interface IIssueTypesStore {
   // observables
-  loader: Record<string, TLoader>; // project id -> TLoader
-  fetchedMap: Record<string, boolean>; // project id -> boolean
+  loader: TLoader; // issue type loader
+  issuePropertiesLoader: Record<string, TLoader>; // project id -> TLoader
+  propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
   data: Record<string, IIssueType>; // issue type id -> issue type
   // computed functions
-  getProjectIssueTypeLoader: (projectId: string) => TLoader;
+  getProjectIssuePropertiesLoader: (projectId: string) => TLoader;
   getProjectIssueTypeIds: (projectId: string) => string[];
   getProjectActiveIssueTypes: (projectId: string) => Record<string, IIssueType>; // issue type id -> issue type
-  getProjectDefaultIssueTypeId: (projectId: string) => string | undefined;
+  getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
+  getIssueTypeProperties: (issueTypeId: string) => TIssueProperty<EIssuePropertyType>[];
   // helper actions
-  fetchAllData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
+  addIssueTypes: (issueTypes: TIssueType[]) => void;
+  fetchAllPropertyData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
   // actions
   enableIssueTypes: (workspaceSlug: string, projectId: string) => Promise<void>;
-  getAllTypesPropertiesOptions: (workspaceSlug: string, projectId: string) => Promise<TIssueType[] | undefined>;
+  fetchAllIssueTypes: (workspaceSlug: string, projectId?: string) => Promise<TIssueType[] | undefined>;
+  fetchAllPropertiesAndOptions: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
   createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   deleteType: (typeId: string) => Promise<void>;
 }
 
 export class IssueTypes implements IIssueTypesStore {
   // observables
-  loader: Record<string, TLoader> = {};
-  fetchedMap: Record<string, boolean> = {};
+  loader: TLoader = "init-loader";
+  issuePropertiesLoader: Record<string, TLoader> = {};
+  propertiesFetchedMap: Record<string, boolean> = {};
   data: Record<string, IIssueType> = {};
   // service
   service: IssueTypesService;
@@ -53,14 +57,15 @@ export class IssueTypes implements IIssueTypesStore {
   constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
-      loader: observable,
-      fetchedMap: observable,
+      loader: observable.ref,
+      issuePropertiesLoader: observable,
+      propertiesFetchedMap: observable,
       data: observable,
       // helper actions
-      fetchAllData: action,
+      fetchAllPropertyData: action,
       // actions
       enableIssueTypes: action,
-      getAllTypesPropertiesOptions: action,
+      fetchAllPropertiesAndOptions: action,
       createType: action,
       deleteType: action,
     });
@@ -76,7 +81,9 @@ export class IssueTypes implements IIssueTypesStore {
    * @param projectId
    * @returns {TLoader}
    */
-  getProjectIssueTypeLoader = computedFn((projectId: string) => this.loader[projectId] ?? "init-loader");
+  getProjectIssuePropertiesLoader = computedFn(
+    (projectId: string) => this.issuePropertiesLoader[projectId] ?? "init-loader"
+  );
 
   /**
    * @description Get project issue type ids
@@ -107,28 +114,56 @@ export class IssueTypes implements IIssueTypesStore {
     return projectIssueTypes;
   });
 
-  getProjectDefaultIssueTypeId = computedFn((projectId: string) => {
+  /**
+   * @description Get project default issue type id of the project
+   * @param projectId
+   * @returns {string | undefined}
+   */
+  getProjectDefaultIssueType = computedFn((projectId: string) => {
     const projectIssueTypes = this.getProjectActiveIssueTypes(projectId);
 
     const defaultIssueType = Object.values(projectIssueTypes).find((issueType) => issueType.is_default);
-    return defaultIssueType?.id ?? undefined;
+    return defaultIssueType ?? undefined;
+  });
+
+  /**
+   * @description Get issue type properties by issue type id
+   * @param issueTypeId
+   * @returns {TIssueProperty<EIssuePropertyType>[]}
+   */
+  getIssueTypeProperties = computedFn((issueTypeId: string) => {
+    const issueType = this.data[issueTypeId];
+    if (!issueType) return [];
+    return issueType.properties;
   });
 
   // helper actions
+  /**
+   * @description Add issue types to the store
+   * @param issueTypes
+   * @returns void
+   */
+  addIssueTypes = (issueTypes: TIssueType[]) => {
+    for (const issueType of issueTypes) {
+      if (issueType.id) {
+        set(this.data, issueType.id, new IssueType(this.store, issueType));
+      }
+    }
+  };
+
   /**
    * @description Fetch all data
    * @param workspaceSlug
    * @param projectId
    */
-  fetchAllData = async (workspaceSlug: string, projectId: string) => {
-    const [issueTypes, issueProperties, issuePropertyOptions] = await Promise.all([
-      this.service.fetchAll(workspaceSlug, projectId),
+  fetchAllPropertyData = async (workspaceSlug: string, projectId: string) => {
+    const [issueProperties, issuePropertyOptions] = await Promise.all([
       this.issuePropertyService.fetchAll(workspaceSlug, projectId),
       this.issuePropertyOptionService.fetchAll(workspaceSlug, projectId),
     ]).catch((error) => {
       throw error;
     });
-    return { issueTypes, issueProperties, issuePropertyOptions };
+    return { issueProperties, issuePropertyOptions };
   };
 
   // actions
@@ -139,41 +174,71 @@ export class IssueTypes implements IIssueTypesStore {
    */
   enableIssueTypes = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
-
     try {
-      this.loader[projectId] = "init-loader";
-      await this.service.enableIssueTypes(workspaceSlug, projectId);
-      await this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
-      await this.getAllTypesPropertiesOptions(workspaceSlug, projectId);
+      this.loader = "init-loader";
+      const issueTypeId = await this.service.enableIssueTypes(workspaceSlug, projectId);
+      await this.fetchAllIssueTypes(workspaceSlug, projectId);
+      runInAction(() => {
+        // enable `is_issue_type_enabled` in project details
+        set(this.store.projectRoot.project.projectMap, [projectId, "is_issue_type_enabled"], true);
+        // get all issues
+        const currentProjectIssues = Object.values(this.store.issue.issues.issuesMap).filter(
+          (issue) => issue.project_id === projectId
+        );
+        // attach issue type to all project issues
+        for (const issue of currentProjectIssues) {
+          this.store.issue.issues.updateIssue(issue.id, { type_id: issueTypeId });
+        }
+        this.loader = "loaded";
+      });
     } catch (error) {
-      this.loader[projectId] = "loaded";
+      this.loader = "loaded";
       throw error;
     }
   };
 
   /**
-   * @description Get all types and properties
+   * @description Get all issue types for the workspace or project, if project id is provided
+   * @param workspaceSlug
+   * @param projectId (optional)
+   */
+  fetchAllIssueTypes = async (workspaceSlug: string, projectId?: string) => {
+    if (!workspaceSlug) return;
+    try {
+      this.loader = "init-loader";
+      let issueTypes;
+      if (projectId) {
+        issueTypes = await this.service.fetchAllProjectIssueTypes(workspaceSlug, projectId);
+      } else {
+        issueTypes = await this.service.fetchAll(workspaceSlug);
+      }
+      runInAction(() => {
+        this.addIssueTypes(issueTypes);
+        this.loader = "loaded";
+      });
+      return issueTypes;
+    } catch (error) {
+      this.loader = "loaded";
+      console.error("Error in fetching issue types", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Get all property and options
    * @param workspaceSlug
    * @param projectId
    */
-  getAllTypesPropertiesOptions = async (workspaceSlug: string, projectId: string) => {
+  fetchAllPropertiesAndOptions = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
-
     try {
-      // Do not fetch if issue type is not enabled
-      const currentProjectDetails = this.store.projectRoot.project.getProjectById(projectId);
-      if (!currentProjectDetails?.is_issue_type_enabled) return;
       // Do not fetch if issue types are already fetched and issue type ids are available
-      const currentProjectIssueTypeIds = this.getProjectIssueTypeIds(projectId);
-      if (this.fetchedMap[projectId] && currentProjectIssueTypeIds.length) return;
-      // Fetch issue types and properties
-      this.loader[projectId] = "init-loader";
-      const { issueTypes, issueProperties, issuePropertyOptions } = await this.fetchAllData(workspaceSlug, projectId);
+      if (this.propertiesFetchedMap[projectId] === true) return;
+      // Fetch issue property and options
+      this.issuePropertiesLoader[projectId] = "init-loader";
+      const { issueProperties, issuePropertyOptions } = await this.fetchAllPropertyData(workspaceSlug, projectId);
       runInAction(() => {
-        if (issueTypes && issueProperties) {
-          for (const issueType of issueTypes) {
-            if (issueType.id) set(this.data, issueType.id, new IssueType(this.store, issueType));
-          }
+        if (issueProperties) {
           for (const issueProperty of issueProperties) {
             if (issueProperty.id && issueProperty.issue_type) {
               const issueType = this.data[issueProperty.issue_type];
@@ -183,13 +248,12 @@ export class IssueTypes implements IIssueTypesStore {
             }
           }
         }
-        this.loader[projectId] = "loaded";
-        this.fetchedMap[projectId] = true;
+        this.issuePropertiesLoader[projectId] = "loaded";
+        this.propertiesFetchedMap[projectId] = true;
       });
-      return issueTypes;
     } catch (error) {
-      this.loader[projectId] = "loaded";
-      this.fetchedMap[projectId] = false;
+      this.issuePropertiesLoader[projectId] = "loaded";
+      this.propertiesFetchedMap[projectId] = false;
       throw error;
     }
   };
@@ -203,13 +267,13 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug || !projectId) return;
 
     try {
-      this.loader[projectId] = "mutation";
+      this.loader = "mutation";
       const issueType = await this.service.create(workspaceSlug, projectId, typeData);
       if (issueType.id) set(this.data, issueType.id, new IssueType(this.store, issueType));
-      this.loader[projectId] = "loaded";
+      this.loader = "loaded";
       return issueType;
     } catch (error) {
-      this.loader[projectId] = "loaded";
+      this.loader = "loaded";
       throw error;
     }
   };
@@ -223,12 +287,12 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug || !projectId) return;
 
     try {
-      this.loader[projectId] = "mutation";
+      this.loader = "mutation";
       await this.service.deleteType(workspaceSlug, projectId, typeId);
       set(this.data, typeId, undefined);
-      this.loader[projectId] = "loaded";
+      this.loader = "loaded";
     } catch (error) {
-      this.loader[projectId] = "loaded";
+      this.loader = "loaded";
       throw error;
     }
   };

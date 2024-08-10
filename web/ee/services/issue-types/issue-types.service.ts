@@ -10,7 +10,15 @@ export class IssueTypesService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchAll(workspaceSlug: string, projectId: string): Promise<TIssueType[]> {
+  async fetchAll(workspaceSlug: string): Promise<TIssueType[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issue-types/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchAllProjectIssueTypes(workspaceSlug: string, projectId: string): Promise<TIssueType[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -47,7 +55,7 @@ export class IssueTypesService extends APIService {
       });
   }
 
-  async enableIssueTypes(workspaceSlug: string, projectId: string): Promise<void> {
+  async enableIssueTypes(workspaceSlug: string, projectId: string): Promise<string> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/default-issue-types/`)
       .then((response) => response?.data)
       .catch((error) => {

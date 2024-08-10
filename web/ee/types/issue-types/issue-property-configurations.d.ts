@@ -22,6 +22,8 @@ export type TissuePropertyTypeDetails<T extends EIssuePropertyType> = {
     property_type: EIssuePropertyType;
     relation_type: EIssuePropertyRelationType | undefined;
     is_multi: boolean | undefined;
+    is_required: boolean | undefined;
+    default_value: string[] | undefined;
     settings: TIssuePropertySettingsMap[T] | undefined;
   };
 };

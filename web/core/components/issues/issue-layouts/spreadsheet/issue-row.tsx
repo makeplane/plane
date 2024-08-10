@@ -21,6 +21,7 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";
@@ -287,7 +288,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
               <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
                 <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
-                  {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
+                  {issueDetail.project_id && (
+                    <IssueIdentifier
+                      issueId={issueDetail.id}
+                      projectId={issueDetail.project_id}
+                      textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                    />
+                  )}
                 </p>
               </div>
             </WithDisplayPropertiesHOC>

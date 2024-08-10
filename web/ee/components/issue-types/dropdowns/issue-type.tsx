@@ -1,7 +1,9 @@
 import { observer } from "mobx-react";
 // ui
-import { CustomSearchSelect, LayersIcon, Loader, Logo } from "@plane/ui";
+import { CustomSelect, Loader } from "@plane/ui";
 // plane web types
+import { IssueTypeLogo } from "@/plane-web/components/issue-types";
+// plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueTypeDropdownProps = {
@@ -13,29 +15,28 @@ type TIssueTypeDropdownProps = {
 export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
   const { issueTypeId, projectId, handleIssueTypeChange } = props;
   // store hooks
-  const { getProjectIssueTypeLoader, getProjectActiveIssueTypes } = useIssueTypes();
+  const { loader: issueTypesLoader, getProjectActiveIssueTypes } = useIssueTypes();
   // derived values
-  const issueTypeLoader = getProjectIssueTypeLoader(projectId);
   const issueTypes = getProjectActiveIssueTypes(projectId);
 
-  const issuePropertyTypeOptions = Object.entries(issueTypes).map(([issueTypeId, issueTypeDetail]) => ({
+  // Can be used with CustomSearchSelect as well
+  const issueTypeOptions = Object.entries(issueTypes).map(([issueTypeId, issueTypeDetail]) => ({
     value: issueTypeId,
     query: issueTypeDetail.name ?? "",
     content: (
-      <div className="flex gap-2 items-center">
-        <div className="flex-shrink-0 grid h-5 w-5 place-items-center rounded bg-custom-background-80">
-          {issueTypeDetail?.logo_props?.in_use ? (
-            <Logo logo={issueTypeDetail.logo_props} size={12} type="lucide" />
-          ) : (
-            <LayersIcon className="h-3 w-3 text-custom-text-300" />
-          )}
-        </div>
-        <div className="text-sm font-medium text-custom-text-200">{issueTypeDetail.name}</div>
+      <div className="flex w-full gap-2 items-center">
+        <IssueTypeLogo
+          icon_props={issueTypeDetail?.logo_props?.icon}
+          size={14}
+          containerSize={20}
+          isDefault={issueTypeDetail?.is_default}
+        />
+        <div className="text-sm font-medium text-custom-text-200 truncate">{issueTypeDetail.name}</div>
       </div>
     ),
   }));
 
-  if (!issueTypeId || issueTypeLoader === "init-loader") {
+  if (!issueTypeId || issueTypesLoader === "init-loader") {
     return (
       <Loader className="w-16 h-full">
         <Loader.Item height="100%" />
@@ -44,26 +45,30 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
   }
 
   return (
-    <CustomSearchSelect
+    <CustomSelect
       value={issueTypeId}
       label={
-        <div className="flex gap-1 items-center">
-          <div className="flex-shrink-0 grid h-4 w-4 place-items-center">
-            {issueTypes[issueTypeId]?.logo_props?.in_use ? (
-              <Logo logo={issueTypes[issueTypeId].logo_props} size={12} type="lucide" />
-            ) : (
-              <LayersIcon className="h-3 w-3 text-custom-text-300" />
-            )}
-          </div>
-          <div className="text-sm font-medium text-custom-text-200">{issueTypes[issueTypeId]?.name}</div>
+        <div className="flex w-full gap-2 items-center max-w-44">
+          <IssueTypeLogo
+            icon_props={issueTypes[issueTypeId]?.logo_props?.icon}
+            size={14}
+            containerSize={20}
+            isDefault={issueTypes[issueTypeId]?.is_default}
+          />
+          <div className="text-sm font-medium text-custom-text-200 truncate">{issueTypes[issueTypeId]?.name}</div>
         </div>
       }
-      options={issuePropertyTypeOptions}
       onChange={handleIssueTypeChange}
       className="w-full h-full flex"
-      optionsClassName="w-48"
+      optionsClassName="w-44 space-y-1.5"
       buttonClassName="rounded text-sm py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300"
       noChevron
-    />
+    >
+      {issueTypeOptions.map((option) => (
+        <CustomSelect.Option key={option.value} value={option.value}>
+          {option.content}
+        </CustomSelect.Option>
+      ))}
+    </CustomSelect>
   );
 });
