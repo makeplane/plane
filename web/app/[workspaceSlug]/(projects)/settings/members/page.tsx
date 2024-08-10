@@ -15,6 +15,7 @@ import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components
 // constants
 import { MEMBER_INVITED } from "@/constants/event-tracker";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
@@ -27,7 +28,8 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { canPerformWorkspaceAdminActions, canPerformWorkspaceViewerActions } = useUser();
+  const { canPerformWorkspaceAdminActions, canPerformWorkspaceViewerActions, canPerformWorkspaceMemberActions } =
+    useUser();
   const {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
@@ -92,7 +94,11 @@ const WorkspaceMembersSettingsPage = observer(() => {
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
-      <section className="w-full overflow-y-auto md:pr-9 pr-4">
+      <section
+        className={cn("w-full overflow-y-auto md:pr-9 pr-4", {
+          "opacity-60": !canPerformWorkspaceMemberActions,
+        })}
+      >
         <div className="flex items-center justify-between gap-4 py-3.5">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
