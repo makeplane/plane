@@ -3,11 +3,11 @@
 import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core";
-import IntegrationGuide from "@/components/integration/guide";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser, useWorkspace } from "@/hooks/store";
+import IntegrationGuide from "@/plane-web/components/integration/guide";
 
 const ImportsPage = observer(() => {
   // store hooks
@@ -33,8 +33,8 @@ const ImportsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto py-8 pr-9">
-        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto py-8 pr-9">
+        <div className="flex items-center border-b border-custom-border-100 py-3.5 flex-shrink-0">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>
         <IntegrationGuide />

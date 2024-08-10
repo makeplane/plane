@@ -28,6 +28,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
@@ -37,7 +38,7 @@ from plane.app.serializers import (
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,

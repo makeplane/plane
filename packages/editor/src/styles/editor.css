@@ -456,3 +456,7 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-top: 0;
 }
 /* end tailwind typography */
+
+.ProseMirror .issue-embed img {
+  margin: 0 !important;
+}

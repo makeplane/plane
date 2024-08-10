@@ -5,7 +5,7 @@ import { Draggable } from "./draggable";
 type Props<T> = {
   data: T[];
   render: (item: T, index: number) => React.ReactNode;
-  onChange: (data: T[]) => void;
+  onChange: (data: T[], movedItem?: T) => void;
   keyExtractor: (item: T, index: number) => string;
   containerClassName?: string;
   id?: string;
@@ -16,13 +16,16 @@ const moveItem = <T,>(
   source: T,
   destination: T & Record<symbol, string>,
   keyExtractor: (item: T, index: number) => string
-) => {
+): {
+  newData: T[];
+  movedItem: T | undefined;
+} => {
   const sourceIndex = data.findIndex((item, index) => keyExtractor(item, index) === keyExtractor(source, 0));
-  if (sourceIndex === -1) return data;
+  if (sourceIndex === -1) return { newData: data, movedItem: undefined };
 
   const destinationIndex = data.findIndex((item, index) => keyExtractor(item, index) === keyExtractor(destination, 0));
 
-  if (destinationIndex === -1) return data;
+  if (destinationIndex === -1) return { newData: data, movedItem: undefined };
 
   const symbolKey = Reflect.ownKeys(destination).find((key) => key.toString() === "Symbol(closestEdge)");
   const position = symbolKey ? destination[symbolKey as symbol] : "bottom"; // Add 'as symbol' to cast symbolKey to symbol
@@ -41,7 +44,7 @@ const moveItem = <T,>(
 
   newData.splice(adjustedDestinationIndex, 0, movedItem);
 
-  return newData;
+  return { newData, movedItem };
 };
 
 export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) => {
@@ -50,7 +53,13 @@ export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerCl
       onDrop({ source, location }) {
         const destination = location?.current?.dropTargets[0];
         if (!destination) return;
-        onChange(moveItem(data, source.data as T, destination.data as T & { closestEdge: string }, keyExtractor));
+        const { newData, movedItem } = moveItem(
+          data,
+          source.data as T,
+          destination.data as T & { closestEdge: string },
+          keyExtractor
+        );
+        onChange(newData, movedItem);
       },
     });
 

@@ -14,6 +14,9 @@ import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
@@ -37,12 +40,21 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspace: { fetchWorkspaceMembers },
   } = useMember();
   const { workspaces } = useWorkspace();
+  const { fetchFeatureFlags } = useFeatureFlags();
+  const { fetchAllIssueTypes } = useIssueTypes();
   const { isMobile } = usePlatformOS();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
+
+  // fetching feature flags
+  const { isLoading: flagsLoader, error: flagsError } = useSWR(
+    workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false, errorRetryCount: 1 }
+  );
 
   // fetching user workspace information
   useSWR(
@@ -77,6 +89,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetching all issue types for the workspace
+  useSWR(
+    workspaceSlug ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchAllIssueTypes(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -88,7 +107,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (allWorkspaces === undefined) {
+  if ((flagsLoader && !flagsError) || allWorkspaces === undefined) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

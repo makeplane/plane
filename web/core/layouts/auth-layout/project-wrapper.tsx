@@ -20,6 +20,7 @@ import {
   useCommandPalette,
 } from "@/hooks/store";
 // images
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
@@ -45,6 +46,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
+  const { fetchAllPropertiesAndOptions } = useIssueTypes();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -100,6 +102,15 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+  // fetching all issue types and properties
+  useSWR(
+    workspaceSlug && projectId ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
   // check if the project member apis is loading

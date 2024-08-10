@@ -1,1 +1,3 @@
-export * from "src/ce/extensions";
+export * from "./ai-features";
+export * from "./issue-suggestions";
+export * from "./document-extensions";
