@@ -3,10 +3,12 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+// hooks
+import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
@@ -30,10 +32,14 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     // store hooks
     const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
     const issueType = useIssueType(issueTypeId);
+    const { getProjectById } = useProject();
     // derived values
+    const isIssueTypeDisplayEnabled = useFlag("ISSUE_TYPE_DISPLAY");
+    const projectDetails = getProjectById(projectId);
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
     const issueProperties = getProjectIssuePropertiesLoader(projectId);
+    const isIssueTypeEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;
 
     // fetch issue custom property values
     useEffect(() => {
@@ -50,8 +56,8 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
             setIsLoading(false);
           });
       }
-      fetchIssuePropertyValues();
-    }, [fetchAllPropertiesAndOptions, issueId, projectId, workspaceSlug]);
+      if (isIssueTypeEnabled) fetchIssuePropertyValues();
+    }, [fetchAllPropertiesAndOptions, isIssueTypeEnabled, issueId, projectId, workspaceSlug]);
 
     const handlePropertyValueChange = async (propertyId: string, value: string[]) => {
       const beforeUpdateValue = issuePropertyValues[propertyId];
@@ -84,6 +90,9 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
         });
     };
 
+    // if issue types are not enabled, return null
+    if (!isIssueTypeEnabled) return null;
+
     if (issueProperties === "init-loader") {
       return (
         <Loader className="space-y-4 py-4">
@@ -95,6 +104,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       );
     }
 
+    // if issue type details or active properties are not available, return null
     if (!issueTypeDetails || !activeProperties?.length) return null;
 
     return (

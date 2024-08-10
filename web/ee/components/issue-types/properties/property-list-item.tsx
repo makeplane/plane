@@ -1,8 +1,11 @@
 import { useState } from "react";
+import isEqual from "lodash/isEqual";
+import omitBy from "lodash/omitBy";
 import { observer } from "mobx-react";
 // ui
-import { cn } from "@plane/editor";
 import { Logo, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // plane web components
 import {
   IssuePropertyQuickActions,
@@ -214,10 +217,11 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
 
   const handleUpdateProperty = async (data: Partial<TIssueProperty<EIssuePropertyType>>) => {
     if (!data) return;
-
+    // Construct the payload by filtering out unchanged properties
+    const payload = omitBy(data, (value, key) => isEqual(value, issuePropertyDetail[key]));
     setIsSubmitting(true);
     await issueProperty
-      ?.updateProperty(issueTypeId, data)
+      ?.updateProperty(issueTypeId, payload)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,

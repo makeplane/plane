@@ -13,6 +13,8 @@ from plane.ee.permissions import ProjectEntityPermission
 from plane.ee.serializers import (
     IssuePropertySerializer,
 )
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyEndpoint(BaseAPIView):
@@ -20,6 +22,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, issue_type_id=None, pk=None):
         # Get a single issue property
         if pk:
@@ -46,6 +49,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer = IssuePropertySerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def post(
         self,
         request,
@@ -90,6 +94,7 @@ class IssuePropertyEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def patch(self, request, slug, project_id, issue_type_id, pk):
         # Update an issue properties
         issue_property = IssueProperty.objects.get(
@@ -135,6 +140,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def delete(self, request, slug, project_id, issue_type_id, pk):
         # Delete an issue properties
         issue_property = IssueProperty.objects.get(

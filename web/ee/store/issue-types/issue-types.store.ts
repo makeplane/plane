@@ -150,7 +150,7 @@ export class IssueTypes implements IIssueTypesStore {
           // update the issue type
           this.data[issueType.id].updateType(issueType);
         } else {
-        // create a new issue type
+          // create a new issue type
           set(this.data, issueType.id, new IssueType(this.store, issueType));
         }
       }

@@ -114,7 +114,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   const handlePropertyValuesValidation = () => {
     const issueTypeId = watch("type_id");
-    // if no issue type id or no issue property values, return
+    // if issue type is not enabled for the project, skip validation
+    const projectDetails = getProjectById(projectId);
+    if (!projectDetails?.is_issue_type_enabled) return true;
+    // if no issue type id or no issue property values, skip validation
     if (!issueTypeId || !issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return true;
     // all properties for the issue type
     const properties = getIssueTypeProperties(issueTypeId);

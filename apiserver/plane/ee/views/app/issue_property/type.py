@@ -22,7 +22,7 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
         WorkspaceEntityPermission,
     ]
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug):
         # Get all issue types for the workspace
         issue_types = IssueType.objects.filter(
@@ -46,7 +46,7 @@ class IssueTypeEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, pk=None):
         # Get a single issue type
         if pk:

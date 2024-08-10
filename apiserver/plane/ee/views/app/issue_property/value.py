@@ -28,6 +28,8 @@ from plane.ee.utils.issue_property_validators import (
 from plane.ee.bgtasks.issue_property_activity_task import (
     issue_property_activity,
 )
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyValueEndpoint(BaseAPIView):
@@ -84,6 +86,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             ),
         )
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, issue_id, issue_property_id=None):
         # Get a single issue property value
         if issue_property_id:
@@ -123,6 +126,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
 
         return Response(response, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def post(self, request, slug, project_id, issue_id):
         try:
             # Create a new issue property value
@@ -204,6 +208,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def patch(self, request, slug, project_id, issue_id, property_id):
         try:
             # Get the issue property

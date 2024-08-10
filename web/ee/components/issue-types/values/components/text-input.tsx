@@ -78,11 +78,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
             }}
             onBlur={() => {
               if (!isEqual(value, data)) {
-                if (data[0].trim() === "") {
-                  onTextValueChange([]);
-                } else {
-                  onTextValueChange(data);
-                }
+                onTextValueChange(data);
               }
               document.body?.removeAttribute("data-delay-outside-click");
             }}
@@ -114,11 +110,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
             }}
             onBlur={() => {
               if (!isEqual(value, data)) {
-                if (data[0].trim() === "") {
-                  onTextValueChange([]);
-                } else {
-                  onTextValueChange(data);
-                }
+                onTextValueChange(data);
               }
               document.body?.removeAttribute("data-delay-outside-click");
             }}

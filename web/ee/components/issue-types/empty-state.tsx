@@ -7,7 +7,7 @@ import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TIssueTypeEmptyState = {
   workspaceSlug: string;
@@ -21,9 +21,11 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   const { resolvedTheme } = useTheme();
   // store hooks
   const { enableIssueTypes } = useIssueTypes();
+  const { toggleProPlanModal } = useWorkspaceSubscription();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // derived values
+  const isIssueTypeSettingsEnabled = useFlag("ISSUE_TYPE_SETTINGS");
   const resolvedEmptyStatePath = `/empty-state/issue-types/issue-type-${resolvedTheme === "light" ? "light" : "dark"}.svg`;
   // handlers
   const handleEnableIssueTypes = async () => {
@@ -52,7 +54,9 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
     <div className="flex justify-center min-h-full overflow-y-auto py-10 px-5">
       <div className={cn("flex flex-col gap-5 md:min-w-[24rem] max-w-[45rem]")}>
         <div className="flex flex-col gap-1.5 flex-shrink">
-          <h3 className="text-xl font-semibold">Enable issue types</h3>
+          <h3 className="text-xl font-semibold">
+            {isIssueTypeSettingsEnabled ? "Enable issue types" : "Upgrade to enable issue types"}
+          </h3>
           <p className="text-sm text-custom-text-200">
             Issue types distinguish different kinds of work in unique ways, helping you to identify, categorize, and
             report on your team{"’"}s work more effectively.
@@ -67,9 +71,15 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
           lazyBoundary="100%"
         />
         <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-          <Button disabled={isLoading} onClick={() => handleEnableIssueTypes()}>
-            {isLoading ? "Setting up..." : "Enable"}
-          </Button>
+          {isIssueTypeSettingsEnabled ? (
+            <Button disabled={isLoading} onClick={() => handleEnableIssueTypes()}>
+              {isLoading ? "Setting up..." : "Enable"}
+            </Button>
+          ) : (
+            <Button disabled={isLoading} onClick={() => toggleProPlanModal(true)}>
+              Upgrade
+            </Button>
+          )}
         </div>
       </div>
     </div>

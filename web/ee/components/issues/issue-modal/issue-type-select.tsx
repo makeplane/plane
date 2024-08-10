@@ -10,6 +10,8 @@ import { TIssue } from "@plane/types";
 import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns";
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store";
 
 type TIssueTypeSelectProps = {
   control: Control<TIssue>;
@@ -22,11 +24,12 @@ export const IssueTypeSelect: React.FC<TIssueTypeSelectProps> = observer((props)
   // store hooks
   const { getProjectById } = useProject();
   // derived values
+  const isIssueTypeDisplayEnabled = useFlag("ISSUE_TYPE_DISPLAY");
   const projectDetails = getProjectById(projectId);
 
   return (
     <>
-      {projectDetails?.is_issue_type_enabled && (
+      {isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled && (
         <>
           <div className="flex items-center gap-2">
             <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />

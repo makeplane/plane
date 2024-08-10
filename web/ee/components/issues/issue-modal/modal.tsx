@@ -287,6 +287,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     await issuePropertyValuesService
       .create(workspaceSlug.toString(), projectId, issueId, issuePropertyValues)
       .then(() => {
+        // reset issue property values
+        setIssuePropertyValues({});
         // TODO: remove
         setToast({
           type: TOAST_TYPE.SUCCESS,

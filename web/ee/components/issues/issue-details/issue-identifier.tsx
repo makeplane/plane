@@ -9,7 +9,7 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueIdentifierProps = {
   issueId: string;
@@ -31,8 +31,9 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const issue = getIssueById(issueId);
   const projectDetails = getProjectById(projectId);
   const issueType = useIssueType(issue?.type_id);
+  const isIssueTypeDisplayEnabled = useFlag("ISSUE_TYPE_DISPLAY");
 
-  if (!projectDetails?.is_issue_type_enabled) {
+  if (!isIssueTypeDisplayEnabled || !projectDetails?.is_issue_type_enabled) {
     return (
       <BaseIssueIdentifier
         issueId={issueId}
