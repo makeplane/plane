@@ -2,6 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Control, Controller } from "react-hook-form";
 import { ChevronRight } from "lucide-react";
 // types
@@ -21,10 +22,12 @@ type TIssueTypeSelectProps = {
 
 export const IssueTypeSelect: React.FC<TIssueTypeSelectProps> = observer((props) => {
   const { control, projectId, disabled = false } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectById } = useProject();
   // derived values
-  const isIssueTypeDisplayEnabled = useFlag("ISSUE_TYPE_DISPLAY");
+  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
   const projectDetails = getProjectById(projectId);
 
   return (

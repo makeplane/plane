@@ -19,8 +19,12 @@ export enum E_FEATURE_FLAGS {
   ISSUE_WORKLOG = "ISSUE_WORKLOG",
 }
 
-export const useFlag = (flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean = false): boolean => {
+export const useFlag = (
+  workspaceSlug: string,
+  flag: keyof typeof E_FEATURE_FLAGS,
+  defaultValue: boolean = false
+): boolean => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useFlag must be used within StoreProvider");
-  return context.featureFlags.flags[E_FEATURE_FLAGS[flag]] ?? defaultValue;
+  return context.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS[flag]] ?? defaultValue;
 };

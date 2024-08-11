@@ -25,7 +25,7 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // derived values
-  const isIssueTypeSettingsEnabled = useFlag("ISSUE_TYPE_SETTINGS");
+  const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_SETTINGS");
   const resolvedEmptyStatePath = `/empty-state/issue-types/issue-type-${resolvedTheme === "light" ? "light" : "dark"}.svg`;
   // handlers
   const handleEnableIssueTypes = async () => {

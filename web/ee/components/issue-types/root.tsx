@@ -19,7 +19,7 @@ export const IssueTypesRoot = observer(() => {
   // store hooks
   const { currentProjectDetails } = useProject();
   // derived values
-  const isIssueTypeSettingsEnabled = useFlag("ISSUE_TYPE_SETTINGS");
+  const isIssueTypeSettingsEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_SETTINGS");
 
   return (
     <div className="container mx-auto h-full pb-8">

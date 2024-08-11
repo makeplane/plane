@@ -89,7 +89,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const isIssueTypesEnabled = useFlag("ISSUE_TYPE_DISPLAY");
+  const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
   // fetching all issue types for the workspace
   useSWR(
     workspaceSlug && isIssueTypesEnabled ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}` : null,

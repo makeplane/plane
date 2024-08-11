@@ -13,11 +13,13 @@ import { useFlag } from "@/plane-web/hooks/store";
  * }
  * ```
  */
-export const useEditorFlagging = (): {
+export const useEditorFlagging = (
+  workspaceSlug: string
+): {
   documentEditor: TExtensions[];
   richTextEditor: TExtensions[];
 } => {
-  const isIssueEmbedEnabled = useFlag("PAGE_ISSUE_EMBEDS");
+  const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   // extensions disabled in the document editor
   const documentEditor: TExtensions[] = [];
   if (!isIssueEmbedEnabled) documentEditor.push("issue-embed");

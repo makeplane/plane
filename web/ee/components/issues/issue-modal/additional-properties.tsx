@@ -36,7 +36,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
   const { getProjectById } = useProject();
   const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
   // derived values
-  const isIssueTypeDisplayEnabled = useFlag("ISSUE_TYPE_DISPLAY");
+  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_DISPLAY");
   const projectDetails = getProjectById(projectId);
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
   const isIssueTypesEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;

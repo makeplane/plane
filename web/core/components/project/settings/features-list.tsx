@@ -25,7 +25,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
-  const isWorklogEnabled = useFlag("ISSUE_WORKLOG");
+  const isWorklogEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 

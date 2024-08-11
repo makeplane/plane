@@ -105,7 +105,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
-  const isIssueTypeEnabled = projectExists?.is_issue_type_enabled && useFlag("ISSUE_TYPE_DISPLAY");
+  const isIssueTypeEnabled =
+    projectExists?.is_issue_type_enabled && useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
   // fetching all issue types and properties
   useSWR(
     workspaceSlug && projectId && isIssueTypeEnabled

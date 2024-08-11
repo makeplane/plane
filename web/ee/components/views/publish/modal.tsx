@@ -38,7 +38,7 @@ export const PublishViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { publishView, fetchPublishDetails, updatePublishedView, unPublishView } = useProjectView();
-  const isViewsPublishEnabled = useFlag("VIEW_PUBLISH");
+  const isViewsPublishEnabled = useFlag(workspaceSlug?.toString(), "VIEW_PUBLISH");
   // derived values
   const { data: publishedViewSettings, isLoading } = useSWR(
     view?.anchor ? `PUBLISHED_VIEW_${view.id}` : null,
