@@ -11,39 +11,30 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 // types
-import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-  TGroupedIssues,
-  TSubGroupedIssues,
   TLoader,
-  IssuePaginationOptions,
   TIssuesResponse,
   TIssues,
   TIssuePaginationData,
-  TGroupedIssueCount,
-  TPaginationData,
   TBulkOperationsPayload,
+  TIssueMap,
+  IIssueFilterOptions,
+  IIssueDisplayFilterOptions,
 } from "@plane/types";
 import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
-import { convertToISODateString } from "@/helpers/date-time.helper";
+import { convertToISODateString, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
 import { IIssueRootStore } from "../root.store";
-import {
-  getDifference,
-  getGroupIssueKeyActions,
-  getGroupKey,
-  getIssueIds,
-  getSortOrderToFilterEmptyValues,
-  getSubGroupIssueKeyActions,
-} from "./base-issues-utils";
+import { getSortOrderToFilterEmptyValues } from "./base-issues-utils";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import { STATE_GROUPS } from "@/constants/state";
+import { perfTestIssues } from "./test";
 // constants
 // helpers
 // services
@@ -57,24 +48,14 @@ export enum EIssueGroupedAction {
 }
 export interface IBaseIssuesStore {
   // observable
-  loader: Record<string, TLoader>;
-
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined; // object to store Issue Ids based on group or subgroup
-  groupedIssueCount: TGroupedIssueCount; // map of groupId/subgroup and issue count of that particular group/subgroup
-  issuePaginationData: TIssuePaginationData; // map of groupId/subgroup and pagination Data of that particular group/subgroup
+  loader: TLoader;
+  issueIds: string[] | undefined;
+  groupedIssueIds: TIssues | undefined; // object to store Issue Ids based on group or subgroup
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   // helper methods
-  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
-  issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
-  getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
   getIssueLoader(groupId?: string, subGroupId?: string): TLoader;
-  getGroupIssueCount: (
-    groupId: string | undefined,
-    subGroupId: string | undefined,
-    isSubGroupCumulative: boolean
-  ) => number | undefined;
 
   addIssueToCycle: (
     workspaceSlug: string,
@@ -136,6 +117,20 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   target_date: "target_date",
 };
 
+export const ISSUE_FILTER_MAP: Record<keyof IIssueFilterOptions, keyof TIssue> = {
+  project: "project_id",
+  cycle: "cycle_id",
+  module: "module_ids",
+  state: "state_id",
+  state_group: "state_group" as keyof TIssue, // state_detail.group is only being used for state_group display,
+  priority: "priority",
+  labels: "label_ids",
+  created_by: "created_by",
+  assignees: "assignee_ids",
+  target_date: "target_date",
+  start_date: "start_date",
+};
+
 // This constant maps the order by keys to the respective issue property that the key relies on
 const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   created_at: "created_at",
@@ -170,13 +165,9 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
 };
 
 export abstract class BaseIssuesStore implements IBaseIssuesStore {
-  loader: Record<string, TLoader> = {};
-  groupedIssueIds: TIssues | undefined = undefined;
+  loader: TLoader = undefined;
+  issueIds: string[] | undefined = undefined;
   issuePaginationData: TIssuePaginationData = {};
-
-  groupedIssueCount: TGroupedIssueCount = {};
-  //
-  paginationOptions: IssuePaginationOptions | undefined = undefined;
 
   isArchived: boolean;
 
@@ -196,29 +187,24 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     makeObservable(this, {
       // observable
       loader: observable,
-      groupedIssueIds: observable,
-      issuePaginationData: observable,
-      groupedIssueCount: observable,
+      issueIds: observable,
 
-      paginationOptions: observable,
       // computed
       moduleId: computed,
       cycleId: computed,
+      currentLayout: computed,
       orderBy: computed,
       groupBy: computed,
       subGroupBy: computed,
       orderByKey: computed,
+      groupedIssueIds: computed,
       issueGroupKey: computed,
       issueSubGroupKey: computed,
       // action
-      storePreviousPaginationValues: action.bound,
 
       onfetchIssues: action.bound,
-      onfetchNexIssues: action.bound,
       clear: action.bound,
       setLoader: action.bound,
-      addIssue: action.bound,
-      removeIssueFromList: action.bound,
 
       createIssue: action,
       issueUpdate: action,
@@ -272,9 +258,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // current Order by value
   get orderBy() {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
-    if (!displayFilters) return;
+    if (!displayFilters) return "-created_at";
 
-    return displayFilters?.order_by;
+    if (displayFilters.layout === EIssueLayoutTypes.CALENDAR) return "target_date";
+
+    return displayFilters?.order_by ?? "-created_at";
   }
 
   // current Group by value
@@ -284,11 +272,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     const layout = displayFilters?.layout;
 
-    return layout === EIssueLayoutTypes.CALENDAR
-      ? "target_date"
-      : [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout)
-        ? displayFilters?.group_by
-        : undefined;
+    if (layout === EIssueLayoutTypes.CALENDAR) return "target_date";
+
+    return [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout) ? displayFilters?.group_by : undefined;
   }
 
   // current Sub group by value
@@ -296,29 +282,211 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters || displayFilters.group_by === displayFilters.sub_group_by) return;
 
-    return displayFilters?.layout === "kanban" ? displayFilters?.sub_group_by : undefined;
+    return displayFilters?.layout === EIssueLayoutTypes.KANBAN ? displayFilters?.sub_group_by : undefined;
   }
 
-  getIssueIds = (groupId?: string, subGroupId?: string) => {
-    const groupedIssueIds = this.groupedIssueIds;
+  get currentLayout() {
+    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
+    if (!displayFilters || !displayFilters.layout) return;
 
-    if (!groupedIssueIds) return undefined;
+    return displayFilters?.layout;
+  }
 
-    const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
-    if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
-      return allIssues as string[];
+  get groupedIssueIds() {
+    if (!this.issueIds) return;
+
+    const startTime = performance.now();
+    const currentIssues = this.rootIssueStore.issues.getIssuesByIds(this.issueIds, "un-archived");
+    if (!currentIssues) return [];
+
+    // const filteredIssues = this.issueFilterByValues(
+    //   currentIssues,
+    //   this.issueFilterStore?.issueFilters?.filters,
+    //   this.issueFilterStore?.issueFilters?.displayFilters
+    // );
+    // if (!filteredIssues) return [];
+
+    const sortedIssues = this.issuesSortWithOrderBy(currentIssues, this.orderBy);
+
+    let issues: TIssues;
+
+    if (this.currentLayout === EIssueLayoutTypes.LIST) {
+      if (this.groupBy) issues = this.groupedIssues(this.groupBy, sortedIssues);
+      else issues = sortedIssues.map((issue) => issue.id);
+    } else if (this.currentLayout === EIssueLayoutTypes.KANBAN && this.groupBy) {
+      if (this.subGroupBy) issues = this.subGroupedIssues(this.subGroupBy, this.groupBy, sortedIssues);
+      else issues = this.groupedIssues(this.groupBy, sortedIssues);
+    } else if (this.currentLayout === EIssueLayoutTypes.CALENDAR)
+      issues = this.groupedIssues("target_date", sortedIssues, true);
+    else if (this.currentLayout === EIssueLayoutTypes.SPREADSHEET) issues = sortedIssues.map((issue) => issue.id);
+    else if (this.currentLayout === EIssueLayoutTypes.GANTT) issues = sortedIssues.map((issue) => issue.id);
+    else return;
+
+    console.log("### grouping issues Took, ", performance.now() - startTime, "ms");
+    return issues;
+  }
+
+  // testPerformance() {
+  //   const currentIssues = perfTestIssues as unknown as TIssue[];
+  //   if (!currentIssues) return [];
+
+  //   const startTimeFind = performance.now();
+  //   const issue  = currentIssues.find((issueValue) => issueValue.id === "1a8fcff2-6694-4df3-b231-bdddb7e67ee6");
+  //   console.log("finding an issue ", performance.now()- startTimeFind);
+
+  //   const startTime = performance.now();
+  //   const filteredIssues = this.issueFilterByValues(
+  //     currentIssues,
+  //     this.issueFilterStore?.issueFilters?.filters,
+  //     this.issueFilterStore?.issueFilters?.displayFilters
+  //   );
+
+  //   const sortedIssues = this.issuesSortWithOrderBy(filteredIssues, this.orderBy);
+
+  //   let issues: TIssues = [];
+
+  //   if (this.currentLayout === EIssueLayoutTypes.LIST) {
+  //     if (this.groupBy) issues = this.groupedIssues(this.groupBy, sortedIssues);
+  //     else issues = sortedIssues.map((issue) => issue.id);
+  //   } else if (this.currentLayout === EIssueLayoutTypes.KANBAN && this.groupBy) {
+  //     if (this.subGroupBy) issues = this.subGroupedIssues(this.subGroupBy, this.groupBy, sortedIssues);
+  //     else issues = this.groupedIssues(this.groupBy, sortedIssues);
+  //   } else if (this.currentLayout === EIssueLayoutTypes.CALENDAR)
+  //     issues = this.groupedIssues("target_date", sortedIssues, true);
+  //   else if (this.currentLayout === EIssueLayoutTypes.SPREADSHEET) issues = sortedIssues.map((issue) => issue.id);
+  //   else if (this.currentLayout === EIssueLayoutTypes.GANTT) issues = sortedIssues.map((issue) => issue.id);
+
+  //   console.log("Total operations took ", performance.now() - startTime, "ms", issues);
+  // }
+
+  groupedIssues = (groupBy: TIssueDisplayFilterOptions, issues: TIssue[], isCalendarIssues: boolean = false) => {
+    const currentIssues: { [group_id: string]: string[] } = {};
+    if (!groupBy) return currentIssues;
+
+    this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
+      currentIssues[group] = [];
+    });
+
+    for (const issue in issues) {
+      const currentIssue = issues[issue];
+      let groupArray = [];
+
+      if (groupBy === "state_detail.group") {
+        // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
+        const state_group =
+          (this.rootIssueStore?.rootStore?.state?.stateMap || {})?.[currentIssue?.state_id ?? ""]?.group || "None";
+        groupArray = [state_group];
+      } else {
+        const groupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[groupBy]) as
+          | boolean
+          | number
+          | string
+          | string[]
+          | null;
+        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : ["None"];
+      }
+
+      for (const group of groupArray) {
+        if (group && currentIssues[group]) currentIssues[group].push(currentIssue.id);
+        else if (group) currentIssues[group] = [currentIssue.id];
+      }
     }
 
-    if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return (groupedIssueIds[groupId] ?? []) as string[];
-    }
-
-    if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
-      return ((groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? []) as string[];
-    }
-
-    return undefined;
+    return currentIssues;
   };
+
+  subGroupedIssues = (
+    subGroupBy: TIssueDisplayFilterOptions,
+    groupBy: TIssueDisplayFilterOptions,
+    issues: TIssue[]
+  ) => {
+    const currentIssues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
+    if (!subGroupBy || !groupBy) return currentIssues;
+
+    this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group) => {
+      const groupByIssues: { [group_id: string]: string[] } = {};
+      this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
+        groupByIssues[group] = [];
+      });
+      currentIssues[sub_group] = groupByIssues;
+    });
+
+    for (const issue in issues) {
+      const currentIssue = issues[issue];
+      let subGroupArray = [];
+      let groupArray = [];
+      if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
+        const state_group =
+          (this.rootIssueStore?.rootStore?.state?.stateMap || {})?.[currentIssue?.state_id ?? ""]?.group || "None";
+
+        subGroupArray = [state_group];
+        groupArray = [state_group];
+      } else {
+        const subGroupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]) as
+          | boolean
+          | number
+          | string
+          | string[]
+          | null;
+        const groupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[groupBy]) as
+          | boolean
+          | number
+          | string
+          | string[]
+          | null;
+
+        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : ["None"];
+        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : ["None"];
+      }
+
+      for (const subGroup of subGroupArray) {
+        for (const group of groupArray) {
+          if (subGroup && group && currentIssues?.[subGroup]?.[group])
+            currentIssues[subGroup][group].push(currentIssue.id);
+          else if (subGroup && group && currentIssues[subGroup]) currentIssues[subGroup][group] = [currentIssue.id];
+          else if (subGroup && group) currentIssues[subGroup] = { [group]: [currentIssue.id] };
+        }
+      }
+    }
+
+    return currentIssues;
+  };
+
+  issueDisplayFiltersDefaultData = (groupBy: string | null): string[] => {
+    switch (groupBy) {
+      case "state":
+        return Object.keys(this.rootIssueStore?.rootStore?.state?.stateMap || {});
+      case "state_detail.group":
+        return Object.keys(STATE_GROUPS);
+      case "priority":
+        return ISSUE_PRIORITIES.map((i) => i.key);
+      case "labels":
+        return Object.keys(this.rootIssueStore?.rootStore?.label?.labelMap || {});
+      case "created_by":
+        return Object.keys(this.rootIssueStore?.rootStore?.memberRoot?.workspace?.workspaceMemberMap || {});
+      case "assignees":
+        return Object.keys(this.rootIssueStore?.rootStore?.memberRoot?.workspace?.workspaceMemberMap || {});
+      case "project":
+        return Object.keys(this.rootIssueStore?.rootStore?.projectRoot?.project?.projectMap || {});
+      case "cycle":
+        return Object.keys(this.rootIssueStore?.rootStore?.cycle?.cycleMap || {});
+      case "module":
+        return Object.keys(this.rootIssueStore?.rootStore?.module.moduleMap || {});
+      default:
+        return [];
+    }
+  };
+
+  getGroupArray(value: boolean | number | string | string[] | null, isDate: boolean = false): string[] {
+    if (!value || value === null || value === undefined) return ["None"];
+    if (Array.isArray(value))
+      if (value && value.length) return value;
+      else return ["None"];
+    else if (typeof value === "boolean") return [value ? "True" : "False"];
+    else if (typeof value === "number") return [value.toString()];
+    else if (isDate) return [renderFormattedPayloadDate(value) || "None"];
+    else return [value || "None"];
+  }
 
   // The Issue Property corresponding to the order by value
   get orderByKey() {
@@ -347,97 +515,21 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   /**
-   * Store the pagination data required for next subsequent issue pagination calls
-   * @param prevCursor cursor value of previous page
-   * @param nextCursor cursor value of next page
-   * @param nextPageResults boolean to indicate if the next page results exist i.e, have we reached end of pages
-   * @param groupId groupId and subGroupId to add the pagination data for the particular group/subgroup
-   * @param subGroupId
-   */
-  setPaginationData(
-    prevCursor: string,
-    nextCursor: string,
-    nextPageResults: boolean,
-    groupId?: string,
-    subGroupId?: string
-  ) {
-    const cursorObject = {
-      prevCursor,
-      nextCursor,
-      nextPageResults,
-    };
-
-    set(this.issuePaginationData, [getGroupKey(groupId, subGroupId)], cursorObject);
-  }
-
-  /**
    * Sets the loader value of the particular groupId/subGroupId, or to ALL_ISSUES if both are undefined
    * @param loaderValue
    * @param groupId
    * @param subGroupId
    */
-  setLoader(loaderValue: TLoader, groupId?: string, subGroupId?: string) {
+  setLoader(loaderValue: TLoader) {
     runInAction(() => {
-      set(this.loader, getGroupKey(groupId, subGroupId), loaderValue);
+      this.loader = loaderValue;
     });
   }
 
   /**
    * gets the Loader value of particular group/subgroup/ALL_ISSUES
    */
-  getIssueLoader = (groupId?: string, subGroupId?: string) => get(this.loader, getGroupKey(groupId, subGroupId));
-
-  /**
-   * gets the pagination data of particular group/subgroup/ALL_ISSUES
-   */
-  getPaginationData = computedFn(
-    (groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined =>
-      get(this.issuePaginationData, [getGroupKey(groupId, subGroupId)])
-  );
-
-  /**
-   * gets the issue count of particular group/subgroup/ALL_ISSUES
-   *
-   * if isSubGroupCumulative is true, sum up all the issueCount of the subGroupId, across all the groupIds
-   */
-  getGroupIssueCount = computedFn(
-    (
-      groupId: string | undefined,
-      subGroupId: string | undefined,
-      isSubGroupCumulative: boolean
-    ): number | undefined => {
-      if (isSubGroupCumulative && subGroupId) {
-        const groupIssuesKeys = Object.keys(this.groupedIssueCount);
-        let subGroupCumulativeCount = 0;
-
-        for (const groupKey of groupIssuesKeys) {
-          if (groupKey.includes(`_${subGroupId}`)) subGroupCumulativeCount += this.groupedIssueCount[groupKey];
-        }
-
-        return subGroupCumulativeCount;
-      }
-
-      return get(this.groupedIssueCount, [getGroupKey(groupId, subGroupId)]);
-    }
-  );
-
-  /**
-   * Gets the next page cursor based on number of issues currently available
-   * @param groupId groupId for the cursor
-   * @param subGroupId subgroupId for cursor
-   * @returns next page cursor or undefined
-   */
-  getNextCursor = (groupId: string | undefined, subGroupId: string | undefined): string | undefined => {
-    const groupedIssues = this.getIssueIds(groupId, subGroupId) ?? [];
-    const currentIssueCount = groupedIssues.length;
-
-    if (!this.paginationOptions) return;
-
-    const { perPageCount } = this.paginationOptions;
-    const nextPage = Math.floor(currentIssueCount / perPageCount);
-
-    return `${perPageCount}:${nextPage}:0`;
-  };
+  getIssueLoader = () => this.loader;
 
   /**
    * This Method is called after fetching the first paginated issues
@@ -450,55 +542,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param projectId
    * @param id Id can be anything from cycleId, moduleId, viewId or userId based on the store
    */
-  onfetchIssues(
-    issuesResponse: TIssuesResponse,
-    options: IssuePaginationOptions,
-    workspaceSlug: string,
-    projectId?: string,
-    id?: string
-  ) {
-    // Process the Issue Response to get the following data from it
-    const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
-
+  onfetchIssues(issueList: TIssue[]) {
     // The Issue list is added to the main Issue Map
-    this.rootIssueStore.issues.addIssue(issueList);
+    this.rootIssueStore.issues.addIssue(issueList, true);
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
-      this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
-      this.loader[getGroupKey()] = undefined;
+      set(
+        this,
+        "issueIds",
+        issueList.map((issue) => issue.id)
+      );
+      this.loader = undefined;
     });
-
-    // fetch parent stats if required, to be handled in the Implemented class
-    this.fetchParentStats(workspaceSlug, projectId, id);
-
-    // store Pagination options for next subsequent calls and data like next cursor etc
-    this.storePreviousPaginationValues(issuesResponse, options);
-  }
-
-  /**
-   * This Method is called on the subsequent pagination calls after the first initial call
-   *
-   * This method updates the appropriate issue list based on if groupId or subgroupIds are Passed
-   * @param issuesResponse Paginated Response received from the API
-   * @param groupId
-   * @param subGroupId
-   */
-  onfetchNexIssues(issuesResponse: TIssuesResponse, groupId?: string, subGroupId?: string) {
-    // Process the Issue Response to get the following data from it
-    const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
-
-    // The Issue list is added to the main Issue Map
-    this.rootIssueStore.issues.addIssue(issueList);
-
-    // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
-    runInAction(() => {
-      this.updateGroupedIssueIds(groupedIssues, groupedIssueCount, groupId, subGroupId);
-      this.loader[getGroupKey(groupId, subGroupId)] = undefined;
-    });
-
-    // store Pagination data like next cursor etc
-    this.storePreviousPaginationValues(issuesResponse, undefined, groupId, subGroupId);
   }
 
   /**
@@ -554,7 +610,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     try {
       // Update the Respective Stores
       this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
 
       // Check if should Sync
       if (!shouldSync) return;
@@ -573,7 +628,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     } catch (error) {
       // If errored out update store again to revert the change
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
       throw error;
     }
   }
@@ -615,7 +669,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     try {
       // Update the Respective Stores
       this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
 
       // call API to update the issue
       await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
@@ -628,7 +681,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     } catch (error) {
       // If errored out update store again to revert the change
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
       throw error;
     }
   }
@@ -830,7 +882,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
             }
           });
           const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
-          this.updateIssueList(issueDetails, issueBeforeUpdate);
         });
       });
     } catch (error) {
@@ -1210,23 +1261,16 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     });
 
     // if true, add issue id to the list
-    if (shouldUpdateList) this.updateIssueList(issue, undefined, EIssueGroupedAction.ADD);
+    if (shouldUpdateList) this.issueIds;
   }
 
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true) {
+  clear() {
     runInAction(() => {
-      this.groupedIssueIds = undefined;
-      this.issuePaginationData = {};
-      this.groupedIssueCount = {};
-      if (shouldClearPaginationOptions) {
-        this.paginationOptions = undefined;
-      }
+      this.issueIds = undefined;
     });
-    this.controller.abort();
-    this.controller = new AbortController();
   }
 
   /**
@@ -1235,8 +1279,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param issueId
    */
   addIssueToList(issueId: string) {
-    const issue = this.rootIssueStore.issues.getIssueById(issueId);
-    this.updateIssueList(issue, undefined, EIssueGroupedAction.ADD);
+    update(this, "issueIds", (issueIds: string[] = []) => {
+      return uniq([...issueIds, issueId]);
+    });
   }
 
   /**
@@ -1245,66 +1290,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param issueId
    */
   removeIssueFromList(issueId: string) {
-    const issue = this.rootIssueStore.issues.getIssueById(issueId);
-    this.updateIssueList(undefined, issue, EIssueGroupedAction.DELETE);
-  }
-
-  /**
-   * Method called to update the issue list,
-   * If an action is passed, this method would add/remove the issue from list according to the action
-   * If there is no action, this method compares before and after states of the issue to decide, where to remove the issue id from and where to add it to
-   * if only issue is passed down then, the method determines where to add the issue Id and updates the list
-   * @param issue current issue state
-   * @param issueBeforeUpdate issue state before the update
-   * @param action specific action can be provided to force the method to that action
-   * @returns
-   */
-  updateIssueList(
-    issue?: TIssue,
-    issueBeforeUpdate?: TIssue,
-    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
-  ) {
-    if (!issue && !issueBeforeUpdate) return;
-
-    // get Issue ID from one of the issue objects
-    const issueId = issue?.id ?? issueBeforeUpdate?.id;
-    if (!issueId) return;
-
-    // get issueUpdates from another method by passing down the three arguments
-    // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
-    const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
-    const accumulatedUpdatesForCount = {};
-    runInAction(() => {
-      // The issueUpdates
-      for (const issueUpdate of issueUpdates) {
-        //if update is add, add it at a particular path
-        if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          // add issue Id at the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
-            this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
-          );
-        }
-
-        //if update is delete, remove it at a particular path
-        if (issueUpdate.action === EIssueGroupedAction.DELETE) {
-          // remove issue Id from the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => pull(issueIds, issueId));
-        }
-
-        // accumulate the updates so that we don't end up updating the count twice for the same issue
-        this.accumulateIssueUpdates(accumulatedUpdatesForCount, issueUpdate.path, issueUpdate.action);
-
-        //if update is reorder, reorder it at a particular path
-        if (issueUpdate.action === EIssueGroupedAction.REORDER) {
-          // re-order/re-sort the issue Ids at the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
-            this.issuesSortWithOrderBy(issueIds, this.orderBy)
-          );
-        }
-      }
-
-      // update the respective counts from the accumulation object
-      this.updateIssueCount(accumulatedUpdatesForCount);
+    update(this, "issueIds", (issueIds: string[] = []) => {
+      return issueIds.filter((id) => id !== issueId);
     });
   }
 
@@ -1315,395 +1302,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @returns groupedIssues, grouped issue Ids
    * @returns groupedIssueCount, object containing issue counts of individual groups
    */
-  processIssueResponse(issueResponse: TIssuesResponse): {
-    issueList: TIssue[];
-    groupedIssues: TIssues;
-    groupedIssueCount: TGroupedIssueCount;
-  } {
+  processIssueResponse(issueResponse: TIssuesResponse): TIssue[] {
     const issueResult = issueResponse?.results;
 
     // if undefined return empty objects
-    if (!issueResult)
-      return {
-        issueList: [],
-        groupedIssues: {},
-        groupedIssueCount: {},
-      };
+    if (!issueResult) return [];
 
     //if is an array then it's an ungrouped response. return values with groupId as ALL_ISSUES
     if (Array.isArray(issueResult)) {
-      return {
-        issueList: issueResult,
-        groupedIssues: {
-          [ALL_ISSUES]: issueResult.map((issue) => issue.id),
-        },
-        groupedIssueCount: {
-          [ALL_ISSUES]: issueResponse.total_count,
-        },
-      };
+      return issueResult;
     }
 
-    const issueList: TIssue[] = [];
-    const groupedIssues: TGroupedIssues | TSubGroupedIssues = {};
-    const groupedIssueCount: TGroupedIssueCount = {};
-
-    // update total issue count to ALL_ISSUES
-    set(groupedIssueCount, [ALL_ISSUES], issueResponse.total_count);
-
-    // loop through all the groupIds from issue Result
-    for (const groupId in issueResult) {
-      const groupIssuesObject = issueResult[groupId];
-      const groupIssueResult = groupIssuesObject?.results;
-
-      // if groupIssueResult is undefined then continue the loop
-      if (!groupIssueResult) continue;
-
-      // set grouped Issue count of the current groupId
-      set(groupedIssueCount, [groupId], groupIssuesObject.total_results);
-
-      // if groupIssueResult, the it is not subGrouped
-      if (Array.isArray(groupIssueResult)) {
-        // add the result to issueList
-        issueList.push(...groupIssueResult);
-        // set the issue Ids to the groupId path
-        set(
-          groupedIssues,
-          [groupId],
-          groupIssueResult.map((issue) => issue.id)
-        );
-        continue;
-      }
-
-      // loop through all the subGroupIds from issue Result
-      for (const subGroupId in groupIssueResult) {
-        const subGroupIssuesObject = groupIssueResult[subGroupId];
-        const subGroupIssueResult = subGroupIssuesObject?.results;
-
-        // if subGroupIssueResult is undefined then continue the loop
-        if (!subGroupIssueResult) continue;
-
-        // set sub grouped Issue count of the current groupId
-        set(groupedIssueCount, [getGroupKey(groupId, subGroupId)], subGroupIssuesObject.total_results);
-
-        if (Array.isArray(subGroupIssueResult)) {
-          // add the result to issueList
-          issueList.push(...subGroupIssueResult);
-          // set the issue Ids to the [groupId, subGroupId] path
-          set(
-            groupedIssues,
-            [groupId, subGroupId],
-            subGroupIssueResult.map((issue) => issue.id)
-          );
-
-          continue;
-        }
-      }
-    }
-
-    return { issueList, groupedIssues, groupedIssueCount };
+    return [];
   }
-
-  /**
-   * This method is used to update the grouped issue Ids to it's respected lists and also to update group Issue Counts
-   * @param groupedIssues Object that contains list of issueIds with respect to their groups/subgroups
-   * @param groupedIssueCount Object the contains the issue count of each groups
-   * @param groupId groupId string
-   * @param subGroupId subGroupId string
-   * @returns updates the store with the values
-   */
-  updateGroupedIssueIds(
-    groupedIssues: TIssues,
-    groupedIssueCount: TGroupedIssueCount,
-    groupId?: string,
-    subGroupId?: string
-  ) {
-    // if groupId exists and groupedIssues has ALL_ISSUES as a group,
-    // then it's an individual group/subgroup pagination
-    if (groupId && groupedIssues[ALL_ISSUES] && Array.isArray(groupedIssues[ALL_ISSUES])) {
-      const issueGroup = groupedIssues[ALL_ISSUES];
-      const issueGroupCount = groupedIssueCount[ALL_ISSUES];
-      const issuesPath = [groupId];
-      // issuesPath is the path for the issue List in the Grouped Issue List
-      // issuePath is either [groupId] for grouped pagination or [groupId, subGroupId] for subGrouped pagination
-      if (subGroupId) issuesPath.push(subGroupId);
-
-      // update the issue Count of the particular group/subGroup
-      set(this.groupedIssueCount, [getGroupKey(groupId, subGroupId)], issueGroupCount);
-
-      // update the issue list in the issuePath
-      this.updateIssueGroup(issueGroup, issuesPath);
-      return;
-    }
-
-    // if not in the above condition the it's a complete grouped pagination not individual group/subgroup pagination
-    // update total issue count as ALL_ISSUES count in `groupedIssueCount` object
-    set(this.groupedIssueCount, [ALL_ISSUES], groupedIssueCount[ALL_ISSUES]);
-
-    // loop through the groups of groupedIssues.
-    for (const groupId in groupedIssues) {
-      const issueGroup = groupedIssues[groupId];
-      const issueGroupCount = groupedIssueCount[groupId];
-
-      // update the groupId's issue count
-      set(this.groupedIssueCount, [groupId], issueGroupCount);
-
-      // This updates the group issue list in the store, if the issueGroup is a string
-      const storeUpdated = this.updateIssueGroup(issueGroup, [groupId]);
-      // if issueGroup is indeed a string, continue
-      if (storeUpdated) continue;
-
-      // if issueGroup is not a string, loop through the sub group Issues
-      for (const subGroupId in issueGroup) {
-        const issueSubGroup = (issueGroup as TGroupedIssues)[subGroupId];
-        const issueSubGroupCount = groupedIssueCount[getGroupKey(groupId, subGroupId)];
-
-        // update the subGroupId's issue count
-        set(this.groupedIssueCount, [getGroupKey(groupId, subGroupId)], issueSubGroupCount);
-        // This updates the subgroup issue list in the store
-        this.updateIssueGroup(issueSubGroup, [groupId, subGroupId]);
-      }
-    }
-  }
-
-  /**
-   * This Method is used to update the issue Id list at the particular issuePath
-   * @param groupedIssueIds could be an issue Id List for grouped issues or an object that contains a issue Id list in case of subGrouped
-   * @param issuePath array of string, to identify the path of the issueList to be updated with the above issue Id list
-   * @returns a boolean that indicates if the groupedIssueIds is indeed a array Id list, in which case the issue Id list is added to the store at issuePath
-   */
-  updateIssueGroup(groupedIssueIds: TGroupedIssues | string[], issuePath: string[]): boolean {
-    if (!groupedIssueIds) return true;
-
-    // if groupedIssueIds is an array, update the `groupedIssueIds` store at the issuePath
-    if (groupedIssueIds && Array.isArray(groupedIssueIds)) {
-      update(this, ["groupedIssueIds", ...issuePath], (issueIds: string[] = []) =>
-        this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds as string[])), this.orderBy)
-      );
-      // return true to indicate the store has been updated
-      return true;
-    }
-
-    // return false to indicate the store has been updated and the groupedIssueIds is likely Object for subGrouped Issues
-    return false;
-  }
-
-  /**
-   * For Every issue update, accumulate it so that when an single issue is added to two groups, it doesn't increment the total count twice
-   * @param accumulator
-   * @param path
-   * @param action
-   * @returns
-   */
-  accumulateIssueUpdates(
-    accumulator: { [key: string]: EIssueGroupedAction },
-    path: string[],
-    action: EIssueGroupedAction
-  ) {
-    const [groupId, subGroupId] = path;
-
-    if (action !== EIssueGroupedAction.ADD && action !== EIssueGroupedAction.DELETE) return;
-
-    // if both groupId && subGroupId exists update the subgroup key
-    if (subGroupId && groupId) {
-      const groupKey = getGroupKey(groupId, subGroupId);
-      this.updateUpdateAccumulator(accumulator, groupKey, action);
-    }
-
-    // after above, if groupId exists update the group key
-    if (groupId) {
-      this.updateUpdateAccumulator(accumulator, groupId, action);
-    }
-
-    // if groupId is not ALL_ISSUES then update the  All_ISSUES key
-    // (if groupId is equal to ALL_ISSUES, it would have updated in the previous condition)
-    if (groupId !== ALL_ISSUES) {
-      this.updateUpdateAccumulator(accumulator, ALL_ISSUES, action);
-    }
-  }
-
-  /**
-   * This method's job is just to check and update the accumulator key
-   * @param accumulator accumulator object
-   * @param key object key like, subgroupKey, Group Key or ALL_ISSUES
-   * @param action
-   * @returns
-   */
-  updateUpdateAccumulator(
-    accumulator: { [key: string]: EIssueGroupedAction },
-    key: string,
-    action: EIssueGroupedAction
-  ) {
-    // if the key for accumulator is undefined, they update it with the action
-    if (!accumulator[key]) {
-      accumulator[key] = action;
-      return;
-    }
-
-    // if the key for accumulator is not the current action,
-    // Meaning if the key already has an action ADD and the current one is REMOVE,
-    // The the key is deleted as both the actions cancel each other out
-    if (accumulator[key] !== action) {
-      delete accumulator[key];
-    }
-  }
-
-  /**
-   * This method is used to update the count of the issues at the path with the increment
-   * @param path issuePath, corresponding key is to be incremented
-   * @param increment
-   */
-  updateIssueCount(accumulatedUpdatesForCount: { [key: string]: EIssueGroupedAction }) {
-    const updateKeys = Object.keys(accumulatedUpdatesForCount);
-    for (const updateKey of updateKeys) {
-      const update = accumulatedUpdatesForCount[updateKey];
-      if (!update) continue;
-
-      const increment = update === EIssueGroupedAction.ADD ? 1 : -1;
-      // get current count at the key
-      const issueCount = get(this.groupedIssueCount, updateKey) ?? 0;
-      // update the count at the key
-      set(this.groupedIssueCount, updateKey, issueCount + increment);
-    }
-  }
-
-  /**
-   * This method is used to get update Details that would be used to update the issue Ids at the path
-   * @param issue current state of issue
-   * @param issueBeforeUpdate state of the issue before the update
-   * @param action optional action, to force the method to return back that action
-   * @returns an array of object that contains the path at which issue to be updated and the action to be performed at the path
-   */
-  getUpdateDetails = (
-    issue?: Partial<TIssue>,
-    issueBeforeUpdate?: Partial<TIssue>,
-    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
-  ): { path: string[]; action: EIssueGroupedAction }[] => {
-    // check the before and after states to return if there needs to be a re-sorting of issueId list if the issue property that orderBy  depends on has changed
-    const orderByUpdates = this.getOrderByUpdateDetails(issue, issueBeforeUpdate);
-    // if unGrouped, then return the path as ALL_ISSUES along with orderByUpdates
-    if (!this.issueGroupKey) return action ? [{ path: [ALL_ISSUES], action }, ...orderByUpdates] : orderByUpdates;
-
-    const issueGroupKey = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
-    const issueBeforeUpdateGroupKey = issueBeforeUpdate?.[this.issueGroupKey] as string | string[] | null | undefined;
-    // if grouped, the get the Difference between the two issue properties (this.issueGroupKey) on which groupBy is performed
-    const groupActionsArray = getDifference(
-      this.getArrayStringArray(issue, issueGroupKey, this.groupBy),
-      this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateGroupKey, this.groupBy),
-      action
-    );
-
-    // if not subGrouped, then use the differences to construct an updateDetails Array
-    if (!this.issueSubGroupKey)
-      return [
-        ...getGroupIssueKeyActions(
-          groupActionsArray[EIssueGroupedAction.ADD],
-          groupActionsArray[EIssueGroupedAction.DELETE]
-        ),
-        ...orderByUpdates,
-      ];
-
-    const issueSubGroupKey = issue?.[this.issueSubGroupKey] as string | string[] | null | undefined;
-    const issueBeforeUpdateSubGroupKey = issueBeforeUpdate?.[this.issueSubGroupKey] as
-      | string
-      | string[]
-      | null
-      | undefined;
-    // if subGrouped, the get the Difference between the two issue properties (this.issueGroupKey) on which subGroupBy is performed
-    const subGroupActionsArray = getDifference(
-      this.getArrayStringArray(issue, issueSubGroupKey, this.subGroupBy),
-      this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateSubGroupKey, this.subGroupBy),
-      action
-    );
-
-    // Use the differences to construct an updateDetails Array
-    return [
-      ...getSubGroupIssueKeyActions(
-        groupActionsArray,
-        subGroupActionsArray,
-        this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateGroupKey, this.groupBy),
-        this.getArrayStringArray(issue, issueGroupKey, this.groupBy),
-        this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateSubGroupKey, this.subGroupBy),
-        this.getArrayStringArray(issue, issueSubGroupKey, this.subGroupBy)
-      ),
-      ...orderByUpdates,
-    ];
-  };
-
-  /**
-   * This method is used to get update Details that would be used to re-order/re-sort the issue Ids at the path
-   * @param issue current state of issue
-   * @param issueBeforeUpdate state of the issue before the update
-   * @returns  an array of object that contains the path at which issue to be re-sorted/re-ordered
-   */
-  getOrderByUpdateDetails(
-    issue: Partial<TIssue> | undefined,
-    issueBeforeUpdate: Partial<TIssue> | undefined
-  ): { path: string[]; action: EIssueGroupedAction.REORDER }[] {
-    // if before and after states of the issue prop on which orderBy depends on then return and empty Array
-    if (
-      !issue ||
-      !issueBeforeUpdate ||
-      !this.orderByKey ||
-      isEqual(issue[this.orderByKey], issueBeforeUpdate[this.orderByKey])
-    )
-      return [];
-
-    // if they are not equal and issues are not grouped then, provide path as ALL_ISSUES
-    if (!this.issueGroupKey) return [{ path: [ALL_ISSUES], action: EIssueGroupedAction.REORDER }];
-
-    const issueGroupKey = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
-    // if they are grouped then identify the paths based on props on which group by is dependent on
-    const issueKeyActions: { path: string[]; action: EIssueGroupedAction.REORDER }[] = [];
-    const groupByValues = this.getArrayStringArray(issue, issueGroupKey);
-
-    // if issues are not subGrouped then, provide path from groupByValues
-    if (!this.issueSubGroupKey) {
-      for (const groupKey of groupByValues) {
-        issueKeyActions.push({ path: [groupKey], action: EIssueGroupedAction.REORDER });
-      }
-
-      return issueKeyActions;
-    }
-
-    const issueSubGroupKey = issue?.[this.issueSubGroupKey] as string | string[] | null | undefined;
-    // if they are grouped then identify the paths based on props on which sub group by is dependent on
-    const subGroupByValues = this.getArrayStringArray(issue, issueSubGroupKey);
-
-    // if issues are subGrouped then, provide path from subGroupByValues
-    for (const groupKey of groupByValues) {
-      for (const subGroupKey of subGroupByValues) {
-        issueKeyActions.push({ path: [groupKey, subGroupKey], action: EIssueGroupedAction.REORDER });
-      }
-    }
-
-    return issueKeyActions;
-  }
-
-  /**
-   * get the groupByKey issue property on which actions are to be decided in the form of array
-   * @param value
-   * @param groupByKey
-   * @returns an array of issue property values
-   */
-  getArrayStringArray = (
-    issueObject: Partial<TIssue> | undefined,
-    value: string | string[] | undefined | null,
-    groupByKey?: TIssueGroupByOptions | undefined
-  ): string[] => {
-    // if issue object is undefined return empty array
-    if (!issueObject) return [];
-    // if value is not defined, return None value in array
-    if (!value || isEmpty(value)) return ["None"];
-    // if array return the array
-    if (Array.isArray(value)) return value;
-
-    // if the groupKey is state group then return the group based on state_id
-    if (groupByKey === "state_detail.group") {
-      return [this.rootIssueStore.rootStore.state.stateMap?.[value]?.group];
-    }
-
-    return [value];
-  };
 
   /**
    * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
@@ -1774,196 +1385,185 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order])[0] : dataValues) : dataValues[0];
   }
 
-  issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
-    const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
+  issueFilterByValues = (
+    issues: TIssue[],
+    filters: IIssueFilterOptions | undefined,
+    displayFilters: IIssueDisplayFilterOptions | undefined
+  ) => {
+    if (!filters || !displayFilters) return issues;
+
+    return issues.filter((issue) => {
+      const filterKeys = Object.keys(filters) as (keyof IIssueFilterOptions)[];
+
+      for (const filterKey of filterKeys) {
+        const filterIssueKey = ISSUE_FILTER_MAP[filterKey];
+
+        const filterValue = filters[filterKey];
+        const issueValue = issue[filterIssueKey] as string | string[] | null | undefined;
+
+        if (!filterValue || filterValue.length <= 0) continue;
+
+        if (!issueValue || this.shouldFilterOutIssue(issueValue, filterValue, filterKey)) return false;
+      }
+
+      if (!displayFilters.sub_issue && issue.parent) return false;
+
+      return true;
+    });
+  };
+
+  shouldFilterOutIssue(issueValue: string | string[], filterValue: string[], filterKey: keyof IIssueFilterOptions) {
+    if (filterKey.endsWith("date")) {
+    } else if (filterKey === "state_group" && !Array.isArray(issueValue)) {
+      const issueStateGroup = this.rootIssueStore?.rootStore?.state?.stateMap?.[issueValue]?.group;
+
+      if (!issueStateGroup || !filterValue.includes(issueStateGroup)) return true;
+    } else {
+      if (Array.isArray(issueValue)) {
+        if (!filterValue.every((value: string) => issueValue.includes(value))) return true;
+      } else if (!filterValue.includes(issueValue)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  issuesSortWithOrderBy = (issues: TIssue[], key: TIssueOrderByOptions | undefined): TIssue[] => {
     const array = orderBy(issues, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
 
     switch (key) {
       case "sort_order":
-        return getIssueIds(orderBy(array, "sort_order"));
+        return orderBy(array, "sort_order");
       case "state__name":
-        return getIssueIds(
-          orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue?.["state_id"]))
-        );
+        return orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue?.["state_id"]));
       case "-state__name":
-        return getIssueIds(
-          orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue?.["state_id"]), ["desc"])
-        );
+        return orderBy(array, (issue) => this.populateIssueDataForSorting("state_id", issue?.["state_id"]), ["desc"]);
       // dates
       case "created_at":
-        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["created_at"])));
+        return orderBy(array, (issue) => convertToISODateString(issue["created_at"]));
       case "-created_at":
-        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]));
+        return orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
       case "updated_at":
-        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["updated_at"])));
+        return orderBy(array, (issue) => convertToISODateString(issue["updated_at"]));
       case "-updated_at":
-        return getIssueIds(orderBy(array, (issue) => convertToISODateString(issue["updated_at"]), ["desc"]));
+        return orderBy(array, (issue) => convertToISODateString(issue["updated_at"]), ["desc"]);
       case "start_date":
-        return getIssueIds(orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"])); //preferring sorting based on empty values to always keep the empty values below
+        return orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"]); //preferring sorting based on empty values to always keep the empty values below
       case "-start_date":
-        return getIssueIds(
-          orderBy(
-            array,
-            [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"], //preferring sorting based on empty values to always keep the empty values below
-            ["asc", "desc"]
-          )
+        return orderBy(
+          array,
+          [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"], //preferring sorting based on empty values to always keep the empty values below
+          ["asc", "desc"]
         );
 
       case "target_date":
-        return getIssueIds(orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "target_date"), "target_date"])); //preferring sorting based on empty values to always keep the empty values below
+        return orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "target_date"), "target_date"]); //preferring sorting based on empty values to always keep the empty values below
       case "-target_date":
-        return getIssueIds(
-          orderBy(
-            array,
-            [getSortOrderToFilterEmptyValues.bind(null, "target_date"), "target_date"], //preferring sorting based on empty values to always keep the empty values below
-            ["asc", "desc"]
-          )
+        return orderBy(
+          array,
+          [getSortOrderToFilterEmptyValues.bind(null, "target_date"), "target_date"], //preferring sorting based on empty values to always keep the empty values below
+          ["asc", "desc"]
         );
 
       // custom
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority)));
+        return orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority));
       }
       case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return getIssueIds(
-          orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["desc"])
-        );
+        return orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["desc"]);
       }
 
       // number
       case "attachment_count":
-        return getIssueIds(orderBy(array, "attachment_count"));
+        return orderBy(array, "attachment_count");
       case "-attachment_count":
-        return getIssueIds(orderBy(array, "attachment_count", ["desc"]));
+        return orderBy(array, "attachment_count", ["desc"]);
 
       case "estimate_point":
-        return getIssueIds(
-          orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "estimate_point"), "estimate_point"])
-        ); //preferring sorting based on empty values to always keep the empty values below
+        return orderBy(array, [getSortOrderToFilterEmptyValues.bind(null, "estimate_point"), "estimate_point"]); //preferring sorting based on empty values to always keep the empty values below
       case "-estimate_point":
-        return getIssueIds(
-          orderBy(
-            array,
-            [getSortOrderToFilterEmptyValues.bind(null, "estimate_point"), "estimate_point"], //preferring sorting based on empty values to always keep the empty values below
-            ["asc", "desc"]
-          )
+        return orderBy(
+          array,
+          [getSortOrderToFilterEmptyValues.bind(null, "estimate_point"), "estimate_point"], //preferring sorting based on empty values to always keep the empty values below
+          ["asc", "desc"]
         );
 
       case "link_count":
-        return getIssueIds(orderBy(array, "link_count"));
+        return orderBy(array, "link_count");
       case "-link_count":
-        return getIssueIds(orderBy(array, "link_count", ["desc"]));
+        return orderBy(array, "link_count", ["desc"]);
 
       case "sub_issues_count":
-        return getIssueIds(orderBy(array, "sub_issues_count"));
+        return orderBy(array, "sub_issues_count");
       case "-sub_issues_count":
-        return getIssueIds(orderBy(array, "sub_issues_count", ["desc"]));
+        return orderBy(array, "sub_issues_count", ["desc"]);
 
       // Array
       case "labels__name":
-        return getIssueIds(
-          orderBy(array, [
+        return orderBy(array, [
+          getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
+        ]);
+      case "-labels__name":
+        return orderBy(
+          array,
+          [
             getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
-          ])
-        );
-      case "-labels__name":
-        return getIssueIds(
-          orderBy(
-            array,
-            [
-              getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("label_ids", issue?.["label_ids"], "asc"),
-            ],
-            ["asc", "desc"]
-          )
+          ],
+          ["asc", "desc"]
         );
 
       case "issue_module__module__name":
-        return getIssueIds(
-          orderBy(array, [
+        return orderBy(array, [
+          getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "asc"),
+        ]);
+      case "-issue_module__module__name":
+        return orderBy(
+          array,
+          [
             getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "asc"),
-          ])
-        );
-      case "-issue_module__module__name":
-        return getIssueIds(
-          orderBy(
-            array,
-            [
-              getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("module_ids", issue?.["module_ids"], "asc"),
-            ],
-            ["asc", "desc"]
-          )
+          ],
+          ["asc", "desc"]
         );
 
       case "issue_cycle__cycle__name":
-        return getIssueIds(
-          orderBy(array, [
+        return orderBy(array, [
+          getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "asc"),
+        ]);
+      case "-issue_cycle__cycle__name":
+        return orderBy(
+          array,
+          [
             getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "asc"),
-          ])
-        );
-      case "-issue_cycle__cycle__name":
-        return getIssueIds(
-          orderBy(
-            array,
-            [
-              getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("cycle_id", issue?.["cycle_id"], "asc"),
-            ],
-            ["asc", "desc"]
-          )
+          ],
+          ["asc", "desc"]
         );
 
       case "assignees__first_name":
-        return getIssueIds(
-          orderBy(array, [
+        return orderBy(array, [
+          getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "asc"),
+        ]);
+      case "-assignees__first_name":
+        return orderBy(
+          array,
+          [
             getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "asc"),
-          ])
-        );
-      case "-assignees__first_name":
-        return getIssueIds(
-          orderBy(
-            array,
-            [
-              getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
-              (issue) => this.populateIssueDataForSorting("assignee_ids", issue?.["assignee_ids"], "asc"),
-            ],
-            ["asc", "desc"]
-          )
+          ],
+          ["asc", "desc"]
         );
 
       default:
-        return getIssueIds(array);
+        return array;
     }
-  };
-
-  /**
-   * This Method is called to store the pagination options and paginated data from response
-   * @param issuesResponse issue list response
-   * @param options pagination options to be stored for next page call
-   * @param groupId
-   * @param subGroupId
-   */
-  storePreviousPaginationValues = (
-    issuesResponse: TIssuesResponse,
-    options?: IssuePaginationOptions,
-    groupId?: string,
-    subGroupId?: string
-  ) => {
-    if (options) this.paginationOptions = options;
-
-    this.setPaginationData(
-      issuesResponse.prev_cursor,
-      issuesResponse.next_cursor,
-      issuesResponse.next_page_results,
-      groupId,
-      subGroupId
-    );
   };
 }

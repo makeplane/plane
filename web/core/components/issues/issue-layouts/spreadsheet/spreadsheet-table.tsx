@@ -25,8 +25,6 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
-  canLoadMoreIssues: boolean;
-  loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
 };
@@ -42,20 +40,13 @@ export const SpreadsheetTable = observer((props: Props) => {
     quickActions,
     updateIssue,
     canEditProperties,
-    canLoadMoreIssues,
     containerRef,
-    loadMoreIssues,
     spreadsheetColumnsList,
     selectionHelpers,
   } = props;
 
   // states
   const isScrolled = useRef(false);
-  const [intersectionElement, setIntersectionElement] = useState<HTMLTableSectionElement | null>(null);
-
-  const {
-    issues: { getIssueLoader },
-  } = useIssuesStore();
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -89,10 +80,6 @@ export const SpreadsheetTable = observer((props: Props) => {
       if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll, containerRef]);
-
-  const isPaginating = !!getIssueLoader();
-
-  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `100% 0% 100% 0%`);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
@@ -131,11 +118,6 @@ export const SpreadsheetTable = observer((props: Props) => {
           />
         ))}
       </tbody>
-      {canLoadMoreIssues && (
-        <tfoot ref={setIntersectionElement}>
-          <SpreadsheetIssueRowLoader columnCount={displayPropertiesCount} />
-        </tfoot>
-      )}
     </table>
   );
 });

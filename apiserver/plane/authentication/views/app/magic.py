@@ -29,17 +29,12 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.authentication.rate_limit import AuthenticationThrottle
 
 
 class MagicGenerateEndpoint(APIView):
 
     permission_classes = [
         AllowAny,
-    ]
-
-    throttle_classes = [
-        AuthenticationThrottle,
     ]
 
     def post(self, request):

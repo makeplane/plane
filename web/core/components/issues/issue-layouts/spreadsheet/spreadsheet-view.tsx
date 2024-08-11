@@ -28,8 +28,6 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
-  canLoadMoreIssues: boolean;
-  loadMoreIssues: () => void;
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
@@ -47,8 +45,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     canEditProperties,
     enableQuickCreateIssue,
     disableIssueCreation,
-    canLoadMoreIssues,
-    loadMoreIssues,
     isWorkspaceLevel = false,
   } = props;
   // refs
@@ -100,8 +96,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 updateIssue={updateIssue}
                 canEditProperties={canEditProperties}
                 containerRef={containerRef}
-                canLoadMoreIssues={canLoadMoreIssues}
-                loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
               />

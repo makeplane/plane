@@ -40,13 +40,13 @@ export const IssueLayoutHOC = observer((props: Props) => {
   const storeType = useIssueStoreType();
   const { issues } = useIssues(storeType);
 
-  const issueCount = issues.getGroupIssueCount(undefined, undefined, false);
+  const issueCount = issues.issueIds?.length;
 
   if (issues?.getIssueLoader() === "init-loader" || issueCount === undefined) {
     return <ActiveLoader layout={layout} />;
   }
 
-  if (issues.getGroupIssueCount(undefined, undefined, false) === 0 && layout !== EIssueLayoutTypes.CALENDAR) {
+  if (issueCount === 0 && layout !== EIssueLayoutTypes.CALENDAR) {
     return <IssueLayoutEmptyState storeType={storeType} />;
   }
 

@@ -44,17 +44,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     membership: { currentProjectRole },
   } = useUser();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
-  const {
-    fetchIssues,
-    fetchNextIssues,
-    quickAddIssue,
-    updateIssue,
-    removeIssue,
-    removeIssueFromView,
-    archiveIssue,
-    restoreIssue,
-    updateFilters,
-  } = useIssuesActions(storeType);
+  const { quickAddIssue, updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
 
   const issueCalendarView = useCalendarView();
 
@@ -64,25 +55,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
-  const layout = displayFilters?.calendar?.layout ?? "month";
-  const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
-
-  useEffect(() => {
-    startDate &&
-      endDate &&
-      layout &&
-      fetchIssues(
-        "init-loader",
-        {
-          canGroup: true,
-          perPageCount: layout === "month" ? 4 : 30,
-          before: endDate,
-          after: startDate,
-          groupedBy: EIssueGroupByToServerOptions["target_date"],
-        },
-        viewId
-      );
-  }, [fetchIssues, storeType, startDate, endDate, layout, viewId]);
 
   const handleDragAndDrop = async (
     issueId: string | undefined,
@@ -106,23 +78,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
       });
     });
   };
-
-  const loadMoreIssues = useCallback(
-    (dateString: string) => {
-      fetchNextIssues(dateString);
-    },
-    [fetchNextIssues]
-  );
-
-  const getPaginationData = useCallback(
-    (groupId: string | undefined) => issues?.getPaginationData(groupId, undefined),
-    [issues?.getPaginationData]
-  );
-
-  const getGroupIssueCount = useCallback(
-    (groupId: string | undefined) => issues?.getGroupIssueCount(groupId, undefined, false),
-    [issues?.getGroupIssueCount]
-  );
 
   return (
     <>
@@ -148,9 +103,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               placements={placement}
             />
           )}
-          loadMoreIssues={loadMoreIssues}
-          getPaginationData={getPaginationData}
-          getGroupIssueCount={getGroupIssueCount}
           addIssuesToView={addIssuesToView}
           quickAddCallback={quickAddIssue}
           readOnly={!isEditingAllowed || isCompletedCycle}

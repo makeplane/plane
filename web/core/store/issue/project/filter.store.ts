@@ -87,7 +87,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     const displayFilters = this.filters[projectId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
-    return this.computedIssueFilters(displayFilters);
+    return this.computedIssueFilters(displayFilters, { project: [projectId] });
   }
 
   getAppliedFilters(projectId: string) {
@@ -185,7 +185,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
 
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(
+          this.rootIssueStore.projectIssues.fetchIssues(
             workspaceSlug,
             projectId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
@@ -229,7 +229,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
           });
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+            this.rootIssueStore.projectIssues.fetchIssues(workspaceSlug, projectId, "mutation");
           }
 
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {

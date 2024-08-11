@@ -39,7 +39,7 @@ import { TRenderQuickActions } from "./list-view-types";
 import { ListQuickAddIssueForm } from "./quick-add-issue-form";
 
 interface Props {
-  groupIssueIds: string[] | undefined;
+  issueIds: string[] | undefined;
   group: IGroupByColumn;
   issuesMap: TIssueMap;
   group_by: TIssueGroupByOptions | null;
@@ -57,13 +57,12 @@ interface Props {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
   showEmptyGroup?: boolean;
-  loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
 }
 
 export const ListGroup = observer((props: Props) => {
   const {
-    groupIssueIds = [],
+    issueIds = [],
     group,
     issuesMap,
     group_by,
@@ -81,7 +80,6 @@ export const ListGroup = observer((props: Props) => {
     addIssuesToView,
     isCompletedCycle,
     showEmptyGroup,
-    loadMoreIssues,
     selectionHelpers,
   } = props;
 
@@ -92,35 +90,7 @@ export const ListGroup = observer((props: Props) => {
 
   const projectState = useProjectState();
 
-  const {
-    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
-  } = useIssuesStore();
-
-  const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
-
-  const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
-  const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
-  const isPaginating = !!getIssueLoader(group.id);
-
-  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `100% 0% 100% 0%`);
-
-  const shouldLoadMore =
-    nextPageResults === undefined && groupIssueCount !== undefined && groupIssueIds
-      ? groupIssueIds.length < groupIssueCount
-      : !!nextPageResults;
-
-  const loadMore = isPaginating ? (
-    <ListLoaderItemRow />
-  ) : (
-    <div
-      className={
-        "h-11 relative flex items-center gap-3 bg-custom-background-100 border border-transparent border-t-custom-border-200 pl-8 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
-      }
-      onClick={() => loadMoreIssues(group.id)}
-    >
-      Load More &darr;
-    </div>
-  );
+  const groupIssueCount = issueIds?.length ?? 0;
 
   const validateEmptyIssueGroups = (issueCount: number = 0) => {
     if (!showEmptyGroup && issueCount <= 0) return false;
@@ -254,9 +224,9 @@ export const ListGroup = observer((props: Props) => {
             orderBy={orderBy}
             isDraggingOverColumn={isDraggingOverColumn}
           />
-          {groupIssueIds && (
+          {issueIds && (
             <IssueBlocksList
-              issueIds={groupIssueIds}
+              issueIds={issueIds}
               groupId={group.id}
               issuesMap={issuesMap}
               updateIssue={updateIssue}
@@ -269,8 +239,6 @@ export const ListGroup = observer((props: Props) => {
               selectionHelpers={selectionHelpers}
             />
           )}
-
-          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
 
           {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
             <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">

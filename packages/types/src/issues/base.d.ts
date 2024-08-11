@@ -10,17 +10,19 @@ export * from "./issue_relation";
 export * from "./issue_sub_issues";
 export * from "./activity/base";
 
-export type TLoader = "init-loader" | "mutation" | "pagination" | undefined;
+export type TLoader = "init-loader" | "mutation" | undefined;
+
+export type TUngroupedIssues = string[];
 
 export type TGroupedIssues = {
-  [group_id: string]: string[];
+  [group_id: string]: TUngroupedIssues;
 };
 
 export type TSubGroupedIssues = {
   [sub_grouped_id: string]: TGroupedIssues;
 };
 
-export type TIssues = TGroupedIssues | TSubGroupedIssues;
+export type TIssues = TGroupedIssues | TSubGroupedIssues | TUngroupedIssues;
 
 export type TPaginationData = {
   nextCursor: string;

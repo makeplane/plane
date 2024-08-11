@@ -77,7 +77,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters },
-    issues: { getGroupIssueCount },
+    issues: { issueIds },
   } = useIssues(EIssuesStoreType.MODULE);
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
@@ -152,7 +152,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const issuesCount = issueIds?.length;
 
   return (
     <>

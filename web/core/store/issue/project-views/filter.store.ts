@@ -86,9 +86,10 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
   getIssueFilters(viewId: string) {
     const displayFilters = this.filters[viewId] || undefined;
-    if (isEmpty(displayFilters)) return undefined;
+    const projectId = this.rootIssueStore.projectId;
+    if (isEmpty(displayFilters) || !projectId) return undefined;
 
-    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
+    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters, { project: [projectId] });
 
     return _filters;
   }
@@ -190,12 +191,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            viewId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
+          this.rootIssueStore.projectViewIssues.fetchIssues(workspaceSlug, projectId, viewId, "mutation");
           break;
         }
         case EIssueFilterType.DISPLAY_FILTERS: {
@@ -232,12 +228,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           });
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
-              workspaceSlug,
-              projectId,
-              viewId,
-              "mutation"
-            );
+            this.rootIssueStore.projectViewIssues.fetchIssues(workspaceSlug, projectId, viewId, "mutation");
           }
 
           break;

@@ -58,12 +58,15 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @param {IIssueFilters} filters
    * @returns {IIssueFilters}
    */
-  computedIssueFilters = (filters: IIssueFilters): IIssueFilters => ({
-    filters: isEmpty(filters?.filters) ? undefined : filters?.filters,
-    displayFilters: isEmpty(filters?.displayFilters) ? undefined : filters?.displayFilters,
-    displayProperties: isEmpty(filters?.displayProperties) ? undefined : filters?.displayProperties,
-    kanbanFilters: isEmpty(filters?.kanbanFilters) ? undefined : filters?.kanbanFilters,
-  });
+  computedIssueFilters = (filters: IIssueFilters, defaultFilters?: IIssueFilterOptions): IIssueFilters => {
+    const currFilters = isEmpty(filters?.filters) ? defaultFilters : { ...filters?.filters, ...defaultFilters };
+    return {
+      filters: currFilters,
+      displayFilters: isEmpty(filters?.displayFilters) ? undefined : filters?.displayFilters,
+      displayProperties: isEmpty(filters?.displayProperties) ? undefined : filters?.displayProperties,
+      kanbanFilters: isEmpty(filters?.kanbanFilters) ? undefined : filters?.kanbanFilters,
+    };
+  };
 
   /**
    * @description This method is used to convert the filters array params to string params

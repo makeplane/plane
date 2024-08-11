@@ -46,9 +46,6 @@ type Props = {
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
   issueCalendarView: ICalendarStore;
-  loadMoreIssues: (dateString: string) => void;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
@@ -73,13 +70,10 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     layout,
     showWeekends,
     issueCalendarView,
-    loadMoreIssues,
     handleDragAndDrop,
     quickActions,
     quickAddCallback,
     addIssuesToView,
-    getPaginationData,
-    getGroupIssueCount,
     updateFilters,
     readOnly = false,
   } = props;
@@ -159,9 +153,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                         week={week}
                         issues={issues}
                         groupedIssueIds={groupedIssueIds}
-                        loadMoreIssues={loadMoreIssues}
-                        getPaginationData={getPaginationData}
-                        getGroupIssueCount={getGroupIssueCount}
                         enableQuickIssueCreate
                         disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                         quickActions={quickActions}
@@ -181,9 +172,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   week={issueCalendarView.allDaysOfActiveWeek}
                   issues={issues}
                   groupedIssueIds={groupedIssueIds}
-                  loadMoreIssues={loadMoreIssues}
-                  getPaginationData={getPaginationData}
-                  getGroupIssueCount={getGroupIssueCount}
                   enableQuickIssueCreate
                   disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                   quickActions={quickActions}
@@ -204,9 +192,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               <CalendarIssueBlocks
                 date={selectedDate}
                 issueIdList={issueIdList}
-                loadMoreIssues={loadMoreIssues}
-                getPaginationData={getPaginationData}
-                getGroupIssueCount={getGroupIssueCount}
                 quickActions={quickActions}
                 enableQuickIssueCreate
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
@@ -231,9 +216,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             date={selectedDate}
             issueIdList={issueIdList}
             quickActions={quickActions}
-            loadMoreIssues={loadMoreIssues}
-            getPaginationData={getPaginationData}
-            getGroupIssueCount={getGroupIssueCount}
             enableQuickIssueCreate
             disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
             quickAddCallback={quickAddCallback}

@@ -40,6 +40,16 @@ export class IssueService extends APIService {
       });
   }
 
+  async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/deleted-issues/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssuesWithParams(
     workspaceSlug: string,
     projectId: string,

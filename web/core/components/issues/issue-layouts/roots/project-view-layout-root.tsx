@@ -41,16 +41,21 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
   // hooks
-  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
+        await issues.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          viewId.toString(),
+          issues.issueIds ? "mutation" : "init-loader"
+        );
       }
-    },
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    }
   );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;

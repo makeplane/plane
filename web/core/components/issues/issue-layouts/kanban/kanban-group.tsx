@@ -14,6 +14,7 @@ import {
   TSubGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
+  TUngroupedIssues,
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
@@ -32,7 +33,7 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
+  issueIds: TUngroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -44,7 +45,6 @@ interface IKanbanGroup {
   quickActions: TRenderQuickActions;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle?: boolean;
@@ -62,13 +62,12 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     sub_group_by,
     issuesMap,
     displayProperties,
-    groupedIssueIds,
+    issueIds,
     isDropDisabled,
     dropErrorMessage,
     updateIssue,
     quickActions,
     canEditProperties,
-    loadMoreIssues,
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
@@ -79,26 +78,11 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const projectState = useProjectState();
 
   const {
-    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
+    issues: { getIssueLoader },
   } = useIssuesStore();
-
-  const [intersectionElement, setIntersectionElement] = useState<HTMLSpanElement | null>(null);
   const columnRef = useRef<HTMLDivElement | null>(null);
 
-  const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
-
-  const loadMoreIssuesInThisGroup = useCallback(() => {
-    loadMoreIssues(groupId, sub_group_id === "null" ? undefined : sub_group_id);
-  }, [loadMoreIssues, groupId, sub_group_id]);
-
   const isPaginating = !!getIssueLoader(groupId, sub_group_id);
-
-  useIntersectionObserver(
-    containerRef,
-    isPaginating ? null : intersectionElement,
-    loadMoreIssuesInThisGroup,
-    `0% 100% 100% 100%`
-  );
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
   // Enable Kanban Columns as Drop Targets
@@ -214,27 +198,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
-  const issueIds = isSubGroup
-    ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? []
-    : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
+  const groupIssueCount = Array.isArray(issueIds) ? issueIds.lastIndexOf : 0;
 
-  const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false) ?? 0;
-
-  const nextPageResults = getPaginationData(groupId, sub_group_id)?.nextPageResults;
-
-  const loadMore = isPaginating ? (
-    <KanbanIssueBlockLoader />
-  ) : (
-    <div
-      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
-      onClick={loadMoreIssuesInThisGroup}
-    >
-      {" "}
-      Load More &darr;
-    </div>
-  );
-
-  const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
   const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
@@ -268,8 +233,6 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         scrollableContainerRef={scrollableContainerRef}
         canDropOverIssue={!canOverlayBeVisible}
       />
-
-      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">

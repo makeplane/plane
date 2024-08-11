@@ -13,8 +13,6 @@ import { GANTT_SELECT_GROUP, HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 type Props = {
   blockIds: string[];
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  canLoadMoreBlocks?: boolean;
-  loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
   enableReorder: boolean;
   enableSelection: boolean;
@@ -33,8 +31,6 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     enableSelection,
     sidebarToRender,
     getBlockById,
-    loadMoreBlocks,
-    canLoadMoreBlocks,
     ganttContainerRef,
     title,
     quickAdd,
@@ -91,10 +87,8 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             getBlockById,
             enableReorder,
             enableSelection,
-            canLoadMoreBlocks,
             ganttContainerRef,
-            loadMoreBlocks,
-            selectionHelpers
+            selectionHelpers,
           })}
       </div>
       {quickAdd ? quickAdd : null}

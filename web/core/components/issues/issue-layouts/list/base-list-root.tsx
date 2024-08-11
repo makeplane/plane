@@ -38,16 +38,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const storeType = useIssueStoreType() as ListStoreType;
   //stores
   const { issuesFilter, issues } = useIssues(storeType);
-  const {
-    fetchIssues,
-    fetchNextIssues,
-    quickAddIssue,
-    updateIssue,
-    removeIssue,
-    removeIssueFromView,
-    archiveIssue,
-    restoreIssue,
-  } = useIssuesActions(storeType);
+  const { fetchIssues, quickAddIssue, updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue } =
+    useIssuesActions(storeType);
   // mobx store
   const {
     membership: { currentProjectRole },
@@ -60,10 +52,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
-
-  useEffect(() => {
-    fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
-  }, [fetchIssues, storeType, group_by, viewId]);
 
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
   // auth
@@ -99,13 +87,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
-  const loadMoreIssues = useCallback(
-    (groupId?: string) => {
-      fetchNextIssues(groupId);
-    },
-    [fetchNextIssues]
-  );
-
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-custom-background-90`}>
@@ -117,7 +98,6 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           updateIssue={updateIssue}
           quickActions={renderQuickActions}
           groupedIssueIds={groupedIssueIds ?? {}}
-          loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           quickAddCallback={quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}

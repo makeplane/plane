@@ -7,7 +7,6 @@ import {
   TIssue,
   IIssueDisplayProperties,
   IIssueMap,
-  TSubGroupedIssues,
   TIssueKanbanFilters,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -26,12 +25,7 @@ import { KanbanGroup } from "./kanban-group";
 
 export interface IKanBan {
   issuesMap: IIssueMap;
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
-  getGroupIssueCount: (
-    groupId: string | undefined,
-    subGroupId: string | undefined,
-    isSubGroupCumulative: boolean
-  ) => number | undefined;
+  groupedIssueIds: TGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -43,7 +37,6 @@ export interface IKanBan {
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
-  loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
@@ -58,7 +51,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
     issuesMap,
     groupedIssueIds,
-    getGroupIssueCount,
     displayProperties,
     sub_group_by,
     group_by,
@@ -69,7 +61,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     handleKanbanFilters,
     enableQuickIssueCreate,
     quickAddCallback,
-    loadMoreIssues,
     disableIssueCreation,
     addIssuesToView,
     canEditProperties,
@@ -108,13 +99,14 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   if (!list) return null;
 
   const visibilityGroupBy = (_list: IGroupByColumn): { showGroup: boolean; showIssues: boolean } => {
+    const count = Array.isArray(groupedIssueIds?.[_list.id]) ? groupedIssueIds?.[_list.id].length : 0;
     if (sub_group_by) {
       const groupVisibility = {
         showGroup: true,
         showIssues: true,
       };
       if (!showEmptyGroup) {
-        groupVisibility.showGroup = (getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0;
+        groupVisibility.showGroup = count > 0;
       }
       return groupVisibility;
     } else {
@@ -123,7 +115,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
         showIssues: true,
       };
       if (!showEmptyGroup) {
-        if ((getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0) groupVisibility.showGroup = true;
+        if (count > 0) groupVisibility.showGroup = true;
         else groupVisibility.showGroup = false;
       }
       if (kanbanFilters?.group_by.includes(_list.id)) groupVisibility.showIssues = false;
@@ -137,13 +129,13 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     <div className={`relative w-full flex gap-2 px-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {list &&
         list.length > 0 &&
-        list.map((subList: IGroupByColumn) => {
-          const groupByVisibilityToggle = visibilityGroupBy(subList);
+        list.map((group: IGroupByColumn) => {
+          const groupByVisibilityToggle = visibilityGroupBy(group);
 
           if (groupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div
-              key={subList.id}
+              key={group.id}
               className={`group relative flex flex-shrink-0 flex-col ${
                 groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
               } `}
@@ -153,11 +145,11 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
-                    column_id={subList.id}
-                    icon={subList.icon}
-                    title={subList.name}
-                    count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
-                    issuePayload={subList.payload}
+                    column_id={group.id}
+                    icon={group.icon}
+                    title={group.name}
+                    count={Array.isArray(groupedIssueIds?.[group.id]) ? groupedIssueIds?.[group.id].length : 0}
+                    issuePayload={group.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     addIssuesToView={addIssuesToView}
                     kanbanFilters={kanbanFilters}
@@ -168,17 +160,17 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
 
               {groupByVisibilityToggle.showIssues && (
                 <KanbanGroup
-                  groupId={subList.id}
+                  groupId={group.id}
                   issuesMap={issuesMap}
-                  groupedIssueIds={groupedIssueIds}
+                  issueIds={groupedIssueIds?.[group.id] ?? []}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
                   orderBy={orderBy}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
-                  isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
-                  dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
+                  isDropDisabled={!!group.isDropDisabled || !!isDropDisabled}
+                  dropErrorMessage={group.dropErrorMessage ?? dropErrorMessage}
                   updateIssue={updateIssue}
                   quickActions={quickActions}
                   enableQuickIssueCreate={enableQuickIssueCreate}
@@ -186,7 +178,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   disableIssueCreation={disableIssueCreation}
                   canEditProperties={canEditProperties}
                   scrollableContainerRef={scrollableContainerRef}
-                  loadMoreIssues={loadMoreIssues}
                   handleOnDrop={handleOnDrop}
                 />
               )}

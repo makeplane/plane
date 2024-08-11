@@ -26,13 +26,13 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
-    issues: { getGroupIssueCount },
+    issues: { issueIds },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { currentProjectDetails, loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
-  const issueCount = getGroupIssueCount(undefined, undefined, false);
+  const issueCount = issueIds?.length;
 
   const activeTabBreadcrumbDetail =
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];

@@ -76,7 +76,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
-    issues: { getGroupIssueCount },
+    issues: { issueIds },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
@@ -152,7 +152,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const issuesCount = issueIds?.length;
 
   return (
     <>

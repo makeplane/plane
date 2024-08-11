@@ -26,6 +26,8 @@ import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types"
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
+import { TGroupedIssues, TSubGroupedIssues } from "@plane/types";
+import useSWR from "swr";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -57,17 +59,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const {
-    fetchIssues,
-    fetchNextIssues,
-    quickAddIssue,
-    updateIssue,
-    removeIssue,
-    removeIssueFromView,
-    archiveIssue,
-    restoreIssue,
-    updateFilters,
-  } = useIssuesActions(storeType);
+  const { quickAddIssue, updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
 
   const deleteAreaRef = useRef<HTMLDivElement | null>(null);
   const [isDragOverDelete, setIsDragOverDelete] = useState(false);
@@ -82,26 +75,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const orderBy = displayFilters?.order_by;
 
-  useEffect(() => {
-    fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);
-  }, [fetchIssues, storeType, group_by, sub_group_by, viewId]);
-
-  const fetchMoreIssues = useCallback(
-    (groupId?: string, subgroupId?: string) => {
-      if (issues?.getIssueLoader(groupId, subgroupId) !== "pagination") {
-        fetchNextIssues(groupId, subgroupId);
-      }
-    },
-    [fetchNextIssues]
-  );
-
-  const debouncedFetchMoreIssues = debounce(
-    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
-    300,
-    { leading: true, trailing: false }
-  );
-
-  const groupedIssueIds = issues?.groupedIssueIds;
+  const groupedIssueIds = issues?.groupedIssueIds as TSubGroupedIssues & TGroupedIssues;
 
   const userDisplayFilters = displayFilters || null;
 
@@ -257,7 +231,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             <KanBanView
               issuesMap={issueMap}
               groupedIssueIds={groupedIssueIds ?? {}}
-              getGroupIssueCount={issues.getGroupIssueCount}
               displayProperties={displayProperties}
               sub_group_by={sub_group_by}
               group_by={group_by}
@@ -274,7 +247,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               addIssuesToView={addIssuesToView}
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
-              loadMoreIssues={debouncedFetchMoreIssues}
             />
           </div>
         </div>

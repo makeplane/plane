@@ -18,8 +18,6 @@ import { IssuesSidebarBlock } from "./block";
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   getBlockById: (id: string) => IGanttBlock;
-  canLoadMoreBlocks?: boolean;
-  loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
   blockIds: string[];
   enableReorder: boolean;
@@ -35,27 +33,9 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     getBlockById,
     enableReorder,
     enableSelection,
-    loadMoreBlocks,
-    canLoadMoreBlocks,
-    ganttContainerRef,
     showAllBlocks = false,
     selectionHelpers,
   } = props;
-
-  const {
-    issues: { getIssueLoader },
-  } = useIssuesStore();
-
-  const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
-
-  const isPaginating = !!getIssueLoader();
-
-  useIntersectionObserver(
-    ganttContainerRef,
-    isPaginating ? null : intersectionElement,
-    loadMoreBlocks,
-    "100% 0% 100% 0%"
-  );
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,
@@ -95,11 +75,6 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
               </GanttDnDHOC>
             );
           })}
-          {canLoadMoreBlocks && (
-            <div ref={setIntersectionElement} className="p-2">
-              <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
-            </div>
-          )}
         </>
       ) : (
         <Loader className="space-y-3 pr-2">

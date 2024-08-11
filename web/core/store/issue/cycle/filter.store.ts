@@ -88,7 +88,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     const displayFilters = this.filters[cycleId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
-    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
+    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters, { cycle: [cycleId] });
 
     return _filters;
   }
@@ -192,12 +192,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
 
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
-            cycleId
-          );
+          this.rootIssueStore.cycleIssues.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             filters: _filters.filters,
           });
@@ -237,12 +232,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
           });
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-              workspaceSlug,
-              projectId,
-              "mutation",
-              cycleId
-            );
+            this.rootIssueStore.cycleIssues.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
           }
 
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {

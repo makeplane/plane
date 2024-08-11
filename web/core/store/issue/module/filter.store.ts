@@ -88,7 +88,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     const displayFilters = this.filters[moduleId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
-    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters);
+    const _filters: IIssueFilters = this.computedIssueFilters(displayFilters, { module: [moduleId] });
 
     return _filters;
   }
@@ -191,12 +191,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           });
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
-            moduleId
-          );
+          this.rootIssueStore.moduleIssues.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             filters: _filters.filters,
           });
@@ -236,12 +231,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           });
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
-              workspaceSlug,
-              projectId,
-              "mutation",
-              moduleId
-            );
+            this.rootIssueStore.moduleIssues.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
           }
 
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {

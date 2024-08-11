@@ -40,7 +40,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId, moduleId } = useParams();
   // hooks
-  const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
   useSWR(
     workspaceSlug && projectId && moduleId
@@ -49,9 +49,14 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && moduleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
+        await issues.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues.issueIds ? "mutation" : "init-loader",
+          moduleId.toString()
+        );
       }
-    },
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    }
   );
 
   if (!workspaceSlug || !projectId || !moduleId) return <></>;

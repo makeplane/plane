@@ -32,8 +32,6 @@ type ChartViewRootProps = {
   bottomSpacing: boolean;
   showAllBlocks: boolean;
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
-  loadMoreBlocks?: () => void;
-  canLoadMoreBlocks?: boolean;
   quickAdd?: React.JSX.Element | undefined;
 };
 
@@ -43,12 +41,10 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     title,
     blockIds,
     getBlockById,
-    loadMoreBlocks,
     loaderTitle,
     blockUpdateHandler,
     sidebarToRender,
     blockToRender,
-    canLoadMoreBlocks,
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
@@ -165,8 +161,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
       <GanttChartMainContent
         blockIds={blockIds}
         getBlockById={getBlockById}
-        loadMoreBlocks={loadMoreBlocks}
-        canLoadMoreBlocks={canLoadMoreBlocks}
         blockToRender={blockToRender}
         blockUpdateHandler={blockUpdateHandler}
         bottomSpacing={bottomSpacing}

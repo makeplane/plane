@@ -45,21 +45,26 @@ const CycleIssueLayout = (props: {
 export const CycleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
-  const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   useSWR(
     workspaceSlug && projectId && cycleId
-      ? `CYCLE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${cycleId.toString()}`
+      ? `CYCLE_ISSUES_FILTERS_${workspaceSlug.toString()}_${projectId.toString()}_${cycleId.toString()}`
       : null,
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        await issues.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues.issueIds ? "mutation" : "init-loader",
+          cycleId.toString()
+        );
       }
-    },
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    }
   );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
-import { IIssueDisplayFilterOptions } from "@plane/types";
+import { IIssueDisplayFilterOptions, TUngroupedIssues } from "@plane/types";
 // hooks
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
@@ -44,7 +44,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { issues, issuesFilter } = useIssues(storeType);
   const {
     fetchIssues,
-    fetchNextIssues,
     quickAddIssue,
     updateIssue,
     removeIssue,
@@ -58,10 +57,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  useEffect(() => {
-    fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
-  }, [fetchIssues, storeType, viewId]);
-
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
@@ -72,8 +67,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
 
-  const issueIds = issues.groupedIssueIds?.[ALL_ISSUES] ?? [];
-  const nextPageResults = issues.getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
+  const issueIds = (issues.groupedIssueIds ?? []) as TUngroupedIssues;
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -120,8 +114,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         quickAddCallback={quickAddIssue}
         enableQuickCreateIssue={enableQuickAdd}
         disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-        canLoadMoreIssues={!!nextPageResults}
-        loadMoreIssues={fetchNextIssues}
       />
     </IssueLayoutHOC>
   );

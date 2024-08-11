@@ -46,7 +46,6 @@ export interface IList {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
-  loadMoreIssues: (groupId?: string) => void;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -66,7 +65,6 @@ export const List: React.FC<IList> = observer((props) => {
     handleOnDrop,
     addIssuesToView,
     isCompletedCycle = false,
-    loadMoreIssues,
   } = props;
 
   const storeType = useIssueStoreType();
@@ -142,7 +140,7 @@ export const List: React.FC<IList> = observer((props) => {
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup
                     key={group.id}
-                    groupIssueIds={groupedIssueIds?.[group.id]}
+                    issueIds={groupedIssueIds?.[group.id]}
                     issuesMap={issuesMap}
                     group_by={group_by}
                     group={group}
@@ -159,7 +157,6 @@ export const List: React.FC<IList> = observer((props) => {
                     disableIssueCreation={disableIssueCreation}
                     addIssuesToView={addIssuesToView}
                     isCompletedCycle={isCompletedCycle}
-                    loadMoreIssues={loadMoreIssues}
                     containerRef={containerRef}
                     selectionHelpers={helpers}
                   />

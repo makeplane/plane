@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { TIssue, TUngroupedIssues } from "@plane/types";
 // hooks
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
@@ -48,12 +48,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
-  useEffect(() => {
-    fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
-  }, [fetchIssues, storeType, viewId]);
-
-  const issuesIds = (issues.groupedIssueIds?.[ALL_ISSUES] as string[]) ?? [];
-  const nextPageResults = issues.getPaginationData(undefined, undefined)?.nextPageResults;
+  const issuesIds = (issues.groupedIssueIds as TUngroupedIssues) ?? [];
 
   const { enableIssueCreation } = issues?.viewFlags || {};
 
@@ -111,8 +106,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableAddBlock={isAllowed}
           enableSelection={isBulkOperationsEnabled && isAllowed}
           quickAdd={quickAdd}
-          loadMoreBlocks={loadMoreIssues}
-          canLoadMoreBlocks={nextPageResults}
           showAllBlocks
         />
       </div>

@@ -14,27 +14,12 @@ import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store"
 // services
 import { IIssueRootStore } from "../root.store";
 import { IProjectIssuesFilter } from "./filter.store";
+import { issueDB } from "@/db/local.index";
 
 export interface IProjectIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
   // action
-  fetchIssues: (
-    workspaceSlug: string,
-    projectId: string,
-    loadType: TLoader,
-    option: IssuePaginationOptions
-  ) => Promise<TIssuesResponse | undefined>;
-  fetchIssuesWithExistingPagination: (
-    workspaceSlug: string,
-    projectId: string,
-    loadType: TLoader
-  ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (
-    workspaceSlug: string,
-    projectId: string,
-    groupId?: string,
-    subGroupId?: string
-  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
@@ -60,8 +45,6 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     super(_rootStore, issueFilterStore);
     makeObservable(this, {
       fetchIssues: action,
-      fetchNextIssues: action,
-      fetchIssuesWithExistingPagination: action,
 
       quickAddIssue: action,
     });
@@ -90,91 +73,24 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
    * @param options
    * @returns
    */
-  fetchIssues = async (
-    workspaceSlug: string,
-    projectId: string,
-    loadType: TLoader = "init-loader",
-    options: IssuePaginationOptions,
-    isExistingPaginationOptions: boolean = false
-  ) => {
+  fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
     try {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear(!isExistingPaginationOptions);
+      if (loadType === "init-loader") this.clear();
 
-      // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
-      // call the fetch issues API with the params
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
-        signal: this.controller.signal,
-      });
+      const response = await issueDB.getIssues(workspaceSlug, projectId, this.issueFilterStore.issueFilters);
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchIssues(response);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
       this.setLoader(undefined);
       throw error;
     }
-  };
-
-  /**
-   * This method is called subsequent pages of pagination
-   * if groupId/subgroupId is provided, only that specific group's next page is fetched
-   * else all the groups' next page is fetched
-   * @param workspaceSlug
-   * @param projectId
-   * @param groupId
-   * @param subGroupId
-   * @returns
-   */
-  fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
-    const cursorObject = this.getPaginationData(groupId, subGroupId);
-    // if there are no pagination options and the next page results do not exist the return
-    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
-    try {
-      // set Loader
-      this.setLoader("pagination", groupId, subGroupId);
-
-      // get params from stored pagination options
-      const params = this.issueFilterStore?.getFilterParams(
-        this.paginationOptions,
-        projectId,
-        this.getNextCursor(groupId, subGroupId),
-        groupId,
-        subGroupId
-      );
-      // call the fetch issues API with the params for next page in issues
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
-
-      // after the next page of issues are fetched, call the base method to process the response
-      this.onfetchNexIssues(response, groupId, subGroupId);
-      return response;
-    } catch (error) {
-      // set Loader as undefined if errored out
-      this.setLoader(undefined, groupId, subGroupId);
-      throw error;
-    }
-  };
-
-  /**
-   * This Method exists to fetch the first page of the issues with the existing stored pagination
-   * This is useful for refetching when filters, groupBy, orderBy etc changes
-   * @param workspaceSlug
-   * @param projectId
-   * @param loadType
-   * @returns
-   */
-  fetchIssuesWithExistingPagination = async (
-    workspaceSlug: string,
-    projectId: string,
-    loadType: TLoader = "mutation"
-  ) => {
-    if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
   };
 
   /**

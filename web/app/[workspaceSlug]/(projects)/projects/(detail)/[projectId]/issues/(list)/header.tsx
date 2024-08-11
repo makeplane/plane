@@ -50,7 +50,7 @@ export const ProjectIssuesHeader = observer(() => {
   } = useMember();
   const {
     issuesFilter: { issueFilters, updateFilters },
-    issues: { getGroupIssueCount },
+    issues: { issueIds },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -113,7 +113,7 @@ export const ProjectIssuesHeader = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const issuesCount = issueIds?.length;
 
   return (
     <>

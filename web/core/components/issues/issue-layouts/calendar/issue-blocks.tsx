@@ -6,13 +6,11 @@ import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { useState } from "react";
 // types
 
 type Props = {
   date: Date;
-  loadMoreIssues: (dateString: string) => void;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   issueIdList: string[];
   quickActions: TRenderQuickActions;
   isDragDisabled?: boolean;
@@ -29,7 +27,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     date,
     issueIdList,
     quickActions,
-    loadMoreIssues,
     isDragDisabled = false,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -40,24 +37,17 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
 
-  const {
-    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
-  } = useIssuesStore();
+  const [isExpanded, setIsExpanded] = useState(isMobileView);
 
   if (!formattedDatePayload) return null;
 
-  const dayIssueCount = getGroupIssueCount(formattedDatePayload, undefined, false);
-  const nextPageResults = getPaginationData(formattedDatePayload, undefined)?.nextPageResults;
-  const isPaginating = !!getIssueLoader(formattedDatePayload);
+  const dayIssueCount = issueIdList?.length ?? 0;
 
-  const shouldLoadMore =
-    nextPageResults === undefined && dayIssueCount !== undefined
-      ? issueIdList?.length < dayIssueCount
-      : !!nextPageResults;
+  const currentIssueIds = isExpanded ? issueIdList : issueIdList?.slice(0, 4);
 
   return (
     <>
-      {issueIdList?.map((issueId) => (
+      {currentIssueIds?.map((issueId) => (
         <div key={issueId} className="relative cursor-pointer p-1 px-2">
           <CalendarIssueBlockRoot
             issueId={issueId}
@@ -66,12 +56,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
           />
         </div>
       ))}
-
-      {isPaginating && (
-        <div className="p-1 px-2">
-          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
-        </div>
-      )}
 
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
         <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
@@ -87,12 +71,12 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         </div>
       )}
 
-      {shouldLoadMore && !isPaginating && (
+      {!isExpanded && dayIssueCount > 4 && (
         <div className="flex items-center px-2.5 py-1">
           <button
             type="button"
             className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 font-medium  hover:bg-custom-background-80 text-custom-primary-100 hover:text-custom-primary-200"
-            onClick={() => loadMoreIssues(formattedDatePayload)}
+            onClick={() => setIsExpanded(true)}
           >
             Load More
           </button>

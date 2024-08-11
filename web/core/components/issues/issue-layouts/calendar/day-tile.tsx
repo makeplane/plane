@@ -29,9 +29,6 @@ type Props = {
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  loadMoreIssues: (dateString: string) => void;
-  getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
-  getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
@@ -53,9 +50,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     date,
     issues,
     groupedIssueIds,
-    loadMoreIssues,
-    getPaginationData,
-    getGroupIssueCount,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -167,9 +161,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               date={date.date}
               issueIdList={issueIds}
               quickActions={quickActions}
-              loadMoreIssues={loadMoreIssues}
-              getPaginationData={getPaginationData}
-              getGroupIssueCount={getGroupIssueCount}
               isDragDisabled={readOnly}
               addIssuesToView={addIssuesToView}
               disableIssueCreation={disableIssueCreation}
