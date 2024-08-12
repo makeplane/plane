@@ -16,6 +16,9 @@ from .app.issue_property import (
 from .app.worklog import IssueWorkLogSerializer
 from .app.exporter import ExporterHistorySerializer
 
+from .app.workspace.feature import WorkspaceFeatureSerializer
+from .app.workspace.project_state import ProjectStateSerializer
+
 # Space imports
 from .space.page import PagePublicSerializer
 from .space.views import ViewsPublicSerializer
