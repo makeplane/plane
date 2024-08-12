@@ -25,7 +25,8 @@ export interface IIssueType extends TIssueType {
   updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   addProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions?: TIssuePropertyOption[]) => void;
   createProperty: (
-    propertyData: Partial<TIssueProperty<EIssuePropertyType>>
+    propertyData: Partial<TIssueProperty<EIssuePropertyType>>,
+    propertyOptions?: Partial<TIssuePropertyOption>[]
   ) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
   deleteProperty: (propertyId: string) => Promise<void>;
 }
@@ -196,16 +197,25 @@ export class IssueType implements IIssueType {
    * @description Create an issue property
    * @param propertyData Issue property data
    */
-  createProperty = async (propertyData: Partial<TIssueProperty<EIssuePropertyType>>) => {
+  createProperty = async (
+    propertyData: Partial<TIssueProperty<EIssuePropertyType>>,
+    propertyOptions?: Partial<TIssuePropertyOption>[]
+  ) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return;
 
     try {
-      const issueProperty = await this.issuePropertyService.create(workspaceSlug, projectId, this.id, propertyData);
+      const issueProperty = await this.issuePropertyService.create(
+        workspaceSlug,
+        projectId,
+        this.id,
+        propertyData,
+        propertyOptions
+      );
       runInAction(() => {
-        this.addProperty(issueProperty);
+        this.addProperty(issueProperty.property_detail, issueProperty.options);
       });
-      return issueProperty;
+      return issueProperty.property_detail;
     } catch (error) {
       console.error("IssueType.createProperty -> error", error);
       throw error;

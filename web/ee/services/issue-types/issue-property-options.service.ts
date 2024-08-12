@@ -22,13 +22,11 @@ export class IssuePropertyOptionsService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issuePropertyId: string,
-    data: Partial<TIssuePropertyOption>[]
-  ): Promise<TIssuePropertyOption[]> {
+    data: Partial<TIssuePropertyOption>
+  ): Promise<TIssuePropertyOption> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${issuePropertyId}/options/`,
-      {
-        options: data,
-      }
+      data
     )
       .then((response) => response?.data)
       .catch((error) => {

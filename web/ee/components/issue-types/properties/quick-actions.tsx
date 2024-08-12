@@ -2,55 +2,44 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Pencil, Trash2, X } from "lucide-react";
 // ui
-import { AlertModalCore, Spinner, Tooltip } from "@plane/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// plane web components
+import { DeleteConfirmationModal } from "@/plane-web/components/issue-types";
 // plane web types
 import { TOperationMode } from "@/plane-web/types";
 
 type TIssuePropertyQuickActions = {
   currentOperationMode: TOperationMode | null;
   isSubmitting: boolean;
-  handleCreateUpdate: () => Promise<void>;
-  handleDiscard: () => void;
-  handleDelete: () => Promise<void>;
-  handleIssuePropertyOperationMode: (mode: TOperationMode) => void;
+  onCreateUpdate: () => Promise<void>;
+  onDiscard: () => void;
+  onDisable: () => Promise<void>;
+  onDelete: () => Promise<void>;
+  onIssuePropertyOperationMode: (mode: TOperationMode) => void;
 };
 
 export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickActions) => {
   const {
     currentOperationMode,
     isSubmitting,
-    handleCreateUpdate,
-    handleDiscard,
-    handleDelete,
-    handleIssuePropertyOperationMode,
+    onCreateUpdate,
+    onDiscard,
+    onDisable,
+    onDelete,
+    onIssuePropertyOperationMode,
   } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const handleDeleteIssueProperty = async () => {
-    setIsDeleteLoading(true);
-    await handleDelete().finally(() => {
-      setIsDeleteLoading(false);
-    });
-  };
 
   return (
     <>
-      <AlertModalCore
+      <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
-        handleClose={() => setIsDeleteModalOpen(false)}
-        handleSubmit={handleDeleteIssueProperty}
-        isSubmitting={isDeleteLoading}
-        title="Delete this property"
-        content={
-          <>
-            <p>Deletion of properties may lead to loss of existing data or weird behavior.</p>
-            <p>Do you want to disable the property instead?</p>
-          </>
-        }
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDisable={onDisable}
+        onDelete={onDelete}
       />
       <div
         className={cn("items-center justify-end gap-1.5 pr-2", {
@@ -65,7 +54,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
                 className={cn(
                   "p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
                 )}
-                onClick={handleCreateUpdate}
+                onClick={onCreateUpdate}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? <Spinner width="12px" height="12px" /> : <Check size={12} className="text-green-600" />}
@@ -79,7 +68,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
                     "bg-custom-background-80": isSubmitting,
                   }
                 )}
-                onClick={handleDiscard}
+                onClick={onDiscard}
                 disabled={isSubmitting}
               >
                 <X size={12} className="text-red-500" />
@@ -91,7 +80,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
             <Tooltip className="w-full shadow" tooltipContent="Edit" position="bottom">
               <button
                 className="p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
-                onClick={() => handleIssuePropertyOperationMode("update")}
+                  onClick={() => onIssuePropertyOperationMode("update")}
               >
                 <Pencil size={12} className="text-custom-text-300" />
               </button>

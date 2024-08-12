@@ -20,11 +20,11 @@ export type TissuePropertyTypeDetails<T extends EIssuePropertyType> = {
   dataToUpdate: {
     logo_props: TLogoProps;
     property_type: EIssuePropertyType;
-    relation_type: EIssuePropertyRelationType | undefined;
-    is_multi: boolean | undefined;
-    is_required: boolean | undefined;
-    default_value: string[] | undefined;
-    settings: TIssuePropertySettingsMap[T] | undefined;
+    relation_type: EIssuePropertyRelationType | null;
+    is_multi: boolean;
+    is_required: boolean;
+    default_value: string[];
+    settings: TIssuePropertySettingsMap[T];
   };
 };
 

@@ -18,14 +18,14 @@ import {
 // Get the key for the issue property type based on the property type and relation type
 export const getIssuePropertyTypeKey = (
   issuePropertyType: EIssuePropertyType | undefined,
-  issuePropertyRelationType: EIssuePropertyRelationType | undefined
+  issuePropertyRelationType: EIssuePropertyRelationType | null | undefined
 ) =>
   `${issuePropertyType}${issuePropertyRelationType ? `_${issuePropertyRelationType}` : ""}` as TIssuePropertyTypeKeys;
 
 // Get the display name for the issue property type based on the property type and relation type
 export const getIssuePropertyTypeDisplayName = (
   issuePropertyType: EIssuePropertyType | undefined,
-  issuePropertyRelationType: EIssuePropertyRelationType | undefined
+  issuePropertyRelationType: EIssuePropertyRelationType | null | undefined
 ) => {
   const propertyTypeKey = getIssuePropertyTypeKey(issuePropertyType, issuePropertyRelationType);
   return ISSUE_PROPERTY_TYPE_DETAILS[propertyTypeKey]?.displayName || "--";

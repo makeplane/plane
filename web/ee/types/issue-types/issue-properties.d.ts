@@ -1,7 +1,7 @@
 // types
 import { TLogoProps } from "@plane/types";
 // plane web types
-import { TIssuePropertySettingsMap } from "@/plane-web/types/issue-types";
+import { TIssuePropertyOption, TIssuePropertySettingsMap } from "@/plane-web/types/issue-types";
 
 // Issue property types
 export enum EIssuePropertyType {
@@ -27,7 +27,7 @@ type TBaseIssueProperty = {
   description: string | undefined;
   logo_props: TLogoProps | undefined;
   sort_order: number | undefined;
-  relation_type: EIssuePropertyRelationType | undefined;
+  relation_type: EIssuePropertyRelationType | null | undefined;
   is_required: boolean | undefined;
   default_value: string[] | undefined;
   is_active: boolean | undefined;
@@ -43,4 +43,10 @@ type TBaseIssueProperty = {
 export interface TIssueProperty<T extends EIssuePropertyType> extends TBaseIssueProperty {
   property_type: T | undefined;
   settings: TIssuePropertySettingsMap[T] | undefined;
+}
+
+// Issue property response
+export interface TIssuePropertyResponse {
+  property_detail: TIssueProperty<EIssuePropertyType>;
+  options: TIssuePropertyOption[];
 }

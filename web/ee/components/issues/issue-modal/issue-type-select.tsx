@@ -16,12 +16,13 @@ import { useFlag } from "@/plane-web/hooks/store";
 
 type TIssueTypeSelectProps = {
   control: Control<TIssue>;
-  projectId: string;
+  projectId: string | null;
   disabled?: boolean;
+  handleFormChange: () => void;
 };
 
 export const IssueTypeSelect: React.FC<TIssueTypeSelectProps> = observer((props) => {
-  const { control, projectId, disabled = false } = props;
+  const { control, projectId, disabled = false, handleFormChange } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -52,6 +53,7 @@ export const IssueTypeSelect: React.FC<TIssueTypeSelectProps> = observer((props)
                     disabled={disabled}
                     handleIssueTypeChange={(issueTypeId) => {
                       onChange(issueTypeId);
+                      handleFormChange();
                     }}
                   />
                 )}

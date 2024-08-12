@@ -301,7 +301,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 handleFormChange={handleFormChange}
               />
               {projectId && (
-                <IssueTypeSelect control={control} projectId={projectId} disabled={!!data?.sourceIssueId} />
+                <IssueTypeSelect
+                  control={control}
+                  projectId={projectId}
+                  disabled={!!data?.sourceIssueId}
+                  handleFormChange={handleFormChange}
+                />
               )}
             </div>
           )}
