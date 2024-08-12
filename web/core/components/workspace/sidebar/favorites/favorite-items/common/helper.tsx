@@ -44,6 +44,6 @@ const entityPaths: Record<string, string> = {
 export const generateFavoriteItemLink = (workspaceSlug: string, favorite: IFavorite) => {
   const entityPath = entityPaths[favorite.entity_type];
   return entityPath
-    ? `/${workspaceSlug}/projects/${favorite.project_id}/${entityPath}/${favorite.entity_identifier || ""}`
+    ? `/${workspaceSlug}/projects/${favorite.project_id}/${entityPath}/${entityPath === "issues" ? "" : favorite.entity_identifier || ""}`
     : `/${workspaceSlug}`;
 };
