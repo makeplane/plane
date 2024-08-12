@@ -1,7 +1,6 @@
 import concat from "lodash/concat";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
-import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
@@ -15,6 +14,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 import {
   EIssuePropertyRelationType,
   EIssuePropertyType,
+  TIssuePropertyPayload,
   TIssueProperty,
   TIssuePropertyOption,
   TIssuePropertySettingsMap,
@@ -24,12 +24,12 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
   propertyOptions: IIssuePropertyOption[];
   // computed
   asJSON: TIssueProperty<T>;
-  sortedActivePropertyOptions: IIssuePropertyOption[];
+  sortedActivePropertyOptions: TIssuePropertyOption[];
   // computed function
   getPropertyOptionById: (propertyOptionId: string) => IIssuePropertyOption | undefined;
   // actions
-  updateProperty: (issueTypeId: string, propertyData: Partial<TIssueProperty<T>>) => Promise<void>;
-  addPropertyOption: (propertyOptionData: TIssuePropertyOption) => void;
+  updateProperty: (issueTypeId: string, propertyData: TIssuePropertyPayload) => Promise<void>;
+  addOrUpdatePropertyOptions: (propertyOptionsData: TIssuePropertyOption[]) => void;
   createPropertyOption: (propertyOption: Partial<TIssuePropertyOption>) => Promise<TIssuePropertyOption | undefined>;
   deletePropertyOption: (propertyOptionId: string) => Promise<void>;
 }
@@ -88,8 +88,8 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       asJSON: computed,
       sortedActivePropertyOptions: computed,
       // actions
+      addOrUpdatePropertyOptions: action,
       updateProperty: action,
-      addPropertyOption: action,
       createPropertyOption: action,
       deletePropertyOption: action,
     });
@@ -147,11 +147,12 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
 
   /**
    * @description Get sorted active property options
-   * @returns {IIssuePropertyOption[]}
+   * @returns {TIssuePropertyOption[]}
    */
-  get sortedActivePropertyOptions(): IIssuePropertyOption[] {
+  get sortedActivePropertyOptions(): TIssuePropertyOption[] {
     return this.propertyOptions
-      ?.filter((option) => option.is_active)
+      .map((option) => option?.asJSON)
+      ?.filter((option) => option?.is_active)
       .sort((a, b) => {
         if (a.sort_order && b.sort_order) return a.sort_order - b.sort_order;
         return 0;
@@ -168,45 +169,36 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     this.propertyOptions.find((option) => option.id === propertyOptionId)
   );
 
-  // actions
+  // helper actions
   /**
-   * @description Update issue property data
-   * @param {Partial<TIssueProperty<T>>} propertyData
+   * @description Add or update property option
+   * @param {TIssuePropertyOption[]} propertyOptionsData
    */
-  updateProperty = async (issueTypeId: string, propertyData: Partial<TIssueProperty<T>>) => {
-    const { workspaceSlug, projectId } = this.store.router;
-    if (!workspaceSlug || !projectId || !issueTypeId || !this.id) return undefined;
-
+  addOrUpdatePropertyOptions = (propertyOptionsData: TIssuePropertyOption[]) => {
     try {
-      const issueProperty = await this.service.update(workspaceSlug, projectId, issueTypeId, this.id, propertyData);
-      runInAction(() => {
-        for (const key in issueProperty) {
-          if (issueProperty.hasOwnProperty(key)) {
-            const propertyKey = key as keyof TIssueProperty<T>;
-            set(this, propertyKey, issueProperty[propertyKey] ?? undefined);
-          }
+      // add or update property option
+      for (const option of propertyOptionsData) {
+        if (!option.id) return;
+        const existingPropertyOption = this.getPropertyOptionById(option.id);
+        if (existingPropertyOption) {
+          // update the existing property option
+          existingPropertyOption.updateOptionData(option);
+        } else {
+          const issuePropertyOption = new IssuePropertyOption(this.store, option);
+          const updatedPropertyOptions = uniq(concat(this.propertyOptions, issuePropertyOption));
+          // add or update property option
+          runInAction(() => {
+            set(this, "propertyOptions", updatedPropertyOptions);
+          });
         }
-      });
+      }
     } catch (error) {
-      console.error("IssueProperty -> updateProperty -> error", error);
+      console.error("IssueProperty -> addOrUpdatePropertyOptions -> error", error);
       throw error;
     }
   };
 
-  /**
-   * @description Add property option
-   * @param {TIssuePropertyOption} propertyOptionData
-   */
-  addPropertyOption = (propertyOptionData: TIssuePropertyOption) => {
-    try {
-      const issuePropertyOption = new IssuePropertyOption(this.store, propertyOptionData);
-      update(this, "propertyOptions", (propertyOptions) => uniq(concat(propertyOptions, issuePropertyOption)));
-    } catch (error) {
-      console.error("IssueProperty -> addPropertyOption -> error", error);
-      throw error;
-    }
-  };
-
+  // actions
   /**
    * @description Create a new property option
    * @param {Partial<TIssuePropertyOption>} propertyOption
@@ -223,12 +215,46 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
         propertyOption
       );
       runInAction(() => {
-        this.addPropertyOption(issuePropertyOption);
+        this.addOrUpdatePropertyOptions([issuePropertyOption]);
       });
 
       return issuePropertyOption;
     } catch (error) {
       console.error("IssueProperty -> createPropertyOption -> error", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Update issue property data
+   * @param {TIssuePropertyPayload} propertyData
+   */
+  updateProperty = async (issueTypeId: string, propertyData: TIssuePropertyPayload) => {
+    const { workspaceSlug, projectId } = this.store.router;
+    if (!workspaceSlug || !projectId || !issueTypeId || !this.id) return undefined;
+
+    try {
+      const issuePropertyResponse = await this.service.update(
+        workspaceSlug,
+        projectId,
+        issueTypeId,
+        this.id,
+        propertyData
+      );
+      runInAction(() => {
+        const { options, ...issuePropertyData } = issuePropertyResponse;
+        for (const key in issuePropertyData) {
+          if (issuePropertyData.hasOwnProperty(key)) {
+            const propertyKey = key as keyof TIssueProperty<T>;
+            set(this, propertyKey, issuePropertyData[propertyKey] ?? undefined);
+          }
+        }
+        if (options && options.length) {
+          this.addOrUpdatePropertyOptions(options);
+        }
+      });
+    } catch (error) {
+      console.error("IssueProperty -> updateProperty -> error", error);
       throw error;
     }
   };

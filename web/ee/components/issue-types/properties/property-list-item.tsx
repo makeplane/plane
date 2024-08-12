@@ -18,14 +18,13 @@ import {
   TIssuePropertyCreateList,
 } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueProperty, useIssueType } from "@/plane-web/hooks/store";
+import { useIssueProperty, useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
 // plane web types
 import {
   EIssuePropertyType,
   TIssueProperty,
   TCreationListModes,
   TOperationMode,
-  TIssuePropertyOptionCreateList,
   TIssuePropertyOption,
 } from "@/plane-web/types";
 
@@ -52,6 +51,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   // store hooks
   const issueType = useIssueType(issueTypeId);
   const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
+  const { propertyOptions, setPropertyOptions, resetOptions } = usePropertyOptions();
   // derived values
   let key: string;
   let issuePropertyCreateData;
@@ -61,6 +61,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   const issuePropertyDetail = issuePropertyId ? issueProperty?.asJSON : issuePropertyCreateData;
   // If issuePropertyDetail is not available, return null
   if (!issuePropertyDetail) return null;
+  const sortedActivePropertyOptions = issueProperty?.sortedActivePropertyOptions;
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [issuePropertyOperationMode, setIssuePropertyOperationMode] = useState<TOperationMode | null>(
@@ -69,9 +70,6 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   const [issuePropertyData, setIssuePropertyData] =
     useState<Partial<TIssueProperty<EIssuePropertyType>>>(issuePropertyDetail);
   const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyError>(defaultIssuePropertyError);
-  const [issuePropertyOptionCreateList, setIssuePropertyOptionCreateList] = useState<TIssuePropertyOptionCreateList[]>(
-    []
-  );
   // derived values
   // check if mandatory field is disabled for the property
   const isMandatoryFieldDisabled =
@@ -81,11 +79,9 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
 
   // get property default values
   const getDefaultValues = () => {
-    // if property is option type and operation mode is create, return default values from issuePropertyOptionCreateList
+    // if property is option type and operation mode is create, return default values from propertyOptions
     if (issuePropertyData?.property_type === EIssuePropertyType.OPTION && issuePropertyOperationMode === "create") {
-      return (
-        issuePropertyOptionCreateList.filter((option) => option.is_default).map((option) => option.id as string) ?? []
-      );
+      return propertyOptions.filter((option) => option.is_default).map((option) => option.id as string) ?? [];
     }
     // else return default values from issuePropertyData
     return issuePropertyData?.default_value ?? [];
@@ -112,40 +108,13 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   };
 
   // handlers
-  const handleIssuePropertyOptionCreateList = (mode: TCreationListModes, value: TIssuePropertyOptionCreateList) => {
-    switch (mode) {
-      case "add":
-        setIssuePropertyOptionCreateList((prevValue) => {
-          prevValue = prevValue ? [...prevValue] : [];
-          return [...prevValue, value];
-        });
-        break;
-      case "update":
-        setIssuePropertyOptionCreateList((prevValue) => {
-          prevValue = prevValue ? [...prevValue] : [];
-          const index = prevValue.findIndex((item) => item.key === value.key);
-          if (index !== -1) prevValue[index] = value;
-          return [...prevValue];
-        });
-        break;
-      case "remove":
-        setIssuePropertyOptionCreateList((prevValue) => {
-          prevValue = prevValue ? [...prevValue] : [];
-          return prevValue.filter((item) => item.key !== value.key);
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
   const handleCreateProperty = async () => {
     if (!issuePropertyData) return;
 
     // create property options payload (required for option type)
     let optionsPayload: Partial<TIssuePropertyOption>[] = [];
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-      optionsPayload = issuePropertyOptionCreateList
+      optionsPayload = propertyOptions
         .map((item) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { key, ...rest } = item;
@@ -156,7 +125,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
 
     setIsSubmitting(true);
     await issueType
-      ?.createProperty(issuePropertyData, optionsPayload)
+      ?.createProperty({
+        ...issuePropertyData,
+        options: optionsPayload,
+      })
       .then(async (response) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -173,7 +145,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         });
       })
       .finally(() => {
-        setIssuePropertyOptionCreateList([]);
+        resetOptions();
         key && handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
         setIsSubmitting(false);
       });
@@ -184,10 +156,36 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     // Construct the payload by filtering out unchanged properties
     const originalData = cloneDeep(issuePropertyDetail);
     const payload = originalData && omitBy(data, (value, key) => isEqual(value, originalData[key]));
-    if (isEmpty(payload)) return;
+
+    // Construct the property options payload (required for option type)
+    const originalOptionsData = cloneDeep(sortedActivePropertyOptions);
+    let optionsPayload: Partial<TIssuePropertyOption>[] = [];
+    if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
+      optionsPayload = propertyOptions
+        .filter((item) => !!item.name && !isEmpty(item))
+        .map((option) => {
+          delete option.key;
+          const originalOption = originalOptionsData?.find((optionData) => optionData.id === option.id);
+          // If the option is new, include the entire object
+          if (!originalOption) {
+            return option;
+          }
+          // If the option exists, only include the changed fields
+          const changedFields = omitBy(option, (value, key: string) => isEqual(value, (originalOption as any)[key]));
+          if (Object.keys(changedFields).length === 0) return null;
+          // Ensure "id" is always included in the payload
+          return { id: option.id, ...changedFields };
+        })
+        .filter((item) => !!item);
+    }
+
+    if (isEmpty(payload) && isEmpty(optionsPayload)) return;
     setIsSubmitting(true);
     await issueProperty
-      ?.updateProperty(issueTypeId, payload)
+      ?.updateProperty(issueTypeId, {
+        ...payload,
+        options: optionsPayload,
+      })
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -204,6 +202,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         setIssuePropertyData(issuePropertyDetail);
       })
       .finally(() => {
+        resetOptions();
         setIsSubmitting(false);
       });
   };
@@ -214,6 +213,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     else {
       setIssuePropertyData(issuePropertyDetail);
       setIssuePropertyOperationMode(null);
+      resetOptions();
     }
   };
 
@@ -284,7 +284,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     if (value) {
       // if property is option type, set is_default to false for all options
       if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-        setIssuePropertyOptionCreateList((prevValue) => {
+        setPropertyOptions((prevValue) => {
           prevValue = prevValue ? [...prevValue] : [];
           return prevValue.map((item) => ({ ...item, is_default: false }));
         });
@@ -334,9 +334,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           issueTypeId={issueTypeId}
           propertyDetail={issuePropertyData}
           currentOperationMode={issuePropertyOperationMode}
-          issuePropertyOptionCreateList={issuePropertyOptionCreateList}
           onPropertyDetailChange={handlePropertyDataChange}
-          handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
           disabled={!issuePropertyData.property_type}
         />
       </div>

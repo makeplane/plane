@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 // plane web components
-import { OptionValueSelect } from "@/plane-web/components/issue-types";
 import {
-  DefaultOptionCreateSelect,
+  DefaultOptionSelect,
   IssuePropertyOptionsRoot,
   PropertyMultiSelect,
   PropertySettingsConfiguration,
@@ -12,36 +11,21 @@ import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/is
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
 // plane web types
-import {
-  EIssuePropertyType,
-  TCreationListModes,
-  TIssueProperty,
-  TOperationMode,
-  TIssuePropertyOptionCreateList,
-} from "@/plane-web/types";
+import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TDropdownAttributesProps = {
   issueTypeId: string;
   dropdownPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;
   currentOperationMode: TOperationMode;
-  issuePropertyOptionCreateList: TIssuePropertyOptionCreateList[];
   onDropdownDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.OPTION>>(
     key: K,
     value: TIssueProperty<EIssuePropertyType.OPTION>[K],
     shouldSync?: boolean
   ) => void;
-  handleIssuePropertyOptionCreateList: (mode: TCreationListModes, value: TIssuePropertyOptionCreateList) => void;
 };
 
 export const DropdownAttributes = observer((props: TDropdownAttributesProps) => {
-  const {
-    issueTypeId,
-    dropdownPropertyDetail,
-    currentOperationMode,
-    issuePropertyOptionCreateList,
-    onDropdownDetailChange,
-    handleIssuePropertyOptionCreateList,
-  } = props;
+  const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -81,33 +65,10 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
           ))}
         </div>
       )}
-      <IssuePropertyOptionsRoot
-        issueTypeId={issueTypeId}
-        issuePropertyId={dropdownPropertyDetail.id}
-        issuePropertyOptionCreateList={issuePropertyOptionCreateList}
-        handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
-      />
+      <IssuePropertyOptionsRoot issuePropertyId={dropdownPropertyDetail.id} />
       <div className="pt-2 px-1">
         <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
-        {dropdownPropertyDetail.id ? (
-          <OptionValueSelect
-            propertyDetail={dropdownPropertyDetail}
-            value={dropdownPropertyDetail.default_value ?? []}
-            issueTypeId={issueTypeId}
-            issuePropertyId={dropdownPropertyDetail.id}
-            variant="create"
-            isMultiSelect={dropdownPropertyDetail.is_multi}
-            isDisabled={isOptionDefaultDisabled}
-            onOptionValueChange={async (value) => onDropdownDetailChange("default_value", value)}
-          />
-        ) : (
-          <DefaultOptionCreateSelect
-            isMultiSelect={dropdownPropertyDetail.is_multi}
-            issuePropertyOptionCreateList={issuePropertyOptionCreateList}
-            handleOptionListUpdate={(value) => handleIssuePropertyOptionCreateList("update", value)}
-            isDisabled={isOptionDefaultDisabled}
-          />
-        )}
+        <DefaultOptionSelect isMultiSelect={dropdownPropertyDetail.is_multi} isDisabled={isOptionDefaultDisabled} />
       </div>
     </>
   );

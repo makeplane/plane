@@ -6,30 +6,33 @@ import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
-import { TIssuePropertyOptionCreateList } from "@/plane-web/types";
+import { usePropertyOptions } from "@/plane-web/hooks/store";
 
-type TDefaultOptionCreateSelectProps = {
+type TDefaultOptionSelectProps = {
   isMultiSelect?: boolean;
   isDisabled?: boolean;
-  issuePropertyOptionCreateList: TIssuePropertyOptionCreateList[];
-  handleOptionListUpdate: (value: TIssuePropertyOptionCreateList) => void;
 };
 
-export const DefaultOptionCreateSelect = observer((props: TDefaultOptionCreateSelectProps) => {
-  const { isMultiSelect = false, isDisabled = false, issuePropertyOptionCreateList, handleOptionListUpdate } = props;
+export const DefaultOptionSelect = observer((props: TDefaultOptionSelectProps) => {
+  const { isMultiSelect = false, isDisabled = false } = props;
+  // store hooks
+  const { propertyOptions, handlePropertyOptionsList } = usePropertyOptions();
   // derived values
-  const optionsList = issuePropertyOptionCreateList.filter((option) => !!option.name);
-  const selectedDefaultOptionsKeys = optionsList.filter((option) => option.is_default).map((option) => option.key);
+  const optionsList = propertyOptions.filter((option) => !!option.name);
+  const selectedDefaultOptionsIds = optionsList
+    .filter((option) => (option.id || option.key) && option.is_default)
+    .map((option) => (option.id ?? option.key) as string);
   // states
-  const [data, setData] = React.useState<string[]>(selectedDefaultOptionsKeys ?? []);
+  const [data, setData] = React.useState<string[]>(selectedDefaultOptionsIds ?? []);
 
   const customSearchOptions = optionsList.map((option) => ({
-    value: option.key,
+    value: option.id ?? option.key,
     query: option.name ?? "",
     content: option.name,
   }));
 
-  const getOptionDetails = (optionId: string) => optionsList.find((option) => option.key === optionId);
+  const getOptionDetails = (optionId: string) =>
+    optionsList.find((option) => option.id === optionId || option.key === optionId);
 
   const getDisplayName = () => {
     if (isMultiSelect) {
@@ -61,10 +64,11 @@ export const DefaultOptionCreateSelect = observer((props: TDefaultOptionCreateSe
   };
 
   const onOptionValueChange = (value: string[]) => {
-    issuePropertyOptionCreateList.map((option) => {
-      handleOptionListUpdate({
-        ...option,
-        is_default: value.includes(option.key),
+    propertyOptions.map((option) => {
+      handlePropertyOptionsList("update", {
+        id: option.id,
+        key: option.key,
+        is_default: value.includes(option.key as string) || value.includes(option.id as string),
       });
     });
   };
@@ -77,7 +81,7 @@ export const DefaultOptionCreateSelect = observer((props: TDefaultOptionCreateSe
           value={data || []}
           onChange={(optionIds: string[]) => setData(optionIds)}
           onClose={() => {
-            if (!isEqual(data, selectedDefaultOptionsKeys)) {
+            if (!isEqual(data, selectedDefaultOptionsIds)) {
               onOptionValueChange(data);
             }
           }}
@@ -90,7 +94,7 @@ export const DefaultOptionCreateSelect = observer((props: TDefaultOptionCreateSe
           onChange={(optionId: string) => {
             const updatedData = optionId && !data?.includes(optionId) ? [optionId] : [];
             setData(updatedData);
-            if (!isEqual(updatedData, selectedDefaultOptionsKeys)) {
+            if (!isEqual(updatedData, selectedDefaultOptionsIds)) {
               onOptionValueChange(updatedData);
             }
           }}

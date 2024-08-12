@@ -23,6 +23,102 @@ class IssuePropertyEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    def create_options(self, issue_property, options):
+        workspace_id = issue_property.workspace_id
+        issue_property_id = issue_property.id
+        project_id = issue_property.project_id
+
+        last_id = IssuePropertyOption.objects.filter(
+            project=issue_property.project_id, property_id=issue_property_id
+        ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+        sort_order = (last_id + 10000) if last_id else 10000
+
+        bulk_create_options = [
+            IssuePropertyOption(
+                name=option.get("name"),
+                sort_order=sort_order + (index * 10000),
+                property_id=issue_property_id,
+                description=option.get("description", ""),
+                logo_props=option.get("logo_props", {}),
+                is_active=option.get("is_active", True),
+                is_default=option.get("is_default", False),
+                parent_id=option.get("parent_id"),
+                workspace_id=workspace_id,
+                project_id=project_id,
+            )
+            for index, option in enumerate(options)
+            if not option.get("id")
+        ]
+
+        IssuePropertyOption.objects.bulk_create(
+            bulk_create_options,
+            batch_size=100,
+        )
+
+    def handle_options_create_update(
+        self, issue_property, options, slug, project_id
+    ):
+        bulk_create_options = []
+        bulk_update_options = []
+
+        for option in options:
+            if option.get("id"):
+                bulk_update_options.append(option)
+            else:
+                bulk_create_options.append(option)
+
+        if bulk_create_options:
+            self.create_options(issue_property, bulk_create_options)
+
+        if bulk_update_options:
+            for option in bulk_update_options:
+                issue_property_option = IssuePropertyOption.objects.get(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    property_id=issue_property.id,
+                    pk=option["id"],
+                )
+                option_serializer = IssuePropertyOptionSerializer(
+                    issue_property_option, data=option, partial=True
+                )
+                option_serializer.is_valid(raise_exception=True)
+
+                option_serializer.save()
+
+    def reset_options_default(self, issue_property):
+        # Reset all the default options
+        IssuePropertyOption.objects.filter(
+            property_id=issue_property.id,
+            workspace_id=issue_property.workspace_id,
+            project_id=issue_property.project_id,
+            is_default=True,
+        ).update(is_default=False)
+
+    def update_property_default_options(self, issue_property):
+        # Fetch all the default options
+        issue_property_options = IssuePropertyOption.objects.filter(
+            property_id=issue_property.id,
+            workspace_id=issue_property.workspace_id,
+            project_id=issue_property.project_id,
+            is_default=True,
+        ).values_list("id", flat=True)
+
+        # Save the default value
+        issue_property.default_value = [
+            str(option) for option in issue_property_options
+        ]
+        issue_property.save()
+
+    def get_options_response(self, issue_property, slug, project_id):
+        options = IssuePropertyOption.objects.filter(
+            property_id=issue_property.id,
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        options_serializer = IssuePropertyOptionSerializer(options, many=True)
+        return options_serializer.data
+
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, issue_type_id=None, pk=None):
         # Get a single issue property
@@ -98,77 +194,19 @@ class IssuePropertyEndpoint(BaseAPIView):
 
             # Check if the property type is option and create the options
             if issue_property.property_type == "OPTION":
-                workspace_id = issue_property.workspace_id
-                issue_property_id = issue_property.id
-
-                # Bulk create the options
-                bulk_create_options = []
-                last_id = IssuePropertyOption.objects.filter(
-                    project=project_id, property_id=issue_property_id
-                ).aggregate(largest=models.Max("sort_order"))["largest"]
-
-                if last_id:
-                    sort_order = last_id + 10000
-                else:
-                    sort_order = 10000
-
-                for option in options:
-                    if not option.get("name"):
-                        return Response(
-                            {"error": "Name of option is required"},
-                            status=status.HTTP_400_BAD_REQUEST,
-                        )
-
-                    bulk_create_options.append(
-                        IssuePropertyOption(
-                            name=option.get("name"),
-                            sort_order=sort_order,
-                            property_id=issue_property_id,
-                            description=option.get("description", ""),
-                            logo_props=option.get("logo_props", {}),
-                            is_active=option.get("is_active", True),
-                            is_default=option.get("is_default", False),
-                            parent_id=option.get("parent_id"),
-                            workspace_id=issue_property.workspace_id,
-                            project_id=project_id,
-                        )
-                    )
-
-                    sort_order += 10000
-
-                # Create the options
-                IssuePropertyOption.objects.bulk_create(
-                    bulk_create_options,
-                    batch_size=100,
-                )
-
-                # Fetch all the default options
-                issue_property_options = IssuePropertyOption.objects.filter(
-                    property_id=issue_property_id,
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    is_default=True,
-                ).values_list("id", flat=True)
-
-                # Save the default value
-                issue_property.default_value = [
-                    str(option) for option in issue_property_options
-                ]
-                issue_property.save()
+                self.create_options(issue_property, options)
+                self.update_property_default_options(issue_property)
+                # Reset the default options if the property is required
+                if issue_property.is_required:
+                    self.reset_options_default(issue_property)
 
             serializer = IssuePropertySerializer(issue_property)
-            options = IssuePropertyOption.objects.filter(
-                property_id=issue_property.id,
-                workspace_id=issue_property.workspace_id,
-                project_id=project_id,
-            )
-            options_serializer = IssuePropertyOptionSerializer(
-                options, many=True
-            )
             # generate the response with the new data and options
             response = {
-                "property_detail": serializer.data,
-                "options": options_serializer.data,
+                **serializer.data,
+                "options": self.get_options_response(
+                    issue_property, slug, project_id
+                ),
             }
             return Response(response, status=status.HTTP_201_CREATED)
         except IntegrityError:
@@ -188,6 +226,9 @@ class IssuePropertyEndpoint(BaseAPIView):
             issue_type_id=issue_type_id,
             pk=pk,
         )
+
+        options = request.data.pop("options", [])
+
         if (
             request.data.get("property_type")
             or request.data.get("is_multi")
@@ -239,7 +280,23 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer.is_valid(raise_exception=True)
         # Save the data
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if issue_property.property_type == "OPTION":
+            self.handle_options_create_update(
+                issue_property, options, slug, project_id
+            )
+            self.update_property_default_options(issue_property)
+            # Reset the default options if the property is required
+            if issue_property.is_required:
+                self.reset_options_default(issue_property)
+
+        response = {
+            **serializer.data,
+            "options": self.get_options_response(
+                issue_property, slug, project_id
+            ),
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def delete(self, request, slug, project_id, issue_type_id, pk):

@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 // types
 import { TLogoProps } from "@plane/types";
 // plane web services
@@ -12,8 +12,8 @@ import { TIssuePropertyOption } from "@/plane-web/types";
 export interface IIssuePropertyOption extends TIssuePropertyOption {
   // computed
   asJSON: TIssuePropertyOption;
-  // actions
-  updatePropertyOption: (issuePropertyId: string, propertyOptionData: Partial<TIssuePropertyOption>) => Promise<void>;
+  // helper action
+  updateOptionData: (propertyOptionData: Partial<TIssuePropertyOption>) => void;
 }
 
 export class IssuePropertyOption implements IIssuePropertyOption {
@@ -54,8 +54,8 @@ export class IssuePropertyOption implements IIssuePropertyOption {
       updated_by: observable.ref,
       // computed
       asJSON: computed,
-      // actions
-      updatePropertyOption: action,
+      // helper action
+      updateOptionData: action,
     });
 
     this.id = propertyOptionData.id;
@@ -103,33 +103,12 @@ export class IssuePropertyOption implements IIssuePropertyOption {
    * @description Update issue property option data
    * @param {Partial<TIssuePropertyOption>} propertyOptionData
    */
-  updatePropertyOption = async (issuePropertyId: string, propertyOptionData: Partial<TIssuePropertyOption>) => {
-    const { workspaceSlug, projectId } = this.store.router;
-    if (!workspaceSlug || !projectId || !issuePropertyId || !this.id) return undefined;
-
-    const beforeUpdateData = this.asJSON;
-    try {
-      runInAction(() => {
-        for (const key in propertyOptionData) {
-          if (propertyOptionData.hasOwnProperty(key)) {
-            const propertyKey = key as keyof TIssuePropertyOption;
-            set(this, propertyKey, propertyOptionData[propertyKey] ?? undefined);
-          }
-        }
-      });
-      await this.service.update(workspaceSlug, projectId, issuePropertyId, this.id, propertyOptionData);
-    } catch (error) {
-      console.error("IssuePropertyOption -> updatePropertyOption -> error", error);
-      // rollback the changes
-      runInAction(() => {
-        for (const key in beforeUpdateData) {
-          if (beforeUpdateData.hasOwnProperty(key)) {
-            const propertyKey = key as keyof TIssuePropertyOption;
-            set(this, propertyKey, beforeUpdateData[propertyKey] ?? undefined);
-          }
-        }
-      });
-      throw error;
+  updateOptionData = (propertyOptionData: Partial<TIssuePropertyOption>) => {
+    for (const key in propertyOptionData) {
+      if (propertyOptionData.hasOwnProperty(key)) {
+        const propertyKey = key as keyof TIssuePropertyOption;
+        set(this, propertyKey, propertyOptionData[propertyKey] ?? undefined);
+      }
     }
   };
 }

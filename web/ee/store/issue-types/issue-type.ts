@@ -12,7 +12,13 @@ import { IssuePropertiesService, IssueTypesService } from "@/plane-web/services/
 import { IIssueProperty, IssueProperty } from "@/plane-web/store/issue-types";
 import { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { EIssuePropertyType, TIssueProperty, TIssuePropertyOption, TIssueType } from "@/plane-web/types";
+import {
+  EIssuePropertyType,
+  TIssuePropertyPayload,
+  TIssueProperty,
+  TIssuePropertyOption,
+  TIssueType,
+} from "@/plane-web/types";
 
 export interface IIssueType extends TIssueType {
   properties: IIssueProperty<EIssuePropertyType>[];
@@ -23,11 +29,8 @@ export interface IIssueType extends TIssueType {
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
   // actions
   updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
-  addProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions?: TIssuePropertyOption[]) => void;
-  createProperty: (
-    propertyData: Partial<TIssueProperty<EIssuePropertyType>>,
-    propertyOptions?: Partial<TIssuePropertyOption>[]
-  ) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
+  addProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions: TIssuePropertyOption[]) => void;
+  createProperty: (propertyData: TIssuePropertyPayload) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
   deleteProperty: (propertyId: string) => Promise<void>;
 }
 
@@ -177,15 +180,13 @@ export class IssueType implements IIssueType {
    */
   addProperty = async (
     issuePropertyData: TIssueProperty<EIssuePropertyType>,
-    propertyOptions?: TIssuePropertyOption[]
+    propertyOptions: TIssuePropertyOption[]
   ) => {
     try {
       const issueProperty = new IssueProperty<EIssuePropertyType>(this.store, issuePropertyData);
       update(this, "properties", (properties) => uniq(concat(properties, issueProperty)));
       if (propertyOptions && propertyOptions.length) {
-        for (const propertyOptionData of propertyOptions) {
-          issueProperty.addPropertyOption(propertyOptionData);
-        }
+        issueProperty.addOrUpdatePropertyOptions(propertyOptions);
       }
     } catch (error) {
       console.error(error);
@@ -195,27 +196,24 @@ export class IssueType implements IIssueType {
 
   /**
    * @description Create an issue property
-   * @param propertyData Issue property data
+   * @param {TIssuePropertyPayload} propertyData Issue property data
    */
-  createProperty = async (
-    propertyData: Partial<TIssueProperty<EIssuePropertyType>>,
-    propertyOptions?: Partial<TIssuePropertyOption>[]
-  ) => {
+  createProperty = async (propertyData: TIssuePropertyPayload) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return;
 
     try {
-      const issueProperty = await this.issuePropertyService.create(
+      const issuePropertyResponse = await this.issuePropertyService.create(
         workspaceSlug,
         projectId,
         this.id,
-        propertyData,
-        propertyOptions
+        propertyData
       );
+      const { options, ...issuePropertyData } = issuePropertyResponse;
       runInAction(() => {
-        this.addProperty(issueProperty.property_detail, issueProperty.options);
+        this.addProperty(issuePropertyData, options);
       });
-      return issueProperty.property_detail;
+      return issuePropertyData;
     } catch (error) {
       console.error("IssueType.createProperty -> error", error);
       throw error;

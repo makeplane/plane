@@ -13,38 +13,22 @@ import { SelectedAttributeProperties } from "@/plane-web/components/issue-types/
 // plane web helpers
 import { getIssuePropertyAttributeDisplayName } from "@/plane-web/helpers/issue-properties.helper";
 // plane web types
-import {
-  EIssuePropertyType,
-  TCreationListModes,
-  TIssueProperty,
-  TOperationMode,
-  TIssuePropertyOptionCreateList,
-} from "@/plane-web/types";
+import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TPropertyAttributesDropdownProps = {
   issueTypeId: string;
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
   currentOperationMode: TOperationMode | null;
-  issuePropertyOptionCreateList: TIssuePropertyOptionCreateList[];
   onPropertyDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType>>(
     key: K,
     value: TIssueProperty<EIssuePropertyType>[K],
     shouldSync?: boolean
   ) => void;
-  handleIssuePropertyOptionCreateList: (mode: TCreationListModes, value: TIssuePropertyOptionCreateList) => void;
   disabled?: boolean;
 };
 
 export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDropdownProps) => {
-  const {
-    issueTypeId,
-    propertyDetail,
-    currentOperationMode,
-    issuePropertyOptionCreateList,
-    handleIssuePropertyOptionCreateList,
-    onPropertyDetailChange,
-    disabled,
-  } = props;
+  const { issueTypeId, propertyDetail, currentOperationMode, onPropertyDetailChange, disabled } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -101,9 +85,7 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
               issueTypeId={issueTypeId}
               propertyDetail={propertyDetail}
               currentOperationMode={currentOperationMode}
-              issuePropertyOptionCreateList={issuePropertyOptionCreateList}
               onPropertyDetailChange={onPropertyDetailChange}
-              handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
             />
           </div>
         </Popover.Panel>,

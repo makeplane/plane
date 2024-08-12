@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
-import { EIssuePropertyType, TIssueProperty, TIssuePropertyOption, TIssuePropertyResponse } from "@/plane-web/types";
+import { EIssuePropertyType, TIssueProperty, TIssuePropertyPayload, TIssuePropertyResponse } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -22,15 +22,11 @@ export class IssuePropertiesService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueTypeId: string,
-    data: Partial<TIssueProperty<EIssuePropertyType>>,
-    options?: Partial<TIssuePropertyOption>[] | undefined
+    data: TIssuePropertyPayload
   ): Promise<TIssuePropertyResponse> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/`,
-      {
-        ...data,
-        options: options ?? [],
-      }
+      data
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -43,8 +39,8 @@ export class IssuePropertiesService extends APIService {
     projectId: string,
     issueTypeId: string,
     issuePropertyId: string,
-    data: Partial<TIssueProperty<EIssuePropertyType>>
-  ): Promise<TIssueProperty<EIssuePropertyType>> {
+    data: TIssuePropertyPayload
+  ): Promise<TIssuePropertyResponse> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${issuePropertyId}/`,
       data
