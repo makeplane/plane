@@ -7,6 +7,7 @@ import {
   MemberPickerAttributes,
   NumberAttributes,
   TextAttributes,
+  TIssuePropertyFormError,
 } from "@/plane-web/components/issue-types/properties";
 // plane web helpers
 import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
@@ -23,10 +24,11 @@ type TSelectedPropertyAttributesProps = {
     shouldSync?: boolean
   ) => void;
   disabled?: boolean;
+  error?: TIssuePropertyFormError;
 };
 
 export const SelectedAttributeProperties = observer((props: TSelectedPropertyAttributesProps) => {
-  const { issueTypeId, propertyDetail, currentOperationMode, onPropertyDetailChange } = props;
+  const { issueTypeId, propertyDetail, currentOperationMode, onPropertyDetailChange, error } = props;
 
   const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
     TEXT: (
@@ -51,6 +53,7 @@ export const SelectedAttributeProperties = observer((props: TSelectedPropertyAtt
         dropdownPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.OPTION>>}
         currentOperationMode={currentOperationMode}
         onDropdownDetailChange={onPropertyDetailChange}
+        error={error}
       />
     ),
     BOOLEAN: (

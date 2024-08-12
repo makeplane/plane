@@ -194,11 +194,20 @@ class IssuePropertyEndpoint(BaseAPIView):
 
             # Check if the property type is option and create the options
             if issue_property.property_type == "OPTION":
-                self.create_options(issue_property, options)
-                self.update_property_default_options(issue_property)
-                # Reset the default options if the property is required
-                if issue_property.is_required:
-                    self.reset_options_default(issue_property)
+                try:
+                    self.create_options(issue_property, options)
+                    self.update_property_default_options(issue_property)
+                    # Reset the default options if the property is required
+                    if issue_property.is_required:
+                        self.reset_options_default(issue_property)
+
+                except IntegrityError:
+                    return Response(
+                        {
+                            "error": "An option with the same name already exists in this property",
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
 
             serializer = IssuePropertySerializer(issue_property)
             # generate the response with the new data and options
@@ -282,13 +291,22 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer.save()
 
         if issue_property.property_type == "OPTION":
-            self.handle_options_create_update(
-                issue_property, options, slug, project_id
-            )
-            self.update_property_default_options(issue_property)
-            # Reset the default options if the property is required
-            if issue_property.is_required:
-                self.reset_options_default(issue_property)
+            try:
+                self.handle_options_create_update(
+                    issue_property, options, slug, project_id
+                )
+                self.update_property_default_options(issue_property)
+                # Reset the default options if the property is required
+                if issue_property.is_required:
+                    self.reset_options_default(issue_property)
+
+            except IntegrityError:
+                return Response(
+                    {
+                        "error": "An option with the same name already exists in this property",
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
 
         response = {
             **serializer.data,

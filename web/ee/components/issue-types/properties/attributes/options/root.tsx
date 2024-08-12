@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 // ui
 import { GripVertical } from "lucide-react";
 import { Sortable, Tooltip } from "@plane/ui";
-// plane web components
 import {
   IssuePropertyCreateOptionItem,
   IssuePropertyOptionItem,
@@ -15,10 +14,11 @@ import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 
 type TIssuePropertyOptionsRoot = {
   issuePropertyId: string | undefined;
+  error?: string;
 };
 
 export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer((props) => {
-  const { issuePropertyId } = props;
+  const { issuePropertyId, error } = props;
   // store hooks
   const { propertyOptions, handlePropertyOptionsList } = usePropertyOptions();
   // derived values
@@ -116,6 +116,7 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
                 scrollIntoElementView();
               }, 0);
             }}
+            error={index === 0 ? error : undefined}
           />
         ))}
       </div>

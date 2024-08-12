@@ -11,20 +11,21 @@ type TIssuePropertyOptionItem = {
   optionId?: string;
   propertyOptionData: TIssuePropertyOptionCreateUpdateData;
   updateOptionData: (value: TIssuePropertyOptionCreateUpdateData) => void;
+  error?: string;
 };
 
 export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((props) => {
-  const { optionId, propertyOptionData, updateOptionData } = props;
+  const { optionId, propertyOptionData, updateOptionData, error: optionsError } = props;
   // derived values
   const { key, ...propertyOptionCreateData } = propertyOptionData;
   // states
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(optionsError);
   const [optionData, setOptionData] = useState<Partial<TIssuePropertyOption>>(propertyOptionCreateData);
 
   useEffect(() => {
     if (optionId && !optionData.name) setError("Option name is required.");
-    else setError(undefined);
-  }, [optionId, optionData]);
+    else setError(optionsError ?? undefined);
+  }, [optionId, optionData, optionsError]);
 
   // handle create/ update operation
   const handleCreateUpdate = async () => {

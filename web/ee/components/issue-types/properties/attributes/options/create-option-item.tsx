@@ -8,6 +8,7 @@ import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 type TIssuePropertyCreateOptionItem = {
   propertyOptionCreateListData: TIssuePropertyOptionCreateUpdateData;
   updateCreateListData: (value: TIssuePropertyOptionCreateUpdateData) => void;
+  error?: string;
 };
 
 export const IssuePropertyCreateOptionItem = observer(
@@ -15,13 +16,14 @@ export const IssuePropertyCreateOptionItem = observer(
     props: TIssuePropertyCreateOptionItem,
     ref: React.Ref<HTMLDivElement>
   ) {
-    const { propertyOptionCreateListData, updateCreateListData } = props;
+    const { propertyOptionCreateListData, updateCreateListData, error} = props;
 
     return (
       <div ref={ref} className="w-full px-1 pr-2">
         <IssuePropertyOptionItem
           propertyOptionData={propertyOptionCreateListData}
           updateOptionData={updateCreateListData}
+          error={error}
         />
       </div>
     );

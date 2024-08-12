@@ -13,10 +13,11 @@ type TIssueTypeListItem = {
   issueTypeId: string;
   isOpen: boolean;
   onToggle: (issueTypeId: string) => void;
+  onEditIssueTypeIdChange: (issueTypeId: string) => void;
 };
 
 export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
-  const { issueTypeId, isOpen, onToggle } = props;
+  const { issueTypeId, isOpen, onToggle, onEditIssueTypeIdChange } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -62,18 +63,27 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   </div>
                 </div>
               </div>
-              <div className="flex-shrink-0 flex gap-4">
-                {issueTypeDetail?.is_default && (
-                  <div className="py-1 px-4 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
-                    Default
-                  </div>
-                )}
-                {!issueTypeDetail?.is_active && (
-                  <div className="flex-shrink-0 py-0.5 px-2 text-xs rounded font-medium text-red-600 bg-red-600/10">
-                    Disabled
-                  </div>
-                )}
-                {!issueTypeDetail?.is_default && <IssueTypeQuickActions issueTypeId={issueTypeId} />}
+              <div className="flex-shrink-0 flex">
+                <div className="w-20">
+                  {issueTypeDetail?.is_default && (
+                    <div className="py-1 px-2 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
+                      Default
+                    </div>
+                  )}
+                  {!issueTypeDetail?.is_active && (
+                    <div className="flex-shrink-0 py-1 px-2 text-xs rounded font-medium text-red-600 bg-red-600/10">
+                      Disabled
+                    </div>
+                  )}
+                </div>
+                <div>
+                  {!issueTypeDetail?.is_default && (
+                    <IssueTypeQuickActions
+                      issueTypeId={issueTypeId}
+                      onEditIssueTypeIdChange={onEditIssueTypeIdChange}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           }

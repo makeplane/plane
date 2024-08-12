@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import { TLogoProps } from "@plane/types";
 // ui
 import { LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
 
 type Props = {
@@ -37,7 +38,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
               width={size}
               height={size}
               style={{
-                color: icon_props?.color,
+                color: icon_props?.color ?? "#ffffff",
               }}
             />
           ) : (
@@ -45,7 +46,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
               style={{
                 height: size,
                 width: size,
-                color: icon_props?.color,
+                color: icon_props?.color ?? "#ffffff",
               }}
             />
           )}

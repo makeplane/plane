@@ -66,28 +66,18 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
         [propertyId]: value,
       }));
       // update the property value
-      await issuePropertyValuesService
-        .update(workspaceSlug, projectId, issueId, propertyId, value)
-        .then(() => {
-          // TODO: remove
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Property update successfully.",
-          });
-        })
-        .catch((error) => {
-          // revert the value if update fails
-          setIssuePropertyValues((prev) => ({
-            ...prev,
-            [propertyId]: beforeUpdateValue,
-          }));
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: error?.error ?? "Property could not be update. Please try again.",
-          });
+      await issuePropertyValuesService.update(workspaceSlug, projectId, issueId, propertyId, value).catch((error) => {
+        // revert the value if update fails
+        setIssuePropertyValues((prev) => ({
+          ...prev,
+          [propertyId]: beforeUpdateValue,
+        }));
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: error?.error ?? "Property could not be update. Please try again.",
         });
+      });
     };
 
     // if issue types are not enabled, return null

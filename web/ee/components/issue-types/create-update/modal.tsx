@@ -5,47 +5,54 @@ import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@p
 import { getRandomIconName } from "@/helpers/emoji.helper";
 // plane web components
 import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
-// hooks
+// plane web helpers
 import { getRandomBackgroundColor } from "@/plane-web/helpers/issue-type.helper";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+// plane web
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web types
 import { TIssueType } from "@/plane-web/types";
-// plane web helpers
 
 type Props = {
+  issueTypeId: string | null;
   isModalOpen: boolean;
   handleModalClose: () => void;
 };
 
-export const defaultIssueTypeData: Partial<TIssueType> = {
+const defaultIssueTypeData: Partial<TIssueType> = {
   id: undefined,
   name: "",
   description: "",
 };
 
-export const CreateIssueTypeModal: FC<Props> = (props) => {
-  const { isModalOpen, handleModalClose } = props;
+export const CreateOrUpdateIssueTypeModal: FC<Props> = (props) => {
+  const { issueTypeId, isModalOpen, handleModalClose } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [issueTypeFormData, setIssueTypeFormData] = useState<Partial<TIssueType>>(defaultIssueTypeData);
+  const [issueTypeFormData, setIssueTypeFormData] = useState<Partial<TIssueType> | undefined>(undefined);
   // store hooks
   const { createType } = useIssueTypes();
+  const issueType = useIssueType(issueTypeId);
+  // derived values
+  const issueTypeDetail = issueType?.asJSON;
 
   useEffect(() => {
     if (isModalOpen) {
-      setIssueTypeFormData({
-        ...defaultIssueTypeData,
-        logo_props: {
-          in_use: "icon",
-          icon: {
-            name: getRandomIconName(),
-            color: "#ffffff",
-            background_color: getRandomBackgroundColor(),
+      if (issueTypeDetail) {
+        setIssueTypeFormData(issueTypeDetail);
+      } else {
+        setIssueTypeFormData({
+          ...defaultIssueTypeData,
+          logo_props: {
+            in_use: "icon",
+            icon: {
+              name: getRandomIconName(),
+              background_color: getRandomBackgroundColor(),
+            },
           },
-        },
-      });
+        });
+      }
     }
-  }, [isModalOpen]);
+  }, [issueTypeDetail, isModalOpen]);
 
   // handlers
   const handleFormDataChange = <T extends keyof TIssueType>(key: T, value: TIssueType[T]) =>
@@ -56,7 +63,8 @@ export const CreateIssueTypeModal: FC<Props> = (props) => {
     handleModalClose();
   };
 
-  const handleFormSubmit = async () => {
+  const handleCreateIssueType = async () => {
+    if (!issueTypeFormData) return;
     setIsSubmitting(true);
     await createType(issueTypeFormData)
       .then(() => {
@@ -79,6 +87,32 @@ export const CreateIssueTypeModal: FC<Props> = (props) => {
       });
   };
 
+  const handleUpdateIssueType = async () => {
+    if (!issueTypeFormData) return;
+
+    setIsSubmitting(true);
+    await issueType
+      ?.updateType(issueTypeFormData)
+      .then(() => {
+        handleModalClearAndClose();
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: `Issue type ${issueTypeFormData?.name} updated successfully.`,
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: `Failed to update issue type. Please try again!`,
+        });
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
+
   if (!isModalOpen) return null;
 
   return (
@@ -89,11 +123,11 @@ export const CreateIssueTypeModal: FC<Props> = (props) => {
       width={EModalWidth.XXL}
     >
       <CreateOrUpdateIssueTypeForm
-        formData={issueTypeFormData}
+        formData={issueTypeFormData ?? defaultIssueTypeData}
         isSubmitting={isSubmitting}
         handleFormDataChange={handleFormDataChange}
         handleModalClose={handleModalClearAndClose}
-        handleFormSubmit={handleFormSubmit}
+        handleFormSubmit={issueTypeId ? handleUpdateIssueType : handleCreateIssueType}
       />
     </ModalCore>
   );

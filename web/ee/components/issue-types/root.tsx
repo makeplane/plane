@@ -7,7 +7,7 @@ import { Button } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
-import { CreateIssueTypeModal, IssueTypeEmptyState, IssueTypesList } from "@/plane-web/components/issue-types";
+import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
 
@@ -16,10 +16,16 @@ export const IssueTypesRoot = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editIssueTypeId, setEditIssueTypeId] = useState<string | null>(null);
   // store hooks
   const { currentProjectDetails } = useProject();
   // derived values
   const isIssueTypeSettingsEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_SETTINGS");
+
+  const handleEditIssueTypeIdChange = (issueTypeId: string) => {
+    setEditIssueTypeId(issueTypeId);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="container mx-auto h-full pb-8">
@@ -33,13 +39,20 @@ export const IssueTypesRoot = observer(() => {
       </div>
       <div className="my-2 pr-4 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isIssueTypeSettingsEnabled && currentProjectDetails?.is_issue_type_enabled ? (
-          <IssueTypesList />
+          <IssueTypesList onEditIssueTypeIdChange={handleEditIssueTypeIdChange} />
         ) : (
           <IssueTypeEmptyState workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
         )}
       </div>
       {/* Modal */}
-      <CreateIssueTypeModal isModalOpen={isModalOpen} handleModalClose={() => setIsModalOpen(false)} />
+      <CreateOrUpdateIssueTypeModal
+        issueTypeId={editIssueTypeId}
+        isModalOpen={isModalOpen}
+        handleModalClose={() => {
+          setEditIssueTypeId(null);
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 });

@@ -107,7 +107,6 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
               ...defaultIssueProperty,
             })
           }
-          disabled={!issueType?.is_active}
         >
           <Plus className="h-3.5 w-3.5" />
           Add new property

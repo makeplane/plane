@@ -36,11 +36,13 @@ type TIssuePropertyListItem = {
   handleIssuePropertyCreateList: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
 };
 
-export type TIssuePropertyError = {
+export type TIssuePropertyFormError = {
   [key in keyof TIssueProperty<EIssuePropertyType>]?: string;
+} & {
+  options?: string;
 };
 
-const defaultIssuePropertyError: TIssuePropertyError = {
+const defaultIssuePropertyError: TIssuePropertyFormError = {
   display_name: "",
   property_type: "",
 };
@@ -69,7 +71,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   );
   const [issuePropertyData, setIssuePropertyData] =
     useState<Partial<TIssueProperty<EIssuePropertyType>>>(issuePropertyDetail);
-  const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyError>(defaultIssuePropertyError);
+  const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyFormError>(defaultIssuePropertyError);
   // derived values
   // check if mandatory field is disabled for the property
   const isMandatoryFieldDisabled =
@@ -101,6 +103,11 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     }
     if (!issuePropertyData.property_type) {
       error.property_type = "You must select a property type.";
+      hasError = true;
+    }
+    const nonEmptyPropertyOptions = propertyOptions.filter((option) => !!option.name);
+    if (issuePropertyData.property_type === EIssuePropertyType.OPTION && nonEmptyPropertyOptions.length === 0) {
+      error.options = "You must add at least one option.";
       hasError = true;
     }
     setIssuePropertyError(error);
@@ -336,6 +343,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           currentOperationMode={issuePropertyOperationMode}
           onPropertyDetailChange={handlePropertyDataChange}
           disabled={!issuePropertyData.property_type}
+          error={issuePropertyError}
         />
       </div>
       <div className="w-20 text-center">
