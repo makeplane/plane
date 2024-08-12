@@ -174,6 +174,7 @@ export const InstanceSetupForm: FC = (props) => {
                 placeholder="Wilber"
                 value={formData.first_name}
                 onChange={(e) => handleFormChange("first_name", e.target.value)}
+                autoComplete="on"
                 autoFocus
               />
             </div>
@@ -190,6 +191,7 @@ export const InstanceSetupForm: FC = (props) => {
                 placeholder="Wright"
                 value={formData.last_name}
                 onChange={(e) => handleFormChange("last_name", e.target.value)}
+                autoComplete="on"
               />
             </div>
           </div>
@@ -208,6 +210,7 @@ export const InstanceSetupForm: FC = (props) => {
               value={formData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               hasError={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
+              autoComplete="on"
             />
             {errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message && (
               <p className="px-1 text-xs text-red-500">{errorData.message}</p>
@@ -247,6 +250,7 @@ export const InstanceSetupForm: FC = (props) => {
                 hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
                 onFocus={() => setIsPasswordInputFocused(true)}
                 onBlur={() => setIsPasswordInputFocused(false)}
+                autoComplete="on"
               />
               {showPassword.password ? (
                 <button

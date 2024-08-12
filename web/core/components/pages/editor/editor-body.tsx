@@ -8,6 +8,7 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TDisplayConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
@@ -82,11 +83,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   });
   // editor flaggings
   const { documentEditor } = useEditorFlagging();
-
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+
+  const displayConfig: TDisplayConfig = {
+    fontSize,
+    fontStyle,
+  };
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -139,6 +144,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               onChange={handleDescriptionChange}
               mentionHandler={{
@@ -157,6 +163,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,

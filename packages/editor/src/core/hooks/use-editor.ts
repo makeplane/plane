@@ -1,7 +1,7 @@
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // extensions
@@ -14,22 +14,7 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import {
-  DeleteImage,
-  EditorRefApi,
-  IMentionHighlight,
-  IMentionSuggestion,
-  RestoreImage,
-  TEditorCommands,
-  UploadImage,
-} from "@/types";
-
-export type TFileHandler = {
-  cancel: () => void;
-  delete: DeleteImage;
-  upload: UploadImage;
-  restore: RestoreImage;
-};
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -54,26 +39,30 @@ export interface CustomEditorProps {
   value?: string | null | undefined;
 }
 
-export const useEditor = ({
-  editorClassName,
-  editorProps = {},
-  enableHistory,
-  extensions = [],
-  fileHandler,
-  forwardedRef,
-  handleEditorReady,
-  id = "",
-  initialValue,
-  mentionHandler,
-  onChange,
-  placeholder,
-  provider,
-  tabIndex,
-  value,
-}: CustomEditorProps) => {
-  const editor = useCustomEditor({
+export const useEditor = (props: CustomEditorProps) => {
+  const {
+    editorClassName,
+    editorProps = {},
+    enableHistory,
+    extensions = [],
+    fileHandler,
+    forwardedRef,
+    handleEditorReady,
+    id = "",
+    initialValue,
+    mentionHandler,
+    onChange,
+    placeholder,
+    provider,
+    tabIndex,
+    value,
+  } = props;
+
+  const editor = useTiptapEditor({
     editorProps: {
-      ...CoreEditorProps(editorClassName),
+      ...CoreEditorProps({
+        editorClassName,
+      }),
       ...editorProps,
     },
     extensions: [
@@ -95,18 +84,10 @@ export const useEditor = ({
       ...extensions,
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
-    onCreate: async () => {
-      handleEditorReady?.(true);
-    },
-    onTransaction: async ({ editor }) => {
-      setSavedSelection(editor.state.selection);
-    },
-    onUpdate: async ({ editor }) => {
-      onChange?.(editor.getJSON(), editor.getHTML());
-    },
-    onDestroy: async () => {
-      handleEditorReady?.(false);
-    },
+    onCreate: () => handleEditorReady?.(true),
+    onTransaction: ({ editor }) => setSavedSelection(editor.state.selection),
+    onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
+    onDestroy: () => handleEditorReady?.(false),
   });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);

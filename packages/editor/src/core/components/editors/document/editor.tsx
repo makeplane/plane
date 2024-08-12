@@ -1,19 +1,28 @@
 import React from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useDocumentEditor } from "@/hooks/use-document-editor";
-import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
+import {
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TDisplayConfig,
+  TExtensions,
+  TFileHandler,
+} from "@/types";
 
 interface IDocumentEditor {
   containerClassName?: string;
   disabledExtensions?: TExtensions[];
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: TEmbedConfig;
   fileHandler: TFileHandler;
@@ -34,6 +43,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   const {
     containerClassName,
     disabledExtensions,
+    displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -72,7 +82,13 @@ const DocumentEditor = (props: IDocumentEditor) => {
   if (!editor || !isIndexedDbSynced) return null;
 
   return (
-    <PageRenderer editor={editor} editorContainerClassName={editorContainerClassNames} id={id} tabIndex={tabIndex} />
+    <PageRenderer
+      displayConfig={displayConfig}
+      editor={editor}
+      editorContainerClassName={editorContainerClassNames}
+      id={id}
+      tabIndex={tabIndex}
+    />
   );
 };
 

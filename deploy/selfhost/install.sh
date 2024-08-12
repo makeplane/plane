@@ -9,10 +9,19 @@ export DOCKERHUB_USER=makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
 
 CPU_ARCH=$(uname -m)
+OS_NAME=$(uname)
+UPPER_CPU_ARCH=$(tr '[:lower:]' '[:upper:]' <<< "$CPU_ARCH")
 
 mkdir -p $PLANE_INSTALL_DIR/archive
 DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
 DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
+
+SED_PREFIX=()
+if [ "$OS_NAME" == "Darwin" ]; then
+  SED_PREFIX=("-i" "")
+else
+  SED_PREFIX=("-i")
+fi
 
 function print_header() {
 clear
@@ -51,12 +60,12 @@ function spinner() {
 }
 
 function initialize(){
-    printf "Please wait while we check the availability of Docker images for the selected release ($APP_RELEASE) with ${CPU_ARCH^^} support." >&2
+    printf "Please wait while we check the availability of Docker images for the selected release ($APP_RELEASE) with ${UPPER_CPU_ARCH} support." >&2
 
     if [ "$CUSTOM_BUILD" == "true" ]; then
         echo "" >&2
         echo "" >&2
-        echo "${CPU_ARCH^^} images are not available for selected release ($APP_RELEASE)." >&2
+        echo "${UPPER_CPU_ARCH} images are not available for selected release ($APP_RELEASE)." >&2
         echo "build"
         return 1
     fi
@@ -78,7 +87,7 @@ function initialize(){
     else
         echo "" >&2
         echo "" >&2
-        echo "${CPU_ARCH^^} images are not available for selected release ($APP_RELEASE)." >&2
+        echo "${UPPER_CPU_ARCH} images are not available for selected release ($APP_RELEASE)." >&2
         echo "" >&2
         echo "build"
         return 1
@@ -122,7 +131,7 @@ function updateEnvFile() {
             return
         else 
             # if key exists, update the value
-            sed -i "s/^$key=.*/$key=$value/g" "$file"
+            sed "${SED_PREFIX[@]}" "s/^$key=.*/$key=$value/g" "$file"
         fi
     else
         echo "File not found: $file"

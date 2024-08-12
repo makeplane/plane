@@ -157,6 +157,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
+            autoComplete="on"
             autoFocus
           />
           {showPassword?.password ? (
