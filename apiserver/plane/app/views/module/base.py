@@ -747,25 +747,11 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
+    @allow_permission(["ADMIN"], creator=True, model=Module)
     def destroy(self, request, slug, project_id, pk):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
-
-        if module.created_by_id != request.user.id and (
-            not ProjectMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                project_id=project_id,
-                is_active=True,
-            ).exists()
-        ):
-            return Response(
-                {"error": "Only admin or creator can delete the module"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list(

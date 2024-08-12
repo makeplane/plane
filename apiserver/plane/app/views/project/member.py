@@ -31,9 +31,6 @@ from plane.app.permissions.base import allow_permission
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
-    # permission_classes = [
-    #     ProjectMemberPermission,
-    # ]
 
     def get_permissions(self):
         if self.action == "leave":
@@ -173,7 +170,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # Return the serialized data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
         project_members = ProjectMember.objects.filter(

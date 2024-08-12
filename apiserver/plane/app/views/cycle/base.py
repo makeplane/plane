@@ -315,7 +315,7 @@ class CycleViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"])
+    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
