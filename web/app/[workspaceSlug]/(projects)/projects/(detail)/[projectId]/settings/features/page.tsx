@@ -2,41 +2,35 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // components
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectFeaturesList } from "@/components/project";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
 
 const FeaturesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store
-  const {
-    membership: { fetchUserProjectInfo },
-  } = useUser();
+  const { canPerformProjectAdminActions } = useUser();
   const { currentProjectDetails } = useProject();
-  // fetch the project details
-  const { data: memberDetails } = useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
-  );
   // derived values
-  const isAdmin = memberDetails?.role === EUserProjectRoles.ADMIN;
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Features` : undefined;
 
   if (!workspaceSlug || !projectId) return null;
 
+  if (!canPerformProjectAdminActions) {
+    return <NotAuthorizedView section="settings" isProjectView />;
+  }
+
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <section className={`w-full overflow-y-auto py-8 pr-9 ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <ProjectFeaturesList
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
-          isAdmin={isAdmin}
+          isAdmin={canPerformProjectAdminActions}
         />
       </section>
     </>
