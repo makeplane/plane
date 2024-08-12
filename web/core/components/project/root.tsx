@@ -60,6 +60,8 @@ const Root = observer(() => {
   useEffect(() => {
     if (pathname.includes("/archives")) {
       updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
+    } else {
+      updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
     }
   }, [pathname]);
   return (
