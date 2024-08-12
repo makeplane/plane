@@ -269,6 +269,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (URLProjectId === project.id) setIsProjectListOpen(true);
+    else setIsProjectListOpen(false);
   }, [URLProjectId]);
 
   return (
@@ -291,6 +292,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
               }
             )}
+            id={`${project?.id}`}
           >
             {!disableDrag && (
               <Tooltip
