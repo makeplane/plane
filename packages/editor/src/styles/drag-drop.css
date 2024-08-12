@@ -8,6 +8,7 @@
     opacity 0.2s ease 0.2s,
     top 0.2s ease,
     left 0.2s ease;
+  transform: translateX(-50%);
 
   &.side-menu-hidden {
     opacity: 0;
