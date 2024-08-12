@@ -2,7 +2,8 @@ import { useEffect, FC, useState } from "react";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
-import { CreateProjectForm } from "./create-project-form";
+import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
+import { TProject } from "@/plane-web/types/projects";
 import { ProjectFeatureUpdate } from "./project-feature-update";
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
   onClose: () => void;
   setToFavorite?: boolean;
   workspaceSlug: string;
+  data?: Partial<TProject>;
 };
 
 enum EProjectCreationSteps {
@@ -18,7 +20,7 @@ enum EProjectCreationSteps {
 }
 
 export const CreateProjectModal: FC<Props> = (props) => {
-  const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
+  const { isOpen, onClose, setToFavorite = false, workspaceSlug, data } = props;
   // states
   const [currentStep, setCurrentStep] = useState<EProjectCreationSteps>(EProjectCreationSteps.CREATE_PROJECT);
   const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
@@ -44,6 +46,7 @@ export const CreateProjectModal: FC<Props> = (props) => {
           workspaceSlug={workspaceSlug}
           onClose={onClose}
           handleNextStep={handleNextStep}
+          data={data}
         />
       )}
       {currentStep === EProjectCreationSteps.FEATURE_SELECTION && (
