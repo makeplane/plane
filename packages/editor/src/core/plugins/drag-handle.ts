@@ -5,33 +5,27 @@ import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 // extensions
 import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 
-const dragHandleClassName =
-  "hidden sm:grid place-items-center size-5 aspect-square rounded-sm cursor-grab outline-none hover:bg-custom-background-80 active:bg-custom-background-80 active:cursor-grabbing transition-colors duration-200 ease-linear";
-const dragHandleContainerClassName = "size-[15px] grid place-items-center";
-const dragHandleDotsClassName = "h-full w-3 grid grid-cols-2 place-items-center";
-const dragHandleDotClassName = "size-[2.5px] bg-custom-text-300 rounded-[50%]";
+const verticalEllipsisIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
 
 const createDragHandleElement = (): HTMLElement => {
   const dragHandleElement = document.createElement("button");
   dragHandleElement.type = "button";
+  dragHandleElement.id = "drag-handle";
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
-  dragHandleElement.classList.value = dragHandleClassName;
+  dragHandleElement.classList.value =
+    "hidden sm:flex items-center size-5 aspect-square rounded-sm cursor-grab outline-none hover:bg-custom-background-80 active:bg-custom-background-80 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
 
-  const dragHandleContainer = document.createElement("span");
-  dragHandleContainer.classList.value = dragHandleContainerClassName;
-  dragHandleElement.appendChild(dragHandleContainer);
+  const iconElement1 = document.createElement("span");
+  iconElement1.classList.value = "pointer-events-none text-custom-text-300";
+  iconElement1.innerHTML = verticalEllipsisIcon;
+  const iconElement2 = document.createElement("span");
+  iconElement2.classList.value = "pointer-events-none text-custom-text-300 -ml-2.5";
+  iconElement2.innerHTML = verticalEllipsisIcon;
 
-  const dotsContainer = document.createElement("span");
-  dotsContainer.classList.value = dragHandleDotsClassName;
-
-  for (let i = 0; i < 6; i++) {
-    const spanElement = document.createElement("span");
-    spanElement.classList.value = dragHandleDotClassName;
-    dotsContainer.appendChild(spanElement);
-  }
-
-  dragHandleContainer.appendChild(dotsContainer);
+  dragHandleElement.appendChild(iconElement1);
+  dragHandleElement.appendChild(iconElement2);
 
   return dragHandleElement;
 };
@@ -226,6 +220,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
   let dragHandleElement: HTMLElement | null = null;
   // drag handle view actions
+  const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
   const hideDragHandle = () => {
     if (!dragHandleElement?.classList.contains("drag-handle-hidden"))
       dragHandleElement?.classList.add("drag-handle-hidden");
@@ -260,6 +255,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     };
   };
   const domEvents = {
+    mousemove: () => showDragHandle(),
     dragenter: (view: EditorView) => {
       view.dom.classList.add("dragging");
       hideDragHandle();
