@@ -8,6 +8,7 @@
     opacity 0.2s ease 0.2s,
     top 0.2s ease,
     left 0.2s ease;
+  transform: translateX(-50%);
 
   &.side-menu-hidden {
     opacity: 0;
@@ -15,6 +16,17 @@
   }
 }
 /* end side menu */
+
+/* drag handle */
+#drag-handle {
+  opacity: 100;
+
+  &.drag-handle-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+/* end drag handle */
 
 .ProseMirror:not(.dragging) .ProseMirror-selectednode {
   position: relative;
