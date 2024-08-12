@@ -83,7 +83,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
 
   // if user is not authorized to view this page
   if (!canPerformWorkspaceViewerActions) {
-    return <NotAuthorizedView section="general" />;
+    return <NotAuthorizedView section="settings" />;
   }
 
   return (
