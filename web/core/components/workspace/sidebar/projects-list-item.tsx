@@ -45,7 +45,7 @@ import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useEventTracker, useProject } from "@/hooks/store";
+import { useAppTheme, useEventTracker, useProject, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
@@ -70,31 +70,37 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     Icon: LayersIcon,
+    access: EUserProjectRoles.GUEST,
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     Icon: ContrastIcon,
+    access: EUserProjectRoles.VIEWER,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     Icon: DiceIcon,
+    access: EUserProjectRoles.VIEWER,
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
     Icon: Layers,
+    access: EUserProjectRoles.GUEST,
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     Icon: FileText,
+    access: EUserProjectRoles.VIEWER,
   },
   {
     name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/inbox`,
     Icon: Intake,
+    access: EUserProjectRoles.GUEST,
   },
 ];
 
@@ -106,6 +112,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
@@ -480,31 +489,35 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     (item.name === "Intake" && !project.inbox_view)
                   )
                     return;
-
+                  const currentRole = currentProjectRole ?? 5;
                   return (
-                    <Tooltip
-                      key={item.name}
-                      isMobile={isMobile}
-                      tooltipContent={`${project?.name}: ${item.name}`}
-                      position="right"
-                      className="ml-2"
-                      disabled={!isSidebarCollapsed}
-                    >
-                      <Link key={item.name} href={item.href} onClick={handleProjectClick}>
-                        <SidebarNavItem
+                    <>
+                      {currentRole >= item.access && (
+                        <Tooltip
                           key={item.name}
-                          className={`pl-[18px]  ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                          isActive={pathname.includes(item.href)}
+                          isMobile={isMobile}
+                          tooltipContent={`${project?.name}: ${item.name}`}
+                          position="right"
+                          className="ml-2"
+                          disabled={!isSidebarCollapsed}
                         >
-                          <div className="flex items-center gap-1.5 py-[1px]">
-                            <item.Icon
-                              className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
-                            />
-                            {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
-                          </div>
-                        </SidebarNavItem>
-                      </Link>
-                    </Tooltip>
+                          <Link key={item.name} href={item.href} onClick={handleProjectClick}>
+                            <SidebarNavItem
+                              key={item.name}
+                              className={`pl-[18px]  ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
+                              isActive={pathname.includes(item.href)}
+                            >
+                              <div className="flex items-center gap-1.5 py-[1px]">
+                                <item.Icon
+                                  className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                                />
+                                {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
+                              </div>
+                            </SidebarNavItem>
+                          </Link>
+                        </Tooltip>
+                      )}
+                    </>
                   );
                 })}
               </Disclosure.Panel>
