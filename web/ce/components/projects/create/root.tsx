@@ -3,7 +3,6 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { IProject } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // constants
@@ -17,6 +16,7 @@ import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
 
 type Props = {
@@ -24,9 +24,10 @@ type Props = {
   workspaceSlug: string;
   onClose: () => void;
   handleNextStep: (projectId: string) => void;
+  data?: Partial<TProject>;
 };
 
-const defaultValues: Partial<IProject> = {
+const defaultValues: Partial<TProject> = {
   cover_image: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
   description: "",
   logo_props: {
@@ -49,7 +50,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
-  const methods = useForm<IProject>({
+  const methods = useForm<TProject>({
     defaultValues,
     reValidateMode: "onChange",
   });
@@ -67,7 +68,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
     });
   };
 
-  const onSubmit = async (formData: Partial<IProject>) => {
+  const onSubmit = async (formData: Partial<TProject>) => {
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
 

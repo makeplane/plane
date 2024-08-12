@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // types
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
@@ -16,6 +16,7 @@ import { useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
 const Root = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // store
   const { totalProjectIds, filteredProjectIds } = useProject();
   const {
@@ -56,6 +57,11 @@ const Root = observer(() => {
     clearAllAppliedDisplayFilters(workspaceSlug.toString());
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
+  useEffect(() => {
+    if (pathname.includes("/archives")) {
+      updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
+    }
+  }, [pathname]);
   return (
     <>
       <PageHead title={pageTitle} />

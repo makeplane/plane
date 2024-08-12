@@ -2,12 +2,12 @@ import { ChangeEvent } from "react";
 import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
 import { Info } from "lucide-react";
 import { cn } from "@plane/editor";
-import { IProject } from "@plane/types";
 import { Input, TextArea, Tooltip } from "@plane/ui";
 import { projectIdentifierSanitizer } from "@/helpers/project.helper";
+import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
-  setValue: UseFormSetValue<IProject>;
+  setValue: UseFormSetValue<TProject>;
   isMobile: boolean;
   isChangeInIdentifierRequired: boolean;
   setIsChangeInIdentifierRequired: (value: boolean) => void;
@@ -17,7 +17,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
   const {
     formState: { errors },
     control,
-  } = useFormContext<IProject>();
+  } = useFormContext<TProject>();
 
   const handleNameChange = (onChange: (...event: any[]) => void) => (e: ChangeEvent<HTMLInputElement>) => {
     if (!isChangeInIdentifierRequired) {
