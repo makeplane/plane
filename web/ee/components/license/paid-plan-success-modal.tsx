@@ -1,5 +1,7 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
 // ui
 import { EModalWidth, ModalCore } from "@plane/ui";
@@ -7,6 +9,8 @@ import { EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // plane web constants
 import { PRO_PLAN_FEATURES } from "@/plane-web/constants/license";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 import PlaneOneLogo from "@/public/plane-logos/plane-one-silver.svg";
@@ -17,8 +21,18 @@ export type PaidPlanSuccessModalProps = {
   handleClose: () => void;
 };
 
-export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = (props) => {
+export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((props) => {
+  const { workspaceSlug } = useParams();
   const { variant, isOpen, handleClose } = props;
+  // hooks
+  const { refreshWorkspaceSubscribedPlan } = useWorkspaceSubscription();
+
+  useEffect(() => {
+    if (isOpen && workspaceSlug) {
+      refreshWorkspaceSubscribedPlan(workspaceSlug.toString());
+    }
+  }, [isOpen, workspaceSlug, refreshWorkspaceSubscribedPlan]);
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXXL} className="rounded-xl">
       <div className="py-10 px-10 ">
@@ -61,4 +75,4 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = (props) => {
       </div>
     </ModalCore>
   );
-};
+});

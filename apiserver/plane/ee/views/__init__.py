@@ -26,6 +26,7 @@ from plane.ee.views.app.views import (
 from plane.ee.views.app.workspace import (
     WorkspaceWorkLogsEndpoint,
     WorkspaceExportWorkLogsEndpoint,
+    WorkspaceInviteCheckEndpoint,
 )
 
 # Space imports

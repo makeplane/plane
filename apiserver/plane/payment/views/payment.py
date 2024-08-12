@@ -79,6 +79,11 @@ class PaymentLinkEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
+            if e.response.status_code == 400:
+                return Response(
+                    e.response.json(),
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             log_exception(e)
             return Response(
                 {"error": "error fetching payment link"},

@@ -5,10 +5,12 @@ import requests
 from django.conf import settings
 from django.db.models import CharField
 from django.db.models.functions import Cast
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
@@ -16,13 +18,21 @@ from plane.app.permissions.workspace import (
     WorkspaceUserPermission,
 )
 from plane.db.models import WorkspaceMember, Workspace
+from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    fetch_workspace_license,
+)
 
 
 class ProductEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceUserPermission,
     ]
+
+    """
+    Get the product details for the workspace based on the number of paid users and free users
+    """
 
     def get(self, request, slug):
         try:
@@ -76,39 +86,10 @@ class ProductEndpoint(BaseAPIView):
             )
 
 
-class WorkspaceProductEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceUserPermission,
-    ]
-
-    def get(self, request, slug):
-        try:
-            if settings.PAYMENT_SERVER_BASE_URL:
-                workspace = Workspace.objects.get(slug=slug)
-                response = requests.get(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace.id)}/",
-                    headers={
-                        "content-type": "application/json",
-                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                    },
-                )
-                response.raise_for_status()
-                response = response.json()
-                return Response(response, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    {"error": "error fetching product details"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        except requests.exceptions.RequestException as e:
-            log_exception(e)
-            return Response(
-                {"error": "error fetching product details"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
 class WebsiteUserWorkspaceEndpoint(BaseAPIView):
+    """
+    Get the workspaces where the user is admin
+    """
 
     def get(self, request):
         try:
@@ -165,3 +146,268 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
                 {"error": "error in fetching workspace products"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class WorkspaceProductEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceUserPermission,
+    ]
+
+    """
+    Get the product details for the workspace
+    """
+
+    def get(self, request, slug):
+        try:
+            if settings.PAYMENT_SERVER_BASE_URL:
+                workspace = Workspace.objects.get(slug=slug)
+
+                # Check if the license is present for the workspace
+                workspace_license = WorkspaceLicense.objects.filter(
+                    workspace=workspace
+                ).first()
+
+                # If the license is present, then check if the last sync is more than 1 hour
+                if workspace_license:
+                    # If the last sync is more than 1 hour, then sync the license
+                    if (
+                        workspace_license.last_synced_at - timezone.now()
+                    ).seconds > 3600:
+                        response = fetch_workspace_license(
+                            workspace_id=str(workspace.id),
+                            workspace_slug=slug,
+                            free_seats=WorkspaceMember.objects.filter(
+                                is_active=True,
+                                workspace__slug=slug,
+                                member__is_bot=False,
+                            ).count(),
+                        )
+
+                        # Update the last synced time
+                        workspace_license.last_synced_at = timezone.now()
+                        workspace_license.is_cancelled = response.get(
+                            "is_cancelled", False
+                        )
+                        workspace_license.free_seats = response.get(
+                            "free_seats", 12
+                        )
+                        workspace_license.purchased_seats = response.get(
+                            "purchased_seats", 0
+                        )
+                        workspace_license.current_period_end_date = (
+                            response.get("current_period_end_date")
+                        )
+                        workspace_license.recurring_interval = response.get(
+                            "interval"
+                        )
+                        workspace_license.plan = response.get("plan")
+                        workspace_license.is_offline_payment = response.get(
+                            "is_offline_payment", False
+                        )
+                        workspace_license.save()
+
+                        return Response(
+                            {
+                                "is_cancelled": workspace_license.is_cancelled,
+                                "purchased_seats": workspace_license.purchased_seats,
+                                "current_period_end_date": workspace_license.current_period_end_date,
+                                "interval": workspace_license.recurring_interval,
+                                "product": workspace_license.plan,
+                                "is_offline_payment": workspace_license.is_offline_payment,
+                            },
+                            status=status.HTTP_200_OK,
+                        )
+                    else:
+                        return Response(
+                            {
+                                "is_cancelled": workspace_license.is_cancelled,
+                                "purchased_seats": workspace_license.purchased_seats,
+                                "current_period_end_date": workspace_license.current_period_end_date,
+                                "interval": workspace_license.recurring_interval,
+                                "product": workspace_license.plan,
+                                "is_offline_payment": workspace_license.is_offline_payment,
+                            },
+                            status=status.HTTP_200_OK,
+                        )
+                # If the license is not present, then fetch the license from the payment server and create it
+                else:
+                    # Fetch the workspace license
+                    response = fetch_workspace_license(
+                        workspace_id=str(workspace.id),
+                        workspace_slug=slug,
+                        free_seats=WorkspaceMember.objects.filter(
+                            is_active=True,
+                            workspace__slug=slug,
+                            member__is_bot=False,
+                        ).count(),
+                    )
+                    # Create the workspace license
+                    workspace_license = WorkspaceLicense.objects.create(
+                        workspace=workspace,
+                        is_cancelled=response.get("is_cancelled", False),
+                        purchased_seats=response.get("purchased_seats", 0),
+                        free_seats=response.get("free_seats", 12),
+                        current_period_end_date=response.get(
+                            "current_period_end_date"
+                        ),
+                        recurring_interval=response.get("interval"),
+                        plan=response.get("plan"),
+                        last_synced_at=timezone.now(),
+                    )
+                    # Return the workspace license
+                    return Response(
+                        {
+                            "is_cancelled": workspace_license.is_cancelled,
+                            "purchased_seats": workspace_license.purchased_seats,
+                            "current_period_end_date": workspace_license.current_period_end_date,
+                            "interval": workspace_license.recurring_interval,
+                            "product": workspace_license.plan,
+                            "is_offline_payment": workspace_license.is_offline_payment,
+                        },
+                        status=status.HTTP_200_OK,
+                    )
+            else:
+                return Response(
+                    {"error": "error fetching product details"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except requests.exceptions.RequestException as e:
+            log_exception(e)
+            return Response(
+                {"error": "error fetching product details"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
+
+    def post(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+
+        # Check if the license is present for the workspace
+        workspace_license = WorkspaceLicense.objects.filter(
+            workspace=workspace
+        ).first()
+
+        # If the license is present, then fetch the license from the payment server and update it
+        if workspace_license:
+            # Update the values in the workspace license
+            response = fetch_workspace_license(
+                workspace_id=str(workspace.id),
+                workspace_slug=slug,
+                free_seats=WorkspaceMember.objects.filter(
+                    is_active=True,
+                    workspace__slug=slug,
+                    member__is_bot=False,
+                ).count(),
+            )
+            workspace_license.is_cancelled = response.get(
+                "is_cancelled", False
+            )
+            workspace_license.free_seats = response.get("free_seats", 12)
+            workspace_license.purchased_seats = response.get(
+                "purchased_seats", 0
+            )
+            workspace_license.current_period_end_date = response.get(
+                "current_period_end_date"
+            )
+            workspace_license.recurring_interval = response.get("interval")
+            workspace_license.plan = response.get("plan")
+            workspace_license.last_synced_at = timezone.now()
+            workspace_license.save()
+        # If the license is not present, then fetch the license from the payment server and create it
+        else:
+            # Fetch the workspace license
+            response = fetch_workspace_license(
+                workspace_id=str(workspace.id),
+                workspace_slug=slug,
+                free_seats=WorkspaceMember.objects.filter(
+                    is_active=True,
+                    workspace__slug=slug,
+                    member__is_bot=False,
+                ).count(),
+            )
+            # Create the workspace license
+            workspace_license = WorkspaceLicense.objects.create(
+                workspace=workspace,
+                is_cancelled=response.get("is_cancelled", False),
+                purchased_seats=response.get("purchased_seats", 0),
+                free_seats=response.get("free_seats", 12),
+                current_period_end_date=response.get(
+                    "current_period_end_date"
+                ),
+                recurring_interval=response.get("interval"),
+                plan=response.get("plan"),
+                last_synced_at=timezone.now(),
+            )
+
+        # Return the response
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceLicenseSyncEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        # Check if the request is authorized
+        if (
+            request.headers.get("x-api-key")
+            != settings.PAYMENT_SERVER_AUTH_TOKEN
+        ):
+            return Response(
+                {"error": "Unauthorized"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        # Get the workspace ID from the request
+        workspace_id = request.data.get("workspace_id")
+
+        # Return an error if the workspace ID is not present
+        if not workspace_id:
+            return Response(
+                {"error": "Workspace ID is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the workspace license is present
+        workspace_license = WorkspaceLicense.objects.filter(
+            workspace_id=workspace_id
+        ).first()
+
+        # If the workspace license is present, then fetch the license from the payment server and update it
+        if workspace_license:
+            workspace_license.is_cancelled = request.data.get(
+                "is_cancelled", False
+            )
+            workspace_license.purchased_seats = request.data.get(
+                "purchased_seats", 0
+            )
+            workspace_license.free_seats = request.data.get("free_seats", 12)
+            workspace_license.current_period_end_date = request.data.get(
+                "current_period_end_date"
+            )
+            workspace_license.recurring_interval = request.data.get("interval")
+            workspace_license.plan = request.data.get("plan")
+            workspace_license.last_synced_at = timezone.now()
+            workspace_license.save()
+        # If the workspace license is not present, then fetch the license from the payment server and create it
+        else:
+            # Create the workspace license
+            workspace_license = WorkspaceLicense.objects.create(
+                workspace_id=workspace_id,
+                is_cancelled=request.data.get("is_cancelled", False),
+                purchased_seats=request.data.get("purchased_seats", 0),
+                free_seats=request.data.get("free_seats", 12),
+                current_period_end_date=request.data.get(
+                    "current_period_end_date"
+                ),
+                recurring_interval=request.data.get("interval"),
+                plan=request.data.get("plan"),
+                last_synced_at=timezone.now(),
+            )
+
+        # Return the response
+        return Response(status=status.HTTP_204_NO_CONTENT)

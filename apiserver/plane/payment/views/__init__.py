@@ -2,6 +2,8 @@ from .product import (
     ProductEndpoint,
     WorkspaceProductEndpoint,
     WebsiteUserWorkspaceEndpoint,
+    WorkspaceLicenseRefreshEndpoint,
+    WorkspaceLicenseSyncEndpoint,
 )
 from .payment import PaymentLinkEndpoint, WebsitePaymentLinkEndpoint
 from .subscription import SubscriptionEndpoint, UpgradeSubscriptionEndpoint

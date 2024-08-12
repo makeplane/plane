@@ -41,6 +41,14 @@ export class PaymentService extends APIService {
       });
   }
 
+  async refreshWorkspaceCurrentPlan(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/license-refresh/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getWorkspaceSubscriptionPageLink(workspaceSlug: string) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/`)
       .then((response) => response?.data)

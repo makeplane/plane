@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { set } from "lodash";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
@@ -19,6 +20,7 @@ export interface IWorkspaceSubscriptionStore {
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
   toggleProPlanModal: (value?: boolean) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
+  refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
 }
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
@@ -32,6 +34,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       currentWorkspaceSubscribedPlanDetail: computed,
       toggleProPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
+      refreshWorkspaceSubscribedPlan: action,
     });
   }
 
@@ -65,6 +68,14 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           current_period_end_date: null,
         });
       });
+      throw error;
+    }
+  };
+
+  refreshWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
+    try {
+      await paymentService.refreshWorkspaceCurrentPlan(workspaceSlug);
+    } catch (error) {
       throw error;
     }
   };

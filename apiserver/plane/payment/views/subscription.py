@@ -3,6 +3,7 @@ import requests
 
 # Django imports
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -11,8 +12,12 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
-from plane.db.models import Workspace
+from plane.db.models import Workspace, WorkspaceMember
+from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    fetch_workspace_license,
+)
 
 
 class SubscriptionEndpoint(BaseAPIView):
@@ -95,7 +100,71 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                 )
                 # Check if the response is successful
                 response.raise_for_status()
-                # Check if the response contains the product key
+
+                # Refetch the workspace license
+                workspace_license = WorkspaceLicense.objects.filter(
+                    workspace=workspace
+                ).first()
+
+                # Refetch the workspace license
+                workspace_license_response = fetch_workspace_license(
+                    workspace_id=str(workspace.id),
+                    workspace_slug=slug,
+                    free_seats=WorkspaceMember.objects.filter(
+                        is_active=True,
+                        workspace__slug=slug,
+                        member__is_bot=False,
+                    ).count(),
+                )
+
+                if workspace_license:
+                    # Update the last synced time
+                    workspace_license.last_synced_at = timezone.now()
+                    workspace_license.is_cancelled = (
+                        workspace_license_response.get("is_cancelled", False)
+                    )
+                    workspace_license.purchased_seats = (
+                        workspace_license_response.get("purchased_seats", 0)
+                    )
+                    workspace_license.free_seats = (
+                        workspace_license_response.get("free_seats", 12)
+                    )
+                    workspace_license.current_period_end_date = (
+                        workspace_license_response.get(
+                            "current_period_end_date"
+                        )
+                    )
+                    workspace_license.recurring_interval = (
+                        workspace_license_response.get("interval")
+                    )
+                    workspace_license.plan = workspace_license_response.get(
+                        "plan"
+                    )
+                    workspace_license.save()
+                else:
+                    # Create a new workspace license
+                    WorkspaceLicense.objects.create(
+                        workspace=workspace,
+                        last_synced_at=timezone.now(),
+                        is_cancelled=workspace_license_response.get(
+                            "is_cancelled", False
+                        ),
+                        purchased_seats=workspace_license_response.get(
+                            "purchased_seats", 0
+                        ),
+                        free_seats=workspace_license_response.get(
+                            "free_seats", 12
+                        ),
+                        current_period_end_date=workspace_license_response.get(
+                            "current_period_end_date"
+                        ),
+                        recurring_interval=workspace_license_response.get(
+                            "interval"
+                        ),
+                        plan=workspace_license_response.get("plan"),
+                    )
+
+                # Return the response
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(
                 {"error": "error in checking workspace subscription"},
