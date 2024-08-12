@@ -78,14 +78,18 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
 
   const handleDeleteIssue = async () => {
     try {
-      if (issue?.archived_at) await removeArchivedIssue(workspaceSlug, projectId, issueId);
-      else await removeIssue(workspaceSlug, projectId, issueId);
-      router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
-      captureIssueEvent({
-        eventName: ISSUE_DELETED,
-        payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-        path: pathname,
-      });
+      if (issue?.archived_at) {
+        return removeArchivedIssue(workspaceSlug, projectId, issueId).then(() => {
+          router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            path: pathname,
+          });
+        });
+      } else {
+        return removeIssue(workspaceSlug, projectId, issueId);
+      }
     } catch (error) {
       setToast({
         title: "Error!",
