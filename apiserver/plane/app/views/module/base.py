@@ -30,8 +30,9 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
-    ProjectLitePermission,
+    allow_permission,
 )
+
 from plane.app.serializers import (
     ModuleDetailSerializer,
     ModuleLinkSerializer,
@@ -58,9 +59,9 @@ from .. import BaseAPIView, BaseViewSet
 
 class ModuleViewSet(BaseViewSet):
     model = Module
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    # permission_classes = [
+    #     ProjectEntityPermission,
+    # ]
     webhook_event = "module"
 
     def get_serializer_class(self):
@@ -318,6 +319,7 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "-created_at")
         )
 
+    allow_permission(["ADMIN", "MEMBER", "VIEWER"])
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(
@@ -380,6 +382,8 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
+
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
@@ -426,6 +430,8 @@ class ModuleViewSet(BaseViewSet):
                 modules, datetime_fields, request.user.user_timezone
             )
         return Response(modules, status=status.HTTP_200_OK)
+
+    allow_permission(["ADMIN", "MEMBER", "VIEWER"])
 
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
@@ -671,6 +677,7 @@ class ModuleViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission(["ADMIN", "MEMBER"])
     def partial_update(self, request, slug, project_id, pk):
         module = self.get_queryset().filter(pk=pk)
 
@@ -740,6 +747,7 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
     def destroy(self, request, slug, project_id, pk):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
@@ -859,10 +867,8 @@ class ModuleFavoriteViewSet(BaseViewSet):
 
 
 class ModuleUserPropertiesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
+    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
     def patch(self, request, slug, project_id, module_id):
         module_properties = ModuleUserProperties.objects.get(
             user=request.user,
@@ -885,6 +891,7 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         serializer = ModuleUserPropertiesSerializer(module_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
     def get(self, request, slug, project_id, module_id):
         module_properties, _ = ModuleUserProperties.objects.get_or_create(
             user=request.user,

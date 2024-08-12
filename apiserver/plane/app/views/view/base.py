@@ -77,6 +77,25 @@ class WorkspaceViewViewSet(BaseViewSet):
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
         )
+    
+    def list(self, request, slug):
+        queryset = self.get_queryset()
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
+        if WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member=request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            queryset = queryset.filter(owned_by=request.user)
+        views = IssueViewSerializer(
+            queryset, many=True, fields=fields if fields else None
+        ).data
+        return Response(views, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, pk):
         with transaction.atomic():
@@ -242,6 +261,16 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
 
+        if WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member=request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            issue_queryset = issue_queryset.filter(
+                created_by=request.user,
+            )
+
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,
@@ -386,6 +415,14 @@ class IssueViewViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            queryset = queryset.filter(owned_by=request.user)
         fields = [
             field
             for field in request.GET.get("fields", "").split(",")

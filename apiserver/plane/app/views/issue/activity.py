@@ -19,7 +19,7 @@ from plane.app.serializers import (
     IssueActivitySerializer,
     IssueCommentSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, allow_permission
 from plane.db.models import (
     IssueActivity,
     IssueComment,
@@ -33,6 +33,7 @@ class IssueActivityEndpoint(BaseAPIView):
     ]
 
     @method_decorator(gzip_page)
+    @allow_permission(["ADMIN", "MEMBER", "GUEST", "VIEWER"])
     def get(self, request, slug, project_id, issue_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:
