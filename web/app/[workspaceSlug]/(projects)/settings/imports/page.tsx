@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { getButtonStyling } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
@@ -17,6 +18,8 @@ import IntegrationGuide from "@/plane-web/components/integration/guide";
 import { useFlag } from "@/plane-web/hooks/store";
 
 const ImportsPage = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     userProfile: { data: userProfile },
@@ -29,7 +32,7 @@ const ImportsPage = observer(() => {
   const isDarkMode = userProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
-  const isSiloIntegrationEnabled = useFlag(currentWorkspace?.slug, "SILO_INTEGRATION");
+  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
 
   if (!isAdmin)
     return (

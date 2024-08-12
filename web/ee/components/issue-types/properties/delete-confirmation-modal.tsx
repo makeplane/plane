@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
+// ui
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useState } from "react";
 
 type TProps = {
   isOpen: boolean;

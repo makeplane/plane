@@ -45,8 +45,13 @@ export interface TIssueProperty<T extends EIssuePropertyType> extends TBaseIssue
   settings: TIssuePropertySettingsMap[T] | undefined;
 }
 
+// Issue property payload
+export type TIssuePropertyPayload = Partial<TIssueProperty<EIssuePropertyType>> & {
+  options: Partial<TIssuePropertyOption>[];
+};
+
 // Issue property response
-export interface TIssuePropertyResponse {
-  property_detail: TIssueProperty<EIssuePropertyType>;
+export type TIssuePropertyResponse = TIssueProperty<EIssuePropertyType> & {
   options: TIssuePropertyOption[];
-}
+};
+

@@ -8,6 +8,8 @@ import {
 } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
+// plane web lib
+import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
 // plane web types
 import { TCreationListModes } from "@/plane-web/types";
 
@@ -44,22 +46,32 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
             <div ref={containerRef} className="w-full min-h-36 max-h-72 overflow-y-auto py-2 px-6 transition-all">
               {properties &&
                 properties.map((property) => (
-                  <IssuePropertyListItem
+                  <IssuePropertyOptionsProvider
                     key={property.id}
                     issueTypeId={issueTypeId}
                     issuePropertyId={property.id}
-                    handleIssuePropertyCreateList={handleIssuePropertyCreateList}
-                  />
+                  >
+                    <IssuePropertyListItem
+                      issueTypeId={issueTypeId}
+                      issuePropertyId={property.id}
+                      handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+                    />
+                  </IssuePropertyOptionsProvider>
                 ))}
               {/* Issue properties create list */}
               {issuePropertyCreateList.map((issueProperty, index) => (
-                <IssuePropertyCreateListItem
+                <IssuePropertyOptionsProvider
                   key={issueProperty.key}
-                  ref={index === issuePropertyCreateList.length - 1 ? lastElementRef : undefined}
                   issueTypeId={issueTypeId}
-                  issuePropertyCreateListData={issueProperty}
-                  handleIssuePropertyCreateList={handleIssuePropertyCreateList}
-                />
+                  issuePropertyId={issueProperty.id}
+                >
+                  <IssuePropertyCreateListItem
+                    ref={index === issuePropertyCreateList.length - 1 ? lastElementRef : undefined}
+                    issueTypeId={issueTypeId}
+                    issuePropertyCreateListData={issueProperty}
+                    handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+                  />
+                </IssuePropertyOptionsProvider>
               ))}
             </div>
           </div>

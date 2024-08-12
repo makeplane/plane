@@ -24,6 +24,6 @@ export type TIssuePropertyOptionsPayload = {
 };
 
 // Issue property option create list
-export type TIssuePropertyOptionCreateList = Partial<TIssuePropertyOption> & {
-  key: string;
+export type TIssuePropertyOptionCreateUpdateData = Partial<TIssuePropertyOption> & {
+  key?: string;
 };
