@@ -8,13 +8,13 @@ import useSWR from "swr";
 import { Button } from "@plane/ui";
 // component
 import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { APITokenSettingsLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // store hooks
 import { useUser, useWorkspace } from "@/hooks/store";
 // services
@@ -28,28 +28,20 @@ const ApiTokensPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { canPerformWorkspaceAdminActions } = useUser();
   const { currentWorkspace } = useWorkspace();
 
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-
-  const { data: tokens } = useSWR(workspaceSlug && isAdmin ? API_TOKENS_LIST(workspaceSlug.toString()) : null, () =>
-    workspaceSlug && isAdmin ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
+  const { data: tokens } = useSWR(
+    workspaceSlug && canPerformWorkspaceAdminActions ? API_TOKENS_LIST(workspaceSlug.toString()) : null,
+    () =>
+      workspaceSlug && canPerformWorkspaceAdminActions ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
   );
 
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
 
-  if (!isAdmin)
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-        </div>
-      </>
-    );
+  if (!canPerformWorkspaceAdminActions) {
+    return <NotAuthorizedView section="settings" />;
+  }
 
   if (!tokens) {
     return <APITokenSettingsLoader />;
