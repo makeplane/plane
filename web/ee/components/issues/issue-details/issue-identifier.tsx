@@ -1,6 +1,7 @@
 import { IssueIdentifier as BaseIssueIdentifier } from "ce/components/issues/issue-details/issue-identifier";
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // hooks
@@ -9,7 +10,7 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueIdentifierProps = {
   issueId: string;
@@ -21,6 +22,8 @@ type TIssueIdentifierProps = {
 
 export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
   const { issueId, projectId, iconSize = 12, iconContainerSize = 18, textContainerClassName = "" } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectById, getProjectIdentifierById } = useProject();
   const {
@@ -31,8 +34,9 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const issue = getIssueById(issueId);
   const projectDetails = getProjectById(projectId);
   const issueType = useIssueType(issue?.type_id);
+  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
 
-  if (!projectDetails?.is_issue_type_enabled) {
+  if (!isIssueTypeDisplayEnabled || !projectDetails?.is_issue_type_enabled) {
     return (
       <BaseIssueIdentifier
         issueId={issueId}
@@ -46,7 +50,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
 
   if (issueTypesLoader === "init-loader") {
     return (
-      <Loader className="flex w-20 h-5">
+      <Loader className="flex flex-shrink-0 w-20 h-5">
         <Loader.Item height="100%" width="100%" />
       </Loader>
     );

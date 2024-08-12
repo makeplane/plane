@@ -10,6 +10,8 @@ from plane.ee.permissions import ProjectEntityPermission
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IssuePropertyOption, IssueProperty
 from plane.ee.serializers import IssuePropertyOptionSerializer
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyOptionEndpoint(BaseAPIView):
@@ -17,6 +19,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, issue_property_id=None, pk=None):
         # Get a single issue property option
         if pk:
@@ -56,6 +59,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
 
         return Response(response_map, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def post(self, request, slug, project_id, issue_property_id):
         # Create a new issue property option
         # Only allow when property type is option
@@ -74,41 +78,33 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
             project=project_id, property_id=issue_property_id
         ).aggregate(largest=models.Max("sort_order"))["largest"]
 
+        # Set the sort order for the new option
         if last_id:
             sort_order = last_id + 10000
         else:
             sort_order = 10000
 
-        bulk_property_options = []
-        for option in request.data.get("options", []):
-            bulk_property_options.append(
-                IssuePropertyOption(
-                    name=option.get("name"),
-                    sort_order=sort_order,
-                    property_id=issue_property_id,
-                    description=option.get("description", ""),
-                    logo_props=option.get("logo_props", {}),
-                    is_active=option.get("is_active", True),
-                    is_default=option.get("is_default", False),
-                    parent_id=option.get("parent_id"),
-                    workspace_id=issue_property.workspace_id,
-                    project_id=project_id,
-                )
-            )
-            sort_order += 10000
-
-        # Bulk create the options
-        issue_property_options = IssuePropertyOption.objects.bulk_create(
-            bulk_property_options, batch_size=100
+        # Create the issue property option
+        issue_property_option = IssuePropertyOption.objects.create(
+            name=request.data.get("name"),
+            sort_order=sort_order,
+            property_id=issue_property_id,
+            description=request.data.get("description", ""),
+            logo_props=request.data.get("logo_props", {}),
+            is_active=request.data.get("is_active", True),
+            is_default=request.data.get("is_default", False),
+            parent_id=request.data.get("parent_id"),
+            workspace_id=issue_property.workspace_id,
+            project_id=project_id,
         )
 
-        serializer = IssuePropertyOptionSerializer(
-            issue_property_options, many=True
-        )
+        # Serialize the data
+        serializer = IssuePropertyOptionSerializer(issue_property_option)
 
         # Save the default value
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def patch(self, request, slug, project_id, issue_property_id, pk):
         # Update an issue property option
         issue_property_option = IssuePropertyOption.objects.get(
@@ -141,6 +137,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         # Return the data
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def delete(self, request, slug, project_id, issue_property_id, pk):
         # Delete an issue property option
         issue_property_option = IssuePropertyOption.objects.get(

@@ -30,9 +30,7 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
   // actions
   updateProperty: (issueTypeId: string, propertyData: Partial<TIssueProperty<T>>) => Promise<void>;
   addPropertyOption: (propertyOptionData: TIssuePropertyOption) => void;
-  createPropertyOptions: (
-    propertyOptions: Partial<TIssuePropertyOption>[]
-  ) => Promise<TIssuePropertyOption[] | undefined>;
+  createPropertyOption: (propertyOption: Partial<TIssuePropertyOption>) => Promise<TIssuePropertyOption | undefined>;
   deletePropertyOption: (propertyOptionId: string) => Promise<void>;
 }
 
@@ -45,7 +43,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
   logo_props: TLogoProps | undefined = undefined;
   sort_order: number | undefined = undefined;
   property_type: T | undefined = undefined;
-  relation_type: EIssuePropertyRelationType | undefined = undefined;
+  relation_type: EIssuePropertyRelationType | null | undefined = undefined;
   is_required: boolean | undefined = undefined;
   default_value: string[] | undefined = undefined;
   settings: TIssuePropertySettingsMap[T] | undefined = undefined;
@@ -92,7 +90,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       // actions
       updateProperty: action,
       addPropertyOption: action,
-      createPropertyOptions: action,
+      createPropertyOption: action,
       deletePropertyOption: action,
     });
 
@@ -211,26 +209,24 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
 
   /**
    * @description Create a new property option
-   * @param {Partial<TIssuePropertyOption>[]} propertyOptions
+   * @param {Partial<TIssuePropertyOption>} propertyOption
    */
-  createPropertyOptions = async (propertyOptions: Partial<TIssuePropertyOption>[]) => {
+  createPropertyOption = async (propertyOption: Partial<TIssuePropertyOption>) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
-      const issuePropertyOptions = await this.propertyOptionService.create(
+      const issuePropertyOption = await this.propertyOptionService.create(
         workspaceSlug,
         projectId,
         this.id,
-        propertyOptions
+        propertyOption
       );
       runInAction(() => {
-        issuePropertyOptions.forEach((option) => {
-          this.addPropertyOption(option);
-        });
+        this.addPropertyOption(issuePropertyOption);
       });
 
-      return issuePropertyOptions;
+      return issuePropertyOption;
     } catch (error) {
       console.error("IssueProperty -> createPropertyOption -> error", error);
       throw error;

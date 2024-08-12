@@ -1,6 +1,7 @@
 // icons
 import { AlignLeft, Calendar, CircleChevronDown, Hash, ToggleLeft, UsersRound } from "lucide-react";
 // plane web types
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 import {
   EIssuePropertyRelationType,
   EIssuePropertyType,
@@ -29,7 +30,8 @@ export const getTextAttributeDisplayName = (display_format: TTextAttributeDispla
 
 // Get the display name for the date attribute based on the display format
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) => "No attributes";
+export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) =>
+  renderFormattedDate(new Date()) ?? "Invalid date format";
 // TODO: enable this in next phase of issue types
 // switch (display_format) {
 //   case "MMM dd, yyyy":
@@ -59,10 +61,10 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
         },
       },
       property_type: EIssuePropertyType.TEXT,
-      relation_type: undefined,
-      is_multi: undefined,
+      relation_type: null,
+      is_multi: false,
       is_required: false,
-      default_value: undefined,
+      default_value: [],
       settings: {
         display_format: "single-line",
       } as TIssuePropertySettingsMap[EIssuePropertyType.TEXT],
@@ -80,10 +82,10 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
         },
       },
       property_type: EIssuePropertyType.DECIMAL,
-      relation_type: undefined,
-      is_multi: undefined,
+      relation_type: null,
+      is_multi: false,
       is_required: false,
-      default_value: undefined,
+      default_value: [],
       settings: undefined,
     },
   },
@@ -99,10 +101,10 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
         },
       },
       property_type: EIssuePropertyType.OPTION,
-      relation_type: undefined,
+      relation_type: null,
       is_multi: false,
       is_required: false,
-      default_value: undefined,
+      default_value: [],
       settings: undefined,
     },
   },
@@ -118,10 +120,10 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
         },
       },
       property_type: EIssuePropertyType.BOOLEAN,
-      relation_type: undefined,
-      is_multi: undefined,
+      relation_type: null,
+      is_multi: false,
       is_required: false,
-      default_value: ["false"],
+      default_value: [],
       settings: undefined,
     },
   },
@@ -137,10 +139,10 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
         },
       },
       property_type: EIssuePropertyType.DATETIME,
-      relation_type: undefined,
-      is_multi: undefined,
+      relation_type: null,
+      is_multi: false,
       is_required: false,
-      default_value: undefined,
+      default_value: [],
       settings: undefined,
     },
   },
@@ -159,7 +161,7 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       relation_type: EIssuePropertyRelationType.USER,
       is_multi: false,
       is_required: false,
-      default_value: undefined,
+      default_value: [],
       settings: undefined,
     },
   },

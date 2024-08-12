@@ -15,7 +15,7 @@ const pageService = new ProjectPageService();
 
 export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryType: TPageEmbedType = "issue") => {
   // store hooks
-  const isIssueEmbedEnabled = useFlag("PAGE_ISSUE_EMBEDS");
+  const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
 
   const fetchIssues = async (searchQuery: string): Promise<TEmbedItem[]> => {
     const response = await pageService.searchEmbed<TPageEmbedResponse[]>(workspaceSlug, projectId, {

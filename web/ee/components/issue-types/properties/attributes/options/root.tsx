@@ -71,7 +71,7 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
     const { key, ...payload } = value;
 
     await issueProperty
-      .createPropertyOptions([payload])
+      .createPropertyOption(payload)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,

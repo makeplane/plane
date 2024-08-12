@@ -8,7 +8,7 @@ import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesCreate } from "@/plane-web/components/issue-types/";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web types
 import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
@@ -36,22 +36,23 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
   const { getProjectById } = useProject();
   const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
   // derived values
+  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_DISPLAY");
   const projectDetails = getProjectById(projectId);
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
+  const isIssueTypesEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;
 
   // This has to be on root level because of global level issue update, where we haven't fetch the details yet.
   useEffect(() => {
-    if (projectId) {
+    if (projectId && isIssueTypesEnabled) {
       fetchAllPropertiesAndOptions(workspaceSlug?.toString(), projectId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [fetchAllPropertiesAndOptions, isIssueTypesEnabled, projectId, workspaceSlug]);
 
   if (!issuePropertyValues || !setIssuePropertyValues) return;
 
   return (
     <>
-      {projectDetails?.is_issue_type_enabled && (
+      {isIssueTypesEnabled && (
         <>
           {!issueTypeId || issuePropertiesLoader === "init-loader" ? (
             <Loader className="space-y-4 py-2">

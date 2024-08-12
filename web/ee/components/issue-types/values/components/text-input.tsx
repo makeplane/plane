@@ -56,7 +56,8 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
   const commonClassNames = cn(
     "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0",
     {
-      "border-[0.5px]": variant === "create" || Boolean(error),
+      "border-[0.5px]": variant === "create",
+      "border-[1px] bg-custom-background-90": variant === "update",
     },
     className
   );
@@ -100,7 +101,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
             onChange={handleTextAreaChange}
             className={cn(
               commonClassNames,
-              "min-h-10 max-h-52 vertical-scrollbar scrollbar-xs",
+              "max-h-52 vertical-scrollbar scrollbar-xs",
               variant === "create" && "min-h-28"
             )}
             onClick={() => {
@@ -127,7 +128,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
       return (
         <TextArea
           id={`readonly_text_${propertyDetail.id}`}
-          value={readOnlyData ?? "--"}
+          value={readOnlyData ?? "No data"}
           className={cn(
             commonClassNames,
             "bg-custom-background-80 text-custom-text-100 border-custom-border-400 cursor-default"

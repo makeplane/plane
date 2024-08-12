@@ -60,7 +60,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
   const { currentActiveEstimateId } = useProjectEstimates();
-  const isAdvancedBulkOpsEnabled = useFlag("BULK_OPS_ADVANCED");
+  const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_ADVANCED");
 
   // form info
   const {

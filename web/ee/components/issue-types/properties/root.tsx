@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { v4 } from "uuid";
 import { Plus } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // plane web components
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web types
 import { EIssuePropertyType, TIssueProperty, TCreationListModes } from "@/plane-web/types";
 
@@ -31,11 +32,15 @@ const defaultIssueProperty: Partial<TIssueProperty<EIssuePropertyType>> = {
 
 export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   const { issueTypeId } = props;
+  // router
+  const { projectId } = useParams();
   // states
   const [issuePropertyCreateList, setIssuePropertyCreateList] = useState<TIssuePropertyCreateList[]>([]);
   // store hooks
+  const { getProjectIssuePropertiesLoader } = useIssueTypes();
   const issueType = useIssueType(issueTypeId);
   // derived values
+  const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId?.toString());
   const properties = issueType?.properties;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -73,7 +78,14 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
         <div className="w-full flex gap-2 items-center px-6">
           <div className="text-base font-semibold">Properties</div>
         </div>
-        {(properties && properties?.length > 0) || issuePropertyCreateList.length > 0 ? (
+        {issuePropertiesLoader === "init-loader" ? (
+          <Loader className="w-full space-y-4 p-6">
+            <Loader.Item height="30px" width="100%" />
+            <Loader.Item height="30px" width="100%" />
+            <Loader.Item height="30px" width="100%" />
+            <Loader.Item height="30px" width="100%" />
+          </Loader>
+        ) : (properties && properties?.length > 0) || issuePropertyCreateList.length > 0 ? (
           <IssuePropertyList
             issueTypeId={issueTypeId}
             issuePropertyCreateList={issuePropertyCreateList}
@@ -95,6 +107,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
               ...defaultIssueProperty,
             })
           }
+          disabled={!issueType?.is_active}
         >
           <Plus className="h-3.5 w-3.5" />
           Add new property

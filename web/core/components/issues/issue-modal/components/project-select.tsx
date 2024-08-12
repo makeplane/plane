@@ -15,11 +15,12 @@ import { useUser } from "@/hooks/store";
 
 type TIssueProjectSelectProps = {
   control: Control<TIssue>;
+  disabled?: boolean;
   handleFormChange: () => void;
 };
 
 export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((props) => {
-  const { control, handleFormChange } = props;
+  const { control, disabled = false, handleFormChange } = props;
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
 
@@ -42,6 +43,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
               buttonVariant="border-with-text"
               renderCondition={(project) => shouldRenderProject(project)}
               tabIndex={getTabIndex("project_id")}
+              disabled={disabled}
             />
           </div>
         ) : (

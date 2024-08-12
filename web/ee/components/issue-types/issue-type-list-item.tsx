@@ -37,7 +37,7 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
           onToggle={() => onToggle(issueTypeId)}
           title={
             <div className="flex items-center w-full px-2 gap-2 cursor-pointer">
-              <div className={cn("flex w-full gap-2 items-center")}>
+              <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
                   <ChevronRight
                     className={cn("flex-shrink-0 size-4 transition-all", {
@@ -51,8 +51,9 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   size={26}
                   containerSize={38}
                   isDefault={issueTypeDetail?.is_default}
+                  containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
                 />
-                <div className="flex flex-col w-full items-start justify-start">
+                <div className="flex flex-col items-start justify-start whitespace-normal">
                   <div className="flex gap-4 text-left">
                     <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
                   </div>

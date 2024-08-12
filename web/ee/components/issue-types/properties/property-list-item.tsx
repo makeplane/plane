@@ -1,8 +1,13 @@
 import { useState } from "react";
+import cloneDeep from "lodash/cloneDeep";
+import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
+import omitBy from "lodash/omitBy";
 import { observer } from "mobx-react";
 // ui
-import { cn } from "@plane/editor";
 import { Logo, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // plane web components
 import {
   IssuePropertyQuickActions,
@@ -21,6 +26,7 @@ import {
   TCreationListModes,
   TOperationMode,
   TIssuePropertyOptionCreateList,
+  TIssuePropertyOption,
 } from "@/plane-web/types";
 
 type TIssuePropertyListItem = {
@@ -133,65 +139,25 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     }
   };
 
-  const handleCreatePropertyOptions = async (propertyId: string | undefined) => {
-    if (!propertyId || !issuePropertyOptionCreateList || !issuePropertyOptionCreateList.length) return;
-
-    // get issue property details from the store
-    const issueProperty = issueType?.getPropertyById(propertyId);
-    if (!issueProperty) return;
-
-    const payload = issuePropertyOptionCreateList
-      .map((item) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { key, ...rest } = item;
-        return rest;
-      })
-      .filter((item) => !!item.name);
-
-    await issueProperty
-      .createPropertyOptions(payload)
-      .then(async (response) => {
-        // get the response and set the default value for the property
-        if (response && response.length) {
-          const defaultOptionIds = response
-            .filter((option) => option.id && option.is_default)
-            .map((option) => option.id as string);
-          // update the default value for the property
-          handlePropertyDataChange("default_value", defaultOptionIds);
-          // sync the property options
-          await issueProperty.updateProperty(issueTypeId, {
-            default_value: defaultOptionIds,
-          });
-        }
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Property options created successfully.`,
-        });
-        return response;
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to create issue property options. Please try again!`,
-        });
-      })
-      .finally(() => {
-        setIssuePropertyOptionCreateList([]);
-      });
-  };
-
   const handleCreateProperty = async () => {
     if (!issuePropertyData) return;
 
+    // create property options payload (required for option type)
+    let optionsPayload: Partial<TIssuePropertyOption>[] = [];
+    if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
+      optionsPayload = issuePropertyOptionCreateList
+        .map((item) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { key, ...rest } = item;
+          return rest;
+        })
+        .filter((item) => !!item.name);
+    }
+
     setIsSubmitting(true);
     await issueType
-      ?.createProperty(issuePropertyData)
+      ?.createProperty(issuePropertyData, optionsPayload)
       .then(async (response) => {
-        if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-          await handleCreatePropertyOptions(response?.id);
-        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -207,6 +173,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         });
       })
       .finally(() => {
+        setIssuePropertyOptionCreateList([]);
         key && handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
         setIsSubmitting(false);
       });
@@ -214,10 +181,13 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
 
   const handleUpdateProperty = async (data: Partial<TIssueProperty<EIssuePropertyType>>) => {
     if (!data) return;
-
+    // Construct the payload by filtering out unchanged properties
+    const originalData = cloneDeep(issuePropertyDetail);
+    const payload = originalData && omitBy(data, (value, key) => isEqual(value, originalData[key]));
+    if (isEmpty(payload)) return;
     setIsSubmitting(true);
     await issueProperty
-      ?.updateProperty(issueTypeId, data)
+      ?.updateProperty(issueTypeId, payload)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -391,10 +361,11 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         <IssuePropertyQuickActions
           currentOperationMode={issuePropertyOperationMode}
           isSubmitting={isSubmitting}
-          handleCreateUpdate={handleCreateUpdate}
-          handleDiscard={handleDiscard}
-          handleDelete={handleDelete}
-          handleIssuePropertyOperationMode={(mode) => setIssuePropertyOperationMode(mode)}
+          onCreateUpdate={handleCreateUpdate}
+          onDiscard={handleDiscard}
+          onDelete={handleDelete}
+          onDisable={async () => handlePropertyDataChange("is_active", false, true)}
+          onIssuePropertyOperationMode={(mode) => setIssuePropertyOperationMode(mode)}
         />
       </div>
     </div>

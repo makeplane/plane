@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web hooks
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueType } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web store
@@ -49,7 +49,6 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
-    const { fetchAllPropertiesAndOptions } = useIssueTypes();
     const issueType = useIssueType(issueTypeId);
     // derived values
     const issueTypeDetail = issueType?.asJSON;
@@ -69,7 +68,7 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
           });
       }
       if (issueId) fetchIssuePropertyValues(issueId);
-    }, [fetchAllPropertiesAndOptions, issueId, projectId, workspaceSlug]);
+    }, [issueId, projectId, workspaceSlug]);
 
     useEffect(() => {
       if (activeProperties?.length) {

@@ -20,7 +20,7 @@ import {
   useCommandPalette,
 } from "@/hooks/store";
 // images
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
@@ -102,16 +102,21 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
+
+  const isIssueTypeEnabled =
+    projectExists?.is_issue_type_enabled && useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
   // fetching all issue types and properties
   useSWR(
-    workspaceSlug && projectId ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId
+    workspaceSlug && projectId && isIssueTypeEnabled
+      ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}_${isIssueTypeEnabled}`
+      : null,
+    workspaceSlug && projectId && isIssueTypeEnabled
       ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
-
-  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
 
   // check if the project member apis is loading
   if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)

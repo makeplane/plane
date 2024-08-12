@@ -90,7 +90,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   // plane web hooks
-  const { getIssueTypeProperties } = useIssueTypes();
+  const { getIssueTypeProperties, getProjectActiveIssueTypes, getProjectDefaultIssueType } = useIssueTypes();
 
   const {
     issue: { getIssueById },
@@ -114,7 +114,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   const handlePropertyValuesValidation = () => {
     const issueTypeId = watch("type_id");
-    // if no issue type id or no issue property values, return
+    // if issue type is not enabled for the project, skip validation
+    const projectDetails = getProjectById(projectId);
+    if (!projectDetails?.is_issue_type_enabled) return true;
+    // if no issue type id or no issue property values, skip validation
     if (!issueTypeId || !issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return true;
     // all properties for the issue type
     const properties = getIssueTypeProperties(issueTypeId);
@@ -161,6 +164,36 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  // Update the issue type id when the project id changes
+  useEffect(() => {
+    const issueTypeId = watch("type_id");
+
+    // if data is present, set active type id to the type id of the issue
+    if (data && data.type_id) {
+      setValue("type_id", data.type_id, { shouldValidate: true });
+      return;
+    }
+
+    // if issue type id is present, return
+    if (issueTypeId) return;
+
+    if (!projectId) return;
+
+    const projectIssueTypes = getProjectActiveIssueTypes(projectId);
+    const defaultIssueType = getProjectDefaultIssueType(projectId);
+
+    // if data is not present, set active type id to the default type id of the project
+    if (projectId && projectIssueTypes) {
+      if (defaultIssueType?.id) {
+        setValue("type_id", defaultIssueType.id, { shouldValidate: true });
+      } else {
+        const issueTypeId = Object.keys(projectIssueTypes)[0];
+        if (issueTypeId) setValue("type_id", issueTypeId, { shouldValidate: true });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, projectId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
@@ -262,14 +295,17 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           {/* Don't show project selection if editing an issue */}
           {!data?.id && (
             <div className="flex items-center pt-2 pb-4 gap-x-1">
-              <IssueProjectSelect control={control} handleFormChange={handleFormChange} />
+              <IssueProjectSelect
+                control={control}
+                disabled={!!data?.sourceIssueId}
+                handleFormChange={handleFormChange}
+              />
               {projectId && (
                 <IssueTypeSelect
                   control={control}
-                  setValue={setValue}
-                  data={data}
-                  issueTypeId={watch("type_id")}
                   projectId={projectId}
+                  disabled={!!data?.sourceIssueId}
+                  handleFormChange={handleFormChange}
                 />
               )}
             </div>
