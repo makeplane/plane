@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
+import { ArchiveRestoreIcon, ClipboardCopy, Copy, FileLock2, Link, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
@@ -103,7 +103,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         );
       },
       label: "Copy markdown",
-      icon: Clipboard,
+      icon: ClipboardCopy,
       shouldRender: true,
     },
     {
@@ -125,9 +125,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       shouldRender: true,
     },
     {
-      key: "make-a-copy",
+      key: "duplicate",
       action: saveDescriptionYJSAndPerformAction(handleDuplicatePage),
-      label: "Make a copy",
+      label: "Duplicate",
       icon: Copy,
       shouldRender: canCurrentUserDuplicatePage,
     },
@@ -135,7 +135,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       key: "lock-unlock-page",
       action: is_locked ? handleUnlockPage : saveDescriptionYJSAndPerformAction(handleLockPage),
       label: is_locked ? "Unlock page" : "Lock page",
-      icon: is_locked ? LockOpen : Lock,
+      icon: is_locked ? LockOpen : FileLock2,
       shouldRender: canCurrentUserLockPage,
     },
     {
@@ -156,6 +156,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         Full width
         <ToggleSwitch value={isFullWidth} onChange={() => {}} />
       </CustomMenu.MenuItem>
+      <hr className="my-2 border-custom-border-200" />
       {MENU_ITEMS.map((item) => {
         if (!item.shouldRender) return null;
         return (

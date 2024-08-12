@@ -7,12 +7,14 @@ export type TPagesPersonalizationConfig = {
   full_width: boolean;
   font_size: TEditorFontSize;
   font_style: TEditorFontStyle;
+  sticky_toolbar: boolean;
 };
 
 const DEFAULT_PERSONALIZATION_VALUES: TPagesPersonalizationConfig = {
   full_width: false,
   font_size: "large-font",
   font_style: "sans-serif",
+  sticky_toolbar: true,
 };
 
 export const usePageFilters = () => {
@@ -25,6 +27,7 @@ export const usePageFilters = () => {
   const isFullWidth = !!pagesConfig?.full_width;
   const fontSize = pagesConfig?.font_size ?? DEFAULT_PERSONALIZATION_VALUES.font_size;
   const fontStyle = pagesConfig?.font_style ?? DEFAULT_PERSONALIZATION_VALUES.font_style;
+  const isToolbarSticky = pagesConfig?.sticky_toolbar ?? DEFAULT_PERSONALIZATION_VALUES.sticky_toolbar;
   // update action
   const handleUpdateConfig = (payload: Partial<TPagesPersonalizationConfig>) =>
     setPagesConfig({
@@ -55,6 +58,14 @@ export const usePageFilters = () => {
     handleUpdateConfig({
       font_style: value,
     });
+  /**
+   * @description action to update sticky_toolbar value
+   * @param {boolean} value
+   */
+  const handleStickyToolbar = (value: boolean) =>
+    handleUpdateConfig({
+      sticky_toolbar: value,
+    });
 
   return {
     fontSize,
@@ -63,5 +74,7 @@ export const usePageFilters = () => {
     handleFontStyle,
     isFullWidth,
     handleFullWidth,
+    isToolbarSticky,
+    handleStickyToolbar,
   };
 };
