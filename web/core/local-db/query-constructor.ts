@@ -1,3 +1,4 @@
+import { SQL } from "./sqlite";
 import { wrapDateTime } from "./utils";
 
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
@@ -52,4 +53,36 @@ export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectI
   sql = `${sql.split("group by i.id")[0]};`;
 
   return sql;
+};
+
+const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
+
+export const stageIssueInserts = (issue: any) => {
+  const issue_id = issue.id;
+  const keys = Object.keys(issue).join(",");
+  const values = Object.values(issue).map((val) => {
+    if (val === null) {
+      return "";
+    }
+    if (typeof val === "object") {
+      return JSON.stringify(val);
+    }
+    return val;
+  }); // Will fail when the values have a comma
+
+  SQL.db.exec({
+    sql: `insert into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    bind: values,
+  });
+  arrayFields.forEach((field) => {
+    const values = issue[field];
+    if (values) {
+      values.forEach((val: any) => {
+        SQL.db.exec({
+          sql: `insert into issue_meta(issue_id,key,value) values (?,?,?)`,
+          bind: [issue_id, field, val],
+        });
+      });
+    }
+  });
 };

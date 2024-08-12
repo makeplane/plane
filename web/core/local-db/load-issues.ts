@@ -1,51 +1,32 @@
 import { TBaseIssue } from "@plane/types";
 import { IssueService } from "@/services/issue";
 import createIndexes from "./indexes";
+import { stageIssueInserts } from "./query-constructor";
 import { runQuery } from "./query-executor";
 import { SQL } from "./sqlite";
 import { log } from "./utils";
 
-const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 const PAGE_SIZE = 1000;
 
 export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
+
 export const addIssue = async (issue: any) => {
-  const issue_id = issue.id;
-  const keys = Object.keys(issue).join(",");
-  const values = Object.values(issue).map((val) => {
-    if (val === null) {
-      return "";
-    }
-    if (typeof val === "object") {
-      return JSON.stringify(val);
-    }
-    return val;
-  }); // Will fail when the values have a comma
-
-  const promises = [];
   SQL.db.exec("BEGIN TRANSACTION;");
-
-  promises.push(
-    SQL.db.exec({
-      sql: `insert into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      bind: values,
-    })
-  );
-
-  arrayFields.forEach((field) => {
-    const values = issue[field];
-    if (values) {
-      values.forEach((val: any) => {
-        SQL.db.exec({
-          sql: `insert into issue_meta(issue_id,key,value) values (?,?,?)`,
-          bind: [issue_id, field, val],
-        });
-      });
-    }
-  });
+  stageIssueInserts(issue);
   SQL.db.exec("COMMIT;");
 };
 
+export const addIssuesBulk = async (issues: any, batchSize = 100) => {
+  for (let i = 0; i < issues.length; i += batchSize) {
+    const batch = issues.slice(i, i + batchSize);
+
+    SQL.db.exec("BEGIN TRANSACTION;");
+    batch.forEach((issue: any) => {
+      stageIssueInserts(issue);
+    });
+    await SQL.db.exec("COMMIT;");
+  }
+};
 export const deleteIssueFromLocal = async (issue_id: any) => {
   const deleteQuery = `delete from issues where id='${issue_id}'`;
   const deleteMetaQuery = `delete from issue_meta where issue_id='${issue_id}'`;
@@ -85,14 +66,12 @@ export const loadIssuesPrivate = async (workspaceId: string, projectId: string) 
       const response = await issueService.getIssuesFromServer(workspaceId, projectId, { cursor });
       cursor = response.next_cursor;
       results = response.results as TBaseIssue[];
-      results.map(async (issue) => {
-        try {
-          await addIssue(issue);
-        } catch (e) {
-          log("###Error", e, issue);
-          breakLoop = true;
-        }
-      });
+      try {
+        await addIssuesBulk(results);
+      } catch (e) {
+        log("###Error", e, results);
+        breakLoop = true;
+      }
     } while (results.length >= PAGE_SIZE && !breakLoop);
     await createIndexes();
   } else {
