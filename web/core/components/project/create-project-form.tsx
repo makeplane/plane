@@ -391,7 +391,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4 border-t border-custom-border-100">
+        <div className="flex justify-end gap-2 py-4 border-t border-custom-border-100">
           <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
             Cancel
           </Button>
