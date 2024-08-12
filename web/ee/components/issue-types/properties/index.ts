@@ -7,3 +7,4 @@ export * from "./dropdowns";
 export * from "./attributes";
 export * from "./mandatory-field-toggle";
 export * from "./quick-actions";
+export * from "./delete-confirmation-modal";

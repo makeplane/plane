@@ -12,7 +12,7 @@ interface IWithFeatureFlagHOC {
 
 export const WithFeatureFlagHOC = observer((props: IWithFeatureFlagHOC) => {
   const { workspaceSlug, flag, fallback, children } = props;
-  // check if the feature flag is enableds
+  // check if the feature flag is enabled
   const isFeatureEnabled = useFlag(workspaceSlug, flag);
   // return the children if the feature flag is enabled else return the fallback
   return <>{isFeatureEnabled ? children : fallback}</>;

@@ -53,9 +53,9 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   isDefault={issueTypeDetail?.is_default}
                   containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
                 />
-                <div className="flex flex-col items-start justify-start">
+                <div className="flex flex-col items-start justify-start whitespace-normal">
                   <div className="flex gap-4 text-left">
-                    <div className="text-sm text-custom-text-100 font-medium">{issueTypeDetail?.name}</div>
+                    <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
                   </div>
                   <div className="text-sm text-custom-text-300 text-left line-clamp-1">
                     {issueTypeDetail?.description}

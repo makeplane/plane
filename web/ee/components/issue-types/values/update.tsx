@@ -38,7 +38,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     const projectDetails = getProjectById(projectId);
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
-    const issueProperties = getProjectIssuePropertiesLoader(projectId);
+    const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
     const isIssueTypeEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;
 
     // fetch issue custom property values
@@ -93,7 +93,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     // if issue types are not enabled, return null
     if (!isIssueTypeEnabled) return null;
 
-    if (issueProperties === "init-loader") {
+    if (issuePropertiesLoader === "init-loader") {
       return (
         <Loader className="space-y-4 py-4">
           <Loader.Item height="30px" />

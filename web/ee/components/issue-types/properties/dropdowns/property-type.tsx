@@ -19,7 +19,7 @@ import {
 type TPropertyTypeDropdownProps = {
   issueTypeId: string;
   propertyType: EIssuePropertyType | undefined;
-  propertyRelationType: EIssuePropertyRelationType | undefined;
+  propertyRelationType: EIssuePropertyRelationType | null | undefined;
   currentOperationMode: TOperationMode | null;
   handlePropertyObjectChange: (value: Partial<TIssueProperty<EIssuePropertyType>>) => void;
   error?: string;
