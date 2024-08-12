@@ -279,7 +279,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "active-cycles",
     label: "Cycles",
     href: `/active-cycles`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: EUserWorkspaceRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
     Icon: ContrastIcon,
   },
@@ -317,7 +317,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "your-work",
     label: "Your work",
     href: "/profile",
-    access: EUserWorkspaceRoles.GUEST,
+    access: EUserWorkspaceRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
       options?.userId ? pathname.includes(`${baseUrl}/profile/${options?.userId}`) : false,
     Icon: UserActivityIcon,
