@@ -8,7 +8,7 @@ import { EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web constants
-import { PRO_PLAN_FEATURES } from "@/plane-web/constants/license";
+import { PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -62,12 +62,19 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
         </div>
         <div className="py-4 px-4 md:pl-14 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
-            {PRO_PLAN_FEATURES.map((feature) => (
-              <li key={feature} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>
-                <p className="w-full text-sm font-medium leading-5 flex items-center line-clamp-1">
-                  <CheckCircle className="h-4 w-4 mr-4 text-custom-text-300 flex-shrink-0" />
-                  <span className="text-custom-text-200 truncate">{feature}</span>
-                </p>
+            {PRO_PLAN_FEATURES_MAP.map((feature) => (
+              <li key={feature?.label} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>
+                <div className="w-full text-sm font-medium leading-5 flex items-center">
+                  <CheckCircle className="flex-shrink-0 h-4 w-4 mr-3 text-custom-text-300" />
+                  <div className="relative overflow-hidden line-clamp-1">
+                    <span className="text-custom-text-200 truncate">{feature?.label}</span>
+                  </div>
+                  {feature?.comingSoon && (
+                    <div className="flex-shrink-0 flex justify-center items-center bg-custom-primary-100/60 text-white text-[7px] rounded-full px-1 h-[12px] -mt-4 ml-1 z-50 whitespace-nowrap">
+                      COMING SOON
+                    </div>
+                  )}
+                </div>
               </li>
             ))}
           </ul>

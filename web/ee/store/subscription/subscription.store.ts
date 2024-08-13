@@ -21,6 +21,7 @@ export interface IWorkspaceSubscriptionStore {
   toggleProPlanModal: (value?: boolean) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
+  freeTrialSubscription: (workspaceSlug: string, payload: { product_id: string; price_id: string }) => Promise<void>;
 }
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
@@ -75,6 +76,15 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   refreshWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
     try {
       await paymentService.refreshWorkspaceCurrentPlan(workspaceSlug);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  freeTrialSubscription = async (workspaceSlug: string, payload: { product_id: string; price_id: string }) => {
+    try {
+      await paymentService.getFreeTrialSubscription(workspaceSlug, payload);
+      await this.fetchWorkspaceSubscribedPlan(workspaceSlug);
     } catch (error) {
       throw error;
     }

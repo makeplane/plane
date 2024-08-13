@@ -11,6 +11,7 @@ from .views import (
     FeatureFlagProxyEndpoint,
     WorkspaceLicenseRefreshEndpoint,
     WorkspaceLicenseSyncEndpoint,
+    WorkspaceFreeTrialEndpoint,
 )
 
 urlpatterns = [
@@ -63,5 +64,10 @@ urlpatterns = [
         "workspaces/license-sync/",
         WorkspaceLicenseSyncEndpoint.as_view(),
         name="license-sync",
+    ),
+    path(
+        "workspaces/<str:slug>/trial-subscriptions/",
+        WorkspaceFreeTrialEndpoint.as_view(),
+        name="license-refresh",
     ),
 ]
