@@ -13,11 +13,14 @@ const StatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store
   const { currentProjectDetails } = useProject();
-  const { canPerformProjectMemberActions } = useUser();
+  const {
+    canPerformProjectMemberActions,
+    membership: { currentProjectRole },
+  } = useUser();
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - States` : undefined;
 
-  if (!canPerformProjectMemberActions) {
+  if (currentProjectRole && !canPerformProjectMemberActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

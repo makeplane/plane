@@ -14,7 +14,10 @@ import { useProject, useUser } from "@/hooks/store";
 const LabelsSettingsPage = observer(() => {
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { canPerformProjectMemberActions } = useUser();
+  const {
+    canPerformProjectMemberActions,
+    membership: { currentProjectRole },
+  } = useUser();
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Labels` : undefined;
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
@@ -32,7 +35,7 @@ const LabelsSettingsPage = observer(() => {
     );
   }, [scrollableContainerRef?.current]);
 
-  if (!canPerformProjectMemberActions) {
+  if (currentProjectRole && !canPerformProjectMemberActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

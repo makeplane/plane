@@ -11,7 +11,10 @@ import { useUser, useProject } from "@/hooks/store";
 
 const EstimatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
-  const { canPerformProjectAdminActions } = useUser();
+  const {
+    canPerformProjectAdminActions,
+    membership: { currentProjectRole },
+  } = useUser();
   const { currentProjectDetails } = useProject();
 
   // derived values
@@ -19,7 +22,7 @@ const EstimatesSettingsPage = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
 
-  if (!canPerformProjectAdminActions) {
+  if (currentProjectRole && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 
