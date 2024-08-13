@@ -170,7 +170,6 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                 "logo_props": {
                     "in_use": "icon",
                     "icon": {
-                        "name": "Layers",
                         "color": "#ffffff",
                         "background_color": "#6695FF",
                     },

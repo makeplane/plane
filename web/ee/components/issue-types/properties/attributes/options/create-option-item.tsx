@@ -16,10 +16,10 @@ export const IssuePropertyCreateOptionItem = observer(
     props: TIssuePropertyCreateOptionItem,
     ref: React.Ref<HTMLDivElement>
   ) {
-    const { propertyOptionCreateListData, updateCreateListData, error} = props;
+    const { propertyOptionCreateListData, updateCreateListData, error } = props;
 
     return (
-      <div ref={ref} className="w-full px-1 pr-2">
+      <div ref={ref} className="w-full pr-2.5">
         <IssuePropertyOptionItem
           propertyOptionData={propertyOptionCreateListData}
           updateOptionData={updateCreateListData}

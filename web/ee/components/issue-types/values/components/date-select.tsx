@@ -55,7 +55,7 @@ export const DateValueSelect = observer((props: TDateValueSelectProps) => {
       <DateDropdown
         value={data?.[0]}
         onChange={handleDateChange}
-        placeholder="Add date"
+        placeholder="Choose date"
         buttonVariant={variant === "update" && !Boolean(error) ? "transparent-with-text" : "border-with-text"}
         disabled={isDisabled}
         className="w-full flex-grow group"

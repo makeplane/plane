@@ -5,7 +5,7 @@ import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
 import { observer } from "mobx-react";
 // ui
-import { Logo, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { Logo, TOAST_TYPE, ToggleSwitch, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
@@ -82,7 +82,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   // get property default values
   const getDefaultValues = () => {
     // if property is option type and operation mode is create, return default values from propertyOptions
-    if (issuePropertyData?.property_type === EIssuePropertyType.OPTION && issuePropertyOperationMode === "create") {
+    if (issuePropertyData?.property_type === EIssuePropertyType.OPTION) {
       return propertyOptions.filter((option) => option.is_default).map((option) => option.id as string) ?? [];
     }
     // else return default values from issuePropertyData
@@ -158,7 +158,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       });
   };
 
-  const handleUpdateProperty = async (data: Partial<TIssueProperty<EIssuePropertyType>>) => {
+  const handleUpdateProperty = async (data: Partial<TIssueProperty<EIssuePropertyType>>, showToast: boolean = true) => {
     if (!data) return;
     // Construct the payload by filtering out unchanged properties
     const originalData = cloneDeep(issuePropertyDetail);
@@ -194,18 +194,20 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         options: optionsPayload,
       })
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Property ${issuePropertyData?.display_name} updated successfully.`,
-        });
+        if (showToast)
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: `Property ${issuePropertyData?.display_name} updated successfully.`,
+          });
       })
       .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to update issue property. Please try again!`,
-        });
+        if (showToast)
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: error?.error ?? `Failed to update issue property. Please try again!`,
+          });
         setIssuePropertyData(issuePropertyDetail);
       })
       .finally(() => {
@@ -302,6 +304,31 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     handlePropertyDataChange("is_required", value, !issuePropertyOperationMode);
   };
 
+  const handleEnableDisable = async (isActive: boolean) => {
+    handlePropertyDataChange("is_active", isActive);
+    // sync with server only if operation mode is not create/ update
+    if (issuePropertyOperationMode) return;
+    const enableDisablePropertyPromise = handleUpdateProperty(
+      {
+        is_active: isActive,
+      },
+      false
+    );
+    if (!enableDisablePropertyPromise) return;
+    setPromiseToast(enableDisablePropertyPromise, {
+      loading: `${isActive ? "Enabling" : "Disabling"} ${issuePropertyData?.display_name} property`,
+      success: {
+        title: "Success!",
+        message: () => `${issuePropertyData?.display_name} property ${isActive ? "enabled" : "disabled"} successfully.`,
+      },
+      error: {
+        title: "Error!",
+        message: () =>
+          `${issuePropertyData?.display_name} property could not be ${isActive ? "enabled" : "disabled"}. Please try again.`,
+      },
+    });
+  };
+
   return (
     <div
       className={cn(
@@ -354,15 +381,18 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           isDisabled={isMandatoryFieldDisabled}
         />
       </div>
-      <div className="w-20 text-center whitespace-nowrap">
-        <ToggleSwitch
-          value={!!issuePropertyData.is_active}
-          onChange={() =>
-            // sync with server only if operation mode is not create/ update
-            handlePropertyDataChange("is_active", !issuePropertyData.is_active, !issuePropertyOperationMode)
-          }
-        />
-      </div>
+      <Tooltip
+        className="shadow"
+        tooltipContent={!!issuePropertyData.is_active ? "Click to disable" : "Click to enable"}
+        position="bottom"
+      >
+        <div className="w-20 text-center whitespace-nowrap">
+          <ToggleSwitch
+            value={!!issuePropertyData.is_active}
+            onChange={() => handleEnableDisable(!issuePropertyData.is_active)}
+          />
+        </div>
+      </Tooltip>
       <div className="relative w-16 whitespace-nowrap text-right text-sm font-medium">
         <IssuePropertyQuickActions
           currentOperationMode={issuePropertyOperationMode}

@@ -12,12 +12,13 @@ import { useIssueType } from "@/plane-web/hooks/store";
 type TIssueTypeListItem = {
   issueTypeId: string;
   isOpen: boolean;
+  isCollapseDisabled: boolean;
   onToggle: (issueTypeId: string) => void;
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
 };
 
 export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
-  const { issueTypeId, isOpen, onToggle, onEditIssueTypeIdChange } = props;
+  const { issueTypeId, isOpen, isCollapseDisabled, onToggle, onEditIssueTypeIdChange } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -37,13 +38,18 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
           isOpen={isOpen}
           onToggle={() => onToggle(issueTypeId)}
           title={
-            <div className="flex items-center w-full px-2 gap-2 cursor-pointer">
+            <div
+              className={cn("flex items-center w-full px-2 gap-2 cursor-pointer", {
+                "cursor-not-allowed": isCollapseDisabled,
+              })}
+            >
               <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
                   <ChevronRight
                     className={cn("flex-shrink-0 size-4 transition-all", {
                       "rotate-90 text-custom-text-100": isOpen,
                       "text-custom-text-300": !isOpen,
+                      "text-custom-text-400 opacity-70": isCollapseDisabled,
                     })}
                   />
                 </div>

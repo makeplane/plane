@@ -120,6 +120,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
             isMultiSelect={propertyDetail.is_multi}
             buttonClassName="h-8"
             onOptionValueChange={onPropertyValueChange}
+            showOptionDetails
           />
         )}
       </>
@@ -159,8 +160,6 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
-  const isPropertyMultiLineText =
-    propertyTypeKey === "TEXT" && propertyDetail?.settings?.display_format === "multi-line";
 
   const CurrentPropertyAttribute = isPropertyValuesLoading ? (
     <Loader className="w-full min-h-8">
@@ -175,32 +174,19 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   return (
     <>
       {variant === "create" && (
-        <div
-          className={cn("w-full flex items-start justify-center gap-1.5 py-1", isPropertyMultiLineText && "flex-col")}
-        >
-          <div
-            className={cn(
-              "w-1/3 md:w-1/2 h-8 flex flex-shrink-0 gap-1.5 items-center",
-              isPropertyMultiLineText && "w-full"
-            )}
-          >
+        <div className={cn("w-full flex items-start justify-center gap-1.5 py-1")}>
+          <div className={cn("w-2/5 h-8 flex flex-shrink-0 gap-1.5 items-center")}>
             <IssuePropertyDetail />
           </div>
           <div className="w-full h-full min-h-8 flex flex-col gap-0.5">{CurrentPropertyAttribute}</div>
         </div>
       )}
       {variant === "update" && (
-        <div
-          className={cn(
-            "flex w-full items-start gap-x-3 gap-y-1 min-h-8",
-            isPropertyMultiLineText && "flex-col items-start"
-          )}
-        >
+        <div className={cn("flex w-full items-start gap-x-3 gap-y-1 min-h-8")}>
           <div
             className={cn(
               "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-custom-text-300",
-              isPeekOverview ? "w-1/4" : "w-2/5",
-              isPropertyMultiLineText && "w-full"
+              isPeekOverview ? "w-1/4" : "w-2/5"
             )}
           >
             <IssuePropertyDetail />

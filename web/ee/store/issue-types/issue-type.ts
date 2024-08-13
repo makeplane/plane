@@ -29,7 +29,7 @@ export interface IIssueType extends TIssueType {
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
   // actions
   updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
-  addProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions: TIssuePropertyOption[]) => void;
+  addOrUpdateProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions: TIssuePropertyOption[]) => void;
   createProperty: (propertyData: TIssuePropertyPayload) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
   deleteProperty: (propertyId: string) => Promise<void>;
 }
@@ -81,7 +81,7 @@ export class IssueType implements IIssueType {
       activeProperties: computed,
       // actions
       updateType: action,
-      addProperty: action,
+      addOrUpdateProperty: action,
       createProperty: action,
       deleteProperty: action,
     });
@@ -178,12 +178,19 @@ export class IssueType implements IIssueType {
    * @description Add a property to the issue type
    * @param issueProperty Issue property data
    */
-  addProperty = async (
+  addOrUpdateProperty = async (
     issuePropertyData: TIssueProperty<EIssuePropertyType>,
     propertyOptions: TIssuePropertyOption[]
   ) => {
     try {
-      const issueProperty = new IssueProperty<EIssuePropertyType>(this.store, issuePropertyData);
+      const existingProperty = this.properties.find((property) => property.id === issuePropertyData.id);
+      let issueProperty: IIssueProperty<EIssuePropertyType>;
+      if (existingProperty) {
+        issueProperty = existingProperty;
+        issueProperty.updatePropertyData(issuePropertyData);
+      } else {
+        issueProperty = new IssueProperty<EIssuePropertyType>(this.store, issuePropertyData);
+      }
       update(this, "properties", (properties) => uniq(concat(properties, issueProperty)));
       if (propertyOptions && propertyOptions.length) {
         issueProperty.addOrUpdatePropertyOptions(propertyOptions);
@@ -211,7 +218,7 @@ export class IssueType implements IIssueType {
       );
       const { options, ...issuePropertyData } = issuePropertyResponse;
       runInAction(() => {
-        this.addProperty(issuePropertyData, options);
+        this.addOrUpdateProperty(issuePropertyData, options);
       });
       return issuePropertyData;
     } catch (error) {

@@ -20,6 +20,7 @@ type TOptionValueSelectProps = {
   isMultiSelect?: boolean;
   isDisabled?: boolean;
   buttonClassName?: string;
+  showOptionDetails?: boolean;
   onOptionValueChange: (value: string[]) => Promise<void>;
 };
 
@@ -34,6 +35,7 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
     isMultiSelect = false,
     isDisabled = false,
     buttonClassName = "",
+    showOptionDetails = false,
     onOptionValueChange,
   } = props;
   // states
@@ -53,7 +55,15 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
         if (data.length === 1) {
           return issueProperty?.getPropertyOptionById(data[0])?.name;
         } else {
-          return `${data.length} options selected`;
+          if (showOptionDetails) {
+            // get selected option names (comma separated), add "and" before the last option÷
+            return data
+              .map((optionId) => issueProperty?.getPropertyOptionById(optionId)?.name)
+              .join(", ")
+              .replace(/, ([^,]*)$/, " and $1");
+          } else {
+            return `${data.length} options selected`;
+          }
         }
       }
       return "Select options";
@@ -61,7 +71,7 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
       if (data.length) {
         return issueProperty?.getPropertyOptionById(data[0])?.name;
       }
-      return "Select option";
+      return "Select an option";
     }
   };
 

@@ -29,7 +29,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
   const properties = issueType?.properties;
 
   return (
-    <div className="w-full mt-2 flow-root">
+    <div className="w-full mt-1 flow-root">
       <div className="overflow-x-auto horizontal-scrollbar scrollbar-sm">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="w-full">

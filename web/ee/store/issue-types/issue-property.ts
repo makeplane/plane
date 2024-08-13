@@ -27,6 +27,8 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
   sortedActivePropertyOptions: TIssuePropertyOption[];
   // computed function
   getPropertyOptionById: (propertyOptionId: string) => IIssuePropertyOption | undefined;
+  // helper actions
+  updatePropertyData: (propertyData: TIssueProperty<EIssuePropertyType>) => void;
   // actions
   updateProperty: (issueTypeId: string, propertyData: TIssuePropertyPayload) => Promise<void>;
   addOrUpdatePropertyOptions: (propertyOptionsData: TIssuePropertyOption[]) => void;
@@ -171,6 +173,19 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
 
   // helper actions
   /**
+   * @description Update property data
+   * @param {TIssueProperty<EIssuePropertyType>} propertyData
+   */
+  updatePropertyData = (propertyData: TIssueProperty<EIssuePropertyType>) => {
+    for (const key in propertyData) {
+      if (propertyData.hasOwnProperty(key)) {
+        const propertyKey = key as keyof TIssueProperty<T>;
+        set(this, propertyKey, propertyData[propertyKey] ?? undefined);
+      }
+    }
+  };
+
+  /**
    * @description Add or update property option
    * @param {TIssuePropertyOption[]} propertyOptionsData
    */
@@ -243,12 +258,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       );
       runInAction(() => {
         const { options, ...issuePropertyData } = issuePropertyResponse;
-        for (const key in issuePropertyData) {
-          if (issuePropertyData.hasOwnProperty(key)) {
-            const propertyKey = key as keyof TIssueProperty<T>;
-            set(this, propertyKey, issuePropertyData[propertyKey] ?? undefined);
-          }
-        }
+        this.updatePropertyData(issuePropertyData);
         if (options && options.length) {
           this.addOrUpdatePropertyOptions(options);
         }

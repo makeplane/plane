@@ -52,6 +52,7 @@ export const IssueTypesList = observer((props: TIssueTypesList) => {
               openIssueTypeId === issueTypeId ||
               (issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1)
             }
+            isCollapseDisabled={issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1}
             onToggle={handleIssueTypeListToggle}
             onEditIssueTypeIdChange={onEditIssueTypeIdChange}
           />

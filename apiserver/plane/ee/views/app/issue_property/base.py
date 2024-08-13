@@ -196,10 +196,10 @@ class IssuePropertyEndpoint(BaseAPIView):
             if issue_property.property_type == "OPTION":
                 try:
                     self.create_options(issue_property, options)
-                    self.update_property_default_options(issue_property)
                     # Reset the default options if the property is required
                     if issue_property.is_required:
                         self.reset_options_default(issue_property)
+                    self.update_property_default_options(issue_property)
 
                 except IntegrityError:
                     return Response(
@@ -295,10 +295,10 @@ class IssuePropertyEndpoint(BaseAPIView):
                 self.handle_options_create_update(
                     issue_property, options, slug, project_id
                 )
-                self.update_property_default_options(issue_property)
                 # Reset the default options if the property is required
                 if issue_property.is_required:
                     self.reset_options_default(issue_property)
+                self.update_property_default_options(issue_property)
 
             except IntegrityError:
                 return Response(
