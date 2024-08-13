@@ -13,7 +13,7 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
 
   // store hooks
   const { getViewById } = useProjectView();
-  const { currentProjectDetails } = useProject();
+  const { getProjectById } = useProject();
   const { getCycleById } = useCycle();
   const { getModuleById } = useModule();
 
@@ -22,6 +22,8 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
   const viewDetails = getViewById(favoriteItemId ?? "");
   const cycleDetail = getCycleById(favoriteItemId ?? "");
   const moduleDetail = getModuleById(favoriteItemId ?? "");
+
+  const currentProjectDetails = getProjectById(favorite.project_id ?? "");
 
   let itemIcon;
   let itemTitle;
