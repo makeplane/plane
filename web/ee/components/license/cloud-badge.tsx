@@ -81,6 +81,7 @@ export const CloudEditionBadge = observer(() => {
             isOpen={isProPlanModalOpen}
             handleClose={() => toggleProPlanModal(false)}
             yearlyPlan={false}
+            handleSuccessModal={() => setProPlanSuccessModalOpen(true)}
           />
           <Button
             tabIndex={-1}

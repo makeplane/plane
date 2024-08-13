@@ -9,7 +9,7 @@ import { EModalWidth, Loader, ModalCore, setToast, TOAST_TYPE } from "@plane/ui"
 // plane web constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useEventTracker, useUser } from "@/hooks/store";
-import { PRO_PLAN_FEATURES } from "@/plane-web/constants/license";
+import { PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
 // plane web services
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
@@ -22,28 +22,28 @@ export type ProPlanCloudUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   yearlyPlan?: boolean;
+  handleSuccessModal?: () => void;
 };
 
 export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (props) => {
-  const { isOpen, handleClose, yearlyPlan } = props;
+  const { isOpen, handleClose, yearlyPlan, handleSuccessModal } = props;
   // params
   const { workspaceSlug } = useParams();
   // states
   const [isLoading, setLoading] = useState(false);
+  const [trialLoader, setTrialLoader] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { fetchWorkspaceSubscribedPlan } = useWorkspaceSubscription();
+  const { fetchWorkspaceSubscribedPlan, freeTrialSubscription } = useWorkspaceSubscription();
   // derived values
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
     workspaceSlug ? "CLOUD_PAYMENT_PRODUCTS" : null,
-    workspaceSlug
-      ? () => paymentService.listProducts(workspaceSlug.toString())
-      : null,
+    workspaceSlug ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,
       revalidateIfStale: false,
@@ -135,6 +135,26 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
     }
   };
 
+  const handleTrial = async (productId: string, priceId: string) => {
+    try {
+      setTrialLoader(true);
+      if (!workspaceSlug) return;
+      await freeTrialSubscription(workspaceSlug.toString(), { product_id: productId, price_id: priceId });
+      handleClose && handleClose();
+      handleSuccessModal && handleSuccessModal();
+    } catch (error) {
+      const currentError = error as unknown as { error: string; detail: string };
+      console.error("Error in freeTrialSubscription", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: currentError?.detail ?? currentError?.error ?? "Something went wrong. Please try again.",
+      });
+    } finally {
+      setTrialLoader(false);
+    }
+  };
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL} className="rounded-xl">
       <div className="py-6 px-10 max-h-[90vh] sm:max-h-[95vh] overflow-auto">
@@ -172,10 +192,12 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
           <ProPlanUpgrade
             proProduct={proProduct}
             basePlan="Free"
-            features={PRO_PLAN_FEATURES}
+            features={PRO_PLAN_FEATURES_MAP}
             isLoading={isLoading}
             handlePaymentLink={handlePaymentLink}
             yearlyPlanOnly={yearlyPlan}
+            trialLoader={trialLoader}
+            handleTrial={handleTrial}
           />
         )}
       </div>
