@@ -26,7 +26,7 @@ export const StateDropdown: FC<TStateDropdown> = observer((props) => {
   const projectStateIds = getProjectStateIdsByWorkspaceId(workspaceId);
   const selectedState = getProjectStateById(value);
   const dropdownLabel = () => (
-    <div className="flex items-center gap-2 truncate">
+    <div className="flex items-center gap-2 truncate max-w-[100px] ">
       <ProjectStateIcon projectStateGroup={selectedState?.group} color={selectedState?.color} width="12" height="12" />{" "}
       <span className="flex-grow truncate">{selectedState?.name}</span>
     </div>
@@ -39,7 +39,7 @@ export const StateDropdown: FC<TStateDropdown> = observer((props) => {
       content: (
         <div className="flex items-center gap-2 truncate">
           <ProjectStateIcon projectStateGroup={state?.group} color={state?.color} width="12" height="12" />{" "}
-          <span className="flex-grow truncate">{state?.name}</span>
+          <span className="flex-grow truncate max-w-[100px]">{state?.name}</span>
         </div>
       ),
     };

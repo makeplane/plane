@@ -83,7 +83,7 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       }
       // filter based on members attribute
       if (attributes.members && attributes.members.length > 0) {
-        const projectMemberIds = project?.members.map((member) => member?.id) || [];
+        const projectMemberIds = project?.members.map((member) => member?.member_id) || [];
         isMatched = isMatched && attributes.members.some((member) => projectMemberIds.includes(member));
       }
       // filter based on archived attribute

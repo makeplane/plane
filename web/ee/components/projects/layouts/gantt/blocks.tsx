@@ -99,7 +99,7 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
         )}
 
         <Tooltip tooltipContent={projectDetails?.name} isMobile={isMobile}>
-          <span className="flex-grow truncate text-sm font-medium">{projectDetails?.name}</span>
+          <span className="flex-grow text-sm font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
         </Tooltip>
       </div>
       {duration && (

@@ -58,7 +58,7 @@ export const BaseProjectRoot = observer(() => {
 
   return (
     <div className="vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto p-8">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
         {filteredProjectIds.map((projectId) => {
           const projectDetails = getProjectById(projectId);
           if (!projectDetails) return;

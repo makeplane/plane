@@ -60,7 +60,7 @@ export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = obs
           verticalAlign ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex-shrink-0 w-5 h-5 rounded hover:bg-custom-background-80 flex justify-center items-center overflow-hidden">
+        <div className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden">
           {details?.icon}
         </div>
 
