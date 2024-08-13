@@ -39,9 +39,10 @@ export const createIssueMetaIndexes = async () => {
 
 const createIndexes = async () => {
   log("### Creating indexes");
+  const start = performance.now();
   const promises = [createIssueIndexes(), createIssueMetaIndexes()];
   await Promise.all(promises);
-  log("### Indexes created");
+  log("### Indexes created in", `${performance.now() - start}ms`);
 };
 
 export default createIndexes;

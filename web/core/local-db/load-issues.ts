@@ -57,28 +57,28 @@ export const loadIssuesPrivate = async (workspaceId: string, projectId: string) 
   count = count[0]["count"];
 
   if (!count) {
-    log("### Loading issues from the server");
+    const start = performance.now();
+    log("### Adding issues to local db");
     const issueService = new IssueService();
-    let cursor = `${PAGE_SIZE}:0:0`;
-    let results;
-    let breakLoop = false;
-    do {
-      const response = await issueService.getIssuesFromServer(workspaceId, projectId, { cursor });
-      cursor = response.next_cursor;
-      results = response.results as TBaseIssue[];
-      try {
-        await addIssuesBulk(results);
-      } catch (e) {
-        log("###Error", e, results);
-        breakLoop = true;
-      }
-    } while (results.length >= PAGE_SIZE && !breakLoop);
-    await createIndexes();
-  } else {
-    log(`### issues already present in the db ${count}`);
-    syncLocalData(workspaceId, projectId);
-  }
+    const cursor = `${PAGE_SIZE}:0:0`;
 
+    const response = await issueService.getIssuesFromServer(workspaceId, projectId, { cursor });
+    addIssuesBulk(response.results, 500);
+
+    if (response.total_pages > 1) {
+      const promiseArray = [];
+      for (let i = 1; i < response.total_pages; i++) {
+        promiseArray.push(issueService.getIssuesFromServer(workspaceId, projectId, { cursor: `${PAGE_SIZE}:${i}:0` }));
+      }
+      const pages = await Promise.all(promiseArray);
+      for (const page of pages) {
+        await addIssuesBulk(page.results, 500);
+      }
+    }
+
+    console.log("### Time taken to add issues", performance.now() - start);
+    await createIndexes();
+  }
   PROJECT_OFFLINE_STATUS[projectId] = true;
 };
 
