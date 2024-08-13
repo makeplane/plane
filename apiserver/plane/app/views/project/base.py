@@ -47,6 +47,8 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
+    ProjectPage,
+    Page
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
@@ -455,6 +457,32 @@ class ProjectViewSet(BaseViewSet):
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+    def destroy(self, request, slug, pk):
+        project = Project.objects.get(pk=pk)
+        # Delete the project deploy board
+        DeployBoard.objects.filter(
+            project_id=pk,
+            workspace__slug=slug,
+        ).delete()
+
+        # Delete the user favorite
+        UserFavorite.objects.filter(
+            project_id=pk,
+            workspace__slug=slug,
+        ).delete()
+        # TODO: Delete the pages by recursive calls in the soft delete    
+        # get all the project page ids to delete the project pages
+        project_pages = ProjectPage.objects.filter(
+            project_id=pk,
+            workspace__slug=slug,
+        ).values_list("page_id", flat=True)
+        Page.objects.filter(id__in=project_pages).update(
+            deleted_at=timezone.now()
+        )
+        project.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):

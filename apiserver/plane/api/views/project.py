@@ -27,6 +27,8 @@ from plane.db.models import (
     State,
     Workspace,
     UserFavorite,
+    ProjectPage,
+    Page,
 )
 from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
@@ -363,6 +365,21 @@ class ProjectAPIEndpoint(BaseAPIView):
             entity_identifier=pk,
             project_id=pk,
         ).delete()
+        project = Project.objects.get(pk=pk)
+        # Delete the project deploy board
+        DeployBoard.objects.filter(
+            project_id=pk,
+            workspace__slug=slug,
+        ).delete()
+        # TODO: Delete the pages by recursive calls in the soft delete
+        # get all the project page ids to delete the project pages
+        project_pages = ProjectPage.objects.filter(
+            project_id=pk,
+            workspace__slug=slug,
+        ).values_list("page_id", flat=True)
+        Page.objects.filter(id__in=project_pages).update(
+            deleted_at=timezone.now()
+        )
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
