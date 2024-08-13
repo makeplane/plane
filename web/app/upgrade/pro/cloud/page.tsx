@@ -18,10 +18,8 @@ import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
-import { PaymentService } from "@/plane-web/services/payment.service";
 
 const workspaceService = new WorkspaceService();
-const paymentService = new PaymentService();
 
 const CloudUpgradePage = observer(() => {
   // router
