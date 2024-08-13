@@ -15,7 +15,7 @@ import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
+import { useFlag, useIssueTypes, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
@@ -41,6 +41,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { fetchFeatureFlags } = useFeatureFlags();
+  const { fetchWorkspaceFeatures } = useWorkspaceFeatures();
+  const { fetchProjectStates } = useWorkspaceProjectStates();
   const { fetchAllIssueTypes } = useIssueTypes();
   const { isMobile } = usePlatformOS();
 
@@ -54,6 +56,19 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
+  );
+  // fetch project states
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null,
+    () => (workspaceSlug && currentWorkspace ? fetchProjectStates(workspaceSlug.toString()) : null),
+    { revalidateOnFocus: false }
+  );
+
+  // fetching workspace features
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_FEATURES_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchWorkspaceFeatures(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false }
   );
 
   // fetching user workspace information

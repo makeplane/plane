@@ -28,3 +28,5 @@ class FeatureFlag(Enum):
     ISSUE_TYPE_SETTINGS = "ISSUE_TYPE_SETTINGS"
     # Issue Worklog
     ISSUE_WORKLOG = "ISSUE_WORKLOG"
+    # Project Grouping
+    PROJECT_GROUPING = "PROJECT_GROUPING"

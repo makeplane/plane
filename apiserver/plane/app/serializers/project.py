@@ -116,6 +116,12 @@ class ProjectListSerializer(DynamicBaseSerializer):
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
+    # EE: project_grouping starts
+    state_id = serializers.UUIDField(read_only=True)
+    priority = serializers.CharField(read_only=True)
+    start_date = serializers.DateTimeField(read_only=True)
+    target_date = serializers.DateTimeField(read_only=True)
+    # EE: project_grouping ends
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)

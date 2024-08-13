@@ -79,7 +79,6 @@ export const SidebarWorkspaceMenu = observer(() => {
                 ref={actionSectionRef}
                 className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
                 onClick={() => {
-                  console.log("ndkn");
                   setIsMenuActive(!isMenuActive);
                 }}
               >

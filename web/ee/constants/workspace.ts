@@ -34,11 +34,20 @@ export const WORKSPACE_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
     Icon: Timer,
   },
+  project_states: {
+    key: "project_states",
+    label: "State of Projects",
+    href: `/settings/project-states`,
+    access: EUserWorkspaceRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-states/`,
+    Icon: Timer,
+  },
 };
 
 export const WORKSPACE_SETTINGS_LINKS = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
+  WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
   WORKSPACE_SETTINGS["integrations"],
   WORKSPACE_SETTINGS["import"],
