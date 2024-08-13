@@ -118,8 +118,9 @@ class IssueDB {
       }
 
       const syncTime = new Date();
-      if (projectSyncState?.isSyncing) await projectSyncState?.isSyncing;
-      else if (projectSyncState?.lastSynced) {
+      // if (projectSyncState?.isSyncing) await projectSyncState?.isSyncing;
+      // else
+      if (projectSyncState?.lastSynced) {
         projectSyncState.isSyncing = this.syncIssues(workSpaceSlug, projectId, projectSyncState?.lastSynced);
         await projectSyncState?.isSyncing;
         projectSyncState.lastSynced = syncTime;

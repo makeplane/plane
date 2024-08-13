@@ -32,6 +32,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   draggableId: string;
   canDropOverIssue: boolean;
+  shouldRenderByDefault?: boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -114,6 +115,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     updateIssue,
     quickActions,
     canEditProperties,
+    shouldRenderByDefault,
     scrollableContainerRef,
   } = props;
 
@@ -226,6 +228,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             defaultHeight="100px"
             horizontalOffset={100}
             verticalOffset={200}
+            shouldRenderByDefault={shouldRenderByDefault}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}
