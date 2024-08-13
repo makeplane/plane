@@ -31,8 +31,6 @@ type Props = {
 };
 const Details: React.FC<Props> = (props) => {
   const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
-  //state
-  const [isMenuActive, setIsMenuActive] = useState(false);
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   // router
@@ -164,7 +162,14 @@ const Details: React.FC<Props> = (props) => {
             placement="bottom-start"
           >
             {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
-              <CustomMenu.MenuItem key={item.key} onClick={item.action}>
+              <CustomMenu.MenuItem
+                key={item.key}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  item.action();
+                }}
+              >
                 <div className="flex items-center justify-start gap-2">
                   {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
                   <span>{item.title}</span>

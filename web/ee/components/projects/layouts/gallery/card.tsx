@@ -103,8 +103,12 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             <Button
               tabIndex={-1}
               variant="accent-primary"
-              className="w-full cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none mt-2 flex-end"
-              onClick={() => setJoinProjectModal(true)}
+              className="w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none mt-2 flex-end m-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setJoinProjectModal(true);
+              }}
             >
               Join
             </Button>
