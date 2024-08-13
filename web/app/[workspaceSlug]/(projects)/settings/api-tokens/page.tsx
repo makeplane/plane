@@ -28,7 +28,10 @@ const ApiTokensPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { canPerformWorkspaceAdminActions } = useUser();
+  const {
+    canPerformWorkspaceAdminActions,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { currentWorkspace } = useWorkspace();
 
   const { data: tokens } = useSWR(
@@ -39,7 +42,7 @@ const ApiTokensPage = observer(() => {
 
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
 
-  if (!canPerformWorkspaceAdminActions) {
+  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
 

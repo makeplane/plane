@@ -23,7 +23,10 @@ const WebhooksListPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // mobx store
-  const { canPerformWorkspaceAdminActions } = useUser();
+  const {
+    canPerformWorkspaceAdminActions,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { fetchWebhooks, webhooks, clearSecretKey, webhookSecretKey, createWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
 
@@ -39,7 +42,7 @@ const WebhooksListPage = observer(() => {
     if (!showCreateWebhookModal && webhookSecretKey) clearSecretKey();
   }, [showCreateWebhookModal, webhookSecretKey, clearSecretKey]);
 
-  if (!canPerformWorkspaceAdminActions) {
+  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
 
