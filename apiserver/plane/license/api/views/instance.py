@@ -54,6 +54,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_activated"] = True
         # Get all the configuration
         (
+            ENABLE_SIGNUP,
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
@@ -70,6 +71,10 @@ class InstanceEndpoint(BaseAPIView):
             INTERCOM_APP_ID,
         ) = get_configuration_value(
             [
+                {
+                    "key": "ENABLE_SIGNUP",
+                    "default": os.environ.get("ENABLE_SIGNUP", "0"),
+                },
                 {
                     "key": "IS_GOOGLE_ENABLED",
                     "default": os.environ.get("IS_GOOGLE_ENABLED", "0"),
@@ -132,6 +137,7 @@ class InstanceEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
+        data["enable_signup"] = ENABLE_SIGNUP == "1"
         data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"

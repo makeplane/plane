@@ -5,7 +5,7 @@ import * as Y from "yjs";
 // extensions
 import { IssueWidget, SideMenuExtension } from "@/extensions";
 // hooks
-import { TFileHandler, useEditor } from "@/hooks/use-editor";
+import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // plane editor provider
@@ -13,7 +13,7 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions } from "@/types";
+import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
 
 type DocumentEditorProps = {
   disabledExtensions?: TExtensions[];

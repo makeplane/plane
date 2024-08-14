@@ -212,7 +212,6 @@ export const CommandPalette: FC = observer(() => {
       toggleCreatePageModal,
       toggleCreateProjectModal,
       toggleCreateViewModal,
-      toggleShortcutModal,
     ]
   );
 
@@ -261,15 +260,18 @@ export const CommandPalette: FC = observer(() => {
         if (
           Object.keys(shortcutsList.global).includes(keyPressed) &&
           ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
-        )
+        ) {
           shortcutsList.global[keyPressed].action();
+        }
         // workspace authorized actions
         else if (
           Object.keys(shortcutsList.workspace).includes(keyPressed) &&
           workspaceSlug &&
           performWorkspaceCreateActions()
-        )
+        ) {
+          e.preventDefault();
           shortcutsList.workspace[keyPressed].action();
+        }
         // project authorized actions
         else if (
           Object.keys(shortcutsList.project).includes(keyPressed) &&
@@ -283,16 +285,18 @@ export const CommandPalette: FC = observer(() => {
       }
     },
     [
-      performAnyProjectCreateActions,
-      performProjectCreateActions,
-      performProjectBulkDeleteActions,
-      performWorkspaceCreateActions,
       copyIssueUrlToClipboard,
       isAnyModalOpen,
+      platform,
+      performAnyProjectCreateActions,
+      performProjectBulkDeleteActions,
+      performProjectCreateActions,
+      performWorkspaceCreateActions,
       projectId,
       setTrackElement,
       shortcutsList,
       toggleCommandPaletteModal,
+      toggleShortcutModal,
       toggleSidebar,
       workspaceSlug,
     ]

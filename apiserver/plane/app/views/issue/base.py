@@ -64,7 +64,6 @@ from plane.utils.user_timezone_converter import user_timezone_converter
 
 
 class IssueListEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -438,7 +437,8 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -626,7 +626,6 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             project_id=project_id,
             is_active=True,
         ).exists():
-
             return Response(
                 {"error": "Only admin can perform this action"},
                 status=status.HTTP_403_FORBIDDEN,

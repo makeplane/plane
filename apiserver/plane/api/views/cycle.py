@@ -672,17 +672,6 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
-            return Response(
-                {
-                    "error": "The Cycle has already been completed so no new issues can be added"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Get all CycleIssues already created
         cycle_issues = list(
             CycleIssue.objects.filter(

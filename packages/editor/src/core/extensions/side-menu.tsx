@@ -175,6 +175,7 @@ const SideMenu = (options: SideMenuPluginProps) => {
           editorSideMenu.style.left = `${rect.left - rect.width}px`;
           editorSideMenu.style.top = `${rect.top}px`;
           showSideMenu();
+          dragHandleDOMEvents?.mousemove();
         },
         keydown: () => hideSideMenu(),
         mousewheel: () => hideSideMenu(),

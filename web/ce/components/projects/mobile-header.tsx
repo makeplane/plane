@@ -1,3 +1,4 @@
+"use client";
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +23,6 @@ export const ProjectsListMobileHeader = observer(() => {
     updateDisplayFilters,
     updateFilters,
   } = useProjectFilter();
-
 
   const {
     workspace: { workspaceMemberIds },
