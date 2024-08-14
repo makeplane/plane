@@ -137,7 +137,11 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     >
       <>
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
-          <div>
+          <div
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
+            }}
+          >
             <LiteTextEditor
               workspaceId={workspaceId}
               projectId={projectId}
@@ -147,13 +151,9 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               initialValue={watch("comment_html") ?? ""}
               value={null}
               onChange={(comment_json, comment_html) => setValue("comment_html", comment_html)}
-              onEnterKeyPress={(commentHTML) => {
-                const isCommentEmpty =
-                  commentHTML?.trim() === "" ||
-                  commentHTML === "<p></p>" ||
-                  (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
-                if (!isCommentEmpty && !isSubmitting) {
-                  handleSubmit(onEnter)();
+              onEnterKeyPress={(e) => {
+                if (!isEmpty && !isSubmitting) {
+                  handleSubmit(onEnter)(e);
                 }
               }}
               showSubmitButton={false}

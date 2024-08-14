@@ -1,6 +1,6 @@
 import { Extension } from "@tiptap/core";
 
-export const EnterKeyExtension = (onEnterKeyPress?: (descriptionHTML: string) => void) =>
+export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
   Extension.create({
     name: "enterKey",
 
@@ -8,7 +8,9 @@ export const EnterKeyExtension = (onEnterKeyPress?: (descriptionHTML: string) =>
       return {
         Enter: () => {
           if (!this.editor.storage.mentionsOpen) {
-            onEnterKeyPress?.(this.editor.getHTML());
+            if (onEnterKeyPress) {
+              onEnterKeyPress();
+            }
             return true;
           }
           return false;

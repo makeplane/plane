@@ -140,6 +140,19 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                     workspace_license.plan = workspace_license_response.get(
                         "plan"
                     )
+                    workspace_license.trial_end_date = (
+                        workspace_license_response.get("trial_end_date")
+                    )
+                    workspace_license.has_activated_free_trial = (
+                        workspace_license_response.get(
+                            "has_activated_free_trial"
+                        )
+                    )
+                    workspace_license.has_added_payment_method = (
+                        workspace_license_response.get(
+                            "has_added_payment_method"
+                        )
+                    )
                     workspace_license.save()
                 else:
                     # Create a new workspace license
@@ -161,7 +174,16 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                         recurring_interval=workspace_license_response.get(
                             "interval"
                         ),
+                        trial_end_date=workspace_license_response.get(
+                            "trial_end_date"
+                        ),
                         plan=workspace_license_response.get("plan"),
+                        has_activated_free_trial=workspace_license_response.get(
+                            "has_activated_free_trial"
+                        ),
+                        has_added_payment_method=workspace_license_response.get(
+                            "has_added_payment_method"
+                        ),
                     )
 
                 # Return the response

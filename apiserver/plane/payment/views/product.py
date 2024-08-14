@@ -204,6 +204,15 @@ class WorkspaceProductEndpoint(BaseAPIView):
                         workspace_license.is_offline_payment = response.get(
                             "is_offline_payment", False
                         )
+                        workspace_license.trial_end_date = response.get(
+                            "trial_end_date"
+                        )
+                        workspace_license.has_activated_free_trial = (
+                            response.get("has_activated_free_trial", False)
+                        )
+                        workspace_license.has_added_payment_method = (
+                            response.get("has_added_payment_method", False)
+                        )
                         workspace_license.save()
 
                         return Response(
@@ -214,6 +223,9 @@ class WorkspaceProductEndpoint(BaseAPIView):
                                 "interval": workspace_license.recurring_interval,
                                 "product": workspace_license.plan,
                                 "is_offline_payment": workspace_license.is_offline_payment,
+                                "trial_end_date": workspace_license.trial_end_date,
+                                "has_activated_free_trial": workspace_license.has_activated_free_trial,
+                                "has_added_payment_method": workspace_license.has_added_payment_method,
                             },
                             status=status.HTTP_200_OK,
                         )
@@ -226,6 +238,9 @@ class WorkspaceProductEndpoint(BaseAPIView):
                                 "interval": workspace_license.recurring_interval,
                                 "product": workspace_license.plan,
                                 "is_offline_payment": workspace_license.is_offline_payment,
+                                "trial_end_date": workspace_license.trial_end_date,
+                                "has_activated_free_trial": workspace_license.has_activated_free_trial,
+                                "has_added_payment_method": workspace_license.has_added_payment_method,
                             },
                             status=status.HTTP_200_OK,
                         )
@@ -253,6 +268,13 @@ class WorkspaceProductEndpoint(BaseAPIView):
                         recurring_interval=response.get("interval"),
                         plan=response.get("plan"),
                         last_synced_at=timezone.now(),
+                        trial_end_date=response.get("trial_end_date"),
+                        has_activated_free_trial=response.get(
+                            "has_activated_free_trial", False
+                        ),
+                        has_added_payment_method=response.get(
+                            "has_added_payment_method", False
+                        ),
                     )
                     # Return the workspace license
                     return Response(
@@ -263,6 +285,9 @@ class WorkspaceProductEndpoint(BaseAPIView):
                             "interval": workspace_license.recurring_interval,
                             "product": workspace_license.plan,
                             "is_offline_payment": workspace_license.is_offline_payment,
+                            "trial_end_date": workspace_license.trial_end_date,
+                            "has_activated_free_trial": workspace_license.has_activated_free_trial,
+                            "has_added_payment_method": workspace_license.has_added_payment_method,
                         },
                         status=status.HTTP_200_OK,
                     )
@@ -313,6 +338,13 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
             )
             workspace_license.recurring_interval = response.get("interval")
             workspace_license.plan = response.get("plan")
+            workspace_license.trial_end_date = response.get("trial_end_date")
+            workspace_license.has_activated_free_trial = response.get(
+                "has_activated_free_trial", False
+            )
+            workspace_license.has_added_payment_method = response.get(
+                "has_added_payment_method", False
+            )
             workspace_license.last_synced_at = timezone.now()
             workspace_license.save()
         # If the license is not present, then fetch the license from the payment server and create it
@@ -339,6 +371,13 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
                 recurring_interval=response.get("interval"),
                 plan=response.get("plan"),
                 last_synced_at=timezone.now(),
+                trial_end_date=response.get("trial_end_date"),
+                has_activated_free_trial=response.get(
+                    "has_activated_free_trial", False
+                ),
+                has_added_payment_method=response.get(
+                    "has_added_payment_method", False
+                ),
             )
 
         # Return the response
@@ -392,6 +431,15 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
             workspace_license.recurring_interval = request.data.get("interval")
             workspace_license.plan = request.data.get("plan")
             workspace_license.last_synced_at = timezone.now()
+            workspace_license.trial_end_date = request.data.get(
+                "trial_end_date"
+            )
+            workspace_license.has_activated_free_trial = request.data.get(
+                "has_activated_free_trial", False
+            )
+            workspace_license.has_added_payment_method = request.data.get(
+                "has_added_payment_method", False
+            )
             workspace_license.save()
         # If the workspace license is not present, then fetch the license from the payment server and create it
         else:
@@ -407,6 +455,13 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                 recurring_interval=request.data.get("interval"),
                 plan=request.data.get("plan"),
                 last_synced_at=timezone.now(),
+                trial_end_date=request.data.get("trial_end_date"),
+                has_activated_free_trial=request.data.get(
+                    "has_activated_free_trial", False
+                ),
+                has_added_payment_method=request.data.get(
+                    "has_added_payment_method", False
+                ),
             )
 
         # Return the response

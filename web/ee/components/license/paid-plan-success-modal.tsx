@@ -49,7 +49,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
         <div className="mt-4 mb-6 text-center">
           <p className="text-center text-sm mb-2 px-8 text-custom-text-100">
             {variant === "PRO"
-              ? "Your chosen workspace will get Pro on August 15, 2024."
+              ? "You have unlocked Pro on this workspace now."
               : "You have successfully bought a One license."}
           </p>
           <a
@@ -70,7 +70,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
                     <span className="text-custom-text-200 truncate">{feature?.label}</span>
                   </div>
                   {feature?.comingSoon && (
-                    <div className="flex-shrink-0 flex justify-center items-center bg-custom-primary-100/60 text-white text-[7px] rounded-full px-1 h-[12px] -mt-4 ml-1 z-50 whitespace-nowrap">
+                    <div className="flex-shrink-0 flex justify-center items-center bg-custom-primary-100/90 text-white text-[7px] rounded-full px-1 h-[12px] -mt-4 ml-1 z-50 whitespace-nowrap">
                       COMING SOON
                     </div>
                   )}
