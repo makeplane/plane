@@ -7,12 +7,26 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("db", "0073_alter_commentreaction_unique_together_and_more"),
     ]
 
     operations = [
+        migrations.AddField(
+            model_name="deployboard",
+            name="is_activity_enabled",
+            field=models.BooleanField(default=True),
+        ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="is_archived",
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AlterField(
+            model_name="userfavorite",
+            name="sequence",
+            field=models.FloatField(default=65535),
+        ),
         migrations.CreateModel(
             name="ProjectIssueType",
             fields=[
