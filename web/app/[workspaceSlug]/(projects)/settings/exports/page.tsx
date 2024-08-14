@@ -12,14 +12,18 @@ import { useUser, useWorkspace } from "@/hooks/store";
 
 const ExportsPage = observer(() => {
   // store hooks
-  const { canPerformWorkspaceViewerActions, canPerformWorkspaceMemberActions } = useUser();
+  const {
+    canPerformWorkspaceViewerActions,
+    canPerformWorkspaceMemberActions,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { currentWorkspace } = useWorkspace();
 
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Exports` : undefined;
 
   // if user is not authorized to view this page
-  if (!canPerformWorkspaceViewerActions) {
+  if (currentWorkspaceRole && !canPerformWorkspaceViewerActions) {
     return <NotAuthorizedView section="settings" />;
   }
 

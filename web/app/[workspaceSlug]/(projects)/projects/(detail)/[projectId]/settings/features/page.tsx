@@ -12,14 +12,17 @@ import { useProject, useUser } from "@/hooks/store";
 const FeaturesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store
-  const { canPerformProjectAdminActions } = useUser();
+  const {
+    canPerformProjectAdminActions,
+    membership: { currentProjectRole },
+  } = useUser();
   const { currentProjectDetails } = useProject();
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Features` : undefined;
 
   if (!workspaceSlug || !projectId) return null;
 
-  if (!canPerformProjectAdminActions) {
+  if (currentProjectRole && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

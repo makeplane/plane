@@ -11,12 +11,15 @@ import { BillingRoot } from "@/plane-web/components/workspace";
 
 const BillingSettingsPage = observer(() => {
   // store hooks
-  const { canPerformWorkspaceAdminActions } = useUser();
+  const {
+    canPerformWorkspaceAdminActions,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { currentWorkspace } = useWorkspace();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing & Plans` : undefined;
 
-  if (!canPerformWorkspaceAdminActions) {
+  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
 

@@ -17,7 +17,10 @@ const AutomationSettingsPage = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { canPerformProjectAdminActions } = useUser();
+  const {
+    canPerformProjectAdminActions,
+    membership: { currentProjectRole },
+  } = useUser();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
 
   const handleChange = async (formData: Partial<IProject>) => {
@@ -35,7 +38,7 @@ const AutomationSettingsPage = observer(() => {
   // derived values
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
 
-  if (!canPerformProjectAdminActions) {
+  if (currentProjectRole && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

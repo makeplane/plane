@@ -113,7 +113,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const {
-    membership: { currentProjectRole },
+    membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -489,7 +489,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     (item.name === "Intake" && !project.inbox_view)
                   )
                     return;
-                  const currentRole = currentProjectRole ?? 5;
+                  const currentRole = currentWorkspaceAllProjectsRole
+                    ? currentWorkspaceAllProjectsRole[projectId]
+                    : undefined;
                   return (
                     <>
                       {currentRole >= item.access && (

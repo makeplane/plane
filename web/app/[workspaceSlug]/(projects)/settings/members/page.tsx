@@ -28,8 +28,12 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { canPerformWorkspaceAdminActions, canPerformWorkspaceViewerActions, canPerformWorkspaceMemberActions } =
-    useUser();
+  const {
+    canPerformWorkspaceAdminActions,
+    canPerformWorkspaceViewerActions,
+    canPerformWorkspaceMemberActions,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
@@ -82,7 +86,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   // if user is not authorized to view this page
-  if (!canPerformWorkspaceViewerActions) {
+  if (currentWorkspaceRole && !canPerformWorkspaceViewerActions) {
     return <NotAuthorizedView section="settings" />;
   }
 
