@@ -18,6 +18,7 @@ class IssueType(BaseModel):
     logo_props = models.JSONField(default=dict)
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    level = models.PositiveIntegerField(default=0)
 
     class Meta:
         unique_together = ["workspace", "name", "deleted_at"]

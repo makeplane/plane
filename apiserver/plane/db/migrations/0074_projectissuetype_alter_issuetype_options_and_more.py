@@ -9,7 +9,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0073_alter_commentreaction_unique_together_and_more'),
+        ("db", "0073_alter_commentreaction_unique_together_and_more"),
     ]
 
     operations = [
@@ -172,5 +172,10 @@ class Migration(migrations.Migration):
             model_name="issuetype",
             name="is_default",
             field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name="issuetype",
+            name="level",
+            field=models.PositiveIntegerField(default=0),
         ),
     ]
