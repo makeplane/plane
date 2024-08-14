@@ -67,6 +67,62 @@ export const CloudEditionBadge = observer(() => {
       </Loader>
     );
 
+  // derived values
+  const isInTrialPeriod =
+    subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.trial_end_date ? true : false;
+  const isTrialCompleted =
+    subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.trial_end_date ? true : false;
+
+  const renderButtonText = () => {
+    switch (subscriptionDetail.product) {
+      case "FREE": {
+        if (subscriptionDetail?.has_activated_free_trial) {
+          return "Buy Pro";
+        } else {
+          return "Try Pro";
+        }
+      }
+      case "PRO":
+        if (subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.has_added_payment_method) {
+          return "Purchased Pro";
+        } else {
+          if (subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.has_added_payment_method) {
+            return "Buy Pro";
+          } else {
+            return "Try Pro";
+          }
+        }
+      default:
+        return "Try Pro";
+    }
+  };
+
+  const showPaymentButton = () => {
+    switch (subscriptionDetail.product) {
+      case "FREE": {
+        if (subscriptionDetail?.has_activated_free_trial) {
+          return true;
+        } else {
+          return true;
+        }
+      }
+      case "PRO":
+        if (subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.has_added_payment_method) {
+          return false;
+        } else {
+          if (subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.has_added_payment_method) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      default:
+        return false;
+    }
+  };
+
+  const showPlaneProButton = showPaymentButton() ? false : subscriptionDetail.product === "PRO" ? true : false;
+
   return (
     <>
       <PaidPlanSuccessModal
@@ -74,37 +130,36 @@ export const CloudEditionBadge = observer(() => {
         isOpen={isProPlanSuccessModalOpen}
         handleClose={() => setProPlanSuccessModalOpen(false)}
       />
-      {subscriptionDetail.product === "FREE" && (
-        <>
-          {/* This modal is intentionally placed inside the condition to avoid unnecessary calls to list product endpoint.  */}
-          <ProPlanCloudUpgradeModal
-            isOpen={isProPlanModalOpen}
-            handleClose={() => toggleProPlanModal(false)}
-            yearlyPlan={false}
-            handleSuccessModal={() => setProPlanSuccessModalOpen(true)}
-          />
-          <Button
-            tabIndex={-1}
-            variant="accent-primary"
-            className="w-full cursor-pointer rounded-2xl px-4 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={handleProPlanPurchaseModalOpen}
-          >
-            {subscriptionDetail.product === "FREE" ? "Upgrade to Pro" : "Get Pro yearly"}
-          </Button>
-        </>
+
+      <ProPlanCloudUpgradeModal
+        isOpen={isProPlanModalOpen}
+        handleClose={() => toggleProPlanModal(false)}
+        yearlyPlan={false}
+        handleSuccessModal={() => setProPlanSuccessModalOpen(true)}
+        canFetchProducts={subscriptionDetail.product === "FREE" || isInTrialPeriod || isTrialCompleted}
+      />
+
+      {showPaymentButton() && (
+        <Button
+          tabIndex={-1}
+          variant="accent-primary"
+          className="w-full cursor-pointer rounded-2xl px-4 py-1.5 text-center text-sm font-medium outline-none"
+          onClick={handleProPlanPurchaseModalOpen}
+        >
+          {renderButtonText()}
+        </Button>
       )}
-      {subscriptionDetail.product === "PRO" && (
-        <>
-          <Button
-            tabIndex={-1}
-            variant="accent-primary"
-            className="w-full cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={handlePaidPlanSuccessModalOpen}
-          >
-            <Image src={PlaneLogo} alt="Plane Pro" width={14} height={14} />
-            {"Plane Pro"}
-          </Button>
-        </>
+
+      {showPlaneProButton && (
+        <Button
+          tabIndex={-1}
+          variant="accent-primary"
+          className="w-full cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
+          onClick={handlePaidPlanSuccessModalOpen}
+        >
+          <Image src={PlaneLogo} alt="Plane Pro" width={14} height={14} />
+          Plane Pro
+        </Button>
       )}
     </>
   );

@@ -23,4 +23,8 @@ export type IWorkspaceProductSubscription = {
   interval?: "month" | "year" | null;
   current_period_end_date: string | null;
   is_offline_payment: boolean;
+  trial_end_date: string | undefined;
+  purchased_seats: number | undefined;
+  has_activated_free_trial: boolean;
+  has_added_payment_method: boolean;
 };
