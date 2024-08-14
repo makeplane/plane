@@ -3,10 +3,10 @@
 import { ReactNode } from "react";
 // components
 import { PageHead } from "@/components/core";
-// wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers";
 
 type Props = {
   children: ReactNode;
