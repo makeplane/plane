@@ -59,7 +59,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   return (
     <div
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !isEmpty && !isSubmitting) handleSubmit(onSubmit)(e);
+        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+          handleSubmit(onSubmit)(e);
       }}
     >
       <Controller
