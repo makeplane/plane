@@ -36,6 +36,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       toggleProPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
+      freeTrialSubscription: action,
     });
   }
 

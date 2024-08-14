@@ -260,3 +260,60 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                 {"error": "error fetching payment link"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceOwnerPermission,
+    ]
+
+    def post(self, request, slug):
+        try:
+            # Get the product_id and price_id
+            price_id = request.data.get("price_id", False)
+
+            # Check if product_id and price_id are present
+            if not price_id:
+                return Response(
+                    {"error": "price_id is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Get the workspace
+            workspace = Workspace.objects.get(slug=slug)
+
+            # Check if the payment server base url is present
+            if settings.PAYMENT_SERVER_BASE_URL:
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/trial-subscriptions/upgrade/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "workspace_id": str(workspace.id),
+                        "stripe_price_id": price_id,
+                    },
+                )
+                # Check if the response is successful
+                response.raise_for_status()
+                # Convert the response to json
+                response = response.json()
+                return Response(response, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    {"error": "error fetching product details"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except requests.exceptions.RequestException as e:
+            if e.response.status_code == 400:
+                return Response(
+                    e.response.json(),
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            log_exception(e)
+            return Response(
+                {"error": "error fetching payment link"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
