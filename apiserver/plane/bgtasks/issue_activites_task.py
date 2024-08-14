@@ -133,7 +133,15 @@ def track_parent(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb=(
+                    "created"
+                    if new_parent is not None and old_parent is None
+                    else (
+                        "deleted"
+                        if new_parent is None and old_parent is not None
+                        else "updated"
+                    )
+                ),
                 old_value=(
                     f"{old_parent.project.identifier}-{old_parent.sequence_id}"
                     if old_parent is not None
@@ -344,7 +352,7 @@ def track_labels(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb="deleted",
                 old_value=label.name,
                 new_value="",
                 field="labels",
@@ -423,7 +431,7 @@ def track_assignees(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb="deleted",
                 old_value=assignee.display_name,
                 new_value="",
                 field="assignees",
@@ -467,7 +475,15 @@ def track_estimate_points(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb=(
+                    "created"
+                    if new_estimate is not None and old_estimate is None
+                    else (
+                        "deleted"
+                        if new_estimate is None and old_estimate is not None
+                        else "updated"
+                    )
+                ),
                 old_identifier=(
                     current_instance.get("estimate_point")
                     if current_instance.get("estimate_point") is not None
@@ -1719,16 +1735,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue"
-                        if inbox
-                        else "issue"
+                        else "inbox_issue" if inbox else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox
-                        if inbox
-                        else activity.issue_id
+                        else inbox if inbox else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(
