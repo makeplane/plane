@@ -27,7 +27,7 @@ const CloudUpgradePlanPage = observer(() => {
 
   // fetch workspace members
   const { data: workspaceMembers, isLoading: isFetching } = useSWR(
-    selectedWorkspace ? `WORKSPACES_WITH_PLAN_DETAILS` : null,
+    selectedWorkspace ? `WORKSPACES_MEMBER_DETAILS` : null,
     selectedWorkspace ? () => workspaceService.fetchWorkspaceMembers(selectedWorkspace.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
