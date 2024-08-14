@@ -49,6 +49,8 @@ class WorkspaceLicense(BaseModel):
     is_offline_payment = models.BooleanField(default=False)
     # When this information was last synced from the payment gateway
     last_synced_at = models.DateTimeField(default=timezone.now)
+    # trial end date
+    trial_end_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Workspace License"

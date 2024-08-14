@@ -140,6 +140,9 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                     workspace_license.plan = workspace_license_response.get(
                         "plan"
                     )
+                    workspace_license.trial_end_date = (
+                        workspace_license_response.get("trial_end_date")
+                    )
                     workspace_license.save()
                 else:
                     # Create a new workspace license
@@ -160,6 +163,9 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                         ),
                         recurring_interval=workspace_license_response.get(
                             "interval"
+                        ),
+                        trial_end_date=workspace_license_response.get(
+                            "trial_end_date"
                         ),
                         plan=workspace_license_response.get("plan"),
                     )

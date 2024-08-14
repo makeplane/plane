@@ -99,6 +99,9 @@ def member_sync_task(slug):
                 workspace_license.is_offline_payment = (
                     updated_workspace_license["is_offline_payment"]
                 )
+                workspace_license.trial_end_date = updated_workspace_license[
+                    "trial_end_date"
+                ]
                 workspace_license.last_synced_at = timezone.now()
                 workspace_license.save()
 
