@@ -1,4 +1,4 @@
-FROM python:3.11.1-alpine3.17 AS backend
+FROM python:3.12.5-alpine AS backend
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
