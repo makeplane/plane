@@ -25,7 +25,7 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     IssueFlatSerializer,
     IssueSerializer,
-    IssueDetailSerializer
+    IssueDetailSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
@@ -46,7 +46,7 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
-from plane.app.permissions import allow_permission
+from plane.app.permissions import allow_permission, ROLE
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
@@ -96,7 +96,7 @@ class IssueArchiveViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -212,7 +212,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -256,7 +256,7 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(
             workspace__slug=slug,
@@ -295,7 +295,7 @@ class IssueArchiveViewSet(BaseViewSet):
             {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
         )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,
@@ -327,7 +327,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 
@@ -346,7 +346,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
                 return Response(
                     {
                         "error_code": 4091,
-                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

@@ -9,12 +9,14 @@ from django.db.models import Q
 from plane.app.views.base import BaseAPIView
 from plane.db.models import UserFavorite, Workspace
 from plane.app.serializers import UserFavoriteSerializer
-from plane.app.permissions import allow_permission
+from plane.app.permissions import allow_permission, ROLE
 
 
 class WorkspaceFavoriteEndpoint(BaseAPIView):
 
-    @allow_permission(roles=["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def get(self, request, slug):
         # the second filter is to check if the user is a member of the project
         favorites = UserFavorite.objects.filter(
@@ -32,7 +34,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
         serializer = UserFavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(roles=["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = UserFavoriteSerializer(data=request.data)
@@ -45,7 +49,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(roles=["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def patch(self, request, slug, favorite_id):
         favorite = UserFavorite.objects.get(
             user=request.user, workspace__slug=slug, pk=favorite_id
@@ -58,7 +64,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(roles=["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def delete(self, request, slug, favorite_id):
         favorite = UserFavorite.objects.get(
             user=request.user, workspace__slug=slug, pk=favorite_id
@@ -69,7 +77,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
 class WorkspaceFavoriteGroupEndpoint(BaseAPIView):
 
-    @allow_permission(roles=["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def get(self, request, slug, favorite_id):
         favorites = UserFavorite.objects.filter(
             user=request.user,

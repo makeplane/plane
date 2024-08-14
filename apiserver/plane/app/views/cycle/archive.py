@@ -24,7 +24,7 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from plane.app.permissions import allow_permission
+from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import Cycle, UserFavorite, Issue, Label, User, Project
 from plane.utils.analytics_plot import burndown_plot
 
@@ -288,7 +288,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def get(self, request, slug, project_id, pk=None):
         if pk is None:
             queryset = (
@@ -593,7 +593,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
@@ -612,7 +612,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug

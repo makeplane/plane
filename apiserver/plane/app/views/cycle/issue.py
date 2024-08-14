@@ -36,7 +36,7 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
-from plane.app.permissions import allow_permission
+from plane.app.permissions import allow_permission, ROLE
 
 
 class CycleIssueViewSet(BaseViewSet):
@@ -80,7 +80,7 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def list(self, request, slug, project_id, cycle_id):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
@@ -227,7 +227,7 @@ class CycleIssueViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
 
@@ -323,7 +323,7 @@ class CycleIssueViewSet(BaseViewSet):
         )
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.filter(
             issue_id=issue_id,

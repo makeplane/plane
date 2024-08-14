@@ -33,6 +33,7 @@ from plane.app.serializers import (
 from plane.app.permissions import (
     ProjectMemberPermission,
     allow_permission,
+    ROLE,
 )
 from plane.db.models import (
     UserFavorite,
@@ -153,7 +154,8 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @allow_permission(
-        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
     )
     def list(self, request, slug):
         fields = [
@@ -191,7 +193,8 @@ class ProjectViewSet(BaseViewSet):
         return Response(projects, status=status.HTTP_200_OK)
 
     @allow_permission(
-        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
     )
     def retrieve(self, request, slug, pk):
         project = (
@@ -264,7 +267,7 @@ class ProjectViewSet(BaseViewSet):
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -394,7 +397,7 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
 
-    @allow_permission(["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def partial_update(self, request, slug, pk=None):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -476,7 +479,7 @@ class ProjectViewSet(BaseViewSet):
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
@@ -486,7 +489,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = None
@@ -495,7 +498,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
-    @allow_permission(["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         name = request.GET.get("name", "").strip().upper()
 
@@ -514,7 +517,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission(["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def delete(self, request, slug):
         name = request.data.get("name", "").strip().upper()
 

@@ -11,9 +11,7 @@ from rest_framework import status
 
 # Module imports
 from ..base import BaseAPIView
-from plane.app.permissions import (
-    allow_permission,
-)
+from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import Workspace, Project
 from plane.app.serializers import (
     ProjectLiteSerializer,
@@ -24,7 +22,7 @@ from plane.license.utils.instance_value import get_configuration_value
 
 class GPTIntegrationEndpoint(BaseAPIView):
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
             [
@@ -85,7 +83,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
 class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
-    @allow_permission(roles=["ADMIN", "MEMBER"], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def post(self, request, slug):
         OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
             [

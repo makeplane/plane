@@ -3,20 +3,16 @@ from functools import wraps
 from rest_framework.response import Response
 from rest_framework import status
 
+from enum import Enum
 
-ROLE_VALUES = {
-    "ADMIN": 20,
-    "MEMBER": 15,
-    "VIEWER": 10,
-    "GUEST": 5,
-}
-
-
-def get_role_values(roles):
-    return [ROLE_VALUES.get(role.upper(), 0) for role in roles]
+class ROLE(Enum):
+    ADMIN = 20
+    MEMBER = 15
+    VIEWER = 10
+    GUEST = 5
 
 
-def allow_permission(roles, level="PROJECT", creator=False, model=None ):
+def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
@@ -29,12 +25,18 @@ def allow_permission(roles, level="PROJECT", creator=False, model=None ):
                 if obj:
                     return view_func(instance, request, *args, **kwargs)
 
+            # Convert allowed_roles to their values if they are enum members
+            allowed_role_values = [
+                role.value if isinstance(role, ROLE) else role
+                for role in allowed_roles
+            ]
+
             # Check role permissions
             if level == "WORKSPACE":
                 if WorkspaceMember.objects.filter(
                     member=request.user,
                     workspace__slug=kwargs["slug"],
-                    role__in=get_role_values(roles),
+                    role__in=allowed_role_values,
                     is_active=True,
                 ).exists():
                     return view_func(instance, request, *args, **kwargs)
@@ -43,7 +45,7 @@ def allow_permission(roles, level="PROJECT", creator=False, model=None ):
                     member=request.user,
                     workspace__slug=kwargs["slug"],
                     project_id=kwargs["project_id"],
-                    role__in=get_role_values(roles),
+                    role__in=allowed_role_values,
                     is_active=True,
                 ).exists():
                     return view_func(instance, request, *args, **kwargs)

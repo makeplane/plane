@@ -17,9 +17,7 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    allow_permission,
-)
+from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     ModuleIssueSerializer,
 )
@@ -45,6 +43,7 @@ from plane.utils.paginator import (
 
 # Module imports
 from .. import BaseViewSet
+
 
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
@@ -92,7 +91,7 @@ class ModuleIssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def list(self, request, slug, project_id, module_id):
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
@@ -200,7 +199,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
@@ -242,7 +241,7 @@ class ModuleIssueViewSet(BaseViewSet):
         ]
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     # add multiple module inside an issue and remove multiple modules from an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
@@ -305,7 +304,7 @@ class ModuleIssueViewSet(BaseViewSet):
 
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.filter(
             workspace__slug=slug,

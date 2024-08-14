@@ -15,14 +15,15 @@ from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
 from plane.db.models import IssueAttachment
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.app.permissions import allow_permission
+from plane.app.permissions import allow_permission, ROLE
+
 
 class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     model = IssueAttachment
     parser_classes = (MultiPartParser, FormParser)
 
-    @allow_permission(["ADMIN", "MEMBER", "GUEST"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueAttachmentSerializer(data=request.data)
         if serializer.is_valid():
@@ -44,7 +45,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(["ADMIN"], creator=True, model=IssueAttachment)
+    @allow_permission([ROLE.ADMIN], creator=True, model=IssueAttachment)
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = IssueAttachment.objects.get(pk=pk)
         issue_attachment.asset.delete(save=False)
@@ -63,7 +64,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission(["ADMIN", "MEMBER", "GUEST", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def get(self, request, slug, project_id, issue_id):
         issue_attachments = IssueAttachment.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id

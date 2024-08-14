@@ -25,7 +25,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission
+from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -60,7 +60,7 @@ from plane.utils.user_timezone_converter import user_timezone_converter
 
 class IssueListEndpoint(BaseAPIView):
 
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
 
@@ -222,7 +222,7 @@ class IssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER", "GUEST"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
@@ -337,7 +337,7 @@ class IssueViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission(["ADMIN", "MEMBER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
@@ -412,7 +412,9 @@ class IssueViewSet(BaseViewSet):
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(["ADMIN", "MEMBER", "VIEWER"], creator=True, model=Issue)
+    @allow_permission(
+        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], creator=True, model=Issue
+    )
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -485,7 +487,7 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(["ADMIN", "MEMBER", "GUEST"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -551,7 +553,7 @@ class IssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(["ADMIN"], creator=True, model=Issue)
+    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
@@ -574,7 +576,7 @@ class IssueViewSet(BaseViewSet):
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
-    @allow_permission(["ADMIN", "MEMBER", "GUEST", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def patch(self, request, slug, project_id):
         issue_property = IssueUserProperty.objects.get(
             user=request.user,
@@ -594,7 +596,7 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission(["ADMIN", "MEMBER", "GUEST", "VIEWER"])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def get(self, request, slug, project_id):
         issue_property, _ = IssueUserProperty.objects.get_or_create(
             user=request.user, project_id=project_id
@@ -605,7 +607,7 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
 
-    @allow_permission(["ADMIN"])
+    @allow_permission([ROLE.ADMIN])
     def delete(self, request, slug, project_id):
 
         issue_ids = request.data.get("issue_ids", [])
