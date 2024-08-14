@@ -94,6 +94,7 @@ export class IssueStore implements IIssueStore {
       parent_id: issue?.parent_id,
       cycle_id: issue?.cycle_id,
       module_ids: issue?.module_ids,
+      type_id: issue?.type_id,
       created_at: issue?.created_at,
       updated_at: issue?.updated_at,
       start_date: issue?.start_date,
