@@ -44,7 +44,6 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
-import { getGroupByColumns } from "@/components/issues/issue-layouts/utils";
 // constants
 // helpers
 // services
@@ -422,56 +421,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     }
   );
 
-  getGroups = (isWorkspaceLevel = false) => {
-    if (!this.groupBy || this.groupBy === "target_date") return;
-
-    const {
-      projectRoot,
-      cycle,
-      module: moduleInfo,
-      label,
-      state: projectState,
-      memberRoot,
-    } = this.rootIssueStore.rootStore;
-
-    return getGroupByColumns(
-      this.groupBy,
-      projectRoot.project,
-      cycle,
-      moduleInfo,
-      label,
-      projectState,
-      memberRoot,
-      false,
-      isWorkspaceLevel
-    );
-  };
-
-  getSubGroups = (isWorkspaceLevel = false) => {
-    if (!this.subGroupBy || this.subGroupBy === "target_date") return;
-
-    const {
-      projectRoot,
-      cycle,
-      module: moduleInfo,
-      label,
-      state: projectState,
-      memberRoot,
-    } = this.rootIssueStore.rootStore;
-
-    return getGroupByColumns(
-      this.subGroupBy,
-      projectRoot.project,
-      cycle,
-      moduleInfo,
-      label,
-      projectState,
-      memberRoot,
-      false,
-      isWorkspaceLevel
-    );
-  };
-
   /**
    * Gets the next page cursor based on number of issues currently available
    * @param groupId groupId for the cursor
@@ -504,8 +453,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   onfetchIssues(
     issuesResponse: TIssuesResponse,
     options: IssuePaginationOptions,
-    groupId?: string,
-    subGroupId?: string
+    workspaceSlug: string,
+    projectId?: string,
+    id?: string
   ) {
     // Process the Issue Response to get the following data from it
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
@@ -515,12 +465,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
-      this.updateGroupedIssueIds(groupedIssues, groupedIssueCount, groupId, subGroupId);
-      this.loader[getGroupKey(groupId, subGroupId)] = undefined;
+      this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
+      this.loader[getGroupKey()] = undefined;
     });
 
+    // fetch parent stats if required, to be handled in the Implemented class
+    this.fetchParentStats(workspaceSlug, projectId, id);
+
     // store Pagination options for next subsequent calls and data like next cursor etc
-    this.storePreviousPaginationValues(issuesResponse, options, groupId, subGroupId);
+    this.storePreviousPaginationValues(issuesResponse, options);
   }
 
   /**
