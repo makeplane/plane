@@ -90,7 +90,13 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
     <>
       <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive} sidebarCollapsed={sidebarCollapsed}>
         {!sidebarCollapsed && <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />}
-        <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} isSidebarCollapsed={!!sidebarCollapsed} />
+        <FavoriteItemTitle
+          href={itemLink}
+          projectId={favorite.project_id}
+          icon={itemIcon}
+          title={itemTitle}
+          isSidebarCollapsed={!!sidebarCollapsed}
+        />
         {!sidebarCollapsed && (
           <FavoriteItemQuickAction
             favorite={favorite}
