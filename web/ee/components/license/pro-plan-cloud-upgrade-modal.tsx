@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import orderBy from "lodash/orderBy";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Dialog } from "@headlessui/react";
@@ -23,6 +24,15 @@ export type ProPlanCloudUpgradeModalProps = {
   handleClose: () => void;
   yearlyPlan?: boolean;
   handleSuccessModal?: () => void;
+};
+
+// constants
+export const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMonth: number): number => {
+  const monthlyCost = monthlyPrice * 12;
+  const yearlyCost = yearlyPricePerMonth * 12;
+  const amountSaved = monthlyCost - yearlyCost;
+  const discountPercentage = (amountSaved / monthlyCost) * 100;
+  return Math.floor(discountPercentage);
 };
 
 export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (props) => {
@@ -155,16 +165,25 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
     }
   };
 
+  const monthlyPrice =
+    (orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find((price) => price.recurring === "month")
+      ?.unit_amount || 0) / 100;
+  const yearlyPrice =
+    (orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find((price) => price.recurring === "year")
+      ?.unit_amount || 0) / 1000;
+  // derived values
+  const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL} className="rounded-xl">
       <div className="py-6 px-10 max-h-[90vh] sm:max-h-[95vh] overflow-auto">
         <Dialog.Title as="h2" className="text-2xl font-bold leading-6 mt-6 flex justify-center items-center">
-          Upgrade to Pro for 30% flat off.
+          Upgrade to Pro, yearly for flat {yearlyDiscount}% off.
         </Dialog.Title>
         <div className="mt-3 mb-12">
           <p className="text-center text-sm mb-4 px-10 text-custom-text-100">
-            Pro unlocks everything that teams need to track progress and move work forward.Upgrade today and get 30% off
-            on your yearly bill.
+            Pro unlocks everything that teams need to make progress and move work forward.Upgrade today and get&nbsp;
+            {yearlyDiscount}% off on your yearly bill.
           </p>
           <p className="text-center text-sm text-custom-primary-200 font-semibold underline">
             <a href="https://plane.so/pro" target="_blank">
@@ -198,6 +217,7 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             yearlyPlanOnly={yearlyPlan}
             trialLoader={trialLoader}
             handleTrial={handleTrial}
+            yearlyDiscount={yearlyDiscount}
           />
         )}
       </div>

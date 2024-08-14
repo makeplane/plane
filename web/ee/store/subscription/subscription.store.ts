@@ -84,7 +84,11 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   freeTrialSubscription = async (workspaceSlug: string, payload: { product_id: string; price_id: string }) => {
     try {
       await paymentService.getFreeTrialSubscription(workspaceSlug, payload);
-      await this.fetchWorkspaceSubscribedPlan(workspaceSlug);
+      // fetching workspace subscribed plan and feature flags
+      await Promise.all([
+        this.fetchWorkspaceSubscribedPlan(workspaceSlug),
+        this.rootStore.featureFlags.fetchFeatureFlags(workspaceSlug),
+      ]);
     } catch (error) {
       throw error;
     }
