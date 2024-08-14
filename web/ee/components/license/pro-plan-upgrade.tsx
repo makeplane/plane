@@ -1,6 +1,6 @@
 import { FC } from "react";
 import orderBy from "lodash/orderBy";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Loader } from "lucide-react";
 import { Tab } from "@headlessui/react";
 // types
 import { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
@@ -10,12 +10,15 @@ import { cn } from "@/helpers/common.helper";
 export type ProPlanUpgradeProps = {
   proProduct: IPaymentProduct;
   basePlan: "Free" | "One";
-  features: string[];
+  features: { label: string; comingSoon: boolean }[];
   handlePaymentLink: (priceId: string) => void;
   isLoading?: boolean;
   yearlyPlanOnly?: boolean;
   verticalFeatureList?: boolean;
   extraFeatures?: string | React.ReactNode;
+  trialLoader?: boolean;
+  handleTrial?: (productId: string, priceId: string) => void;
+  yearlyDiscount?: number;
 };
 
 export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
@@ -28,6 +31,9 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
     yearlyPlanOnly = false,
     verticalFeatureList = false,
     extraFeatures,
+    trialLoader = false,
+    handleTrial,
+    yearlyDiscount,
   } = props;
   // derived values
   const yearlyPrice = orderBy(proProduct?.prices || [], ["recurring"], ["desc"]).find(
@@ -39,9 +45,16 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
       : []
     : orderBy(proProduct?.prices || [], ["recurring"], ["asc"]);
 
+  const renderPricing = (unitAmount: number, recurring: string): number => {
+    let price = 0;
+    if (recurring === "month") price = unitAmount / 100;
+    if (recurring === "year") price = unitAmount / 1000;
+    return price;
+  };
+
   return (
     <div className="py-4 px-2 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
-      <Tab.Group>
+      <Tab.Group defaultIndex={1}>
         <div className="flex w-full justify-center">
           {!yearlyPlanOnly && (
             <Tab.List className="flex space-x-1 rounded-lg bg-custom-primary-200/10 p-1 w-60">
@@ -60,9 +73,9 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                   <>
                     {price.recurring === "month" && ("Monthly" as string)}
                     {price.recurring === "year" && ("Yearly" as string)}
-                    {price.recurring === "year" && (
+                    {price.recurring === "year" && yearlyDiscount && (
                       <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 ml-1 text-xs">
-                        -28%
+                        -{yearlyDiscount}%
                       </span>
                     )}
                   </>
@@ -76,10 +89,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
             <Tab.Panel key={price.id}>
               <div className="py-4 text-center font-semibold">
                 <div className="text-2xl">Plane Pro</div>
-                <div className="text-3xl">
-                  {price.recurring === "month" && "$7"}
-                  {price.recurring === "year" && "$5"}
-                </div>
+                <div className="text-3xl">{`$${renderPricing(price.unit_amount, price.recurring)}`}</div>
                 <div className="text-sm text-custom-text-300">
                   {price.recurring === "month" && "a user per month"}
                   {price.recurring === "year" && "a user per month billed annually"}
@@ -98,6 +108,15 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                       : "Redirecting to Stripe..."
                     : "Upgrade to Pro"}
                 </button>
+                {/* free trail button */}
+                <button
+                  disabled={trialLoader}
+                  className="mt-4 text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-2"
+                  onClick={() => handleTrial && handleTrial(proProduct?.id, price.id)}
+                >
+                  <span>Start free trial</span>
+                  <div className="w-3 h-3">{trialLoader && <Loader size={12} className="animate-spin" />}</div>
+                </button>
                 {yearlyPlanOnly && (
                   <div className="text-[9px] text-custom-text-300 w-64 pt-1">
                     We will charge your card on file at <b>$5 per user per month</b> for the total number of users in
@@ -110,15 +129,22 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                 <ul className="grid grid-cols-12 gap-x-4">
                   {features.map((feature) => (
                     <li
-                      key={feature}
+                      key={feature?.label}
                       className={cn("col-span-12 relative rounded-md p-2 flex", {
                         "sm:col-span-6": !verticalFeatureList,
                       })}
                     >
-                      <p className="w-full text-sm font-medium leading-5 flex items-center line-clamp-1">
-                        {!!feature && <CheckCircle className="h-4 w-4 mr-4 text-custom-text-300 flex-shrink-0" />}
-                        <span className="text-custom-text-200 truncate">{feature}</span>
-                      </p>
+                      <div className="w-full text-sm font-medium leading-5 flex items-center">
+                        {!!feature && <CheckCircle className="flex-shrink-0 h-4 w-4 mr-3 text-custom-text-300" />}
+                        <div className="relative overflow-hidden line-clamp-1">
+                          <span className="text-custom-text-200 truncate">{feature?.label}</span>
+                        </div>
+                        {feature?.comingSoon && (
+                          <div className="flex-shrink-0 flex justify-center items-center bg-custom-primary-100/90 text-white text-[7px] rounded-full px-1 h-[12px] -mt-4 ml-1 z-50 whitespace-nowrap">
+                            COMING SOON
+                          </div>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>

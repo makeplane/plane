@@ -18,10 +18,8 @@ import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
-import { PaymentService } from "@/plane-web/services/payment.service";
 
 const workspaceService = new WorkspaceService();
-const paymentService = new PaymentService();
 
 const CloudUpgradePage = observer(() => {
   // router
@@ -50,34 +48,8 @@ const CloudUpgradePage = observer(() => {
 
   const isAnyWorkspaceAvailable = workspacesList && workspacesList?.length > 0;
 
-  const handlePaymentPageRedirection = () => {
-    if (!selectedWorkspace) {
-      setToast({
-        type: TOAST_TYPE.INFO,
-        title: "Please select a workspace to continue",
-      });
-      return;
-    }
-    setIsLoading(true);
-    paymentService
-      .getPaymentLink({
-        slug: selectedWorkspace,
-      })
-      .then((response) => {
-        if (response.payment_link) {
-          window.open(response.payment_link, "_blank");
-        }
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to generate payment link. Please try again.",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+  const handleNextStep = () => {
+    router.push(`/upgrade/pro/cloud/${selectedWorkspace}`);
   };
 
   const handleSignOut = async () => {
@@ -104,60 +76,59 @@ const CloudUpgradePage = observer(() => {
         label={
           <div className="flex flex-col items-center gap-2 pb-4">
             <div className="text-3xl font-semibold">
-              {isAnyWorkspaceAvailable ? "Choose your workspace" : "No eligible workspace found!"}
+              {isAnyWorkspaceAvailable
+                ? "Choose your workspace"
+                : "We didn't find an eligible workspace for this upgrade. Try another email address."}
             </div>
             <div className="text-center text-base text-custom-text-300">
               {isAnyWorkspaceAvailable
                 ? `We found the following workspaces eligible for Pro. If you want to upgrade a different workspace, log in
-              with that email`
-                : `We couldn't find any Pro eligible workspace. Try a different email address and make sure you are an admin of the workspace you are trying to upgrade.`}
+              with that email and make sure you are an admin of the workspace you want to upgrade.`
+                : `We couldn't find any Pro eligible workspace. Try a different email address and make sure you are an admin of the workspace you want to upgrade.`}
             </div>
           </div>
         }
         options={
           isAnyWorkspaceAvailable
             ? workspacesList.map((workspace) => ({
-              label: (
-                <div className={`flex items-center gap-3 px-1`}>
-                  <div className="flex-shrink-0">
-                    <div className="relative grid h-7 w-7 place-items-center rounded">
-                      {workspace?.logo && workspace.logo !== "" ? (
-                        <img
-                          src={workspace.logo}
-                          className="absolute left-0 top-0 h-full w-full rounded object-cover"
-                          alt={workspace.name}
-                        />
-                      ) : (
-                        <span className="grid h-7 w-7 justify-center place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-sm text-white">
-                          {workspace?.name[0]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{truncateText(workspace?.name, 40)}</div>
-                  </div>
-                  {workspace.product === "PRO" && (
+                label: (
+                  <div className={`flex items-center gap-3 px-1`}>
                     <div className="flex-shrink-0">
-                      <Tooltip
-                        position="right"
-                        tooltipContent="You're already subscribed to pro plan for this workspace."
-                      >
-                        <div
-                          className={cn(
-                            "text-[#EA9924] bg-[#FFF7C2] rounded-md px-2 py-0 text-center text-xs font-medium outline-none"
-                          )}
-                        >
-                          Pro
-                        </div>
-                      </Tooltip>
+                      <div className="relative grid h-7 w-7 place-items-center rounded">
+                        {workspace?.logo && workspace.logo !== "" ? (
+                          <img
+                            src={workspace.logo}
+                            className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                            alt={workspace.name}
+                          />
+                        ) : (
+                          <span className="grid h-7 w-7 justify-center place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-sm text-white">
+                            {workspace?.name[0]}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              ),
-              value: workspace.slug,
-              disabled: workspace.product !== "FREE",
-            }))
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium">{truncateText(workspace?.name, 40)}</div>
+                    </div>
+                    {workspace.product === "PRO" && (
+                      <div className="flex-shrink-0">
+                        <Tooltip position="right" tooltipContent="This workspace is already subscribed to Pro.">
+                          <div
+                            className={cn(
+                              "text-[#EA9924] bg-[#FFF7C2] rounded-md px-2 py-0 text-center text-xs font-medium outline-none"
+                            )}
+                          >
+                            Pro
+                          </div>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </div>
+                ),
+                value: workspace.slug,
+                disabled: workspace.product !== "FREE",
+              }))
             : []
         }
         className="w-full"
@@ -172,11 +143,11 @@ const CloudUpgradePage = observer(() => {
       {isAnyWorkspaceAvailable ? (
         <Button
           className="w-full px-2 my-4"
-          onClick={handlePaymentPageRedirection}
+          onClick={handleNextStep}
           loading={isLoading}
           disabled={isLoading || !selectedWorkspace}
         >
-          {isLoading ? "Redirecting to Stripe..." : "Go to payment"}
+          {isLoading ? "Going to payment" : "Choose billing frequency"}
         </Button>
       ) : (
         <div className="w-full flex gap-4 px-4">

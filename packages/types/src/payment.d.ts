@@ -22,4 +22,5 @@ export type IWorkspaceProductSubscription = {
   is_canceled?: boolean;
   interval?: "month" | "year" | null;
   current_period_end_date: string | null;
+  is_offline_payment: boolean;
 };

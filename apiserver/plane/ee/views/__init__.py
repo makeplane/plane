@@ -28,7 +28,8 @@ from plane.ee.views.app.workspace import (
     WorkspaceExportWorkLogsEndpoint,
     WorkspaceFeaturesEndpoint,
     WorkspaceProjectStatesEndpoint,
-    WorkspaceProjectStatesDefaultEndpoint
+    WorkspaceProjectStatesDefaultEndpoint,
+    WorkspaceInviteCheckEndpoint,
 )
 
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint

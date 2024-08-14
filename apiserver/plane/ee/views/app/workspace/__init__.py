@@ -6,3 +6,5 @@ from .worklogs import (
 from .feature import WorkspaceFeaturesEndpoint
 
 from .project_state import WorkspaceProjectStatesEndpoint, WorkspaceProjectStatesDefaultEndpoint
+
+from .invite import WorkspaceInviteCheckEndpoint

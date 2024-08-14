@@ -10,7 +10,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web constants
-import { ONE_TO_PRO_PLAN_FEATURES } from "@/plane-web/constants/license";
+import { ONE_TO_PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
 // local components
 import { ProPlanUpgrade } from "./pro-plan-upgrade";
 
@@ -98,7 +98,7 @@ export const ProPlanSelfHostUpgradeModal: FC<ProPlanSelfHostUpgradeModalProps> =
         <ProPlanUpgrade
           proProduct={proProduct}
           basePlan="One"
-          features={ONE_TO_PRO_PLAN_FEATURES}
+          features={ONE_TO_PRO_PLAN_FEATURES_MAP}
           handlePaymentLink={handlePaymentLink}
         />
       </div>
