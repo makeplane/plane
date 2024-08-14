@@ -40,7 +40,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             .select_related("workspace", "project," "triggered_by", "receiver")
         )
 
-    @allow_permission(roles=["ADMIN", "MEMBER", "GUEST"], level="WORKSPACE")
+    @allow_permission(
+        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+    )
     def list(self, request, slug):
         # Get query parameters
         snoozed = request.GET.get("snoozed", "false")
@@ -170,7 +172,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(roles=["ADMIN", "MEMBER", "GUEST"], level="WORKSPACE")
+    @allow_permission(
+        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+    )
     def partial_update(self, request, slug, pk):
         notification = Notification.objects.get(
             workspace__slug=slug, pk=pk, receiver=request.user
@@ -231,7 +235,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
 class UnreadNotificationEndpoint(BaseAPIView):
 
-    @allow_permission(roles=["ADMIN", "MEMBER", "GUEST"], level="WORKSPACE")
+    @allow_permission(
+        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+    )
     def get(self, request, slug):
         # Watching Issues Count
         unread_notifications_count = (
