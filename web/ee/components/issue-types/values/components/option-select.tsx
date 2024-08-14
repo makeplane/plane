@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { observer } from "mobx-react";
 // components
+import { ChevronDown } from "lucide-react";
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -81,14 +82,36 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
     content: option.name,
   }));
 
+  // sort all the options to top which is available in value.
+  customSearchOptions?.sort((a, b) => {
+    const aIndex = a.value ? value.indexOf(a.value) : -1;
+    const bIndex = b.value ? value.indexOf(b.value) : -1;
+    if (aIndex === -1 && bIndex === -1) {
+      return 0;
+    }
+    if (aIndex === -1) {
+      return 1;
+    }
+    if (bIndex === -1) {
+      return -1;
+    }
+    return aIndex - bIndex;
+  });
+
   const customSearchSelectProps = {
-    label: getDisplayName(),
     options: customSearchOptions,
     className: "group w-full h-full flex",
     optionsClassName: "w-48",
-    chevronClassName: "h-3.5 w-3.5 hidden group-hover:inline",
-    buttonClassName: cn(
-      "rounded text-sm bg-custom-background-100 border-custom-border-200",
+    customButton: (
+      <>
+        <span className="text-sm truncate whitespace-nowrap">{getDisplayName()}</span>
+        {!isDisabled && (
+          <ChevronDown className={cn("flex-shrink-0 h-3.5 w-3.5 hidden group-hover:inline")} aria-hidden="true" />
+        )}
+      </>
+    ),
+    customButtonClassName: cn(
+      "items-center rounded px-2 py-1 text-sm bg-custom-background-100 border-custom-border-200",
       {
         "border-[0.5px]": variant === "create" || Boolean(error),
         "border-0": variant === "update",

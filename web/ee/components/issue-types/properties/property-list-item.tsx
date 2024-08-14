@@ -3,6 +3,7 @@ import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
+import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 // ui
 import { Logo, TOAST_TYPE, ToggleSwitch, Tooltip, setPromiseToast, setToast } from "@plane/ui";
@@ -26,6 +27,7 @@ import {
   TCreationListModes,
   TOperationMode,
   TIssuePropertyOption,
+  TIssuePropertyOptionCreateUpdateData,
 } from "@/plane-web/types";
 
 type TIssuePropertyListItem = {
@@ -114,6 +116,26 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     return hasError;
   };
 
+  function sanitizeOptionsData(
+    options: Partial<TIssuePropertyOptionCreateUpdateData>[]
+  ): Partial<TIssuePropertyOptionCreateUpdateData>[] {
+    // Extract the existing and new options
+    const existingOptions = options.filter((option) => option.id);
+    const newOptions = options.filter((option) => !option.id && option.key);
+    // Extract existing option names
+    const existingOptionNames = new Set(existingOptions.map((option) => option.name?.toLowerCase()));
+    // Filter new options to remove duplicates based on name and ensure no name exists in both lists
+    const sanitizedNewOptions = uniqBy(
+      newOptions.filter((option) => {
+        const name = option.name?.toLowerCase();
+        return name && !existingOptionNames.has(name);
+      }),
+      "name"
+    );
+    // Combine sanitized new options with existing options (for update use case)
+    return [...existingOptions, ...sanitizedNewOptions];
+  }
+
   // handlers
   const handleCreateProperty = async () => {
     if (!issuePropertyData) return;
@@ -121,7 +143,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     // create property options payload (required for option type)
     let optionsPayload: Partial<TIssuePropertyOption>[] = [];
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-      optionsPayload = propertyOptions
+      optionsPayload = sanitizeOptionsData(propertyOptions)
         .map((item) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { key, ...rest } = item;
@@ -168,7 +190,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     const originalOptionsData = cloneDeep(sortedActivePropertyOptions);
     let optionsPayload: Partial<TIssuePropertyOption>[] = [];
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-      optionsPayload = propertyOptions
+      optionsPayload = sanitizeOptionsData(propertyOptions)
         .filter((item) => !!item.name && !isEmpty(item))
         .map((option) => {
           delete option.key;
@@ -332,16 +354,16 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   return (
     <div
       className={cn(
-        "w-full h-8 flex items-center gap-2 group px-1 py-1.5 my-1.5 text-sm rounded hover:bg-custom-background-90 cursor-default",
+        "w-full h-8 flex items-center gap-2 group px-2 py-3 my-2 text-sm rounded hover:bg-custom-background-90 cursor-default",
         {
-          "bg-custom-background-90": issuePropertyOperationMode,
+          "bg-toast-text-warning/20 hover:bg-toast-text-warning/20": issuePropertyOperationMode,
         }
       )}
     >
-      <div className="whitespace-nowrap w-48 grow flex items-center gap-1.5 text-sm font-medium">
+      <div className="whitespace-nowrap w-48 grow flex items-center gap-2 text-sm font-medium">
         {issuePropertyData?.logo_props && (
-          <div className="flex-shrink-0 size-4 grid place-items-center">
-            <Logo logo={issuePropertyData.logo_props} size={15} type="lucide" customColor="text-custom-text-200" />
+          <div className="flex-shrink-0 size-5 grid place-items-center">
+            <Logo logo={issuePropertyData.logo_props} size={16} type="lucide" customColor="text-custom-text-200" />
           </div>
         )}
         <div className="w-full truncate overflow-hidden">

@@ -48,7 +48,12 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
     (propertyDetail.property_type && DISABLE_ATTRIBUTE_CHANGE_LIST.includes(propertyDetail.property_type))
   ) {
     return (
-      <span className="px-2 py-0.5 font-medium text-custom-text-300 bg-custom-background-80/40 rounded">
+      <span
+        className={cn(
+          "px-2 py-0.5 font-medium text-custom-text-300 rounded",
+          !currentOperationMode && "bg-custom-background-80/40"
+        )}
+      >
         {attributeDisplayName ?? ""}
       </span>
     );

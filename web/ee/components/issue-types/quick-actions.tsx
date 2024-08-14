@@ -54,16 +54,7 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className={cn("flex items-center justify-center gap-1 px-2")}>
-        <Tooltip
-          className="shadow"
-          tooltipContent={!!isIssueTypeEnabled ? "Click to disable" : "Click to enable"}
-          position="bottom"
-        >
-          <div className="w-12">
-            <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
-          </div>
-        </Tooltip>
+      <div className={cn("flex items-center justify-center px-2")}>
         <div className="w-6">
           <Tooltip className="w-full shadow" tooltipContent="Edit" position="bottom">
             <button
@@ -79,10 +70,19 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
               }}
               disabled={isLoading}
             >
-              <Pencil size={14} className="text-custom-text-300" />
+              <Pencil size={16} className="text-custom-text-300" />
             </button>
           </Tooltip>
         </div>
+        <Tooltip
+          className="shadow"
+          tooltipContent={!!isIssueTypeEnabled ? "Click to disable" : "Click to enable"}
+          position="bottom"
+        >
+          <div className="w-12">
+            <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
+          </div>
+        </Tooltip>
       </div>
     </>
   );

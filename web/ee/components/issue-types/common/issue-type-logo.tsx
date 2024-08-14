@@ -20,6 +20,9 @@ export const IssueTypeLogo: FC<Props> = (props) => {
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
 
+  // if no value, return empty fragment
+  if (!icon_props?.name && !isDefault) return <></>;
+
   return (
     <>
       <span
@@ -38,23 +41,16 @@ export const IssueTypeLogo: FC<Props> = (props) => {
               color: icon_props?.color ?? "#ffffff", // fallback color
             }}
           />
-        ) : LucideIcon ? (
-          <LucideIcon.element
-            style={{
-              height: size,
-              width: size,
-              color: icon_props?.color ?? "#ffffff", // fallback color
-            }}
-          />
         ) : (
-          // fallback icon
-          <OctagonAlert
-            style={{
-              height: size,
-              width: size,
-              color: icon_props?.color ?? "#dc2626",
-            }}
-          />
+          LucideIcon && (
+            <LucideIcon.element
+              style={{
+                height: size,
+                width: size,
+                color: icon_props?.color ?? "#ffffff", // fallback color
+              }}
+            />
+          )
         )}
       </span>
     </>

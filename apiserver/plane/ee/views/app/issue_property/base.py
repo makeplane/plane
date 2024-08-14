@@ -68,9 +68,6 @@ class IssuePropertyEndpoint(BaseAPIView):
             else:
                 bulk_create_options.append(option)
 
-        if bulk_create_options:
-            self.create_options(issue_property, bulk_create_options)
-
         if bulk_update_options:
             for option in bulk_update_options:
                 issue_property_option = IssuePropertyOption.objects.get(
@@ -83,8 +80,10 @@ class IssuePropertyEndpoint(BaseAPIView):
                     issue_property_option, data=option, partial=True
                 )
                 option_serializer.is_valid(raise_exception=True)
-
                 option_serializer.save()
+
+        if bulk_create_options:
+            self.create_options(issue_property, bulk_create_options)
 
     def reset_options_default(self, issue_property):
         # Reset all the default options

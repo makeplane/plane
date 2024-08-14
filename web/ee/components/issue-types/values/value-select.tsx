@@ -174,15 +174,15 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   return (
     <>
       {variant === "create" && (
-        <div className={cn("w-full flex items-start justify-center gap-1.5 py-1")}>
+        <div className={cn("w-full flex flex-shrink-0 items-start justify-center py-1")}>
           <div className={cn("w-2/5 h-8 flex flex-shrink-0 gap-1.5 items-center")}>
             <IssuePropertyDetail />
           </div>
-          <div className="w-full h-full min-h-8 flex flex-col gap-0.5">{CurrentPropertyAttribute}</div>
+          <div className="w-3/5 h-full min-h-8 flex flex-col gap-0.5 pl-3">{CurrentPropertyAttribute}</div>
         </div>
       )}
       {variant === "update" && (
-        <div className={cn("flex w-full items-start gap-x-3 gap-y-1 min-h-8")}>
+        <div className={cn("flex w-full items-start gap-y-1 min-h-8")}>
           <div
             className={cn(
               "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-custom-text-300",
@@ -191,7 +191,12 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           >
             <IssuePropertyDetail />
           </div>
-          <div className="relative h-full min-h-8 w-full flex-grow flex flex-col gap-0.5">
+          <div
+            className={cn("relative h-full min-h-8 flex flex-col gap-0.5 pl-3", {
+              "w-3/4": isPeekOverview,
+              "w-3/5": !isPeekOverview,
+            })}
+          >
             {CurrentPropertyAttribute}
           </div>
         </div>

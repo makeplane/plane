@@ -16,7 +16,7 @@ const IssueTypesSettingsPage = observer(() => {
   const { currentProjectDetails } = useProject();
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
-  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Issue types` : undefined;
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Issue Types` : undefined;
 
   return (
     <>

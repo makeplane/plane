@@ -61,8 +61,13 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
                 />
                 <div className="flex flex-col items-start justify-start whitespace-normal">
-                  <div className="flex gap-4 text-left">
+                  <div className="flex gap-4 text-left items-center">
                     <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
+                    {!issueTypeDetail?.is_active && (
+                      <div className="py-0.5 px-3 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
+                        Disabled
+                      </div>
+                    )}
                   </div>
                   <div className="text-sm text-custom-text-300 text-left line-clamp-1">
                     {issueTypeDetail?.description}
@@ -70,18 +75,15 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                 </div>
               </div>
               <div className="flex-shrink-0 flex">
-                <div className="w-20">
-                  {issueTypeDetail?.is_default && (
-                    <div className="py-1 px-2 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
-                      Default
-                    </div>
-                  )}
-                  {!issueTypeDetail?.is_active && (
-                    <div className="flex-shrink-0 py-1 px-2 text-xs rounded font-medium text-red-600 bg-red-600/10">
-                      Disabled
-                    </div>
-                  )}
-                </div>
+                {issueTypeDetail?.is_default && (
+                  <div
+                    className={cn(
+                      "py-0.5 px-2 text-xs rounded text-custom-primary-100 bg-transparent border border-custom-primary-100 cursor-default font-medium"
+                    )}
+                  >
+                    Default
+                  </div>
+                )}
                 <div>
                   {!issueTypeDetail?.is_default && (
                     <IssueTypeQuickActions

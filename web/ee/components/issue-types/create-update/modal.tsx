@@ -75,11 +75,11 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = (props) => {
           message: `Issue type created successfully.`,
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: `Failed to create issue type. Please try again!`,
+          message: error?.error ?? `Failed to create issue type. Please try again!`,
         });
       })
       .finally(() => {
@@ -101,11 +101,11 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = (props) => {
           message: `Issue type ${issueTypeFormData?.name} updated successfully.`,
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: `Failed to update issue type. Please try again!`,
+          message: error?.error ?? `Failed to update issue type. Please try again!`,
         });
       })
       .finally(() => {
