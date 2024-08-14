@@ -170,22 +170,16 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     | undefined;
 
   const checkCurrentOptionWorkspaceRole = (value: string) => {
-    const selectedMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
-    if (!value || !selectedMemberWorkspaceRole) return ROLE;
+    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
+    if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    // Filter roles based on the selected member's workspace role
     const isGuestOrViewer = [EUserWorkspaceRoles.GUEST, EUserWorkspaceRoles.VIEWER].includes(
-      selectedMemberWorkspaceRole
+      currentMemberWorkspaceRole
     );
 
-    const filteredRoles = Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => {
-        const roleKey = parseInt(key);
-        return isGuestOrViewer ? roleKey === selectedMemberWorkspaceRole : roleKey <= selectedMemberWorkspaceRole;
-      })
+    return Object.fromEntries(
+      Object.entries(ROLE).filter(([key]) => !isGuestOrViewer || [5, 10].includes(parseInt(key)))
     );
-
-    return filteredRoles;
   };
 
   return (

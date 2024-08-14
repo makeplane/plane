@@ -91,6 +91,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   // store hooks
   const {
     project: { updateMember },
+    workspace: { getWorkspaceMemberDetails },
   } = useMember();
   const { data: currentUser } = useUser();
 
@@ -98,6 +99,19 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   const isCurrentUser = currentUser?.id === rowData.member.id;
   const isAdminRole = currentProjectRole === EUserProjectRoles.ADMIN;
   const isRoleNonEditable = isCurrentUser || !isAdminRole;
+
+  const checkCurrentOptionWorkspaceRole = (value: string) => {
+    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
+    if (!value || !currentMemberWorkspaceRole) return ROLE;
+
+    const isGuestOrViewer = [EUserWorkspaceRoles.GUEST, EUserWorkspaceRoles.VIEWER].includes(
+      currentMemberWorkspaceRole
+    );
+
+    return Object.fromEntries(
+      Object.entries(ROLE).filter(([key]) => !isGuestOrViewer || [5, 10].includes(parseInt(key)))
+    );
+  };
 
   return (
     <>
@@ -140,11 +154,14 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               optionsClassName="w-full"
               input
             >
-              {Object.keys(ROLE).map((item) => (
-                <CustomSelect.Option key={item} value={item as unknown as EUserProjectRoles}>
-                  {ROLE[item as unknown as keyof typeof ROLE]}
-                </CustomSelect.Option>
-              ))}
+              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => {
+                if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
+                return (
+                  <CustomSelect.Option key={key} value={key}>
+                    {label}
+                  </CustomSelect.Option>
+                );
+              })}
             </CustomSelect>
           )}
         />
