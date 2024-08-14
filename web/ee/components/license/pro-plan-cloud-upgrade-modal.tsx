@@ -152,7 +152,7 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
   };
 
   // handling the payment link when the free trial is enabled
-  const handleSubscriptionPageRedirection = () => {
+  const handleSubscriptionPageRedirection = (priceId: string) => {
     if (!workspaceSlug) return;
 
     if (!isAdmin) {
@@ -166,10 +166,10 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
 
     setLoading(true);
     paymentService
-      .getWorkspaceSubscriptionPageLink(workspaceSlug.toString())
+      .modifyTrailSubscription(workspaceSlug.toString(), { price_id: priceId })
       .then((response) => {
-        if (response.url) {
-          window.open(response.url, "_blank");
+        if (response.session_url) {
+          window.open(response.session_url, "_blank");
         }
       })
       .catch(() => {
@@ -267,7 +267,7 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             features={PRO_PLAN_FEATURES_MAP}
             isLoading={isLoading}
             handlePaymentLink={(priceId: string) =>
-              isInTrailPeriod ? handleSubscriptionPageRedirection() : handlePaymentLink(priceId)
+              isInTrailPeriod ? handleSubscriptionPageRedirection(priceId) : handlePaymentLink(priceId)
             }
             yearlyPlanOnly={yearlyPlan}
             trialLoader={trialLoader}
