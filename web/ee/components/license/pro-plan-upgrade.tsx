@@ -50,7 +50,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
   const renderPricing = (unitAmount: number, recurring: string): number => {
     let price = 0;
     if (recurring === "month") price = unitAmount / 100;
-    if (recurring === "year") price = unitAmount / 1000;
+    if (recurring === "year") price = unitAmount / 1200;
     return price;
   };
 

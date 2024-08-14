@@ -79,7 +79,7 @@ export const CloudEditionBadge = observer(() => {
         if (subscriptionDetail?.has_activated_free_trial) {
           return "Buy Pro";
         } else {
-          return "Try Pro";
+          return "Upgrade to Pro";
         }
       }
       case "PRO":
@@ -89,11 +89,11 @@ export const CloudEditionBadge = observer(() => {
           if (subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.has_added_payment_method) {
             return "Buy Pro";
           } else {
-            return "Try Pro";
+            return "Upgrade to Pro";
           }
         }
       default:
-        return "Try Pro";
+        return "Upgrade to Pro";
     }
   };
 

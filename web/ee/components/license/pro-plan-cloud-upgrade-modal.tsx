@@ -265,7 +265,9 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             basePlan="Free"
             features={PRO_PLAN_FEATURES_MAP}
             isLoading={isLoading}
-            handlePaymentLink={isInTrailPeriod ? handleSubscriptionPageRedirection : handlePaymentLink}
+            handlePaymentLink={(priceId: string) =>
+              isInTrailPeriod ? handleSubscriptionPageRedirection : handlePaymentLink(priceId)
+            }
             yearlyPlanOnly={yearlyPlan}
             trialLoader={trialLoader}
             handleTrial={handleTrial}
