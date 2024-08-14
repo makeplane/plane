@@ -15,7 +15,7 @@ from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import IssueAttachment, ProjectMember
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueAttachmentEndpoint(BaseAPIView):

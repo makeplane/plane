@@ -9,10 +9,12 @@ import { Breadcrumbs, CustomMenu } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web constants
+import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router

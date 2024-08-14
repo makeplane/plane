@@ -1,4 +1,6 @@
 import { enableStaticRendering } from "mobx-react";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // stores
 import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.store";
 import { CycleStore, ICycleStore } from "./cycle.store";
@@ -72,7 +74,7 @@ export class CoreRootStore {
     this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.issue = new IssueRootStore(this);
+    this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
@@ -103,7 +105,7 @@ export class CoreRootStore {
     this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.issue = new IssueRootStore(this);
+    this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);

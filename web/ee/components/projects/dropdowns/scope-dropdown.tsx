@@ -1,0 +1,75 @@
+"use client";
+
+import { FC } from "react";
+import { observer } from "mobx-react";
+import { ChevronDown } from "lucide-react";
+import { cn } from "@plane/editor";
+import { CustomMenu } from "@plane/ui";
+// plane web constants
+import { PROJECT_SCOPES } from "@/plane-web/constants/project";
+// plane web hooks
+import { useProjectFilter } from "@/plane-web/hooks/store";
+// plane web types
+import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
+
+export type TProjectScopeDropdown = {
+  workspaceSlug: string;
+  className?: string;
+};
+
+export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) => {
+  const { workspaceSlug, className } = props;
+  // hooks
+  const { scopeProjectsCount, filters, updateScope } = useProjectFilter();
+
+  // derived values
+  const selectedScope = filters?.scope || EProjectScope.ALL_PROJECTS;
+  const selectedScopeCount = scopeProjectsCount?.[selectedScope];
+
+  const DropdownLabel = () => (
+    <>
+      <div className="hidden md:flex relative items-center gap-2">
+        <div className="whitespace-nowrap font-medium">
+          {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
+        </div>
+        <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+          {selectedScopeCount}
+        </div>
+      </div>
+      <div className="flex md:hidden text-sm items-center gap-2 neutral-primary text-custom-text-200 justify-center w-full">
+        <span>{(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}</span>
+        <ChevronDown className="h-3 w-3 hidden md:flex" strokeWidth={2} />
+      </div>
+    </>
+  );
+
+  const DropdownOptions = () =>
+    (PROJECT_SCOPES || []).map((scope) => (
+      <CustomMenu.MenuItem
+        key={scope.key}
+        className="flex items-center gap-2 truncate"
+        onClick={() => updateScope(workspaceSlug, scope.key)}
+      >
+        <div className="truncate font-medium text-xs">{scope?.label}</div>
+        <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+          {scopeProjectsCount?.[scope.key]}
+        </div>
+      </CustomMenu.MenuItem>
+    ));
+
+  return (
+    <CustomMenu
+      maxHeight={"md"}
+      className={cn(
+        "flex flex-grow justify-center text-xs text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded px-3 py-1.5",
+        className
+      )}
+      placement="bottom-start"
+      customButton={<DropdownLabel />}
+      customButtonClassName="flex flex-grow justify-center"
+      closeOnSelect
+    >
+      <DropdownOptions />
+    </CustomMenu>
+  );
+});

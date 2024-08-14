@@ -5,6 +5,7 @@ import useFontFaceObserver from "use-font-face-observer";
 import { LUCIDE_ICONS_LIST } from "./icons";
 // helpers
 import { emojiCodeToUnicode } from "./helpers";
+import { cn } from "../../helpers";
 
 type TLogoProps = {
   in_use: "emoji" | "icon";
@@ -22,10 +23,11 @@ type Props = {
   logo: TLogoProps;
   size?: number;
   type?: "lucide" | "material";
+  customColor?: string;
 };
 
 export const Logo: FC<Props> = (props) => {
-  const { logo, size = 16, type = "material" } = props;
+  const { logo, size = 16, customColor, type = "material" } = props;
 
   // destructuring the logo object
   const { in_use, emoji, icon } = logo;
@@ -72,19 +74,20 @@ export const Logo: FC<Props> = (props) => {
             {lucideIcon && (
               <lucideIcon.element
                 style={{
-                  color: color,
+                  color: !customColor ? color : undefined,
                   height: size,
                   width: size,
                 }}
+                className={cn(customColor)}
               />
             )}
           </>
         ) : (
           <span
-            className="material-symbols-rounded"
+            className={cn("material-symbols-rounded", customColor)}
             style={{
               fontSize: size,
-              color: color,
+              color: !customColor ? color : undefined,
               scale: "115%",
             }}
           >
