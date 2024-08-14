@@ -21,14 +21,6 @@ class IssueType(BaseModel):
     level = models.PositiveIntegerField(default=0)
 
     class Meta:
-        unique_together = ["workspace", "name", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "workspace"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_type_unique_name_workspace_when_deleted_at_null",
-            )
-        ]
         verbose_name = "Issue Type"
         verbose_name_plural = "Issue Types"
         db_table = "issue_types"

@@ -27,6 +27,14 @@ class Migration(migrations.Migration):
             name="sequence",
             field=models.FloatField(default=65535),
         ),
+        migrations.RemoveConstraint(
+            model_name="issuetype",
+            name="issue_type_unique_name_workspace_when_deleted_at_null",
+        ),
+        migrations.AlterUniqueTogether(
+            name="issuetype",
+            unique_together=set(),
+        ),
         migrations.CreateModel(
             name="ProjectIssueType",
             fields=[
