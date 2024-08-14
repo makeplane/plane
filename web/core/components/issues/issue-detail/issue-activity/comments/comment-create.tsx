@@ -33,6 +33,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { isSubmitting },
     reset,
   } = useForm<Partial<TIssueComment>>({
@@ -49,8 +50,18 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
       editorRef.current?.clearEditor();
     });
 
+  const commentHTML = watch("comment_html");
+  const isEmpty =
+    commentHTML?.trim() === "" ||
+    commentHTML === "<p></p>" ||
+    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
+
   return (
-    <div>
+    <div
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey && !isEmpty && !isSubmitting) handleSubmit(onSubmit)(e);
+      }}
+    >
       <Controller
         name="access"
         control={control}
@@ -65,13 +76,9 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 value={"<p></p>"}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
-                onEnterKeyPress={(commentHTML) => {
-                  const isEmpty =
-                    commentHTML?.trim() === "" ||
-                    commentHTML === "<p></p>" ||
-                    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
+                onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
-                    handleSubmit(onSubmit)();
+                    handleSubmit(onSubmit)(e);
                   }
                 }}
                 ref={editorRef}
