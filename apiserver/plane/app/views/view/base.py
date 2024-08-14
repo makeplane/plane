@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from plane.app.permissions import (
     ProjectEntityPermission,
     WorkspaceEntityPermission,
+    allow_permission,
 )
 from plane.app.serializers import (
     IssueViewSerializer,
@@ -58,9 +59,6 @@ from plane.db.models import (
 class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
 
     def perform_create(self, serializer):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
@@ -77,7 +75,10 @@ class WorkspaceViewViewSet(BaseViewSet):
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
         )
-    
+
+    @allow_permission(
+        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+    )
     def list(self, request, slug):
         queryset = self.get_queryset()
         fields = [
@@ -97,6 +98,9 @@ class WorkspaceViewViewSet(BaseViewSet):
         ).data
         return Response(views, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        roles=[], level="WORKSPACE", creator=True, model=IssueView
+    )
     def partial_update(self, request, slug, pk):
         with transaction.atomic():
             workspace_view = IssueView.objects.select_for_update().get(
@@ -130,6 +134,9 @@ class WorkspaceViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
+    @allow_permission(
+        roles=["ADMIN"], level="WORKSPACE", creator=True, model=IssueView
+    )
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(
             pk=pk,
@@ -176,10 +183,6 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
@@ -251,6 +254,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
+    @allow_permission(
+        roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"], level="WORKSPACE"
+    )
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
@@ -377,9 +383,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 class IssueViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     def perform_create(self, serializer):
         serializer.save(
@@ -413,6 +416,7 @@ class IssueViewViewSet(BaseViewSet):
             .distinct()
         )
 
+    allow_permission(roles=["ADMIN", "MEMBER", "VIEWER", "GUEST"])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         if ProjectMember.objects.filter(
@@ -432,6 +436,8 @@ class IssueViewViewSet(BaseViewSet):
             queryset, many=True, fields=fields if fields else None
         ).data
         return Response(views, status=status.HTTP_200_OK)
+
+    allow_permission(roles=[], creator=True, model=IssueView)
 
     def partial_update(self, request, slug, project_id, pk):
         with transaction.atomic():
@@ -464,6 +470,8 @@ class IssueViewViewSet(BaseViewSet):
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
+
+    allow_permission(roles=["ADMIN"], creator=True, model=IssueView)
 
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(
@@ -509,6 +517,8 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             .select_related("view")
         )
 
+    allow_permission(["ADMIN", "MEMBER"])
+
     def create(self, request, slug, project_id):
         _ = UserFavorite.objects.create(
             user=request.user,
@@ -517,6 +527,8 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             project_id=project_id,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    allow_permission(["ADMIN", "MEMBER"])
 
     def destroy(self, request, slug, project_id, view_id):
         view_favorite = UserFavorite.objects.get(
