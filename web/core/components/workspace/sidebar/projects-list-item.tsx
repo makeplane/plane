@@ -385,16 +385,20 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   customButtonClassName="grid place-items-center"
                   placement="bottom-start"
                 >
-                  <CustomMenu.MenuItem onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Star
-                        className={cn("h-3.5 w-3.5 ", {
-                          "fill-yellow-500 stroke-yellow-500": project.is_favorite,
-                        })}
-                      />
-                      <span>{project.is_favorite ? "Remove from favorites" : "Add to favorites"}</span>
-                    </span>
-                  </CustomMenu.MenuItem>
+                  {!isViewerOrGuest && (
+                    <CustomMenu.MenuItem
+                      onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}
+                    >
+                      <span className="flex items-center justify-start gap-2">
+                        <Star
+                          className={cn("h-3.5 w-3.5 ", {
+                            "fill-yellow-500 stroke-yellow-500": project.is_favorite,
+                          })}
+                        />
+                        <span>{project.is_favorite ? "Remove from favorites" : "Add to favorites"}</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  )}
 
                   {/* publish project settings */}
                   {isAdmin && (
@@ -407,14 +411,16 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem>
-                    <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
-                      <div className="flex items-center justify-start gap-2">
-                        <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                        <span>Draft issues</span>
-                      </div>
-                    </Link>
-                  </CustomMenu.MenuItem>
+                  {!isViewerOrGuest && (
+                    <CustomMenu.MenuItem>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                          <span>Draft issues</span>
+                        </div>
+                      </Link>
+                    </CustomMenu.MenuItem>
+                  )}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
