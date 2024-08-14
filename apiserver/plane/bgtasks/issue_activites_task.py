@@ -248,7 +248,17 @@ def track_target_date(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb=(
+                    "created"
+                    if requested_data.get("target_date") is not None
+                    and current_instance.get("target_date") is None
+                    else (
+                        "deleted"
+                        if current_instance.get("target_date") is not None
+                        and requested_data.get("target_date") is None
+                        else "updated"
+                    )
+                ),
                 old_value=(
                     current_instance.get("target_date")
                     if current_instance.get("target_date") is not None
@@ -284,7 +294,17 @@ def track_start_date(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb=(
+                    "created"
+                    if requested_data.get("start_date") is not None
+                    and current_instance.get("start_date") is None
+                    else (
+                        "deleted"
+                        if current_instance.get("start_date") is not None
+                        and requested_data.get("start_date") is None
+                        else "updated"
+                    )
+                ),
                 old_value=(
                     current_instance.get("start_date")
                     if current_instance.get("start_date") is not None
