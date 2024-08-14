@@ -35,7 +35,7 @@ export interface IEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
-  onEnterKeyPress?: (descriptionHTML: string) => void;
+  onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
