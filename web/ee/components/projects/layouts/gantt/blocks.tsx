@@ -11,8 +11,9 @@ import { IGanttBlock } from "@/components/gantt-chart";
 import { findTotalDaysInRange, renderFormattedDate } from "@/helpers/date-time.helper";
 import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
+import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 import JoinButton from "../../common/join-button";
 
 type Props = {
@@ -68,6 +69,7 @@ export const ProjectGanttBlock: React.FC<Props> = observer((props) => {
 // rendering projects on gantt sidebar
 export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props) => {
   const { block } = props;
+  const { filters } = useProjectFilter();
 
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -89,7 +91,7 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
           <span className="flex-grow text-sm font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
         </Tooltip>
       </div>
-      <JoinButton project={projectDetails} />
+      {filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
       <div className="flex-shrink-0 h-full text-sm font-medium py-3 ml-2">
         {duration} day{duration > 1 ? "s" : ""}
       </div>

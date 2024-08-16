@@ -10,7 +10,7 @@ import { PROJECT_SCOPES } from "@/plane-web/constants/project";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
-import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
 
 export type TProjectScopeDropdown = {
   workspaceSlug: string;
@@ -20,7 +20,7 @@ export type TProjectScopeDropdown = {
 export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) => {
   const { workspaceSlug, className } = props;
   // hooks
-  const { scopeProjectsCount, filters, updateScope } = useProjectFilter();
+  const { scopeProjectsCount, filters, updateScope, updateLayout } = useProjectFilter();
 
   // derived values
   const selectedScope = filters?.scope || EProjectScope.ALL_PROJECTS;
@@ -28,13 +28,17 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
 
   const DropdownLabel = () => (
     <>
-      <div className="hidden md:flex relative items-center gap-2">
-        <div className="whitespace-nowrap font-medium">
-          {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
+      <div className="hidden md:flex relative items-center gap-2 w-[160px]">
+        <div className="flex gap-2 flex-1 my-auto">
+          {" "}
+          <div className="whitespace-nowrap font-medium my-auto">
+            {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
+          </div>
+          <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+            {selectedScopeCount}
+          </div>
         </div>
-        <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-          {selectedScopeCount}
-        </div>
+        <ChevronDown className="h-3 w-3" strokeWidth={2} />
       </div>
       <div className="flex md:hidden text-sm items-center gap-2 neutral-primary text-custom-text-200 justify-center w-full">
         <span>{(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}</span>
@@ -48,7 +52,15 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
       <CustomMenu.MenuItem
         key={scope.key}
         className="flex items-center gap-2 truncate"
-        onClick={() => updateScope(workspaceSlug, scope.key)}
+        onClick={() => {
+          updateScope(workspaceSlug, scope.key);
+          if (
+            scope.key === EProjectScope.ALL_PROJECTS &&
+            filters?.layout &&
+            ![EProjectLayouts.GALLERY, EProjectLayouts.TABLE].includes(filters?.layout)
+          )
+            updateLayout(workspaceSlug, EProjectLayouts.GALLERY);
+        }}
       >
         <div className="truncate font-medium text-xs">{scope?.label}</div>
         <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">

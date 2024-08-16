@@ -9,7 +9,9 @@ import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from
 // hooks
 import { useProject, useWorkspace } from "@/hooks/store";
 // types
+import { useProjectFilter } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
+import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 import JoinButton from "../../common/join-button";
 import Attributes from "../attributes";
 import Details from "./details";
@@ -29,6 +31,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const pathname = usePathname();
   const router = useRouter();
   const { updateProject } = useProject();
+  const { filters } = useProjectFilter();
 
   const isArchived = pathname.includes("/archives");
   const handleUpdateProject = (data: Partial<TProject>) => {
@@ -108,7 +111,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         </>
       </Link>
 
-      {!project.archived_at && <JoinButton project={project} />}
+      {!project.archived_at && filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={project} />}
     </div>
   );
 });

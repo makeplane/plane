@@ -15,7 +15,7 @@ import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { E_FEATURE_FLAGS, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import ProjectAttributes from "./attributes";
@@ -58,7 +58,9 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
-  const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
+  const isProjectGroupingEnabled =
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PROJECT_GROUPING);
 
   // form info
   const methods = useForm<TProject>({

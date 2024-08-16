@@ -207,10 +207,11 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     if (!this.scopeMap[workspaceSlug]) {
       this.updateScope(workspaceSlug, EProjectScope.ALL_PROJECTS);
     }
+    const savedLayout = this.handleProjectLocalFilters.get(workspaceSlug)?.layout;
     if (!this.layoutMap[workspaceSlug]) {
       this.updateLayout(
         workspaceSlug,
-        this.handleProjectLocalFilters.get(workspaceSlug)?.layout || EProjectLayouts.GALLERY
+        [EProjectLayouts.GALLERY, EProjectLayouts.TABLE].includes(savedLayout) ? savedLayout : EProjectLayouts.GALLERY
       );
     }
     if (!this.attributesMap[workspaceSlug]) {
