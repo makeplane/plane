@@ -32,4 +32,3 @@ python manage.py create_bucket
 python manage.py clear_cache
 
 python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local
-

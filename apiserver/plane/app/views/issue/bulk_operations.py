@@ -20,7 +20,7 @@ from plane.db.models import (
     IssueLabel,
     IssueAssignee,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
@@ -59,10 +59,16 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
         properties = request.data.get("properties", {})
 
-        if properties.get("start_date", False) and properties.get("target_date", False):
+        if properties.get("start_date", False) and properties.get(
+            "target_date", False
+        ):
             if (
-                datetime.strptime(properties.get("start_date"), "%Y-%m-%d").date()
-                > datetime.strptime(properties.get("target_date"), "%Y-%m-%d").date()
+                datetime.strptime(
+                    properties.get("start_date"), "%Y-%m-%d"
+                ).date()
+                > datetime.strptime(
+                    properties.get("target_date"), "%Y-%m-%d"
+                ).date()
             ):
                 return Response(
                     {
@@ -73,7 +79,6 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 )
 
         for issue in issues:
-
             # Priority
             if properties.get("priority", False):
                 bulk_issue_activities.append(

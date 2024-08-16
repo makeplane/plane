@@ -8,7 +8,7 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
-import { useIssues, useProject } from "@/hooks/store";
+import { useIssues, useProject, useUser } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -26,6 +26,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   // store hooks
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
+  const { data: currentUser, canPerformProjectAdminActions } = useUser();
 
   useEffect(() => {
     setIsDeleting(false);
@@ -36,6 +37,8 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   // derived values
   const issue = data ? data : issueMap[dataId!];
   const projectDetails = getProjectById(issue?.project_id);
+  const isIssueCreator = issue?.created_by === currentUser?.id;
+  const authorized = isIssueCreator || canPerformProjectAdminActions;
 
   const onClose = () => {
     setIsDeleting(false);
@@ -44,6 +47,16 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const handleIssueDelete = async () => {
     setIsDeleting(true);
+
+    if (!authorized) {
+      setToast({
+        title: PROJECT_ERROR_MESSAGES.permissionError.title,
+        type: TOAST_TYPE.ERROR,
+        message: PROJECT_ERROR_MESSAGES.permissionError.message,
+      });
+      onClose();
+      return;
+    }
     if (onSubmit)
       await onSubmit()
         .then(() => {

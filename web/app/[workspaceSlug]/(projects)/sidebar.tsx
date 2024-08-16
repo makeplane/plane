@@ -13,7 +13,7 @@ import {
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // plane web components
 import useSize from "@/hooks/use-window-size";
@@ -23,6 +23,7 @@ export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
+  const { canPerformWorkspaceMemberActions } = useUser();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const windowSize = useSize();
   // refs
@@ -54,10 +55,14 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       <div
         ref={ref}
         className={cn("size-full flex flex-col flex-1 pt-4 pb-0", {
-          "p-2": sidebarCollapsed,
+          "p-2 pt-4": sidebarCollapsed,
         })}
       >
-        <div className="px-4">
+        <div
+          className={cn("px-2", {
+            "px-4": !sidebarCollapsed,
+          })}
+        >
           <SidebarDropdown />
           <div className="flex-shrink-0 h-4" />
           <SidebarAppSwitcher />
@@ -69,8 +74,8 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
           })}
         />
         <div
-          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-4", {
-            "vertical-scrollbar": !sidebarCollapsed,
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2", {
+            "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
         >
           <SidebarUserMenu />
@@ -81,7 +86,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
               "opacity-0": !sidebarCollapsed,
             })}
           />
-          <SidebarFavoritesMenu />
+          {canPerformWorkspaceMemberActions && <SidebarFavoritesMenu />}
 
           <SidebarProjectsList />
         </div>

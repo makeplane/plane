@@ -10,7 +10,7 @@ export const PROJECT_SETTINGS = {
     key: "general",
     label: "General",
     href: `/settings`,
-    access: EUserProjectRoles.MEMBER,
+    access: EUserProjectRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
     Icon: SettingIcon,
   },
@@ -18,7 +18,7 @@ export const PROJECT_SETTINGS = {
     key: "members",
     label: "Members",
     href: `/settings/members`,
-    access: EUserProjectRoles.MEMBER,
+    access: EUserProjectRoles.VIEWER,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
     Icon: SettingIcon,
   },
@@ -72,11 +72,11 @@ export const PROJECT_SETTINGS_LINKS: {
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [
-    PROJECT_SETTINGS["general"],
-    PROJECT_SETTINGS["members"],
-    PROJECT_SETTINGS["features"],
-    PROJECT_SETTINGS["states"],
-    PROJECT_SETTINGS["labels"],
-    PROJECT_SETTINGS["estimates"],
-    PROJECT_SETTINGS["automations"],
-  ];
+  PROJECT_SETTINGS["general"],
+  PROJECT_SETTINGS["members"],
+  PROJECT_SETTINGS["features"],
+  PROJECT_SETTINGS["states"],
+  PROJECT_SETTINGS["labels"],
+  PROJECT_SETTINGS["estimates"],
+  PROJECT_SETTINGS["automations"],
+];

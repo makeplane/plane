@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // ui
@@ -14,7 +15,7 @@ import { useUser } from "@/hooks/store";
 // plane web constants
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 
-export const ProjectSettingsSidebar = () => {
+export const ProjectSettingsSidebar = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // mobx store
@@ -62,4 +63,4 @@ export const ProjectSettingsSidebar = () => {
       </div>
     </div>
   );
-};
+});

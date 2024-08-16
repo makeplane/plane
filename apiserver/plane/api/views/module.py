@@ -18,7 +18,7 @@ from plane.api.serializers import (
     ModuleSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
@@ -520,7 +520,6 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]

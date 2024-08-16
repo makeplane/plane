@@ -1,9 +1,7 @@
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
-// hooks
-import { TFileHandler } from "@/hooks/use-editor";
 // types
-import { IMentionHighlight, IMentionSuggestion, TEditorCommands } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TDisplayConfig, TEditorCommands, TFileHandler } from "@/types";
 
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -22,10 +20,13 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   isEditorReadyToDiscard: () => boolean;
   setSynced: () => void;
   hasUnsyncedChanges: () => boolean;
+  getSelectedText: () => string | null;
+  insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
 }
 
 export interface IEditorProps {
   containerClassName?: string;
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -36,7 +37,7 @@ export interface IEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
-  onEnterKeyPress?: (descriptionHTML: string) => void;
+  onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
@@ -50,6 +51,7 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;

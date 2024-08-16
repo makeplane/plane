@@ -108,7 +108,7 @@ export const SidebarQuickActions = observer(() => {
                 </button>
               )}
               {isDraftButtonOpen && (
-                <div className="absolute  mt-0 h-10 w-[220px] pt-2 z-10 top-8 left-0">
+                <div className="absolute  mt-0 h-10 w-[220px] pt-2 z-[16] top-8 left-0">
                   <div className="h-full w-full">
                     <button
                       onClick={() => setIsDraftIssueModalOpen(true)}

@@ -18,7 +18,7 @@ from django.db.models import (
     JSONField,
     Value,
     OuterRef,
-    Func
+    Func,
 )
 
 # Third Party imports
@@ -61,7 +61,7 @@ from plane.db.models import (
     ProjectPublicMember,
     IssueAttachment,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
 

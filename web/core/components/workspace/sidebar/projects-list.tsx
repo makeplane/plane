@@ -4,7 +4,7 @@ import { useState, FC, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Briefcase, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
@@ -43,6 +43,8 @@ export const SidebarProjectsList: FC = observer(() => {
   const { getProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
+  const pathname = usePathname();
+
   // auth
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -127,7 +129,12 @@ export const SidebarProjectsList: FC = observer(() => {
     setIsAllProjectsListOpen(isOpen);
     localStorage.setItem("isAllProjectsListOpen", isOpen.toString());
   };
-
+  useEffect(() => {
+    if (pathname.includes("projects")) {
+      setIsAllProjectsListOpen(true);
+      localStorage.setItem("isAllProjectsListOpen", "true");
+    }
+  }, [pathname]);
   return (
     <>
       {workspaceSlug && (
@@ -256,7 +263,6 @@ export const SidebarProjectsList: FC = observer(() => {
               toggleCreateProjectModal(true);
             }}
           >
-            <Plus className="flex-shrink-0 size-4" />
             {!isCollapsed && "Add project"}
           </button>
         )}
