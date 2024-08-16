@@ -20,7 +20,7 @@ type Props = {
 export const FilterState: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
   //store
-  const { getStateById, states: storeStates } = useStates();
+  const { sortedStates: storeStates } = useStates();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -29,7 +29,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
 
   const states =
     allowedValues && allowedValues.length > 0
-      ? allowedValues.map((stateId: string) => getStateById(stateId))
+      ? storeStates?.filter((state) => allowedValues.includes(state.id))
       : storeStates;
 
   const sortedOptions = useMemo(() => {
