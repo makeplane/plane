@@ -191,12 +191,10 @@ from .page.version import PageVersionEndpoint
 from .search.base import GlobalSearchEndpoint
 from .search.issue import IssueSearchEndpoint
 
+from .external.base import UnsplashEndpoint
 
-from .external.base import (
-    GPTIntegrationEndpoint,
-    UnsplashEndpoint,
-    WorkspaceGPTIntegrationEndpoint,
-)
+from .ai.base import AskAIEndpoint
+
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,

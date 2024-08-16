@@ -1,3 +1,4 @@
+from .ai import urlpatterns as ai_urls
 from .analytic import urlpatterns as analytic_urls
 from .api import urlpatterns as api_urls
 from .asset import urlpatterns as asset_urls
@@ -19,6 +20,7 @@ from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 
 urlpatterns = [
+    *ai_urls,
     *analytic_urls,
     *asset_urls,
     *cycle_urls,
