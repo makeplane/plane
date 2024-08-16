@@ -100,14 +100,12 @@ export const CloudEditionBadge = observer(() => {
   const showPaymentButton = () => {
     switch (subscriptionDetail.product) {
       case "FREE": {
-        if (subscriptionDetail?.has_activated_free_trial) {
-          return true;
-        } else {
-          return true;
-        }
+        return true;
       }
       case "PRO":
-        if (subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.has_added_payment_method) {
+        if (subscriptionDetail.is_offline_payment) {
+          return false;
+        } else if (subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.has_added_payment_method) {
           return false;
         } else {
           if (subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.has_added_payment_method) {

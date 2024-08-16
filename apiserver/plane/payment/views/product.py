@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db.models import CharField
 from django.db.models.functions import Cast
 from django.utils import timezone
+from django.db.models import F
 
 # Third party imports
 from rest_framework import status
@@ -94,48 +95,36 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
     def get(self, request):
         try:
             # Get all the workspaces where the user is admin
-            workspace_query = (
-                WorkspaceMember.objects.filter(
-                    member=request.user,
-                    is_active=True,
-                    role=20,
-                )
-                .annotate(uuid_str=Cast("workspace_id", CharField()))
+            workspace_ids = WorkspaceMember.objects.filter(
+                member=request.user,
+                is_active=True,
+                role=20,
+            ).values_list("workspace_id", flat=True)
+
+            # Fetch the workspaces from the workspace license
+            workspace_licenses = (
+                WorkspaceLicense.objects.filter(workspace_id__in=workspace_ids)
+                .annotate(slug=F("workspace__slug"))
+                .annotate(name=F("workspace__name"))
+                .annotate(logo=F("workspace__logo"))
+                .annotate(product=F("plan"))
                 .values(
-                    "uuid_str",
-                    "workspace__slug",
-                    "workspace__name",
-                    "workspace__logo",
+                    "workspace_id",
+                    "slug",
+                    "name",
+                    "logo",
+                    "product",
+                    "trial_end_date",
+                    "has_activated_free_trial",
+                    "has_added_payment_method",
+                    "current_period_end_date",
+                    "is_offline_payment",
                 )
             )
 
-            workspaces = [
-                {
-                    "workspace_id": workspace["uuid_str"],
-                    "slug": workspace["workspace__slug"],
-                    "name": workspace["workspace__name"],
-                    "logo": workspace["workspace__logo"],
-                }
-                for workspace in workspace_query
-            ]
+            # Get the workspace details
+            return Response(workspace_licenses, status=status.HTTP_200_OK)
 
-            if settings.PAYMENT_SERVER_BASE_URL:
-                response = requests.post(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/user-workspace-products/",
-                    headers={
-                        "content-type": "application/json",
-                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                    },
-                    json={"workspaces": workspaces},
-                )
-                response.raise_for_status()
-                response = response.json()
-                return Response(response, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    {"error": "error fetching product details"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
                 return Response(
@@ -305,7 +294,6 @@ class WorkspaceProductEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
-
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -385,7 +373,6 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):
-
     permission_classes = [
         AllowAny,
     ]

@@ -18,24 +18,38 @@ import { PaymentService } from "@/plane-web/services/payment.service";
 const paymentService = new PaymentService();
 const workspaceService = new WorkspaceService();
 
+const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMonth: number): number => {
+  const monthlyCost = monthlyPrice * 12;
+  const yearlyCost = yearlyPricePerMonth * 12;
+  const amountSaved = monthlyCost - yearlyCost;
+  const discountPercentage = (amountSaved / monthlyCost) * 100;
+  return Math.floor(discountPercentage);
+};
+
+const renderPlanPricing = (price: number, members: number = 1, recurring: string) => {
+  if (recurring === "month") return ((price / 100) * members).toFixed(0);
+  if (recurring === "year") return ((price / 100) * members).toFixed(0);
+};
+
 const CloudUpgradePlanPage = observer(() => {
   // states
   const [selectedPlan, setSelectedPlan] = useState<IPaymentProductPrice | null>(null);
   const [isLoading, setLoading] = useState(false);
   // router
-  const { selectedWorkspace } = useParams();
+
+  const { selectedWorkspace: workspaceSlug } = useParams();
 
   // fetch workspace members
   const { data: workspaceMembers, isLoading: isFetching } = useSWR(
-    selectedWorkspace ? `WORKSPACES_MEMBER_DETAILS` : null,
-    selectedWorkspace ? () => workspaceService.fetchWorkspaceMembers(selectedWorkspace.toString()) : null,
+    workspaceSlug ? `CLOUD_PRO_WORKSPACE_MEMBER_DETAILS` : null,
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch products
-  const { data, isLoading: isLoadingProduct } = useSWR(
-    selectedWorkspace ? "CLOUD_PAYMENT_PRODUCTS" : null,
-    selectedWorkspace ? () => paymentService.listProducts(selectedWorkspace.toString()) : null,
+  const { data: products, isLoading: isLoadingProduct } = useSWR(
+    workspaceSlug ? "CLOUD_PRO_PRODUCTS" : null,
+    workspaceSlug ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,
       revalidateIfStale: false,
@@ -43,26 +57,29 @@ const CloudUpgradePlanPage = observer(() => {
     }
   );
 
-  const totalWorkspaceMembers = (workspaceMembers || [])?.filter((member) => member.role >= 15)?.length;
+  // fetch workspace current plan
+  const { data: workspaceSubscription, isLoading: workspaceSubscriptionLoading } = useSWR(
+    workspaceSlug ? `CLOUD_PRO_WORKSPACE_SUBSCRIPTION_PLAN_${workspaceSlug}` : null,
+    workspaceSlug ? () => paymentService.getWorkspaceCurrentPlan(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
-  const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
+  // derived values
+  const totalWorkspaceMembers = (workspaceMembers || [])?.filter((member) => member.role >= 15)?.length;
+  const proProduct = (products || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
 
   const monthlyPlan = proProduct?.prices?.find((price) => price.recurring === "month");
   const yearlyPlan = proProduct?.prices?.find((price) => price.recurring === "year");
 
-  const calculateYearlyDiscount = (monthlyAmount: number | undefined, yearlyAmount: number | undefined) => {
-    if (!monthlyAmount || !yearlyAmount) return undefined;
-    const yearlyCostIfPaidMonthly = monthlyAmount * 12;
-    const discountAmount = yearlyCostIfPaidMonthly - yearlyAmount;
-    const discountPercentage = (discountAmount / yearlyCostIfPaidMonthly) * 100;
+  const monthlyPlanUnitPrice = (monthlyPlan?.unit_amount || 0) / 100;
+  const yearlyPlanUnitPrice = (yearlyPlan?.unit_amount || 0) / 1200;
+  const yearlyDiscountedPrice = calculateYearlyDiscount(monthlyPlanUnitPrice, yearlyPlanUnitPrice);
 
-    return discountPercentage;
-  };
-
-  const discountedPrice = calculateYearlyDiscount(monthlyPlan?.unit_amount, yearlyPlan?.unit_amount);
+  const workspaceOnTrial =
+    workspaceSubscription?.has_activated_free_trial && workspaceSubscription?.trial_end_date ? true : false;
 
   const handleStripeCheckout = (priceId: string) => {
-    if (!selectedWorkspace) {
+    if (!workspaceSlug) {
       setToast({
         type: TOAST_TYPE.INFO,
         title: "Please select a workspace to continue",
@@ -71,7 +88,7 @@ const CloudUpgradePlanPage = observer(() => {
     }
     setLoading(true);
     paymentService
-      .getCurrentWorkspacePaymentLink(selectedWorkspace.toString(), {
+      .getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
         price_id: priceId,
         product_id: proProduct?.id,
       })
@@ -92,16 +109,46 @@ const CloudUpgradePlanPage = observer(() => {
       });
   };
 
+  const handleTrialStripeCheckout = (priceId: string) => {
+    if (!workspaceSlug) {
+      setToast({
+        type: TOAST_TYPE.INFO,
+        title: "Please select a workspace to continue",
+      });
+      return;
+    }
+    setLoading(true);
+    paymentService
+      .modifyTrailSubscription(workspaceSlug.toString(), {
+        price_id: priceId,
+      })
+      .then((response) => {
+        if (response.session_url) {
+          window.open(response.session_url, "_self");
+        }
+      })
+      .catch((error) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: error?.detail ?? "Failed to generate payment link. Please try again.",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
       <div className="flex flex-col items-center gap-2 pb-4">
         <div className="text-3xl font-semibold">Choose your billing frequency</div>
-        {discountedPrice && (
-          <div className="text-center text-base text-custom-text-300">{`Upgrade to our yearly plan and get ${Math.round(discountedPrice)}% off.`}</div>
+        {yearlyDiscountedPrice && (
+          <div className="text-center text-base text-custom-text-300">{`Upgrade to our yearly plan and get ${Math.round(yearlyDiscountedPrice)}% off.`}</div>
         )}
       </div>
 
-      {isFetching || isLoadingProduct ? (
+      {isFetching || isLoadingProduct || workspaceSubscriptionLoading ? (
         <div className="flex flex-col rounded gap-1 w-full">
           <Loader.Item height="90px" />
           <Loader.Item height="90px" />
@@ -132,7 +179,9 @@ const CloudUpgradePlanPage = observer(() => {
                   <div className="flex flex-col">
                     {totalWorkspaceMembers && (
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-semibold leading-7">{`$${plan.unit_amount / 100}`}</span>
+                        <span className="text-2xl font-semibold leading-7">
+                          ${renderPlanPricing(plan.unit_amount, 1, plan.recurring)}
+                        </span>
                         <span className="text-sm text-custom-text-300">
                           {` per user per ${plan.recurring} x ${totalWorkspaceMembers}`}
                         </span>
@@ -143,10 +192,11 @@ const CloudUpgradePlanPage = observer(() => {
                     </span>
                   </div>
                 </div>
-
-                <div className="flex flex-col">
+                <div className="flex flex-col text-right">
                   {totalWorkspaceMembers && (
-                    <span className="text-2xl font-semibold leading-7">{`$${(plan.unit_amount / 100) * totalWorkspaceMembers}`}</span>
+                    <span className="text-2xl font-semibold leading-7">
+                      ${renderPlanPricing(plan.unit_amount, totalWorkspaceMembers, plan.recurring)}
+                    </span>
                   )}
                   <span className="text-sm text-custom-text-300">
                     {plan.recurring === "month" ? "per month" : "per year"}
@@ -156,12 +206,18 @@ const CloudUpgradePlanPage = observer(() => {
             ))}
         </div>
       )}
+
       {selectedPlan?.recurring && selectedPlan.unit_amount ? (
         <>
-          <Button className="w-full px-2 my-4" onClick={() => handleStripeCheckout(selectedPlan.id)}>
+          <Button
+            className="w-full px-2 my-4"
+            onClick={() =>
+              workspaceOnTrial ? handleTrialStripeCheckout(selectedPlan.id) : handleStripeCheckout(selectedPlan.id)
+            }
+          >
             {isLoading
               ? "Redirecting to Stripe..."
-              : `Pay $${(selectedPlan?.unit_amount / 100) * totalWorkspaceMembers} every ${selectedPlan?.recurring}`}
+              : `Pay $${renderPlanPricing(selectedPlan.unit_amount, totalWorkspaceMembers, selectedPlan.recurring)} every ${selectedPlan?.recurring}`}
           </Button>
         </>
       ) : (

@@ -22,7 +22,7 @@ const selfHostedProducts: TSelfHostedProduct[] = [
   },
   {
     recurring: "year",
-    unit_amount: 6,
+    unit_amount: 72,
     redirection_link: process.env.NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL || undefined,
   },
 ];
