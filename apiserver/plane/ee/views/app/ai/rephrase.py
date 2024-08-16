@@ -263,6 +263,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             context = request.data.get("context", "")
             user_prompt = request.data.get("text_input", "")
 
+            # Check inputs
             if not context or not user_prompt:
                 return Response(
                     {"error": "Both context and user prompt are required"},
@@ -273,6 +274,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         else:
             text_input = request.data.get("text_input", "")
 
+            # Check inputs
             if not text_input:
                 return Response(
                     {"error": "Text input is required"},
