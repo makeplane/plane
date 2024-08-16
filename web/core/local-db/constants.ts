@@ -2,7 +2,7 @@ export const ARRAY_FIELDS = ["label_ids", "assignee_ids", "module_ids"];
 
 export const GROUP_BY_MAP = {
   state_id: "state_id",
-  priority: "priority_proxy",
+  priority: "priority",
   cycle_id: "cycle_id",
   created_by: "created_by",
   // Array Props

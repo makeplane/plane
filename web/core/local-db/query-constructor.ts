@@ -17,9 +17,9 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   if (order_by) {
     //if order_by starts with "-" then sort in descending order
     if (order_by.startsWith("-")) {
-      orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC`;
+      orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC, created_at DESC`;
     } else {
-      orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC`;
+      orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC, created_at DESC`;
     }
   }
   const [pageSize, page, offset] = cursor.split(":");

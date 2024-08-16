@@ -66,6 +66,10 @@ export const filterConstructor = (filters: any) => {
   const keys = Object.keys(filters);
 
   keys.forEach((key) => {
+    if (key === "priority_proxy") {
+      sql += ` AND priority_proxy=${filters[key]} `;
+      return;
+    }
     const value = filters[key] ? filters[key].split(",") : "";
     if (!value) return;
     if (ARRAY_FIELDS.includes(key)) {
