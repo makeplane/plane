@@ -1,2 +1,2 @@
-export * from "./active-filters";
+export * from "./applied-filters";
 export * from "./issue-types";
