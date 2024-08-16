@@ -256,17 +256,11 @@ if AWS_S3_ENDPOINT_URL and USE_MINIO:
 
 
 # Celery Configuration
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_SERIALIZER = "json"
+CELERY_BROKER_URL = os.environ.get("MESSAGE_QUEUE_URL")
 CELERY_ACCEPT_CONTENT = ["application/json"]
-
-if REDIS_SSL:
-    redis_url = os.environ.get("REDIS_URL")
-    broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
-    CELERY_BROKER_URL = broker_url
-else:
-    CELERY_BROKER_URL = REDIS_URL
-
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
 CELERY_IMPORTS = (
     # scheduled tasks
     "plane.bgtasks.issue_automation_task",
