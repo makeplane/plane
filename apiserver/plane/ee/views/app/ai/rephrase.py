@@ -260,13 +260,13 @@ class RephraseGrammarEndpoint(BaseAPIView):
         task = request.data.get("task", "grammar_check")
 
         if task == Task.ASK_AI.value:
-            context = request.data.get("context", "")
-            user_prompt = request.data.get("text_input", "")
+            context = request.data.get("text_input", "")
+            user_prompt = request.data.get("query", "")
 
             # Check inputs
             if not context or not user_prompt:
                 return Response(
-                    {"error": "Both context and user prompt are required"},
+                    {"error": "Query and text input are required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
