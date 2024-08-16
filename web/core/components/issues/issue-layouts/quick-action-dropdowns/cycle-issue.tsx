@@ -77,6 +77,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     {
       ...issue,
       name: `${issue.name} (copy)`,
+      sourceIssueId: issue.id,
     },
     ["id"]
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { TIssueTypeFilters } from "@plane/types";
+import { TIssueGroupingFilters } from "@plane/types";
 
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
@@ -9,11 +9,11 @@ import { ISSUE_FILTER_OPTIONS } from "@/constants/issue";
 // constants
 
 type Props = {
-  selectedIssueType: TIssueTypeFilters | undefined;
-  handleUpdate: (val: TIssueTypeFilters) => void;
+  selectedIssueType: TIssueGroupingFilters | undefined;
+  handleUpdate: (val: TIssueGroupingFilters) => void;
 };
 
-export const FilterIssueType: React.FC<Props> = observer((props) => {
+export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   const { selectedIssueType, handleUpdate } = props;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
@@ -23,7 +23,7 @@ export const FilterIssueType: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Issue Type"
+        title="Issue Grouping"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

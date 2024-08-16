@@ -8,9 +8,9 @@ import type { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ConfirmIssueDiscard } from "@/components/issues";
-import { IssueFormRoot } from "@/components/issues/issue-modal/form";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 import { useEventTracker } from "@/hooks/store";
+import { IssueFormRoot } from "@/plane-web/components/issues/issue-modal/form";
 // services
 import { IssueDraftService } from "@/services/issue";
 

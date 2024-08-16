@@ -3,20 +3,31 @@ import isNumber from "lodash/isNumber";
 
 // Format Date Helpers
 /**
- * @returns {string | null} formatted date in the format of MMM dd, yyyy
+ * @returns {string | null} formatted date in the desired format or platform default format (MMM dd, yyyy)
  * @description Returns date in the formatted format
  * @param {Date | string} date
+ * @param {string} formatToken (optional) // default MMM dd, yyyy
+ * @example renderFormattedDate("2024-01-01", "MM-DD-YYYY") // Jan 01, 2024
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
-export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
+export const renderFormattedDate = (
+  date: string | Date | undefined | null,
+  formatToken: string = "MMM dd, yyyy"
+): string | null => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
   if (!parsedDate) return null;
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return null; // Return null for invalid dates
-  // Format the date in format (MMM dd, yyyy)
-  const formattedDate = format(parsedDate, "MMM dd, yyyy");
+  let formattedDate;
+  try {
+    // Format the date in the format provided or default format (MMM dd, yyyy)
+    formattedDate = format(parsedDate, formatToken);
+  } catch (e) {
+    // Format the date in format (MMM dd, yyyy) in case of any error
+    formattedDate = format(parsedDate, "MMM dd, yyyy");
+  }
   return formattedDate;
 };
 
