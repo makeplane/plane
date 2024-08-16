@@ -103,7 +103,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                   <LiteTextEditor
                     workspaceId={workspaceID?.toString() ?? ""}
                     workspaceSlug={workspaceSlug?.toString() ?? ""}
-                    onEnterKeyPress={() => handleSubmit(handleCommentUpdate)()}
+                    onEnterKeyPress={handleSubmit(handleCommentUpdate)}
                     ref={editorRef}
                     id={comment.id}
                     initialValue={value}

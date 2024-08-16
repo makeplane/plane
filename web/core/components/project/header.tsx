@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Search, Briefcase, X, ListFilter } from "lucide-react";
 // types
 import { TProjectFilters } from "@plane/types";
@@ -21,7 +21,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
-export const ProjectsListHeader = observer(() => {
+export const ProjectsBaseHeader = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -34,6 +34,8 @@ export const ProjectsListHeader = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+  const pathname = usePathname();
+
   const {
     currentWorkspaceDisplayFilters: displayFilters,
     currentWorkspaceFilters: filters,
@@ -51,6 +53,7 @@ export const ProjectsListHeader = observer(() => {
   });
   // auth
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isArchived = pathname.includes("/archives");
 
   const handleFilters = useCallback(
     (key: keyof TProjectFilters, value: string | string[]) => {
@@ -97,6 +100,7 @@ export const ProjectsListHeader = observer(() => {
               type="text"
               link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
             />
+            {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
           </Breadcrumbs>
         </div>
       </div>

@@ -42,6 +42,7 @@ class FileAsset(BaseModel):
         related_name="assets",
     )
     is_deleted = models.BooleanField(default=False)
+    is_archived = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "File Asset"

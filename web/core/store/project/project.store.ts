@@ -2,11 +2,10 @@ import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
-import { IProject } from "@plane/types";
 // helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
+import { TProject } from "@/plane-web/types/projects/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
@@ -16,7 +15,7 @@ export interface IProjectStore {
   // observables
   loader: boolean;
   projectMap: {
-    [projectId: string]: IProject; // projectId: project Info
+    [projectId: string]: TProject; // projectId: project Info
   };
   // computed
   filteredProjectIds: string[] | undefined;
@@ -25,21 +24,21 @@ export interface IProjectStore {
   totalProjectIds: string[] | undefined;
   joinedProjectIds: string[];
   favoriteProjectIds: string[];
-  currentProjectDetails: IProject | undefined;
+  currentProjectDetails: TProject | undefined;
   // actions
-  getProjectById: (projectId: string | undefined | null) => IProject | undefined;
+  getProjectById: (projectId: string | undefined | null) => TProject | undefined;
   getProjectIdentifierById: (projectId: string | undefined | null) => string;
   // fetch actions
-  fetchProjects: (workspaceSlug: string) => Promise<IProject[]>;
-  fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<IProject>;
+  fetchProjects: (workspaceSlug: string) => Promise<TProject[]>;
+  fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<TProject>;
   // favorites actions
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   // project-view action
   updateProjectView: (workspaceSlug: string, projectId: string, viewProps: any) => Promise<any>;
   // CRUD actions
-  createProject: (workspaceSlug: string, data: Partial<IProject>) => Promise<IProject>;
-  updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<IProject>;
+  createProject: (workspaceSlug: string, data: Partial<TProject>) => Promise<TProject>;
+  updateProject: (workspaceSlug: string, projectId: string, data: Partial<TProject>) => Promise<TProject>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   // archive actions
   archiveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -50,7 +49,7 @@ export class ProjectStore implements IProjectStore {
   // observables
   loader: boolean = false;
   projectMap: {
-    [projectId: string]: IProject; // projectId: project Info
+    [projectId: string]: TProject; // projectId: project Info
   } = {};
   // root store
   rootStore: CoreRootStore;
@@ -206,7 +205,7 @@ export class ProjectStore implements IProjectStore {
   /**
    * get Workspace projects using workspace slug
    * @param workspaceSlug
-   * @returns Promise<IProject[]>
+   * @returns Promise<TProject[]>
    *
    */
   fetchProjects = async (workspaceSlug: string) => {
@@ -231,7 +230,7 @@ export class ProjectStore implements IProjectStore {
    * Fetches project details using workspace slug and project id
    * @param workspaceSlug
    * @param projectId
-   * @returns Promise<IProject>
+   * @returns Promise<TProject>
    */
   fetchProjectDetails = async (workspaceSlug: string, projectId: string) => {
     try {
@@ -249,7 +248,7 @@ export class ProjectStore implements IProjectStore {
   /**
    * Returns project details using project id
    * @param projectId
-   * @returns IProject | null
+   * @returns TProject | null
    */
   getProjectById = computedFn((projectId: string | undefined | null) => {
     const projectInfo = this.projectMap[projectId ?? ""] || undefined;
@@ -348,7 +347,7 @@ export class ProjectStore implements IProjectStore {
    * Creates a project in the workspace and adds it to the store
    * @param workspaceSlug
    * @param data
-   * @returns Promise<IProject>
+   * @returns Promise<TProject>
    */
   createProject = async (workspaceSlug: string, data: any) => {
     try {
@@ -369,9 +368,9 @@ export class ProjectStore implements IProjectStore {
    * @param workspaceSlug
    * @param projectId
    * @param data
-   * @returns Promise<IProject>
+   * @returns Promise<TProject>
    */
-  updateProject = async (workspaceSlug: string, projectId: string, data: Partial<IProject>) => {
+  updateProject = async (workspaceSlug: string, projectId: string, data: Partial<TProject>) => {
     try {
       const projectDetails = this.getProjectById(projectId);
       runInAction(() => {

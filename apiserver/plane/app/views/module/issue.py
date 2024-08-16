@@ -21,7 +21,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     ModuleIssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
