@@ -20,6 +20,8 @@ import { EUserProjectRoles } from "@/constants/project";
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+// plane web components
+import { AppliedIssueTypeFilters } from "@/plane-web/components/issues";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -128,6 +130,13 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedModuleFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("module", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "issue_type" && (
+                <AppliedIssueTypeFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("issue_type", val)}
                   values={value}
                 />
               )}
