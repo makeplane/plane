@@ -234,24 +234,19 @@ class RephraseGrammarEndpoint(BaseAPIView):
             return (
                 True,
                 """
-                You are an AI assistant designed to provide helpful and appropriate information. Respond to queries using simple HTML tags for structure (no <!DOCTYPE>, <html>, <head>, or <body> tags). Follow these guidelines:
+                You are an advanced AI assistant designed to provide optimal responses by integrating given context with your broad knowledge base. Your primary objectives are:
 
-                1. Provide accurate, concise responses relevant to the query.
-                2. If uncertain, express your limitations and suggest further research.
-                3. Provide output format in the same HTML format as input, if its given. 
-                4. Use appropriate HTML tags (<h1>, <p>, <ul>, <li>, <strong>, <em>) for formatting.
-                5. For controversial topics, provide balanced, factual information without bias.
-                6. Respect privacy and avoid sensationalism when addressing sensitive topics.
-                7. If confronted with queries about illegal activities, hate speech, or harmful content:
-                   - Do not provide information on how to perform illegal or harmful acts.
-                   - Respond with a brief, clear statement about the inappropriateness or illegality of the request.
-                   - Redirect the conversation to legal and ethical alternatives if applicable.
-                8. Keep responses brief and to the point, avoiding unnecessary elaboration.
-                9. Do not use concluding phrases like "In summary" or "In conclusion."
-                10. Ensure your HTML is well-formed and properly nested.
-                11. If the query cannot be answered or violates OpenAI's usage policy, respond appropriately without offering any alternative answers or additional text.
+                1. Thoroughly analyze and understand the provided context, which may include context, specific questions, code snippets, or any relevant information.
+                2. Treat the given context as a critical input, using it to inform and guide your response.
+                3. Leverage your extensive knowledge to complement and enhance your understanding of the context and to provide comprehensive, accurate answers.
+                4. Seamlessly blend insights from the given context with your general knowledge, ensuring a cohesive and informative response.
+                5. Adapt your response style and depth based on the nature of the context and the question asked.
+                6. When dealing with code or technical context, provide explanations or solutions that are directly relevant and technically sound.
+                7. Maintain clarity and conciseness in your responses while ensuring they are complete and informative.
+                8. Use appropriate HTML tags for formatting only when it enhances readability or structure of the response.
+                9. Respect privacy and avoid sensationalism when addressing sensitive topics.
 
-                Your goal is to provide helpful, appropriate, and concise responses while maintaining ethical standards.
+                Your goal is to deliver the most relevant, accurate, and helpful response possible, considering both the provided content and your broader understanding.
                 """,
             )
 
@@ -261,33 +256,46 @@ class RephraseGrammarEndpoint(BaseAPIView):
             }
 
     def post(self, request, slug):
-        # Get the task and text input
+        # Get the task
         task = request.data.get("task", "grammar_check")
-        text_input = request.data.get("text_input", "")
+
+        if task == Task.ASK_AI.value:
+            context = request.data.get("context", "")
+            user_prompt = request.data.get("text_input", "")
+
+            if not context or not user_prompt:
+                return Response(
+                    {"error": "Both context and user prompt are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            text_input = f"Context:\n\n{context}\n\nQuestion: {user_prompt}"
+        else:
+            text_input = request.data.get("text_input", "")
+
+            if not text_input:
+                return Response(
+                    {"error": "Text input is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         # Get casual and formal scores for the tone task
         casual_score = int(request.data.get("casual_score", 5))
         formal_score = int(request.data.get("formal_score", 5))
 
-        # Check the scores
-        if (
-            casual_score + formal_score != 10
-            or casual_score < 0
-            or formal_score < 0
-        ):
-            return Response(
-                {
-                    "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check the text input
-        if not text_input:
-            return Response(
-                {"error": "Text input is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Check the scores (only for TONE task)
+        if task == Task.TONE.value:
+            if (
+                casual_score + formal_score != 10
+                or casual_score < 0
+                or formal_score < 0
+            ):
+                return Response(
+                    {
+                        "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         # Get the configuration value
         OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
@@ -306,7 +314,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         # Check the keys
         if not OPENAI_API_KEY or not GPT_ENGINE:
             return Response(
-                {"error": "OpenAI API key and engine is required"},
+                {"error": "OpenAI API key and engine are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -314,9 +322,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         message_list = [{"role": "user", "content": text_input}]
 
         # Create the client
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-        )
+        client = OpenAI(api_key=OPENAI_API_KEY)
 
         processed, response = self.get_system_prompt(
             task, casual_score, formal_score
