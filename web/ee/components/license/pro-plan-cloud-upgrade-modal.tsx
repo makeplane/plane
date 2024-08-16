@@ -213,7 +213,6 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
     (orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find((price) => price.recurring === "year")
       ?.unit_amount || 0) / 1200;
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
-  console.log("yearlyDiscount", yearlyDiscount);
   const isInTrailPeriod =
     subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.trial_end_date ? true : false;
   const isTrialCompleted =

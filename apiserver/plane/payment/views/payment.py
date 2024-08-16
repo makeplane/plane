@@ -246,7 +246,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                 return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"error": "error fetching product details"},
+                    {"error": "error upgrading trial subscriptions"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
@@ -257,7 +257,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                 )
             log_exception(e)
             return Response(
-                {"error": "error fetching payment link"},
+                {"error": "error creating trial subscriptions"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -280,6 +280,28 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Get the workspace members
+            workspace_members = (
+                WorkspaceMember.objects.filter(
+                    workspace__slug=slug, is_active=True, member__is_bot=False
+                )
+                .annotate(
+                    user_email=F("member__email"),
+                    user_id=F("member__id"),
+                    user_role=F("role"),
+                )
+                .values(
+                    "user_email",
+                    "user_id",
+                    "user_role",
+                )
+                .values("user_email", "user_id", "user_role")
+            )
+
+            # Convert the user_id to string
+            for member in workspace_members:
+                member["user_id"] = str(member["user_id"])
+
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
@@ -294,6 +316,8 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                     json={
                         "workspace_id": str(workspace.id),
                         "stripe_price_id": price_id,
+                        "members_list": list(workspace_members),
+                        "slug": slug,
                     },
                 )
                 # Check if the response is successful
@@ -303,7 +327,7 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                 return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"error": "error fetching product details"},
+                    {"error": "error upgrading trial subscriptions"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
@@ -314,6 +338,6 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                 )
             log_exception(e)
             return Response(
-                {"error": "error fetching payment link"},
+                {"error": "error upgrading trial subscriptions"},
                 status=status.HTTP_400_BAD_REQUEST,
             )

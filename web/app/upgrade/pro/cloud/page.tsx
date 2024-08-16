@@ -18,6 +18,8 @@ import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
+// plane web types
+import { TWorkspaceWithProductDetails } from "@/plane-web/types/workspace";
 
 const workspaceService = new WorkspaceService();
 
@@ -33,7 +35,7 @@ const CloudUpgradePage = observer(() => {
   const { setTheme } = useTheme();
 
   const { data: workspacesList, isLoading: isFetching } = useSWR(
-    currentUser ? `WORKSPACES_WITH_PLAN_DETAILS` : null,
+    currentUser ? `CLOUD_PRO_WORKSPACES_LIST` : null,
     currentUser ? () => workspaceService.getWorkspacesWithPlanDetails() : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
@@ -67,6 +69,23 @@ const CloudUpgradePage = observer(() => {
         })
       )
       .finally(() => setIsLoading(false));
+  };
+
+  const workspaceSubscription = (workspace: TWorkspaceWithProductDetails): "FREE" | "PRO" | "TRIAL" => {
+    switch (workspace.product) {
+      case "PRO":
+        if (workspace.is_offline_payment) {
+          return "PRO";
+        } else if (workspace.trial_end_date && workspace.has_added_payment_method) {
+          return "PRO";
+        } else if (workspace.trial_end_date && !workspace.has_added_payment_method) {
+          return "TRIAL";
+        }
+      case "FREE":
+        return "FREE";
+      default:
+        return "FREE";
+    }
   };
 
   return (
@@ -111,7 +130,9 @@ const CloudUpgradePage = observer(() => {
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-medium">{truncateText(workspace?.name, 40)}</div>
                     </div>
-                    {workspace.product === "PRO" && (
+
+                    {/* pro */}
+                    {workspaceSubscription(workspace) === "PRO" && (
                       <div className="flex-shrink-0">
                         <Tooltip position="right" tooltipContent="This workspace is already subscribed to Pro.">
                           <div
@@ -124,10 +145,25 @@ const CloudUpgradePage = observer(() => {
                         </Tooltip>
                       </div>
                     )}
+
+                    {/* trial */}
+                    {workspaceSubscription(workspace) === "TRIAL" && (
+                      <div className="flex-shrink-0">
+                        <Tooltip position="right" tooltipContent="This workspace is in Trial please upgrade to Pro.">
+                          <div
+                            className={cn(
+                              "text-custom-primary-100 bg-custom-primary-100/20 rounded-md px-2 py-0 text-center text-xs font-medium outline-none"
+                            )}
+                          >
+                            Trial
+                          </div>
+                        </Tooltip>
+                      </div>
+                    )}
                   </div>
                 ),
                 value: workspace.slug,
-                disabled: workspace.product !== "FREE",
+                disabled: ["PRO"].includes(workspaceSubscription(workspace)),
               }))
             : []
         }
