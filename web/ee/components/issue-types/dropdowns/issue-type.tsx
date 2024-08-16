@@ -16,9 +16,9 @@ type TIssueTypeDropdownProps = {
 export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
   const { issueTypeId, projectId, disabled = false, handleIssueTypeChange } = props;
   // store hooks
-  const { loader: issueTypesLoader, getProjectActiveIssueTypes } = useIssueTypes();
+  const { loader: issueTypesLoader, getProjectIssueTypes } = useIssueTypes();
   // derived values
-  const issueTypes = getProjectActiveIssueTypes(projectId);
+  const issueTypes = getProjectIssueTypes(projectId, true);
 
   // Can be used with CustomSearchSelect as well
   const issueTypeOptions = Object.entries(issueTypes).map(([issueTypeId, issueTypeDetail]) => ({

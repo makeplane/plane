@@ -230,9 +230,16 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 existing_prop_queryset
             ).values("property_id", "values")
 
+            # existing values
+            existing_values = {
+                str(prop["property_id"]): prop["values"]
+                for prop in existing_prop_values
+            }
+
             # Get the value
             values = request.data.get("values", [])
 
+            # Check if the property is required
             if issue_property.is_required and (
                 not values or not [v for v in values if v]
             ):
@@ -277,10 +284,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
 
             # Log the activity
             issue_property_activity.delay(
-                existing_values={
-                    str(prop["property_id"]): prop["values"]
-                    for prop in existing_prop_values
-                },
+                existing_values=existing_values,
                 requested_values={str(property_id): values},
                 issue_id=issue_id,
                 user_id=str(request.user.id),

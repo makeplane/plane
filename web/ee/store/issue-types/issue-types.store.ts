@@ -27,9 +27,10 @@ export interface IIssueTypesStore {
   propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
   data: Record<string, IIssueType>; // issue type id -> issue type
   // computed functions
+  getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
   getProjectIssuePropertiesLoader: (projectId: string) => TLoader;
   getProjectIssueTypeIds: (projectId: string) => string[];
-  getProjectActiveIssueTypes: (projectId: string) => Record<string, IIssueType>; // issue type id -> issue type
+  getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
   getIssueTypeProperties: (issueTypeId: string) => TIssueProperty<EIssuePropertyType>[];
   // helper actions
@@ -77,6 +78,13 @@ export class IssueTypes implements IIssueTypesStore {
 
   // computed functions
   /**
+   * @description Get issue type by issue type id
+   * @param issueTypeId
+   * @returns {IIssueType | undefined}
+   */
+  getIssueTypeById = computedFn((issueTypeId: string) => this.data[issueTypeId]);
+
+  /**
    * @description Get project issue type loader
    * @param projectId
    * @returns {TLoader}
@@ -91,8 +99,8 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {string[]}
    */
   getProjectIssueTypeIds = computedFn((projectId: string) => {
-    const projectIssueTypeIds = Object.keys(this.data).filter(
-      (issueTypeId) => this.data[issueTypeId]?.project === projectId
+    const projectIssueTypeIds = Object.keys(this.data).filter((issueTypeId) =>
+      this.data[issueTypeId]?.project_ids?.includes(projectId)
     );
     return projectIssueTypeIds;
   });
@@ -101,10 +109,11 @@ export class IssueTypes implements IIssueTypesStore {
    * @description Get current project issue types
    * @returns {Record<string, IIssueType>}
    */
-  getProjectActiveIssueTypes = computedFn((projectId: string) => {
+  getProjectIssueTypes = computedFn((projectId: string, activeOnly: boolean) => {
     const projectIssueTypes = Object.entries(this.data).reduce(
       (acc, [issueTypeId, issueType]) => {
-        if (issueType.project === projectId && issueType.is_active) {
+        if (issueType.project_ids?.includes(projectId)) {
+          if (activeOnly && !issueType.is_active) return acc;
           acc[issueTypeId] = issueType;
         }
         return acc;
@@ -120,7 +129,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {string | undefined}
    */
   getProjectDefaultIssueType = computedFn((projectId: string) => {
-    const projectIssueTypes = this.getProjectActiveIssueTypes(projectId);
+    const projectIssueTypes = this.getProjectIssueTypes(projectId, true);
 
     const defaultIssueType = Object.values(projectIssueTypes).find((issueType) => issueType.is_default);
     return defaultIssueType ?? undefined;

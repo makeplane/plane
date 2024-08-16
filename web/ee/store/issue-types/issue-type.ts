@@ -29,7 +29,10 @@ export interface IIssueType extends TIssueType {
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
   // actions
   updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
-  addOrUpdateProperty: (propertyData: TIssueProperty<EIssuePropertyType>, propertyOptions: TIssuePropertyOption[]) => void;
+  addOrUpdateProperty: (
+    propertyData: TIssueProperty<EIssuePropertyType>,
+    propertyOptions: TIssuePropertyOption[]
+  ) => void;
   createProperty: (propertyData: TIssuePropertyPayload) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
   deleteProperty: (propertyId: string) => Promise<void>;
 }
@@ -40,12 +43,11 @@ export class IssueType implements IIssueType {
   name: string | undefined = undefined;
   description: string | undefined = undefined;
   logo_props: TLogoProps | undefined = undefined;
-  sort_order: number | undefined = undefined;
   is_active: boolean | undefined = undefined;
   is_default: boolean | undefined = undefined;
   issue_exists: boolean | undefined = undefined;
-  weight: number | undefined = undefined;
-  project: string | undefined = undefined;
+  level: number | undefined = undefined;
+  project_ids: string[] | undefined = undefined;
   workspace: string | undefined = undefined;
   created_at: Date | undefined = undefined;
   created_by: string | undefined = undefined;
@@ -66,11 +68,12 @@ export class IssueType implements IIssueType {
       name: observable.ref,
       description: observable.ref,
       logo_props: observable,
-      sort_order: observable.ref,
       is_active: observable.ref,
       is_default: observable.ref,
       issue_exists: observable.ref,
-      weight: observable.ref,
+      level: observable.ref,
+      project_ids: observable.ref,
+      workspace: observable.ref,
       created_at: observable.ref,
       created_by: observable.ref,
       updated_at: observable.ref,
@@ -90,12 +93,11 @@ export class IssueType implements IIssueType {
     this.name = issueTypeData.name;
     this.description = issueTypeData.description;
     this.logo_props = issueTypeData.logo_props;
-    this.sort_order = issueTypeData.sort_order;
     this.is_active = issueTypeData.is_active;
     this.is_default = issueTypeData.is_default;
     this.issue_exists = issueTypeData.issue_exists;
-    this.weight = issueTypeData.weight;
-    this.project = issueTypeData.project;
+    this.level = issueTypeData.level;
+    this.project_ids = issueTypeData.project_ids;
     this.workspace = issueTypeData.workspace;
     this.created_at = issueTypeData.created_at;
     this.created_by = issueTypeData.created_by;
@@ -117,12 +119,11 @@ export class IssueType implements IIssueType {
       name: this.name,
       description: this.description,
       logo_props: this.logo_props,
-      sort_order: this.sort_order,
       is_active: this.is_active,
       is_default: this.is_default,
       issue_exists: this.issue_exists,
-      weight: this.weight,
-      project: this.project,
+      level: this.level,
+      project_ids: this.project_ids,
       workspace: this.workspace,
       created_at: this.created_at,
       created_by: this.created_by,

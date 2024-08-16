@@ -90,7 +90,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   // plane web hooks
-  const { getIssueTypeProperties, getProjectActiveIssueTypes, getProjectDefaultIssueType } = useIssueTypes();
+  const { getIssueTypeProperties, getProjectIssueTypes, getProjectDefaultIssueType } = useIssueTypes();
 
   const {
     issue: { getIssueById },
@@ -180,7 +180,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     if (!projectId) return;
 
-    const projectIssueTypes = getProjectActiveIssueTypes(projectId);
+    const projectIssueTypes = getProjectIssueTypes(projectId, true);
     const defaultIssueType = getProjectDefaultIssueType(projectId);
 
     // if data is not present, set active type id to the default type id of the project
