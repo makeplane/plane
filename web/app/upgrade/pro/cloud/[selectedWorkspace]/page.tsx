@@ -28,7 +28,7 @@ const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMonth: numb
 
 const renderPlanPricing = (price: number, members: number = 1, recurring: string) => {
   if (recurring === "month") return ((price / 100) * members).toFixed(0);
-  if (recurring === "year") return ((price / 1200) * members).toFixed(0);
+  if (recurring === "year") return ((price / 100) * members).toFixed(0);
 };
 
 const CloudUpgradePlanPage = observer(() => {
@@ -73,7 +73,6 @@ const CloudUpgradePlanPage = observer(() => {
 
   const monthlyPlanUnitPrice = (monthlyPlan?.unit_amount || 0) / 100;
   const yearlyPlanUnitPrice = (yearlyPlan?.unit_amount || 0) / 1200;
-
   const yearlyDiscountedPrice = calculateYearlyDiscount(monthlyPlanUnitPrice, yearlyPlanUnitPrice);
 
   const workspaceOnTrial =
