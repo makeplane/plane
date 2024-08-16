@@ -53,6 +53,7 @@ export class ProjectPageStore implements IProjectPageStore {
   };
   // service
   service: ProjectPageService;
+  rootStore: CoreRootStore;
 
   constructor(private store: CoreRootStore) {
     makeObservable(this, {
@@ -70,6 +71,7 @@ export class ProjectPageStore implements IProjectPageStore {
       createPage: action,
       removePage: action,
     });
+    this.rootStore = store;
     // service
     this.service = new ProjectPageService();
     // initialize display filters of the current project
@@ -257,7 +259,10 @@ export class ProjectPageStore implements IProjectPageStore {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       await this.service.remove(workspaceSlug, projectId, pageId);
-      runInAction(() => unset(this.data, [pageId]));
+      runInAction(() => {
+        unset(this.data, [pageId]);
+        if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
+      });
     } catch (error) {
       runInAction(() => {
         this.loader = undefined;

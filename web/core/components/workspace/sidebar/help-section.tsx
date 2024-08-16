@@ -10,7 +10,7 @@ import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useInstance } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useInstance, useTransient } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
@@ -45,15 +45,14 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   const { config } = useInstance();
+  const { isIntercomToggle, toggleIntercom } = useTransient();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
   const handleCrispWindowShow = () => {
-    if (window) {
-      window.$crisp.push(["do", "chat:show"]);
-    }
+    toggleIntercom(!isIntercomToggle);
   };
 
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
@@ -64,7 +63,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
     <>
       <div
         className={cn(
-          "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-14 flex-shrink-0",
+          "flex w-full items-center justify-between px-4 gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-14 flex-shrink-0",
           {
             "flex-col h-auto py-1.5": isCollapsed,
           }
@@ -133,7 +132,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
             leaveTo="transform opacity-0 scale-95"
           >
             <div
-              className={`absolute bottom-2 min-w-[10rem] ${
+              className={`absolute bottom-2 min-w-[10rem] z-[15] ${
                 isCollapsed ? "left-full" : "-left-[75px]"
               } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
               ref={helpOptionsRef}

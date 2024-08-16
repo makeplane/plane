@@ -3,7 +3,13 @@ import sortBy from "lodash/sortBy";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
+import {
+  IProjectBulkAddFormData,
+  IProjectMember,
+  IProjectMemberLite,
+  IProjectMembership,
+  IUserLite,
+} from "@plane/types";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
 // services
@@ -12,6 +18,7 @@ import { ProjectMemberService } from "@/services/project";
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
 // store
+import { IProjectStore } from "../project/project.store";
 import { CoreRootStore } from "../root.store";
 import { IMemberRootStore } from ".";
 
@@ -58,6 +65,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
   routerStore: IRouterStore;
   userStore: IUserStore;
   memberRoot: IMemberRootStore;
+  projectRoot: IProjectStore;
   // services
   projectMemberService;
 
@@ -78,6 +86,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
+    this.projectRoot = _rootStore.projectRoot.project;
     // services
     this.projectMemberService = new ProjectMemberService();
   }
@@ -159,6 +168,10 @@ export class ProjectMemberStore implements IProjectMemberStore {
           set(this.projectMemberMap, [projectId, member.member], member);
         });
       });
+      this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members.concat(
+        data.members as unknown as IProjectMemberLite[]
+      );
+
       return response;
     });
 
@@ -212,6 +225,9 @@ export class ProjectMemberStore implements IProjectMemberStore {
       runInAction(() => {
         delete this.projectMemberMap?.[projectId]?.[userId];
       });
+      this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members.filter(
+        (member) => member.id !== userId
+      );
     });
   };
 }
