@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // ui
@@ -12,7 +13,7 @@ import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
 import { useUser } from "@/hooks/store";
 
-export const ProjectSettingsSidebar = () => {
+export const ProjectSettingsSidebar = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // mobx store
@@ -60,4 +61,4 @@ export const ProjectSettingsSidebar = () => {
       </div>
     </div>
   );
-};
+});

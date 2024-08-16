@@ -6,7 +6,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import { TPageNavigationTabs } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
 import { PagesListRoot, PagesListView } from "@/components/pages";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -16,7 +19,7 @@ const ProjectPagesPage = observer(() => {
   const type = searchParams.get("type");
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { getProjectById } = useProject();
+  const { getProjectById, currentProjectDetails } = useProject();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
@@ -29,6 +32,17 @@ const ProjectPagesPage = observer(() => {
   };
 
   if (!workspaceSlug || !projectId) return <></>;
+
+  // No access to cycle
+  if (currentProjectDetails?.page_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_PAGE}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
   return (
     <>
       <PageHead title={pageTitle} />

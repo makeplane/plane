@@ -30,7 +30,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { membership, signOut, data: currentUser } = useUser();
+  const { membership, signOut, data: currentUser, canPerformWorkspaceMemberActions } = useUser();
   const { fetchProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
@@ -72,8 +72,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch workspace favorite
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_FAVORITE_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => fetchFavorite(workspaceSlug.toString()) : null,
+    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
+      ? `WORKSPACE_FAVORITE_${workspaceSlug}`
+      : null,
+    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
+      ? () => fetchFavorite(workspaceSlug.toString())
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
