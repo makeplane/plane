@@ -1,11 +1,6 @@
 /* eslint-disable no-useless-catch */
 
 import { action, computed, makeObservable } from "mobx";
-// types
-
-// plane web store
-
-// plane web service
 
 // store
 import { ProjectStore as CeProjectStore, IProjectStore as ICeProjectStore } from "@/store/project/project.store";

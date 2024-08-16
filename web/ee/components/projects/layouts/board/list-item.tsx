@@ -58,7 +58,7 @@ export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) =
           setToast({
             title: "Warning!",
             type: TOAST_TYPE.ERROR,
-            message: "You don't have permission to change this project",
+            message: "You don't have permission to move this project",
           });
         }
       }}

@@ -73,7 +73,7 @@ const WorklogsPage = observer(() => {
             <div>
               <h3 className="text-xl font-medium">See progress overview for all projects.</h3>
               <span className="text-custom-sidebar-text-400 text-sm font-medium">
-                State Of Projects is a Plane-only feature for tracking progress of all your projects by any project
+                Projects States is a Plane-only feature for tracking progress of all your projects by any project
                 property.
               </span>
             </div>

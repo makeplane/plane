@@ -418,6 +418,7 @@ export class ProjectStore implements IProjectStore {
       .then((response) => {
         runInAction(() => {
           set(this.projectMap, [projectId, "archived_at"], response.archived_at);
+          if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
         });
       })
       .catch((error) => {

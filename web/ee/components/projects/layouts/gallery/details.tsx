@@ -150,36 +150,38 @@ const Details: React.FC<Props> = observer((props) => {
           />
         </div>
         <div className="flex gap-2 absolute top-2 right-2" data-prevent-nprogress>
-          <CustomMenu
-            customButton={
-              <span className="grid place-items-center p-0.5 text-white rounded my-auto">
-                <MoreHorizontal className="size-4" />
-              </span>
-            }
-            className={cn(
-              "flex justify-center items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6 "
-            )}
-            customButtonClassName="grid place-items-center"
-            placement="bottom-start"
-          >
-            {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
-              <CustomMenu.MenuItem
-                key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  item.action();
-                }}
-              >
-                <div className="flex items-center justify-start gap-2">
-                  {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-                  <span>{item.title}</span>
-                </div>
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
+          {(isOwner || !isArchived) && (
+            <CustomMenu
+              customButton={
+                <span className="grid place-items-center p-0.5 text-white rounded my-auto">
+                  <MoreHorizontal className="size-4" />
+                </span>
+              }
+              className={cn(
+                "flex justify-center items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6 "
+              )}
+              customButtonClassName="grid place-items-center"
+              placement="bottom-start"
+            >
+              {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
+                <CustomMenu.MenuItem
+                  key={item.key}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    item.action();
+                  }}
+                >
+                  <div className="flex items-center justify-start gap-2">
+                    {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+                    <span>{item.title}</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              ))}
+            </CustomMenu>
+          )}
 
-          {project.is_member && (
+          {project.is_member && !isArchived && (
             <div data-prevent-nprogress>
               {" "}
               <FavoriteStar

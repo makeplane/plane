@@ -37,7 +37,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
   if (!currentWorkspace) return null;
   return (
-    <div className="flex flex-col justify-between group/project-card rounded border border-custom-border-200 bg-custom-background-100 w-full">
+    <div
+      className={cn(
+        "flex flex-col justify-between group/project-card rounded border border-custom-border-200 bg-custom-background-100 w-full",
+        {
+          "bg-custom-background-80": isArchived,
+        }
+      )}
+    >
       {/* Delete Project Modal */}
       <DeleteProjectModal
         project={project}
@@ -100,7 +107,8 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           </div>
         </>
       </Link>
-      <JoinButton project={project} />
+
+      {!project.archived_at && <JoinButton project={project} />}
     </div>
   );
 });
