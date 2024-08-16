@@ -102,6 +102,12 @@ def member_sync_task(slug):
                 workspace_license.trial_end_date = updated_workspace_license[
                     "trial_end_date"
                 ]
+                workspace_license.has_activated_free_trial = (
+                    updated_workspace_license["has_activated_free_trial"]
+                )
+                workspace_license.has_added_payment_method = (
+                    updated_workspace_license["has_added_payment_method"]
+                )
                 workspace_license.last_synced_at = timezone.now()
                 workspace_license.save()
 
@@ -120,6 +126,12 @@ def member_sync_task(slug):
                         "is_offline_payment"
                     ],
                     last_synced_at=timezone.now(),
+                    has_activated_free_trial=updated_workspace_license[
+                        "has_activated_free_trial"
+                    ],
+                    has_added_payment_method=updated_workspace_license[
+                        "has_added_payment_method"
+                    ],
                 )
         else:
             return

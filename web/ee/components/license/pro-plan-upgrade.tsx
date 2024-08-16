@@ -19,6 +19,7 @@ export type ProPlanUpgradeProps = {
   trialLoader?: boolean;
   handleTrial?: (productId: string, priceId: string) => void;
   yearlyDiscount?: number;
+  showTrialButton?: boolean;
 };
 
 export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
@@ -34,6 +35,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
     trialLoader = false,
     handleTrial,
     yearlyDiscount,
+    showTrialButton = false,
   } = props;
   // derived values
   const yearlyPrice = orderBy(proProduct?.prices || [], ["recurring"], ["desc"]).find(
@@ -48,7 +50,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
   const renderPricing = (unitAmount: number, recurring: string): number => {
     let price = 0;
     if (recurring === "month") price = unitAmount / 100;
-    if (recurring === "year") price = unitAmount / 1000;
+    if (recurring === "year") price = unitAmount / 1200;
     return price;
   };
 
@@ -108,15 +110,18 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                       : "Redirecting to Stripe..."
                     : "Upgrade to Pro"}
                 </button>
-                {/* free trail button */}
-                <button
-                  disabled={trialLoader}
-                  className="mt-4 text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-2"
-                  onClick={() => handleTrial && handleTrial(proProduct?.id, price.id)}
-                >
-                  <span>Start free trial</span>
-                  <div className="w-3 h-3">{trialLoader && <Loader size={12} className="animate-spin" />}</div>
-                </button>
+
+                {/* trail button */}
+                {showTrialButton && (
+                  <button
+                    disabled={trialLoader}
+                    className="mt-4 text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-2"
+                    onClick={() => handleTrial && handleTrial(proProduct?.id, price.id)}
+                  >
+                    <span>Start free trial</span>
+                    <div className="w-3 h-3">{trialLoader && <Loader size={12} className="animate-spin" />}</div>
+                  </button>
+                )}
                 {yearlyPlanOnly && (
                   <div className="text-[9px] text-custom-text-300 w-64 pt-1">
                     We will charge your card on file at <b>$5 per user per month</b> for the total number of users in

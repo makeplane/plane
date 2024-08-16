@@ -72,4 +72,15 @@ export class PaymentService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async modifyTrailSubscription(
+    workspaceSlug: string,
+    payload: { price_id: string }
+  ): Promise<{ session_url: string }> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/trial-subscriptions/upgrade/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

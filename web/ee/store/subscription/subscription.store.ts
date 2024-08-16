@@ -36,6 +36,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       toggleProPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
+      freeTrialSubscription: action,
     });
   }
 
@@ -57,6 +58,11 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           is_canceled: response?.is_canceled || false,
           interval: response?.interval || null,
           current_period_end_date: response?.current_period_end_date,
+          is_offline_payment: response?.is_offline_payment || false,
+          trial_end_date: response?.trial_end_date || undefined,
+          purchased_seats: response?.purchased_seats || 0,
+          has_activated_free_trial: response?.has_activated_free_trial || false,
+          has_added_payment_method: response?.has_added_payment_method || false,
         });
       });
       return response;
