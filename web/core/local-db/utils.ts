@@ -1,5 +1,6 @@
 import pick from "lodash/pick";
 import { rootStore } from "@/lib/store-context";
+import { ARRAY_FIELDS } from "./constants";
 import { updateIssue } from "./load-issues";
 
 export const log = console.log;
@@ -54,4 +55,20 @@ export const wrapDateTime = (field: string) => {
     return `datetime(${field})`;
   }
   return field;
+};
+
+export const filterConstructor = (filters: any) => {
+  let sql = "";
+  const keys = Object.keys(filters);
+
+  keys.forEach((key) => {
+    const value = filters[key] ? filters[key].split(",") : "";
+    if (!value) return;
+    if (ARRAY_FIELDS.includes(key)) {
+      sql += ` AND key='${key}' AND value IN ('${value.join("','")}')`;
+    } else {
+      sql += ` AND ${key} in ('${value.join("','")}')`;
+    }
+  });
+  return sql;
 };

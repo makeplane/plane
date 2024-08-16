@@ -18,7 +18,7 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
   const { cursor, group_by } = queries;
 
   await SQL.syncInProgress;
-  const query = issueFilterQueryConstructor(queries);
+  const query = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
   //const countQuery = issueFilterCountQueryConstructor(queries);
   const start = performance.now();
   //const [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
@@ -91,4 +91,3 @@ function getGroupedIssueResults(issueResults: (TIssue & { group_id: string; tota
 
   return groupedResults;
 }
-
