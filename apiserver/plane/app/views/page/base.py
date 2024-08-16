@@ -19,7 +19,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     PageLogSerializer,
     PageSerializer,
@@ -61,9 +61,6 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
     model = Page
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
     search_fields = [
         "name",
     ]
@@ -130,6 +127,7 @@ class PageViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         serializer = PageSerializer(
             data=request.data,
@@ -151,6 +149,7 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
         try:
             page = Page.objects.get(
@@ -216,6 +215,7 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
         if page is None:
@@ -234,6 +234,7 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -243,6 +244,7 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -253,6 +255,7 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 0)
         page = Page.objects.filter(
@@ -275,11 +278,13 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -307,6 +312,7 @@ class PageViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -336,6 +342,7 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN], creator=True, model=Page)
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -384,12 +391,10 @@ class PageViewSet(BaseViewSet):
 
 
 class PageFavoriteViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     model = UserFavorite
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, pk):
         _ = UserFavorite.objects.create(
             project_id=project_id,
@@ -399,6 +404,7 @@ class PageFavoriteViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, pk):
         page_favorite = UserFavorite.objects.get(
             project=project_id,
@@ -412,9 +418,6 @@ class PageFavoriteViewSet(BaseViewSet):
 
 
 class PageLogEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     serializer_class = PageLogSerializer
     model = PageLog
@@ -454,9 +457,6 @@ class PageLogEndpoint(BaseAPIView):
 
 
 class SubPagesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, page_id):
@@ -475,10 +475,8 @@ class SubPagesEndpoint(BaseAPIView):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def retrieve(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(
@@ -503,6 +501,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         )
         return response
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(

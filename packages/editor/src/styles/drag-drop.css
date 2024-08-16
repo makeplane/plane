@@ -3,7 +3,7 @@
   position: fixed;
   display: flex;
   align-items: center;
-  opacity: 100;
+  opacity: 1;
   transition:
     opacity 0.2s ease 0.2s,
     top 0.2s ease,
@@ -19,7 +19,7 @@
 
 /* drag handle */
 #drag-handle {
-  opacity: 100;
+  opacity: 1;
 
   &.drag-handle-hidden {
     opacity: 0;
@@ -27,6 +27,17 @@
   }
 }
 /* end drag handle */
+
+/* ai handle */
+#ai-handle {
+  opacity: 1;
+
+  &.handle-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+/* end ai handle */
 
 .ProseMirror:not(.dragging) .ProseMirror-selectednode {
   position: relative;

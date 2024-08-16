@@ -1,4 +1,5 @@
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
+import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
@@ -211,6 +212,41 @@ export const useEditor = (props: CustomEditorProps) => {
             .run();
         } catch (error) {
           console.error("An error occurred while setting focus at position:", error);
+        }
+      },
+      getSelectedText: () => {
+        if (!editorRef.current) return null;
+
+        const { state } = editorRef.current;
+        const { from, to, empty } = state.selection;
+
+        if (empty) return null;
+
+        const nodesArray: string[] = [];
+        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+          if (parent === state.doc && editorRef.current) {
+            const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
+            const dom = serializer.serializeNode(node);
+            const tempDiv = document.createElement("div");
+            tempDiv.appendChild(dom);
+            nodesArray.push(tempDiv.innerHTML);
+          }
+        });
+        const selection = nodesArray.join("");
+        console.log(selection);
+        return selection;
+      },
+      insertText: (contentHTML, insertOnNextLine) => {
+        if (!editor) return;
+        // get selection
+        const { from, to, empty } = editor.state.selection;
+        if (empty) return;
+        if (insertOnNextLine) {
+          // move cursor to the end of the selection and insert a new line
+          editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
+        } else {
+          // replace selected text with the content provided
+          editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
     }),

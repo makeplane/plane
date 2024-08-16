@@ -12,7 +12,7 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast 
 // helpers
 import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
-import { ROLE } from "@/constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 import { useEventTracker, useMember, useUser } from "@/hooks/store";
 // constants
 
@@ -56,6 +56,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // form info
   const {
     formState: { errors, isSubmitting },
+    watch,
+    setValue,
     reset,
     handleSubmit,
     control,
@@ -167,6 +169,19 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       }[]
     | undefined;
 
+  const checkCurrentOptionWorkspaceRole = (value: string) => {
+    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
+    if (!value || !currentMemberWorkspaceRole) return ROLE;
+
+    const isGuestOrViewer = [EUserWorkspaceRoles.GUEST, EUserWorkspaceRoles.VIEWER].includes(
+      currentMemberWorkspaceRole
+    );
+
+    return Object.fromEntries(
+      Object.entries(ROLE).filter(([key]) => !isGuestOrViewer || [5, 10].includes(parseInt(key)))
+    );
+  };
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -237,6 +252,14 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     }
                                     onChange={(val: string) => {
                                       onChange(val);
+                                      // Update the role to the workspace role when member ID changes
+                                      const workspaceMemberDetails = getWorkspaceMemberDetails(val);
+                                      const workspaceRole = workspaceMemberDetails?.role ?? 5;
+                                      const newValue = ROLE[workspaceRole].toUpperCase();
+                                      setValue(
+                                        `members.${index}.role`,
+                                        EUserProjectRoles[newValue as keyof typeof EUserProjectRoles]
+                                      );
                                     }}
                                     options={options}
                                     optionsClassName="w-48"
@@ -271,7 +294,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     input
                                     optionsClassName="w-full"
                                   >
-                                    {Object.entries(ROLE).map(([key, label]) => {
+                                    {Object.entries(
+                                      checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))
+                                    ).map(([key, label]) => {
                                       if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
 
                                       return (
