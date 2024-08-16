@@ -53,38 +53,42 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
     >
       <div
         ref={ref}
-        className={cn("size-full flex flex-col flex-1 p-4 pb-0", {
-          "p-2": sidebarCollapsed,
+        className={cn("size-full flex flex-col flex-1 pt-4 pb-0", {
+          "p-2 pt-4": sidebarCollapsed,
         })}
       >
-        <SidebarDropdown />
-        <div className="flex-shrink-0 h-4" />
-        <SidebarAppSwitcher />
-        <SidebarQuickActions />
+        <div
+          className={cn("px-2", {
+            "px-4": !sidebarCollapsed,
+          })}
+        >
+          <SidebarDropdown />
+          <div className="flex-shrink-0 h-4" />
+          <SidebarAppSwitcher />
+          <SidebarQuickActions />
+        </div>
         <hr
           className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
             "opacity-0": !sidebarCollapsed,
           })}
         />
-        <SidebarUserMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
+        <div
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2", {
+            "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
-        />
-        <SidebarWorkspaceMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
-          })}
-        />
-        <SidebarFavoritesMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-            "opacity-0": !sidebarCollapsed,
-          })}
-        />
-        <SidebarProjectsList />
+        >
+          <SidebarUserMenu />
+
+          <SidebarWorkspaceMenu />
+          <hr
+            className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
+              "opacity-0": !sidebarCollapsed,
+            })}
+          />
+          <SidebarFavoritesMenu />
+
+          <SidebarProjectsList />
+        </div>
         <SidebarHelpSection />
       </div>
     </div>

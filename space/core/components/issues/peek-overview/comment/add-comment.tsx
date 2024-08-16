@@ -66,8 +66,8 @@ export const AddComment: React.FC<Props> = observer((props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <LiteTextEditor
-              onEnterKeyPress={() => {
-                if (currentUser) handleSubmit(onSubmit)();
+              onEnterKeyPress={(e) => {
+                if (currentUser) handleSubmit(onSubmit)(e);
               }}
               workspaceId={workspaceID?.toString() ?? ""}
               workspaceSlug={workspaceSlug?.toString() ?? ""}

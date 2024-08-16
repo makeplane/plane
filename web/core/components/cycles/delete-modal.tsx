@@ -42,6 +42,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
     try {
       await deleteCycle(workspaceSlug, projectId, cycle.id)
         .then(() => {
+          if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
@@ -68,8 +69,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           });
         })
         .finally(() => handleClose());
-
-      if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -87,7 +86,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
       handleSubmit={formSubmit}
       isSubmitting={loader}
       isOpen={isOpen}
-      title="Delete Cycle"
+      title="Delete cycle"
       content={
         <>
           Are you sure you want to delete cycle{' "'}

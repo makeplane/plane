@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
 require("dotenv").config({ path: ".env" });
+// const path = require("path");
+
 const { withSentryConfig } = require("@sentry/nextjs");
 const withPWA = require("next-pwa")({
   dest: "public",
+  disable: process.env.NODE_ENV === "development",
 });
 
 const nextConfig = {
@@ -34,6 +37,13 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
+  // webpack: (config, { isServer }) => {
+  //   if (!isServer) {
+  //     // Ensure that all imports of 'yjs' resolve to the same instance
+  //     config.resolve.alias["yjs"] = path.resolve(__dirname, "node_modules/yjs");
+  //   }
+  //   return config;
+  // },
   async redirects() {
     return [
       {
@@ -43,6 +53,11 @@ const nextConfig = {
       },
       {
         source: "/sign-in",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/signin",
         destination: "/",
         permanent: true,
       },

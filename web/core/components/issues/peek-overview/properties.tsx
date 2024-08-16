@@ -133,7 +133,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserCircle2 className="h-4 w-4 flex-shrink-0" />
               <span>Created by</span>
             </div>
-            <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
+            <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
               <ButtonAvatars showTooltip userIds={createdByDetails?.id} />
               <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
             </div>
@@ -225,7 +225,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
-              <span>Module</span>
+              <span>Modules</span>
             </div>
             <IssueModuleSelect
               className="w-3/4 flex-grow"

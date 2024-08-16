@@ -1086,6 +1086,13 @@ class CycleViewSet(BaseViewSet):
         CycleIssue.objects.filter(
             cycle_id=self.kwargs.get("pk"),
         ).delete()
+        # Delete the user favorite cycle
+        UserFavorite.objects.filter(
+            user=request.user,
+            entity_type="cycle",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -1154,7 +1161,7 @@ class CycleFavoriteViewSet(BaseViewSet):
             workspace__slug=slug,
             entity_identifier=cycle_id,
         )
-        cycle_favorite.delete()
+        cycle_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

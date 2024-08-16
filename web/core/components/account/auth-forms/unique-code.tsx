@@ -107,6 +107,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
             className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+            autoComplete="on"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (

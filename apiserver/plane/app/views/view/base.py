@@ -141,6 +141,13 @@ class WorkspaceViewViewSet(BaseViewSet):
             or workspace_view.owned_by == request.user
         ):
             workspace_view.delete()
+            # Delete the user favorite view
+            UserFavorite.objects.filter(
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_type="view",
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
@@ -216,7 +223,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -437,6 +445,13 @@ class IssueViewViewSet(BaseViewSet):
             or project_view.owned_by_id == request.user.id
         ):
             project_view.delete()
+            # Delete the user favorite view
+            UserFavorite.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_type="view",
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
@@ -474,5 +489,5 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             entity_type="view",
             entity_identifier=view_id,
         )
-        view_favorite.delete()
+        view_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -131,7 +131,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <UserCircle2 className="h-4 w-4 flex-shrink-0" />
                   <span>Created by</span>
                 </div>
-                <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
+                <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
                   <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
                 </div>
@@ -222,7 +222,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Module</span>
+                  <span>Modules</span>
                 </div>
                 <IssueModuleSelect
                   className="w-3/5 flex-grow"

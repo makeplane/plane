@@ -25,6 +25,7 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   projectId: string | undefined;
   value: string | null;
+  canRemoveCycle?: boolean;
 };
 
 export const CycleDropdown: React.FC<Props> = observer((props) => {
@@ -46,6 +47,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
+    canRemoveCycle = true,
   } = props;
   // states
 
@@ -128,7 +130,13 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
         )}
       </Combobox.Button>
       {isOpen && projectId && (
-        <CycleOptions isOpen={isOpen} projectId={projectId} placement={placement} referenceElement={referenceElement} />
+        <CycleOptions
+          isOpen={isOpen}
+          projectId={projectId}
+          placement={placement}
+          referenceElement={referenceElement}
+          canRemoveCycle={canRemoveCycle}
+        />
       )}
     </Combobox>
   );

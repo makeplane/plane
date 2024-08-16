@@ -8,6 +8,7 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TDisplayConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
@@ -19,6 +20,7 @@ import { cn } from "@/helpers/common.helper";
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
@@ -72,7 +74,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -80,14 +81,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
-
+  // editor flaggings
+  const { documentEditor } = useEditorFlagging();
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
-  const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
-    workspaceSlug?.toString() ?? "",
-    projectId?.toString() ?? ""
-  );
+  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+
+  const displayConfig: TDisplayConfig = {
+    fontSize,
+    fontStyle,
+  };
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -140,6 +144,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               onChange={handleDescriptionChange}
               mentionHandler={{
@@ -149,6 +154,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               embedHandler={{
                 issue: issueEmbedProps,
               }}
+              disabledExtensions={documentEditor}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -157,12 +163,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
               }}
               embedHandler={{
-                issue: issueEmbedReadOnlyProps,
+                issue: {
+                  widgetCallback: issueEmbedProps.widgetCallback,
+                },
               }}
             />
           )}

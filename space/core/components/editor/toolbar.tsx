@@ -12,7 +12,7 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   executeCommand: (commandKey: TEditorCommands) => void;
-  handleSubmit: () => void;
+  handleSubmit: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isCommentEmpty: boolean;
   isSubmitting: boolean;
   showSubmitButton: boolean;

@@ -157,11 +157,11 @@ export const LinkModal: FC<Props> = (props) => {
                     <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                       {status
                         ? isSubmitting
-                          ? "Updating Link..."
-                          : "Update Link"
+                          ? "Updating link..."
+                          : "Update link"
                         : isSubmitting
-                          ? "Adding Link..."
-                          : "Add Link"}
+                          ? "Adding link..."
+                          : "Add link"}
                     </Button>
                   </div>
                 </form>

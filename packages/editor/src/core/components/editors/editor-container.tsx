@@ -1,18 +1,22 @@
 import { FC, ReactNode } from "react";
 import { Editor } from "@tiptap/react";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // helpers
 import { cn } from "@/helpers/common";
+// types
+import { TDisplayConfig } from "@/types";
 
 interface EditorContainerProps {
   children: ReactNode;
+  displayConfig: TDisplayConfig;
   editor: Editor | null;
   editorContainerClassName: string;
-  hideDragHandle?: () => void;
   id: string;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { children, editor, editorContainerClassName, hideDragHandle, id } = props;
+  const { children, displayConfig, editor, editorContainerClassName, id } = props;
 
   const handleContainerClick = () => {
     if (!editor) return;
@@ -53,16 +57,25 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
     }
   };
 
+  const handleContainerMouseLeave = () => {
+    const dragHandleElement = document.querySelector("#editor-side-menu");
+    if (!dragHandleElement?.classList.contains("side-menu-hidden")) {
+      dragHandleElement?.classList.add("side-menu-hidden");
+    }
+  };
+
   return (
     <div
       id={`editor-container-${id}`}
       onClick={handleContainerClick}
-      onMouseLeave={hideDragHandle}
+      onMouseLeave={handleContainerMouseLeave}
       className={cn(
-        "cursor-text relative",
+        "editor-container cursor-text relative",
         {
           "active-editor": editor?.isFocused && editor?.isEditable,
         },
+        displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
+        displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
         editorContainerClassName
       )}
     >

@@ -35,6 +35,7 @@ from plane.db.models import (
     IssueAttachment,
     IssueLink,
     ProjectMember,
+    UserFavorite,
 )
 from plane.utils.analytics_plot import burndown_plot
 
@@ -408,6 +409,12 @@ class CycleAPIEndpoint(BaseAPIView):
         CycleIssue.objects.filter(
             cycle_id=self.kwargs.get("pk"),
         ).delete()
+        # Delete the user favorite cycle
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -664,17 +671,6 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
-
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
-            return Response(
-                {
-                    "error": "The Cycle has already been completed so no new issues can be added"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Get all CycleIssues already created
         cycle_issues = list(

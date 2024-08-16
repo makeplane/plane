@@ -271,6 +271,7 @@ export class ProjectViewStore implements IProjectViewStore {
     await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
       runInAction(() => {
         delete this.viewMap[viewId];
+        if (this.rootStore.favorite.entityMap[viewId]) this.rootStore.favorite.removeFavoriteFromStore(viewId);
       });
     });
   };

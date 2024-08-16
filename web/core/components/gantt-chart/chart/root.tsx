@@ -23,18 +23,19 @@ type ChartViewRootProps = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
-  enableBlockLeftResize: boolean;
-  enableBlockRightResize: boolean;
-  enableBlockMove: boolean;
-  enableReorder: boolean;
-  enableAddBlock: boolean;
-  enableSelection: boolean;
+  enableBlockLeftResize: boolean | ((blockId: string) => boolean);
+  enableBlockRightResize: boolean | ((blockId: string) => boolean);
+  enableBlockMove: boolean | ((blockId: string) => boolean);
+  enableReorder: boolean | ((blockId: string) => boolean);
+  enableAddBlock: boolean | ((blockId: string) => boolean);
+  enableSelection: boolean | ((blockId: string) => boolean);
   bottomSpacing: boolean;
   showAllBlocks: boolean;
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   loadMoreBlocks?: () => void;
   canLoadMoreBlocks?: boolean;
   quickAdd?: React.JSX.Element | undefined;
+  showToday: boolean;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
@@ -58,6 +59,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     bottomSpacing,
     showAllBlocks,
     quickAdd,
+    showToday,
   } = props;
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
@@ -161,6 +163,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         handleChartView={(key) => updateCurrentViewRenderPayload(null, key)}
         handleToday={handleToday}
         loaderTitle={loaderTitle}
+        showToday={showToday}
       />
       <GanttChartMainContent
         blockIds={blockIds}
