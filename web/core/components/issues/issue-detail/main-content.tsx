@@ -66,8 +66,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        <div className="mb-2.5 flex items-center">
-          <IssueIdentifier issueId={issueId} projectId={issue.project_id} />
+        <div className="mb-2.5 flex items-center gap-4">
+          <IssueIdentifier issueId={issueId} projectId={issue.project_id} iconSize={14} iconContainerSize={20} />
           <IssueUpdateStatus isSubmitting={isSubmitting} />
         </div>
 
