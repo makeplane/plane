@@ -12,21 +12,17 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useCommandPalette, useProject, useProjectView, useUser } from "@/hooks/store";
+import { useCommandPalette, useProject, useProjectView } from "@/hooks/store";
 
 export const ProjectViewsHeader = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { currentProjectDetails, loader } = useProject();
   const { filters, updateFilters, clearAllFilters } = useProjectView();
 
@@ -48,9 +44,6 @@ export const ProjectViewsHeader = observer(() => {
   );
 
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
-
-  const canUserCreateView =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -83,13 +76,11 @@ export const ProjectViewsHeader = observer(() => {
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <ViewListHeader />
-          {canUserCreateView && (
-            <div>
-              <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
-                Add view
-              </Button>
-            </div>
-          )}
+          <div>
+            <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
+              Add view
+            </Button>
+          </div>
         </div>
       </div>
       {isFiltersApplied && (

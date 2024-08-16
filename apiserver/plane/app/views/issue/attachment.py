@@ -13,19 +13,16 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import IssueAttachment, ProjectMember
+from plane.db.models import IssueAttachment
 from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
     model = IssueAttachment
     parser_classes = (MultiPartParser, FormParser)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueAttachmentSerializer(data=request.data)
         if serializer.is_valid():
@@ -47,21 +44,9 @@ class IssueAttachmentEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN], creator=True, model=IssueAttachment)
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = IssueAttachment.objects.get(pk=pk)
-        if issue_attachment.created_by_id != request.user.id and (
-            not ProjectMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                project_id=project_id,
-                is_active=True,
-            ).exists()
-        ):
-            return Response(
-                {"error": "Only admin or creator can delete the attachment"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(
@@ -78,6 +63,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def get(self, request, slug, project_id, issue_id):
         issue_attachments = IssueAttachment.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
