@@ -4,7 +4,7 @@ export const GROUP_BY_MAP = {
   state_id: "state_id",
   priority: "priority",
   cycle_id: "cycle_id",
-  created_by: "",
+  created_by: "created_by",
   // Array Props
   issue_module__module_id: "module_ids",
   labels__id: "label_ids",

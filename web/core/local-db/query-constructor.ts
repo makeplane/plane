@@ -1,3 +1,4 @@
+import { sq } from "date-fns/locale";
 import { ARRAY_FIELDS, GROUP_BY_MAP } from "./constants";
 import { SQL } from "./sqlite";
 import { filterConstructor, wrapDateTime } from "./utils";
@@ -59,7 +60,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
             ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy} ${orderByString}) AS rank FROM issues i
       WHERE i.project_id = '${projectId}'   ${filterString}
       ) ranked_issues
-      WHERE rank <= 10;`;
+      WHERE rank <= ${per_page};`;
     }
 
     console.log("####", sql);
@@ -71,6 +72,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   sql += filterString;
 
   sql += ` group by i.id`;
+  sql += orderByString;
 
   // Add offset and paging to query
   sql += ` LIMIT  ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
