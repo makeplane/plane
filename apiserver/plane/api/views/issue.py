@@ -38,7 +38,7 @@ from plane.app.permissions import (
     ProjectLitePermission,
     ProjectMemberPermission,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -354,6 +354,124 @@ class IssueAPIEndpoint(BaseAPIView):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, slug, project_id):
+        # Get the entities required for putting the issue, external_id and
+        # external_source are must to identify the issue here
+        project = Project.objects.get(pk=project_id)
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+
+        # If the external_id and source are present, we need to find the exact
+        # issue that needs to be updated with the provided external_id and
+        # external_source
+        if external_id and external_source:
+            try:
+                issue = Issue.objects.get(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_id=external_id,
+                    external_source=external_source,
+                )
+
+                # Get the current instance of the issue in order to track
+                # changes and dispatch the issue activity
+                current_instance = json.dumps(
+                    IssueSerializer(issue).data, cls=DjangoJSONEncoder
+                )
+
+                # Get the requested data, encode it as django object and pass it
+                # to serializer to validation
+                requested_data = json.dumps(
+                    self.request.data, cls=DjangoJSONEncoder
+                )
+                serializer = IssueSerializer(
+                    issue,
+                    data=request.data,
+                    context={
+                        "project_id": project_id,
+                        "workspace_id": project.workspace_id,
+                    },
+                    partial=True,
+                )
+                if serializer.is_valid():
+                    # If the serializer is valid, save the issue and dispatch
+                    # the update issue activity worker event.
+                    serializer.save()
+                    issue_activity.delay(
+                        type="issue.activity.updated",
+                        requested_data=requested_data,
+                        actor_id=str(request.user.id),
+                        issue_id=str(issue.id),
+                        project_id=str(project_id),
+                        current_instance=current_instance,
+                        epoch=int(timezone.now().timestamp()),
+                    )
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(
+                    # If the serializer is not valid, respond with 400 bad
+                    # request
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            except Issue.DoesNotExist:
+                # If the issue does not exist, a new record needs to be created
+                # for the requested data.
+                # Serialize the data with the context of the project and
+                # workspace
+                serializer = IssueSerializer(
+                    data=request.data,
+                    context={
+                        "project_id": project_id,
+                        "workspace_id": project.workspace_id,
+                        "default_assignee_id": project.default_assignee_id,
+                    },
+                )
+
+                # If the serializer is valid, save the issue and dispatch the
+                # issue activity worker event as created
+                if serializer.is_valid():
+                    serializer.save()
+                    # Refetch the issue
+                    issue = Issue.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        pk=serializer.data["id"],
+                    ).first()
+
+                    # If any of the created_at or created_by is present, update
+                    # the issue with the provided data, else return with the
+                    # default states given.
+                    issue.created_at = request.data.get(
+                        "created_at", timezone.now()
+                    )
+                    issue.created_by_id = request.data.get(
+                        "created_by", request.user.id
+                    )
+                    issue.save(update_fields=["created_at", "created_by"])
+
+                    issue_activity.delay(
+                        type="issue.activity.created",
+                        requested_data=json.dumps(
+                            self.request.data, cls=DjangoJSONEncoder
+                        ),
+                        actor_id=str(request.user.id),
+                        issue_id=str(serializer.data.get("id", None)),
+                        project_id=str(project_id),
+                        current_instance=None,
+                        epoch=int(timezone.now().timestamp()),
+                    )
+                    return Response(
+                        serializer.data, status=status.HTTP_201_CREATED
+                    )
+                return Response(
+                    serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            return Response(
+                {"error": "external_id and external_source are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def patch(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
