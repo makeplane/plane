@@ -1,5 +1,5 @@
 import { sq } from "date-fns/locale";
-import { ARRAY_FIELDS, GROUP_BY_MAP } from "./constants";
+import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
 import { SQL } from "./sqlite";
 import { filterConstructor, wrapDateTime } from "./utils";
 
@@ -97,7 +97,9 @@ const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 
 export const stageIssueInserts = (issue: any) => {
   const issue_id = issue.id;
+  issue.priority_proxy = PRIORITY_MAP[issue.priority];
   const keys = Object.keys(issue).join(",");
+
   const values = Object.values(issue).map((val) => {
     if (val === null) {
       return "";
@@ -109,7 +111,7 @@ export const stageIssueInserts = (issue: any) => {
   }); // Will fail when the values have a comma
 
   SQL.db.exec({
-    sql: `insert into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    sql: `insert into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     bind: values,
   });
   arrayFields.forEach((field) => {

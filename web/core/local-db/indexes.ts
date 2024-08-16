@@ -6,6 +6,7 @@ export const createIssueIndexes = async () => {
     "state_id",
     "sort_order",
     //  "priority",
+    "priority_proxy",
     "project_id",
     "created_by",
     "cycle_id",

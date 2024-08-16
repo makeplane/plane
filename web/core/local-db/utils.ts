@@ -1,6 +1,6 @@
 import pick from "lodash/pick";
 import { rootStore } from "@/lib/store-context";
-import { ARRAY_FIELDS } from "./constants";
+import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
 import { updateIssue } from "./load-issues";
 
 export const log = console.log;
@@ -59,6 +59,10 @@ export const wrapDateTime = (field: string) => {
 
 export const filterConstructor = (filters: any) => {
   let sql = "";
+  if (filters.priority) {
+    filters.priority_proxy = PRIORITY_MAP[filters.priority];
+    delete filters.priority;
+  }
   const keys = Object.keys(filters);
 
   keys.forEach((key) => {
