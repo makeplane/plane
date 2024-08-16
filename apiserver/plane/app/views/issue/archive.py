@@ -25,9 +25,9 @@ from plane.app.permissions import (
 from plane.app.serializers import (
     IssueFlatSerializer,
     IssueSerializer,
-    IssueDetailSerializer
+    IssueDetailSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
@@ -343,7 +343,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
                 return Response(
                     {
                         "error_code": 4091,
-                        "error_message": "INVALID_ARCHIVE_STATE_GROUP"
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

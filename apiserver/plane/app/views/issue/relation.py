@@ -27,7 +27,7 @@ from plane.db.models import (
     IssueAttachment,
     IssueLink,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -80,8 +80,7 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("issue_id", flat=True)
 
         queryset = (
-            Issue.issue_objects
-            .filter(workspace__slug=slug)
+            Issue.issue_objects.filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
