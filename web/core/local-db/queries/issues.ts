@@ -60,8 +60,8 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
 
   const out = {
     results: issueResults,
-    next_cursor: `${pageSize}:${page}:${Number(offset) + Number(pageSize)}`,
-    prev_cursor: `${pageSize}:${page}:${Number(offset) - Number(pageSize)}`,
+    next_cursor: `${pageSize}:${parseInt(page) + 1}:${Number(offset) + Number(pageSize)}`,
+    prev_cursor: `${pageSize}:${parseInt(page) - 1}:${Number(offset) - Number(pageSize)}`,
     total_results: total_count,
     total_count,
     next_page_results,
