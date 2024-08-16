@@ -1,4 +1,4 @@
-import { GalleryVertical, GanttChartSquare, Kanban, LucideIcon, Sheet } from "lucide-react";
+import { GalleryVertical, GanttChartSquare, Kanban, List, LucideIcon } from "lucide-react";
 // plane web types
 import {
   EProjectLayouts,
@@ -7,7 +7,7 @@ import {
   TProjectSortBy,
   TProjectSortOrder,
 } from "@/plane-web/types/workspace-project-filters";
-import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import { EProjectAccess, EProjectPriority } from "@/plane-web/types/workspace-project-states";
 
 // scope constants
 type TProjectScopeMapObject<T> = { key: T; label: string };
@@ -17,19 +17,11 @@ type TProjectScopeMap = {
 export const PROJECT_SCOPE_MAP: TProjectScopeMap = {
   [EProjectScope.ALL_PROJECTS]: {
     key: EProjectScope.ALL_PROJECTS,
-    label: "All projects",
+    label: "Browse all projects",
   },
   [EProjectScope.MY_PROJECTS]: {
     key: EProjectScope.MY_PROJECTS,
-    label: "My projects",
-  },
-  [EProjectScope.PUBLIC]: {
-    key: EProjectScope.PUBLIC,
-    label: "Public",
-  },
-  [EProjectScope.PRIVATE]: {
-    key: EProjectScope.PRIVATE,
-    label: "Private",
+    label: "Your projects",
   },
 };
 export const PROJECT_SCOPES = Object.values(PROJECT_SCOPE_MAP);
@@ -47,7 +39,7 @@ export const PROJECT_LAYOUT_MAP: TProjectLayoutMap = {
     icon: GalleryVertical,
   },
   [EProjectLayouts.BOARD]: { key: EProjectLayouts.BOARD, title: "Board Layout", label: "Board", icon: Kanban },
-  [EProjectLayouts.TABLE]: { key: EProjectLayouts.TABLE, title: "Table Layout", label: "Table", icon: Sheet },
+  [EProjectLayouts.TABLE]: { key: EProjectLayouts.TABLE, title: "Table Layout", label: "Table", icon: List },
   [EProjectLayouts.TIMELINE]: {
     key: EProjectLayouts.TIMELINE,
     title: "Timeline Layout",
@@ -62,6 +54,10 @@ type TProjectPriorityMapObject<T> = { key: T; label: string };
 type TProjectPriorityMap = {
   [key in EProjectPriority]: TProjectPriorityMapObject<key>;
 };
+type TProjectAccessMapObject<T> = { key: T; label: string };
+type TProjectAccessMap = {
+  [key in EProjectAccess]: TProjectAccessMapObject<key>;
+};
 export const PROJECT_PRIORITY_MAP: TProjectPriorityMap = {
   [EProjectPriority.NONE]: {
     key: EProjectPriority.NONE,
@@ -72,10 +68,18 @@ export const PROJECT_PRIORITY_MAP: TProjectPriorityMap = {
   [EProjectPriority.HIGH]: { key: EProjectPriority.HIGH, label: "High" },
   [EProjectPriority.URGENT]: {
     key: EProjectPriority.URGENT,
-    label: "urgent",
+    label: "Urgent",
   },
 };
+export const PROJECT_ACCESS_MAP: TProjectAccessMap = {
+  [EProjectAccess.PUBLIC]: {
+    key: EProjectAccess.PUBLIC,
+    label: "Public",
+  },
+  [EProjectAccess.PRIVATE]: { key: EProjectAccess.PRIVATE, label: "Private" },
+};
 export const PROJECT_PRIORITIES = Object.values(PROJECT_PRIORITY_MAP);
+export const PROJECT_ACCESS = Object.values(PROJECT_ACCESS_MAP);
 
 // display filter constants
 export const PROJECT_GROUP_BY_OPTIONS: {

@@ -50,9 +50,9 @@ export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) =
   }, [cardRef?.current, project, isDragAllowed]);
   return (
     <div
-      className="flex whitespace-nowrap gap-2 rounded"
+      className="flex whitespace-nowrap gap-2 rounded w-full"
       ref={cardRef}
-      id={project.id}
+      id={`kanban-${project.id}`}
       onDragStart={() => {
         if (!isDragAllowed) {
           setToast({

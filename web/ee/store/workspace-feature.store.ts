@@ -121,6 +121,9 @@ export class WorkspaceFeatureStore implements IWorkspaceFeatureStore {
         });
       });
       const workspaceFeatures = await workspaceFeatureService.updateWorkspaceFeature(workspaceSlug, payload);
+      if (workspaceFeatures?.is_project_grouping_enabled) {
+        this.store.projectRoot.project.fetchProjects(workspaceSlug);
+      }
       return workspaceFeatures;
     } catch (error) {
       runInAction(() => {
@@ -131,7 +134,6 @@ export class WorkspaceFeatureStore implements IWorkspaceFeatureStore {
           }
         });
       });
-      console.error("workspace features --> updateWorkspaceFeature", error);
       throw error;
     } finally {
       runInAction(() => (this.loader = undefined));

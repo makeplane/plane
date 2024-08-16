@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { cn } from "@plane/editor";
-import { Button } from "@plane/ui";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // hooks
 import { useProject, useWorkspace } from "@/hooks/store";
 // types
 import { TProject } from "@/plane-web/types/projects";
-import Attributes from "./attributes";
+import JoinButton from "../../common/join-button";
+import Attributes from "../attributes";
 import Details from "./details";
 
 type Props = {
@@ -37,7 +37,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
   if (!currentWorkspace) return null;
   return (
-    <>
+    <div className="flex flex-col justify-between group/project-card rounded border border-custom-border-200 bg-custom-background-100 w-full">
       {/* Delete Project Modal */}
       <DeleteProjectModal
         project={project}
@@ -71,16 +71,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             e.preventDefault();
             e.stopPropagation();
             if (!isArchived) setJoinProjectModal(true);
+          } else {
+            router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
           }
-          router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
         }}
         data-prevent-nprogress={!project.is_member || isArchived}
-        className={cn(
-          "group/project-card flex flex-col rounded border border-custom-border-200 bg-custom-background-100 justify-between",
-          {
-            "bg-custom-background-80": isArchived,
-          }
-        )}
+        className={cn("group/project-card flex flex-col justify-between w-full", {
+          "bg-custom-background-80": isArchived,
+        })}
       >
         <>
           <div>
@@ -97,24 +95,12 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               handleUpdateProject={handleUpdateProject}
               workspaceSlug={workspaceSlug.toString()}
               currentWorkspace={currentWorkspace}
+              dateClassname="block"
             />
           </div>
-          {!project.is_member && (
-            <Button
-              tabIndex={-1}
-              variant="accent-primary"
-              className="w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none mt-2 flex-end m-2"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setJoinProjectModal(true);
-              }}
-            >
-              Join
-            </Button>
-          )}
         </>
       </Link>
-    </>
+      <JoinButton project={project} />
+    </div>
   );
 });

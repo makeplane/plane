@@ -19,21 +19,23 @@ type TFilterState = {
 export const FilterState: React.FC<TFilterState> = observer((props) => {
   const { workspaceId, searchQuery, appliedFilters, handleUpdate } = props;
   // hooks
-  const { getProjectStatesByWorkspaceId } = useWorkspaceProjectStates();
+  const { getProjectStateById, getProjectStateIdsWithGroupingByWorkspaceId } = useWorkspaceProjectStates();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   // derived values
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const workspaceProjectStates = getProjectStatesByWorkspaceId(workspaceId);
-
+  const groupedProjectStateIds = getProjectStateIdsWithGroupingByWorkspaceId(workspaceId);
+  const stateDetails = (groupedProjectStateIds ? Object.values(groupedProjectStateIds).flat() : []).map((stateId) =>
+    getProjectStateById(stateId)
+  );
   const sortedOptions = useMemo(
     () =>
-      (workspaceProjectStates ?? []).filter(
+      (stateDetails ?? []).filter(
         (state) =>
-          (state.name || "").includes(searchQuery.toLowerCase()) ||
-          (state.group || "").includes(searchQuery.toLowerCase()) ||
+          (state?.name || "").includes(searchQuery.toLowerCase()) ||
+          (state?.group || "").includes(searchQuery.toLowerCase()) ||
           searchQuery === ""
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,15 +71,15 @@ export const FilterState: React.FC<TFilterState> = observer((props) => {
                 .slice(0, itemsToRender)
                 .map(
                   (state) =>
-                    state.id &&
-                    state.group &&
-                    state.name && (
+                    state?.id &&
+                    state?.group &&
+                    state?.name && (
                       <FilterOption
-                        key={state.id}
-                        isChecked={appliedFilters?.includes(state.id) ? true : false}
-                        onClick={() => state.id && handleFilter(state.id)}
-                        icon={<ProjectStateIcon projectStateGroup={state.group} width="14" height="14" />}
-                        title={state.name.charAt(0).toUpperCase() + state.name.slice(1)}
+                        key={state?.id}
+                        isChecked={appliedFilters?.includes(state?.id) ? true : false}
+                        onClick={() => state?.id && handleFilter(state?.id)}
+                        icon={<ProjectStateIcon projectStateGroup={state?.group} width="14" height="14" />}
+                        title={state?.name.charAt(0).toUpperCase() + state?.name.slice(1)}
                       />
                     )
                 )}

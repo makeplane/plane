@@ -44,6 +44,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchFeatureFlags } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectStates } = useWorkspaceProjectStates();
+
   const { fetchAllIssueTypes } = useIssueTypes();
   const { isMobile } = usePlatformOS();
 
@@ -61,20 +62,19 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
   );
-  // fetch project states
-  useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null,
-    () => (workspaceSlug && currentWorkspace ? fetchProjectStates(workspaceSlug.toString()) : null),
-    { revalidateOnFocus: false }
-  );
-
   // fetching workspace features
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_FEATURES_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceFeatures(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false }
   );
-
+  // fetch project states
+  useSWR(
+    workspaceSlug && currentWorkspace && isProjectStateEnabled ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null,
+    () =>
+      workspaceSlug && currentWorkspace && isProjectStateEnabled ? fetchProjectStates(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false }
+  );
   // fetching user workspace information
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
@@ -83,7 +83,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}_${isProjectStateEnabled}` : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

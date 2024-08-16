@@ -6,14 +6,14 @@ import { useParams } from "next/navigation";
 // hooks
 // ui
 // helpers
-import { Tooltip } from "@plane/ui";
+import { Logo, Tooltip } from "@plane/ui";
 import { IGanttBlock } from "@/components/gantt-chart";
 import { findTotalDaysInRange, renderFormattedDate } from "@/helpers/date-time.helper";
 import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
+import JoinButton from "../../common/join-button";
 
 type Props = {
   projectId: string;
@@ -68,7 +68,6 @@ export const ProjectGanttBlock: React.FC<Props> = observer((props) => {
 // rendering projects on gantt sidebar
 export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props) => {
   const { block } = props;
-  const { projectStates } = useWorkspaceProjectStates();
 
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -76,37 +75,36 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
 
   // derived values
   const projectDetails = block.data;
-  const stateDetails = projectDetails && projectStates[projectDetails?.state_id];
-  const duration = findTotalDaysInRange(projectDetails.start_date, projectDetails.target_date);
-
+  const duration = findTotalDaysInRange(projectDetails.start_date, projectDetails.target_date) || 0;
+  console.log("projectDetails", projectDetails, duration);
   const { isMobile } = usePlatformOS();
-  return (
-    <Link
-      href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-      className=" w-full cursor-pointer text-sm text-custom-text-100 flex justify-between px-4 h-11"
-    >
-      <div className="relative flex h-full w-full cursor-pointer items-center gap-2 py-3">
-        <div className="flex-shrink-0 text-xs text-custom-text-300 mr-5 w-[60px]">
+  const children = (
+    <>
+      <div className="relative flex h-full w-full items-center gap-2 py-3">
+        <div className="flex-shrink-0 text-xs text-custom-text-300 mr-3 w-[40px]">
           {projectDetails.identifier} {projectDetails?.sequence_id}
         </div>
-        {stateDetails && (
-          <ProjectStateIcon
-            projectStateGroup={stateDetails?.group}
-            color={stateDetails?.color}
-            width="16"
-            height="16"
-          />
-        )}
-
+        <Logo logo={projectDetails.logo_props} size={16} />
         <Tooltip tooltipContent={projectDetails?.name} isMobile={isMobile}>
           <span className="flex-grow text-sm font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
         </Tooltip>
       </div>
-      {duration && (
-        <div className="flex-shrink-0 h-full text-sm font-medium py-3">
-          {duration} day{duration > 1 ? "s" : ""}
-        </div>
-      )}{" "}
+      <JoinButton project={projectDetails} />
+      <div className="flex-shrink-0 h-full text-sm font-medium py-3 ml-2">
+        {duration} day{duration > 1 ? "s" : ""}
+      </div>
+    </>
+  );
+  return projectDetails.is_member ? (
+    <Link
+      href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+      className=" w-full cursor-pointer text-sm text-custom-text-100 flex justify-between px-4 h-11"
+    >
+      {children}
     </Link>
+  ) : (
+    <div className="w-full cursor-not-allowed text-sm text-custom-text-100 flex justify-between px-4 h-11">
+      {children}
+    </div>
   );
 });

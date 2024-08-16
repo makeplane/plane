@@ -41,7 +41,7 @@ export const ProjectBoardGroupItem: FC<ProjectBoardGroupItem> = observer((props)
       return setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "Workspace not found" });
 
     updateProject(currentWorkspace?.slug, sourceId, payload);
-    highlightProjectOnDrop(sourceId, true);
+    highlightProjectOnDrop(`kanban-${sourceId}`, true);
   };
 
   // Enable Kanban Columns as Drop Targets

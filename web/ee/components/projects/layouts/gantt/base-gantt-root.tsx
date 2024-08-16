@@ -11,6 +11,7 @@ import { useProject, useUser } from "@/hooks/store";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectGanttBlock } from "./blocks";
 import { ProjectGanttSidebar } from "./sidebar";
 
@@ -63,24 +64,26 @@ export const BaseGanttRoot: React.FC = observer(() => {
     currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.ADMIN;
 
   return (
-    <div className="h-full w-full">
-      <GanttChartRoot
-        border={false}
-        title="Projects"
-        loaderTitle="Projects"
-        blockIds={filteredProjectIds || []}
-        getBlockById={getBlockById}
-        blockUpdateHandler={updateProjectBlockStructure}
-        blockToRender={(data: TProject) => <ProjectGanttBlock projectId={data.id} />}
-        sidebarToRender={(props) => <ProjectGanttSidebar {...props} showAllBlocks />}
-        enableBlockLeftResize={isAllowed}
-        enableBlockRightResize={isAllowed}
-        enableBlockMove={isAllowed}
-        enableAddBlock={isAllowed}
-        enableSelection={false}
-        showToday={false}
-        showAllBlocks
-      />
-    </div>
+    <ProjectLayoutHOC layout={EProjectLayouts.TIMELINE}>
+      <div className="h-full w-full">
+        <GanttChartRoot
+          border={false}
+          title="Projects"
+          loaderTitle="Projects"
+          blockIds={filteredProjectIds || []}
+          getBlockById={getBlockById}
+          blockUpdateHandler={updateProjectBlockStructure}
+          blockToRender={(data: TProject) => <ProjectGanttBlock projectId={data.id} />}
+          sidebarToRender={(props) => <ProjectGanttSidebar {...props} showAllBlocks />}
+          enableBlockLeftResize={isAllowed}
+          enableBlockRightResize={isAllowed}
+          enableBlockMove={isAllowed}
+          enableAddBlock={isAllowed}
+          enableSelection={false}
+          showToday={false}
+          showAllBlocks
+        />
+      </div>
+    </ProjectLayoutHOC>
   );
 });

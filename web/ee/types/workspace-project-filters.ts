@@ -1,5 +1,5 @@
 // plane web types
-import { EProjectStateGroup, EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import { EProjectStateGroup, EProjectPriority, EProjectAccess } from "@/plane-web/types/workspace-project-states";
 
 export type TProjectAppliedDisplayFilterKeys = "my_projects" | "archived_projects";
 
@@ -9,8 +9,6 @@ export type TProjectBaseFilters = "All projects" | "My projects" | "Private" | "
 export enum EProjectScope {
   ALL_PROJECTS = "ALL_PROJECTS",
   MY_PROJECTS = "MY_PROJECTS",
-  PUBLIC = "PUBLIC",
-  PRIVATE = "PRIVATE",
 }
 export type TProjectScope = EProjectScope;
 
@@ -27,13 +25,14 @@ export type TProjectLayouts = EProjectLayouts;
 export type TProjectPriority = EProjectPriority;
 export type TProjectStateGroup = EProjectStateGroup;
 export type TProjectAttributes = {
+  access: TProjectAccess[];
   priority: TProjectPriority[];
   state: string[];
   lead: string[];
   members: string[];
   archived: boolean;
 };
-
+export type TProjectAccess = EProjectAccess;
 // display filter
 export type TProjectGroupBy = "states" | "state_groups" | "priority" | "created_by";
 export type TProjectSortBy =

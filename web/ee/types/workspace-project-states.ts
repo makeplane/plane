@@ -26,6 +26,10 @@ export enum EProjectPriority {
   HIGH = "high",
   URGENT = "urgent",
 }
+export enum EProjectAccess {
+  PUBLIC = "public",
+  PRIVATE = "private",
+}
 
 export type TProjectState = {
   id: string | undefined;

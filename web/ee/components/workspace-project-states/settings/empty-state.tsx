@@ -12,15 +12,15 @@ export const WorkspaceProjectStatesEmptyState: FC<Props> = ({ toggleProjectGroup
   const { resolvedTheme } = useTheme();
 
   // derived values
-  const resolvedEmptyStatePath = `/projects/project-states-${resolvedTheme}.svg`;
+  const resolvedEmptyStatePath = `/projects/project-states-${resolvedTheme?.includes("dark") ? "dark" : "light"}.svg`;
 
   return (
     <div className="w-[600px] m-auto mt-12">
       <div className="flex flex-col gap-1.5 flex-shrink">
         <h3 className="text-xl font-medium">Enable project states</h3>
         <p className="text-sm">
-          Group project managers can now see the overall progress of all their projects from one screen. Turn on State
-          Of Projects below, set states for your projects, and start tracking progress.{" "}
+          Project managers can now see the overall progress of all their projects from one screen. Turn on State Of
+          Projects below, set states for your projects, and start tracking progress.{" "}
         </p>
       </div>
       <Image

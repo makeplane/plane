@@ -77,9 +77,15 @@ export const groupDetails = (
     }
     case "created_by": {
       const member = getWorkspaceMemberDetails(groupByKey);
+      if (!member?.member) return { title: "Created By", icon: <></>, prePopulatedPayload: {} };
+      const memberDetails = member?.member;
       return {
-        title: member?.display_name || "Created By",
-        icon: member ? <Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" /> : <></>,
+        title: memberDetails?.display_name || "Created By",
+        icon: memberDetails ? (
+          <Avatar name={memberDetails.display_name} src={memberDetails.avatar} showTooltip={false} size="md" />
+        ) : (
+          <></>
+        ),
         prePopulatedPayload: {},
       };
     }

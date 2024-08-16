@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, PenSquare, Settings, Trash2 } from "lucide-react";
 // ui
 import { cn } from "@plane/editor";
@@ -29,7 +30,7 @@ type Props = {
   setArchiveRestoreProject: (value: boolean) => void;
   setDeleteProjectModal: (value: boolean) => void;
 };
-const Details: React.FC<Props> = (props) => {
+const Details: React.FC<Props> = observer((props) => {
   const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
@@ -178,26 +179,28 @@ const Details: React.FC<Props> = (props) => {
             ))}
           </CustomMenu>
 
-          <div data-prevent-nprogress>
-            {" "}
-            <FavoriteStar
-              buttonClassName={cn(
-                "h-6 w-6 bg-white/30 rounded opacity-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto",
-                {
-                  "opacity-100 pointer-events-auto": project.is_favorite,
-                }
-              )}
-              iconClassName="text-white"
-              onClick={(e) => {
-                if (isArchived) return;
-                e.preventDefault();
-                e.stopPropagation();
-                if (project.is_favorite) handleRemoveFromFavorites();
-                else handleAddToFavorites();
-              }}
-              selected={project.is_favorite}
-            />
-          </div>
+          {project.is_member && (
+            <div data-prevent-nprogress>
+              {" "}
+              <FavoriteStar
+                buttonClassName={cn(
+                  "h-6 w-6 bg-white/30 rounded opacity-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto",
+                  {
+                    "opacity-100 pointer-events-auto": project.is_favorite,
+                  }
+                )}
+                iconClassName="text-white"
+                onClick={(e) => {
+                  if (isArchived) return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (project.is_favorite) handleRemoveFromFavorites();
+                  else handleAddToFavorites();
+                }}
+                selected={project.is_favorite}
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="flex h-10 w-full items-center justify-between gap-3 mt-3 p-2">
@@ -208,7 +211,7 @@ const Details: React.FC<Props> = (props) => {
 
           <div className="flex w-full flex-col justify-between gap-0.5 truncate">
             <div className="flex justify-between ">
-              <h3 className=" font-medium w-full truncate max-w-[200px]">{project.name}</h3>
+              <h3 className=" font-medium w-full truncate ">{project.name}</h3>
             </div>
             <span className="flex items-center gap-1.5">
               <p className="text-xs font-medium ">{project.identifier} </p>
@@ -219,5 +222,5 @@ const Details: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+});
 export default Details;

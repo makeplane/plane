@@ -15,15 +15,15 @@ const Upgrade = () => {
   return (
     <div
       className={cn("flex rounded-xl mt-5 ", {
-        "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme === "dark",
-        "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": resolvedTheme === "light",
+        "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
+        "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
       })}
     >
-      <div className={cn("flex flex-col min-h-[25rem] justify-center relative pl-10 w-1/3")}>
-        <div className=" max-w-[300px]">
+      <div className={cn("flex w-full flex-col min-h-[25rem] justify-center relative pl-10 xl:w-1/3")}>
+        <div className="w-full xl:max-w-[300px]">
           <div className="text-2xl font-semibold">Track all your projects from one screen.</div>
           <div className="text-sm">
-            Group projects like you group issues—by state, priority, or any other—and track their progress in one click.
+            Projects like you group issues—by state, priority, or any other—and track their progress in one click.
           </div>
           <div className="flex mt-6">
             <Button variant="primary">Available on Pro</Button>
@@ -38,7 +38,11 @@ const Upgrade = () => {
           </div>
         </div>
       </div>
-      <Image src={resolvedTheme === "dark" ? StateDark : StateLight} alt="" className="w-2/3 max-h-[300px] self-end" />
+      <Image
+        src={resolvedTheme === "dark" ? StateDark : StateLight}
+        alt=""
+        className="w-2/3 max-h-[300px] self-end hidden xl:flex"
+      />
     </div>
   );
 };
