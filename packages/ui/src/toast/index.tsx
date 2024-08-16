@@ -69,7 +69,7 @@ export const setToast = (props: SetToastProps) => {
     borderColorClassName,
   }: ToastContentProps) =>
     props.type === TOAST_TYPE.LOADING ? (
-      <div className="flex items-center h-[98px] w-[350px]">
+      <div className="flex items-center h-[98px] w-[350px]" data-prevent-outside-click>
         <div
           onMouseDown={(e) => {
             e.stopPropagation();
@@ -96,6 +96,7 @@ export const setToast = (props: SetToastProps) => {
       </div>
     ) : (
       <div
+        data-prevent-outside-click
         onMouseDown={(e) => {
           e.stopPropagation();
           e.preventDefault();

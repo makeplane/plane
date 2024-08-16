@@ -10,11 +10,12 @@ import { TIssue } from "@plane/types";
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import { cn } from "@/helpers/common.helper";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
 import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
@@ -33,7 +34,6 @@ export const CalendarIssueBlock = observer(
     const menuActionRef = useRef<HTMLDivElement | null>(null);
     // hooks
     const { workspaceSlug, projectId } = useParams();
-    const { getProjectIdentifierById } = useProject();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
     const { isMobile } = usePlatformOS();
@@ -99,9 +99,13 @@ export const CalendarIssueBlock = observer(
                   backgroundColor: stateColor,
                 }}
               />
-              <div className="flex-shrink-0 text-sm md:text-xs text-custom-text-300">
-                {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
-              </div>
+              {issue.project_id && (
+                <IssueIdentifier
+                  issueId={issue.id}
+                  projectId={issue.project_id}
+                  textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                />
+              )}
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
               </Tooltip>

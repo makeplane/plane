@@ -16,9 +16,11 @@ import {
   TIssueOrderByOptions,
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
+import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issues";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
+import { EIssueLayoutTypes } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
@@ -27,7 +29,7 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
-import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
+import { KanbanIssueBlocksList } from ".";
 
 interface IKanbanGroup {
   groupId: string;
@@ -273,10 +275,9 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
       {enableQuickIssueCreate && !disableIssueCreation && (
         <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
-          <KanBanQuickAddIssueForm
-            formKey="name"
-            groupId={groupId}
-            subGroupId={sub_group_id}
+          <QuickAddIssueRoot
+            layout={EIssueLayoutTypes.KANBAN}
+            QuickAddButton={KanbanQuickAddIssueButton}
             prePopulatedData={{
               ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
             }}

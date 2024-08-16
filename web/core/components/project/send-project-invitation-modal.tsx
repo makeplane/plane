@@ -262,7 +262,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       );
                                     }}
                                     options={options}
-                                    optionsClassName="w-full"
+                                    optionsClassName="w-48"
                                   />
                                 );
                               }}

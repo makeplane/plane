@@ -1,13 +1,13 @@
 # Python imports
 from datetime import datetime
-
+import uuid
 import jwt
 
 # Django imports
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Count
+from django.db.models import Count, F, Q
 from django.utils import timezone
 
 # Third party modules
@@ -22,7 +22,7 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import (
     User,
@@ -31,8 +31,11 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
-
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
+from plane.payment.utils.member_payment_count import (
+    workspace_member_check,
+)
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
@@ -103,6 +106,33 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get current existing workspace invitations where accepted is False
+        # TODO: Uncomment this code block after implementing the workspace_member_check function
+        # workspace_invitations = (
+        #     WorkspaceMemberInvite.objects.filter(
+        #         workspace_id=workspace.id,
+        #     )
+        #     .annotate(
+        #         user_email=F("email"), user_id=F("id"), user_role=F("role")
+        #     )
+        #     .values("user_email", "user_id", "user_role")
+        # )
+
+        # # Check the invite flow
+        # allowed_status, allowed_admin_members, allowed_guest_viewers = (
+        #     workspace_member_check(workspace_invitations, emails, slug)
+        # )
+
+        # if not allowed_status:
+        #     return Response(
+        #         {
+        #             "error": "You cannot invite more users than the allowed limit",
+        #             "allowed_admin_members": allowed_admin_members,
+        #             "allowed_guest_viewers": allowed_guest_viewers,
+        #         },
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
+
         workspace_invitations = []
         for email in emails:
             try:
@@ -153,6 +183,61 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+    # TODO: Uncomment this code block after implementing the workspace_member_check function
+    # def partial_update(self, request, slug, pk):
+    #     workspace_invitations = (
+    #         WorkspaceMemberInvite.objects.filter(
+    #             ~Q(id=pk),
+    #             workspace__slug=slug,
+    #         )
+    #         .annotate(
+    #             user_email=F("email"), user_id=F("id"), user_role=F("role")
+    #         )
+    #         .values("user_email", "user_id", "user_role")
+    #     )
+
+    #     workspace_invitation = WorkspaceMemberInvite.objects.get(
+    #         pk=pk, workspace__slug=slug
+    #     )
+
+    #     # Check the invite flow
+    #     allowed_status, allowed_admin_members, allowed_guest_viewers = (
+    #         workspace_member_check(
+    #             workspace_invitations,
+    #             [
+    #                 {
+    #                     "email": workspace_invitation.email,
+    #                     "role": request.data.get(
+    #                         "role", workspace_invitation.role
+    #                     ),
+    #                 }
+    #             ],
+    #             slug,
+    #         )
+    #     )
+
+    #     if not allowed_status:
+    #         return Response(
+    #             {
+    #                 "error": "You cannot invite more users than the allowed limit",
+    #                 "allowed_admin_members": allowed_admin_members,
+    #                 "allowed_guest_viewers": allowed_guest_viewers,
+    #             },
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+
+    #     if not status:
+    #         return Response(
+    #             {
+    #                 "error": "You cannot invite more users than the allowed limit",
+    #                 "allowed_admin_members": allowed_admin_members,
+    #                 "allowed_guest_viewers": allowed_guest_viewers,
+    #             },
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+
+    #     return super().partial_update(request, slug, pk)
 
     def destroy(self, request, slug, pk):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(
@@ -227,14 +312,24 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     workspace_invite.delete()
 
                 # Send event
-                workspace_invite_event.delay(
-                    user=user.id if user is not None else None,
+                track_event.delay(
                     email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
                     event_name="MEMBER_ACCEPTED",
-                    accepted_from="EMAIL",
+                    properties={
+                        "event_id": uuid.uuid4().hex,
+                        "user": {"email": email, "id": str(user)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR", None),
+                            "user_agent": request.META.get(
+                                "HTTP_USER_AGENT", None
+                            ),
+                        },
+                        "accepted_from": "EMAIL",
+                    },
                 )
+
+                # sync workspace members
+                member_sync_task.delay(slug)
 
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
@@ -307,6 +402,12 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             ],
             ignore_conflicts=True,
         )
+
+        # Sync workspace members
+        [
+            member_sync_task.delay(invitation.workspace.slug)
+            for invitation in workspace_invitations
+        ]
 
         # Delete joined workspace invites
         workspace_invitations.delete()

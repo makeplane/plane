@@ -18,7 +18,7 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
 // constants
-import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -26,6 +26,7 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // components
 import { GroupDragOverlay } from "../group-drag-overlay";
+import { ListQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import {
   GroupDropLocation,
   getDestinationFromDropPayload,
@@ -36,7 +37,6 @@ import {
 import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { TRenderQuickActions } from "./list-view-types";
-import { ListQuickAddIssueForm } from "./quick-add-issue-form";
 
 interface Props {
   groupIssueIds: string[] | undefined;
@@ -274,8 +274,11 @@ export const ListGroup = observer((props: Props) => {
 
           {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
             <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-              <ListQuickAddIssueForm
+              <QuickAddIssueRoot
+                layout={EIssueLayoutTypes.LIST}
+                QuickAddButton={ListQuickAddIssueButton}
                 prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
+                containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
                 quickAddCallback={quickAddCallback}
               />
             </div>
