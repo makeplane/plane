@@ -20,6 +20,8 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   isEditorReadyToDiscard: () => boolean;
   setSynced: () => void;
   hasUnsyncedChanges: () => boolean;
+  getSelectedText: () => string | null;
+  insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
 }
 
 export interface IEditorProps {

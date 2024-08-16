@@ -19,6 +19,8 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web components
+import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -155,6 +157,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 issue: issueEmbedProps,
               }}
               disabledExtensions={documentEditor}
+              aiHandler={{
+                menu: ({ onClose }) => <EditorAIMenu editorRef={editorRef} onClose={onClose} />,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef

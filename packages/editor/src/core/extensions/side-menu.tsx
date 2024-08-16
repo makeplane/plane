@@ -1,8 +1,8 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
-// plane editor extensions
-import { AIHandlePlugin } from "@/plane-editor/extensions";
+// plugins
+import { AIHandlePlugin } from "@/plugins/ai-handle";
 import { DragHandlePlugin } from "@/plugins/drag-handle";
 
 type Props = {
@@ -105,7 +105,7 @@ const SideMenu = (options: SideMenuPluginProps) => {
   const showSideMenu = () => editorSideMenu?.classList.remove("side-menu-hidden");
   // side menu elements
   const { view: dragHandleView, domEvents: dragHandleDOMEvents } = DragHandlePlugin(options);
-  const { view: aiHandleView } = AIHandlePlugin(options);
+  const { view: aiHandleView, domEvents: aiHandleDOMEvents } = AIHandlePlugin(options);
 
   return new Plugin({
     key: new PluginKey("sideMenu"),
@@ -113,11 +113,11 @@ const SideMenu = (options: SideMenuPluginProps) => {
       hideSideMenu();
       view?.dom.parentElement?.appendChild(editorSideMenu);
       // side menu elements' initialization
-      if (handlesConfig.dragDrop) {
-        dragHandleView(view, editorSideMenu);
-      }
       if (handlesConfig.ai) {
         aiHandleView(view, editorSideMenu);
+      }
+      if (handlesConfig.dragDrop) {
+        dragHandleView(view, editorSideMenu);
       }
 
       return {
@@ -175,7 +175,12 @@ const SideMenu = (options: SideMenuPluginProps) => {
           editorSideMenu.style.left = `${rect.left - rect.width}px`;
           editorSideMenu.style.top = `${rect.top}px`;
           showSideMenu();
-          dragHandleDOMEvents?.mousemove();
+          if (handlesConfig.dragDrop) {
+            dragHandleDOMEvents?.mousemove();
+          }
+          if (handlesConfig.ai) {
+            aiHandleDOMEvents?.mousemove?.();
+          }
         },
         keydown: () => hideSideMenu(),
         mousewheel: () => hideSideMenu(),
