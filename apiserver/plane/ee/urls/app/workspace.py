@@ -8,6 +8,7 @@ from plane.ee.views import (
     WorkspaceFeaturesEndpoint,
     WorkspaceProjectStatesEndpoint,
     WorkspaceProjectStatesDefaultEndpoint,
+    WorkspaceInviteCheckEndpoint,
 )
 
 
@@ -41,5 +42,10 @@ urlpatterns = [
         "workspaces/<str:slug>/project-states/<uuid:pk>/default/",
         WorkspaceProjectStatesDefaultEndpoint.as_view(),
         name="workspace-project-states-default",
+    ),
+    path(
+        "workspaces/<str:slug>/invite-check/",
+        WorkspaceInviteCheckEndpoint.as_view(),
+        name="workspace-invite-check",
     ),
 ]

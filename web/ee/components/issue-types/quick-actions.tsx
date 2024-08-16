@@ -7,20 +7,18 @@ import { Pencil } from "lucide-react";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web components
-import { UpdateIssueTypeModal } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
 
 type Props = {
   issueTypeId: string;
+  onEditIssueTypeIdChange: (issueTypeId: string) => void;
 };
 
 export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
-  const { issueTypeId } = props;
+  const { issueTypeId, onEditIssueTypeIdChange } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [isCreateUpdateModalOpen, setIsCreateUpdateModalOpen] = useState<boolean>(false);
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -56,13 +54,8 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <UpdateIssueTypeModal
-        data={issueTypeDetail}
-        isModalOpen={isCreateUpdateModalOpen}
-        handleModalClose={() => setIsCreateUpdateModalOpen(false)}
-      />
-      <div className={cn("flex items-center justify-center gap-3")}>
-        {issueType?.is_active && (
+      <div className={cn("flex items-center justify-center px-2")}>
+        <div className="w-6">
           <Tooltip className="w-full shadow" tooltipContent="Edit" position="bottom">
             <button
               className={cn(
@@ -73,15 +66,23 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
               )}
               onClick={(e) => {
                 e.preventDefault();
-                setIsCreateUpdateModalOpen(true);
+                onEditIssueTypeIdChange(issueTypeId);
               }}
               disabled={isLoading}
             >
-              <Pencil size={14} className="text-custom-text-300" />
+              <Pencil size={16} className="text-custom-text-300" />
             </button>
           </Tooltip>
-        )}
-        <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
+        </div>
+        <Tooltip
+          className="shadow"
+          tooltipContent={!!isIssueTypeEnabled ? "Click to disable" : "Click to enable"}
+          position="bottom"
+        >
+          <div className="w-12">
+            <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
+          </div>
+        </Tooltip>
       </div>
     </>
   );

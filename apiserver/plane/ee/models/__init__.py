@@ -9,4 +9,4 @@ from .issue_properties import (
 
 from .issue import IssueWorkLog
 from .project import ProjectState, ProjectAttribute
-from .workspace import WorkspaceFeature
+from .workspace import WorkspaceFeature, WorkspaceLicense

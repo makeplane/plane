@@ -27,7 +27,7 @@ export const PropertyRadioInputSelect = <T extends EIssuePropertyType>(
       ...settings,
     };
     set(updatedSettings, settingsConfigurations.keyToUpdate, value);
-    onChange(updatedSettings as TIssuePropertySettingsMap[T]); // TODO: Fix this
+    onChange(updatedSettings as TIssuePropertySettingsMap[T]);
   };
 
   const selectedValue = get(settings, settingsConfigurations.keyToUpdate);
@@ -40,7 +40,7 @@ export const PropertyRadioInputSelect = <T extends EIssuePropertyType>(
       className="z-10"
       buttonClassName="size-3"
       fieldClassName="text-sm"
-      wrapperClassName="gap-1"
+      wrapperClassName="gap-1.5"
       vertical
     />
   );

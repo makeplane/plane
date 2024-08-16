@@ -42,7 +42,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
         onDelete={onDelete}
       />
       <div
-        className={cn("items-center justify-end gap-1.5 pr-2", {
+        className={cn("items-center justify-end gap-1.5", {
           "hidden group-hover:flex": !currentOperationMode,
           flex: currentOperationMode,
         })}
@@ -57,7 +57,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
                 onClick={onCreateUpdate}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? <Spinner width="12px" height="12px" /> : <Check size={12} className="text-green-600" />}
+                {isSubmitting ? <Spinner width="16px" height="16px" /> : <Check size={16} className="text-green-600" />}
               </button>
             </Tooltip>
             <Tooltip className="w-full shadow" tooltipContent="Discard" position="bottom">
@@ -71,7 +71,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
                 onClick={onDiscard}
                 disabled={isSubmitting}
               >
-                <X size={12} className="text-red-500" />
+                <X size={16} className="text-red-500" />
               </button>
             </Tooltip>
           </>
@@ -80,9 +80,9 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
             <Tooltip className="w-full shadow" tooltipContent="Edit" position="bottom">
               <button
                 className="p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
-                  onClick={() => onIssuePropertyOperationMode("update")}
+                onClick={() => onIssuePropertyOperationMode("update")}
               >
-                <Pencil size={12} className="text-custom-text-300" />
+                <Pencil size={16} className="text-custom-text-300" />
               </button>
             </Tooltip>
             <Tooltip className="w-full shadow" tooltipContent="Delete" position="bottom">
@@ -90,7 +90,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
                 className="p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
                 onClick={() => setIsDeleteModalOpen(true)}
               >
-                <Trash2 size={12} className="text-red-500" />
+                <Trash2 size={16} className="text-red-500" />
               </button>
             </Tooltip>
           </>

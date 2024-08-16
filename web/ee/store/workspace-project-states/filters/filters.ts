@@ -27,6 +27,7 @@ export interface IProjectFilterStore extends IProjectFilterHelper {
   attributesMap: Record<string, TProjectAttributes>; // workspace_slug -> TProjectAttributes
   displayFiltersMap: Record<string, TProjectDisplayFilters>; // workspace_slug -> TProjectDisplayFilters
   searchQuery: string | undefined; // string
+  loading: boolean;
   // computed
   filters: TProjectFilters | undefined;
   scopeProjectsCount: Record<TProjectScope, number>;
@@ -63,11 +64,13 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
   attributesMap: Record<string, TProjectAttributes> = {};
   displayFiltersMap: Record<string, TProjectDisplayFilters> = {};
   searchQuery: string | undefined = "";
+  loading = true;
 
   constructor(public store: RootStore) {
     super(store);
     makeObservable(this, {
       // observables
+      loading: observable,
       scopeMap: observable,
       layoutMap: observable,
       attributesMap: observable,
@@ -97,7 +100,6 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
   get filters(): TProjectFilters | undefined {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return undefined;
-
     return {
       scope: this.scopeMap[workspaceSlug],
       layout: this.layoutMap[workspaceSlug],
@@ -114,8 +116,6 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const defaultCounts = {
       [EProjectScope.ALL_PROJECTS]: 0,
       [EProjectScope.MY_PROJECTS]: 0,
-      [EProjectScope.PUBLIC]: 0,
-      [EProjectScope.PRIVATE]: 0,
     };
     const workspaceDetails = this.store.workspaceRoot.currentWorkspace;
     const projectStore = this.store.projectRoot.project;
@@ -128,8 +128,6 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     return {
       [EProjectScope.ALL_PROJECTS]: this.filterProjectsByScope(projects, EProjectScope.ALL_PROJECTS).length,
       [EProjectScope.MY_PROJECTS]: this.filterProjectsByScope(projects, EProjectScope.MY_PROJECTS).length,
-      [EProjectScope.PUBLIC]: this.filterProjectsByScope(projects, EProjectScope.PUBLIC).length,
-      [EProjectScope.PRIVATE]: this.filterProjectsByScope(projects, EProjectScope.PRIVATE).length,
     };
   }
 
@@ -141,7 +139,10 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     if (!this.filters) return 0;
     const attributes = this.filters.attributes;
     if (isEmpty(attributes)) return 0;
-    return Object.values(attributes).reduce((acc, val: any) => acc + val.length, 0);
+    const filters = Object.keys(attributes).filter(
+      (key: string) => key !== "archived" && (attributes as Record<string, any>)[key].length > 0
+    );
+    return filters.length;
   }
 
   /**
@@ -152,23 +153,25 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const workspaceDetails = this.store.workspaceRoot.currentWorkspace;
     const projectStore = this.store.projectRoot.project;
     const projectMap = projectStore.projectMap;
-
+    this.loading = projectStore.loader;
     if (isEmpty(projectMap) || !this.filters || !workspaceDetails) return undefined;
 
     let projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id) as TProject[];
     // filter projects based on scope
-    projects = this.filterProjectsByScope(projects, this.filters.scope);
+    projects = this.filters.scope ? this.filterProjectsByScope(projects, this.filters.scope) : projects;
     // filter projects based on attributes
-    projects = this.filterProjectsByAttributes(projects, this.filters.attributes);
+    projects = this.filters.attributes ? this.filterProjectsByAttributes(projects, this.filters.attributes) : projects;
     // filter projects based on the display filters order_by and sort_order
-    projects = this.sortProjectsByDisplayFilters(
-      projects,
-      this.filters.display_filters?.sort_by,
-      this.filters.display_filters?.sort_order
-    );
+    projects = this.filters.display_filters
+      ? this.sortProjectsByDisplayFilters(
+          projects,
+          this.filters.display_filters?.sort_by,
+          this.filters.display_filters?.sort_order
+        )
+      : projects;
     // filter projects based on search query
     projects = this.filterProjectsBySearchQuery(projects, this.searchQuery);
-
+    this.loading = false;
     return projects;
   }
   // computed methods
@@ -205,13 +208,17 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
       this.updateScope(workspaceSlug, EProjectScope.ALL_PROJECTS);
     }
     if (!this.layoutMap[workspaceSlug]) {
-      this.updateLayout(workspaceSlug, EProjectLayouts.GALLERY);
+      this.updateLayout(
+        workspaceSlug,
+        this.handleProjectLocalFilters.get(workspaceSlug)?.layout || EProjectLayouts.GALLERY
+      );
     }
     if (!this.attributesMap[workspaceSlug]) {
       this.updateAttributes(workspaceSlug, "priority", []);
       this.updateAttributes(workspaceSlug, "state", []);
       this.updateAttributes(workspaceSlug, "lead", []);
       this.updateAttributes(workspaceSlug, "members", []);
+      this.updateAttributes(workspaceSlug, "access", []);
     }
     if (!this.displayFiltersMap[workspaceSlug]) {
       this.updateDisplayFilters(workspaceSlug, "group_by", "states");
@@ -238,6 +245,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    */
   updateLayout = (workspaceSlug: string, layout: TProjectLayouts): void => {
     set(this.layoutMap, workspaceSlug, layout);
+    this.handleProjectLocalFilters.set("layout", workspaceSlug, { layout });
   };
 
   /**

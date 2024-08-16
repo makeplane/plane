@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 // ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+// components
+import { ComicBoxButton } from "@/components/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
@@ -55,11 +57,11 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
       <div className={cn("flex flex-col gap-5 md:min-w-[24rem] max-w-[45rem]")}>
         <div className="flex flex-col gap-1.5 flex-shrink">
           <h3 className="text-xl font-semibold">
-            {isIssueTypeSettingsEnabled ? "Enable issue types" : "Upgrade to enable issue types"}
+            {isIssueTypeSettingsEnabled ? "Enable Issue Types" : "Upgrade to enable Issue Types."}
           </h3>
           <p className="text-sm text-custom-text-200">
-            Issue types distinguish different kinds of work in unique ways, helping you to identify, categorize, and
-            report on your team{"’"}s work more effectively.
+            Shape issues to your work with Issue Types. Customize with icons, backgrounds, and properties and configure
+            them for this project.
           </p>
         </div>
         <Image
@@ -72,9 +74,13 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
         />
         <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
           {isIssueTypeSettingsEnabled ? (
-            <Button disabled={isLoading} onClick={() => handleEnableIssueTypes()}>
-              {isLoading ? "Setting up..." : "Enable"}
-            </Button>
+            <ComicBoxButton
+              label={isLoading ? "Setting up" : "Enable"}
+              title="Once enabled, Issue Types can't be disabled."
+              description="Plane's Issues will become the default issue type for this project and will show up with its icon and background in this project."
+              disabled={isLoading}
+              onClick={() => handleEnableIssueTypes()}
+            />
           ) : (
             <Button disabled={isLoading} onClick={() => toggleProPlanModal(true)}>
               Upgrade

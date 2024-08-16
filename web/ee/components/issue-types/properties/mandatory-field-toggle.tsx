@@ -58,7 +58,12 @@ export const PropertyMandatoryFieldToggle = (props: TPropertyMandatoryFieldToggl
           position="bottom"
         >
           <span>
-            <Checkbox checked={value} onChange={() => handleMandatoryFieldChange(!value)} disabled={isDisabled} />
+            <Checkbox
+              checked={value}
+              onChange={() => handleMandatoryFieldChange(!value)}
+              disabled={isDisabled}
+              className={!value ? "bg-custom-background-100" : ""}
+            />
           </span>
         </Tooltip>
       </div>

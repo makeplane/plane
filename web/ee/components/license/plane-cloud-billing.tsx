@@ -107,21 +107,23 @@ export const PlaneCloudBilling: React.FC = observer(() => {
                     (Expires on: {renderFormattedDate(endDate)})
                   </div>
                 ) : (
-                    <div className="text-center text-sm text-custom-text-200 font-medium">
-                      (Renew on: {renderFormattedDate(endDate)})
-                    </div>
+                  <div className="text-center text-sm text-custom-text-200 font-medium">
+                    (Renew on: {renderFormattedDate(endDate)})
+                  </div>
                 )}
               </div>
-              <div>
-                <Button
-                  variant="neutral-primary"
-                  className="cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
-                  onClick={handleSubscriptionPageRedirection}
-                >
-                  {isLoading ? "Redirecting to Stripe..." : "Manage your subscriptions"}
-                  <ExternalLink className="h-3 w-3" strokeWidth={2} />
-                </Button>
-              </div>
+              {!currentWorkspaceSubscribedPlanDetail.is_offline_payment && (
+                <div>
+                  <Button
+                    variant="neutral-primary"
+                    className="cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
+                    onClick={handleSubscriptionPageRedirection}
+                  >
+                    {isLoading ? "Redirecting to Stripe..." : "Manage your subscriptions"}
+                    <ExternalLink className="h-3 w-3" strokeWidth={2} />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}

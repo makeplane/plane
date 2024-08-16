@@ -5,6 +5,7 @@ import {
   IssuePropertyOptionsRoot,
   PropertyMultiSelect,
   PropertySettingsConfiguration,
+  TIssuePropertyFormError,
 } from "@/plane-web/components/issue-types/properties";
 // plane web constants
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
@@ -22,10 +23,11 @@ type TDropdownAttributesProps = {
     value: TIssueProperty<EIssuePropertyType.OPTION>[K],
     shouldSync?: boolean
   ) => void;
+  error?: TIssuePropertyFormError;
 };
 
 export const DropdownAttributes = observer((props: TDropdownAttributesProps) => {
-  const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange } = props;
+  const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -65,7 +67,7 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
           ))}
         </div>
       )}
-      <IssuePropertyOptionsRoot issuePropertyId={dropdownPropertyDetail.id} />
+      <IssuePropertyOptionsRoot issuePropertyId={dropdownPropertyDetail.id} error={error?.options} />
       <div className="pt-2 px-1">
         <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
         <DefaultOptionSelect isMultiSelect={dropdownPropertyDetail.is_multi} isDisabled={isOptionDefaultDisabled} />

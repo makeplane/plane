@@ -242,6 +242,7 @@ export class IssueTypes implements IIssueTypesStore {
       if (this.propertiesFetchedMap[projectId] === true) return;
       // Fetch issue property and options
       this.issuePropertiesLoader[projectId] = "init-loader";
+      this.propertiesFetchedMap[projectId] = true;
       const { issueProperties, issuePropertyOptions } = await this.fetchAllPropertyData(workspaceSlug, projectId);
       runInAction(() => {
         if (issueProperties) {
@@ -249,13 +250,12 @@ export class IssueTypes implements IIssueTypesStore {
             if (issueProperty.id && issueProperty.issue_type) {
               const issueType = this.data[issueProperty.issue_type];
               if (issueType) {
-                issueType.addProperty(issueProperty, issuePropertyOptions[issueProperty.id]);
+                issueType.addOrUpdateProperty(issueProperty, issuePropertyOptions[issueProperty.id]);
               }
             }
           }
         }
         this.issuePropertiesLoader[projectId] = "loaded";
-        this.propertiesFetchedMap[projectId] = true;
       });
     } catch (error) {
       this.issuePropertiesLoader[projectId] = "loaded";

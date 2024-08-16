@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 // ui
 import { GripVertical } from "lucide-react";
 import { Sortable, Tooltip } from "@plane/ui";
-// plane web components
 import {
   IssuePropertyCreateOptionItem,
   IssuePropertyOptionItem,
@@ -15,10 +14,11 @@ import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 
 type TIssuePropertyOptionsRoot = {
   issuePropertyId: string | undefined;
+  error?: string;
 };
 
 export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer((props) => {
-  const { issuePropertyId } = props;
+  const { issuePropertyId, error } = props;
   // store hooks
   const { propertyOptions, handlePropertyOptionsList } = usePropertyOptions();
   // derived values
@@ -74,16 +74,16 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
       <div className="text-xs font-medium text-custom-text-300 p-1">Add options</div>
       <div
         ref={containerRef}
-        className="flex flex-col items-center, py-1 space-y-1.5 -mr-2 max-h-36 vertical-scrollbar scrollbar-xs"
+        className="flex flex-col items-center py-1 -mr-1.5 space-y-1.5 max-h-36 overflow-scroll vertical-scrollbar scrollbar-xs"
       >
         {sortedActivePropertyOptions && sortedActivePropertyOptions?.length > 0 && (
           <Sortable
             data={sortedActivePropertyOptions}
             render={(propertyOption: TIssuePropertyOptionCreateUpdateData) => (
-              <div key={propertyOption.id} className="flex w-full items-center gap-0.5">
+              <div key={propertyOption.id} className="flex group w-full items-center">
                 <Tooltip tooltipContent="Drag to rearrange">
-                  <div className="rounded-sm flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-grab">
-                    <GripVertical size={14} className="text-custom-text-200" />
+                  <div className="rounded-sm flex-shrink-0 w-3 relative flex justify-center items-center transition-colors cursor-grab">
+                    <GripVertical size={12} className="hidden group-hover:block text-custom-text-200" />
                   </div>
                 </Tooltip>
                 <IssuePropertyOptionItem
@@ -95,7 +95,7 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
                 />
               </div>
             )}
-            containerClassName="w-full pr-1"
+            containerClassName="w-full -ml-0.5 pr-2.5"
             onChange={(
               data: TIssuePropertyOptionCreateUpdateData[],
               movedItem?: TIssuePropertyOptionCreateUpdateData
@@ -106,17 +106,24 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
           />
         )}
         {createListData.map((issuePropertyOption, index) => (
-          <IssuePropertyCreateOptionItem
-            key={issuePropertyOption.key}
-            ref={index === createListData.length - 2 ? secondLastElementRef : undefined}
-            propertyOptionCreateListData={issuePropertyOption}
-            updateCreateListData={(value) => {
-              handlePropertyOptionsList("update", value);
-              setTimeout(() => {
-                scrollIntoElementView();
-              }, 0);
-            }}
-          />
+          <div key={issuePropertyOption.key} className="flex group w-full items-center">
+            <Tooltip tooltipContent="Save to enable drag-and-rearrange">
+              <div className="rounded-sm flex-shrink-0 w-3 relative flex justify-center items-center transition-colors cursor-not-allowed">
+                <GripVertical size={12} className="hidden group-hover:block text-custom-text-400" />
+              </div>
+            </Tooltip>
+            <IssuePropertyCreateOptionItem
+              ref={index === createListData.length - 2 ? secondLastElementRef : undefined}
+              propertyOptionCreateListData={issuePropertyOption}
+              updateCreateListData={(value) => {
+                handlePropertyOptionsList("update", value);
+                setTimeout(() => {
+                  scrollIntoElementView();
+                }, 0);
+              }}
+              error={index === 0 ? error : undefined}
+            />
+          </div>
         ))}
       </div>
     </div>

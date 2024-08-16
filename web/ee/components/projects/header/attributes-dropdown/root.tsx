@@ -2,13 +2,14 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, ListFilter, Search, X } from "lucide-react";
+import { ListFilter, Search, X } from "lucide-react";
 // components
 import { FiltersDropdown } from "@/components/issues";
 // plane web components
 import { FilterPriority, FilterState, FilterUser } from "@/plane-web/components/projects";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
+import { FilterAccess } from "./access";
 
 type TProjectAttributesDropdown = {
   workspaceSlug: string;
@@ -54,6 +55,15 @@ export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observe
           </div>
         </div>
         <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+          {/* access */}
+          <div className="py-2">
+            <FilterAccess
+              workspaceId={workspaceId}
+              searchQuery={filtersSearchQuery}
+              appliedFilters={filters?.attributes?.access ?? null}
+              handleUpdate={(val) => updateAttributes(workspaceSlug, "access", val)}
+            />
+          </div>{" "}
           {/* priority */}
           <div className="py-2">
             <FilterPriority

@@ -13,6 +13,7 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
+import { EditorAIMenu } from "@/ce/components/pages/editor/ai";
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -155,6 +156,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 issue: issueEmbedProps,
               }}
               disabledExtensions={documentEditor}
+              aiHandler={{
+                menu: ({ onClose }) => <EditorAIMenu editorRef={editorRef} onClose={onClose} />,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef

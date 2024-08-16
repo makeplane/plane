@@ -5,12 +5,7 @@ import { PropertyValueSelect } from "@/plane-web/components/issue-types/values";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
 // plane web types
-import {
-  EIssuePropertyType,
-  TIssuePropertyValueErrors,
-  TIssuePropertyValues,
-  TPropertyValueVariant,
-} from "@/plane-web/types";
+import { TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@/plane-web/types";
 
 type TIssueAdditionalPropertyValuesProps = {
   issueTypeId: string;
@@ -43,30 +38,6 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
     if (!propertyId) return;
     handlePropertyValueChange(propertyId, value);
   };
-
-  // sort all multi-line text properties to the top in create mode and to the bottom in update mode
-  sortedProperties.sort((a, b) => {
-    const isAMultiLineText = a.property_type === EIssuePropertyType.TEXT && a.settings?.display_format === "multi-line";
-    const isBMultiLineText = b.property_type === EIssuePropertyType.TEXT && b.settings?.display_format === "multi-line";
-    if (variant === "create") {
-      // Sort multi-line text properties to the top in create mode
-      if (isAMultiLineText && !isBMultiLineText) {
-        return -1;
-      }
-      if (!isAMultiLineText && isBMultiLineText) {
-        return 1;
-      }
-    } else if (variant === "update") {
-      // Sort multi-line text properties to the bottom in update mode
-      if (isAMultiLineText && !isBMultiLineText) {
-        return 1;
-      }
-      if (!isAMultiLineText && isBMultiLineText) {
-        return -1;
-      }
-    }
-    return 0; // No sorting preference
-  });
 
   return (
     <div className="flex flex-col space-y-2">

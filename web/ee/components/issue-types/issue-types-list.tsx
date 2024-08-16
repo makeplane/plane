@@ -8,7 +8,12 @@ import { IssueTypeListItem } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
-export const IssueTypesList = observer(() => {
+type TIssueTypesList = {
+  onEditIssueTypeIdChange: (issueTypeId: string) => void;
+};
+
+export const IssueTypesList = observer((props: TIssueTypesList) => {
+  const { onEditIssueTypeIdChange } = props;
   // router
   const { projectId } = useParams();
   // states
@@ -47,7 +52,9 @@ export const IssueTypesList = observer(() => {
               openIssueTypeId === issueTypeId ||
               (issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1)
             }
+            isCollapseDisabled={issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1}
             onToggle={handleIssueTypeListToggle}
+            onEditIssueTypeIdChange={onEditIssueTypeIdChange}
           />
         ))}
     </div>

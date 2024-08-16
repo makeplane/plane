@@ -26,9 +26,6 @@ from plane.app.serializers import (
     IssueFlatSerializer,
     IssueDetailSerializer,
 )
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -48,12 +45,10 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
+from plane.app.permissions import allow_permission, ROLE
 
 
 class IssueArchiveViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
     serializer_class = IssueFlatSerializer
     model = Issue
 
@@ -97,6 +92,7 @@ class IssueArchiveViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -212,6 +208,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 ),
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -255,6 +252,7 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(
             workspace__slug=slug,
@@ -293,6 +291,7 @@ class IssueArchiveViewSet(BaseViewSet):
             {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,

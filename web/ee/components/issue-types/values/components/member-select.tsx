@@ -54,7 +54,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
       "bg-custom-background-90": isDisabled,
     }),
     dropdownArrowClassName: "h-3.5 w-3.5 hidden group-hover:inline",
-    placeholder: isMultiSelect ? "Select members" : "Select member",
+    placeholder: isMultiSelect ? "Select members" : "Select a member",
     disabled: isDisabled,
     hideIcon: !data?.length,
     placement: "bottom-start",

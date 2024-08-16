@@ -2,9 +2,10 @@
 
 import { MutableRefObject, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 // ui
-import { ControlLink, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // constants
@@ -89,6 +90,7 @@ const ProjectRowDetails = observer((props: ProjectRowDetailsProps) => {
   const cellRef = useRef(null);
   // router
   const { workspaceSlug } = useParams();
+  const router = useRouter();
   // hooks
   const { getProjectById } = useProject();
 
@@ -108,8 +110,8 @@ const ProjectRowDetails = observer((props: ProjectRowDetailsProps) => {
         tabIndex={0}
         className="sticky left-0 z-10 group/list-block bg-custom-background-100"
       >
-        <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}`}
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/issues`}
           className={cn(
             "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
             {
@@ -118,7 +120,9 @@ const ProjectRowDetails = observer((props: ProjectRowDetailsProps) => {
               "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
             }
           )}
-          onClick={() => {}}
+          onClick={() => {
+            router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+          }}
         >
           <div className="flex items-center gap-2 justify-between h-full w-full pr-4 pl-4 truncate">
             <div className="w-full line-clamp-1 text-sm text-custom-text-100">
@@ -131,13 +135,13 @@ const ProjectRowDetails = observer((props: ProjectRowDetailsProps) => {
                     <span className="text-custom-text-300  w-[60px] text-xs self-center">
                       {projectDetails.identifier}
                     </span>
-                    <span> {projectDetails.name}</span>
+                    <span className="max-w-[300px] truncate"> {projectDetails.name}</span>
                   </div>
                 </Tooltip>
               </div>
             </div>
           </div>
-        </ControlLink>
+        </Link>
       </td>
       {/* Rest of the columns */}
       {spreadsheetColumnsList.map((property) => (

@@ -36,7 +36,7 @@ export const WORKSPACE_SETTINGS = {
   },
   project_states: {
     key: "project_states",
-    label: "State of Projects",
+    label: "Project States",
     href: `/settings/project-states`,
     access: EUserWorkspaceRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-states/`,

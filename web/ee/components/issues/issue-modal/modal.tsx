@@ -289,12 +289,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       .then(() => {
         // reset issue property values
         setIssuePropertyValues({});
-        // TODO: remove
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Custom properties created successfully.",
-        });
       })
       .catch(() => {
         setToast({

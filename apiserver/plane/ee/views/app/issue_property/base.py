@@ -68,9 +68,6 @@ class IssuePropertyEndpoint(BaseAPIView):
             else:
                 bulk_create_options.append(option)
 
-        if bulk_create_options:
-            self.create_options(issue_property, bulk_create_options)
-
         if bulk_update_options:
             for option in bulk_update_options:
                 issue_property_option = IssuePropertyOption.objects.get(
@@ -83,8 +80,10 @@ class IssuePropertyEndpoint(BaseAPIView):
                     issue_property_option, data=option, partial=True
                 )
                 option_serializer.is_valid(raise_exception=True)
-
                 option_serializer.save()
+
+        if bulk_create_options:
+            self.create_options(issue_property, bulk_create_options)
 
     def reset_options_default(self, issue_property):
         # Reset all the default options
@@ -194,11 +193,20 @@ class IssuePropertyEndpoint(BaseAPIView):
 
             # Check if the property type is option and create the options
             if issue_property.property_type == "OPTION":
-                self.create_options(issue_property, options)
-                self.update_property_default_options(issue_property)
-                # Reset the default options if the property is required
-                if issue_property.is_required:
-                    self.reset_options_default(issue_property)
+                try:
+                    self.create_options(issue_property, options)
+                    # Reset the default options if the property is required
+                    if issue_property.is_required:
+                        self.reset_options_default(issue_property)
+                    self.update_property_default_options(issue_property)
+
+                except IntegrityError:
+                    return Response(
+                        {
+                            "error": "An option with the same name already exists in this property",
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
 
             serializer = IssuePropertySerializer(issue_property)
             # generate the response with the new data and options
@@ -282,13 +290,22 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer.save()
 
         if issue_property.property_type == "OPTION":
-            self.handle_options_create_update(
-                issue_property, options, slug, project_id
-            )
-            self.update_property_default_options(issue_property)
-            # Reset the default options if the property is required
-            if issue_property.is_required:
-                self.reset_options_default(issue_property)
+            try:
+                self.handle_options_create_update(
+                    issue_property, options, slug, project_id
+                )
+                # Reset the default options if the property is required
+                if issue_property.is_required:
+                    self.reset_options_default(issue_property)
+                self.update_property_default_options(issue_property)
+
+            except IntegrityError:
+                return Response(
+                    {
+                        "error": "An option with the same name already exists in this property",
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
 
         response = {
             **serializer.data,

@@ -152,32 +152,34 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
   if (!currentWorkspace) return null;
   return (
     <FormProvider {...methods}>
-      <ProjectCreateHeader handleClose={handleClose} />
-      <form onSubmit={handleSubmit(onSubmit)} className="px-3">
-        <div className="mt-9 space-y-6 pb-5">
-          <ProjectCommonAttributes
-            setValue={setValue}
-            isMobile={isMobile}
-            isChangeInIdentifierRequired={isChangeInIdentifierRequired}
-            setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
-          />
-          <ProjectAttributes
-            workspaceSlug={workspaceSlug}
-            currentWorkspace={currentWorkspace}
-            isProjectGroupingEnabled={isProjectGroupingEnabled}
-            data={data}
-          />
-        </div>
+      <div className="p-3">
+        <ProjectCreateHeader handleClose={handleClose} />
+        <form onSubmit={handleSubmit(onSubmit)} className="px-3">
+          <div className="mt-9 space-y-6 pb-5">
+            <ProjectCommonAttributes
+              setValue={setValue}
+              isMobile={isMobile}
+              isChangeInIdentifierRequired={isChangeInIdentifierRequired}
+              setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+            />
+            <ProjectAttributes
+              workspaceSlug={workspaceSlug}
+              currentWorkspace={currentWorkspace}
+              isProjectGroupingEnabled={isProjectGroupingEnabled}
+              data={data}
+            />
+          </div>
 
-        <div className="flex justify-end gap-2 pt-4 border-t border-custom-border-100">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
-            Cancel
-          </Button>
-          <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>
-            {isSubmitting ? "Creating" : "Create project"}
-          </Button>
-        </div>
-      </form>
+          <div className="flex justify-end gap-2 pt-4 border-t border-custom-border-100">
+            <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>
+              {isSubmitting ? "Creating" : "Create project"}
+            </Button>
+          </div>
+        </form>
+      </div>
     </FormProvider>
   );
 });

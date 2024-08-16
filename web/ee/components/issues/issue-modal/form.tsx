@@ -359,9 +359,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             />
           )}
         </div>
-        <div className="px-4 py-2 border-t-[0.5px] border-custom-border-200">
+        <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg">
           <div className="pb-3 border-b-[0.5px] border-custom-border-200">
-            <div className="text-base font-medium pb-2">Properties</div>
             <IssueDefaultProperties
               control={control}
               id={data?.id}

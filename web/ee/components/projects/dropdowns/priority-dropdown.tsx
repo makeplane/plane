@@ -345,7 +345,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
         <span className="flex-grow truncate">{priority.label}</span>
       </div>
     ),
-  }));
+  })).reverse();
 
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));

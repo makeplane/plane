@@ -82,7 +82,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
               }
               document.body?.removeAttribute("data-delay-outside-click");
             }}
-            placeholder="Enter some text"
+            placeholder="Add text"
             hasError={Boolean(error)}
           />
           {Boolean(error) && (

@@ -3,9 +3,10 @@ import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
+import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 // ui
-import { Logo, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { Logo, TOAST_TYPE, ToggleSwitch, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
@@ -26,6 +27,7 @@ import {
   TCreationListModes,
   TOperationMode,
   TIssuePropertyOption,
+  TIssuePropertyOptionCreateUpdateData,
 } from "@/plane-web/types";
 
 type TIssuePropertyListItem = {
@@ -36,11 +38,13 @@ type TIssuePropertyListItem = {
   handleIssuePropertyCreateList: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
 };
 
-export type TIssuePropertyError = {
+export type TIssuePropertyFormError = {
   [key in keyof TIssueProperty<EIssuePropertyType>]?: string;
+} & {
+  options?: string;
 };
 
-const defaultIssuePropertyError: TIssuePropertyError = {
+const defaultIssuePropertyError: TIssuePropertyFormError = {
   display_name: "",
   property_type: "",
 };
@@ -69,7 +73,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   );
   const [issuePropertyData, setIssuePropertyData] =
     useState<Partial<TIssueProperty<EIssuePropertyType>>>(issuePropertyDetail);
-  const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyError>(defaultIssuePropertyError);
+  const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyFormError>(defaultIssuePropertyError);
   // derived values
   // check if mandatory field is disabled for the property
   const isMandatoryFieldDisabled =
@@ -80,7 +84,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   // get property default values
   const getDefaultValues = () => {
     // if property is option type and operation mode is create, return default values from propertyOptions
-    if (issuePropertyData?.property_type === EIssuePropertyType.OPTION && issuePropertyOperationMode === "create") {
+    if (issuePropertyData?.property_type === EIssuePropertyType.OPTION) {
       return propertyOptions.filter((option) => option.is_default).map((option) => option.id as string) ?? [];
     }
     // else return default values from issuePropertyData
@@ -103,9 +107,34 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       error.property_type = "You must select a property type.";
       hasError = true;
     }
+    const nonEmptyPropertyOptions = propertyOptions.filter((option) => !!option.name);
+    if (issuePropertyData.property_type === EIssuePropertyType.OPTION && nonEmptyPropertyOptions.length === 0) {
+      error.options = "You must add at least one option.";
+      hasError = true;
+    }
     setIssuePropertyError(error);
     return hasError;
   };
+
+  function sanitizeOptionsData(
+    options: Partial<TIssuePropertyOptionCreateUpdateData>[]
+  ): Partial<TIssuePropertyOptionCreateUpdateData>[] {
+    // Extract the existing and new options
+    const existingOptions = options.filter((option) => option.id);
+    const newOptions = options.filter((option) => !option.id && option.key);
+    // Extract existing option names
+    const existingOptionNames = new Set(existingOptions.map((option) => option.name?.toLowerCase()));
+    // Filter new options to remove duplicates based on name and ensure no name exists in both lists
+    const sanitizedNewOptions = uniqBy(
+      newOptions.filter((option) => {
+        const name = option.name?.toLowerCase();
+        return name && !existingOptionNames.has(name);
+      }),
+      "name"
+    );
+    // Combine sanitized new options with existing options (for update use case)
+    return [...existingOptions, ...sanitizedNewOptions];
+  }
 
   // handlers
   const handleCreateProperty = async () => {
@@ -114,7 +143,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     // create property options payload (required for option type)
     let optionsPayload: Partial<TIssuePropertyOption>[] = [];
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-      optionsPayload = propertyOptions
+      optionsPayload = sanitizeOptionsData(propertyOptions)
         .map((item) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { key, ...rest } = item;
@@ -151,7 +180,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       });
   };
 
-  const handleUpdateProperty = async (data: Partial<TIssueProperty<EIssuePropertyType>>) => {
+  const handleUpdateProperty = async (data: Partial<TIssueProperty<EIssuePropertyType>>, showToast: boolean = true) => {
     if (!data) return;
     // Construct the payload by filtering out unchanged properties
     const originalData = cloneDeep(issuePropertyDetail);
@@ -161,7 +190,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     const originalOptionsData = cloneDeep(sortedActivePropertyOptions);
     let optionsPayload: Partial<TIssuePropertyOption>[] = [];
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
-      optionsPayload = propertyOptions
+      optionsPayload = sanitizeOptionsData(propertyOptions)
         .filter((item) => !!item.name && !isEmpty(item))
         .map((option) => {
           delete option.key;
@@ -187,18 +216,20 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         options: optionsPayload,
       })
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Property ${issuePropertyData?.display_name} updated successfully.`,
-        });
+        if (showToast)
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: `Property ${issuePropertyData?.display_name} updated successfully.`,
+          });
       })
       .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to update issue property. Please try again!`,
-        });
+        if (showToast)
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: error?.error ?? `Failed to update issue property. Please try again!`,
+          });
         setIssuePropertyData(issuePropertyDetail);
       })
       .finally(() => {
@@ -295,19 +326,44 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     handlePropertyDataChange("is_required", value, !issuePropertyOperationMode);
   };
 
+  const handleEnableDisable = async (isActive: boolean) => {
+    handlePropertyDataChange("is_active", isActive);
+    // sync with server only if operation mode is not create/ update
+    if (issuePropertyOperationMode) return;
+    const enableDisablePropertyPromise = handleUpdateProperty(
+      {
+        is_active: isActive,
+      },
+      false
+    );
+    if (!enableDisablePropertyPromise) return;
+    setPromiseToast(enableDisablePropertyPromise, {
+      loading: `${isActive ? "Enabling" : "Disabling"} ${issuePropertyData?.display_name} property`,
+      success: {
+        title: "Success!",
+        message: () => `${issuePropertyData?.display_name} property ${isActive ? "enabled" : "disabled"} successfully.`,
+      },
+      error: {
+        title: "Error!",
+        message: () =>
+          `${issuePropertyData?.display_name} property could not be ${isActive ? "enabled" : "disabled"}. Please try again.`,
+      },
+    });
+  };
+
   return (
     <div
       className={cn(
-        "w-full h-8 flex items-center gap-2 group px-1 py-1.5 my-1.5 text-sm rounded hover:bg-custom-background-90 cursor-default",
+        "w-full h-8 flex items-center gap-2 group px-2 py-3 my-2 text-sm rounded hover:bg-custom-background-90 cursor-default",
         {
-          "bg-custom-background-90": issuePropertyOperationMode,
+          "bg-toast-text-warning/20 hover:bg-toast-text-warning/20": issuePropertyOperationMode,
         }
       )}
     >
-      <div className="whitespace-nowrap w-48 grow flex items-center gap-1.5 text-sm font-medium">
+      <div className="whitespace-nowrap w-48 grow flex items-center gap-2 text-sm font-medium">
         {issuePropertyData?.logo_props && (
-          <div className="flex-shrink-0 size-4 grid place-items-center">
-            <Logo logo={issuePropertyData.logo_props} size={15} type="lucide" customColor="text-custom-text-200" />
+          <div className="flex-shrink-0 size-5 grid place-items-center">
+            <Logo logo={issuePropertyData.logo_props} size={16} type="lucide" customColor="text-custom-text-200" />
           </div>
         )}
         <div className="w-full truncate overflow-hidden">
@@ -336,6 +392,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           currentOperationMode={issuePropertyOperationMode}
           onPropertyDetailChange={handlePropertyDataChange}
           disabled={!issuePropertyData.property_type}
+          error={issuePropertyError}
         />
       </div>
       <div className="w-20 text-center">
@@ -346,15 +403,18 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           isDisabled={isMandatoryFieldDisabled}
         />
       </div>
-      <div className="w-20 text-center whitespace-nowrap">
-        <ToggleSwitch
-          value={!!issuePropertyData.is_active}
-          onChange={() =>
-            // sync with server only if operation mode is not create/ update
-            handlePropertyDataChange("is_active", !issuePropertyData.is_active, !issuePropertyOperationMode)
-          }
-        />
-      </div>
+      <Tooltip
+        className="shadow"
+        tooltipContent={!!issuePropertyData.is_active ? "Click to disable" : "Click to enable"}
+        position="bottom"
+      >
+        <div className="w-20 text-center whitespace-nowrap">
+          <ToggleSwitch
+            value={!!issuePropertyData.is_active}
+            onChange={() => handleEnableDisable(!issuePropertyData.is_active)}
+          />
+        </div>
+      </Tooltip>
       <div className="relative w-16 whitespace-nowrap text-right text-sm font-medium">
         <IssuePropertyQuickActions
           currentOperationMode={issuePropertyOperationMode}

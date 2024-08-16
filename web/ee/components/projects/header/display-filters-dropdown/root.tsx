@@ -24,7 +24,7 @@ export const ProjectDisplayFiltersDropdown: FC<TProjectDisplayFiltersDropdown> =
       <FiltersDropdown title="Display" placement="bottom-end" menuButton={menuButton}>
         <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
           {/* group by */}
-          {filters?.layout === EProjectLayouts.BOARD && (
+          {filters?.layout && [EProjectLayouts.BOARD, EProjectLayouts.TABLE].includes(filters?.layout) && (
             <div className="py-2">
               <DisplayFilterGroupBy
                 filterValue={filters?.display_filters?.group_by}

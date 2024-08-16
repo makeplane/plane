@@ -4,6 +4,7 @@ import orderBy from "lodash/orderBy";
 import reverse from "lodash/reverse";
 import sortBy from "lodash/sortBy";
 // plane web constants
+import { storage } from "@/lib/local-storage";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
@@ -17,6 +18,7 @@ import {
   TProjectSortBy,
   TProjectSortOrder,
   TProjectPriority,
+  TProjectFilters,
 } from "@/plane-web/types/workspace-project-filters";
 
 export interface IProjectFilterHelper {
@@ -47,10 +49,6 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
           return true;
         case EProjectScope.MY_PROJECTS:
           return project.is_member;
-        case EProjectScope.PUBLIC:
-          return project.network === 2;
-        case EProjectScope.PRIVATE:
-          return project.network === 0;
         default:
           return true;
       }
@@ -65,7 +63,6 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
   filterProjectsByAttributes = (projects: TProject[], attributes: Partial<TProjectAttributes>): TProject[] =>
     projects.filter((project) => {
       let isMatched = true;
-
       // filter based on priority attribute
       if (attributes.priority && attributes.priority.length > 0 && project.priority) {
         const projectPriority = project?.priority || "none";
@@ -83,8 +80,13 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       }
       // filter based on members attribute
       if (attributes.members && attributes.members.length > 0) {
-        const projectMemberIds = project?.members.map((member) => member?.id) || [];
+        const projectMemberIds = project?.members.map((member) => member?.member_id) || [];
         isMatched = isMatched && attributes.members.some((member) => projectMemberIds.includes(member));
+      }
+      // filter based on access attribute
+      if (attributes.access && attributes.access.length > 0) {
+        const projectNetwork = project.network === 2 ? "public" : "private";
+        isMatched = isMatched && includes(attributes.access, projectNetwork);
       }
       // filter based on archived attribute
       if (attributes.archived) {
@@ -94,6 +96,42 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       }
       return isMatched;
     });
+
+  handleProjectLocalFilters = {
+    fetchFiltersFromStorage: () => {
+      const _filters = storage.get("project_local_filters");
+      return _filters ? JSON.parse(_filters) : [];
+    },
+
+    get: (workspaceSlug: string) => {
+      const storageFilters = this.handleProjectLocalFilters.fetchFiltersFromStorage();
+      const currentFilterIndex = storageFilters.findIndex((filter: any) => filter.workspaceSlug === workspaceSlug);
+
+      if (!currentFilterIndex && currentFilterIndex.length < 0) return undefined;
+      return storageFilters[currentFilterIndex]?.filters || {};
+    },
+
+    set: (filterType: keyof TProjectFilters, workspaceSlug: string, filters: Partial<TProjectFilters>) => {
+      const storageFilters = this.handleProjectLocalFilters.fetchFiltersFromStorage();
+      const currentFilterIndex = storageFilters.findIndex((filter: any) => filter.workspaceSlug === workspaceSlug);
+
+      if (currentFilterIndex < 0)
+        storageFilters.push({
+          workspaceSlug: workspaceSlug,
+          filters: filters,
+        });
+      else
+        storageFilters[currentFilterIndex] = {
+          ...storageFilters[currentFilterIndex],
+          filters: {
+            ...storageFilters[currentFilterIndex].filters,
+            [filterType]: filters[filterType],
+          },
+        };
+
+      storage.set("project_local_filters", JSON.stringify(storageFilters));
+    },
+  };
 
   /**
    * @description sort the project based on the display filters order_by and sort_order
@@ -162,9 +200,11 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
     switch (groupBy) {
       // project grouping by state_id
       case "states": {
-        const projectStateIds = this.store.workspaceProjectStates.getProjectStateIdsByWorkspaceId(workspaceId);
+        const projectStateIds =
+          this.store.workspaceProjectStates.getProjectStateIdsWithGroupingByWorkspaceId(workspaceId);
+        const projectStateIdsArray = projectStateIds ? Object.values(projectStateIds).flat() : [];
         const projectsByStates = {} as TProjectsBoardLayoutStructure;
-        (projectStateIds || []).forEach((stateId) => {
+        (projectStateIdsArray || []).forEach((stateId) => {
           const stateFilteredProjects = projects.filter((project) => project.state_id === stateId);
           projectsByStates[stateId] = stateFilteredProjects.map((project) => project.id);
         });
