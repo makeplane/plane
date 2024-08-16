@@ -48,7 +48,7 @@ const ImportsPage = observer(() => {
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="flex h-full flex-col gap-10 rounded-xl px-8">
+        <div className="flex h-full flex-col gap-10 rounded-xl md:pr-9 pr-4">
           <div className="flex items-center border-b border-custom-border-100 py-3.5">
             <h3 className="text-xl font-medium">Imports</h3>
           </div>
@@ -103,7 +103,7 @@ const ImportsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto py-8 pr-9">
+      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto md:pr-9 pr-4">
         <div className="flex items-center border-b border-custom-border-100 py-3.5 flex-shrink-0">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>
