@@ -54,12 +54,12 @@ class AskAIEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         task = request.data.get("task", "ASK_AI")
-        context = request.data.get("context", "")
-        user_prompt = request.data.get("text_input", "")
+        context = request.data.get("text_input", "")
+        user_prompt = request.data.get("query", "")
 
         if not context or not user_prompt:
             return Response(
-                {"error": "Both context and user prompt are required"},
+                {"error": "Query and Text input are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
