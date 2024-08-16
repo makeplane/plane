@@ -14,12 +14,14 @@ import {
   EditorRefApi,
   IMentionHighlight,
   IMentionSuggestion,
+  TAIHandler,
   TDisplayConfig,
   TExtensions,
   TFileHandler,
 } from "@/types";
 
 interface IDocumentEditor {
+  aiHandler?: TAIHandler;
   containerClassName?: string;
   disabledExtensions?: TExtensions[];
   displayConfig?: TDisplayConfig;
@@ -41,6 +43,7 @@ interface IDocumentEditor {
 
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
+    aiHandler,
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
@@ -84,6 +87,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   return (
     <PageRenderer
       displayConfig={displayConfig}
+      aiHandler={aiHandler}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
       id={id}
