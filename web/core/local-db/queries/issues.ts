@@ -1,10 +1,10 @@
+import { EIssueGroupBYServerToProperty } from "@plane/constants";
+import { TIssue } from "@plane/types";
 import { IssueService } from "@/services/issue/issue.service";
 import { PROJECT_OFFLINE_STATUS } from "../load-issues";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "../query-constructor";
 import { runQuery } from "../query-executor";
 import { SQL } from "../sqlite";
-import { EIssueGroupBYServerToProperty } from "@plane/constants";
-import { TIssue, TIssues } from "@plane/types";
 
 const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 
@@ -19,14 +19,14 @@ export const getIssues = async (workspaceSlug: string, projectId: string, querie
 
   await SQL.syncInProgress;
   const query = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
-  //const countQuery = issueFilterCountQueryConstructor(queries);
+  const countQuery = issueFilterCountQueryConstructor(workspaceSlug, projectId, queries);
   const start = performance.now();
-  //const [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
-  const issuesRaw = await runQuery(query);
+  const [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
+  // const issuesRaw = await runQuery(query);
   const end = performance.now();
 
-  //const { total_count } = count[0];
-  const total_count = 2300;
+  const { total_count } = count[0];
+  // const total_count = 2300;
 
   const [pageSize, page, offset] = cursor.split(":");
 

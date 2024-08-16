@@ -36,7 +36,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
         FROM (
             SELECT im.issue_id,
             im.value AS group_id,
-            RANK() OVER (
+            ROW_NUMBER() OVER (
                PARTITION BY im.value
                ${orderByString}
            ) AS rank,
@@ -80,7 +80,9 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 };
 
 export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  let sql = issueFilterQueryConstructor(workspaceSlug, projectId, queries);
+  // Remove group by from the query to fallback to non group query
+  const { group_by, ...otherProps } = queries;
+  let sql = issueFilterQueryConstructor(workspaceSlug, projectId, otherProps);
 
   sql = sql.replace("SELECT *", "SELECT COUNT(DISTINCT i.id) as total_count");
   // Remove everything after group by i.id
