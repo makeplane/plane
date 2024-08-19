@@ -17,8 +17,12 @@ import { groupDetails, highlightProjectOnDrop } from "./utils";
 type ProjectBoardGroupItem = {
   groupByKey: string;
   projectIds: string[];
-  verticalAlign: boolean;
-  setVerticalAlign: (value: boolean) => void;
+  verticalAlign: { [key: string]: boolean };
+  setVerticalAlign: (
+    value: (state: { [key: string]: boolean }) => {
+      [key: string]: boolean;
+    }
+  ) => void;
   dropErrorMessage?: string;
 };
 
@@ -98,11 +102,11 @@ export const ProjectBoardGroupItem: FC<ProjectBoardGroupItem> = observer((props)
         <ProjectBoardGroupItemHeader
           groupByKey={groupByKey}
           projectIds={projectIds}
-          verticalAlign={verticalAlign}
+          verticalAlign={verticalAlign[`${groupByKey}`] || false}
           setVerticalAlign={setVerticalAlign}
         />
         {/* projects placeholder */}
-        {!verticalAlign && projectIds.length > 0 && (
+        {!verticalAlign[groupByKey] && projectIds.length > 0 && (
           <ProjectBoardList groupByKey={groupByKey} projectIds={projectIds} />
         )}
       </div>
