@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // ui
 import { Button, Checkbox, Tooltip } from "@plane/ui";
 // helpers
@@ -20,11 +21,13 @@ type Props = {
 
 export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   const { className, selectionHelpers } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
   const { toggleProPlanModal } = useWorkspaceSubscription();
   // derived values
-  const isBulkOpsEnabled = useFlag("BULK_OPS");
+  const isBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS");
   const { handleClearSelection } = selectionHelpers;
 
   if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;

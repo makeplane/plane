@@ -36,7 +36,7 @@ export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Intake className="h-4 w-4 flex-shrink-0" />}
+      icon={<Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

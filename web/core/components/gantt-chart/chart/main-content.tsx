@@ -38,12 +38,12 @@ type Props = {
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;
-  enableBlockLeftResize: boolean;
-  enableBlockMove: boolean;
-  enableBlockRightResize: boolean;
-  enableReorder: boolean;
-  enableSelection: boolean;
-  enableAddBlock: boolean;
+  enableBlockLeftResize: boolean | ((blockId: string) => boolean);
+  enableBlockMove: boolean | ((blockId: string) => boolean);
+  enableBlockRightResize: boolean | ((blockId: string) => boolean);
+  enableReorder: boolean | ((blockId: string) => boolean);
+  enableSelection: boolean | ((blockId: string) => boolean);
+  enableAddBlock: boolean | ((blockId: string) => boolean);
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;

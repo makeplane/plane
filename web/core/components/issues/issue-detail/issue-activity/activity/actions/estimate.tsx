@@ -21,7 +21,7 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
 
   return (
     <IssueActivityBlockComponent
-      icon={<Triangle size={14} color="#6b7280" aria-hidden="true" />}
+      icon={<Triangle size={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

@@ -4,6 +4,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 export type TCollapsibleProps = {
   title: string | React.ReactNode;
   children: React.ReactNode;
+  buttonRef?: React.RefObject<HTMLButtonElement>;
   className?: string;
   buttonClassName?: string;
   isOpen?: boolean;
@@ -12,7 +13,7 @@ export type TCollapsibleProps = {
 };
 
 export const Collapsible: FC<TCollapsibleProps> = (props) => {
-  const { title, children, className, buttonClassName, isOpen, onToggle, defaultOpen } = props;
+  const { title, children, buttonRef, className, buttonClassName, isOpen, onToggle, defaultOpen } = props;
   // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(isOpen || defaultOpen ? true : false);
 
@@ -33,12 +34,11 @@ export const Collapsible: FC<TCollapsibleProps> = (props) => {
 
   return (
     <Disclosure as="div" className={className}>
-      <Disclosure.Button className={buttonClassName} onClick={handleOnClick}>
+      <Disclosure.Button ref={buttonRef} className={buttonClassName} onClick={handleOnClick}>
         {title}
       </Disclosure.Button>
       <Transition
         show={localIsOpen}
-        className="overflow-hidden"
         enter="transition-max-height duration-400 ease-in-out"
         enterFrom="max-h-0"
         enterTo="max-h-screen"

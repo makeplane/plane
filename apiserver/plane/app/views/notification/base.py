@@ -19,6 +19,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.paginator import BasePaginator
+from plane.app.permissions import allow_permission, ROLE
 
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
@@ -39,6 +40,10 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             .select_related("workspace", "project," "triggered_by", "receiver")
         )
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def list(self, request, slug):
         # Get query parameters
         snoozed = request.GET.get("snoozed", "false")
@@ -168,6 +173,10 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def partial_update(self, request, slug, pk):
         notification = Notification.objects.get(
             workspace__slug=slug, pk=pk, receiver=request.user
@@ -185,6 +194,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def mark_read(self, request, slug, pk):
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug, pk=pk
@@ -194,6 +206,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def mark_unread(self, request, slug, pk):
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug, pk=pk
@@ -203,6 +218,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def archive(self, request, slug, pk):
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug, pk=pk
@@ -212,6 +230,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def unarchive(self, request, slug, pk):
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug, pk=pk
@@ -223,6 +244,11 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
 
 class UnreadNotificationEndpoint(BaseAPIView):
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def get(self, request, slug):
         # Watching Issues Count
         unread_notifications_count = (
@@ -260,6 +286,10 @@ class UnreadNotificationEndpoint(BaseAPIView):
 
 
 class MarkAllReadNotificationViewSet(BaseViewSet):
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def create(self, request, slug):
         snoozed = request.data.get("snoozed", False)
         archived = request.data.get("archived", False)
@@ -343,6 +373,9 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
     serializer_class = UserNotificationPreferenceSerializer
 
     # request the object
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def get(self, request):
         user_notification_preference = UserNotificationPreference.objects.get(
             user=request.user
@@ -353,6 +386,9 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update the object
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def patch(self, request):
         user_notification_preference = UserNotificationPreference.objects.get(
             user=request.user

@@ -20,7 +20,7 @@ export const IssuePriorityActivity: FC<TIssuePriorityActivity> = observer((props
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Signal size={14} color="#6b7280" aria-hidden="true" />}
+      icon={<Signal size={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

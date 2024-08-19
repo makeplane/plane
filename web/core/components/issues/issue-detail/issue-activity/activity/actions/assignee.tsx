@@ -21,7 +21,7 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Users className="h-3 w-3 flex-shrink-0" />}
+      icon={<Users className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

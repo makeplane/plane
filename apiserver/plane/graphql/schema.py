@@ -21,6 +21,8 @@ from .queries.issue import (
     IssueCommentActivityQuery,
 )
 from .queries.page import PageQuery
+from .queries.cycle import CycleQuery, CycleIssueQuery
+from .queries.module import ModuleQuery, ModuleIssueQuery
 from .queries.search import ProjectSearchQuery
 from .queries.attachment import IssueAttachmentQuery
 
@@ -39,7 +41,8 @@ from .mutations.issue import (
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
 from .mutations.page import PageFavoriteMutation
-
+from .mutations.cycle import CycleIssueMutation
+from .mutations.module import ModuleIssueMutation
 
 # combined query class for all
 @strawberry.type
@@ -64,6 +67,10 @@ class Query(
     WorkspaceStateQuery,
     ProjectSearchQuery,
     IssueAttachmentQuery,
+    CycleQuery,
+    CycleIssueQuery,
+    ModuleQuery,
+    ModuleIssueQuery,
 ):
     pass
 
@@ -82,6 +89,8 @@ class Mutation(
     ProfileMutation,
     PageFavoriteMutation,
     IssueAttachmentMutation,
+    CycleIssueMutation,
+    ModuleIssueMutation,
 ):
     pass
 

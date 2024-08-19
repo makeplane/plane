@@ -25,10 +25,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectLitePermission,
-)
+from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -60,15 +57,10 @@ from plane.utils.paginator import (
 from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
 
-# Module imports
-
 
 class IssueListEndpoint(BaseAPIView):
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
 
@@ -167,6 +159,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "type_id",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -185,9 +178,6 @@ class IssueViewSet(BaseViewSet):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     search_fields = [
         "name",
@@ -233,6 +223,7 @@ class IssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
@@ -256,6 +247,15 @@ class IssueViewSet(BaseViewSet):
             group_by=group_by,
             sub_group_by=sub_group_by,
         )
+
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            issue_queryset = issue_queryset.filter(created_by=request.user)
 
         if group_by:
             if sub_group_by:
@@ -338,6 +338,7 @@ class IssueViewSet(BaseViewSet):
                 ),
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
@@ -402,6 +403,7 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "type_id",
                 )
                 .first()
             )
@@ -412,6 +414,9 @@ class IssueViewSet(BaseViewSet):
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], creator=True, model=Issue
+    )
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -438,7 +443,8 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -483,6 +489,7 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -548,23 +555,11 @@ class IssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
-        if issue.created_by_id != request.user.id and (
-            not ProjectMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                project_id=project_id,
-                is_active=True,
-            ).exists()
-        ):
-            return Response(
-                {"error": "Only admin or creator can delete the issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         issue.delete()
         issue_activity.delay(
@@ -582,10 +577,8 @@ class IssueViewSet(BaseViewSet):
 
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def patch(self, request, slug, project_id):
         issue_property = IssueUserProperty.objects.get(
             user=request.user,
@@ -605,6 +598,7 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def get(self, request, slug, project_id):
         issue_property, _ = IssueUserProperty.objects.get_or_create(
             user=request.user, project_id=project_id
@@ -614,23 +608,9 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN])
     def delete(self, request, slug, project_id):
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member=request.user,
-            role__in=[15, 10, 5],
-            project_id=project_id,
-            is_active=True,
-        ).exists():
-
-            return Response(
-                {"error": "Only admin can perform this action"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         issue_ids = request.data.get("issue_ids", [])
 
