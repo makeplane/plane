@@ -77,7 +77,7 @@ export const CycleForm: React.FC<Props> = (props) => {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} Cycle</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} cycle</h3>
         </div>
         <div className="space-y-3">
           <div className="space-y-1">

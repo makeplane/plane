@@ -5,6 +5,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Q
 
 # Modeule imports
 from plane.db.mixins import AuditModel
@@ -124,7 +125,22 @@ class Project(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
     class Meta:
-        unique_together = [["identifier", "workspace"], ["name", "workspace"]]
+        unique_together = [
+            ["identifier", "workspace", "deleted_at"],
+            ["name", "workspace", "deleted_at"],
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["identifier", "workspace"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_unique_identifier_workspace_when_deleted_at_null",
+            ),
+            models.UniqueConstraint(
+                fields=["name", "workspace"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_unique_name_workspace_when_deleted_at_null",
+            ),
+        ]
         verbose_name = "Project"
         verbose_name_plural = "Projects"
         db_table = "projects"
@@ -198,7 +214,14 @@ class ProjectMember(ProjectBaseModel):
         super(ProjectMember, self).save(*args, **kwargs)
 
     class Meta:
-        unique_together = ["project", "member"]
+        unique_together = ["project", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "member"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_member_unique_project_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Member"
         verbose_name_plural = "Project Members"
         db_table = "project_members"
@@ -223,13 +246,21 @@ class ProjectIdentifier(AuditModel):
     name = models.CharField(max_length=12, db_index=True)
 
     class Meta:
-        unique_together = ["name", "workspace"]
+        unique_together = ["name", "workspace", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "workspace"],
+                condition=Q(deleted_at__isnull=True),
+                name="unique_name_workspace_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Identifier"
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifiers"
         ordering = ("-created_at",)
 
 
+# DEPRECATED TODO: - Remove in next release
 class ProjectFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -300,7 +331,14 @@ class ProjectPublicMember(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "member"]
+        unique_together = ["project", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_public_member_unique_project_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Public Member"
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"

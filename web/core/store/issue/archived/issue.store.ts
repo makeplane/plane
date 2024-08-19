@@ -73,6 +73,9 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
   };
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug

@@ -136,7 +136,7 @@ const ProgressChart: React.FC<Props> = ({
         enableSlices="x"
         sliceTooltip={(datum) => (
           <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
-            {datum.slice.points[0].data.yFormatted}
+            {datum.slice.points?.[1]?.data?.yFormatted ?? datum.slice.points[0].data.yFormatted}
             <span className="text-custom-text-200"> {plotTitle} pending on </span>
             {datum.slice.points[0].data.xFormatted}
           </div>

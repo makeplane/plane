@@ -2,13 +2,12 @@
 
 import { FC, Fragment, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // types
-import { ICycle } from "@plane/types";
+import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 // components
@@ -23,19 +22,22 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { useIssueDetail, useIssues } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
   projectId: string;
   cycle: ICycle | null;
   cycleId?: string | null;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
 };
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
-  const { workspaceSlug, projectId, cycle, cycleId } = props;
+  const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
@@ -59,9 +61,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   } = useIssues(EIssuesStoreType.CYCLE);
   const {
     issue: { getIssueById },
+    setPeekIssue,
   } = useIssueDetail();
-
-  const { currentProjectDetails } = useProject();
 
   useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
@@ -171,26 +172,27 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       if (!issue) return null;
 
                       return (
-                        <Link
+                        <div
                           key={issue.id}
-                          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                           className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                          onClick={() => {
+                            if (issue.id) {
+                              setPeekIssue({ workspaceSlug, projectId, issueId: issue.id });
+                              handleFiltersUpdate("priority", ["urgent", "high"], true);
+                            }
+                          }}
                         >
                           <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                            <PriorityIcon priority={issue.priority} withContainer size={12} />
-
-                            <Tooltip
-                              tooltipHeading="Issue ID"
-                              tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
-                            >
-                              <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                {currentProjectDetails?.identifier}-{issue.sequence_id}
-                              </span>
-                            </Tooltip>
+                            <IssueIdentifier
+                              issueId={issue.id}
+                              projectId={projectId}
+                              textContainerClassName="text-xs text-custom-text-200"
+                            />
                             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
+                          <PriorityIcon priority={issue.priority} withContainer size={12} />
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             <StateDropdown
                               value={issue.state_id}
@@ -215,7 +217,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                               </Tooltip>
                             )}
                           </div>
-                        </Link>
+                        </div>
                       );
                     })}
                     {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
@@ -262,6 +264,11 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         }
                         completed={assignee.completed_issues}
                         total={assignee.total_issues}
+                        onClick={() => {
+                          if (assignee.assignee_id) {
+                            handleFiltersUpdate("assignees", [assignee.assignee_id], true);
+                          }
+                        }}
                       />
                     );
                   else
@@ -317,6 +324,11 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                     }
                     completed={label.completed_issues}
                     total={label.total_issues}
+                    onClick={() => {
+                      if (label.label_id) {
+                        handleFiltersUpdate("labels", [label.label_id], true);
+                      }
+                    }}
                   />
                 ))
               ) : (

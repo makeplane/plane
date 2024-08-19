@@ -21,7 +21,7 @@ class UserFavorite(WorkspaceBaseModel):
     entity_identifier = models.UUIDField(null=True, blank=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     is_folder = models.BooleanField(default=False)
-    sequence = models.IntegerField(default=65535)
+    sequence = models.FloatField(default=65535)
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -31,7 +31,19 @@ class UserFavorite(WorkspaceBaseModel):
     )
 
     class Meta:
-        unique_together = ["entity_type", "user", "entity_identifier"]
+        unique_together = [
+            "entity_type",
+            "user",
+            "entity_identifier",
+            "deleted_at",
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["entity_type", "entity_identifier", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="user_favorite_unique_entity_type_entity_identifier_user_when_deleted_at_null",
+            )
+        ]
         verbose_name = "User Favorite"
         verbose_name_plural = "User Favorites"
         db_table = "user_favorites"
@@ -39,9 +51,14 @@ class UserFavorite(WorkspaceBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            largest_sequence = UserFavorite.objects.filter(
-                workspace=self.project.workspace
-            ).aggregate(largest=models.Max("sequence"))["largest"]
+            if self.project:
+                largest_sequence = UserFavorite.objects.filter(
+                    workspace=self.project.workspace
+                ).aggregate(largest=models.Max("sequence"))["largest"]
+            else:
+                largest_sequence = UserFavorite.objects.filter(
+                    workspace=self.workspace,
+                ).aggregate(largest=models.Max("sequence"))["largest"]
             if largest_sequence is not None:
                 self.sequence = largest_sequence + 10000
 

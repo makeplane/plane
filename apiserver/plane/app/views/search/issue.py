@@ -9,9 +9,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import (
-    Issue,
-)
+from plane.db.models import Issue, ProjectMember
 from plane.utils.issue_search import search_issues
 
 
@@ -52,8 +50,14 @@ class IssueSearchEndpoint(BaseAPIView):
             issue = Issue.issue_objects.get(pk=issue_id)
             issues = issues.filter(
                 ~Q(pk=issue_id),
-                ~Q(issue_related__issue=issue),
-                ~Q(issue_relation__related_issue=issue),
+                ~Q(
+                    issue_related__issue=issue,
+                    issue_related__deleted_at__isnull=True,
+                ),
+                ~Q(
+                    issue_relation__related_issue=issue,
+                    issue_related__deleted_at__isnull=True,
+                ),
             )
         if sub_issue == "true" and issue_id:
             issue = Issue.issue_objects.get(pk=issue_id)
@@ -69,6 +73,16 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if target_date == "none":
             issues = issues.filter(target_date__isnull=True)
+        
+        if ProjectMember.objects.filter(
+            project_id=project_id,
+            member=self.request.user,
+            is_active=True,
+            role=5
+        ).exists():
+            issues = issues.filter(
+                created_by=self.request.user
+        )
 
         return Response(
             issues.values(

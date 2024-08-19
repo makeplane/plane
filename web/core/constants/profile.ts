@@ -31,26 +31,26 @@ export const PROFILE_ACTION_LINKS: {
     Icon: Activity,
   },
   {
-      key: "appearance",
-      label: "Appearance",
-      href: `/profile/appearance`,
-      highlight: (pathname: string) => pathname.includes("/profile/appearance"),
-      Icon: Settings2,
-    },
-    {
-      key: "notifications",
-      label: "Notifications",
-      href: `/profile/notifications`,
-      highlight: (pathname: string) => pathname === "/profile/notifications/",
-      Icon: Bell,
-    },
+    key: "appearance",
+    label: "Appearance",
+    href: `/profile/appearance`,
+    highlight: (pathname: string) => pathname.includes("/profile/appearance"),
+    Icon: Settings2,
+  },
+  {
+    key: "notifications",
+    label: "Notifications",
+    href: `/profile/notifications`,
+    highlight: (pathname: string) => pathname === "/profile/notifications/",
+    Icon: Bell,
+  },
 ];
 
 export const PROFILE_VIEWER_TAB = [
   {
     route: "",
     label: "Summary",
-    selected: "",
+    selected: "/",
   },
 ];
 
@@ -58,21 +58,21 @@ export const PROFILE_ADMINS_TAB = [
   {
     route: "assigned",
     label: "Assigned",
-    selected: "/assigned",
+    selected: "/assigned/",
   },
   {
     route: "created",
     label: "Created",
-    selected: "/created",
+    selected: "/created/",
   },
   {
     route: "subscribed",
     label: "Subscribed",
-    selected: "/subscribed",
+    selected: "/subscribed/",
   },
   {
     route: "activity",
     label: "Activity",
-    selected: "/activity",
+    selected: "/activity/",
   },
 ];

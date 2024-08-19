@@ -8,6 +8,7 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TDisplayConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
@@ -18,7 +19,10 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web components
+import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
@@ -72,7 +76,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -80,14 +83,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
-
+  // editor flaggings
+  const { documentEditor } = useEditorFlagging();
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
-  const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
-    workspaceSlug?.toString() ?? "",
-    projectId?.toString() ?? ""
-  );
+  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+
+  const displayConfig: TDisplayConfig = {
+    fontSize,
+    fontStyle,
+  };
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -101,7 +107,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       <div
         className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full p-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
-          "w-40 lg:w-56": !isFullWidth,
+          "w-[10rem] lg:w-[14rem]": !isFullWidth,
           "w-[5%]": isFullWidth,
         })}
       >
@@ -113,8 +119,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         )}
       </div>
       <div
-        className={cn("h-full w-full pt-5", {
-          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-14rem-14rem)]": !isFullWidth,
+        className={cn("h-full w-full pt-5 duration-200", {
+          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
           "md:w-[90%]": isFullWidth,
         })}
       >
@@ -140,6 +146,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               onChange={handleDescriptionChange}
               mentionHandler={{
@@ -149,27 +156,35 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               embedHandler={{
                 issue: issueEmbedProps,
               }}
+              disabledExtensions={documentEditor}
+              aiHandler={{
+                menu: ({ onClose }) => <EditorAIMenu editorRef={editorRef} onClose={onClose} />,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
               ref={readOnlyEditorRef}
+              id={pageId}
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
               }}
               embedHandler={{
-                issue: issueEmbedReadOnlyProps,
+                issue: {
+                  widgetCallback: issueEmbedProps.widgetCallback,
+                },
               }}
             />
           )}
         </div>
       </div>
       <div
-        className={cn("hidden xl:block flex-shrink-0", {
-          "w-40 lg:w-56": !isFullWidth,
+        className={cn("hidden xl:block flex-shrink-0 duration-200", {
+          "w-[10rem] lg:w-[14rem]": !isFullWidth,
           "w-[5%]": isFullWidth,
         })}
       />

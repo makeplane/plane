@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -84,12 +85,14 @@ export const MemberOptions = observer((props: Props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  return (
-    <Combobox.Options className="fixed z-10" static>
+  return createPortal(
+    <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20"
         ref={setPopperElement}
-        style={styles.popper}
+        style={{
+          ...styles.popper,
+        }}
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
@@ -134,6 +137,7 @@ export const MemberOptions = observer((props: Props) => {
           )}
         </div>
       </div>
-    </Combobox.Options>
+    </Combobox.Options>,
+    document.body
   );
 });

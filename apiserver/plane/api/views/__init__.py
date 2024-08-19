@@ -25,6 +25,7 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import WorkspaceMemberAPIEndpoint
+from .member import ProjectMemberAPIEndpoint
 
 from .inbox import InboxIssueAPIEndpoint
+

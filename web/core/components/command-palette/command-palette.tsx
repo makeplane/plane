@@ -43,9 +43,10 @@ export const CommandPalette: FC = observer(() => {
   const { platform } = usePlatformOS();
   const {
     data: currentUser,
-    canPerformProjectCreateActions,
-    canPerformWorkspaceCreateActions,
+    canPerformProjectMemberActions,
+    canPerformWorkspaceMemberActions,
     canPerformAnyCreateAction,
+    canPerformProjectAdminActions,
   } = useUser();
   const {
     issues: { removeIssue },
@@ -102,27 +103,40 @@ export const CommandPalette: FC = observer(() => {
   // auth
   const performProjectCreateActions = useCallback(
     (showToast: boolean = true) => {
-      if (!canPerformProjectCreateActions && showToast)
+      if (!canPerformProjectMemberActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
 
-      return canPerformProjectCreateActions;
+      return canPerformProjectMemberActions;
     },
-    [canPerformProjectCreateActions]
+    [canPerformProjectMemberActions]
+  );
+
+  const performProjectBulkDeleteActions = useCallback(
+    (showToast: boolean = true) => {
+      if (!canPerformProjectAdminActions && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+
+      return canPerformProjectAdminActions;
+    },
+    [canPerformProjectAdminActions]
   );
 
   const performWorkspaceCreateActions = useCallback(
     (showToast: boolean = true) => {
-      if (!canPerformWorkspaceCreateActions && showToast)
+      if (!canPerformWorkspaceMemberActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
-      return canPerformWorkspaceCreateActions;
+      return canPerformWorkspaceMemberActions;
     },
-    [canPerformWorkspaceCreateActions]
+    [canPerformWorkspaceMemberActions]
   );
 
   const performAnyProjectCreateActions = useCallback(
@@ -198,7 +212,6 @@ export const CommandPalette: FC = observer(() => {
       toggleCreatePageModal,
       toggleCreateProjectModal,
       toggleCreateViewModal,
-      toggleShortcutModal,
     ]
   );
 
@@ -210,6 +223,7 @@ export const CommandPalette: FC = observer(() => {
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
       const shiftClicked = shiftKey;
+      const deleteKey = keyPressed === "backspace" || keyPressed === "delete";
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
@@ -229,7 +243,11 @@ export const CommandPalette: FC = observer(() => {
         toggleShortcutModal(true);
       }
 
-      if (cmdClicked) {
+      if (deleteKey) {
+        if (performProjectBulkDeleteActions()) {
+          shortcutsList.project.delete.action();
+        }
+      } else if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
@@ -242,15 +260,18 @@ export const CommandPalette: FC = observer(() => {
         if (
           Object.keys(shortcutsList.global).includes(keyPressed) &&
           ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
-        )
+        ) {
           shortcutsList.global[keyPressed].action();
+        }
         // workspace authorized actions
         else if (
           Object.keys(shortcutsList.workspace).includes(keyPressed) &&
           workspaceSlug &&
           performWorkspaceCreateActions()
-        )
+        ) {
+          e.preventDefault();
           shortcutsList.workspace[keyPressed].action();
+        }
         // project authorized actions
         else if (
           Object.keys(shortcutsList.project).includes(keyPressed) &&
@@ -264,15 +285,18 @@ export const CommandPalette: FC = observer(() => {
       }
     },
     [
-      performAnyProjectCreateActions,
-      performProjectCreateActions,
-      performWorkspaceCreateActions,
       copyIssueUrlToClipboard,
       isAnyModalOpen,
+      platform,
+      performAnyProjectCreateActions,
+      performProjectBulkDeleteActions,
+      performProjectCreateActions,
+      performWorkspaceCreateActions,
       projectId,
       setTrackElement,
       shortcutsList,
       toggleCommandPaletteModal,
+      toggleShortcutModal,
       toggleSidebar,
       workspaceSlug,
     ]

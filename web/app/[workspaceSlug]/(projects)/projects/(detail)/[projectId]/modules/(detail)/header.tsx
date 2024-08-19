@@ -302,7 +302,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   }}
                   size="sm"
                 >
-                  Add Issue
+                  Add issue
                 </Button>
               </>
             )}

@@ -20,7 +20,7 @@ import {
   useCommandPalette,
 } from "@/hooks/store";
 // images
-import emptyProject from "@/public/empty-state/project.svg";
+import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
   children: ReactNode;

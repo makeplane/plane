@@ -11,6 +11,7 @@ from rest_framework import serializers
 # Module imports
 from plane.db.models import (
     Issue,
+    IssueType,
     IssueActivity,
     IssueAssignee,
     IssueAttachment,
@@ -46,6 +47,12 @@ class IssueSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        queryset=IssueType.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Issue
@@ -53,7 +60,6 @@ class IssueSerializer(BaseSerializer):
             "id",
             "workspace",
             "project",
-            "created_by",
             "updated_by",
             "updated_at",
         ]
@@ -130,9 +136,19 @@ class IssueSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
+        issue_type = validated_data.pop("type", None)
+
+        if not issue_type:
+            # Get default issue type
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id, is_default=True
+            ).first()
+            issue_type = issue_type
+
         issue = Issue.objects.create(
             **validated_data,
             project_id=project_id,
+            type=issue_type,
         )
 
         # Issue Audit Users
@@ -270,6 +286,7 @@ class LabelSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "deleted_at",
         ]
 
 
@@ -338,9 +355,7 @@ class IssueAttachmentSerializer(BaseSerializer):
             "workspace",
             "project",
             "issue",
-            "created_by",
             "updated_by",
-            "created_at",
             "updated_at",
         ]
 

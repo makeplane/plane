@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { TIssue, TPaginationData } from "@plane/types";
 // components
-import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
+import { CalendarQuickAddIssueActions, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
@@ -75,9 +75,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
         <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
-          <CalendarQuickAddIssueForm
-            formKey="target_date"
-            groupId={formattedDatePayload}
+          <CalendarQuickAddIssueActions
             prePopulatedData={{
               target_date: formattedDatePayload,
             }}
@@ -91,7 +89,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         <div className="flex items-center px-2.5 py-1">
           <button
             type="button"
-            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 font-medium  hover:bg-custom-background-80 text-custom-primary-100 hover:text-custom-primary-200"
             onClick={() => loadMoreIssues(formattedDatePayload)}
           >
             Load More

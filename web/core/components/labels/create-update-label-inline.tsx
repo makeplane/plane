@@ -66,7 +66,7 @@ export const CreateUpdateLabelInline = observer(
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: error?.detail ?? "Something went wrong. Please try again later.",
+            message: error?.detail ?? error.error ?? "Something went wrong. Please try again later.",
           });
           reset(formData);
         });

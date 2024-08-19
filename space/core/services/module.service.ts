@@ -8,7 +8,7 @@ export class ModuleService extends APIService {
   }
 
   async getModules(anchor: string): Promise<TPublicModule[]> {
-    return this.get(`api/public/anchor/${anchor}/modules/`)
+    return this.get(`/api/public/anchor/${anchor}/modules/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

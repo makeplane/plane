@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +17,7 @@ import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
-import { EXPORTERS_LIST } from "@/constants/workspace";
+import { EUserWorkspaceRoles, EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -37,7 +37,11 @@ const IntegrationGuide = observer(() => {
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");
   // store hooks
-  const { data: currentUser } = useUser();
+  const {
+    data: currentUser,
+    canPerformAnyCreateAction,
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { workspaceProjectIds } = useProject();
 
   const { data: exporterServices } = useSWR(
@@ -47,11 +51,29 @@ const IntegrationGuide = observer(() => {
       : null
   );
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
+  };
+
   const handleCsvClose = () => {
     router.replace(`/${workspaceSlug?.toString()}/settings/exports`);
   };
 
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (exporterServices?.results?.some((service) => service.status === "processing")) {
+        handleRefresh();
+      } else {
+        clearInterval(interval);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [exporterServices]);
 
   return (
     <>
@@ -76,7 +98,11 @@ const IntegrationGuide = observer(() => {
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <span>
-                        <Button variant="primary" className="capitalize" disabled={!hasProjects}>
+                        <Button
+                          variant="primary"
+                          className="capitalize"
+                          disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+                        >
                           {service.type}
                         </Button>
                       </span>
@@ -94,12 +120,7 @@ const IntegrationGuide = observer(() => {
                 <button
                   type="button"
                   className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
-                  onClick={() => {
-                    setRefreshing(true);
-                    mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`)).then(() =>
-                      setRefreshing(false)
-                    );
-                  }}
+                  onClick={handleRefresh}
                 >
                   <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
                   {refreshing ? "Refreshing..." : "Refresh status"}

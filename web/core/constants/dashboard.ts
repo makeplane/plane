@@ -279,7 +279,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "active-cycles",
     label: "Cycles",
     href: `/active-cycles`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: EUserWorkspaceRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
     Icon: ContrastIcon,
   },
@@ -293,12 +293,16 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
   },
 ];
 
+type TLinkOptions = {
+  userId: string | undefined;
+};
+
 export const SIDEBAR_USER_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
   access: EUserWorkspaceRoles;
-  highlight: (pathname: string, baseUrl: string) => boolean;
+  highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) => boolean;
   Icon: React.FC<Props>;
 }[] = [
   {
@@ -313,8 +317,9 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "your-work",
     label: "Your work",
     href: "/profile",
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/profile/`),
+    access: EUserWorkspaceRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
+      options?.userId ? pathname.includes(`${baseUrl}/profile/${options?.userId}`) : false,
     Icon: UserActivityIcon,
   },
   {

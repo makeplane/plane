@@ -119,6 +119,7 @@ class PageLog(BaseModel):
         return f"{self.page.name} {self.entity_name}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class PageBlock(ProjectBaseModel):
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, related_name="blocks"
@@ -175,6 +176,7 @@ class PageBlock(ProjectBaseModel):
         return f"{self.page.name} <{self.name}>"
 
 
+# DEPRECATED TODO: - Remove in next release
 class PageFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -232,7 +234,14 @@ class ProjectPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "page"]
+        unique_together = ["project", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_page_unique_project_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Page"
         verbose_name_plural = "Project Pages"
         db_table = "project_pages"
@@ -254,7 +263,14 @@ class TeamPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["team", "page"]
+        unique_together = ["team", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_page_unique_team_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team Page"
         verbose_name_plural = "Team Pages"
         db_table = "team_pages"

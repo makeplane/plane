@@ -65,7 +65,7 @@ export const useGroupIssuesDragNDrop = (
 
     if (isCycleChanged && workspaceSlug) {
       if (data[cycleKey]) {
-        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId).catch(() =>
+        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch(() =>
           setToast(errorToastProps)
         );
       } else {

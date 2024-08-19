@@ -10,8 +10,8 @@ import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace }
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
-import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.svg";
-import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace.svg";
+import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.webp";
+import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace-light.webp";
 import { LogoSpinner } from "../common";
 
 export enum ECreateOrJoinWorkspaceViews {

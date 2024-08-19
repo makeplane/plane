@@ -36,6 +36,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.api_logs_task.delete_api_logs",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-day-to-delete-hard-delete": {
+        "task": "plane.bgtasks.deletion_task.hard_delete",
+        "schedule": crontab(hour=0, minute=0),
+    },
 }
 
 # Load task modules from all registered Django app configs.

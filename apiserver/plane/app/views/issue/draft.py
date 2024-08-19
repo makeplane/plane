@@ -32,7 +32,7 @@ from plane.app.serializers import (
     IssueFlatSerializer,
     IssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
@@ -40,6 +40,7 @@ from plane.db.models import (
     IssueReaction,
     IssueSubscriber,
     Project,
+    ProjectMember,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -67,6 +68,7 @@ class IssueDraftViewSet(BaseViewSet):
             Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_draft=True)
+            .filter(deleted_at__isnull=True)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
@@ -380,6 +382,19 @@ class IssueDraftViewSet(BaseViewSet):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if issue.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         issue.delete()
         issue_activity.delay(
             type="issue_draft.activity.deleted",

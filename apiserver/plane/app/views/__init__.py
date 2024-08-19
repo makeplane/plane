@@ -40,6 +40,11 @@ from .workspace.base import (
     ExportWorkspaceUserActivityEndpoint,
 )
 
+from .workspace.favorite import (
+    WorkspaceFavoriteEndpoint,
+    WorkspaceFavoriteGroupEndpoint,
+)
+
 from .workspace.member import (
     WorkSpaceMemberViewSet,
     TeamMemberViewSet,
@@ -169,8 +174,10 @@ from .module.archive import (
     ModuleArchiveUnarchiveEndpoint,
 )
 
-from .api import ApiTokenEndpoint
-
+from .api import (
+    ApiTokenEndpoint,
+    ServiceApiTokenEndpoint,
+)
 
 from .page.base import (
     PageViewSet,

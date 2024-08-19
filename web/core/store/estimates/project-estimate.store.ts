@@ -26,6 +26,7 @@ export interface IProjectEstimateStore {
   error: TErrorCodes | undefined;
   // computed
   currentActiveEstimateId: string | undefined;
+  currentActiveEstimate: IEstimate | undefined;
   archivedEstimateIds: string[] | undefined;
   areEstimateEnabledByProjectId: (projectId: string) => boolean;
   estimateIdsByProjectId: (projectId: string) => string[] | undefined;
@@ -61,6 +62,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       error: observable,
       // computed
       currentActiveEstimateId: computed,
+      currentActiveEstimate: computed,
       archivedEstimateIds: computed,
       // actions
       getWorkspaceEstimates: action,
@@ -83,6 +85,20 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       (p) => p.project === projectId && p.last_used
     );
     return currentActiveEstimateId?.id ?? undefined;
+  }
+
+  // computed
+  /**
+   * @description get current active estimate for a project
+   * @returns { string | undefined }
+   */
+  get currentActiveEstimate(): IEstimate | undefined {
+    const { projectId } = this.store.router;
+    if (!projectId) return undefined;
+    const currentActiveEstimate = Object.values(this.estimates || {}).find(
+      (p) => p.project === projectId && p.last_used
+    );
+    return currentActiveEstimate ?? undefined;
   }
 
   /**
