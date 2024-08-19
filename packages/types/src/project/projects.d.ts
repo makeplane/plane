@@ -144,4 +144,5 @@ export interface ISearchIssueResponse {
   state__group: TStateGroups;
   state__name: string;
   workspace__slug: string;
+  type_id: string;
 }

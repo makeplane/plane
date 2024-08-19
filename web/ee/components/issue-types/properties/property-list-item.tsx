@@ -6,11 +6,12 @@ import omitBy from "lodash/omitBy";
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 // ui
-import { Logo, TOAST_TYPE, ToggleSwitch, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import { TOAST_TYPE, ToggleSwitch, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import {
+  IssuePropertyLogo,
   IssuePropertyQuickActions,
   PropertyAttributesDropdown,
   PropertyMandatoryFieldToggle,
@@ -356,14 +357,14 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       className={cn(
         "w-full h-8 flex items-center gap-2 group px-2 py-3 my-2 text-sm rounded hover:bg-custom-background-90 cursor-default",
         {
-          "bg-toast-text-warning/20 hover:bg-toast-text-warning/20": issuePropertyOperationMode,
+          "bg-yellow-500/15 hover:bg-yellow-500/15": issuePropertyOperationMode,
         }
       )}
     >
       <div className="whitespace-nowrap w-48 grow flex items-center gap-2 text-sm font-medium">
         {issuePropertyData?.logo_props && (
           <div className="flex-shrink-0 size-5 grid place-items-center">
-            <Logo logo={issuePropertyData.logo_props} size={16} type="lucide" customColor="text-custom-text-200" />
+            <IssuePropertyLogo icon_props={issuePropertyData.logo_props.icon} colorClassName="text-custom-text-200" />
           </div>
         )}
         <div className="w-full truncate overflow-hidden">

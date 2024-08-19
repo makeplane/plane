@@ -25,6 +25,8 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { getTabIndex } from "@/helpers/issue-modal.helper";
 // hooks
 import { useProjectEstimates, useProject } from "@/hooks/store";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -256,10 +258,15 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               type="button"
               className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
             >
-              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-              <span className="whitespace-nowrap">
-                {selectedParentIssue && `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`}
-              </span>
+              {selectedParentIssue?.project_id && (
+                <IssueIdentifier
+                  projectId={selectedParentIssue.project_id}
+                  issueTypeId={selectedParentIssue.type_id}
+                  projectIdentifier={selectedParentIssue?.project__identifier}
+                  issueSequenceId={selectedParentIssue.sequence_id}
+                  textContainerClassName="text-xs"
+                />
+              )}
             </button>
           }
           placement="bottom-start"

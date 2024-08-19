@@ -2,16 +2,16 @@
 
 import isToday from "date-fns/isToday";
 import { observer } from "mobx-react";
+// types
 import { TIssue, TWidgetIssue } from "@plane/types";
-// hooks
 // ui
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
 import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// types
 
 export type IssueListItemProps = {
   issueId: string;
@@ -67,12 +67,12 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
             : blockedByIssueProjectDetails && (
-              <IssueIdentifier
-                issueId={blockedByIssues[0]?.id}
-                projectId={blockedByIssueProjectDetails?.id}
-                textContainerClassName="text-xs text-custom-text-200 font-medium"
-              />
-            )
+                <IssueIdentifier
+                  issueId={blockedByIssues[0]?.id}
+                  projectId={blockedByIssueProjectDetails?.id}
+                  textContainerClassName="text-xs text-custom-text-200 font-medium"
+                />
+              )
           : "-"}
       </div>
     </ControlLink>
@@ -126,12 +126,12 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
             : blockedByIssueProjectDetails && (
-              <IssueIdentifier
-                issueId={blockedByIssues[0]?.id}
-                projectId={blockedByIssueProjectDetails?.id}
-                textContainerClassName="text-xs text-custom-text-200 font-medium"
-              />
-            )
+                <IssueIdentifier
+                  issueId={blockedByIssues[0]?.id}
+                  projectId={blockedByIssueProjectDetails?.id}
+                  textContainerClassName="text-xs text-custom-text-200 font-medium"
+                />
+              )
           : "-"}
       </div>
     </ControlLink>

@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { LogoSpinner } from "@/components/common";
 import { cn } from "@/helpers/common.helper";
 import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
+import { Spinner } from "@plane/ui";
 
 interface CustomIframeProps {
   srcBase: string;
@@ -69,7 +70,7 @@ const SiloIframe: React.FC<CustomIframeProps> = ({ srcBase }) => {
           hidden: isLoaded,
         })}
       >
-        <LogoSpinner />
+        <Spinner />
       </div>
     </div>
   );

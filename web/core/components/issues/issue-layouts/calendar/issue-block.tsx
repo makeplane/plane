@@ -5,17 +5,19 @@ import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
+// types
 import { TIssue } from "@plane/types";
-// components
+// ui
 import { Tooltip, ControlLink } from "@plane/ui";
-// hooks
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-// helpers
-// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
+// local components
 import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {

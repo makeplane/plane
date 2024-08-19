@@ -16,6 +16,8 @@ import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDe
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
+// plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
@@ -61,13 +63,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
-  const { workspaceProjectIds, getProjectById } = useProject();
+  const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
+  // plane web hooks
+  const { isIssueTypeEnabledForProject } = useIssueTypes();
   // pathname
   const pathname = usePathname();
   // local storage
@@ -281,8 +285,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!workspaceSlug || !projectId || !issueId) return;
     if (Object.keys(issuePropertyValues).length === 0) return;
 
-    const projectDetails = getProjectById(projectId);
-    if (!projectDetails?.is_issue_type_enabled) return;
+    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+      workspaceSlug?.toString(),
+      projectId,
+      "ISSUE_TYPE_DISPLAY"
+    );
+    if (!isIssueTypeDisplayEnabled) return;
 
     await issuePropertyValuesService
       .create(workspaceSlug.toString(), projectId, issueId, issuePropertyValues)

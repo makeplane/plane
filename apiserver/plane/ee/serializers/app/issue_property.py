@@ -13,6 +13,10 @@ from plane.ee.models import (
 
 class IssueTypeSerializer(BaseSerializer):
     issue_exists = serializers.BooleanField(read_only=True)
+    project_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
 
     class Meta:
         model = IssueType
@@ -34,7 +38,6 @@ class IssuePropertySerializer(BaseSerializer):
             "name",
             "issue_type",
             "workspace",
-            "project",
             "deleted_at",
         ]
 
@@ -47,7 +50,6 @@ class IssuePropertyOptionSerializer(BaseSerializer):
         read_only_fields = [
             "property",
             "workspace",
-            "project",
             "deleted_at",
         ]
 

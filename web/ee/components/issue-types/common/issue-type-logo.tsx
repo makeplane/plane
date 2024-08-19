@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { OctagonAlert } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
@@ -7,16 +6,31 @@ import { LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
+export type TIssueTypeLogoSize = "sm" | "md" | "lg" | "xl";
+
 type Props = {
   icon_props: TLogoProps["icon"];
-  size?: number;
-  containerSize?: number;
+  size?: TIssueTypeLogoSize;
   containerClassName?: string;
   isDefault?: boolean;
 };
 
+const iconSizeMap = {
+  sm: 12.5,
+  md: 14.5,
+  lg: 18,
+  xl: 25,
+};
+
+const containerSizeMap = {
+  sm: 18,
+  md: 21,
+  lg: 25.5,
+  xl: 35.5,
+};
+
 export const IssueTypeLogo: FC<Props> = (props) => {
-  const { icon_props, size = 11, containerSize = 18, containerClassName, isDefault = false } = props;
+  const { icon_props, size = "sm", containerClassName, isDefault = false } = props;
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
 
@@ -27,16 +41,16 @@ export const IssueTypeLogo: FC<Props> = (props) => {
     <>
       <span
         style={{
-          height: containerSize,
-          width: containerSize,
+          height: containerSizeMap[size],
+          width: containerSizeMap[size],
           backgroundColor: icon_props?.background_color,
         }}
         className={cn("flex-shrink-0 grid place-items-center rounded bg-custom-background-80", containerClassName)} // fallback background color
       >
         {isDefault ? (
           <LayersIcon
-            width={size}
-            height={size}
+            width={iconSizeMap[size]}
+            height={iconSizeMap[size]}
             style={{
               color: icon_props?.color ?? "#ffffff", // fallback color
             }}
@@ -45,8 +59,8 @@ export const IssueTypeLogo: FC<Props> = (props) => {
           LucideIcon && (
             <LucideIcon.element
               style={{
-                height: size,
-                width: size,
+                height: iconSizeMap[size],
+                width: iconSizeMap[size],
                 color: icon_props?.color ?? "#ffffff", // fallback color
               }}
             />

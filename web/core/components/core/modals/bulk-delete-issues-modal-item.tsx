@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { ISearchIssueResponse } from "@plane/types";
+// plane web hooks
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
 interface Props {
@@ -20,7 +21,7 @@ export const BulkDeleteIssuesModalItem: React.FC<Props> = observer((props: Props
       as="div"
       value={issue.id}
       className={({ active }) =>
-        `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
+        `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 my-0.5 ${
           active ? "bg-custom-background-80 text-custom-text-100" : ""
         }`
       }

@@ -9,6 +9,7 @@ import {
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
+// ui
 import { ContrastIcon, DiceIcon } from "@plane/ui";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -37,10 +38,10 @@ export const commandGroups: {
     itemName: (issue: IWorkspaceIssueSearchResult) => (
       <div className="flex gap-2">
         <IssueIdentifier
-          issueId={issue.id}
           projectId={issue.project_id}
-          iconSize={10}
-          iconContainerSize={16}
+          issueTypeId={issue.type_id}
+          projectIdentifier={issue.project__identifier}
+          issueSequenceId={issue.sequence_id}
           textContainerClassName="text-xs"
         />{" "}
         {issue.name}

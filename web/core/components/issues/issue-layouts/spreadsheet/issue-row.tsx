@@ -20,8 +20,9 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// local components
+// plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+// local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";

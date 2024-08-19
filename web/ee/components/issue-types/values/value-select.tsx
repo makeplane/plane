@@ -1,8 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { AlignLeft, InfoIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 // ui
-import { Loader, Logo, Tooltip } from "@plane/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -15,7 +15,8 @@ import {
   MemberValueSelect,
   DateValueSelect,
   OptionValueSelect,
-} from "@/plane-web/components/issue-types/values";
+  IssuePropertyLogo,
+} from "@/plane-web/components/issue-types";
 import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
 // plane web types
 import {
@@ -56,10 +57,8 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   const IssuePropertyDetail = () => (
     <>
       <div className="flex-shrink-0 grid place-items-center">
-        {propertyDetail?.logo_props?.in_use ? (
-          <Logo logo={propertyDetail.logo_props} size={16} type="lucide" customColor="text-custom-text-300" />
-        ) : (
-          <AlignLeft className={cn("w-4 h-4 text-custom-text-300")} />
+        {propertyDetail?.logo_props?.in_use && (
+          <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-custom-text-300" />
         )}
       </div>
       <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>

@@ -27,7 +27,7 @@ export const PROJECT_SCOPE_MAP: TProjectScopeMap = {
 export const PROJECT_SCOPES = Object.values(PROJECT_SCOPE_MAP);
 
 // layout constants
-type TProjectLayoutMapObject<T> = { key: T; title: string; label: string; icon: LucideIcon };
+type TProjectLayoutMapObject<T> = { key: T; title: string; label: string; icon: LucideIcon; selectivelyHide: boolean };
 type TProjectLayoutMap = {
   [key in EProjectLayouts]: TProjectLayoutMapObject<key>;
 };
@@ -37,14 +37,28 @@ export const PROJECT_LAYOUT_MAP: TProjectLayoutMap = {
     title: "Gallery Layout",
     label: "Gallery",
     icon: GalleryVertical,
+    selectivelyHide: false,
   },
-  [EProjectLayouts.BOARD]: { key: EProjectLayouts.BOARD, title: "Board Layout", label: "Board", icon: Kanban },
-  [EProjectLayouts.TABLE]: { key: EProjectLayouts.TABLE, title: "Table Layout", label: "Table", icon: List },
+  [EProjectLayouts.BOARD]: {
+    key: EProjectLayouts.BOARD,
+    title: "Board Layout",
+    label: "Board",
+    icon: Kanban,
+    selectivelyHide: true,
+  },
+  [EProjectLayouts.TABLE]: {
+    key: EProjectLayouts.TABLE,
+    title: "Table Layout",
+    label: "Table",
+    icon: List,
+    selectivelyHide: false,
+  },
   [EProjectLayouts.TIMELINE]: {
     key: EProjectLayouts.TIMELINE,
     title: "Timeline Layout",
     label: "Timeline",
     icon: GanttChartSquare,
+    selectivelyHide: true,
   },
 };
 export const PROJECT_LAYOUTS = Object.values(PROJECT_LAYOUT_MAP);

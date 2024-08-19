@@ -95,6 +95,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 "state__name",
                 "state__group",
                 "state__color",
+                "type_id",
             ),
             status=status.HTTP_200_OK,
         )

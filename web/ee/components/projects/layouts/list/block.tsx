@@ -11,7 +11,9 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProjectFilter } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
+import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 import JoinButton from "../../common/join-button";
 import QuickActions from "../../quick-actions";
 import Attributes from "../attributes";
@@ -35,7 +37,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectById, updateProject } = useProject();
   const { currentWorkspace } = useWorkspace();
-
+  const { filters } = useProjectFilter();
   const { isMobile } = usePlatformOS();
 
   const projectDetails = getProjectById(projectId);
@@ -112,7 +114,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
             handleUpdateProject={(data) => updateProject(workspaceSlug.toString(), projectDetails.id, data)}
             workspaceSlug={workspaceSlug.toString()}
             currentWorkspace={currentWorkspace}
-            cta={<JoinButton project={projectDetails as TProject} />}
+            cta={filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails as TProject} />}
           />
           <div
             className={cn("hidden", {

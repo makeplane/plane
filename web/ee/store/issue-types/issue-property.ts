@@ -29,9 +29,9 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
   getPropertyOptionById: (propertyOptionId: string) => IIssuePropertyOption | undefined;
   // helper actions
   updatePropertyData: (propertyData: TIssueProperty<EIssuePropertyType>) => void;
+  addOrUpdatePropertyOptions: (propertyOptionsData: TIssuePropertyOption[]) => void;
   // actions
   updateProperty: (issueTypeId: string, propertyData: TIssuePropertyPayload) => Promise<void>;
-  addOrUpdatePropertyOptions: (propertyOptionsData: TIssuePropertyOption[]) => void;
   createPropertyOption: (propertyOption: Partial<TIssuePropertyOption>) => Promise<TIssuePropertyOption | undefined>;
   deletePropertyOption: (propertyOptionId: string) => Promise<void>;
 }
@@ -193,7 +193,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     try {
       // add or update property option
       for (const option of propertyOptionsData) {
-        if (!option.id) return;
+        if (!option.id) continue;
         const existingPropertyOption = this.getPropertyOptionById(option.id);
         if (existingPropertyOption) {
           // update the existing property option

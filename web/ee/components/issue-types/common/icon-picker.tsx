@@ -2,10 +2,14 @@ import React, { useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
+// types
 import { TLogoProps } from "@plane/types";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { IssueTypeLogo } from "./issue-type-logo";
+// local components
+import { IssueTypeLogo, TIssueTypeLogoSize } from "./issue-type-logo";
 import { LucideIconsList } from "./lucide-icons-list";
 
 export type TIssueTypeIconPicker = {
@@ -19,8 +23,7 @@ export type TIssueTypeIconPicker = {
   icon_props: TLogoProps["icon"];
   onChange: (value: TLogoProps["icon"]) => void;
   placement?: Placement;
-  size?: number;
-  containerSize?: number;
+  size?: TIssueTypeLogoSize;
 };
 
 export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
@@ -35,7 +38,6 @@ export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
     icon_props,
     onChange,
     size,
-    containerSize,
     placement = "bottom-start",
   } = props;
   // refs
@@ -69,12 +71,7 @@ export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
             disabled={disabled}
             onClick={() => handleToggle(!isOpen)}
           >
-            <IssueTypeLogo
-              icon_props={icon_props}
-              size={size}
-              containerSize={containerSize}
-              containerClassName={iconContainerClassName}
-            />
+            <IssueTypeLogo icon_props={icon_props} size={size} containerClassName={iconContainerClassName} />
           </button>
         </Popover.Button>
         {isOpen && (

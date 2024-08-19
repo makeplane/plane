@@ -3,6 +3,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TLoader } from "@plane/types";
+// plane web enums
+import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 // plane web services
 import {
   IssuePropertiesService,
@@ -20,6 +22,10 @@ type TIssueTypesPropertiesOptions = {
   issuePropertyOptions: TIssuePropertyOptionsPayload;
 };
 
+type IssueTypeFlagKeys = keyof {
+  [K in keyof typeof E_FEATURE_FLAGS as K extends "ISSUE_TYPE_DISPLAY" | "ISSUE_TYPE_SETTINGS" ? K : never]: unknown;
+};
+
 export interface IIssueTypesStore {
   // observables
   loader: TLoader; // issue type loader
@@ -27,11 +33,17 @@ export interface IIssueTypesStore {
   propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
   data: Record<string, IIssueType>; // issue type id -> issue type
   // computed functions
+  getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
   getProjectIssuePropertiesLoader: (projectId: string) => TLoader;
   getProjectIssueTypeIds: (projectId: string) => string[];
-  getProjectActiveIssueTypes: (projectId: string) => Record<string, IIssueType>; // issue type id -> issue type
+  getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
   getIssueTypeProperties: (issueTypeId: string) => TIssueProperty<EIssuePropertyType>[];
+  isIssueTypeEnabledForProject: (
+    workspaceSlug: string,
+    projectId: string,
+    issueTypeFlagKey: IssueTypeFlagKeys
+  ) => boolean;
   // helper actions
   addOrUpdateIssueTypes: (issueTypes: TIssueType[]) => void;
   fetchAllPropertyData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
@@ -77,6 +89,13 @@ export class IssueTypes implements IIssueTypesStore {
 
   // computed functions
   /**
+   * @description Get issue type by issue type id
+   * @param issueTypeId
+   * @returns {IIssueType | undefined}
+   */
+  getIssueTypeById = computedFn((issueTypeId: string) => this.data[issueTypeId]);
+
+  /**
    * @description Get project issue type loader
    * @param projectId
    * @returns {TLoader}
@@ -91,8 +110,8 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {string[]}
    */
   getProjectIssueTypeIds = computedFn((projectId: string) => {
-    const projectIssueTypeIds = Object.keys(this.data).filter(
-      (issueTypeId) => this.data[issueTypeId]?.project === projectId
+    const projectIssueTypeIds = Object.keys(this.data).filter((issueTypeId) =>
+      this.data[issueTypeId]?.project_ids?.includes(projectId)
     );
     return projectIssueTypeIds;
   });
@@ -101,10 +120,11 @@ export class IssueTypes implements IIssueTypesStore {
    * @description Get current project issue types
    * @returns {Record<string, IIssueType>}
    */
-  getProjectActiveIssueTypes = computedFn((projectId: string) => {
+  getProjectIssueTypes = computedFn((projectId: string, activeOnly: boolean) => {
     const projectIssueTypes = Object.entries(this.data).reduce(
       (acc, [issueTypeId, issueType]) => {
-        if (issueType.project === projectId && issueType.is_active) {
+        if (issueType.project_ids?.includes(projectId)) {
+          if (activeOnly && !issueType.is_active) return acc;
           acc[issueTypeId] = issueType;
         }
         return acc;
@@ -120,7 +140,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {string | undefined}
    */
   getProjectDefaultIssueType = computedFn((projectId: string) => {
-    const projectIssueTypes = this.getProjectActiveIssueTypes(projectId);
+    const projectIssueTypes = this.getProjectIssueTypes(projectId, true);
 
     const defaultIssueType = Object.values(projectIssueTypes).find((issueType) => issueType.is_default);
     return defaultIssueType ?? undefined;
@@ -136,6 +156,23 @@ export class IssueTypes implements IIssueTypesStore {
     if (!issueType) return [];
     return issueType.properties;
   });
+
+  /**
+   * @description Check if issue type is enabled for the project
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueTypeFlagKey - feature flag
+   * @returns {boolean}
+   */
+  isIssueTypeEnabledForProject = (
+    workspaceSlug: string,
+    projectId: string,
+    issueTypeFlagKey: IssueTypeFlagKeys
+  ): boolean => {
+    const issueTypeFlagEnabled = this.store.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS[issueTypeFlagKey]];
+    const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
+    return (issueTypeFlagEnabled && projectDetails?.is_issue_type_enabled) ?? false;
+  };
 
   // helper actions
   /**
@@ -182,18 +219,19 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug || !projectId) return;
     try {
       this.loader = "init-loader";
-      const issueTypeId = await this.service.enableIssueTypes(workspaceSlug, projectId);
-      await this.fetchAllIssueTypes(workspaceSlug, projectId);
+      const issueType = await this.service.enableIssueTypes(workspaceSlug, projectId);
       runInAction(() => {
         // enable `is_issue_type_enabled` in project details
         set(this.store.projectRoot.project.projectMap, [projectId, "is_issue_type_enabled"], true);
+        // add issue type to the store
+        this.addOrUpdateIssueTypes([issueType]);
         // get all issues
         const currentProjectIssues = Object.values(this.store.issue.issues.issuesMap).filter(
           (issue) => issue.project_id === projectId
         );
         // attach issue type to all project issues
         for (const issue of currentProjectIssues) {
-          this.store.issue.issues.updateIssue(issue.id, { type_id: issueTypeId });
+          this.store.issue.issues.updateIssue(issue.id, { type_id: issueType.id });
         }
         this.loader = "loaded";
       });

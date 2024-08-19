@@ -44,9 +44,7 @@ export default function UpgradePlanPage() {
       router.push("/upgrade/pro/cloud");
     }
     if (selectedEdition === "self-hosted") {
-      if (process.env.NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL) {
-        window.open(process.env.NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL, "_blank");
-      }
+      router.push("/upgrade/pro/self-hosted");
     }
   };
 

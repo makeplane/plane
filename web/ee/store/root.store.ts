@@ -1,6 +1,11 @@
 // plane web store
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
-import { IIssueTypesStore, IssueTypes } from "@/plane-web/store/issue-types";
+import {
+  IIssuePropertiesActivityStore,
+  IIssueTypesStore,
+  IssuePropertiesActivityStore,
+  IssueTypes,
+} from "@/plane-web/store/issue-types";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import {
@@ -34,6 +39,7 @@ export class RootStore extends CoreRootStore {
   workspaceProjectStates: IWorkspaceProjectStatesStore;
   projectFilter: IProjectFilterStore;
   issueTypes: IIssueTypesStore;
+  issuePropertiesActivity: IIssuePropertiesActivityStore;
 
   constructor() {
     super();
@@ -46,6 +52,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
+    this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
   }
 
@@ -60,6 +67,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
+    this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
   }
 }

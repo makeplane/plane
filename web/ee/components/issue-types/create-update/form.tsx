@@ -60,8 +60,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = (props) => {
                 icon: value,
               });
             }}
-            size={28}
-            containerSize={40}
+            size="xl"
           />
           <div className="space-y-1 flew-grow w-full">
             <Input
