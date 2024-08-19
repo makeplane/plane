@@ -24,7 +24,8 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store hooks
 import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
+
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
@@ -83,7 +84,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;

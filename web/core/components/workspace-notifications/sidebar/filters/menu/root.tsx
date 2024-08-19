@@ -9,11 +9,11 @@ import { NotificationFilterOptionItem } from "@/components/workspace-notificatio
 // constants
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export const NotificationFilter: FC = observer(() => {
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <PopoverMenu

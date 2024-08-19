@@ -17,7 +17,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { CycleQuickActions } from "../quick-actions";
 
 type TCyclesListItem = {
@@ -40,7 +40,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // store hooks
   const { getCycleById } = useCycle();
 

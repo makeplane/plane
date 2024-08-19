@@ -47,7 +47,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useProject, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // constants
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
@@ -111,7 +111,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();

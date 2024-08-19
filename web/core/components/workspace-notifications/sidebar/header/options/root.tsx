@@ -8,7 +8,7 @@ import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/w
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
@@ -17,7 +17,7 @@ type TNotificationSidebarHeaderOptions = {
 export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOptions> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { loader, getNotifications } = useWorkspaceNotifications();
 
   const refreshNotifications = async () => {

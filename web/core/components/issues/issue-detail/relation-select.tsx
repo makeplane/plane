@@ -10,7 +10,7 @@ import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 import { cn } from "@/helpers/common.helper";
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // components
 // ui
 // helpers
@@ -62,7 +62,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
     toggleRelationModal,
   } = useIssueDetail();
   const { issueMap } = useIssues();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const relationIssueIds = getRelationByIssueIdRelationType(issueId, relationKey);
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {

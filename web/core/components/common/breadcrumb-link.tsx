@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { Tooltip } from "@plane/ui";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   label?: string | ReactNode;
@@ -14,7 +14,7 @@ type Props = {
 
 export const BreadcrumbLink: React.FC<Props> = (props) => {
   const { href, label, icon, disableTooltip = false } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   return (
     <Tooltip tooltipContent={label} position="bottom" isMobile={isMobile} disabled={disableTooltip}>
       <li className="flex items-center space-x-2" tabIndex={-1}>

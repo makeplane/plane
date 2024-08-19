@@ -13,7 +13,7 @@ import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/att
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TIssueAttachmentsListItem = {
   attachmentId: string;
@@ -33,7 +33,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   if (!attachment) return <></>;
 

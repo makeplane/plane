@@ -6,7 +6,7 @@ import { Network } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { useIssueDetail } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // ui
 // components
 import { IssueUser } from "../";
@@ -28,7 +28,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
   } = useIssueDetail();
 
   const activity = getActivityById(activityId);
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   if (!activity) return <></>;
   return (
     <div

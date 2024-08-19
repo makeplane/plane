@@ -15,7 +15,7 @@ import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // hooks
 import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -42,7 +42,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const { data: currentUser, signOut } = useUser();
   const { data: currentUserSettings } = useUserSettings();
   const { workspaces } = useWorkspace();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   const workspacesList = Object.values(workspaces ?? {});
 

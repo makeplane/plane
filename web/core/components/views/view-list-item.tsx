@@ -11,7 +11,7 @@ import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
 import { ViewListItemAction, ViewQuickActions } from "@/components/views";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   view: IProjectView;
@@ -24,7 +24,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <ListItem

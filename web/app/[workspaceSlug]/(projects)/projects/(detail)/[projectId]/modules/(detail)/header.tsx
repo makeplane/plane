@@ -41,7 +41,7 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -73,7 +73,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId } = useParams();
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // store hooks
   const {
     issuesFilter: { issueFilters },

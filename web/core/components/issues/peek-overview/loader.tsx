@@ -4,7 +4,7 @@ import { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Loader, Tooltip } from "@plane/ui";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TIssuePeekOverviewLoader = {
   removeRoutePeekId: () => void;
@@ -13,7 +13,7 @@ type TIssuePeekOverviewLoader = {
 export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => {
   const { removeRoutePeekId } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Loader className="w-full h-screen overflow-hidden p-5 space-y-6">

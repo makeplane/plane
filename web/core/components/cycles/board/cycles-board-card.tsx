@@ -21,7 +21,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -47,7 +47,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   // computed
   const cycleDetails = getCycleById(cycleId);
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   if (!cycleDetails) return null;
 

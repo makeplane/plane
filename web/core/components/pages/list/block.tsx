@@ -11,7 +11,7 @@ import { BlockItemAction } from "@/components/pages/list";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePage } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TPageListBlock = {
   workspaceSlug: string;
@@ -25,7 +25,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
   const parentRef = useRef(null);
   // hooks
   const { name, logo_props } = usePage(pageId);
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <ListItem

@@ -13,11 +13,11 @@ import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TProps = {
-  activeTab: 'issues' | 'cycles' | 'modules';
-}
+  activeTab: "issues" | "cycles" | "modules";
+};
 
 export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   const { activeTab } = props;
@@ -30,7 +30,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { currentProjectDetails, loader } = useProject();
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   const issueCount = getGroupIssueCount(undefined, undefined, false);
 

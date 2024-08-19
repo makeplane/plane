@@ -3,14 +3,15 @@
 import React from "react";
 // components
 import { Tooltip } from "@plane/ui";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
+
 type Props = {
   labelDetails: any[];
   maxRender?: number;
 };
 
 export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 }) => {
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   return (
     <>
       {labelDetails?.length > 0 ? (

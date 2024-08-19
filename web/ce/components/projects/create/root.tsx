@@ -15,7 +15,7 @@ import { PROJECT_UNSPLASH_COVERS } from "@/constants/project";
 import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
 
@@ -55,7 +55,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
     reValidateMode: "onChange",
   });
   const { handleSubmit, reset, setValue } = methods;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 

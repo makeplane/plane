@@ -9,7 +9,7 @@ import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // services
@@ -49,7 +49,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const handleClose = () => {

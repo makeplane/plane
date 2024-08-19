@@ -12,7 +12,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useInstance, useTransient } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
@@ -43,7 +43,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { toggleShortcutModal } = useCommandPalette();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
   // states

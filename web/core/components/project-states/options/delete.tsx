@@ -11,7 +11,7 @@ import { STATE_DELETED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TStateDelete = {
   workspaceSlug: string;
@@ -23,7 +23,7 @@ type TStateDelete = {
 export const StateDelete: FC<TStateDelete> = observer((props) => {
   const { workspaceSlug, projectId, totalStates, state } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   const { deleteState } = useProjectState();
   // states

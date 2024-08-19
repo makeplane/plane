@@ -21,7 +21,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useAppTheme, useProject, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // services
 // components
 import { ProfileSidebarTime } from "./time";
@@ -43,7 +43,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   useOutsideClickDetector(ref, () => {
     if (profileSidebarCollapsed === false) {

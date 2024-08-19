@@ -14,7 +14,7 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useWebhook, useWorkspace } from "@/hooks/store";
 // types
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
 // hooks
@@ -33,7 +33,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 

@@ -14,7 +14,7 @@ import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useUser, useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // services
 // icons
 import GithubLogo from "@/public/services/github.png";
@@ -53,7 +53,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   } = useUser();
 
   const isUserAdmin = currentWorkspaceRole === 20;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
     github_app_name: config?.github_app_name || "",

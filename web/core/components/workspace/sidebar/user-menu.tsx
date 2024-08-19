@@ -16,13 +16,13 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export const SidebarUserMenu = observer(() => {
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const {
     membership: { currentWorkspaceRole },
     data: currentUser,

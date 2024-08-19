@@ -20,7 +20,7 @@ import { EUserProjectRoles } from "@/constants/project";
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle, useEventTracker, useMember, useUser } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { CycleService } from "@/services/cycle.service";
 const cycleService = new CycleService();
 
@@ -40,7 +40,7 @@ const defaultValues: Partial<ICycle> = {
 export const CycleListItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // store hooks
   const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
   const { captureEvent } = useEventTracker();

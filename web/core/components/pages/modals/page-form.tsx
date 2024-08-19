@@ -13,7 +13,7 @@ import { EPageAccess, PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   formData: Partial<TPage>;
@@ -25,7 +25,7 @@ type Props = {
 export const PageForm: React.FC<Props> = (props) => {
   const { formData, handleFormData, handleModalClose, handleFormSubmit } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // state
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -4,7 +4,7 @@ import { FC } from "react";
 // hooks
 import { Tooltip } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // ui
 
 type TIssueLink = {
@@ -17,7 +17,7 @@ export const IssueLink: FC<TIssueLink> = (props) => {
   const {
     activity: { getActivityById },
   } = useIssueDetail();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const activity = getActivityById(activityId);
 
   if (!activity) return <></>;

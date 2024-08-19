@@ -32,7 +32,7 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // plane web services
@@ -46,7 +46,7 @@ const issueService = new IssueService();
 export const CommandModal: React.FC = observer(() => {
   // hooks
   const { workspaceProjectIds } = useProject();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { canPerformAnyCreateAction } = useUser();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");

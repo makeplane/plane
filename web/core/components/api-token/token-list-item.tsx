@@ -7,7 +7,7 @@ import { IApiToken } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 import { DeleteApiTokenModal } from "@/components/api-token";
 import { renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // ui
 // helpers
 // types
@@ -21,7 +21,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <>

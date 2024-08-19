@@ -18,7 +18,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // constants
 import { FavoriteRoot } from "./favorite-items";
 import { getDestinationStateSequence } from "./favorites.helpers";
@@ -36,7 +36,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { moveFavorite, getGroupedFavorites, favoriteMap, moveFavoriteFolder } = useFavorite();
   const { workspaceSlug } = useParams();
   // states

@@ -6,7 +6,7 @@ import { Tooltip } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 
@@ -17,7 +17,7 @@ type TIssuePeekOverviewError = {
 export const IssuePeekOverviewError: FC<TIssuePeekOverviewError> = (props) => {
   const { removeRoutePeekId } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <div className="w-full h-full overflow-hidden relative flex flex-col">

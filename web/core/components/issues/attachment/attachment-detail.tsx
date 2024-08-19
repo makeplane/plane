@@ -16,7 +16,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // types
 import { TAttachmentOperations } from "./root";
 
@@ -41,7 +41,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   if (!attachment) return <></>;
 

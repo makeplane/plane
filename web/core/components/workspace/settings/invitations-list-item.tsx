@@ -12,7 +12,7 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   invitationId: string;
@@ -31,7 +31,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
 

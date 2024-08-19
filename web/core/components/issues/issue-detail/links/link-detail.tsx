@@ -11,7 +11,7 @@ import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
@@ -30,7 +30,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     setIssueLinkData,
   } = useIssueDetail();
   const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 

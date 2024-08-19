@@ -21,7 +21,7 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router
@@ -36,7 +36,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(

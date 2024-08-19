@@ -19,7 +19,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteRoot } from "./favorite-items";
@@ -36,7 +36,7 @@ export const SidebarFavoritesMenu = observer(() => {
   const { favoriteIds, favoriteMap, deleteFavorite, removeFromFavoriteFolder } = useFavorite();
   const { workspaceSlug } = useParams();
 
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>("is_favorite_menu_open", false);

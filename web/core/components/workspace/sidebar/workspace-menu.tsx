@@ -20,7 +20,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 
@@ -32,7 +32,7 @@ export const SidebarWorkspaceMenu = observer(() => {
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

@@ -12,7 +12,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // constants
 import { useModule } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
@@ -28,7 +28,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   // derived values
   const moduleDetails = getModuleById(moduleId);
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <div

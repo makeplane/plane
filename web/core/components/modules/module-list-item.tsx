@@ -15,7 +15,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useModule, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
@@ -34,7 +34,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const pathname = usePathname();
   // store hooks
   const { getModuleById } = useModule();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived values

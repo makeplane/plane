@@ -5,7 +5,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type TNotificationItemOptionButton = {
   tooltipContent?: string;
@@ -17,7 +17,7 @@ type TNotificationItemOptionButton = {
 export const NotificationItemOptionButton: FC<TNotificationItemOptionButton> = (props) => {
   const { tooltipContent = "", buttonClassName = "", children, callBack } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip tooltipContent={tooltipContent} isMobile={isMobile}>

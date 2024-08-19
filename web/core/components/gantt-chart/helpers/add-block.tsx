@@ -9,7 +9,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { useGanttChart } from "../hooks/use-gantt-chart";
 import { IBlockUpdateData, IGanttBlock } from "../types";
 // hooks
@@ -28,7 +28,7 @@ export const ChartAddBlock: React.FC<Props> = observer((props) => {
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // chart hook
   const { currentViewData } = useGanttChart();
 

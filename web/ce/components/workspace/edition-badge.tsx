@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // assets
 import packageJson from "package.json";
 // local components
 import { PaidPlanUpgradeModal } from "./upgrade";
 
 export const WorkspaceEditionBadge = observer(() => {
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // states
   const [isPaidPlanPurchaseModalOpen, setIsPaidPlanPurchaseModalOpen] = useState(false);
 

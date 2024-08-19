@@ -21,7 +21,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export const ModuleViewHeader: FC = observer(() => {
   // refs
@@ -29,7 +29,7 @@ export const ModuleViewHeader: FC = observer(() => {
   // router
   const { projectId } = useParams();
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // store hooks
   const {
     workspace: { workspaceMemberIds },

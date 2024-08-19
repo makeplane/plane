@@ -32,7 +32,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   project: IProject;
@@ -52,7 +52,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   project.member_role;
   // derived values
   const projectMembersIds = project.members?.map((member) => member.member_id);

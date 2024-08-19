@@ -9,7 +9,7 @@ import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 import { RelationIssueProperty } from "@/components/issues/relations";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
@@ -49,7 +49,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   // derived values
   const issue = getIssueById(relationIssueId);

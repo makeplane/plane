@@ -10,7 +10,7 @@ import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
@@ -60,7 +60,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const issue = getIssueById(issueId);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =

@@ -34,7 +34,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     project: { removeMemberFromProject },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // const { isMobile } = usePlatformOS();
+  // const isMobile = useIsMobile();
 
   const handleRemove = async (memberId: string) => {
     if (!workspaceSlug || !projectId || !memberId) return;

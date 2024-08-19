@@ -13,7 +13,7 @@ import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
@@ -31,7 +31,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   // store
   const { currentTab, getIssueInboxByIssueId } = useProjectInbox();
   const { projectLabels } = useLabel();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { getUserDetails } = useMember();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
   const issue = inboxIssue?.issue;

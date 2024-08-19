@@ -12,7 +12,7 @@ import { NOTIFICATION_SNOOZE_OPTIONS } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // store
 import { INotification } from "@/store/notifications/notification";
 
@@ -27,7 +27,7 @@ type TNotificationItemSnoozeOption = {
 export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
   const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const {} = useWorkspaceNotifications();
   const { asJson: data, snoozeNotification, unSnoozeNotification } = notification;
 

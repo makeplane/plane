@@ -26,13 +26,13 @@ import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, I
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import { useLabel } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // types
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   // router params
   const { workspaceSlug } = useParams();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip

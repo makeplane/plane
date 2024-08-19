@@ -36,7 +36,7 @@ import {
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export const ProjectIssuesHeader = observer(() => {
   // states
@@ -60,7 +60,7 @@ export const ProjectIssuesHeader = observer(() => {
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(

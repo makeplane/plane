@@ -14,7 +14,7 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile, usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 
@@ -31,7 +31,8 @@ export const PageDetailsHeader = observer(() => {
   const { currentProjectDetails, loader } = useProject();
   const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
   // use platform
-  const { isMobile, platform } = usePlatformOS();
+  const { platform } = usePlatformOS();
+  const isMobile = useIsMobile();
   // derived values
   const isMac = platform === "MacOS";
 

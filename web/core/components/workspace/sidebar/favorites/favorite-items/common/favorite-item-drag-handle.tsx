@@ -6,7 +6,7 @@ import { DragHandle, Tooltip } from "@plane/ui";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   sort_order: number | null;
@@ -16,7 +16,7 @@ type Props = {
 export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
   const { sort_order, isDragging } = props;
   // store hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip

@@ -8,7 +8,7 @@ import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // hooks
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 
 export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   const { handleClose, tokenDetails } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const copyApiToken = (token: string) => {
     copyTextToClipboard(token).then(() =>
       setToast({

@@ -5,7 +5,7 @@ import { FC } from "react";
 import { IIssueLabel } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // types
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // hooks
 
 type IssueLabelsListProps = {
@@ -16,7 +16,7 @@ type IssueLabelsListProps = {
 
 export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
   const { labels } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   return (
     <>
       {labels && (

@@ -10,7 +10,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   cycleId: string;
@@ -25,7 +25,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
   const { getCycleById } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
 
   return (

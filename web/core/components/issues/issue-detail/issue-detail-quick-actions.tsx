@@ -18,7 +18,7 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useProjectState, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 type Props = {
   workspaceSlug: string;
@@ -42,7 +42,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
     data: currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { getStateById } = useProjectState();
   const {
     issue: { getIssueById },

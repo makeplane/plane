@@ -12,7 +12,7 @@ import { ParentIssuesListModal } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
@@ -46,7 +46,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
   const parentIssue = issue?.parent_id ? getIssueById(issue.parent_id) : undefined;
   const parentIssueProjectDetails =
     parentIssue && parentIssue.project_id ? getProjectById(parentIssue.project_id) : undefined;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const handleParentIssue = async (_issueId: string | null = null) => {
     try {
       await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId });

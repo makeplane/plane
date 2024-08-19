@@ -28,7 +28,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { useEventTracker, useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
 // types
@@ -47,7 +47,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   // form info
   const {
     handleSubmit,

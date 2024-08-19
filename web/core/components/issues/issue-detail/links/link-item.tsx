@@ -10,7 +10,7 @@ import { calculateTimeAgoShort } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { TLinkOperationsModal } from "./create-update-link-modal";
 
 type TIssueLinkItem = {
@@ -28,7 +28,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
     setIssueLinkData,
     link: { getLinkById },
   } = useIssueDetail();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 

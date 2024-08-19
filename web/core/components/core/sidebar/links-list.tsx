@@ -9,7 +9,7 @@ import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
 import { useMember, useModule } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // types
 
 type Props = {
@@ -25,7 +25,7 @@ export const LinksList: React.FC<Props> = observer((props) => {
   const { moduleId, handleDeleteLink, handleEditLink, userAuth, disabled } = props;
   // hooks
   const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const { getModuleById } = useModule();
   // derived values
   const currentModule = getModuleById(moduleId);
