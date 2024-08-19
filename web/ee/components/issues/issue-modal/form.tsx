@@ -90,7 +90,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   // plane web hooks
-  const { getIssueTypeProperties, getProjectIssueTypes, getProjectDefaultIssueType } = useIssueTypes();
+  const { isIssueTypeEnabledForProject, getIssueTypeProperties, getProjectIssueTypes, getProjectDefaultIssueType } =
+    useIssueTypes();
 
   const {
     issue: { getIssueById },
@@ -115,8 +116,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const handlePropertyValuesValidation = () => {
     const issueTypeId = watch("type_id");
     // if issue type is not enabled for the project, skip validation
-    const projectDetails = getProjectById(projectId);
-    if (!projectDetails?.is_issue_type_enabled) return true;
+    const isIssueTypeDisplayEnabled =
+      !!projectId && isIssueTypeEnabledForProject(workspaceSlug?.toString(), projectId, "ISSUE_TYPE_DISPLAY");
+    if (!isIssueTypeDisplayEnabled) return true;
     // if no issue type id or no issue property values, skip validation
     if (!issueTypeId || !issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return true;
     // all properties for the issue type

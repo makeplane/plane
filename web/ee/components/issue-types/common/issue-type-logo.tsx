@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { OctagonAlert } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui

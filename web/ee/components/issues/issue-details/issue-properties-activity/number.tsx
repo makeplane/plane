@@ -1,0 +1,35 @@
+import { FC } from "react";
+import { observer } from "mobx-react";
+// plane web components
+import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/issues";
+// plane web hooks
+import { useIssuePropertiesActivity, useIssueProperty } from "@/plane-web/hooks/store";
+
+export const IssueNumberPropertyActivity: FC<TIssueAdditionalPropertiesActivityItem> = observer((props) => {
+  const { activityId, issueTypeId, issuePropertyId } = props;
+  // plane web hooks
+  const { getPropertyActivityById } = useIssuePropertiesActivity();
+  // derived values
+  const activityDetail = getPropertyActivityById(activityId);
+  const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
+  const propertyName = propertyDetail?.display_name?.toLowerCase();
+
+  if (!activityDetail) return <></>;
+  return (
+    <>
+      {activityDetail.action === "created" && (
+        <>
+          set {propertyName} to <span className="font-medium text-custom-text-100">{activityDetail?.new_value}.</span>
+        </>
+      )}
+      {activityDetail.action === "updated" && (
+        <>
+          updated {propertyName} from{" "}
+          <span className="font-medium text-custom-text-100">{activityDetail?.old_value}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{activityDetail?.new_value}.</span>
+        </>
+      )}
+      {activityDetail.action === "deleted" && <>removed {propertyName}.</>}
+    </>
+  );
+});

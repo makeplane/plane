@@ -4,11 +4,10 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { Loader } from "@plane/ui";
-import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesCreate } from "@/plane-web/components/issue-types/";
 // plane web hooks
-import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web types
 import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
@@ -33,26 +32,24 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
     setIssuePropertyValues,
   } = props;
   // store hooks
-  const { getProjectById } = useProject();
-  const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
+  const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
+    useIssueTypes();
   // derived values
-  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_DISPLAY");
-  const projectDetails = getProjectById(projectId);
+  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
-  const isIssueTypesEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;
 
   // This has to be on root level because of global level issue update, where we haven't fetch the details yet.
   useEffect(() => {
-    if (projectId && isIssueTypesEnabled) {
+    if (projectId && isIssueTypeDisplayEnabled) {
       fetchAllPropertiesAndOptions(workspaceSlug?.toString(), projectId);
     }
-  }, [fetchAllPropertiesAndOptions, isIssueTypesEnabled, projectId, workspaceSlug]);
+  }, [fetchAllPropertiesAndOptions, isIssueTypeDisplayEnabled, projectId, workspaceSlug]);
 
   if (!issuePropertyValues || !setIssuePropertyValues) return;
 
   return (
     <>
-      {isIssueTypesEnabled && (
+      {isIssueTypeDisplayEnabled && (
         <>
           {!issueTypeId || issuePropertiesLoader === "init-loader" ? (
             <Loader className="space-y-4 py-2">

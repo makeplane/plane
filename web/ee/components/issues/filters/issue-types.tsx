@@ -13,7 +13,7 @@ import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -28,17 +28,20 @@ export const FilterIssueTypes: React.FC<Props> = observer((props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // hooks
   const { workspaceSlug, projectId: routerProjectId } = useParams();
-  const { data: workspaceIssueTypes, getProjectIssueTypes } = useIssueTypes();
+  const { data: workspaceIssueTypes, isIssueTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
   const { getProjectById } = useProject();
-  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
   // derived values
   const projectId = routerProjectId?.toString();
-  const projectDetails = getProjectById(projectId);
+  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+    workspaceSlug?.toString(),
+    projectId,
+    "ISSUE_TYPE_DISPLAY"
+  );
   const issueTypes = projectId ? getProjectIssueTypes(projectId, false) : workspaceIssueTypes;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   // Return null if issue type is not enabled for the project
-  if (!isIssueTypeDisplayEnabled || (projectId && !projectDetails?.is_issue_type_enabled)) return null;
+  if (!isIssueTypeDisplayEnabled) return null;
 
   const sortedOptions = useMemo(() => {
     const filteredOptions = (Object.values(issueTypes) || []).filter((issueType) =>

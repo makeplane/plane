@@ -4,10 +4,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { X } from "lucide-react";
 // plane web components
-import { useProject } from "@/hooks/store";
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -20,14 +19,16 @@ export const AppliedIssueTypeFilters: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { getProjectById } = useProject();
-  const { getIssueTypeById } = useIssueTypes();
-  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
+  const { isIssueTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   // derived values
-  const projectDetails = getProjectById(projectId?.toString());
+  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+    workspaceSlug?.toString(),
+    projectId?.toString(),
+    "ISSUE_TYPE_DISPLAY"
+  );
 
   // Return null if issue type is not enabled for the project
-  if (!isIssueTypeDisplayEnabled || (projectId && !projectDetails?.is_issue_type_enabled)) return null;
+  if (!isIssueTypeDisplayEnabled) return null;
 
   return (
     <>
