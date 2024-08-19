@@ -11,6 +11,12 @@ export type TPropertyValuesValidationProps = {
   watch: UseFormWatch<TIssue>;
 };
 
+export type TActiveAdditionalPropertiesProps = {
+  projectId: string | null;
+  workspaceSlug: string;
+  watch: UseFormWatch<TIssue>;
+};
+
 export type TCreateUpdatePropertyValuesProps = {
   issueId: string;
   projectId: string;
@@ -23,6 +29,7 @@ export type TIssueModalContext = {
   issuePropertyValueErrors: TIssuePropertyValueErrors;
   setIssuePropertyValueErrors: React.Dispatch<React.SetStateAction<TIssuePropertyValueErrors>>;
   getIssueTypeIdOnProjectChange: (projectId: string) => string | null;
+  getActiveAdditionalPropertiesLength: (props: TActiveAdditionalPropertiesProps) => number;
   handlePropertyValuesValidation: (props: TPropertyValuesValidationProps) => boolean;
   handleCreateUpdatePropertyValues: (props: TCreateUpdatePropertyValuesProps) => Promise<void>;
 };

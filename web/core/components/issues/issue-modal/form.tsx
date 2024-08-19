@@ -20,6 +20,7 @@ import {
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 // hooks
@@ -81,7 +82,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug, projectId: routeProjectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
-  const { getIssueTypeIdOnProjectChange, handlePropertyValuesValidation } = useIssueModal();
+  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
+    useIssueModal();
 
   const {
     issue: { getIssueById },
@@ -102,6 +104,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   });
 
   const projectId = watch("project_id");
+  const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
+    projectId: projectId,
+    workspaceSlug: workspaceSlug?.toString(),
+    watch: watch,
+  });
 
   //reset few fields on projectId change
   useEffect(() => {
@@ -283,32 +290,48 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             />
           </div>
         </div>
-        <div className="px-5 pb-4 space-y-3 max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm">
-          <IssueDescriptionEditor
-            control={control}
-            issueName={watch("name")}
-            descriptionHtmlData={data?.description_html}
-            editorRef={editorRef}
-            submitBtnRef={submitBtnRef}
-            gptAssistantModal={gptAssistantModal}
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId}
-            handleFormChange={handleFormChange}
-            handleDescriptionHTMLDataChange={(description_html) =>
-              setValue<"description_html">("description_html", description_html)
-            }
-            setGptAssistantModal={setGptAssistantModal}
-            handleGptAssistantClose={() => reset(getValues())}
-            onClose={onClose}
-          />
-          {projectId && (
-            <IssueAdditionalProperties
-              issueId={data?.id ?? data?.sourceIssueId}
-              issueTypeId={watch("type_id")}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug?.toString()}
-            />
+        <div
+          className={cn(
+            "pb-4 space-y-3",
+            activeAdditionalPropertiesLength > 4 &&
+              "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
           )}
+        >
+          <div className="px-5">
+            <IssueDescriptionEditor
+              control={control}
+              issueName={watch("name")}
+              descriptionHtmlData={data?.description_html}
+              editorRef={editorRef}
+              submitBtnRef={submitBtnRef}
+              gptAssistantModal={gptAssistantModal}
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId}
+              handleFormChange={handleFormChange}
+              handleDescriptionHTMLDataChange={(description_html) =>
+                setValue<"description_html">("description_html", description_html)
+              }
+              setGptAssistantModal={setGptAssistantModal}
+              handleGptAssistantClose={() => reset(getValues())}
+              onClose={onClose}
+            />
+          </div>
+          <div
+            className={cn(
+              "px-5",
+              activeAdditionalPropertiesLength <= 4 &&
+                "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+            )}
+          >
+            {projectId && (
+              <IssueAdditionalProperties
+                issueId={data?.id ?? data?.sourceIssueId}
+                issueTypeId={watch("type_id")}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug?.toString()}
+              />
+            )}
+          </div>
         </div>
         <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg">
           <div className="pb-3 border-b-[0.5px] border-custom-border-200">

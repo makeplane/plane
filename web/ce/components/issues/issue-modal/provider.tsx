@@ -17,6 +17,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         issuePropertyValueErrors: {},
         setIssuePropertyValueErrors: () => {},
         getIssueTypeIdOnProjectChange: () => null,
+        getActiveAdditionalPropertiesLength: () => 0,
         handlePropertyValuesValidation: () => true,
         handleCreateUpdatePropertyValues: () => Promise.resolve(),
       }}
