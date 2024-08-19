@@ -12,6 +12,7 @@
     "packages/tailwind-config-custom",
     "packages/tsconfig",
     "packages/ui",
+    "packages/ui-v2",
     "packages/types",
     "packages/constants"
   ],

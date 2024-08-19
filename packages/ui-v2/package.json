@@ -2,7 +2,7 @@
   "name": "@plane/ui-v2",
   "description": "UI v2 components shared across multiple apps internally",
   "private": true,
-  "version": "2.0.0",
+  "version": "0.22.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -15,7 +15,7 @@
     "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6008",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch"
   },
@@ -34,6 +34,7 @@
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
     "sonner": "^1.4.41",
+    "storybook": "^8.2.9",
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2"
   },
