@@ -36,9 +36,6 @@ from plane.db.models import (
 )
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.payment.bgtasks.member_sync_task import member_sync_task
-from plane.payment.utils.member_payment_count import (
-    workspace_member_check,
-)
 from .. import BaseViewSet
 
 

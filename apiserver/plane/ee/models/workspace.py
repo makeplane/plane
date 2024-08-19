@@ -55,6 +55,8 @@ class WorkspaceLicense(BaseModel):
     has_activated_free_trial = models.BooleanField(default=False)
     # is payment method added
     has_added_payment_method = models.BooleanField(default=False)
+    # subscription
+    subscription = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name = "Workspace License"

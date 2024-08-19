@@ -74,6 +74,9 @@ export const CloudEditionBadge = observer(() => {
     subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.trial_end_date ? true : false;
 
   const renderButtonText = () => {
+    if (!subscriptionDetail.subscription) {
+      return "Upgrade to Pro";
+    }
     switch (subscriptionDetail.product) {
       case "FREE": {
         if (subscriptionDetail?.has_activated_free_trial) {
@@ -98,6 +101,9 @@ export const CloudEditionBadge = observer(() => {
   };
 
   const showPaymentButton = () => {
+    if (!subscriptionDetail.subscription) {
+      return true;
+    }
     switch (subscriptionDetail.product) {
       case "FREE": {
         return true;

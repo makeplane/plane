@@ -72,6 +72,7 @@ const CloudUpgradePage = observer(() => {
   };
 
   const workspaceSubscription = (workspace: TWorkspaceWithProductDetails): "FREE" | "PRO" | "TRIAL" => {
+    if (!workspace.subscription) return "FREE";
     switch (workspace.product) {
       case "PRO":
         if (workspace.is_offline_payment) {
