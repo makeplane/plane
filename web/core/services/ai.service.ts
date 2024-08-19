@@ -1,7 +1,7 @@
+// plane web constants
+import { AI_EDITOR_TASKS } from "@/ce/constants/ai";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// plane web constants
-import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
 // services
 import { APIService } from "@/services/api.service";
 // types
