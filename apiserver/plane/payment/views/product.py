@@ -230,6 +230,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
             workspace_license.has_added_payment_method = request.data.get(
                 "has_added_payment_method", False
             )
+            workspace_license.subscription = request.data.get("subscription")
             workspace_license.save()
         # If the workspace license is not present, then fetch the license from the payment server and create it
         else:
@@ -252,6 +253,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                 has_added_payment_method=request.data.get(
                     "has_added_payment_method", False
                 ),
+                subscription=request.data.get("subscription"),
             )
 
         # Return the response
