@@ -7,7 +7,7 @@ import jwt
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Count, F, Q
+from django.db.models import Count
 from django.utils import timezone
 
 # Third party modules
@@ -33,9 +33,6 @@ from plane.db.models import (
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
-from plane.payment.utils.member_payment_count import (
-    workspace_member_check,
-)
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):

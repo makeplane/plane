@@ -63,6 +63,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           purchased_seats: response?.purchased_seats || 0,
           has_activated_free_trial: response?.has_activated_free_trial || false,
           has_added_payment_method: response?.has_added_payment_method || false,
+          subscription: response?.subscription || undefined,
         });
       });
       return response;

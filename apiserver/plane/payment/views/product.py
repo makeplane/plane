@@ -3,8 +3,6 @@ import requests
 
 # Django imports
 from django.conf import settings
-from django.db.models import CharField
-from django.db.models.functions import Cast
 from django.utils import timezone
 from django.db.models import F
 
@@ -18,11 +16,11 @@ from .base import BaseAPIView
 from plane.app.permissions.workspace import (
     WorkspaceUserPermission,
 )
-from plane.db.models import WorkspaceMember, Workspace
+from plane.db.models import WorkspaceMember
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
-    fetch_workspace_license,
+    resync_workspace_license,
 )
 
 
@@ -119,6 +117,7 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
                     "has_added_payment_method",
                     "current_period_end_date",
                     "is_offline_payment",
+                    "subscription",
                 )
             )
 
@@ -149,137 +148,9 @@ class WorkspaceProductEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-                workspace = Workspace.objects.get(slug=slug)
-
-                # Check if the license is present for the workspace
-                workspace_license = WorkspaceLicense.objects.filter(
-                    workspace=workspace
-                ).first()
-
-                # If the license is present, then check if the last sync is more than 1 hour
-                if workspace_license:
-                    # If the last sync is more than 1 hour, then sync the license
-                    if (
-                        workspace_license.last_synced_at - timezone.now()
-                    ).seconds > 3600:
-                        response = fetch_workspace_license(
-                            workspace_id=str(workspace.id),
-                            workspace_slug=slug,
-                            free_seats=WorkspaceMember.objects.filter(
-                                is_active=True,
-                                workspace__slug=slug,
-                                member__is_bot=False,
-                            ).count(),
-                        )
-
-                        # Update the last synced time
-                        workspace_license.last_synced_at = timezone.now()
-                        workspace_license.is_cancelled = response.get(
-                            "is_cancelled", False
-                        )
-                        workspace_license.free_seats = response.get(
-                            "free_seats", 12
-                        )
-                        workspace_license.purchased_seats = response.get(
-                            "purchased_seats", 0
-                        )
-                        workspace_license.current_period_end_date = (
-                            response.get("current_period_end_date")
-                        )
-                        workspace_license.recurring_interval = response.get(
-                            "interval"
-                        )
-                        workspace_license.plan = response.get("plan")
-                        workspace_license.is_offline_payment = response.get(
-                            "is_offline_payment", False
-                        )
-                        workspace_license.trial_end_date = response.get(
-                            "trial_end_date"
-                        )
-                        workspace_license.has_activated_free_trial = (
-                            response.get("has_activated_free_trial", False)
-                        )
-                        workspace_license.has_added_payment_method = (
-                            response.get("has_added_payment_method", False)
-                        )
-                        workspace_license.save()
-
-                        return Response(
-                            {
-                                "is_cancelled": workspace_license.is_cancelled,
-                                "purchased_seats": workspace_license.purchased_seats,
-                                "current_period_end_date": workspace_license.current_period_end_date,
-                                "interval": workspace_license.recurring_interval,
-                                "product": workspace_license.plan,
-                                "is_offline_payment": workspace_license.is_offline_payment,
-                                "trial_end_date": workspace_license.trial_end_date,
-                                "has_activated_free_trial": workspace_license.has_activated_free_trial,
-                                "has_added_payment_method": workspace_license.has_added_payment_method,
-                            },
-                            status=status.HTTP_200_OK,
-                        )
-                    else:
-                        return Response(
-                            {
-                                "is_cancelled": workspace_license.is_cancelled,
-                                "purchased_seats": workspace_license.purchased_seats,
-                                "current_period_end_date": workspace_license.current_period_end_date,
-                                "interval": workspace_license.recurring_interval,
-                                "product": workspace_license.plan,
-                                "is_offline_payment": workspace_license.is_offline_payment,
-                                "trial_end_date": workspace_license.trial_end_date,
-                                "has_activated_free_trial": workspace_license.has_activated_free_trial,
-                                "has_added_payment_method": workspace_license.has_added_payment_method,
-                            },
-                            status=status.HTTP_200_OK,
-                        )
-                # If the license is not present, then fetch the license from the payment server and create it
-                else:
-                    # Fetch the workspace license
-                    response = fetch_workspace_license(
-                        workspace_id=str(workspace.id),
-                        workspace_slug=slug,
-                        free_seats=WorkspaceMember.objects.filter(
-                            is_active=True,
-                            workspace__slug=slug,
-                            member__is_bot=False,
-                        ).count(),
-                    )
-                    # Create the workspace license
-                    workspace_license = WorkspaceLicense.objects.create(
-                        workspace=workspace,
-                        is_cancelled=response.get("is_cancelled", False),
-                        purchased_seats=response.get("purchased_seats", 0),
-                        free_seats=response.get("free_seats", 12),
-                        current_period_end_date=response.get(
-                            "current_period_end_date"
-                        ),
-                        recurring_interval=response.get("interval"),
-                        plan=response.get("plan"),
-                        last_synced_at=timezone.now(),
-                        trial_end_date=response.get("trial_end_date"),
-                        has_activated_free_trial=response.get(
-                            "has_activated_free_trial", False
-                        ),
-                        has_added_payment_method=response.get(
-                            "has_added_payment_method", False
-                        ),
-                    )
-                    # Return the workspace license
-                    return Response(
-                        {
-                            "is_cancelled": workspace_license.is_cancelled,
-                            "purchased_seats": workspace_license.purchased_seats,
-                            "current_period_end_date": workspace_license.current_period_end_date,
-                            "interval": workspace_license.recurring_interval,
-                            "product": workspace_license.plan,
-                            "is_offline_payment": workspace_license.is_offline_payment,
-                            "trial_end_date": workspace_license.trial_end_date,
-                            "has_activated_free_trial": workspace_license.has_activated_free_trial,
-                            "has_added_payment_method": workspace_license.has_added_payment_method,
-                        },
-                        status=status.HTTP_200_OK,
-                    )
+                # Resync the workspace license
+                response = resync_workspace_license(workspace_slug=slug)
+                return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response(
                     {"error": "error fetching product details"},
@@ -295,84 +166,16 @@ class WorkspaceProductEndpoint(BaseAPIView):
 
 class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
     def post(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug)
-
-        # Check if the license is present for the workspace
-        workspace_license = WorkspaceLicense.objects.filter(
-            workspace=workspace
-        ).first()
-
-        # If the license is present, then fetch the license from the payment server and update it
-        if workspace_license:
-            # Update the values in the workspace license
-            response = fetch_workspace_license(
-                workspace_id=str(workspace.id),
-                workspace_slug=slug,
-                free_seats=WorkspaceMember.objects.filter(
-                    is_active=True,
-                    workspace__slug=slug,
-                    member__is_bot=False,
-                ).count(),
-            )
-            workspace_license.is_cancelled = response.get(
-                "is_cancelled", False
-            )
-            workspace_license.free_seats = response.get("free_seats", 12)
-            workspace_license.purchased_seats = response.get(
-                "purchased_seats", 0
-            )
-            workspace_license.current_period_end_date = response.get(
-                "current_period_end_date"
-            )
-            workspace_license.recurring_interval = response.get("interval")
-            workspace_license.plan = response.get("plan")
-            workspace_license.trial_end_date = response.get("trial_end_date")
-            workspace_license.has_activated_free_trial = response.get(
-                "has_activated_free_trial", False
-            )
-            workspace_license.has_added_payment_method = response.get(
-                "has_added_payment_method", False
-            )
-            workspace_license.last_synced_at = timezone.now()
-            workspace_license.save()
-        # If the license is not present, then fetch the license from the payment server and create it
-        else:
-            # Fetch the workspace license
-            response = fetch_workspace_license(
-                workspace_id=str(workspace.id),
-                workspace_slug=slug,
-                free_seats=WorkspaceMember.objects.filter(
-                    is_active=True,
-                    workspace__slug=slug,
-                    member__is_bot=False,
-                ).count(),
-            )
-            # Create the workspace license
-            workspace_license = WorkspaceLicense.objects.create(
-                workspace=workspace,
-                is_cancelled=response.get("is_cancelled", False),
-                purchased_seats=response.get("purchased_seats", 0),
-                free_seats=response.get("free_seats", 12),
-                current_period_end_date=response.get(
-                    "current_period_end_date"
-                ),
-                recurring_interval=response.get("interval"),
-                plan=response.get("plan"),
-                last_synced_at=timezone.now(),
-                trial_end_date=response.get("trial_end_date"),
-                has_activated_free_trial=response.get(
-                    "has_activated_free_trial", False
-                ),
-                has_added_payment_method=response.get(
-                    "has_added_payment_method", False
-                ),
-            )
+        # Resync the workspace license
+        _ = resync_workspace_license(workspace_slug=slug, force=True)
 
         # Return the response
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):
+    """This endpoint is used to sync the workspace license from the payment server"""
+
     permission_classes = [
         AllowAny,
     ]
@@ -427,6 +230,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
             workspace_license.has_added_payment_method = request.data.get(
                 "has_added_payment_method", False
             )
+            workspace_license.subscription = request.data.get("subscription")
             workspace_license.save()
         # If the workspace license is not present, then fetch the license from the payment server and create it
         else:
@@ -449,6 +253,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                 has_added_payment_method=request.data.get(
                     "has_added_payment_method", False
                 ),
+                subscription=request.data.get("subscription"),
             )
 
         # Return the response
