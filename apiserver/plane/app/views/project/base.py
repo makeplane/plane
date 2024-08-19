@@ -52,6 +52,7 @@ from plane.db.models import (
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class ProjectViewSet(BaseViewSet):
@@ -263,6 +264,14 @@ class ProjectViewSet(BaseViewSet):
                 {"error": "Project does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=pk,
+            entity_name="project",
+            entity_identifier=pk,
+            user_id=request.user.id,
+        )
 
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
