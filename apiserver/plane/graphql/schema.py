@@ -5,6 +5,7 @@ from strawberry_django.optimizer import DjangoOptimizerExtension
 from .queries.workspace import (
     WorkspaceQuery,
     WorkspaceMembersQuery,
+    WorkspaceIssuesInformationQuery,
     WorkspaceIssuesQuery,
 )
 from .queries.users import UserQuery
@@ -14,6 +15,7 @@ from .queries.label import LabelQuery, WorkspaceLabelQuery
 from .queries.state import StateQuery, WorkspaceStateQuery
 from .queries.notification import NotificationQuery
 from .queries.issue import (
+    IssuesInformationQuery,
     IssueQuery,
     RecentIssuesQuery,
     IssueUserPropertyQuery,
@@ -21,10 +23,19 @@ from .queries.issue import (
     IssueCommentActivityQuery,
 )
 from .queries.page import PageQuery
-from .queries.cycle import CycleQuery, CycleIssueQuery
-from .queries.module import ModuleQuery, ModuleIssueQuery
+from .queries.cycle import (
+    CycleQuery,
+    CycleIssuesInformationQuery,
+    CycleIssueQuery,
+)
+from .queries.module import (
+    ModuleQuery,
+    ModuleIssuesInformationQuery,
+    ModuleIssueQuery,
+)
 from .queries.search import ProjectSearchQuery
 from .queries.attachment import IssueAttachmentQuery
+from .queries.link import IssueLinkQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -43,6 +54,7 @@ from .mutations.user import ProfileMutation
 from .mutations.page import PageFavoriteMutation
 from .mutations.cycle import CycleIssueMutation
 from .mutations.module import ModuleIssueMutation
+
 
 # combined query class for all
 @strawberry.type
@@ -71,6 +83,11 @@ class Query(
     CycleIssueQuery,
     ModuleQuery,
     ModuleIssueQuery,
+    IssueLinkQuery,
+    IssuesInformationQuery,
+    WorkspaceIssuesInformationQuery,
+    CycleIssuesInformationQuery,
+    ModuleIssuesInformationQuery,
 ):
     pass
 

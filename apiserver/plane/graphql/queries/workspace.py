@@ -13,16 +13,22 @@ from strawberry.permission import PermissionExtension
 from plane.graphql.types.workspace import WorkspaceType, WorkspaceMemberType
 from plane.db.models import Workspace, WorkspaceMember, Issue
 from plane.graphql.utils.issue_filters import issue_filters
-from plane.graphql.types.issue import IssueType
+from plane.graphql.types.issue import (
+    IssuesInformationType,
+    IssuesInformationObjectType,
+    IssuesType,
+)
 from plane.graphql.permissions.workspace import (
     WorkspaceBasePermission,
     IsAuthenticated,
 )
+from plane.graphql.types.paginator import PaginatorResponse
+from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.issue import issue_information_query_execute
 
 
 @strawberry.type
 class WorkspaceQuery:
-
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
     )
@@ -33,12 +39,12 @@ class WorkspaceQuery:
                 workspace_member__is_active=True,
             ).order_by("-created_at")
         )
+
         return workspaces
 
 
 @strawberry.type
 class WorkspaceMembersQuery:
-
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
@@ -56,22 +62,62 @@ class WorkspaceMembersQuery:
         return workspace_members
 
 
+# workspace issues information query
 @strawberry.type
-class WorkspaceIssuesQuery:
-
+class WorkspaceIssuesInformationQuery:
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
         ]
     )
-    async def workspace_issues(
+    async def workspaceIssuesInformation(
+        self,
+        info: Info,
+        slug: str,
+        filters: Optional[JSON] = {},
+        groupBy: Optional[str] = None,
+        orderBy: Optional[str] = "-created_at",
+    ) -> IssuesInformationType:
+        filters = issue_filters(filters, "POST")
+
+        (
+            issue_count,
+            issue_group_info,
+        ) = await issue_information_query_execute(
+            user=info.context.user,
+            slug=slug,
+            filters=filters,
+            groupBy=groupBy,
+            orderBy=orderBy,
+        )
+
+        issue_information = IssuesInformationType(
+            all=IssuesInformationObjectType(
+                totalIssues=issue_count, groupInfo=issue_group_info
+            ),
+            active=None,
+            backlog=None,
+        )
+
+        return issue_information
+
+
+# workspace issues query
+@strawberry.type
+class WorkspaceIssuesQuery:
+    @strawberry.field(
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
+    )
+    async def workspaceIssues(
         self,
         info: Info,
         slug: str,
         filters: Optional[JSON] = {},
         orderBy: Optional[str] = "-created_at",
-        groupBy: Optional[str] = None,
-    ) -> list[IssueType]:
+        cursor: Optional[str] = None,
+    ) -> PaginatorResponse[IssuesType]:
         filters = issue_filters(filters, "POST")
 
         issues = await sync_to_async(list)(
@@ -85,4 +131,5 @@ class WorkspaceIssuesQuery:
             .order_by(orderBy, "-created_at")
             .filter(**filters)
         )
-        return issues
+
+        return paginate(results_object=issues, cursor=cursor)

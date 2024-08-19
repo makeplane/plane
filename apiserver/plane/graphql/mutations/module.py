@@ -39,9 +39,7 @@ class ModuleIssueMutation:
         module: strawberry.ID,
         issues: JSON,
     ) -> bool:
-
         project = await sync_to_async(Project.objects.get)(pk=project)
-        print("issue", issues)
         # Create ModuleIssues asynchronously
         await sync_to_async(
             lambda: ModuleIssue.objects.bulk_create(

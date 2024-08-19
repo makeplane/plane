@@ -15,7 +15,7 @@ from asgiref.sync import sync_to_async
 # Django imports
 
 # Module imports
-from plane.graphql.types.issue import IssueType, IssueUserPropertyType
+from plane.graphql.types.issue import IssuesType, IssueUserPropertyType
 from plane.graphql.permissions.project import (
     ProjectBasePermission,
     ProjectMemberPermission,
@@ -52,7 +52,7 @@ class IssueMutation:
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
         targetDate: Optional[datetime] = None,
-    ) -> IssueType:
+    ) -> IssuesType:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
         issue = await sync_to_async(Issue.objects.create)(
             name=name,
@@ -137,7 +137,7 @@ class IssueMutation:
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
         targetDate: Optional[datetime] = None,
-    ) -> IssueType:
+    ) -> IssuesType:
         issue = await sync_to_async(Issue.objects.get)(id=id)
 
         if name is not None:
@@ -270,7 +270,6 @@ class IssueAttachmentMutation:
     # ) -> IssueAttachment:
     #     pass
 
-
     # @strawberry.mutation(
     #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     # )
@@ -282,7 +281,6 @@ class IssueAttachmentMutation:
     #     # file_name = default_storage.save(filename, content)
 
     #     return True
-
 
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
