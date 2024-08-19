@@ -22,7 +22,7 @@ export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((pro
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<CalendarDays size={14} color="#6b7280" aria-hidden="true" />}
+      icon={<CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

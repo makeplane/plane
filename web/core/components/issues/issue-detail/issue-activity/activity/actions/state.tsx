@@ -23,7 +23,7 @@ export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />}
+      icon={<DoubleCircleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >
