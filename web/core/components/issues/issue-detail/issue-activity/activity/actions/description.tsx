@@ -20,7 +20,7 @@ export const IssueDescriptionActivity: FC<TIssueDescriptionActivity> = observer(
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<MessageSquare size={14} color="#6b7280" aria-hidden="true" />}
+      icon={<MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >
