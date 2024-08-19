@@ -98,7 +98,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   </div>
 
                   <ToggleSwitch
-                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                    value={Boolean(isWorklogEnabled && currentProjectDetails?.[featureItem.property as keyof IProject])}
                     onChange={() => handleSubmit(featureItemKey, featureItem.property)}
                     disabled={
                       !featureItem.isEnabled || !isAdmin || featureItem.property === "is_time_tracking_enabled"
