@@ -27,4 +27,5 @@ export type IWorkspaceProductSubscription = {
   purchased_seats: number | undefined;
   has_activated_free_trial: boolean;
   has_added_payment_method: boolean;
+  subscription: string | undefined;
 };

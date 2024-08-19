@@ -12,4 +12,5 @@ export type TWorkspaceWithProductDetails = {
   has_added_payment_method: boolean;
   trial_end_date: string;
   is_offline_payment: boolean;
+  subscription: string;
 };
