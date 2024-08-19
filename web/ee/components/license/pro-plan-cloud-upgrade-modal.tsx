@@ -57,7 +57,7 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
-    workspaceSlug && canFetchProducts ? "CLOUD_PAYMENT_PRODUCTS" : null,
+    workspaceSlug && canFetchProducts ? `CLOUD_PAYMENT_PRODUCTS_${workspaceSlug?.toString()}` : null,
     workspaceSlug && canFetchProducts ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,

@@ -48,7 +48,7 @@ const CloudUpgradePlanPage = observer(() => {
 
   // fetch products
   const { data: products, isLoading: isLoadingProduct } = useSWR(
-    workspaceSlug ? "CLOUD_PRO_PRODUCTS" : null,
+    workspaceSlug ? `CLOUD_PRO_PRODUCTS_${workspaceSlug?.toString()}` : null,
     workspaceSlug ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,
