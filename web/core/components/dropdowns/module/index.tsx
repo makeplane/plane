@@ -11,7 +11,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useModule } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITHOUT_TEXT } from "../constants";
@@ -68,7 +68,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
   } = props;
   // store hooks
   const { getModuleById } = useModule();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   if (Array.isArray(value))
     return (

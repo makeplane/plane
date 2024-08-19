@@ -27,3 +27,16 @@ export const usePlatformOS = () => {
   }, []);
   return { isMobile, platform };
 };
+
+export const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+
+    if (isMobile) {
+      setIsMobile(isMobile);
+    }
+  }, []);
+  return isMobile;
+};

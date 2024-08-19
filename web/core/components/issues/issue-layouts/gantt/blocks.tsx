@@ -8,7 +8,7 @@ import { Tooltip, ControlLink } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -40,7 +40,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     issueDetails.project_id &&
     !getIsIssuePeeked(issueDetails.id) &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <div
@@ -92,7 +92,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
     issueDetails &&
     issueDetails.project_id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <ControlLink

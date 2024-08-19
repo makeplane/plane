@@ -30,7 +30,7 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "../properties/labels";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
@@ -61,7 +61,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   } = useIssues(storeType);
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const projectDetails = getProjectById(issue.project_id);
 
   // router

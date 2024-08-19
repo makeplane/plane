@@ -18,7 +18,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
@@ -82,7 +82,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
 
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const element = issueRef.current;

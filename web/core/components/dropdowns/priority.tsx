@@ -15,7 +15,7 @@ import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // constants
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 // types
@@ -67,7 +67,7 @@ const BorderButton = (props: ButtonProps) => {
     none: "hover:bg-custom-background-80 border-custom-border-300",
   };
 
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip
@@ -147,7 +147,7 @@ const BackgroundButton = (props: ButtonProps) => {
     none: "bg-custom-background-80",
   };
 
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip
@@ -228,7 +228,7 @@ const TransparentButton = (props: ButtonProps) => {
     none: "hover:text-custom-text-300",
   };
 
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip
@@ -363,8 +363,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
 
   return (
     <Combobox

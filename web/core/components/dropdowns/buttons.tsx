@@ -4,7 +4,7 @@
 import { Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // types
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
 import { TButtonVariants } from "./types";
 
@@ -50,7 +50,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
 
 const BorderButton: React.FC<ButtonProps> = (props) => {
   const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <Tooltip
@@ -74,7 +74,7 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
 
 const BackgroundButton: React.FC<ButtonProps> = (props) => {
   const { children, className, tooltipContent, tooltipHeading, showTooltip } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
@@ -96,7 +96,7 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
 
 const TransparentButton: React.FC<ButtonProps> = (props) => {
   const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}

@@ -7,7 +7,7 @@ import { Tooltip } from "@plane/ui";
 // types
 // constants
 import { EIssueLayoutTypes,ISSUE_LAYOUTS } from "@/constants/issue";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // hooks
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 
 export const LayoutSelection: React.FC<Props> = (props) => {
   const { layouts, onChange, selectedLayout } = props;
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">

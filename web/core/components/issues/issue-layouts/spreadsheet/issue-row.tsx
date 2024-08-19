@@ -19,7 +19,7 @@ import { cn } from "@/helpers/common.helper";
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
@@ -172,7 +172,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   // hooks
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&

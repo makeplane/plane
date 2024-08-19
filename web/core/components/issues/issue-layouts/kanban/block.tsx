@@ -17,7 +17,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useKanbanView } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
@@ -52,7 +52,7 @@ interface IssueDetailsBlockProps {
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   const handleEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -122,7 +122,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&

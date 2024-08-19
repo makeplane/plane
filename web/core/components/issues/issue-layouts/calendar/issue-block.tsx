@@ -14,7 +14,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
 // local components
@@ -38,7 +38,7 @@ export const CalendarIssueBlock = observer(
     const { workspaceSlug, projectId } = useParams();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
-    const { isMobile } = usePlatformOS();
+    const isMobile = useIsMobile();
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 

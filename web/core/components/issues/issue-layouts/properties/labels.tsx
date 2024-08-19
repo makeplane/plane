@@ -15,7 +15,7 @@ import { Tooltip } from "@plane/ui";
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIsMobile } from "@/hooks/use-platform-os";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -66,7 +66,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // store hooks
   const { fetchProjectLabels, getProjectLabels } = useLabel();
-  const { isMobile } = usePlatformOS();
+  const isMobile = useIsMobile();
   const storeLabels = getProjectLabels(projectId);
 
   const onOpen = () => {
