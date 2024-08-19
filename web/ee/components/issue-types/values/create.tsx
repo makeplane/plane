@@ -2,15 +2,14 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-// plane web hooks
+// hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
+// helpers
+import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
+// plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
-// plane web store
-import { IIssueProperty } from "@/plane-web/store/issue-types";
-// plane web types
-import { EIssuePropertyType, TIssuePropertyValues } from "@/plane-web/types";
 // local components
 import { IssueAdditionalPropertyValues } from "./root";
 
@@ -19,15 +18,6 @@ type TIssueAdditionalPropertyValuesCreateProps = {
   issueTypeId: string;
   projectId: string;
   workspaceSlug: string;
-};
-
-// helper function to get the default value for every property
-const getPropertiesDefaultValues = (properties: IIssueProperty<EIssuePropertyType>[]): TIssuePropertyValues => {
-  const defaultValues: TIssuePropertyValues = {};
-  properties?.forEach((property) => {
-    if (property.id && property.default_value) defaultValues[property.id] = property.default_value ?? [];
-  });
-  return defaultValues;
 };
 
 const issuePropertyValuesService = new IssuePropertyValuesService();

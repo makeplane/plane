@@ -9,6 +9,10 @@ import {
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
+// plane web helpers
+import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
@@ -27,9 +31,18 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   // states
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
+  // hooks
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
   // plane web hooks
-  const { isIssueTypeEnabledForProject, getIssueTypeProperties, getProjectIssueTypes, getProjectDefaultIssueType } =
-    useIssueTypes();
+  const {
+    isIssueTypeEnabledForProject,
+    getIssueTypeById,
+    getIssueTypeProperties,
+    getProjectIssueTypes,
+    getProjectDefaultIssueType,
+  } = useIssueTypes();
 
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
@@ -112,7 +125,11 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       .create(workspaceSlug, projectId, issueId, issuePropertyValues)
       .then(() => {
         // reset issue property values
-        setIssuePropertyValues({});
+        const issueDetail = getIssueById(issueId);
+        const issueType = issueDetail?.type_id ? getIssueTypeById(issueDetail.type_id) : null;
+        setIssuePropertyValues({
+          ...getPropertiesDefaultValues(issueType?.activeProperties ?? []),
+        });
       })
       .catch(() => {
         setToast({
