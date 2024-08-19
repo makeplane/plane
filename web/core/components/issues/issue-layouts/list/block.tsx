@@ -19,6 +19,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "./list-view-types";
