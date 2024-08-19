@@ -55,8 +55,7 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                 </div>
                 <IssueTypeLogo
                   icon_props={issueTypeDetail?.logo_props?.icon}
-                  size={26}
-                  containerSize={38}
+                  size="xl"
                   isDefault={issueTypeDetail?.is_default}
                   containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
                 />

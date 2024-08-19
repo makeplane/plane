@@ -8,6 +8,8 @@ import { X } from "lucide-react";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // helpers
 import { getTabIndex } from "@/helpers/issue-modal.helper";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type TIssueParentTagProps = {
   control: Control<TIssue>;
@@ -33,7 +35,15 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
               }}
             />
             <span className="flex-shrink-0 text-custom-text-200">
-              {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
+              {selectedParentIssue?.project_id && (
+                <IssueIdentifier
+                  projectId={selectedParentIssue.project_id}
+                  issueTypeId={selectedParentIssue.type_id}
+                  projectIdentifier={selectedParentIssue?.project__identifier}
+                  issueSequenceId={selectedParentIssue.sequence_id}
+                  textContainerClassName="text-xs"
+                />
+              )}
             </span>
             <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
             <button

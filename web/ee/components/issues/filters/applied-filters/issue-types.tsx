@@ -40,12 +40,7 @@ export const AppliedIssueTypeFilters: React.FC<Props> = observer((props) => {
             key={issueTypeId}
             className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs truncate"
           >
-            <IssueTypeLogo
-              icon_props={issueType?.logo_props?.icon}
-              size={10}
-              containerSize={16}
-              isDefault={issueType?.is_default}
-            />
+            <IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} />
             <span className="normal-case truncate">{issueType.name}</span>
             {editable && (
               <button

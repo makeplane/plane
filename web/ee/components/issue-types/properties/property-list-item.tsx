@@ -357,7 +357,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       className={cn(
         "w-full h-8 flex items-center gap-2 group px-2 py-3 my-2 text-sm rounded hover:bg-custom-background-90 cursor-default",
         {
-          "bg-toast-text-warning/20 hover:bg-toast-text-warning/20": issuePropertyOperationMode,
+          "bg-yellow-500/15 hover:bg-yellow-500/15": issuePropertyOperationMode,
         }
       )}
     >

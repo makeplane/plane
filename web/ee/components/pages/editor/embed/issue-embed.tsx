@@ -11,7 +11,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties/al
 import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useIssueDetail, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail, useUser } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -31,7 +31,6 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
-  const { getProjectById } = useProject();
   const {
     setPeekIssue,
     issue: { fetchIssue, getIssueById, updateIssue },
@@ -39,7 +38,6 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
 
   // derived values
   const projectRole = currentWorkspaceAllProjectsRole?.[projectId];
-  const projectDetails = getProjectById(projectId);
   const issueDetails = getIssueById(issueId);
 
   // auth

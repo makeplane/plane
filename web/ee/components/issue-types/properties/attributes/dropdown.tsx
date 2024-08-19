@@ -10,7 +10,7 @@ import {
 // plane web constants
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
+import { useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
 // plane web types
 import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
@@ -30,9 +30,25 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
   const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
+  const { setPropertyOptions } = usePropertyOptions();
   // derived values
   const isAnyIssueAttached = issueType?.issue_exists;
   const isOptionDefaultDisabled = dropdownPropertyDetail.is_multi === undefined || !!dropdownPropertyDetail.is_required;
+  // helpers
+  const resetToSingleSelectDefault = () => {
+    const firstDefaultOption = dropdownPropertyDetail.default_value?.[0];
+    // Update property options
+    setPropertyOptions((prevOptions) => {
+      if (!prevOptions) return [];
+      return prevOptions.map((option) => ({
+        ...option,
+        is_default: option.id === firstDefaultOption,
+      }));
+    });
+    // Update default value
+    const newDefaultValue = firstDefaultOption ? [firstDefaultOption] : [];
+    onDropdownDetailChange("default_value", newDefaultValue);
+  };
 
   return (
     <>
@@ -43,10 +59,7 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
           onChange={(value) => {
             onDropdownDetailChange("is_multi", value);
             if (!value) {
-              onDropdownDetailChange(
-                "default_value",
-                dropdownPropertyDetail.default_value?.[0] ? [dropdownPropertyDetail.default_value?.[0]] : []
-              );
+              resetToSingleSelectDefault();
             }
           }}
           isDisabled={currentOperationMode === "update" && isAnyIssueAttached}

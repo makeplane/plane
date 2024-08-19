@@ -23,7 +23,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";

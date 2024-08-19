@@ -22,7 +22,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
-import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {

@@ -30,11 +30,11 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
       <div className="flex flex-col sticky top-0 bg-custom-background-100">
         <div className="flex items-center px-2 py-[12px] w-full ">
           <div
-            className={`relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border ${isInputFocused ? "border-custom-primary-100" : "border-transparent"}`}
+            className={`relative flex items-center gap-2 bg-custom-background-90 h-8 rounded-lg w-full px-[30px] border ${isInputFocused ? "border-custom-primary-100" : "border-transparent"}`}
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
           >
-            <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
+            <Search className="absolute left-2.5 bottom-2 h-3.5 w-3.5 text-custom-text-400" />
             <Input
               placeholder="Search"
               value={query}

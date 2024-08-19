@@ -79,14 +79,7 @@ export const FilterIssueTypes: React.FC<Props> = observer((props) => {
                     key={issueType.id}
                     isChecked={issueType.id && appliedFilters?.includes(issueType.id) ? true : false}
                     onClick={() => issueType.id && handleUpdate(issueType.id)}
-                    icon={
-                      <IssueTypeLogo
-                        icon_props={issueType?.logo_props?.icon}
-                        size={10}
-                        containerSize={16}
-                        isDefault={issueType?.is_default}
-                      />
-                    }
+                    icon={<IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} />}
                     title={
                       projectId
                         ? issueType.name
