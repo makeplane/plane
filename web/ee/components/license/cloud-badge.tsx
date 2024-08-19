@@ -67,12 +67,6 @@ export const CloudEditionBadge = observer(() => {
       </Loader>
     );
 
-  // derived values
-  const isInTrialPeriod =
-    subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.trial_end_date ? true : false;
-  const isTrialCompleted =
-    subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.trial_end_date ? true : false;
-
   const renderButtonText = () => {
     if (!subscriptionDetail.subscription) {
       return "Upgrade to Pro";
@@ -140,7 +134,6 @@ export const CloudEditionBadge = observer(() => {
         handleClose={() => toggleProPlanModal(false)}
         yearlyPlan={false}
         handleSuccessModal={() => setProPlanSuccessModalOpen(true)}
-        canFetchProducts={subscriptionDetail.product === "FREE" || isInTrialPeriod || isTrialCompleted}
       />
 
       {showPaymentButton() && (
