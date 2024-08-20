@@ -111,7 +111,9 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         </>
       </Link>
 
-      {!project.archived_at && filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={project} />}
+      {!project.archived_at && filters?.scope === EProjectScope.ALL_PROJECTS && (
+        <JoinButton className="m-2" project={project} />
+      )}
     </div>
   );
 });

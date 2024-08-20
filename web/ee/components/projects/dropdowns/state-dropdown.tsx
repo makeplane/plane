@@ -62,6 +62,7 @@ export const StateDropdown: FC<TStateDropdown> = observer((props) => {
       buttonClassName={buttonClassName}
       className={className}
       disabled={disabled}
+      optionsClassName="z-[19]"
       noChevron
     />
   );

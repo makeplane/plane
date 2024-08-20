@@ -46,7 +46,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
     <div
       ref={projectRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent border-b border-b-custom-border-200",
+        "group/list-block min-h-11 relative flex flex-col gap-x-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent border-b border-b-custom-border-200 md:py-1",
         {
           "bg-custom-background-80": isCurrentBlockDragging,
           "md:flex-row md:items-center": isSidebarCollapsed,
@@ -64,7 +64,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
       }}
     >
       <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-0.5 truncate">
+        <div className="flex flex-grow items-center gap-0.5 truncate p-2 pb-0 lg:pb-2">
           <div className="flex items-center gap-1">
             <div className="h-8 w-8 flex-shrink-0 grid place-items-center rounded bg-custom-background-90 mr-2">
               <Logo logo={projectDetails.logo_props} size={18} />
@@ -98,7 +98,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
           )}
         </div>
         <div
-          className={cn("block border border-custom-border-300 rounded h-full", {
+          className={cn("block border border-custom-border-300 rounded h-full m-auto", {
             "md:hidden": isSidebarCollapsed,
             "lg:hidden": !isSidebarCollapsed,
           })}
