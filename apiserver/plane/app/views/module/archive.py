@@ -575,6 +575,12 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=module_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(
             {"archived_at": str(module.archived_at)},
             status=status.HTTP_200_OK,

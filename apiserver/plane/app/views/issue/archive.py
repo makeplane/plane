@@ -47,6 +47,7 @@ from plane.utils.paginator import (
     SubGroupedOffsetPaginator,
 )
 from plane.app.permissions import allow_permission, ROLE
+from plane.utils.error_codes import ERROR_CODES
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
@@ -345,7 +346,9 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
             if issue.state.group not in ["completed", "cancelled"]:
                 return Response(
                     {
-                        "error_code": 4091,
+                        "error_code": ERROR_CODES[
+                            "INVALID_ARCHIVE_STATE_GROUP"
+                        ],
                         "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
