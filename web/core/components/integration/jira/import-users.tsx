@@ -137,7 +137,7 @@ export const JiraImportUsers: FC = () => {
                           label={value !== "" ? value : "Select user from project"}
                           options={options}
                           onChange={onChange}
-                          optionsClassName="w-full"
+                          optionsClassName="w-48"
                         />
                       )}
                     />

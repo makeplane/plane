@@ -19,7 +19,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   // states
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   // params
-  const { projectId, pageId } = useParams();
+  const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -28,7 +28,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
   const { toggleProPlanModal } = useWorkspaceSubscription();
-  const isPagePublishEnabled = useFlag("PAGE_PUBLISH");
+  const isPagePublishEnabled = useFlag(workspaceSlug?.toString(), "PAGE_PUBLISH");
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());

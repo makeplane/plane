@@ -34,6 +34,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     peekIssue,
+    setPeekIssue,
     issue: { fetchIssue },
     fetchActivities,
   } = useIssueDetail();
@@ -43,6 +44,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // state
   const [loader, setLoader] = useState(true);
   const [error, setError] = useState(false);
+
+  const removeRoutePeekId = () => {
+    setPeekIssue(undefined);
+    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+  };
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -95,16 +101,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          issues?.removeIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
-          });
-          captureIssueEvent({
-            eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: pathname,
+          return issues?.removeIssue(workspaceSlug, projectId, issueId).then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_DELETED,
+              payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              path: pathname,
+            });
+            removeRoutePeekId();
           });
         } catch (error) {
           setToast({

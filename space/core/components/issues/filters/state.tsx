@@ -18,7 +18,7 @@ type Props = {
 export const FilterState: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
-  const { states } = useStates();
+  const { sortedStates: states } = useStates();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);

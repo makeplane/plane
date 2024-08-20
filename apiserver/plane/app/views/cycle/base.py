@@ -30,8 +30,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectLitePermission,
+    allow_permission, ROLE
 )
 from plane.app.serializers import (
     CycleSerializer,
@@ -51,6 +50,7 @@ from plane.db.models import (
     ProjectMember,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 # Module imports
 from .. import BaseAPIView, BaseViewSet
@@ -61,15 +61,6 @@ class CycleViewSet(BaseViewSet):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            owned_by=self.request.user,
-        )
 
     def get_queryset(self):
         favorite_subquery = UserFavorite.objects.filter(
@@ -326,6 +317,7 @@ class CycleViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
@@ -612,6 +604,7 @@ class CycleViewSet(BaseViewSet):
         )
         return Response(data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         if (
             request.data.get("start_date", None) is None
@@ -685,6 +678,7 @@ class CycleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
         queryset = self.get_queryset().filter(
             workspace__slug=slug, project_id=project_id, pk=pk
@@ -772,6 +766,7 @@ class CycleViewSet(BaseViewSet):
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
@@ -1035,11 +1030,19 @@ class CycleViewSet(BaseViewSet):
                 cycle_id=pk,
             )
 
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="cycle",
+            entity_identifier=pk,
+            user_id=request.user.id,
+            project_id=project_id,
+        )
         return Response(
             data,
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN], creator=True, model=Cycle)
     def destroy(self, request, slug, project_id, pk):
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
@@ -1098,10 +1101,8 @@ class CycleViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         start_date = request.data.get("start_date", False)
         end_date = request.data.get("end_date", False)
@@ -1145,6 +1146,7 @@ class CycleFavoriteViewSet(BaseViewSet):
             .select_related("cycle", "cycle__owned_by")
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         _ = UserFavorite.objects.create(
             project_id=project_id,
@@ -1154,6 +1156,7 @@ class CycleFavoriteViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, cycle_id):
         cycle_favorite = UserFavorite.objects.get(
             project=project_id,
@@ -1167,10 +1170,8 @@ class CycleFavoriteViewSet(BaseViewSet):
 
 
 class TransferCycleIssueEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
 
@@ -1580,10 +1581,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
 
 class CycleUserPropertiesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def patch(self, request, slug, project_id, cycle_id):
         cycle_properties = CycleUserProperties.objects.get(
             user=request.user,
@@ -1606,6 +1605,7 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
         serializer = CycleUserPropertiesSerializer(cycle_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         cycle_properties, _ = CycleUserProperties.objects.get_or_create(
             user=request.user,

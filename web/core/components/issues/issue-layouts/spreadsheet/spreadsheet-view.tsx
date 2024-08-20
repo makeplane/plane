@@ -5,8 +5,9 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@pl
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
-import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "@/components/issues";
 // constants
+import { EIssueLayoutTypes } from "@/constants/issue";
 import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // hooks
 import { useProject } from "@/hooks/store";
@@ -109,7 +110,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             <div className="border-t border-custom-border-100">
               <div className="z-5 sticky bottom-0 left-0 mb-3">
                 {enableQuickCreateIssue && !disableIssueCreation && (
-                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} />
+                  <QuickAddIssueRoot
+                    layout={EIssueLayoutTypes.SPREADSHEET}
+                    QuickAddButton={SpreadsheetAddIssueButton}
+                    quickAddCallback={quickAddCallback}
+                  />
                 )}
               </div>
             </div>

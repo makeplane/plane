@@ -491,7 +491,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: EUserProjectRoles.GUEST,
   },
   // project pages
   [EmptyStateType.PROJECT_PAGE]: {
