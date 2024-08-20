@@ -39,7 +39,6 @@ import { IMemberRootStore } from "@/store/member";
 import { IModuleStore } from "@/store/module.store";
 import { IProjectStore } from "@/store/project/project.store";
 import { IStateStore } from "@/store/state.store";
-import { ALL_ISSUES } from "@plane/constants";
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
@@ -93,7 +92,7 @@ export const getGroupByColumns = (
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
-      if (includeNone) return [{ id: ALL_ISSUES, name: ALL_ISSUES, payload: {}, icon: undefined }];
+      if (includeNone) return [{ id: `All Issues`, name: `All Issues`, payload: {}, icon: undefined }];
   }
 };
 

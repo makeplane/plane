@@ -7,6 +7,7 @@ export const createIssuesTable = (SQLITE: any) => {
       completed_at TEXT, 
       estimate_point REAL, 
       priority TEXT, 
+      priority_proxy INTEGER, 
       start_date TEXT, 
       target_date TEXT, 
       sequence_id INTEGER, 

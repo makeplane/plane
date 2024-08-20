@@ -37,7 +37,6 @@ import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { TRenderQuickActions } from "./list-view-types";
 import { ListQuickAddIssueForm } from "./quick-add-issue-form";
-import isNil from "lodash/isNil";
 
 interface Props {
   groupIssueIds: string[] | undefined;
@@ -99,7 +98,7 @@ export const ListGroup = observer((props: Props) => {
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  const groupIssueCount = getGroupIssueCount(group.id, undefined, false);
+  const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
   const isPaginating = !!getIssueLoader(group.id);
 
@@ -107,7 +106,7 @@ export const ListGroup = observer((props: Props) => {
 
   const shouldLoadMore =
     nextPageResults === undefined && groupIssueCount !== undefined && groupIssueIds
-      ? isNil(groupIssueCount) || groupIssueIds.length < groupIssueCount
+      ? groupIssueIds.length < groupIssueCount
       : !!nextPageResults;
 
   const loadMore = isPaginating ? (

@@ -10,7 +10,7 @@ import { useParams, usePathname } from "next/navigation";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
 //hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
@@ -20,6 +20,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 // ui
 // types
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "../utils";
@@ -221,7 +222,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}
@@ -278,6 +279,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           </div>
         </div>
       </div>
-    </>
+    </IssueLayoutHOC>
   );
 });

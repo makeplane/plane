@@ -6,6 +6,7 @@ export const createIssueIndexes = async () => {
     "state_id",
     "sort_order",
     //  "priority",
+    "priority_proxy",
     "project_id",
     "created_by",
     "cycle_id",
@@ -39,9 +40,10 @@ export const createIssueMetaIndexes = async () => {
 
 const createIndexes = async () => {
   log("### Creating indexes");
+  const start = performance.now();
   const promises = [createIssueIndexes(), createIssueMetaIndexes()];
   await Promise.all(promises);
-  log("### Indexes created");
+  log("### Indexes created in", `${performance.now() - start}ms`);
 };
 
 export default createIndexes;

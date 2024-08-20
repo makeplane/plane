@@ -15,7 +15,6 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import isNil from "lodash/isNil";
 // types
 
 interface IHeaderGroupByCard {
@@ -24,7 +23,7 @@ interface IHeaderGroupByCard {
   column_id: string;
   icon?: React.ReactNode;
   title: string;
-  count: number | undefined;
+  count: number;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
@@ -124,13 +123,11 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           >
             {title}
           </div>
-          {!isNil(count) && (
-            <div
-              className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}
-            >
-              {count || 0}
-            </div>
-          )}
+          <div
+            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}
+          >
+            {count || 0}
+          </div>
         </div>
 
         {sub_group_by === null && (
