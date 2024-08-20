@@ -240,7 +240,6 @@ class IssueViewSet(BaseViewSet):
                 "updated_at__gt": request.GET.get("updated_at__gt")
             }
 
-            print (extra_filters)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
@@ -667,10 +666,17 @@ class DeletedIssuesListViewSet(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        deleted_issues = Issue.all_objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            deleted_at__isnull=False,
-        ).values_list("id", flat=True)
+        filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
+        deleted_issues = (
+            Issue.all_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                deleted_at__isnull=False,
+            )
+            .filter(**filters)
+            .values_list("id", flat=True)
+        )
 
         return Response(deleted_issues, status=status.HTTP_200_OK)
