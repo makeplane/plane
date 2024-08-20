@@ -10,8 +10,20 @@ const SPECIAL_ORDER_BY = [
   "-module__name",
 ];
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const { order_by, cursor, per_page, labels, sub_issue, assignees, state, cycle, group_by, module, ...otherProps } =
-    queries;
+  const {
+    order_by,
+    cursor,
+    per_page,
+    labels,
+    sub_issue,
+    assignees,
+    state,
+    cycle,
+    group_by,
+    sub_group_by,
+    module,
+    ...otherProps
+  } = queries;
 
   if (state) otherProps.state_id = state;
   if (cycle) otherProps.cycle_id = cycle;
@@ -36,6 +48,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     console.log("###", group_by);
 
     const translatedGroupBy = GROUP_BY_MAP[group_by];
+    const translatedSubGroupBy = GROUP_BY_MAP[sub_group_by];
     // Check if group by is by array field
     if (ARRAY_FIELDS.includes(translatedGroupBy)) {
       sql = `
@@ -59,8 +72,8 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     } else {
       sql = `
         SELECT j.* FROM (
-          SELECT 	i.*,i.${translatedGroupBy} as group_id,
-                  ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy} ${orderByString} ) as rank, 
+          SELECT 	i.*,i.${translatedGroupBy} as group_id, i.${translatedSubGroupBy} as sub_group_id,
+                  ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy}, i.${translatedSubGroupBy} ${orderByString} ) as rank, 
                   COUNT(*) OVER (PARTITION by i.${translatedGroupBy}) as total_issues 
 
                   FROM issues AS i LEFT JOIN issue_meta as im ON i.id = im.issue_id 
