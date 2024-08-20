@@ -634,6 +634,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, pk):
