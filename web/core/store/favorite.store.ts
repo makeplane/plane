@@ -229,15 +229,26 @@ export class FavoriteStore implements IFavoriteStore {
   removeFavoriteEntityFromStore = (entity_identifier: string, entity_type: string) => {
     switch (entity_type) {
       case "view":
-        return (this.viewStore.viewMap[entity_identifier].is_favorite = false);
+        return (
+          this.viewStore.viewMap[entity_identifier] && (this.viewStore.viewMap[entity_identifier].is_favorite = false)
+        );
       case "module":
-        return (this.moduleStore.moduleMap[entity_identifier].is_favorite = false);
+        return (
+          this.moduleStore.moduleMap[entity_identifier] &&
+          (this.moduleStore.moduleMap[entity_identifier].is_favorite = false)
+        );
       case "page":
-        return (this.pageStore.data[entity_identifier].is_favorite = false);
+        return this.pageStore.data[entity_identifier] && (this.pageStore.data[entity_identifier].is_favorite = false);
       case "cycle":
-        return (this.cycleStore.cycleMap[entity_identifier].is_favorite = false);
+        return (
+          this.cycleStore.cycleMap[entity_identifier] &&
+          (this.cycleStore.cycleMap[entity_identifier].is_favorite = false)
+        );
       case "project":
-        return (this.projectStore.projectMap[entity_identifier]!.is_favorite = false);
+        return (
+          this.projectStore.projectMap[entity_identifier] &&
+          (this.projectStore.projectMap[entity_identifier].is_favorite = false)
+        );
       default:
         return;
     }
@@ -256,12 +267,12 @@ export class FavoriteStore implements IFavoriteStore {
     const initialState = this.favoriteMap[favoriteId];
 
     try {
+      await this.favoriteService.deleteFavorite(workspaceSlug, favoriteId);
       runInAction(() => {
         delete this.favoriteMap[favoriteId];
         entity_identifier && delete this.entityMap[entity_identifier];
         this.favoriteIds = this.favoriteIds.filter((id) => id !== favoriteId);
       });
-      await this.favoriteService.deleteFavorite(workspaceSlug, favoriteId);
       runInAction(() => {
         entity_identifier && this.removeFavoriteEntityFromStore(entity_identifier, initialState.entity_type);
         if (children) {
@@ -293,9 +304,6 @@ export class FavoriteStore implements IFavoriteStore {
     const initialState = this.entityMap[entityId];
     try {
       const favoriteId = this.entityMap[entityId].id;
-      runInAction(() => {
-        delete this.entityMap[entityId];
-      });
       await this.deleteFavorite(workspaceSlug, favoriteId);
     } catch (error) {
       console.error("Failed to remove favorite entity from favorite store", error);
