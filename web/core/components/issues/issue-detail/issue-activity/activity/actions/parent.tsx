@@ -20,7 +20,7 @@ export const IssueParentActivity: FC<TIssueParentActivity> = observer((props) =>
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<LayoutPanelTop size={14} color="#6b7280" aria-hidden="true" />}
+      icon={<LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

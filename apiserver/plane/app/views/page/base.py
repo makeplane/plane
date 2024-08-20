@@ -33,12 +33,13 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
 )
-
+from plane.utils.error_codes import ERROR_CODES
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -221,6 +222,13 @@ class PageViewSet(BaseViewSet):
             ).values_list("entity_identifier", flat=True)
             data = PageDetailSerializer(page).data
             data["issue_ids"] = issue_ids
+            recent_visited_task.delay(
+                slug=slug,
+                entity_name="page",
+                entity_identifier=pk,
+                user_id=request.user.id,
+                project_id=project_id,
+            )
             return Response(
                 data,
                 status=status.HTTP_200_OK,
@@ -296,6 +304,13 @@ class PageViewSet(BaseViewSet):
                 {"error": "Only the owner or admin can archive the page"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        UserFavorite.objects.filter(
+            entity_type="page",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
 
         unarchive_archive_page_and_descendants(pk, datetime.now())
 
@@ -471,6 +486,11 @@ class PagesDescriptionViewSet(BaseViewSet):
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .first()
         )
+        if page is None:
+            return Response(
+                {"error": "Page not found"},
+                status=404,
+            )
         binary_data = page.description_binary
 
         def stream_data():
@@ -505,14 +525,20 @@ class PagesDescriptionViewSet(BaseViewSet):
 
         if page.is_locked:
             return Response(
-                {"error": "Page is locked"},
-                status=471,
+                {
+                    "error_code": ERROR_CODES["PAGE_LOCKED"],
+                    "error_message": "PAGE_LOCKED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         if page.archived_at:
             return Response(
-                {"error": "Page is archived"},
-                status=472,
+                {
+                    "error_code": ERROR_CODES["PAGE_ARCHIVED"],
+                    "error_message": "PAGE_ARCHIVED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Serialize the existing instance
