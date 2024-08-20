@@ -1,0 +1,204 @@
+@import url("fonts/main.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  font-variant-ligatures: none;
+  -webkit-font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  html {
+    font-family: "Inter", sans-serif;
+  }
+
+  :root {
+    color-scheme: light !important;
+
+    /* Neutral */
+    --color-neutral-white: 0, 0%, 100%;
+    --color-neutral-50: 222, 20%, 96%;
+    --color-neutral-100: 222, 20%, 94%;
+    --color-neutral-200: 222, 20%, 86%;
+    --color-neutral-300: 222, 20%, 70%;
+    --color-neutral-400: 222, 20%, 60%;
+    --color-neutral-500: 222, 20%, 50%;
+    --color-neutral-600: 222, 20%, 40%;
+    --color-neutral-700: 222, 20%, 30%;
+    --color-neutral-800: 222, 20%, 20%;
+    --color-neutral-900: 222, 20%, 10%;
+    --color-neutral-950: 222, 20%, 8%;
+    --color-neutral-black: 222, 20%, 6%;
+
+    /* Brand */
+    --color-brand-50: 222, 100%, 96%;
+    --color-brand-100: 222, 100%, 94%;
+    --color-brand-200: 222, 100%, 86%;
+    --color-brand-300: 222, 100%, 70%;
+    --color-brand-400: 222, 100%, 60%;
+    --color-brand-500: 222, 100%, 50%;
+    --color-brand-600: 222, 100%, 40%;
+    --color-brand-700: 222, 100%, 30%;
+    --color-brand-800: 222, 100%, 20%;
+    --color-brand-900: 222, 100%, 10%;
+    --color-brand-950: 222, 100%, 5%;
+
+    /* Success */
+    --color-success-50: 134, 70%, 95%;
+    --color-success-100: 134, 70%, 90%;
+    --color-success-200: 134, 70%, 80%;
+    --color-success-300: 134, 70%, 70%;
+    --color-success-400: 134, 70%, 60%;
+    --color-success-500: 134, 70%, 50%;
+    --color-success-600: 134, 70%, 40%;
+    --color-success-700: 134, 70%, 30%;
+    --color-success-800: 134, 70%, 20%;
+    --color-success-900: 134, 70%, 10%;
+    --color-success-950: 134, 70%, 5%;
+
+    /* Warning */
+    --color-warning-50: 35, 100%, 95%;
+    --color-warning-100: 35, 100%, 90%;
+    --color-warning-200: 35, 100%, 80%;
+    --color-warning-300: 35, 100%, 70%;
+    --color-warning-400: 35, 100%, 60%;
+    --color-warning-500: 35, 100%, 50%;
+    --color-warning-600: 35, 100%, 40%;
+    --color-warning-700: 35, 100%, 35%;
+    --color-warning-800: 35, 100%, 30%;
+    --color-warning-900: 35, 100%, 25%;
+    --color-warning-950: 35, 100%, 15%;
+
+    /* Error */
+    --color-error-50: 0, 100%, 95%;
+    --color-error-100: 0, 100%, 90%;
+    --color-error-200: 0, 100%, 80%;
+    --color-error-300: 0, 100%, 70%;
+    --color-error-400: 0, 100%, 60%;
+    --color-error-500: 0, 100%, 50%;
+    --color-error-600: 0, 100%, 40%;
+    --color-error-700: 0, 100%, 30%;
+    --color-error-800: 0, 100%, 20%;
+    --color-error-900: 0, 100%, 10%;
+    --color-error-950: 0, 100%, 5%;
+
+    /* Information */
+    --color-information-50: 193, 100%, 95%;
+    --color-information-100: 193, 100%, 90%;
+    --color-information-200: 193, 100%, 80%;
+    --color-information-300: 193, 100%, 70%;
+    --color-information-400: 193, 100%, 60%;
+    --color-information-500: 193, 100%, 50%;
+    --color-information-600: 193, 100%, 40%;
+    --color-information-700: 193, 100%, 30%;
+    --color-information-800: 193, 100%, 20%;
+    --color-information-900: 193, 100%, 10%;
+    --color-information-950: 193, 100%, 5%;
+
+    /* on-color */
+    --on-color-light: 0, 0%, 100%;
+    --on-color-dark: 222, 20%, 6%;
+  }
+
+  /* [data-theme="light-contrast"] {
+  } */
+
+  [data-theme="dark"] {
+    /* Neutral */
+    --color-neutral-white: 222, 20%, 6%;
+    --color-neutral-50: 222, 20%, 8%;
+    --color-neutral-100: 222, 20%, 12%;
+    --color-neutral-200: 222, 20%, 16%;
+    --color-neutral-300: 222, 20%, 30%;
+    --color-neutral-400: 222, 20%, 40%;
+    --color-neutral-500: 222, 20%, 50%;
+    --color-neutral-600: 222, 20%, 60%;
+    --color-neutral-700: 222, 20%, 68%;
+    --color-neutral-800: 222, 20%, 82%;
+    --color-neutral-900: 222, 20%, 90%;
+    --color-neutral-950: 222, 20%, 95%;
+    --color-neutral-black: 222, 20%, 99%;
+
+    /* Brand */
+    --color-brand-50: 222, 100%, 8%;
+    --color-brand-100: 222, 100%, 15%;
+    --color-brand-200: 222, 100%, 20%;
+    --color-brand-300: 222, 100%, 20%;
+    --color-brand-400: 222, 100%, 40%;
+    --color-brand-500: 222, 100%, 50%;
+    --color-brand-600: 222, 100%, 60%;
+    --color-brand-700: 222, 100%, 70%;
+    --color-brand-800: 222, 100%, 80%;
+    --color-brand-900: 222, 100%, 90%;
+    --color-brand-950: 222, 100%, 95%;
+
+    /* Success */
+    --color-success-50: 134, 70%, 5%;
+    --color-success-100: 134, 70%, 10%;
+    --color-success-200: 134, 70%, 20%;
+    --color-success-300: 134, 70%, 30%;
+    --color-success-400: 134, 70%, 40%;
+    --color-success-500: 134, 70%, 50%;
+    --color-success-600: 134, 70%, 60%;
+    --color-success-700: 134, 70%, 70%;
+    --color-success-800: 134, 70%, 80%;
+    --color-success-900: 134, 70%, 90%;
+    --color-success-950: 134, 70%, 95%;
+
+    /* Warning */
+    --color-warning-50: 50, 100%, 5%;
+    --color-warning-100: 39, 100%, 10%;
+    --color-warning-200: 50, 100%, 20%;
+    --color-warning-300: 50, 100%, 30%;
+    --color-warning-400: 50, 100%, 40%;
+    --color-warning-500: 50, 100%, 50%;
+    --color-warning-600: 50, 100%, 60%;
+    --color-warning-700: 50, 100%, 70%;
+    --color-warning-800: 50, 100%, 80%;
+    --color-warning-900: 50, 100%, 90%;
+    --color-warning-950: 50, 100%, 95%;
+
+    /* Error */
+    --color-error-50: 0, 100%, 5%;
+    --color-error-100: 0, 100%, 10%;
+    --color-error-200: 0, 100%, 20%;
+    --color-error-300: 0, 100%, 30%;
+    --color-error-400: 0, 100%, 40%;
+    --color-error-500: 0, 100%, 50%;
+    --color-error-600: 0, 100%, 60%;
+    --color-error-700: 0, 100%, 70%;
+    --color-error-800: 0, 100%, 80%;
+    --color-error-900: 0, 100%, 90%;
+    --color-error-950: 0, 100%, 95%;
+
+    /* Information */
+    --color-information-50: 193, 100%, 5%;
+    --color-information-100: 193, 100%, 10%;
+    --color-information-200: 193, 100%, 20%;
+    --color-information-300: 193, 100%, 30%;
+    --color-information-400: 193, 100%, 40%;
+    --color-information-500: 193, 100%, 50%;
+    --color-information-600: 193, 100%, 60%;
+    --color-information-700: 193, 100%, 70%;
+    --color-information-800: 193, 100%, 80%;
+    --color-information-900: 193, 100%, 90%;
+    --color-information-950: 193, 100%, 95%;
+
+    /* on-color */
+    --on-color-light: 0, 0%, 100%;
+    --on-color-dark: 222, 20%, 6%;
+  }
+
+  /* [data-theme="dark-contrast"] {
+  } */
+}
