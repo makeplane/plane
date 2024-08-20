@@ -7,7 +7,7 @@ import { loadLabels } from "./utils/load-labels";
 import { issueFilterQueryConstructor, issueFilterCountQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
-import { getGroupedIssueResults } from "./utils/utils";
+import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
 
 const PAGE_SIZE = 1000;
 const log = console.log;
@@ -194,7 +194,7 @@ export class Storage {
     }
     await this.getSync(projectId);
 
-    const { cursor, group_by } = queries;
+    const { cursor, group_by, sub_group_by } = queries;
 
     const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
     const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
@@ -209,6 +209,7 @@ export class Storage {
     const [pageSize, page, offset] = cursor.split(":");
 
     const groupByProperty = EIssueGroupBYServerToProperty[group_by as typeof EIssueGroupBYServerToProperty];
+    const subGroupByProperty = EIssueGroupBYServerToProperty[sub_group_by as typeof EIssueGroupBYServerToProperty];
 
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => {
@@ -227,7 +228,11 @@ export class Storage {
     };
 
     if (groupByProperty && page === "0") {
-      issueResults = getGroupedIssueResults(issueResults);
+      if (subGroupByProperty) {
+        issueResults = getSubGroupedIssueResults(issueResults);
+      } else {
+        issueResults = getGroupedIssueResults(issueResults);
+      }
     }
 
     console.log(issueResults);

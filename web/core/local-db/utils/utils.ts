@@ -101,3 +101,57 @@ export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: strin
 
   return groupedResults;
 };
+
+
+export const getSubGroupedIssueResults = (
+  issueResults: (TIssue & { group_id: string; total_issues: number; sub_group_id: string })[]
+): any => {
+  const subGroupedResults: {
+    [key: string]: {
+      results: {
+        [key: string]: {
+          results: TIssue[];
+          total_results: number;
+        };
+      };
+      total_results: number;
+    };
+  } = {};
+
+  for (const issue of issueResults) {
+    const { group_id, total_issues, sub_group_id } = issue;
+    const groupId = group_id ? group_id : "None";
+    const subGroupId = sub_group_id ? sub_group_id : "None";
+
+    if (subGroupedResults?.[groupId] === undefined) {
+      subGroupedResults[groupId] = { results: {}, total_results: 0 };
+    }
+
+    if (
+      subGroupedResults[groupId].results[subGroupId] !== undefined &&
+      Array.isArray(subGroupedResults[groupId].results[subGroupId]?.results)
+    ) {
+      subGroupedResults[groupId].results[subGroupId]?.results.push(issue);
+    } else {
+      subGroupedResults[groupId].results[subGroupId] = { results: [issue], total_results: total_issues };
+    }
+  }
+
+  const groupByKeys = Object.keys(subGroupedResults);
+
+  for (const groupByKey of groupByKeys) {
+    let totalIssues = 0;
+    const groupedResults = subGroupedResults[groupByKey]?.results ?? {};
+    const subGroupByKeys = Object.keys(groupedResults);
+
+    for (const subGroupByKey of subGroupByKeys) {
+      const subGroupedResultsCount = groupedResults[subGroupByKey].total_results ?? 0;
+      totalIssues += subGroupedResultsCount;
+    }
+
+    subGroupedResults[groupByKey].total_results = totalIssues;
+  }
+
+  return subGroupedResults;
+};
+
