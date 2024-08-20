@@ -7,7 +7,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from django.urls import resolve
 from django.utils import timezone
-from plane.db.models.api import APIToken
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -17,7 +16,7 @@ from rest_framework.views import APIView
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
-from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
+from plane.api.rate_limit import ApiKeyRateThrottle
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
@@ -45,28 +44,14 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         IsAuthenticated,
     ]
 
+    throttle_classes = [
+        ApiKeyRateThrottle,
+    ]
+
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
-
-    def get_throttles(self):
-        throttle_classes = []
-        api_key = self.request.headers.get("X-Api-Key")
-
-        if api_key:
-            service_token = APIToken.objects.filter(
-                token=api_key,
-                is_service=True,
-            ).first()
-
-            if service_token:
-                throttle_classes.append(ServiceTokenRateThrottle())
-                return throttle_classes
-
-        throttle_classes.append(ApiKeyRateThrottle())
-
-        return throttle_classes
 
     def handle_exception(self, exc):
         """

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // types
 import { TIssue } from "@plane/types";
+// ui
+import { StateGroupIcon } from "@plane/ui";
 // components
 import {
   IssueActivity,
@@ -15,10 +17,8 @@ import {
   IssueDetailWidgets,
 } from "@/components/issues";
 // hooks
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
 import { TIssueOperations } from "./root";
 
@@ -38,6 +38,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
   const { data: currentUser } = useUser();
+  const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -53,6 +54,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue || !issue.project_id) return <></>;
 
+  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
+
   return (
     <>
       <div className="rounded-lg space-y-4">
@@ -66,9 +69,15 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        <div className="mb-2.5 flex items-center gap-4">
-          <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
-          <IssueUpdateStatus isSubmitting={isSubmitting} />
+        <div className="mb-2.5 flex items-center">
+          {currentIssueState && (
+            <StateGroupIcon
+              className="mr-3 h-4 w-4"
+              stateGroup={currentIssueState.group}
+              color={currentIssueState.color}
+            />
+          )}
+          <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issue} />
         </div>
 
         <IssueTitleInput

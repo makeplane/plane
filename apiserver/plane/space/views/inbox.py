@@ -19,7 +19,6 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     DeployBoard,
-    IssueType,
 )
 from plane.app.serializers import (
     IssueSerializer,
@@ -156,10 +155,6 @@ class InboxIssuePublicViewSet(BaseViewSet):
             color="#ff7700",
         )
 
-        issue_type = IssueType.objects.filter(
-            project_id=project_deploy_board.project_id, is_default=True
-        ).first()
-
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -170,7 +165,6 @@ class InboxIssuePublicViewSet(BaseViewSet):
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
             state=state,
-            type=issue_type,
         )
 
         # Create an Issue Activity

@@ -1,6 +1,3 @@
-// ui
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
-
 export const getRandomEmoji = () => {
   const emojis = [
     "8986",
@@ -20,8 +17,6 @@ export const getRandomEmoji = () => {
 
   return emojis[Math.floor(Math.random() * emojis.length)];
 };
-
-export const getRandomIconName = () => LUCIDE_ICONS_LIST[Math.floor(Math.random() * LUCIDE_ICONS_LIST.length)].name;
 
 export const renderEmoji = (
   emoji:
@@ -68,6 +63,7 @@ export const convertHexEmojiToDecimal = (emojiUnified: string): string => {
     .map((e) => parseInt(e, 16))
     .join("-");
 };
+
 
 export const emojiCodeToUnicode = (emoji: string) => {
   if (!emoji) return "";

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { TIssue, TPaginationData } from "@plane/types";
 // components
-import { CalendarQuickAddIssueActions, CalendarIssueBlockRoot } from "@/components/issues";
+import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
@@ -75,7 +75,9 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
         <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
-          <CalendarQuickAddIssueActions
+          <CalendarQuickAddIssueForm
+            formKey="target_date"
+            groupId={formattedDatePayload}
             prePopulatedData={{
               target_date: formattedDatePayload,
             }}

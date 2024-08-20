@@ -4,8 +4,9 @@ import { ReactNode } from "react";
 // components
 import { AppHeader, ContentWrapper } from "@/components/core";
 // local components
-import { ProjectsListHeader } from "@/plane-web/components/projects/header";
-import { ProjectsListMobileHeader } from "@/plane-web/components/projects/mobile-header";
+import { ProjectsListHeader } from "./header";
+import { ProjectsListMobileHeader } from "./mobile-header";
+
 export default function ProjectListLayout({ children }: { children: ReactNode }) {
   return (
     <>

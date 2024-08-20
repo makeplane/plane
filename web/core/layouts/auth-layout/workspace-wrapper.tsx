@@ -15,10 +15,8 @@ import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { useFlag, useIssueTypes, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
@@ -34,7 +32,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { membership, signOut, data: currentUser, canPerformWorkspaceMemberActions } = useUser();
+  const { membership, signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
@@ -42,19 +40,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { fetchFeatureFlags } = useFeatureFlags();
-  const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
-  const { fetchProjectStates } = useWorkspaceProjectStates();
-
-  const { fetchAllIssueTypes } = useIssueTypes();
   const { isMobile } = usePlatformOS();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
-  const isProjectStateEnabled =
-    workspaceFeatures[workspaceSlug.toString()] &&
-    workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
@@ -62,19 +53,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
   );
-  // fetching workspace features
-  useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_FEATURES_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => fetchWorkspaceFeatures(workspaceSlug.toString()) : null,
-    { revalidateOnFocus: false }
-  );
-  // fetch project states
-  useSWR(
-    workspaceSlug && currentWorkspace && isProjectStateEnabled ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null,
-    () =>
-      workspaceSlug && currentWorkspace && isProjectStateEnabled ? fetchProjectStates(workspaceSlug.toString()) : null,
-    { revalidateOnFocus: false }
-  );
+
   // fetching user workspace information
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
@@ -103,20 +82,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch workspace favorite
   useSWR(
-    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
-      ? `WORKSPACE_FAVORITE_${workspaceSlug}`
-      : null,
-    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
-      ? () => fetchFavorite(workspaceSlug.toString())
-      : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
-  // fetching all issue types for the workspace
-  useSWR(
-    workspaceSlug && isIssueTypesEnabled ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}` : null,
-    workspaceSlug && isIssueTypesEnabled ? () => fetchAllIssueTypes(workspaceSlug.toString()) : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_FAVORITE_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchFavorite(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

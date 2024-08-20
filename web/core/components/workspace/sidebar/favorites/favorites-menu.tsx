@@ -22,7 +22,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
-import { FavoriteRoot } from "./favorite-items";
+import { FavoriteItem } from "./favorite-item";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
@@ -196,8 +196,7 @@ export const SidebarFavoritesMenu = observer(() => {
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
                         />
                       ) : (
-                        <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
+                        <FavoriteItem
                           favorite={fav}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}

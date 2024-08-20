@@ -6,7 +6,6 @@ import strawberry
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
-from strawberry.file_uploads import Upload
 
 # Third-party imports
 from typing import Optional
@@ -263,28 +262,7 @@ class IssueUserPropertyMutation:
 
 @strawberry.type
 class IssueAttachmentMutation:
-    # @strawberry.field(
-    #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    # )
-    # async def create_issue_attachment(
-    # ) -> IssueAttachment:
-    #     pass
-
-
-    # @strawberry.mutation(
-    #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    # )
-    # def upload_file(self, file: Upload, info: Info) -> bool:
-    #     content = file.read()
-    #     filename = file.filename
-
-    #     # Save the file using Django's file storage
-    #     # file_name = default_storage.save(filename, content)
-
-    #     return True
-
-
-    @strawberry.mutation(
+    @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def deleteIssueAttachment(

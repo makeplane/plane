@@ -19,8 +19,6 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
@@ -189,14 +187,11 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </Tooltip>
             )}
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 pl-2" style={{ minWidth: `${keyMinWidth}px` }}>
-                {issue.project_id && (
-                  <IssueIdentifier
-                    issueId={issueId}
-                    projectId={issue.project_id}
-                    textContainerClassName="text-xs font-medium text-custom-text-300"
-                  />
-                )}
+              <div
+                className="flex-shrink-0 text-xs font-medium text-custom-text-300 pl-2"
+                style={{ minWidth: `${keyMinWidth}px` }}
+              >
+                {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
 

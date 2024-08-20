@@ -22,11 +22,9 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetail, useIssues } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -63,6 +61,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     issue: { getIssueById },
     setPeekIssue,
   } = useIssueDetail();
+
+  const { currentProjectDetails } = useProject();
 
   useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
@@ -183,16 +183,20 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                           }}
                         >
                           <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                            <IssueIdentifier
-                              issueId={issue.id}
-                              projectId={projectId}
-                              textContainerClassName="text-xs text-custom-text-200"
-                            />
+                            <PriorityIcon priority={issue.priority} withContainer size={12} />
+
+                            <Tooltip
+                              tooltipHeading="Issue ID"
+                              tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
+                            >
+                              <span className="flex-shrink-0 text-xs text-custom-text-200">
+                                {currentProjectDetails?.identifier}-{issue.sequence_id}
+                              </span>
+                            </Tooltip>
                             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
-                          <PriorityIcon priority={issue.priority} withContainer size={12} />
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             <StateDropdown
                               value={issue.state_id}

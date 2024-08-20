@@ -1,5 +1,5 @@
 // editor
-import { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
+import { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TReadOnlyEmbedConfig } from "@plane/editor";
 // types
 import { TPageEmbedResponse, TPageEmbedType } from "@plane/types";
 // ui
@@ -15,7 +15,7 @@ const pageService = new ProjectPageService();
 
 export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryType: TPageEmbedType = "issue") => {
   // store hooks
-  const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
+  const isIssueEmbedEnabled = useFlag("PAGE_ISSUE_EMBEDS");
 
   const fetchIssues = async (searchQuery: string): Promise<TEmbedItem[]> => {
     const response = await pageService.searchEmbed<TPageEmbedResponse[]>(workspaceSlug, projectId, {
@@ -59,12 +59,32 @@ export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryTyp
 
   const upgradeCallback = () => <IssueEmbedUpgradeCard />;
 
-  const issueEmbedProps: TIssueEmbedConfig = {
-    searchCallback: isIssueEmbedEnabled ? searchCallback : undefined,
-    widgetCallback: isIssueEmbedEnabled ? widgetCallback : upgradeCallback,
+  const issueEmbedProps: TEmbedConfig["issue"] = {
+    searchCallback,
+    widgetCallback,
   };
 
+  const issueEmbedReadOnlyProps: TReadOnlyEmbedConfig["issue"] = {
+    widgetCallback,
+  };
+
+  const issueEmbedUpgradeProps: TEmbedConfig["issue"] = {
+    widgetCallback: upgradeCallback,
+  };
+
+  const issueEmbedReadOnlyUpgradeProps: TReadOnlyEmbedConfig["issue"] = {
+    widgetCallback: upgradeCallback,
+  };
+
+  if (isIssueEmbedEnabled) {
+    return {
+      issueEmbedProps,
+      issueEmbedReadOnlyProps,
+    };
+  }
+
   return {
-    issueEmbedProps,
+    issueEmbedProps: issueEmbedUpgradeProps,
+    issueEmbedReadOnlyProps: issueEmbedReadOnlyUpgradeProps,
   };
 };

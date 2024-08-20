@@ -13,7 +13,6 @@ class InstanceSerializer(BaseSerializer):
         model = Instance
         exclude = [
             "license_key",
-            "user_count"
         ]
         read_only_fields = [
             "id",

@@ -263,6 +263,7 @@ export const SidebarProjectsList: FC = observer(() => {
               toggleCreateProjectModal(true);
             }}
           >
+            <Plus className="flex-shrink-0 size-4" />
             {!isCollapsed && "Add project"}
           </button>
         )}

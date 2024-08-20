@@ -524,22 +524,6 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
-def filter_issue_type(params, issue_filter, method, prefix=""):
-    if method == "GET":
-        types = [item for item in params.get("issue_type").split(",") if item != "null"]
-        types = filter_valid_uuids(types)
-        if len(types) and "" not in types:
-            issue_filter[f"{prefix}type__in"] = types
-    else:
-        if (
-            params.get("issue_type", None)
-            and len(params.get("issue_type"))
-            and params.get("issue_type") != "null"
-        ):
-            issue_filter[f"{prefix}type__in"] = params.get("issue_type")
-    return issue_filter
-
-
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 
@@ -568,7 +552,6 @@ def issue_filters(query_params, method, prefix=""):
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
-        "issue_type": filter_issue_type,
     }
 
     for key, value in ISSUE_FILTER.items():

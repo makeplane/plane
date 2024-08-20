@@ -46,6 +46,7 @@ export const SelectProject: React.FC<Props> = observer((props) => {
             : "All projects"}
         </div>
       }
+      optionsClassName="w-48"
       multiple
     />
   );

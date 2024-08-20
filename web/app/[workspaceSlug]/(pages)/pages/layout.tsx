@@ -1,7 +1,6 @@
 "use client";
 
 // layouts
-import { useParams } from "next/navigation";
 import { WorkspaceAuthWrapper } from "@/layouts/auth-layout";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -13,17 +12,10 @@ import { WorkspacePagesUpgrade } from "@/plane-web/components/pages";
 import { PagesAppSidebar } from "./sidebar";
 
 export default function WorkspacePagesLayout({ children }: { children: React.ReactNode }) {
-  // router
-  const { workspaceSlug } = useParams();
-
   return (
     <AuthenticationWrapper>
       <WorkspaceAuthWrapper>
-        <WithFeatureFlagHOC
-          workspaceSlug={workspaceSlug?.toString()}
-          flag="WORKSPACE_PAGES"
-          fallback={<WorkspacePagesUpgrade />}
-        >
+        <WithFeatureFlagHOC flag="WORKSPACE_PAGES" fallback={<WorkspacePagesUpgrade />}>
           <>
             <PagesAppCommandPalette />
             <div className="relative flex h-screen w-full overflow-hidden">

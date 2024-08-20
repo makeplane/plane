@@ -5,19 +5,13 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 
 const LabelsSettingsPage = observer(() => {
-  // store hooks
   const { currentProjectDetails } = useProject();
-  const {
-    canPerformProjectMemberActions,
-    membership: { currentProjectRole },
-  } = useUser();
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Labels` : undefined;
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
@@ -34,10 +28,6 @@ const LabelsSettingsPage = observer(() => {
       })
     );
   }, [scrollableContainerRef?.current]);
-
-  if (currentProjectRole && !canPerformProjectMemberActions) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
 
   return (
     <>

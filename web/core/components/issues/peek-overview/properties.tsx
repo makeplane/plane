@@ -28,7 +28,6 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
 // plane web components
-import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 import { IssueWorklogProperty } from "@/plane-web/components/issues";
 
 interface IPeekOverviewProperties {
@@ -289,15 +288,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           issueId={issueId}
           disabled={disabled}
         />
-
-        {issue.type_id && (
-          <IssueAdditionalPropertyValuesUpdate
-            issueId={issueId}
-            issueTypeId={issue.type_id}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
       </div>
     </div>
   );

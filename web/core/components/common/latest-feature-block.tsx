@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 // icons
 import { Lightbulb } from "lucide-react";
 // images
-import latestFeatures from "@/public/onboarding/onboarding-pages.webp";
+import latestFeatures from "@/public/onboarding/onboarding-pages.svg";
 
 export const LatestFeatureBlock = () => {
   const { resolvedTheme } = useTheme();

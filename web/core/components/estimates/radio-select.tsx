@@ -4,7 +4,7 @@ import { cn } from "@/helpers/common.helper";
 
 type RadioInputProps = {
   name?: string;
-  label?: string | React.ReactNode;
+  label: string | React.ReactNode | undefined;
   wrapperClassName?: string;
   fieldClassName?: string;
   buttonClassName?: string;
@@ -46,14 +46,14 @@ export const RadioInput = ({
 
   return (
     <div className={className}>
-      {inputLabel && <div className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</div>}
+      <div className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</div>
       <div className={cn(`${wrapperClass}`, inputWrapperClassName)}>
         {options.map(({ value, label, disabled }, index) => (
           <div
             key={index}
             onClick={() => !disabled && setSelected(value)}
             className={cn(
-              "flex items-center gap-2 text-base",
+              "flex items-center gap-2",
               disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
               inputFieldClassName
             )}
@@ -72,7 +72,7 @@ export const RadioInput = ({
               disabled={disabled}
               checked={selected === value}
             />
-            <label htmlFor={`${name}_${index}`} className="cursor-pointer w-full">
+            <label htmlFor={`${name}_${index}`} className="text-base cursor-pointer">
               {label}
             </label>
           </div>

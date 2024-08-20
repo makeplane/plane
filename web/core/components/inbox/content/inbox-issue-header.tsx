@@ -140,7 +140,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
-    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
+    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
       if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });
   };

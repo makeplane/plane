@@ -13,16 +13,15 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from rest_framework import status
 from django.db import transaction
 
 # Third party imports
-from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
 from plane.app.permissions import (
-    allow_permission,
-    ROLE,
+    ProjectEntityPermission,
+    WorkspaceEntityPermission,
 )
 from plane.app.serializers import (
     IssueViewSerializer,
@@ -48,8 +47,10 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
-from plane.bgtasks.recent_visited_task import recent_visited_task
+
+# Module imports
 from .. import BaseViewSet
+
 from plane.db.models import (
     UserFavorite,
 )
@@ -58,6 +59,9 @@ from plane.db.models import (
 class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     def perform_create(self, serializer):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
@@ -75,32 +79,6 @@ class WorkspaceViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
-        level="WORKSPACE",
-    )
-    def list(self, request, slug):
-        queryset = self.get_queryset()
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-        if WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
-            queryset = queryset.filter(owned_by=request.user)
-        views = IssueViewSerializer(
-            queryset, many=True, fields=fields if fields else None
-        ).data
-        return Response(views, status=status.HTTP_200_OK)
-
-    @allow_permission(
-        allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView
-    )
     def partial_update(self, request, slug, pk):
         with transaction.atomic():
             workspace_view = IssueView.objects.select_for_update().get(
@@ -134,27 +112,6 @@ class WorkspaceViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    def retrieve(self, request, slug, pk):
-        issue_view = self.get_queryset().filter(pk=pk).first()
-        serializer = IssueViewSerializer(issue_view)
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=None,
-            entity_name="view",
-            entity_identifier=pk,
-            user_id=request.user.id,
-        )
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-        )
-
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        level="WORKSPACE",
-        creator=True,
-        model=IssueView,
-    )
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(
             pk=pk,
@@ -201,6 +158,10 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
@@ -263,8 +224,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -272,10 +232,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
-        level="WORKSPACE",
-    )
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
@@ -285,16 +241,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
-
-        if WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
-            issue_queryset = issue_queryset.filter(
-                created_by=request.user,
-            )
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -402,6 +348,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 class IssueViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
 
     def perform_create(self, serializer):
         serializer.save(
@@ -443,20 +392,8 @@ class IssueViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
-    )
-
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
-            queryset = queryset.filter(owned_by=request.user)
         fields = [
             field
             for field in request.GET.get("fields", "").split(",")
@@ -466,29 +403,6 @@ class IssueViewViewSet(BaseViewSet):
             queryset, many=True, fields=fields if fields else None
         ).data
         return Response(views, status=status.HTTP_200_OK)
-
-    allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
-    )
-
-    def retrieve(self, request, slug, project_id, pk):
-        issue_view = (
-            self.get_queryset().filter(pk=pk, project_id=project_id).first()
-        )
-        serializer = IssueViewSerializer(issue_view)
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=project_id,
-            entity_name="view",
-            entity_identifier=pk,
-            user_id=request.user.id,
-        )
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-        )
-
-    allow_permission(allowed_roles=[], creator=True, model=IssueView)
 
     def partial_update(self, request, slug, project_id, pk):
         with transaction.atomic():
@@ -521,8 +435,6 @@ class IssueViewViewSet(BaseViewSet):
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
-
-    allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
 
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(
@@ -575,8 +487,6 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             .select_related("view")
         )
 
-    allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-
     def create(self, request, slug, project_id):
         _ = UserFavorite.objects.create(
             user=request.user,
@@ -585,8 +495,6 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             project_id=project_id,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    allow_permission([ROLE.ADMIN, ROLE.MEMBER])
 
     def destroy(self, request, slug, project_id, view_id):
         view_favorite = UserFavorite.objects.get(

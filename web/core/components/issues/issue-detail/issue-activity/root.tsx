@@ -21,7 +21,6 @@ type TIssueActivity = {
   projectId: string;
   issueId: string;
   disabled?: boolean;
-  isIntakeIssue?: boolean;
 };
 
 export type TActivityOperations = {
@@ -31,7 +30,7 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
@@ -115,14 +114,12 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       <div className="flex items-center justify-between">
         <div className="text-lg text-custom-text-100">Activity</div>
         <div className="flex items-center gap-2">
-          {!isIntakeIssue && (
-            <IssueActivityWorklogCreateButton
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              disabled={disabled}
-            />
-          )}
+          <IssueActivityWorklogCreateButton
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
+          />
           <ActivityFilterRoot selectedFilters={selectedFilters} toggleFilter={toggleFilter} />
         </div>
       </div>

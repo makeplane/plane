@@ -1,8 +1,7 @@
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
-import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
+import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // extensions
@@ -15,7 +14,22 @@ import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import {
+  DeleteImage,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  RestoreImage,
+  TEditorCommands,
+  UploadImage,
+} from "@/types";
+
+export type TFileHandler = {
+  cancel: () => void;
+  delete: DeleteImage;
+  upload: UploadImage;
+  restore: RestoreImage;
+};
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -40,30 +54,26 @@ export interface CustomEditorProps {
   value?: string | null | undefined;
 }
 
-export const useEditor = (props: CustomEditorProps) => {
-  const {
-    editorClassName,
-    editorProps = {},
-    enableHistory,
-    extensions = [],
-    fileHandler,
-    forwardedRef,
-    handleEditorReady,
-    id = "",
-    initialValue,
-    mentionHandler,
-    onChange,
-    placeholder,
-    provider,
-    tabIndex,
-    value,
-  } = props;
-
-  const editor = useTiptapEditor({
+export const useEditor = ({
+  editorClassName,
+  editorProps = {},
+  enableHistory,
+  extensions = [],
+  fileHandler,
+  forwardedRef,
+  handleEditorReady,
+  id = "",
+  initialValue,
+  mentionHandler,
+  onChange,
+  placeholder,
+  provider,
+  tabIndex,
+  value,
+}: CustomEditorProps) => {
+  const editor = useCustomEditor({
     editorProps: {
-      ...CoreEditorProps({
-        editorClassName,
-      }),
+      ...CoreEditorProps(editorClassName),
       ...editorProps,
     },
     extensions: [
@@ -85,10 +95,18 @@ export const useEditor = (props: CustomEditorProps) => {
       ...extensions,
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
-    onCreate: () => handleEditorReady?.(true),
-    onTransaction: ({ editor }) => setSavedSelection(editor.state.selection),
-    onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
-    onDestroy: () => handleEditorReady?.(false),
+    onCreate: async () => {
+      handleEditorReady?.(true);
+    },
+    onTransaction: async ({ editor }) => {
+      setSavedSelection(editor.state.selection);
+    },
+    onUpdate: async ({ editor }) => {
+      onChange?.(editor.getJSON(), editor.getHTML());
+    },
+    onDestroy: async () => {
+      handleEditorReady?.(false);
+    },
   });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
@@ -212,41 +230,6 @@ export const useEditor = (props: CustomEditorProps) => {
             .run();
         } catch (error) {
           console.error("An error occurred while setting focus at position:", error);
-        }
-      },
-      getSelectedText: () => {
-        if (!editorRef.current) return null;
-
-        const { state } = editorRef.current;
-        const { from, to, empty } = state.selection;
-
-        if (empty) return null;
-
-        const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
-          if (parent === state.doc && editorRef.current) {
-            const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
-            const dom = serializer.serializeNode(node);
-            const tempDiv = document.createElement("div");
-            tempDiv.appendChild(dom);
-            nodesArray.push(tempDiv.innerHTML);
-          }
-        });
-        const selection = nodesArray.join("");
-        console.log(selection);
-        return selection;
-      },
-      insertText: (contentHTML, insertOnNextLine) => {
-        if (!editor) return;
-        // get selection
-        const { from, to, empty } = editor.state.selection;
-        if (empty) return;
-        if (insertOnNextLine) {
-          // move cursor to the end of the selection and insert a new line
-          editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
-        } else {
-          // replace selected text with the content provided
-          editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
     }),

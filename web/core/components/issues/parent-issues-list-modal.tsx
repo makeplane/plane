@@ -2,23 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-// icons
-import { Rocket, Search } from "lucide-react";
 // headless ui
+import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// types
+// services
 import { ISearchIssueResponse } from "@plane/types";
-// ui
 import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// components
 import { IssueSearchModalEmptyState } from "@/components/core";
-// hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-// services
 import { ProjectService } from "@/services/project";
+// hooks
+// components
+// ui
+// icons
+// types
 
 type Props = {
   isOpen: boolean;
@@ -184,7 +182,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                 key={issue.id}
                                 value={issue}
                                 className={({ active, selected }) =>
-                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
+                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
                                     active ? "bg-custom-background-80 text-custom-text-100" : ""
                                   } ${selected ? "text-custom-text-100" : ""}`
                                 }
@@ -196,14 +194,8 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                       backgroundColor: issue.state__color,
                                     }}
                                   />
-                                  <span className="flex-shrink-0">
-                                    <IssueIdentifier
-                                      projectId={issue.project_id}
-                                      issueTypeId={issue.type_id}
-                                      projectIdentifier={issue.project__identifier}
-                                      issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-xs text-custom-text-200"
-                                    />
+                                  <span className="flex-shrink-0 text-xs">
+                                    {issue.project__identifier}-{issue.sequence_id}
                                   </span>{" "}
                                   <span className="truncate">{issue.name}</span>
                                 </div>

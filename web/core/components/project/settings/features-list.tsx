@@ -25,7 +25,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
-  const isWorklogEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
+  const isWorklogEnabled = useFlag("ISSUE_WORKLOG");
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
@@ -98,7 +98,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   </div>
 
                   <ToggleSwitch
-                    value={Boolean(isWorklogEnabled && currentProjectDetails?.[featureItem.property as keyof IProject])}
+                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
                     onChange={() => handleSubmit(featureItemKey, featureItem.property)}
                     disabled={
                       !featureItem.isEnabled || !isAdmin || featureItem.property === "is_time_tracking_enabled"

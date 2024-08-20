@@ -6,21 +6,22 @@ import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// types
+//plane
 import { ISearchIssueResponse, IUser } from "@plane/types";
-// ui
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+//components
 import { EmptyState } from "@/components/empty-state";
-// constants
+//constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
-// hooks
-import { useIssues } from "@/hooks/store";
+//hooks
+import { useIssues, useProject } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { ProjectService } from "@/services/project";
-// local components
+// ui
+// icons
+// components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
 
 type FormInput = {
@@ -40,6 +41,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   // router params
   const { workspaceSlug, projectId } = useParams();
   // hooks
+  const { getProjectById } = useProject();
   const {
     issues: { removeBulkIssues },
   } = useIssues(EIssuesStoreType.PROJECT);
@@ -113,6 +115,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
       );
   };
 
+  const projectDetails = getProjectById(projectId as string);
+
   const issueList =
     issues.length > 0 ? (
       <li className="p-2">
@@ -123,6 +127,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
           {issues.map((issue) => (
             <BulkDeleteIssuesModalItem
               issue={issue}
+              identifier={projectDetails?.identifier}
               canDeleteIssueIds={watch("delete_issue_ids").includes(issue.id)}
               key={issue.id}
             />

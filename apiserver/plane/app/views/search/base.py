@@ -91,7 +91,6 @@ class GlobalSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
-            "type_id",
         )
 
     def filter_cycles(self, query, slug, project_id, workspace_search):
@@ -369,7 +368,6 @@ class SearchEndpoint(BaseAPIView):
                     "project_id",
                     "priority",
                     "state_id",
-                    "type_id",
                 )[:count]
             )
             return Response(issues, status=status.HTTP_200_OK)

@@ -11,7 +11,7 @@ export const WorklogEmptyScreen: FC = () => {
   const resolvedEmptyStatePath = `/empty-state/worklogs/worklog-${resolvedTheme === "light" ? "light" : "dark"}.png`;
 
   return (
-    <div className="w-[600px] m-auto mt-12">
+    <div className="flex flex-col gap-5 items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5">
       <div className="flex flex-col gap-1.5 flex-shrink">
         <h3 className="text-xl font-semibold">No worklogs yet</h3>
         <p className="text-sm">

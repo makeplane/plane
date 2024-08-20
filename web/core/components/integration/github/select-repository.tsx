@@ -81,7 +81,7 @@ export const SelectRepository: React.FC<Props> = (props) => {
           )}
         </>
       }
-      optionsClassName="w-48"
+      optionsClassName="w-full"
     />
   );
 };

@@ -153,7 +153,6 @@ export default function ResetPasswordPage() {
                       //hasError={Boolean(errors.email)}
                       placeholder="name@company.com"
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
-                      autoComplete="on"
                       disabled
                     />
                   </div>
@@ -174,7 +173,6 @@ export default function ResetPasswordPage() {
                       minLength={8}
                       onFocus={() => setIsPasswordInputFocused(true)}
                       onBlur={() => setIsPasswordInputFocused(false)}
-                      autoComplete="on"
                       autoFocus
                     />
                     {showPassword.password ? (

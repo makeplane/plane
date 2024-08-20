@@ -18,7 +18,3 @@ export * from "./properties";
 
 // save view
 export * from "./save-filter-view";
-
-// quick add
-export * from "./quick-add";
-

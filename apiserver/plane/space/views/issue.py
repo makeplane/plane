@@ -18,7 +18,7 @@ from django.db.models import (
     JSONField,
     Value,
     OuterRef,
-    Func,
+    Func
 )
 
 # Third Party imports

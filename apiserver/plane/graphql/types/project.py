@@ -5,14 +5,10 @@ from datetime import datetime
 # Strawberry imports
 import strawberry
 import strawberry_django
-from strawberry.types import Info
 from strawberry.scalars import JSON
 
 # Module imports
-from plane.db.models import Project, ProjectMember, Issue
-
-# Third-party library imports
-from asgiref.sync import sync_to_async
+from plane.db.models import Project, ProjectMember
 
 
 @strawberry_django.type(Project)
@@ -41,8 +37,6 @@ class ProjectType:
     archived_at: Optional[datetime]
     is_member: bool
     is_favorite: bool
-    total_members: int
-    total_issues: int
 
     @strawberry.field
     def workspace(self) -> int:
@@ -63,22 +57,6 @@ class ProjectType:
     @strawberry.field
     def default_state(self) -> int:
         return self.default_state_id
-
-    @strawberry.field
-    async def total_members(self, info: strawberry.Info) -> int:
-        projects = await sync_to_async(
-            lambda: ProjectMember.objects.filter(
-                project_id=self.id, is_active=True
-            ).count()
-        )()
-        return projects
-
-    @strawberry.field
-    async def total_issues(self, info: Info) -> int:
-        projects = await sync_to_async(
-            lambda: Issue.issue_objects.filter(project_id=self.id).count()
-        )()
-        return projects
 
 
 @strawberry_django.type(ProjectMember)

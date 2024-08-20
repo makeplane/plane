@@ -45,15 +45,8 @@ class IssueQuery:
         filters: Optional[JSON] = {},
         orderBy: Optional[str] = "-created_at",
         groupBy: Optional[str] = None,
-        type: Optional[str] = "all",
     ) -> list[IssueType]:
-
         filters = issue_filters(filters, "POST")
-
-        if type == "backlog":
-            filters["state__group__in"] = ["backlog"]
-        elif type == "active":
-            filters["state__group__in"] = ["unstarted", "started"]
 
         issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
@@ -121,9 +114,7 @@ class RecentIssuesQuery:
             ).filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
-            )[
-                :5
-            ]
+            )[:5]
         )
 
         return issues

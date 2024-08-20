@@ -124,7 +124,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
             newUsers[index].email = val;
             setUsers(newUsers);
           }}
-          optionsClassName="w-48"
+          optionsClassName="w-full"
         />
       )}
     </div>

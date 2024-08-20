@@ -150,14 +150,13 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
       deleteSubIssue: async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          return deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId).then(() => {
-            captureIssueEvent({
-              eventName: "Sub-issue deleted",
-              payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-              path: pathname,
-            });
-            setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
+          await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+          captureIssueEvent({
+            eventName: "Sub-issue deleted",
+            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            path: pathname,
           });
+          setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
           captureIssueEvent({
             eventName: "Sub-issue removed",

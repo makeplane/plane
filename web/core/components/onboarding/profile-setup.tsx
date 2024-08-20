@@ -22,8 +22,8 @@ import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.hel
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 // services
 // assets
-import ProfileSetupDark from "@/public/onboarding/profile-setup-dark.webp";
-import ProfileSetupLight from "@/public/onboarding/profile-setup-light.webp";
+import ProfileSetupDark from "@/public/onboarding/profile-setup-dark.svg";
+import ProfileSetupLight from "@/public/onboarding/profile-setup-light.svg";
 import UserPersonalizationDark from "@/public/onboarding/user-personalization-dark.svg";
 import UserPersonalizationLight from "@/public/onboarding/user-personalization-light.svg";
 import { AuthService } from "@/services/auth.service";
@@ -372,7 +372,6 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           hasError={Boolean(errors.first_name)}
                           placeholder="Wilbur"
                           className="w-full border-onboarding-border-100"
-                          autoComplete="on"
                         />
                       )}
                     />
@@ -406,7 +405,6 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           hasError={Boolean(errors.last_name)}
                           placeholder="Wright"
                           className="w-full border-onboarding-border-100"
-                          autoComplete="on"
                         />
                       )}
                     />
@@ -440,7 +438,6 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                               className="w-full border-[0.5px] border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                               onFocus={() => setIsPasswordInputFocused(true)}
                               onBlur={() => setIsPasswordInputFocused(false)}
-                              autoComplete="on"
                             />
                             {showPassword.password ? (
                               <EyeOff

@@ -54,12 +54,12 @@ class FlagProvider(AbstractProvider):
         evaluation_context,
     ):
         # Get the targeting key and attributes from the evaluation context
-        targeting_key = evaluation_context.targeting_key
+        targetting_key = evaluation_context.targeting_key
         attributes = evaluation_context.attributes
         slug = attributes.get("slug")
         # Get the value of the feature flag
         value = self.make_request(
-            user_id=targeting_key,
+            user_id=targetting_key,
             slug=slug,
             feature_key=flag_key,
             default_value=default_value,
