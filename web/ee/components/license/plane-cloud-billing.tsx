@@ -105,26 +105,31 @@ export const PlaneCloudBilling: React.FC = observer(() => {
               <div className="flex items-center gap-2">
                 <Image src={PlaneLogo} alt="Plane pro" width={24} height={24} />
                 <h4 className="text-2xl mb-1 leading-6 font-bold">Plane Pro</h4>
-                {isInTrialPeriod && (
+                {!currentWorkspaceSubscribedPlanDetail.is_offline_payment && (
                   <>
-                    <div className="flex-shrink-0 p-1 px-2 uppercase bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
-                      Free Trial
-                    </div>
-                    <div className="text-center text-sm text-custom-text-200 font-medium">
-                      (Free trial ends on: {renderFormattedDate(currentWorkspaceSubscribedPlanDetail?.trial_end_date)})
-                    </div>
+                    {isInTrialPeriod && (
+                      <>
+                        <div className="flex-shrink-0 p-1 px-2 uppercase bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
+                          Free Trial
+                        </div>
+                        <div className="text-center text-sm text-custom-text-200 font-medium">
+                          (Free trial ends on:{" "}
+                          {renderFormattedDate(currentWorkspaceSubscribedPlanDetail?.trial_end_date)})
+                        </div>
+                      </>
+                    )}
+                    {!isInTrialPeriod &&
+                      (isSubscriptionCancelled ? (
+                        <div className="text-center text-sm text-red-500 font-medium">
+                          (Expires on: {renderFormattedDate(endDate)})
+                        </div>
+                      ) : (
+                        <div className="text-center text-sm text-custom-text-200 font-medium">
+                          (Renew on: {renderFormattedDate(endDate)})
+                        </div>
+                      ))}
                   </>
                 )}
-                {!isInTrialPeriod &&
-                  (isSubscriptionCancelled ? (
-                    <div className="text-center text-sm text-red-500 font-medium">
-                      (Expires on: {renderFormattedDate(endDate)})
-                    </div>
-                  ) : (
-                    <div className="text-center text-sm text-custom-text-200 font-medium">
-                      (Renew on: {renderFormattedDate(endDate)})
-                    </div>
-                  ))}
               </div>
               {!currentWorkspaceSubscribedPlanDetail.is_offline_payment && (
                 <div>
