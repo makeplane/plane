@@ -34,7 +34,7 @@ export const SidebarAppSwitcher = observer(() => {
   const pathname = usePathname();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const isWorkspacePagesEnabled = useFlag("WORKSPACE_PAGES");
+  const isWorkspacePagesEnabled = useFlag(workspaceSlug?.toString(), "WORKSPACE_PAGES");
 
   const isPagesApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
 

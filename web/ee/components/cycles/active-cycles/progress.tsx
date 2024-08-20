@@ -4,7 +4,7 @@ import { ICycle } from "@plane/types";
 // ui
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // constants
-import { WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle;
@@ -13,7 +13,7 @@ export type ActiveCycleProgressProps = {
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
   const { cycle } = props;
 
-  const progressIndicatorData = WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
+  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
@@ -60,7 +60,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
                       <span
                         className="block h-3 w-3 rounded-full"
                         style={{
-                          backgroundColor: WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS[index].color,
+                          backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
                         }}
                       />
                       <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
@@ -78,7 +78,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
                         <span
                           className="block h-3 w-3 rounded-full"
                           style={{
-                            backgroundColor: WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS[index].color,
+                            backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
                           }}
                         />
                         <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>

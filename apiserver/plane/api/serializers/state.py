@@ -23,6 +23,7 @@ class StateSerializer(BaseSerializer):
             "updated_at",
             "workspace",
             "project",
+            "deleted_at",
         ]
 
 

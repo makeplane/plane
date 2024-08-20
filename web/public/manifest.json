@@ -1,6 +1,6 @@
 {
   "name": "Plane",
-  "shot_name": "Plane",
+  "short_name": "Plane",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

@@ -7,7 +7,11 @@ from rest_framework import status
 
 # Module imports
 from ..base import BaseViewSet, BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    allow_permission,
+    ROLE,
+)
 from plane.db.models import Project, Estimate, EstimatePoint, Issue
 from plane.app.serializers import (
     EstimateSerializer,
@@ -23,10 +27,8 @@ def generate_random_name(length=10):
 
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
     def get(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if project.estimate_id is not None:
@@ -189,10 +191,8 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
 
 class EstimatePointEndpoint(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, estimate_id):
         #  TODO: add a key validation if the same key already exists
         if not request.data.get("key") or not request.data.get("value"):
@@ -211,6 +211,7 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer = EstimatePointSerializer(estimate_point).data
         return Response(serializer, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(
         self, request, slug, project_id, estimate_id, estimate_point_id
     ):
@@ -231,6 +232,7 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(
         self, request, slug, project_id, estimate_id, estimate_point_id
     ):

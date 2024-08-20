@@ -138,7 +138,7 @@ services:
 
   plane-db:
     <<: *app-env
-    image: postgres:15.5-alpine
+    image: postgres:15.7-alpine
     pull_policy: if_not_present
     restart: unless-stopped
     command: postgres -c 'max_connections=1000'

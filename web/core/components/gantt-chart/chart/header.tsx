@@ -16,10 +16,12 @@ type Props = {
   handleToday: () => void;
   loaderTitle: string;
   toggleFullScreenMode: () => void;
+  showToday: boolean;
 };
 
 export const GanttChartHeader: React.FC<Props> = observer((props) => {
-  const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode } = props;
+  const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode, showToday } =
+    props;
   // chart hook
   const { currentView } = useGanttChart();
 
@@ -46,9 +48,15 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
         ))}
       </div>
 
-      <button type="button" className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80" onClick={handleToday}>
-        Today
-      </button>
+      {showToday && (
+        <button
+          type="button"
+          className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
+          onClick={handleToday}
+        >
+          Today
+        </button>
+      )}
 
       <button
         type="button"

@@ -70,11 +70,12 @@ export const useRelationOperations = (): TRelationIssueOperations => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await removeIssue(workspaceSlug, projectId, issueId);
-          captureIssueEvent({
-            eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            path: pathname,
+          return removeIssue(workspaceSlug, projectId, issueId).then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_DELETED,
+              payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+              path: pathname,
+            });
           });
         } catch (error) {
           captureIssueEvent({

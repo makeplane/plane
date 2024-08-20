@@ -128,7 +128,9 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
    * @returns { boolean }
    */
   get isFeatureFlagEnabled(): boolean {
-    return this.store.featureFlags.flags[E_FEATURE_FLAGS.ISSUE_WORKLOG] || false;
+    const workspaceSlug = this.store.router.workspaceSlug;
+    if (!workspaceSlug) return false;
+    return this.store.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS.ISSUE_WORKLOG] || false;
   }
 
   // computed functions

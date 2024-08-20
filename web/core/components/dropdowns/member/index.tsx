@@ -42,6 +42,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     placement,
     projectId,
     showTooltip = false,
+    showUserDetails = false,
     tabIndex,
     value,
     icon,
@@ -73,6 +74,26 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
     if (!multiple) handleClose();
+  };
+
+  const getDisplayName = (value: string | string[] | null, showUserDetails: boolean, placeholder: string = "") => {
+    if (Array.isArray(value)) {
+      if (value.length > 0) {
+        if (value.length === 1) {
+          return getUserDetails(value[0])?.display_name || placeholder;
+        } else {
+          return showUserDetails ? `${value.length} members` : "";
+        }
+      } else {
+        return placeholder;
+      }
+    } else {
+      if (showUserDetails && value) {
+        return getUserDetails(value)?.display_name || placeholder;
+      } else {
+        return placeholder;
+      }
+    }
   };
 
   return (
@@ -110,7 +131,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             onClick={handleOnClick}
           >
             <DropdownButton
-              className={buttonClassName}
+              className={cn("text-xs", buttonClassName)}
               isActive={isOpen}
               tooltipHeading={placeholder}
               tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
@@ -119,12 +140,8 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">
-                  {Array.isArray(value) && value.length > 0
-                    ? value.length === 1
-                      ? getUserDetails(value[0])?.display_name
-                      : ""
-                    : placeholder}
+                <span className="flex-grow truncate leading-5">
+                  {getDisplayName(value, showUserDetails, placeholder)}
                 </span>
               )}
               {dropdownArrow && (

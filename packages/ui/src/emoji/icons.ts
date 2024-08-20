@@ -149,6 +149,9 @@ import {
   Minus,
   MinusCircle,
   MinusSquare,
+  CircleChevronDown,
+  UsersRound,
+  ToggleLeft,
 } from "lucide-react";
 
 export const MATERIAL_ICONS_LIST = [
@@ -791,6 +794,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Camera", element: Camera },
   { name: "CameraOff", element: CameraOff },
   { name: "Cast", element: Cast },
+  { name: "CircleChevronDown", element: CircleChevronDown },
   { name: "Check", element: Check },
   { name: "CheckCircle", element: CheckCircle },
   { name: "CheckSquare", element: CheckSquare },
@@ -908,4 +912,6 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Minus", element: Minus },
   { name: "MinusCircle", element: MinusCircle },
   { name: "MinusSquare", element: MinusSquare },
+  { name: "ToggleLeft", element: ToggleLeft },
+  { name: "UsersRound", element: UsersRound },
 ];

@@ -4,13 +4,24 @@ import { cn } from "../../helpers";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   mode?: "primary" | "transparent" | "true-transparent";
-  inputSize?: "sm" | "md";
+  inputSize?: "xs" | "sm" | "md";
   hasError?: boolean;
   className?: string;
+  autoComplete?: "on" | "off";
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { id, type, name, mode = "primary", inputSize = "sm", hasError = false, className = "", ...rest } = props;
+  const {
+    id,
+    type,
+    name,
+    mode = "primary",
+    inputSize = "sm",
+    hasError = false,
+    className = "",
+    autoComplete = "off",
+    ...rest
+  } = props;
 
   return (
     <input
@@ -26,11 +37,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             mode === "transparent",
           "rounded border-none bg-transparent ring-0": mode === "true-transparent",
           "border-red-500": hasError,
+          "px-1.5 py-1": inputSize === "xs",
           "px-3 py-2": inputSize === "sm",
           "p-3": inputSize === "md",
         },
         className
       )}
+      autoComplete={autoComplete}
       {...rest}
     />
   );

@@ -4,9 +4,11 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // ui
-import { CustomMenu, LayersIcon } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type TIssueParentSiblingItem = {
   workspaceSlug: string;
@@ -31,10 +33,17 @@ export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((pro
       <CustomMenu.MenuItem key={issueDetail.id}>
         <Link
           href={`/${workspaceSlug}/projects/${issueDetail?.project_id as string}/issues/${issueDetail.id}`}
-          className="flex items-center gap-2 py-2"
+          className="flex items-center gap-2 py-0.5"
         >
-          <LayersIcon className="h-4 w-4" />
-          {projectDetails?.identifier}-{issueDetail.sequence_id}
+          {issueDetail.project_id && projectDetails?.identifier && (
+            <IssueIdentifier
+              projectId={issueDetail.project_id}
+              issueTypeId={issueDetail.type_id}
+              projectIdentifier={projectDetails?.identifier}
+              issueSequenceId={issueDetail.sequence_id}
+              textContainerClassName="text-xs"
+            />
+          )}
         </Link>
       </CustomMenu.MenuItem>
     </>

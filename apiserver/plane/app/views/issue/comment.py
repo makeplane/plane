@@ -16,7 +16,7 @@ from plane.app.serializers import (
     IssueCommentSerializer,
     CommentReactionSerializer,
 )
-from plane.app.permissions import ProjectLitePermission
+from plane.app.permissions import ProjectLitePermission, allow_permission, ROLE
 from plane.db.models import (
     IssueComment,
     ProjectMember,
@@ -29,9 +29,6 @@ class IssueCommentViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
     filterset_fields = [
         "issue__id",
@@ -66,6 +63,7 @@ class IssueCommentViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -90,6 +88,11 @@ class IssueCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER],
+        creator=True,
+        model=IssueComment,
+    )
     def partial_update(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug,
@@ -121,6 +124,9 @@ class IssueCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment
+    )
     def destroy(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug,
