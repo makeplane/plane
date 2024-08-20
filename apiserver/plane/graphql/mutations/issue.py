@@ -6,7 +6,6 @@ import strawberry
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
-from strawberry.file_uploads import Upload
 
 # Third-party imports
 from typing import Optional
