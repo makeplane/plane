@@ -5,6 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import uniqBy from "lodash/uniqBy";
 import { useParams } from "next/navigation";
 import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -37,7 +38,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
   const { isMobile } = usePlatformOS();
-  const { moveFavorite, getGroupedFavorites, favoriteMap, moveFavoriteFolder } = useFavorite();
+  const { moveFavorite, getGroupedFavorites, groupedFavorites, moveFavoriteFolder } = useFavorite();
   const { workspaceSlug } = useParams();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -110,7 +111,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             const edge = extractClosestEdge(destinationData) || undefined;
             const payload = {
               id: favorite.id,
-              sequence: Math.round(getDestinationStateSequence(favoriteMap, destinationData.id as string, edge) || 0),
+              sequence: Math.round(
+                getDestinationStateSequence(groupedFavorites, destinationData.id as string, edge) || 0
+              ),
             };
 
             handleOnDropFolder(payload);
@@ -146,7 +149,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           if (source.data.is_folder) return;
           if (sourceId === destinationId) return;
           if (!sourceId || !destinationId) return;
-          if (favoriteMap[sourceId].parent === destinationId) return;
+          if (groupedFavorites[sourceId].parent === destinationId) return;
           handleOnDrop(sourceId, destinationId);
         },
       })
@@ -313,14 +316,14 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "px-2": !isSidebarCollapsed,
                   })}
                 >
-                  {favorite.children.map((child) => (
+                  {uniqBy(favorite.children, "id").map((child) => (
                     <FavoriteRoot
                       key={child.id}
                       workspaceSlug={workspaceSlug.toString()}
                       favorite={child}
                       handleRemoveFromFavorites={handleRemoveFromFavorites}
                       handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                      favoriteMap={favoriteMap}
+                      favoriteMap={groupedFavorites}
                     />
                   ))}
                 </Disclosure.Panel>
