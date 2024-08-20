@@ -1,13 +1,17 @@
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Share2 } from "lucide-react";
+// plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 export const useViewPublish = (isPublished: boolean, isAuthorized: boolean) => {
   const [isPublishModalOpen, setPublishModalOpen] = useState(false);
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleProPlanModal } = useWorkspaceSubscription();
-  const isViewsPublishEnabled = useFlag("VIEW_PUBLISH");
+  const isViewsPublishEnabled = useFlag(workspaceSlug?.toString(), "VIEW_PUBLISH");
 
   const publishContextMenu = {
     key: "publish",

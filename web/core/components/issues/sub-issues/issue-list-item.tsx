@@ -4,11 +4,16 @@ import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { TIssue } from "@plane/types";
-// components
+// ui
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
+// local components
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
@@ -117,15 +122,23 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
             )}
           </div>
 
-          <div className="flex w-full cursor-pointer items-center gap-2">
+          <div className="flex w-full cursor-pointer items-center gap-3">
             <div
               className="h-2 w-2 flex-shrink-0 rounded-full"
               style={{
                 backgroundColor: currentIssueStateDetail?.color ?? "#737373",
               }}
             />
-            <div className="flex-shrink-0 text-xs text-custom-text-200">
-              {projectDetail?.identifier}-{issue?.sequence_id}
+            <div className="flex-shrink-0">
+              {projectDetail && (
+                <IssueIdentifier
+                  projectId={projectDetail.id}
+                  issueTypeId={issue.type_id}
+                  projectIdentifier={projectDetail.identifier}
+                  issueSequenceId={issue.sequence_id}
+                  textContainerClassName="text-xs text-custom-text-200"
+                />
+              )}
             </div>
 
             <ControlLink

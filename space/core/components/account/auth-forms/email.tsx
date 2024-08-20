@@ -63,6 +63,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
+            autoComplete="on"
             autoFocus
           />
           {email.length > 0 && (

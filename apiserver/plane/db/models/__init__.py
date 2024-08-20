@@ -109,6 +109,6 @@ from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, ProjectIssueType
 
 from .recent_visit import UserRecentVisit

@@ -119,6 +119,7 @@ class WorkspaceEntitySearchEndpoint(BaseAPIView):
                 "project_id",
                 "priority",
                 "state_id",
+                "type_id",
             )[:count]
         )
 

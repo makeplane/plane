@@ -104,29 +104,35 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                       : notificationField === "None"
                         ? null
                         : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
-                  {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
-                  <span className="font-semibold">
-                    {" "}
-                    {notificationField !== "None" ? (
-                      notificationField !== "comment" ? (
-                        notificationField === "target_date" ? (
-                          renderFormattedDate(notification?.data?.issue_activity.new_value)
-                        ) : notificationField === "attachment" ? (
-                          "the issue"
-                        ) : notificationField === "description" ? (
-                          stripAndTruncateHTML(notification?.data?.issue_activity.new_value || "", 55)
-                        ) : notificationField === "archived_at" ? null : (
-                          notification?.data?.issue_activity.new_value
-                        )
-                      ) : (
-                        <span>
-                          {sanitizeCommentForNotification(notification?.data?.issue_activity.new_value ?? undefined)}
-                        </span>
-                      )
-                    ) : (
-                      "the issue and assigned it to you."
-                    )}
-                  </span>
+                  {notification?.data?.issue_activity.verb !== "deleted" && (
+                    <>
+                      {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
+                      <span className="font-semibold">
+                        {" "}
+                        {notificationField !== "None" ? (
+                          notificationField !== "comment" ? (
+                            notificationField === "target_date" ? (
+                              renderFormattedDate(notification?.data?.issue_activity.new_value)
+                            ) : notificationField === "attachment" ? (
+                              "the issue"
+                            ) : notificationField === "description" ? (
+                              stripAndTruncateHTML(notification?.data?.issue_activity.new_value || "", 55)
+                            ) : notificationField === "archived_at" ? null : (
+                              notification?.data?.issue_activity.new_value
+                            )
+                          ) : (
+                            <span>
+                              {sanitizeCommentForNotification(
+                                notification?.data?.issue_activity.new_value ?? undefined
+                              )}
+                            </span>
+                          )
+                        ) : (
+                          "the issue and assigned it to you."
+                        )}
+                      </span>
+                    </>
+                  )}
                 </>
               ) : (
                 <span className="semi-bold">{notification.message}</span>

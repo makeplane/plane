@@ -134,7 +134,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
           /255
         </div>
       </div>
-      {title?.length === 0 && <span className="text-sm text-red-500">Title is required</span>}
+      {title?.length === 0 && <span className="text-sm font-medium text-red-500">Title is required</span>}
     </div>
   );
 });

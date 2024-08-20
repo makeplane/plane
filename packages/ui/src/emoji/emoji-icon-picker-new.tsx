@@ -101,7 +101,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                           type: EmojiIconPickerTypes.EMOJI,
                           value: val,
                         });
-                        if (closeOnSelect) close();
+                        if (closeOnSelect) handleToggle(false);
                       }}
                       height="20rem"
                       width="100%"
@@ -120,7 +120,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                           type: EmojiIconPickerTypes.ICON,
                           value: val,
                         });
-                        if (closeOnSelect) close();
+                        if (closeOnSelect) handleToggle(false);
                       }}
                     />
                   </Tab.Panel>

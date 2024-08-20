@@ -9,6 +9,7 @@ import { TIssueActivityComment } from "@plane/types";
 
 export enum EActivityFilterTypeEE {
   WORKLOG = "WORKLOG",
+  ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY = "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY",
 }
 
 export type TActivityFilters = TActivityFiltersCe | EActivityFilterTypeEE.WORKLOG;
@@ -33,10 +34,15 @@ export type TActivityFilterOption = {
   onClick: () => void;
 };
 
+const shouldRenderActivity = (activity: TIssueActivityComment, filter: TActivityFilters): boolean =>
+  activity.activity_type === filter ||
+  (filter === EActivityFilterType.ACTIVITY &&
+    activity.activity_type === EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY);
+
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
-  filter: TActivityFilters[]
+  filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
-  activity.filter((activity) => filter.includes(activity.activity_type as TActivityFilters));
+  activity.filter((activity) => filters.some((filter) => shouldRenderActivity(activity, filter)));
 
 export { EActivityFilterType };

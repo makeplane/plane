@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 // ui
 import { LayersIcon } from "@plane/ui";
 // extensions
@@ -9,45 +10,40 @@ import { IssueEmbedSuggestions, IssueListRenderer } from "@/plane-editor/extensi
 // plane editor types
 import { TIssueEmbedConfig } from "@/plane-editor/types";
 // types
-import { ISlashCommandItem } from "@/types";
+import { ISlashCommandItem, TExtensions } from "@/types";
 
 type Props = {
+  disabledExtensions?: TExtensions[];
   fileHandler: TFileHandler;
   issueEmbedConfig: TIssueEmbedConfig | undefined;
 };
 
 export const DocumentEditorAdditionalExtensions = (props: Props) => {
-  const { fileHandler, issueEmbedConfig } = props;
+  const { disabledExtensions, fileHandler, issueEmbedConfig } = props;
 
-  const slashCommandAdditionalOptions: ISlashCommandItem[] = [
-    {
-      key: "issue_embed",
-      title: "Issue embed",
-      description: "Embed an issue from the project.",
-      searchTerms: ["issue", "link", "embed"],
-      icon: <LayersIcon className="size-3.5" />,
-      command: ({ editor, range }) => {
-        editor
-          .chain()
-          .focus()
-          .insertContentAt(
-            range,
-            "<p class='text-sm bg-gray-300 w-fit pl-3 pr-3 pt-1 pb-1 rounded shadow-sm'>#issue_</p>"
-          )
-          .run();
+  const isIssueEmbedDisabled = !!disabledExtensions?.includes("issue-embed");
+
+  const extensions: Extensions = [];
+
+  if (!isIssueEmbedDisabled) {
+    const slashCommandAdditionalOptions: ISlashCommandItem[] = [
+      {
+        key: "issue-embed",
+        title: "Issue embed",
+        description: "Embed an issue from the project.",
+        searchTerms: ["issue", "link", "embed"],
+        icon: <LayersIcon className="size-3.5" />,
+        command: ({ editor, range }) => {
+          editor.chain().focus().insertContentAt(range, "<p>#issue_</p>").run();
+        },
       },
-    },
-  ];
-
-  let extensions = [];
-  // If searchCallback is provided, then add the slash command for issue embed. This check is required as the searchCallback is optional.
-  if (issueEmbedConfig?.searchCallback) {
-    extensions = [SlashCommand(fileHandler.upload, slashCommandAdditionalOptions)];
+    ];
+    extensions.push(SlashCommand(fileHandler.upload, slashCommandAdditionalOptions));
   } else {
-    extensions = [SlashCommand(fileHandler.upload)];
+    extensions.push(SlashCommand(fileHandler.upload));
   }
 
-  if (issueEmbedConfig && issueEmbedConfig.searchCallback)
+  if (issueEmbedConfig && !isIssueEmbedDisabled) {
     extensions.push(
       IssueEmbedSuggestions.configure({
         suggestion: {
@@ -55,6 +51,7 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
         },
       })
     );
+  }
 
   return extensions;
 };

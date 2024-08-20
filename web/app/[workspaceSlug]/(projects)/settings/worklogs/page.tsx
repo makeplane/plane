@@ -43,7 +43,11 @@ const WorklogsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <WithFeatureFlagHOC flag={E_FEATURE_FLAGS.ISSUE_WORKLOG} fallback={<WorkspaceWorklogsUpgrade />}>
+      <WithFeatureFlagHOC
+        workspaceSlug={workspaceSlug?.toString()}
+        flag={E_FEATURE_FLAGS.ISSUE_WORKLOG}
+        fallback={<WorkspaceWorklogsUpgrade />}
+      >
         <WorkspaceWorklogRoot workspaceSlug={workspaceSlug.toString()} workspaceId={currentWorkspace.id} />
       </WithFeatureFlagHOC>
     </>

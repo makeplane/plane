@@ -1,66 +1,43 @@
-/* drag handle */
-.drag-handle {
+/* side menu */
+#editor-side-menu {
   position: fixed;
+  display: flex;
+  align-items: center;
   opacity: 1;
-  height: 20px;
-  width: 20px;
-  aspect-ratio: 1 / 1;
-  display: grid;
-  place-items: center;
-  z-index: 5;
-  cursor: grab;
-  border-radius: 2px;
-  outline: none !important;
   transition:
     opacity 0.2s ease 0.2s,
-    background-color 0.2s ease,
     top 0.2s ease,
     left 0.2s ease;
+  transform: translateX(-50%);
 
-  &:hover {
-    background-color: rgba(var(--color-background-80));
+  &.side-menu-hidden {
+    opacity: 0;
+    pointer-events: none;
   }
+}
+/* end side menu */
 
-  &:active {
-    background-color: rgba(var(--color-background-80));
-    cursor: grabbing;
-  }
+/* drag handle */
+#drag-handle {
+  opacity: 1;
 
   &.drag-handle-hidden {
     opacity: 0;
     pointer-events: none;
   }
 }
+/* end drag handle */
 
-@media screen and (max-width: 600px) {
-  .drag-handle {
-    display: none;
+/* ai handle */
+#ai-handle {
+  opacity: 1;
+
+  &.handle-hidden {
+    opacity: 0;
     pointer-events: none;
   }
 }
-
-.drag-handle-container {
-  height: 15px;
-  width: 15px;
-  display: grid;
-  place-items: center;
-}
-
-.drag-handle-dots {
-  height: 100%;
-  width: 12px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  place-items: center;
-}
-
-.drag-handle-dot {
-  height: 2.5px;
-  width: 2.5px;
-  background-color: rgba(var(--color-text-300));
-  border-radius: 50%;
-}
-/* end drag handle */
+/* end ai handle */
 
 .ProseMirror:not(.dragging) .ProseMirror-selectednode {
   position: relative;
