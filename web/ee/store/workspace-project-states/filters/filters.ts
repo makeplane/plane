@@ -122,7 +122,9 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const projectMap = projectStore.projectMap;
     if (!workspaceDetails || isEmpty(projectMap)) return defaultCounts;
 
-    const projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id) as TProject[];
+    const projects = Object.values(projectMap).filter(
+      (p) => p.workspace === workspaceDetails.id && !p.archived_at
+    ) as TProject[];
     if (projects.length === 0) return defaultCounts;
 
     return {
@@ -203,16 +205,19 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    */
   initWorkspaceFilters = (workspaceSlug: string): void => {
     if (Object.keys(this.scopeMap).includes(workspaceSlug)) return;
+    const savedFilters = this.handleProjectLocalFilters.get(workspaceSlug);
 
     if (!this.scopeMap[workspaceSlug]) {
-      this.updateScope(workspaceSlug, EProjectScope.ALL_PROJECTS);
-    }
-    const savedLayout = this.handleProjectLocalFilters.get(workspaceSlug)?.layout;
-    if (!this.layoutMap[workspaceSlug]) {
-      this.updateLayout(
+      this.updateScope(
         workspaceSlug,
-        [EProjectLayouts.GALLERY, EProjectLayouts.TABLE].includes(savedLayout) ? savedLayout : EProjectLayouts.GALLERY
+        savedFilters.scope ||
+          (this.scopeProjectsCount[EProjectScope.MY_PROJECTS] > 0
+            ? EProjectScope.MY_PROJECTS
+            : EProjectScope.ALL_PROJECTS)
       );
+    }
+    if (!this.layoutMap[workspaceSlug]) {
+      this.updateLayout(workspaceSlug, savedFilters.layout || EProjectLayouts.GALLERY);
     }
     if (!this.attributesMap[workspaceSlug]) {
       this.updateAttributes(workspaceSlug, "priority", []);
@@ -236,6 +241,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    */
   updateScope = (workspaceSlug: string, scope: TProjectScope): void => {
     set(this.scopeMap, workspaceSlug, scope);
+    this.handleProjectLocalFilters.set("scope", workspaceSlug, { scope });
   };
 
   /**

@@ -28,7 +28,7 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
 
   const DropdownLabel = () => (
     <>
-      <div className="hidden md:flex relative items-center gap-2 w-[160px]">
+      <div className="hidden md:flex relative items-center gap-2 w-[150px]">
         <div className="flex gap-2 flex-1 my-auto">
           {" "}
           <div className="whitespace-nowrap font-medium my-auto">
