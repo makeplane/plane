@@ -263,7 +263,10 @@ class IssueArchiveViewSet(BaseViewSet):
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
                 {
-                    "error": "Can only archive completed or cancelled state group issue"
+                        "error_code": ERROR_CODES[
+                            "INVALID_ARCHIVE_STATE_GROUP"
+                        ],
+                        "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
