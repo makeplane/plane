@@ -2,11 +2,9 @@ import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // store hooks
 import { TIssueOperations } from "@/components/issues";
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
@@ -26,6 +24,7 @@ interface IPeekOverviewIssueDetails {
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
   const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
   // store hooks
+  const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
@@ -47,6 +46,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue || !issue.project_id) return <></>;
 
+  const projectDetails = getProjectById(issue.project_id);
+
   const issueDescription =
     issue.description_html !== undefined || issue.description_html !== null
       ? issue.description_html != ""
@@ -56,7 +57,9 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   return (
     <div className="space-y-2">
-      <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
+      <span className="text-base font-medium text-custom-text-400">
+        {projectDetails?.identifier}-{issue?.sequence_id}
+      </span>
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}

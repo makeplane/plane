@@ -1,43 +1,66 @@
-/* side menu */
-#editor-side-menu {
+/* drag handle */
+.drag-handle {
   position: fixed;
-  display: flex;
-  align-items: center;
   opacity: 1;
+  height: 20px;
+  width: 20px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+  cursor: grab;
+  border-radius: 2px;
+  outline: none !important;
   transition:
     opacity 0.2s ease 0.2s,
+    background-color 0.2s ease,
     top 0.2s ease,
     left 0.2s ease;
-  transform: translateX(-50%);
 
-  &.side-menu-hidden {
-    opacity: 0;
-    pointer-events: none;
+  &:hover {
+    background-color: rgba(var(--color-background-80));
   }
-}
-/* end side menu */
 
-/* drag handle */
-#drag-handle {
-  opacity: 1;
+  &:active {
+    background-color: rgba(var(--color-background-80));
+    cursor: grabbing;
+  }
 
   &.drag-handle-hidden {
     opacity: 0;
     pointer-events: none;
   }
 }
-/* end drag handle */
 
-/* ai handle */
-#ai-handle {
-  opacity: 1;
-
-  &.handle-hidden {
-    opacity: 0;
+@media screen and (max-width: 600px) {
+  .drag-handle {
+    display: none;
     pointer-events: none;
   }
 }
-/* end ai handle */
+
+.drag-handle-container {
+  height: 15px;
+  width: 15px;
+  display: grid;
+  place-items: center;
+}
+
+.drag-handle-dots {
+  height: 100%;
+  width: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  place-items: center;
+}
+
+.drag-handle-dot {
+  height: 2.5px;
+  width: 2.5px;
+  background-color: rgba(var(--color-text-300));
+  border-radius: 50%;
+}
+/* end drag handle */
 
 .ProseMirror:not(.dragging) .ProseMirror-selectednode {
   position: relative;

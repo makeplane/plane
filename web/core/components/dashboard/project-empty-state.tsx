@@ -9,7 +9,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
-import ProjectEmptyStateImage from "@/public/empty-state/onboarding/dashboard-light.webp";
+import ProjectEmptyStateImage from "@/public/empty-state/dashboard/project.svg";
 
 export const DashboardProjectEmptyState = observer(() => {
   // store hooks

@@ -42,18 +42,9 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
-
-  // workspace level
-  canPerformWorkspaceAdminActions: boolean;
-  canPerformWorkspaceMemberActions: boolean;
-  canPerformWorkspaceViewerActions: boolean;
-  canPerformWorkspaceGuestActions: boolean;
-
-  // project level
+  canPerformProjectCreateActions: boolean;
   canPerformProjectAdminActions: boolean;
-  canPerformProjectMemberActions: boolean;
-  canPerformProjectViewerActions: boolean;
-  canPerformProjectGuestActions: boolean;
+  canPerformWorkspaceCreateActions: boolean;
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
@@ -101,16 +92,9 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action,
       // computed
-      canPerformWorkspaceAdminActions: computed,
-      canPerformWorkspaceMemberActions: computed,
-      canPerformWorkspaceViewerActions: computed,
-      canPerformWorkspaceGuestActions: computed,
-
+      canPerformProjectCreateActions: computed,
       canPerformProjectAdminActions: computed,
-      canPerformProjectMemberActions: computed,
-      canPerformProjectViewerActions: computed,
-      canPerformProjectGuestActions: computed,
-
+      canPerformWorkspaceCreateActions: computed,
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
     });
@@ -289,40 +273,15 @@ export class UserStore implements IUserStore {
   }
 
   /**
-   * @description returns true if user has workspace admin actions permissions
+   * @description tells if user has project create actions permissions
    * @returns {boolean}
    */
-  get canPerformWorkspaceAdminActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  get canPerformProjectCreateActions() {
+    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.MEMBER;
   }
 
   /**
-   * @description returns true if user has workspace member actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceMemberActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-  }
-
-  /**
-   * @description returns true if user has workspace viewer actions permissions
-   * @returns {boolean}
-   */
-
-  get canPerformWorkspaceViewerActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.VIEWER;
-  }
-
-  /**
-   * @description returns true if user has workspace guest actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceGuestActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.GUEST;
-  }
-
-  /**
-   * @description returns true if user has project admin actions permissions
+   * @description tells if user has project admin actions permissions
    * @returns {boolean}
    */
   get canPerformProjectAdminActions() {
@@ -330,27 +289,10 @@ export class UserStore implements IUserStore {
   }
 
   /**
-   * @description returns true if user has project member actions permissions
+   * @description tells if user has workspace create actions permissions
    * @returns {boolean}
    */
-  get canPerformProjectMemberActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.MEMBER;
-  }
-
-  /**
-   * @description returns true if user has project viewer actions permissions
-   * @returns {boolean}
-   */
-
-  get canPerformProjectViewerActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.VIEWER;
-  }
-
-  /**
-   * @description returns true if user has project guest actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectGuestActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.GUEST;
+  get canPerformWorkspaceCreateActions() {
+    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   }
 }

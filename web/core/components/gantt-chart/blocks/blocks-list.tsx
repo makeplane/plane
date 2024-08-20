@@ -14,10 +14,10 @@ export type GanttChartBlocksProps = {
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  enableBlockLeftResize: boolean | ((blockId: string) => boolean);
-  enableBlockRightResize: boolean | ((blockId: string) => boolean);
-  enableBlockMove: boolean | ((blockId: string) => boolean);
-  enableAddBlock: boolean | ((blockId: string) => boolean);
+  enableBlockLeftResize: boolean;
+  enableBlockRightResize: boolean;
+  enableBlockMove: boolean;
+  enableAddBlock: boolean;
   ganttContainerRef: React.RefObject<HTMLDivElement>;
   showAllBlocks: boolean;
   selectionHelpers: TSelectionHelper;
@@ -55,14 +55,10 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
           showAllBlocks={showAllBlocks}
           blockToRender={blockToRender}
           blockUpdateHandler={blockUpdateHandler}
-          enableBlockLeftResize={
-            typeof enableBlockLeftResize === "function" ? enableBlockLeftResize(blockId) : enableBlockLeftResize
-          }
-          enableBlockRightResize={
-            typeof enableBlockRightResize === "function" ? enableBlockRightResize(blockId) : enableBlockRightResize
-          }
-          enableBlockMove={typeof enableBlockMove === "function" ? enableBlockMove(blockId) : enableBlockMove}
-          enableAddBlock={typeof enableAddBlock === "function" ? enableAddBlock(blockId) : enableAddBlock}
+          enableBlockLeftResize={enableBlockLeftResize}
+          enableBlockRightResize={enableBlockRightResize}
+          enableBlockMove={enableBlockMove}
+          enableAddBlock={enableAddBlock}
           ganttContainerRef={ganttContainerRef}
           selectionHelpers={selectionHelpers}
         />

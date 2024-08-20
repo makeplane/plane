@@ -84,7 +84,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
                     }
                     onChange={onChange}
                     options={options}
-                    optionsClassName="w-48"
+                    optionsClassName="w-full"
                   />
                 )}
               />

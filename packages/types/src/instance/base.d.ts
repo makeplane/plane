@@ -69,8 +69,6 @@ export interface IInstanceConfig {
   payment_server_base_url?: string;
   prime_server_base_url?: string;
   feature_flag_server_base_url?: string;
-  // silo
-  silo_base_url: string | undefined;
 }
 
 export interface IInstanceAdmin {

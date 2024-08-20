@@ -80,7 +80,8 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("issue_id", flat=True)
 
         queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            Issue.issue_objects
+            .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
@@ -143,7 +144,6 @@ class IssueRelationViewSet(BaseViewSet):
             "created_by",
             "updated_by",
             "relation_type",
-            "type_id",
         ]
 
         response_data = {

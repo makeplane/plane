@@ -4,21 +4,15 @@ import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-// types
 import type { TIssue } from "@plane/types";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { ConfirmIssueDiscard } from "@/components/issues";
-// helpers
-import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
-import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { ConfirmIssueDiscard } from "@/components/issues";
+import { IssueFormRoot } from "@/components/issues/issue-modal/form";
+import { isEmptyHtmlString } from "@/helpers/string.helper";
 import { useEventTracker } from "@/hooks/store";
 // services
 import { IssueDraftService } from "@/services/issue";
-// local components
-import { IssueFormRoot } from "./form";
 
 export interface DraftIssueProps {
   changesMade: Partial<TIssue> | null;
@@ -28,7 +22,7 @@ export interface DraftIssueProps {
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
-  onSubmit: (formData: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
+  onSubmit: (formData: Partial<TIssue>) => Promise<void>;
   projectId: string;
   isDraft: boolean;
 }
@@ -56,7 +50,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const pathname = usePathname();
   // store hooks
   const { captureIssueEvent } = useEventTracker();
-  const { handleCreateUpdatePropertyValues } = useIssueModal();
 
   const handleClose = () => {
     if (data?.id) {
@@ -97,7 +90,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
       name: changesMade?.name && changesMade?.name?.trim() !== "" ? changesMade.name?.trim() : "Untitled",
     };
 
-    const response = await issueDraftService
+    await issueDraftService
       .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)
       .then((res) => {
         setToast({
@@ -113,7 +106,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onChange(null);
         setIssueDiscardModal(false);
         onClose(false);
-        return res;
       })
       .catch(() => {
         setToast({
@@ -127,14 +119,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           path: pathname,
         });
       });
-
-    if (response && handleCreateUpdatePropertyValues) {
-      handleCreateUpdatePropertyValues({
-        issueId: response.id,
-        projectId,
-        workspaceSlug: workspaceSlug?.toString(),
-      });
-    }
   };
 
   return (

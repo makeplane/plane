@@ -16,8 +16,6 @@ import { EIssuesStoreType } from "@/constants/issue";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useProjectState } from "@/hooks/store";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 
 export type ActiveCyclePriorityIssuesProps = {
   workspaceSlug: string;
@@ -63,16 +61,19 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
                 className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
               >
                 <div className="flex items-center gap-1.5 flex-grow w-full truncate">
-                  <IssueIdentifier
-                    issueId={issue.id}
-                    projectId={projectId}
-                    textContainerClassName="text-xs text-custom-text-200"
-                  />
+                  <PriorityIcon priority={issue.priority} withContainer size={12} />
+                  <Tooltip
+                    tooltipHeading="Issue ID"
+                    tooltipContent={`${cycle.project_detail?.identifier}-${issue.sequence_id}`}
+                  >
+                    <span className="flex-shrink-0 text-xs text-custom-text-200">
+                      {cycle.project_detail?.identifier}-{issue.sequence_id}
+                    </span>
+                  </Tooltip>
                   <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
                     <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                   </Tooltip>
                 </div>
-                <PriorityIcon priority={issue.priority} withContainer size={12} />
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <StateDropdown
                     value={issue.state_id ?? undefined}

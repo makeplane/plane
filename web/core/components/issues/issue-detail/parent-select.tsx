@@ -4,17 +4,15 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, X } from "lucide-react";
-// ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// hooks
 // components
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { ParentIssuesListModal } from "@/components/issues";
+// ui
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
 import { TIssueOperations } from "./root";
 
@@ -104,23 +102,16 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-green-500/20 rounded px-1.5 py-1">
+          <div className="flex items-center gap-1 bg-green-500/20 text-green-700 rounded px-1.5 py-1">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link
                 href={`/${workspaceSlug}/projects/${parentIssue.project_id}/issues/${parentIssue?.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="text-xs font-medium"
                 onClick={(e) => e.stopPropagation()}
               >
-                {parentIssue?.project_id && parentIssueProjectDetails && (
-                  <IssueIdentifier
-                    projectId={parentIssue.project_id}
-                    issueTypeId={parentIssue.type_id}
-                    projectIdentifier={parentIssueProjectDetails?.identifier}
-                    issueSequenceId={parentIssue.sequence_id}
-                    textContainerClassName="text-xs font-medium text-green-700"
-                  />
-                )}
+                {parentIssueProjectDetails?.identifier}-{parentIssue.sequence_id}
               </Link>
             </Tooltip>
 

@@ -5,19 +5,16 @@ import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
-// types
 import { TIssue } from "@plane/types";
-// ui
+// components
 import { Tooltip, ControlLink } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// helpers
+// types
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
-// local components
 import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
@@ -36,6 +33,7 @@ export const CalendarIssueBlock = observer(
     const menuActionRef = useRef<HTMLDivElement | null>(null);
     // hooks
     const { workspaceSlug, projectId } = useParams();
+    const { getProjectIdentifierById } = useProject();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
     const { isMobile } = usePlatformOS();
@@ -101,13 +99,9 @@ export const CalendarIssueBlock = observer(
                   backgroundColor: stateColor,
                 }}
               />
-              {issue.project_id && (
-                <IssueIdentifier
-                  issueId={issue.id}
-                  projectId={issue.project_id}
-                  textContainerClassName="text-sm md:text-xs text-custom-text-300"
-                />
-              )}
+              <div className="flex-shrink-0 text-sm md:text-xs text-custom-text-300">
+                {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
+              </div>
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
               </Tooltip>

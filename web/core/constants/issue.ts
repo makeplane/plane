@@ -8,7 +8,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssuePriorities,
-  TIssueGroupingFilters,
+  TIssueTypeFilters,
 } from "@plane/types";
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
@@ -99,7 +99,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
 ];
 
 export const ISSUE_FILTER_OPTIONS: {
-  key: TIssueGroupingFilters;
+  key: TIssueTypeFilters;
   title: string;
 }[] = [
   { key: null, title: "All" },
@@ -171,7 +171,7 @@ export interface ILayoutDisplayFiltersOptions {
     group_by?: TIssueGroupByOptions[];
     sub_group_by?: TIssueGroupByOptions[];
     order_by?: TIssueOrderByOptions[];
-    type?: TIssueGroupingFilters[];
+    type?: TIssueTypeFilters[];
   };
   extra_options: {
     access: boolean;
@@ -222,7 +222,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "labels",
         "start_date",
         "target_date",
-        "issue_type",
       ],
       display_properties: true,
       display_filters: {
@@ -248,7 +247,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   draft_issues: {
     list: {
-      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date", "issue_type"],
+      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels", null],
@@ -261,7 +260,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     kanban: {
-      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date", "issue_type"],
+      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels"],
@@ -332,7 +331,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "labels",
         "start_date",
         "target_date",
-        "issue_type",
       ],
       display_properties: true,
       display_filters: {
@@ -357,7 +355,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "labels",
         "start_date",
         "target_date",
-        "issue_type",
       ],
       display_properties: true,
       display_filters: {
@@ -372,18 +369,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     calendar: {
-      filters: [
-        "priority",
-        "state",
-        "cycle",
-        "module",
-        "assignees",
-        "mentions",
-        "created_by",
-        "labels",
-        "start_date",
-        "issue_type",
-      ],
+      filters: ["priority", "state", "cycle", "module", "assignees", "mentions", "created_by", "labels", "start_date"],
       display_properties: false,
       display_filters: {
         type: [null, "active", "backlog"],
@@ -405,7 +391,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "labels",
         "start_date",
         "target_date",
-        "issue_type",
       ],
       display_properties: true,
       display_filters: {
@@ -429,7 +414,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "labels",
         "start_date",
         "target_date",
-        "issue_type",
       ],
       display_properties: false,
       display_filters: {

@@ -9,8 +9,6 @@ from asgiref.sync import sync_to_async
 import strawberry
 import strawberry_django
 from strawberry.scalars import JSON
-from strawberry.types import Info
-
 
 # Module Imports
 from plane.db.models import (
@@ -18,8 +16,6 @@ from plane.db.models import (
     IssueUserProperty,
     IssueActivity,
     IssueComment,
-    CycleIssue,
-    ModuleIssue,
 )
 
 
@@ -52,8 +48,6 @@ class IssueType:
     created_at: datetime
     updated_at: datetime
     sequence_id: int
-    cycle: Optional[strawberry.ID]
-    modules: Optional[list[strawberry.ID]]
 
     @strawberry.field
     def state(self) -> int:
@@ -89,28 +83,13 @@ class IssueType:
         labels = await sync_to_async(list)(self.labels.all())
         return [label.id for label in labels]
 
-    @strawberry.field
-    async def cycle(self, info: Info) -> strawberry.ID:
-        cycle_issue = await sync_to_async(
-            CycleIssue.objects.filter(issue_id=self.id).first
-        )()
-        if cycle_issue:
-            return str(cycle_issue.cycle_id)
-        return None
-
-    @strawberry.field
-    async def modules(self, info: Info) -> list[strawberry.ID]:
-        # Fetch related module IDs in a synchronous context
-        module_issues = await sync_to_async(
-            lambda: list(
-                ModuleIssue.objects.filter(issue_id=self.id).values_list(
-                    "module_id", flat=True
-                )
-            )
-        )()
-
-        # Return the module IDs as strings
-        return [str(module_id) for module_id in module_issues]
+    # @strawberry.field
+    # async def attachments(self) -> list[JSON]:
+    #     return await sync_to_async(list) list(
+    #         IssueAttachment.objects.filter(issue_id=self.id).values(
+    #             "id", "attributes", "asset"
+    #         )
+    #     )
 
 
 @strawberry_django.type(IssueUserProperty)

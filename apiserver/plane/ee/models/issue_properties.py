@@ -10,6 +10,7 @@ from plane.db.models import WorkspaceBaseModel
 
 
 class PropertyTypeEnum(models.TextChoices):
+
     TEXT = "TEXT", "Text"
     DATETIME = "DATETIME", "Datetime"
     DECIMAL = "DECIMAL", "Decimal"
@@ -82,6 +83,7 @@ class IssueProperty(WorkspaceBaseModel):
 
 
 class IssuePropertyOption(WorkspaceBaseModel):
+
     name = models.CharField(max_length=255)
     sort_order = models.FloatField(default=65535)
     property = models.ForeignKey(
@@ -115,7 +117,7 @@ class IssuePropertyOption(WorkspaceBaseModel):
         if self._state.adding:
             # Get the maximum sequence value from the database
             last_id = IssuePropertyOption.objects.filter(
-                project=self.project, property=self.property
+                project=self.project
             ).aggregate(largest=models.Max("sort_order"))["largest"]
             # if last_id is not None
             if last_id is not None:
@@ -156,6 +158,7 @@ class IssuePropertyValue(WorkspaceBaseModel):
 
 
 class IssuePropertyActivity(WorkspaceBaseModel):
+
     old_value = models.TextField(blank=True)
     new_value = models.TextField(blank=True)
     old_identifier = models.UUIDField(blank=True, null=True)

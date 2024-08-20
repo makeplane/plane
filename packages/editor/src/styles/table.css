@@ -12,6 +12,10 @@
   width: 100%;
 }
 
+.table-wrapper table p {
+  font-size: 14px;
+}
+
 .table-wrapper table td,
 .table-wrapper table th {
   min-width: 1em;
@@ -111,3 +115,4 @@
   opacity: 0;
   pointer-events: none;
 }
+

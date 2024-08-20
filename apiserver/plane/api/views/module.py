@@ -520,6 +520,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
+
     permission_classes = [
         ProjectEntityPermission,
     ]

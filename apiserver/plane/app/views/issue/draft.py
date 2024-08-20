@@ -269,7 +269,6 @@ class IssueDraftViewSet(BaseViewSet):
                     "link_count",
                     "is_draft",
                     "archived_at",
-                    "type_id",
                 )
                 .first()
             )

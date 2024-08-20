@@ -51,7 +51,7 @@ export type TIssueOrderByOptions =
   | "sub_issues_count"
   | "-sub_issues_count";
 
-export type TIssueGroupingFilters = "active" | "backlog" | null;
+export type TIssueTypeFilters = "active" | "backlog" | null;
 
 export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";
 
@@ -76,8 +76,7 @@ export type TIssueParams =
   | "sub_issue"
   | "show_empty_groups"
   | "cursor"
-  | "per_page"
-  | "issue_type";
+  | "per_page";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -95,7 +94,6 @@ export interface IIssueFilterOptions {
   state_group?: string[] | null;
   subscriber?: string[] | null;
   target_date?: string[] | null;
-  issue_type?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {
@@ -109,7 +107,7 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
-  type?: TIssueGroupingFilters;
+  type?: TIssueTypeFilters;
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;

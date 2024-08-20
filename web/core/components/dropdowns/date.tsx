@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { DayPicker, Matcher } from "react-day-picker";
-import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -26,7 +25,6 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
-  formatToken?: string;
 };
 
 export const DateDropdown: React.FC<Props> = (props) => {
@@ -50,7 +48,6 @@ export const DateDropdown: React.FC<Props> = (props) => {
     showTooltip = false,
     tabIndex,
     value,
-    formatToken,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -129,15 +126,13 @@ export const DateDropdown: React.FC<Props> = (props) => {
             className={buttonClassName}
             isActive={isOpen}
             tooltipHeading={placeholder}
-            tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
+            tooltipContent={value ? renderFormattedDate(value) : "None"}
             showTooltip={showTooltip}
             variant={buttonVariant}
           >
             {!hideIcon && icon}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">
-                {value ? renderFormattedDate(value, formatToken) : placeholder}
-              </span>
+              <span className="flex-grow truncate">{value ? renderFormattedDate(value) : placeholder}</span>
             )}
             {isClearable && !disabled && isDateSelected && (
               <X
@@ -152,30 +147,28 @@ export const DateDropdown: React.FC<Props> = (props) => {
           </DropdownButton>
         </button>
       </Combobox.Button>
-      {isOpen &&
-        createPortal(
-          <Combobox.Options data-prevent-outside-click static>
-            <div
-              className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20"
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              <DayPicker
-                selected={getDate(value)}
-                defaultMonth={getDate(value)}
-                onSelect={(date) => {
-                  dropdownOnChange(date ?? null);
-                }}
-                showOutsideDays
-                initialFocus
-                disabled={disabledDays}
-                mode="single"
-              />
-            </div>
-          </Combobox.Options>,
-          document.body
-        )}
+      {isOpen && (
+        <Combobox.Options className="fixed z-10" static>
+          <div
+            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <DayPicker
+              selected={getDate(value)}
+              defaultMonth={getDate(value)}
+              onSelect={(date) => {
+                dropdownOnChange(date ?? null);
+              }}
+              showOutsideDays
+              initialFocus
+              disabled={disabledDays}
+              mode="single"
+            />
+          </div>
+        </Combobox.Options>
+      )}
     </Combobox>
   );
 };

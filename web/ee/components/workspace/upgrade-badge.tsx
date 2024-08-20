@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // store
@@ -16,12 +15,10 @@ type TUpgradeBadge = {
 
 export const UpgradeBadge: FC<TUpgradeBadge> = observer((props) => {
   const { className, size = "sm", flag } = props;
-  // router
-  const { workspaceSlug } = useParams();
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // derived values
-  const isFeatureEnabled = flag ? useFlag(workspaceSlug?.toString(), flag) : false;
+  const isFeatureEnabled = flag ? useFlag(flag) : false;
   const isSubscribedToPro = currentWorkspaceSubscribedPlanDetail?.product === "PRO";
 
   if (!currentWorkspaceSubscribedPlanDetail || isFeatureEnabled || isSubscribedToPro) {

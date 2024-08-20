@@ -9,9 +9,7 @@ import { TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { useIssues, useProjectState } from "@/hooks/store";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { useIssues, useProject, useProjectState } from "@/hooks/store";
 // types
 import { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";
@@ -28,6 +26,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // hooks
   const { issueMap } = useIssues();
+  const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
 
   const parentIssue = issueMap?.[issue.parent_id || ""] || undefined;
@@ -43,16 +42,12 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
     <>
       <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
         <Link href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5">
               <span className="block h-2 w-2 rounded-full" style={{ backgroundColor: stateColor }} />
-              {parentIssue.project_id && (
-                <IssueIdentifier
-                  projectId={parentIssue.project_id}
-                  issueId={parentIssue.id}
-                  textContainerClassName="text-xs text-custom-text-200"
-                />
-              )}
+              <span className="flex-shrink-0 text-custom-text-200">
+                {getProjectById(parentIssue.project_id)?.identifier}-{parentIssue?.sequence_id}
+              </span>
             </div>
             <span className="truncate text-custom-text-100">{(parentIssue?.name ?? "").substring(0, 50)}</span>
           </div>

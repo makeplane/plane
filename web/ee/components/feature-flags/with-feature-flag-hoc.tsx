@@ -1,19 +1,16 @@
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
+import { ReactNode } from "react";
 // plane web hooks
 import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store/use-flag";
 
 interface IWithFeatureFlagHOC {
-  workspaceSlug: string;
   flag: keyof typeof E_FEATURE_FLAGS;
   fallback: ReactNode;
   children: ReactNode;
 }
 
-export const WithFeatureFlagHOC = observer((props: IWithFeatureFlagHOC) => {
-  const { workspaceSlug, flag, fallback, children } = props;
-  // check if the feature flag is enabled
-  const isFeatureEnabled = useFlag(workspaceSlug, flag);
-  // return the children if the feature flag is enabled else return the fallback
+export const WithFeatureFlagHOC = observer(({ flag, fallback, children }: IWithFeatureFlagHOC) => {
+  const isFeatureEnabled = useFlag(flag);
+
   return <>{isFeatureEnabled ? children : fallback}</>;
 });

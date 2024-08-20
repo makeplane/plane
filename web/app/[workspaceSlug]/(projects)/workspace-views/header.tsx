@@ -14,10 +14,11 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/com
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
-import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
+import { useLabel, useMember, useUser, useIssues, useGlobalView } from "@/hooks/store";
 
 export const GlobalIssuesHeader = observer(() => {
   // states
@@ -29,6 +30,9 @@ export const GlobalIssuesHeader = observer(() => {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { getViewDetailsById } = useGlobalView();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
   const { workspaceLabels } = useLabel();
   const {
     workspace: { workspaceMemberIds },
@@ -93,6 +97,8 @@ export const GlobalIssuesHeader = observer(() => {
     [workspaceSlug, updateFilters, globalViewId]
   );
 
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
   const isLocked = viewDetails?.is_locked;
 
   return (
@@ -136,10 +142,11 @@ export const GlobalIssuesHeader = observer(() => {
               </FiltersDropdown>
             </>
           )}
-
-          <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
-            Add view
-          </Button>
+          {isAuthorizedUser && (
+            <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
+              Add view
+            </Button>
+          )}
         </div>
       </div>
     </>

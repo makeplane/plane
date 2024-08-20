@@ -11,7 +11,7 @@ const LiteTextEditor = (props: ILiteTextEditor) => {
 
   const extensions = [EnterKeyExtension(onEnterKeyPress)];
 
-  return <EditorWrapper {...props} extensions={extensions} />;
+  return <EditorWrapper {...props} extensions={extensions} hideDragHandleOnMouseLeave={() => {}} />;
 };
 
 const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditor>((props, ref) => (

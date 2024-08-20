@@ -7,12 +7,10 @@ import { Earth, Info, Lock, Minus } from "lucide-react";
 import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { PageQuickActions } from "@/components/pages/dropdowns";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useMember, usePage, useProject } from "@/hooks/store";
+import { useMember, usePage } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -27,15 +25,10 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   // store hooks
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
-  const { getProjectById } = useProject();
-
   // derived values
   const { access, created_at, is_favorite, owned_by, addToFavorites, removePageFromFavorites } = page;
 
   // derived values
-  const project = getProjectById(projectId);
-  const isViewerOrGuest =
-    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers
@@ -81,16 +74,14 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       </Tooltip>
 
       {/* favorite/unfavorite */}
-      {!isViewerOrGuest && (
-        <FavoriteStar
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleFavorites();
-          }}
-          selected={is_favorite}
-        />
-      )}
+      <FavoriteStar
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleFavorites();
+        }}
+        selected={is_favorite}
+      />
 
       {/* quick actions dropdown */}
       <PageQuickActions

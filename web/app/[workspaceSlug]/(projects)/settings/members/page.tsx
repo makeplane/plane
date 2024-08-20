@@ -9,13 +9,12 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
 // constants
 import { MEMBER_INVITED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
@@ -29,9 +28,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
-    canPerformWorkspaceAdminActions,
-    canPerformWorkspaceViewerActions,
-    canPerformWorkspaceMemberActions,
     membership: { currentWorkspaceRole },
   } = useUser();
   const {
@@ -83,12 +79,8 @@ const WorkspaceMembersSettingsPage = observer(() => {
   };
 
   // derived values
+  const isAdmin = currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN].includes(currentWorkspaceRole);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
-
-  // if user is not authorized to view this page
-  if (currentWorkspaceRole && !canPerformWorkspaceViewerActions) {
-    return <NotAuthorizedView section="settings" />;
-  }
 
   return (
     <>
@@ -98,11 +90,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
-      <section
-        className={cn("w-full overflow-y-auto md:pr-9 pr-4", {
-          "opacity-60": !canPerformWorkspaceMemberActions,
-        })}
-      >
+      <section className="w-full overflow-y-auto md:pr-9 pr-4">
         <div className="flex items-center justify-between gap-4 py-3.5">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
@@ -115,13 +103,13 @@ const WorkspaceMembersSettingsPage = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {canPerformWorkspaceAdminActions && (
+          {isAdmin && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}
         </div>
-        <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
+        <WorkspaceMembersList searchQuery={searchQuery} isAdmin={isAdmin ?? false} />
       </section>
     </>
   );

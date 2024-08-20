@@ -20,9 +20,7 @@ import {
   Underline,
 } from "lucide-react";
 // editor
-import { TEditorCommands, TEditorFontStyle } from "@plane/editor";
-// ui
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
+import { TEditorCommands } from "@plane/editor";
 
 type TEditorTypes = "lite" | "document";
 
@@ -109,25 +107,3 @@ export const TOOLBAR_ITEMS: {
     complex: COMPLEX_ITEMS.filter((item) => item.editors.includes("document")),
   },
 };
-
-export const EDITOR_FONT_STYLES: {
-  key: TEditorFontStyle;
-  label: string;
-  icon: any;
-}[] = [
-  {
-    key: "sans-serif",
-    label: "Sans serif",
-    icon: SansSerifIcon,
-  },
-  {
-    key: "serif",
-    label: "Serif",
-    icon: SerifIcon,
-  },
-  {
-    key: "monospace",
-    label: "Mono",
-    icon: MonospaceIcon,
-  },
-];

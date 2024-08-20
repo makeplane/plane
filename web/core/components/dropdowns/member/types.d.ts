@@ -7,7 +7,6 @@ export type MemberDropdownProps = TDropdownProps & {
   placeholder?: string;
   tooltipContent?: string;
   onClose?: () => void;
-  showUserDetails?: boolean;
 } & (
     | {
         multiple: false;

@@ -15,21 +15,18 @@ import { Editor, ReactRenderer } from "@tiptap/react";
 // components
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { LinkView, LinkViewProps } from "@/components/links";
-import { AIFeaturesMenu, BlockMenu } from "@/components/menus";
-// types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import { BlockMenu } from "@/components/menus";
 
 type IPageRenderer = {
-  aiHandler?: TAIHandler;
-  displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
+  hideDragHandle?: () => void;
   id: string;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { aiHandler, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
+  const { editor, editorContainerClassName, hideDragHandle, id, tabIndex } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -133,18 +130,13 @@ export const PageRenderer = (props: IPageRenderer) => {
     <>
       <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
         <EditorContainer
-          displayConfig={displayConfig}
           editor={editor}
           editorContainerClassName={editorContainerClassName}
+          hideDragHandle={hideDragHandle}
           id={id}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor.isEditable && (
-            <>
-              <BlockMenu editor={editor} />
-              <AIFeaturesMenu menu={aiHandler?.menu} />
-            </>
-          )}
+          {editor && editor.isEditable && <BlockMenu editor={editor} />}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

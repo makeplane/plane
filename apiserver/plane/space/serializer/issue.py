@@ -27,7 +27,6 @@ from plane.db.models import (
     CommentReaction,
     IssueVote,
     IssueRelation,
-    IssueType,
 )
 
 
@@ -360,24 +359,7 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue_type_id = validated_data.get("type_id")
-
-        if issue_type_id:
-            # Check if issue type is valid
-            issue_type = IssueType.objects.filter(
-                project_id=project_id, id=issue_type_id
-            ).first()
-        else:
-            # Get default issue type
-            issue_type = IssueType.objects.filter(
-                project_id=project_id, is_default=True
-            ).first()
-
-        issue = Issue.objects.create(
-            **validated_data,
-            project_id=project_id,
-            type=issue_type,
-        )
+        issue = Issue.objects.create(**validated_data, project_id=project_id)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id

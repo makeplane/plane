@@ -16,9 +16,7 @@ from rest_framework.response import Response
 
 # Module imports
 from ..base import BaseViewSet
-from plane.app.permissions import (
-    allow_permission, ROLE
-)
+from plane.app.permissions import ProjectBasePermission, ProjectLitePermission
 from plane.db.models import (
     Inbox,
     InboxIssue,
@@ -41,6 +39,9 @@ from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class InboxViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectBasePermission,
+    ]
 
     serializer_class = InboxSerializer
     model = Inbox
@@ -62,7 +63,6 @@ class InboxViewSet(BaseViewSet):
             .select_related("workspace", "project")
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def list(self, request, slug, project_id):
         inbox = self.get_queryset().first()
         return Response(
@@ -70,11 +70,9 @@ class InboxViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, pk):
         inbox = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=pk
@@ -90,6 +88,9 @@ class InboxViewSet(BaseViewSet):
 
 
 class InboxIssueViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
 
     serializer_class = InboxIssueSerializer
     model = InboxIssue
@@ -159,15 +160,13 @@ class InboxIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
         ).distinct()
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -201,14 +200,6 @@ class InboxIssueViewSet(BaseViewSet):
         if inbox_status:
             inbox_issue = inbox_issue.filter(status__in=inbox_status)
 
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
-            inbox_issue = inbox_issue.filter(created_by=request.user)
         return self.paginate(
             request=request,
             queryset=(inbox_issue),
@@ -218,7 +209,6 @@ class InboxIssueViewSet(BaseViewSet):
             ).data,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
@@ -321,13 +311,12 @@ class InboxIssueViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def partial_update(self, request, slug, project_id, pk):
+    def partial_update(self, request, slug, project_id, issue_id):
         inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
         inbox_issue = InboxIssue.objects.get(
-            issue_id=pk,
+            issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
             inbox_id=inbox_id,
@@ -468,7 +457,7 @@ class InboxIssueViewSet(BaseViewSet):
                         request.data, cls=DjangoJSONEncoder
                     ),
                     actor_id=str(request.user.id),
-                    issue_id=str(pk),
+                    issue_id=str(issue_id),
                     project_id=str(project_id),
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
@@ -503,7 +492,7 @@ class InboxIssueViewSet(BaseViewSet):
                     )
                     .get(
                         inbox_id=inbox_id.id,
-                        issue_id=pk,
+                        issue_id=issue_id,
                         project_id=project_id,
                     )
                 )
@@ -516,12 +505,7 @@ class InboxIssueViewSet(BaseViewSet):
             serializer = InboxIssueDetailSerializer(inbox_issue).data
             return Response(serializer, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER],
-        creator=True,
-        model=Issue,
-    )
-    def retrieve(self, request, slug, project_id, pk):
+    def retrieve(self, request, slug, project_id, issue_id):
         inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
@@ -549,7 +533,9 @@ class InboxIssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
-            .get(inbox_id=inbox_id.id, issue_id=pk, project_id=project_id)
+            .get(
+                inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+            )
         )
         issue = InboxIssueDetailSerializer(inbox_issue).data
         return Response(
@@ -557,13 +543,12 @@ class InboxIssueViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
-    def destroy(self, request, slug, project_id, pk):
+    def destroy(self, request, slug, project_id, issue_id):
         inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
         inbox_issue = InboxIssue.objects.get(
-            issue_id=pk,
+            issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
             inbox_id=inbox_id,
@@ -573,8 +558,21 @@ class InboxIssueViewSet(BaseViewSet):
         if inbox_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
             issue = Issue.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=pk
+                workspace__slug=slug, project_id=project_id, pk=issue_id
             ).first()
+            if issue.created_by_id != request.user.id and (
+                not ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    member=request.user,
+                    role=20,
+                    project_id=project_id,
+                    is_active=True,
+                ).exists()
+            ):
+                return Response(
+                    {"error": "Only admin or creator can delete the issue"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             issue.delete()
 
         inbox_issue.delete()

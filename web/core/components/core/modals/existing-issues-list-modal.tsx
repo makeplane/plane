@@ -10,8 +10,6 @@ import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@pl
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // services
 import { ProjectService } from "@/services/project";
 // components
@@ -151,13 +149,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                             key={issue.id}
                             className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
                           >
-                            <IssueIdentifier
-                              projectId={issue.project_id}
-                              issueTypeId={issue.type_id}
-                              projectIdentifier={issue.project__identifier}
-                              issueSequenceId={issue.sequence_id}
-                              textContainerClassName="text-xs text-custom-text-200"
-                            />
+                            {issue.project__identifier}-{issue.sequence_id}
                             <button
                               type="button"
                               className="group p-1"
@@ -240,7 +232,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                   htmlFor={`issue-${issue.id}`}
                                   value={issue}
                                   className={({ active }) =>
-                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
+                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
                                       active ? "bg-custom-background-80 text-custom-text-100" : ""
                                     } ${selected ? "text-custom-text-100" : ""}`
                                   }
@@ -253,14 +245,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                         backgroundColor: issue.state__color,
                                       }}
                                     />
-                                    <span className="flex-shrink-0">
-                                      <IssueIdentifier
-                                        projectId={issue.project_id}
-                                        issueTypeId={issue.type_id}
-                                        projectIdentifier={issue.project__identifier}
-                                        issueSequenceId={issue.sequence_id}
-                                        textContainerClassName="text-xs text-custom-text-200"
-                                      />
+                                    <span className="flex-shrink-0 text-xs">
+                                      {issue.project__identifier}-{issue.sequence_id}
                                     </span>
                                     {issue.name}
                                   </div>

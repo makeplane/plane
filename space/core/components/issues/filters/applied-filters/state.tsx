@@ -15,7 +15,7 @@ type Props = {
 export const AppliedStateFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values } = props;
 
-  const { sortedStates: states } = useStates();
+  const { states } = useStates();
 
   return (
     <>

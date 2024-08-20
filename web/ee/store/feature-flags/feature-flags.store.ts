@@ -2,18 +2,21 @@ import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { FeatureFlagService, TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
+// plane web store
 
 const featureFlagService = new FeatureFlagService();
 
-type TFeatureFlagsMaps = Record<string, boolean>; // feature flag -> boolean
+type TFeatureFlagsMaps = {
+  [featureFlag: string]: boolean;
+};
 
 export interface IFeatureFlagsStore {
-  flags: Record<string, TFeatureFlagsMaps>; // workspaceSlug -> feature flag map
+  flags: TFeatureFlagsMaps;
   fetchFeatureFlags: (workspaceSlug: string) => Promise<TFeatureFlagsResponse>;
 }
 
 export class FeatureFlagsStore implements IFeatureFlagsStore {
-  flags: Record<string, TFeatureFlagsMaps> = {};
+  flags: TFeatureFlagsMaps = {};
 
   constructor() {
     makeObservable(this, {
@@ -28,7 +31,7 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       runInAction(() => {
         if (response.values) {
           Object.keys(response.values).forEach((key) => {
-            set(this.flags, [workspaceSlug, key], response.values[key]);
+            set(this.flags, key, response.values[key]);
           });
         }
       });

@@ -25,7 +25,6 @@ export type TBaseIssue = {
   parent_id: string | null;
   cycle_id: string | null;
   module_ids: string[] | null;
-  type_id: string | null;
 
   created_at: string;
   updated_at: string;
@@ -49,8 +48,6 @@ export type TIssue = TBaseIssue & {
   issue_link?: TIssueLink[];
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
-  // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
-  sourceIssueId?: string;
 };
 
 export type TIssueMap = {
@@ -60,18 +57,18 @@ export type TIssueMap = {
 type TIssueResponseResults =
   | TBaseIssue[]
   | {
-    [key: string]: {
-      results:
-      | TBaseIssue[]
-      | {
-        [key: string]: {
-          results: TBaseIssue[];
-          total_results: number;
-        };
+      [key: string]: {
+        results:
+          | TBaseIssue[]
+          | {
+              [key: string]: {
+                results: TBaseIssue[];
+                total_results: number;
+              };
+            };
+        total_results: number;
       };
-      total_results: number;
     };
-  };
 
 export type TIssuesResponse = {
   grouped_by: string;
