@@ -1,8 +1,14 @@
-import { sq } from "date-fns/locale";
-import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
-import { SQL } from "./sqlite";
-import { filterConstructor, wrapDateTime } from "./utils";
-
+import { persistence } from "../storage.sqlite";
+import { GROUP_BY_MAP, ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
+import { wrapDateTime, filterConstructor } from "./utils";
+const SPECIAL_ORDER_BY = [
+  "labels__name",
+  "-labels__name",
+  "assignee__name",
+  "-assignee__name",
+  "module__name",
+  "-module__name",
+];
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   const { order_by, cursor, per_page, labels, sub_issue, assignees, state, cycle, group_by, module, ...otherProps } =
     queries;
@@ -52,22 +58,45 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
       WHERE rs.rank <= ${per_page};`;
     } else {
       sql = `
-      SELECT *
-        FROM (
-            SELECT i.*,
-            i.${translatedGroupBy} AS group_id,   -- param for group
-            COUNT(*) OVER (PARTITION BY i.${translatedGroupBy}) AS total_issues,
-            ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy} ${orderByString}) AS rank FROM issues i
-      WHERE i.project_id = '${projectId}'   ${filterString}
-      ) ranked_issues
-      WHERE rank <= ${per_page};`;
+        SELECT j.* FROM (
+          SELECT 	i.*,i.${translatedGroupBy} as group_id,
+                  ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy} ${orderByString} ) as rank, 
+                  COUNT(*) OVER (PARTITION by i.${translatedGroupBy}) as total_issues 
+
+                  FROM issues AS i LEFT JOIN issue_meta as im ON i.id = im.issue_id 
+                 WHERE i.project_id = '${projectId}'  -- Project ID
+        ${filterString}
+        GROUP BY i.id
+        ) AS j  WHERE rank <= ${per_page};
+
+      `;
     }
 
     console.log("####", sql);
     return sql;
   }
 
-  sql = `SELECT * FROM issues i LEFT JOIN issue_meta im ON i.id = im.issue_id WHERE 1=1 AND project_id='${projectId}' `;
+  // sql = `SELECT * FROM issues i LEFT JOIN issue_meta im ON i.id = im.issue_id WHERE 1=1 AND project_id='${projectId}' `;
+
+  // sql += filterString;
+
+  // sql += ` group by i.id`;
+  // sql += orderByString;
+
+  // // Add offset and paging to query
+  // sql += ` LIMIT  ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
+
+  // console.log("$$$", sql);
+  // return sql;
+
+  if (order_by && SPECIAL_ORDER_BY.includes(order_by)) {
+    const name = order_by.replace("-", "");
+    sql = `SELECT i.*,im.*, s.name as ${name} FROM issues i LEFT JOIN issue_meta im ON i.id = im.issue_id LEFT JOIN labels s ON s.id = im.value `;
+  } else {
+    sql = `SELECT * FROM issues i LEFT JOIN issue_meta im ON i.id = im.issue_id `;
+  }
+
+  sql += ` WHERE 1=1 AND i.project_id='${projectId}' `;
 
   sql += filterString;
 
@@ -83,7 +112,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 
 export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   // Remove group by from the query to fallback to non group query
-  const { group_by, ...otherProps } = queries;
+  const { group_by, order_by, ...otherProps } = queries;
   let sql = issueFilterQueryConstructor(workspaceSlug, projectId, otherProps);
 
   sql = sql.replace("SELECT *", "SELECT COUNT(DISTINCT i.id) as total_count");
@@ -110,7 +139,7 @@ export const stageIssueInserts = (issue: any) => {
     return val;
   }); // Will fail when the values have a comma
 
-  SQL.db.exec({
+  persistence.db.exec({
     sql: `insert into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     bind: values,
   });
@@ -118,7 +147,7 @@ export const stageIssueInserts = (issue: any) => {
     const values = issue[field];
     if (values) {
       values.forEach((val: any) => {
-        SQL.db.exec({
+        persistence.db.exec({
           sql: `insert into issue_meta(issue_id,key,value) values (?,?,?)`,
           bind: [issue_id, field, val],
         });

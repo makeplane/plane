@@ -1,3 +1,5 @@
+import createIndexes from "./indexes";
+
 export const createIssuesTable = (SQLITE: any) => {
   const sqlstr = `CREATE TABLE IF NOT EXISTS issues (
       id TEXT, 
@@ -37,7 +39,26 @@ export const createIssueMetaTable = (SQLITE: any) => {
       value TEXT);`;
   SQLITE.exec(sqlstr);
 };
+
+export const createLabelsTable = (SQLITE: any) => {
+  const sqlstr = `CREATE TABLE IF NOT EXISTS labels (
+      id TEXT UNIQUE, 
+      name TEXT, 
+      color TEXT,
+      parent TEXT,
+      project_id TEXT,
+      sort_order INTEGER,
+      workspace_id TEXT);`;
+  SQLITE.exec(sqlstr);
+};
 export const createTables = async (SQLITE: any) => {
   await createIssuesTable(SQLITE);
   await createIssueMetaTable(SQLITE);
+  await createLabelsTable(SQLITE);
+
+  try {
+    await createIndexes();
+  } catch (e) {
+    console.error(e);
+  }
 };

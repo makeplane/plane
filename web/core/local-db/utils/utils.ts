@@ -1,5 +1,6 @@
 import pick from "lodash/pick";
 import { rootStore } from "@/lib/store-context";
+import { TIssue } from "@plane/types";
 import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
 import { updateIssue } from "./load-issues";
 
@@ -60,23 +61,43 @@ export const wrapDateTime = (field: string) => {
 export const filterConstructor = (filters: any) => {
   let sql = "";
   if (filters.priority) {
-    filters.priority_proxy = PRIORITY_MAP[filters.priority];
+    filters.priority_proxy = filters.priority
+      .split(",")
+      .map((priority: string) => PRIORITY_MAP[priority])
+      .join(",");
     delete filters.priority;
   }
   const keys = Object.keys(filters);
 
   keys.forEach((key) => {
-    if (key === "priority_proxy") {
-      sql += ` AND priority_proxy=${filters[key]} `;
-      return;
-    }
     const value = filters[key] ? filters[key].split(",") : "";
     if (!value) return;
     if (ARRAY_FIELDS.includes(key)) {
-      sql += ` AND key='${key}' AND value IN ('${value.join("','")}')`;
+      sql += ` AND im.key='${key}' AND value IN ('${value.join("','")}')`;
     } else {
       sql += ` AND ${key} in ('${value.join("','")}')`;
     }
   });
   return sql;
+};
+
+export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: string; total_issues: number })[]): any => {
+  const groupedResults: {
+    [key: string]: {
+      results: TIssue[];
+      total_results: number;
+    };
+  } = {};
+
+  for (const issue of issueResults) {
+    const { group_id, total_issues } = issue;
+    const groupId = group_id ? group_id : "None";
+    if (groupedResults?.[groupId] !== undefined && Array.isArray(groupedResults?.[groupId]?.results)) {
+      groupedResults?.[groupId]?.results.push(issue);
+    } else {
+      groupedResults[groupId] = { results: [issue], total_results: total_issues };
+    }
+  }
+
+  return groupedResults;
 };

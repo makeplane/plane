@@ -1,9 +1,11 @@
 "use client";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+
 // components
 import { JoinProject } from "@/components/auth-screens";
 import { EmptyState, LogoSpinner } from "@/components/common";
@@ -22,8 +24,7 @@ import {
   useUser,
 } from "@/hooks/store";
 // images
-import { loadIssues } from "@/local-db/load-issues";
-import { initializeSQLite } from "@/local-db/sqlite";
+import { persistence } from "@/local-db/storage.sqlite";
 import emptyProject from "@/public/empty-state/project.svg";
 
 interface IProjectAuthWrapper {
@@ -52,12 +53,19 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
 
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+  useSWRImmutable(
+    workspaceSlug && projectId ? `PROJECT_SYNC_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     workspaceSlug && projectId
       ? async () => {
-          await initializeSQLite();
-          await loadIssues(workspaceSlug.toString(), projectId.toString());
+          await persistence.syncProject(projectId.toString());
+        }
+      : null
+  );
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+    workspaceSlug && projectId
+      ? () => {
+          persistence.syncIssues(projectId.toString());
         }
       : null,
     {

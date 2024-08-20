@@ -10,10 +10,11 @@ import type {
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { persistence } from "@/local-db/storage.sqlite";
 // services
-import { deleteIssueFromLocal } from "@/local-db/load-issues";
-import { getIssues } from "@/local-db/queries/issues";
-import { updatePersistentLayer } from "@/local-db/utils";
+
+import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -52,7 +53,7 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    return await getIssues(workspaceSlug, projectId, queries, config);
+    return await persistence.getIssues(projectId, queries, config);
   }
 
   async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
