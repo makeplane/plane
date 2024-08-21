@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
@@ -33,6 +33,13 @@ const ToastWithTheme = () => {
 export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
+
+  useEffect(() => {
+    const viewportMeta = document.querySelector("[name=viewport]");
+    if (viewportMeta) {
+      viewportMeta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
+    }
+  }, []);
   return (
     <>
       <AppProgressBar height="4px" color="#3F76FF" options={{ showSpinner: false }} shallowRouting />
