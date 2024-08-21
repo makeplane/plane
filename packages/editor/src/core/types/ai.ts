@@ -1,7 +1,8 @@
-type TMenuProps = {
+export type TAIMenuProps = {
+  isOpen: boolean;
   onClose: () => void;
 };
 
 export type TAIHandler = {
-  menu?: (props: TMenuProps) => React.ReactNode;
+  menu?: (props: TAIMenuProps) => React.ReactNode;
 };

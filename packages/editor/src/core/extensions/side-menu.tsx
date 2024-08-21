@@ -182,7 +182,7 @@ const SideMenu = (options: SideMenuPluginProps) => {
             aiHandleDOMEvents?.mousemove?.();
           }
         },
-        keydown: () => hideSideMenu(),
+        // keydown: () => hideSideMenu(),
         mousewheel: () => hideSideMenu(),
         dragenter: (view) => {
           if (handlesConfig.dragDrop) {

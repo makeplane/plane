@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -8,18 +8,20 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TAIMenuProps,
   TDisplayConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
-import { EditorAIMenu } from "@/ce/components/pages/editor/ai";
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web components
+import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -94,6 +96,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     fontStyle,
   };
 
+  const getAIMenu = useCallback(
+    ({ isOpen, onClose }: TAIMenuProps) => <EditorAIMenu editorRef={editorRef} isOpen={isOpen} onClose={onClose} />,
+    [editorRef]
+  );
+
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
@@ -157,7 +164,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
               disabledExtensions={documentEditor}
               aiHandler={{
-                menu: ({ onClose }) => <EditorAIMenu editorRef={editorRef} onClose={onClose} />,
+                menu: getAIMenu,
               }}
             />
           ) : (
