@@ -87,7 +87,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Get all active workspace members
         workspace_members = self.get_queryset()
 
-        if workspace_member.role > 10:
+        if workspace_member.role > 5:
             serializer = WorkspaceMemberAdminSerializer(
                 workspace_members,
                 fields=("id", "member", "role"),

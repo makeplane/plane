@@ -63,7 +63,13 @@ class IssueCommentViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():

@@ -8,7 +8,6 @@ from plane.db.models import WorkspaceMember
 # Permission Mappings
 Owner = 20
 Admin = 15
-Member = 10
 Guest = 5
 
 

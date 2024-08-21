@@ -34,6 +34,7 @@ from plane.db.models import (
     ProjectPage,
 )
 from plane.utils.error_codes import ERROR_CODES
+
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 
@@ -208,7 +209,12 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
         if page is None:
@@ -278,7 +284,12 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         pages = PageSerializer(queryset, many=True).data
@@ -477,7 +488,12 @@ class SubPagesEndpoint(BaseAPIView):
 
 class PagesDescriptionViewSet(BaseViewSet):
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(
@@ -507,7 +523,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         )
         return response
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(
