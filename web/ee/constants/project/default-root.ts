@@ -15,13 +15,13 @@ type TProjectScopeMap = {
   [key in EProjectScope]: TProjectScopeMapObject<key>;
 };
 export const PROJECT_SCOPE_MAP: TProjectScopeMap = {
-  [EProjectScope.ALL_PROJECTS]: {
-    key: EProjectScope.ALL_PROJECTS,
-    label: "Browse all projects",
-  },
   [EProjectScope.MY_PROJECTS]: {
     key: EProjectScope.MY_PROJECTS,
     label: "Your projects",
+  },
+  [EProjectScope.ALL_PROJECTS]: {
+    key: EProjectScope.ALL_PROJECTS,
+    label: "Browse all projects",
   },
 };
 export const PROJECT_SCOPES = Object.values(PROJECT_SCOPE_MAP);

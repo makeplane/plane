@@ -7,38 +7,21 @@ import { useParams, usePathname } from "next/navigation";
 import type { TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-import { CreateIssueToastActionItems } from "@/components/issues";
+import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDetail } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
-// plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
-// plane web services
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
-// plane web types
-import { TIssuePropertyValues } from "@/plane-web/types";
-// components
+// local components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 
-export interface IssuesModalProps {
-  data?: Partial<TIssue>;
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit?: (res: TIssue) => Promise<void>;
-  withDraftIssueWrapper?: boolean;
-  storeType?: EIssuesStoreType;
-  isDraft?: boolean;
-}
-
-const issuePropertyValuesService = new IssuePropertyValuesService();
-
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
   const {
     data,
     isOpen,
@@ -58,8 +41,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
-  // property values
-  const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
@@ -70,8 +51,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
-  // plane web hooks
-  const { isIssueTypeEnabledForProject } = useIssueTypes();
+  const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
   const pathname = usePathname();
   // local storage
@@ -204,7 +184,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
       // add other property values
       if (response.id && response.project_id) {
-        await handleCreateUpdatePropertyValues(response.id, response.project_id);
+        await handleCreateUpdatePropertyValues({
+          issueId: response.id,
+          projectId: response.project_id,
+          workspaceSlug: workspaceSlug.toString(),
+        });
       }
 
       setToast({
@@ -252,9 +236,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
       // add other property values
-      if (issuePropertyValues) {
-        await handleCreateUpdatePropertyValues(data.id, payload.project_id);
-      }
+      await handleCreateUpdatePropertyValues({
+        issueId: data.id,
+        projectId: payload.project_id,
+        workspaceSlug: workspaceSlug.toString(),
+      });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -279,32 +265,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         path: pathname,
       });
     }
-  };
-
-  const handleCreateUpdatePropertyValues = async (issueId: string, projectId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-    if (Object.keys(issuePropertyValues).length === 0) return;
-
-    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
-      workspaceSlug?.toString(),
-      projectId,
-      "ISSUE_TYPE_DISPLAY"
-    );
-    if (!isIssueTypeDisplayEnabled) return;
-
-    await issuePropertyValuesService
-      .create(workspaceSlug.toString(), projectId, issueId, issuePropertyValues)
-      .then(() => {
-        // reset issue property values
-        setIssuePropertyValues({});
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Custom properties could not be created. Please try again.",
-        });
-      });
   };
 
   const handleFormSubmit = async (payload: Partial<TIssue>, is_draft_issue: boolean = false) => {
@@ -348,9 +308,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
           isDraft={isDraft}
-          issuePropertyValues={issuePropertyValues}
-          setIssuePropertyValues={setIssuePropertyValues}
-          handleCreateUpdatePropertyValues={handleCreateUpdatePropertyValues}
         />
       ) : (
         <IssueFormRoot
@@ -367,8 +324,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           onSubmit={handleFormSubmit}
           projectId={activeProjectId}
           isDraft={isDraft}
-          issuePropertyValues={issuePropertyValues}
-          setIssuePropertyValues={setIssuePropertyValues}
         />
       )}
     </ModalCore>

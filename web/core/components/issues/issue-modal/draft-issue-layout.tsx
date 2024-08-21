@@ -4,15 +4,20 @@ import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+// types
 import type { TIssue } from "@plane/types";
-// hooks
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { ConfirmIssueDiscard } from "@/components/issues";
+// helpers
 import { isEmptyHtmlString } from "@/helpers/string.helper";
+// hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker } from "@/hooks/store";
 // services
-import { TIssuePropertyValues } from "@/plane-web/types";
 import { IssueDraftService } from "@/services/issue";
+// local components
 import { IssueFormRoot } from "./form";
 
 export interface DraftIssueProps {
@@ -23,16 +28,9 @@ export interface DraftIssueProps {
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
-  onSubmit: (
-    formData: Partial<TIssue>,
-    is_draft_issue?: boolean,
-    propertyValues?: TIssuePropertyValues
-  ) => Promise<void>;
+  onSubmit: (formData: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
-  issuePropertyValues?: TIssuePropertyValues;
-  setIssuePropertyValues?: React.Dispatch<React.SetStateAction<TIssuePropertyValues>>;
-  handleCreateUpdatePropertyValues?: (issueId: string, projectId: string) => void;
 }
 
 const issueDraftService = new IssueDraftService();
@@ -49,9 +47,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
-    issuePropertyValues,
-    setIssuePropertyValues,
-    handleCreateUpdatePropertyValues,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -61,6 +56,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const pathname = usePathname();
   // store hooks
   const { captureIssueEvent } = useEventTracker();
+  const { handleCreateUpdatePropertyValues } = useIssueModal();
 
   const handleClose = () => {
     if (data?.id) {
@@ -133,7 +129,11 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
       });
 
     if (response && handleCreateUpdatePropertyValues) {
-      handleCreateUpdatePropertyValues(response.id, projectId);
+      handleCreateUpdatePropertyValues({
+        issueId: response.id,
+        projectId,
+        workspaceSlug: workspaceSlug?.toString(),
+      });
     }
   };
 
@@ -159,8 +159,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onSubmit={onSubmit}
         projectId={projectId}
         isDraft={isDraft}
-        issuePropertyValues={issuePropertyValues}
-        setIssuePropertyValues={setIssuePropertyValues}
       />
     </>
   );

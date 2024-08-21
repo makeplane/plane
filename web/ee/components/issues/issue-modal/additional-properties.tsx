@@ -2,36 +2,26 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-// hooks
+// ui
 import { Loader } from "@plane/ui";
+// hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web components
 import { IssueAdditionalPropertyValuesCreate } from "@/plane-web/components/issue-types/";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
 type TIssueAdditionalPropertiesProps = {
   issueId: string | undefined;
   issueTypeId: string | null;
   projectId: string;
   workspaceSlug: string;
-  issuePropertyValues?: TIssuePropertyValues;
-  issuePropertyValueErrors?: TIssuePropertyValueErrors;
-  setIssuePropertyValues?: React.Dispatch<React.SetStateAction<TIssuePropertyValues>>;
 };
 
 export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps> = observer((props) => {
-  const {
-    issueId,
-    issueTypeId,
-    projectId,
-    workspaceSlug,
-    issuePropertyValues,
-    issuePropertyValueErrors,
-    setIssuePropertyValues,
-  } = props;
+  const { issueId, issueTypeId, projectId, workspaceSlug } = props;
   // store hooks
+  const { issuePropertyValues, setIssuePropertyValues } = useIssueModal();
   const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
     useIssueTypes();
   // derived values
@@ -64,9 +54,6 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
               issueTypeId={issueTypeId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              issuePropertyDefaultValues={issuePropertyValues}
-              issuePropertyValueErrors={issuePropertyValueErrors}
-              setIssuePropertyValues={setIssuePropertyValues}
             />
           )}
         </>

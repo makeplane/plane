@@ -64,7 +64,9 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
   ];
 
   return (
-    <div className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}>
+    <div
+      className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`} ${!worklog?.description && "items-center"}`}
+    >
       <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
       <div className="flex-shrink-0 relative w-7 h-7 rounded-full flex justify-center items-center z-10 bg-gray-500 text-white border border-white uppercase font-medium">
         {currentUser?.member?.avatar && currentUser?.member?.avatar !== "" ? (
@@ -83,34 +85,32 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
           </>
         )}
         <div className="absolute top-2 left-4 w-5 h-5 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-80">
-          <Timer className="w-3 h-3" color="#6b7280" />
+          <Timer className="w-3 h-3 text-custom-text-200" />
         </div>
       </div>
       <div className="w-full space-y-1.5">
-        <div className="w-full relative flex ">
-          <div className="w-full truncate space-y-1">
-            <div>
-              <div className="text-xs">
-                <Link
-                  href={`/${workspaceSlug}/profile/${currentUser?.member?.id}`}
-                  className="hover:underline text-custom-text-100 font-medium capitalize"
-                >
-                  {currentUser?.member?.display_name}
-                </Link>
-                <span className="text-custom-text-300 font-medium">{` logged `}</span>
-                <span className="text-custom-text-100 font-medium">{`${convertMinutesToHoursMinutesString(worklog?.duration || 0)}.`}</span>
-              </div>
-              {worklog.created_at && (
-                <span>
-                  <Tooltip
-                    isMobile={isMobile}
-                    tooltipContent={`${renderFormattedDate(worklog.created_at)}, ${renderFormattedTime(worklog.created_at)}`}
-                  >
-                    <div className="text-xs text-custom-text-200">{`${calculateTimeAgo(worklog.created_at)}`}</div>
-                  </Tooltip>
-                </span>
-              )}
+        <div className="w-full relative flex items-center">
+          <div className="flex w-full truncate gap-1">
+            <div className="text-xs">
+              <Link
+                href={`/${workspaceSlug}/profile/${currentUser?.member?.id}`}
+                className="hover:underline text-custom-text-100 font-medium capitalize"
+              >
+                {currentUser?.member?.display_name}
+              </Link>
+              <span className="text-custom-text-300 font-medium">{` logged `}</span>
+              <span className="text-custom-text-100 font-medium">{`${convertMinutesToHoursMinutesString(worklog?.duration || 0)}.`}</span>
             </div>
+            {worklog.created_at && (
+              <span>
+                <Tooltip
+                  isMobile={isMobile}
+                  tooltipContent={`${renderFormattedDate(worklog.created_at)}, ${renderFormattedTime(worklog.created_at)}`}
+                >
+                  <div className="text-xs text-custom-text-200">{`${calculateTimeAgo(worklog.created_at)}`}</div>
+                </Tooltip>
+              </span>
+            )}
           </div>
           <div className="flex-shrink-0 relative">
             <div className="absolute right-0 bottom-0">

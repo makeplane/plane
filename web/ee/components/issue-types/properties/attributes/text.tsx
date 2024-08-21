@@ -39,6 +39,9 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
             onChange={(value) => {
               onTextDetailChange("settings", value as TIssueProperty<EIssuePropertyType.TEXT>["settings"]);
               onTextDetailChange("default_value", []);
+              if (value?.display_format === "readonly") {
+                onTextDetailChange("is_required", false);
+              }
             }}
             isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
           />

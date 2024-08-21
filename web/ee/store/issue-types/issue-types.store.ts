@@ -164,15 +164,13 @@ export class IssueTypes implements IIssueTypesStore {
    * @param issueTypeFlagKey - feature flag
    * @returns {boolean}
    */
-  isIssueTypeEnabledForProject = (
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeFlagKey: IssueTypeFlagKeys
-  ): boolean => {
-    const issueTypeFlagEnabled = this.store.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS[issueTypeFlagKey]];
-    const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
-    return (issueTypeFlagEnabled && projectDetails?.is_issue_type_enabled) ?? false;
-  };
+  isIssueTypeEnabledForProject = computedFn(
+    (workspaceSlug: string, projectId: string, issueTypeFlagKey: IssueTypeFlagKeys): boolean => {
+      const issueTypeFlagEnabled = this.store.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS[issueTypeFlagKey]];
+      const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
+      return (issueTypeFlagEnabled && projectDetails?.is_issue_type_enabled) ?? false;
+    }
+  );
 
   // helper actions
   /**

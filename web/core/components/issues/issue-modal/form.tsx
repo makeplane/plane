@@ -20,17 +20,15 @@ import {
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
-// plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
-// services
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -59,8 +57,6 @@ export interface IssueFormProps {
   onSubmit: (values: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
-  issuePropertyValues?: TIssuePropertyValues;
-  setIssuePropertyValues?: React.Dispatch<React.SetStateAction<TIssuePropertyValues>>;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -74,14 +70,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
-    issuePropertyValues,
-    setIssuePropertyValues,
   } = props;
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
-  const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -89,14 +82,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug, projectId: routeProjectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
-  // plane web hooks
-  const { isIssueTypeEnabledForProject, getIssueTypeProperties, getProjectIssueTypes, getProjectDefaultIssueType } =
-    useIssueTypes();
+  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
+    useIssueModal();
 
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
+  const { getStateById } = useProjectState();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
@@ -112,39 +105,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   });
 
   const projectId = watch("project_id");
-
-  const handlePropertyValuesValidation = () => {
-    const issueTypeId = watch("type_id");
-    // if issue type is not enabled for the project, skip validation
-    const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeEnabledForProject(workspaceSlug?.toString(), projectId, "ISSUE_TYPE_DISPLAY");
-    if (!isIssueTypeDisplayEnabled) return true;
-    // if no issue type id or no issue property values, skip validation
-    if (!issueTypeId || !issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return true;
-    // all properties for the issue type
-    const properties = getIssueTypeProperties(issueTypeId);
-    // filter all active & required propertyIds
-    const activeRequiredPropertyIds = properties
-      ?.filter((property) => property.is_active && property.is_required)
-      .map((property) => property.id);
-    // filter missing required property based on property values
-    const missingRequiredPropertyIds = activeRequiredPropertyIds?.filter(
-      (propertyId) =>
-        propertyId &&
-        (!issuePropertyValues[propertyId] ||
-          !issuePropertyValues[propertyId].length ||
-          issuePropertyValues[propertyId][0].trim() === "")
-    );
-    // set error state
-    setIssuePropertyValueErrors(
-      missingRequiredPropertyIds?.reduce((acc, propertyId) => {
-        if (propertyId) acc[propertyId] = "REQUIRED";
-        return acc;
-      }, {} as TIssuePropertyValueErrors)
-    );
-    // return true if no missing required properties values
-    return missingRequiredPropertyIds.length === 0;
-  };
+  const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
+    projectId: projectId,
+    workspaceSlug: workspaceSlug?.toString(),
+    watch: watch,
+  });
 
   //reset few fields on projectId change
   useEffect(() => {
@@ -177,23 +142,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       return;
     }
 
-    // if issue type id is present, return
-    if (issueTypeId) return;
+    // if issue type id is present or project not available, return
+    if (issueTypeId || !projectId) return;
 
-    if (!projectId) return;
+    // get issue type id on project change
+    const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
+    if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
-    const projectIssueTypes = getProjectIssueTypes(projectId, true);
-    const defaultIssueType = getProjectDefaultIssueType(projectId);
-
-    // if data is not present, set active type id to the default type id of the project
-    if (projectId && projectIssueTypes) {
-      if (defaultIssueType?.id) {
-        setValue("type_id", defaultIssueType.id, { shouldValidate: true });
-      } else {
-        const issueTypeId = Object.keys(projectIssueTypes)[0];
-        if (issueTypeId) setValue("type_id", issueTypeId, { shouldValidate: true });
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
 
@@ -209,7 +164,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     }
 
     // check for required properties validation
-    if (!handlePropertyValuesValidation()) return;
+    if (
+      !handlePropertyValuesValidation({
+        projectId: projectId,
+        workspaceSlug: workspaceSlug?.toString(),
+        watch: watch,
+      })
+    )
+      return;
 
     const submitData = !data?.id
       ? formData
@@ -259,6 +221,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     const projectDetails = getProjectById(issue.project_id);
     if (!projectDetails) return;
 
+    const stateDetails = getStateById(issue.state_id);
+
     setSelectedParentIssue({
       id: issue.id,
       name: issue.name,
@@ -266,8 +230,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       project__identifier: projectDetails.identifier,
       project__name: projectDetails.name,
       sequence_id: issue.sequence_id,
+      type_id: issue.type_id,
+      state__color: stateDetails?.color,
     } as ISearchIssueResponse);
-  }, [watch, getIssueById, getProjectById, selectedParentIssue]);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
   // executing this useEffect when isDirty changes
   useEffect(() => {
@@ -294,24 +260,22 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="p-5">
           <h3 className="text-xl font-medium text-custom-text-200 pb-2">{data?.id ? "Update" : "Create new"} issue</h3>
-          {/* Don't show project selection if editing an issue */}
-          {!data?.id && (
-            <div className="flex items-center pt-2 pb-4 gap-x-1">
-              <IssueProjectSelect
+          {/* Disable project selection if editing an issue */}
+          <div className="flex items-center pt-2 pb-4 gap-x-1">
+            <IssueProjectSelect
+              control={control}
+              disabled={!!data?.id || !!data?.sourceIssueId}
+              handleFormChange={handleFormChange}
+            />
+            {projectId && (
+              <IssueTypeSelect
                 control={control}
-                disabled={!!data?.sourceIssueId}
+                projectId={projectId}
+                disabled={!!data?.id || !!data?.sourceIssueId}
                 handleFormChange={handleFormChange}
               />
-              {projectId && (
-                <IssueTypeSelect
-                  control={control}
-                  projectId={projectId}
-                  disabled={!!data?.sourceIssueId}
-                  handleFormChange={handleFormChange}
-                />
-              )}
-            </div>
-          )}
+            )}
+          </div>
           {watch("parent_id") && selectedParentIssue && (
             <div className="pb-4">
               <IssueParentTag
@@ -331,35 +295,48 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             />
           </div>
         </div>
-        <div className="px-5 pb-4 space-y-3 max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm">
-          <IssueDescriptionEditor
-            control={control}
-            issueName={watch("name")}
-            descriptionHtmlData={data?.description_html}
-            editorRef={editorRef}
-            submitBtnRef={submitBtnRef}
-            gptAssistantModal={gptAssistantModal}
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId}
-            handleFormChange={handleFormChange}
-            handleDescriptionHTMLDataChange={(description_html) =>
-              setValue<"description_html">("description_html", description_html)
-            }
-            setGptAssistantModal={setGptAssistantModal}
-            handleGptAssistantClose={() => reset(getValues())}
-            onClose={onClose}
-          />
-          {projectId && (
-            <IssueAdditionalProperties
-              issueId={data?.id ?? data?.sourceIssueId}
-              issueTypeId={watch("type_id")}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug?.toString()}
-              issuePropertyValues={issuePropertyValues}
-              issuePropertyValueErrors={issuePropertyValueErrors}
-              setIssuePropertyValues={setIssuePropertyValues}
-            />
+        <div
+          className={cn(
+            "pb-4 space-y-3",
+            activeAdditionalPropertiesLength > 4 &&
+              "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
           )}
+        >
+          <div className="px-5">
+            <IssueDescriptionEditor
+              control={control}
+              issueName={watch("name")}
+              descriptionHtmlData={data?.description_html}
+              editorRef={editorRef}
+              submitBtnRef={submitBtnRef}
+              gptAssistantModal={gptAssistantModal}
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId}
+              handleFormChange={handleFormChange}
+              handleDescriptionHTMLDataChange={(description_html) =>
+                setValue<"description_html">("description_html", description_html)
+              }
+              setGptAssistantModal={setGptAssistantModal}
+              handleGptAssistantClose={() => reset(getValues())}
+              onClose={onClose}
+            />
+          </div>
+          <div
+            className={cn(
+              "px-5",
+              activeAdditionalPropertiesLength <= 4 &&
+                "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+            )}
+          >
+            {projectId && (
+              <IssueAdditionalProperties
+                issueId={data?.id ?? data?.sourceIssueId}
+                issueTypeId={watch("type_id")}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug?.toString()}
+              />
+            )}
+          </div>
         </div>
         <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg">
           <div className="pb-3 border-b-[0.5px] border-custom-border-200">

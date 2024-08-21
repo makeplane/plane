@@ -35,6 +35,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.error_codes import ERROR_CODES
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
@@ -117,7 +118,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             ):
                 return Response(
                     {
-                        "error_code": 4100,
+                        "error_code": ERROR_CODES["INVALID_ISSUE_DATES"],
                         "error_message": "INVALID_ISSUE_DATES",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
@@ -177,7 +178,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 ):
                     return Response(
                         {
-                            "error_code": 4101,
+                            "error_code": ERROR_CODES[
+                                "INVALID_ISSUE_START_DATE"
+                            ],
                             "error_message": "INVALID_ISSUE_START_DATE",
                         },
                         status=status.HTTP_400_BAD_REQUEST,
@@ -211,7 +214,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 ):
                     return Response(
                         {
-                            "error_code": 4102,
+                            "error_code": ERROR_CODES[
+                                "INVALID_ISSUE_TARGET_DATE"
+                            ],
                             "error_message": "INVALID_ISSUE_TARGET_DATE",
                         },
                         status=status.HTTP_400_BAD_REQUEST,

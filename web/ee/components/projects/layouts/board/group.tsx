@@ -14,7 +14,7 @@ type ProjectBoardGroup = {
 
 export const ProjectBoardGroup: FC<ProjectBoardGroup> = observer((props) => {
   const { groupByProjectIds } = props;
-  const [verticalAlign, setVerticalAlign] = useState(false);
+  const [verticalAlign, setVerticalAlign] = useState<{ [key: string]: boolean }>({});
 
   return (
     <div className="w-full h-full overflow-hidden overflow-x-auto relative flex px-3 space-x-3 horizontal-scrollbar scrollbar-lg">
@@ -22,7 +22,7 @@ export const ProjectBoardGroup: FC<ProjectBoardGroup> = observer((props) => {
         <div
           key={groupKey}
           className={cn("py-3 h-full overflow-hidden flex-shrink-0", {
-            "w-[320px]": !verticalAlign,
+            "w-[320px]": !verticalAlign[groupKey],
           })}
         >
           <ProjectBoardGroupItem

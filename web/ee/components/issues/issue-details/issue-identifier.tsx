@@ -55,7 +55,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
     "ISSUE_TYPE_DISPLAY"
   );
 
-  if (!isIssueTypeDisplayEnabled || !issueType) {
+  if (!isIssueTypeDisplayEnabled) {
     const baseProps = {
       projectId,
       size,
@@ -80,7 +80,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   }
 
   return (
-    <Tooltip tooltipContent={issueType?.name} position="top-left">
+    <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-left">
       <div className="flex flex-shrink-0 items-center space-x-2">
         <IssueTypeLogo icon_props={issueType?.logo_props?.icon} size={size} isDefault={issueType?.is_default} />
         <span className={cn("text-base font-medium text-custom-text-300", textContainerClassName)}>

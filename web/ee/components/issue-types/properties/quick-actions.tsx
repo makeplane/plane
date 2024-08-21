@@ -12,6 +12,7 @@ import { TOperationMode } from "@/plane-web/types";
 
 type TIssuePropertyQuickActions = {
   currentOperationMode: TOperationMode | null;
+  isPropertyDisabled: boolean;
   isSubmitting: boolean;
   onCreateUpdate: () => Promise<void>;
   onDiscard: () => void;
@@ -23,6 +24,7 @@ type TIssuePropertyQuickActions = {
 export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickActions) => {
   const {
     currentOperationMode,
+    isPropertyDisabled,
     isSubmitting,
     onCreateUpdate,
     onDiscard,
@@ -37,6 +39,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
     <>
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
+        isDisabledAlready={isPropertyDisabled}
         onClose={() => setIsDeleteModalOpen(false)}
         onDisable={onDisable}
         onDelete={onDelete}

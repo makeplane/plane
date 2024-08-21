@@ -18,12 +18,16 @@ type TProjectBoardGroupItemHeader = {
   groupByKey: string;
   projectIds: string[];
   verticalAlign: boolean;
-  setVerticalAlign: (value: boolean) => void;
+  setVerticalAlign: (
+    value: (state: { [key: string]: boolean }) => {
+      [key: string]: boolean;
+    }
+  ) => void;
 };
 
 // Todo: Vertical Align
 export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = observer((props) => {
-  const { groupByKey, projectIds, verticalAlign } = props;
+  const { groupByKey, projectIds, verticalAlign, setVerticalAlign } = props;
   //states
   const [open, setOpen] = useState(false);
   // hooks
@@ -71,7 +75,7 @@ export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = obs
         >
           <div
             className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-custom-text-100 ${
-              verticalAlign ? `vertical-lr max-h-[400px]` : ``
+              verticalAlign ? `vertical-lr` : ``
             }`}
           >
             {details?.title}
@@ -83,7 +87,7 @@ export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = obs
 
         <div
           className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-          // onClick={() => setVerticalAlign(!verticalAlign)}
+          onClick={() => setVerticalAlign((state) => ({ ...state, [groupByKey]: !verticalAlign }))}
         >
           {verticalAlign ? <Maximize2 width={12} strokeWidth={2} /> : <Minimize2 width={12} strokeWidth={2} />}
         </div>

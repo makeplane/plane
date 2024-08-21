@@ -14,25 +14,29 @@ export const IssueDatePropertyActivity: FC<TIssueAdditionalPropertiesActivityIte
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
-  const propertyName = propertyDetail?.display_name?.toLowerCase();
+  const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
   return (
     <>
       {activityDetail.action === "created" && (
         <>
-          set the {propertyName} to{" "}
+          set <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
           <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.new_value)}.</span>
         </>
       )}
       {activityDetail.action === "updated" && (
         <>
-          updated the {propertyName} from{" "}
-          <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.old_value)}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.new_value)}.</span>{" "}
+          changed <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.new_value)}</span> from{" "}
+          <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.old_value)}.</span>{" "}
         </>
       )}
-      {activityDetail.action === "deleted" && <>removed the {propertyName}.</>}
+      {activityDetail.action === "deleted" && (
+        <>
+          removed <span className="font-medium text-custom-text-100">{propertyName}</span>.
+        </>
+      )}
     </>
   );
 });

@@ -148,6 +148,7 @@ const Details: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           />
+          <div className="hidden rounded absolute group-hover/project-card:flex inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent" />
         </div>
         <div className="flex gap-2 absolute top-2 right-2" data-prevent-nprogress>
           {(isOwner || !isArchived) && (
@@ -186,7 +187,7 @@ const Details: React.FC<Props> = observer((props) => {
               {" "}
               <FavoriteStar
                 buttonClassName={cn(
-                  "h-6 w-6 bg-white/30 rounded opacity-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto",
+                  "relative flex justify-center items-center opacity-0 z-[2] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6",
                   {
                     "opacity-100 pointer-events-auto": project.is_favorite,
                   }
