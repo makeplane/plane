@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
+// ui
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { useState } from "react";
 
 type TProps = {
   isOpen: boolean;
@@ -40,17 +42,17 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
       width={EModalWidth.XXL}
       className="py-5 px-6"
     >
-      <div className="flex flex-col sm:flex-row items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start gap-4">
         <span className={cn("flex-shrink-0 grid place-items-center rounded-full size-10 bg-red-500/10 text-red-500")}>
           <AlertTriangle className="size-6" aria-hidden="true" />
         </span>
-        <div className="text-center sm:text-left">
+        <div className="py-1 text-center sm:text-left">
           <h3 className="text-lg font-medium">Delete this property</h3>
+          <div className="py-1 pb-4 text-center sm:text-left text-sm text-custom-text-200">
+            <p>Deletion of properties may lead to loss of existing data.</p>
+            <p>Do you want to disable the property instead?</p>
+          </div>
         </div>
-      </div>
-      <div className="py-4 text-center sm:text-left text-sm text-custom-text-200">
-        <p>Deletion of properties may lead to loss of existing data.</p>
-        <p>Do you want to disable the property instead?</p>
       </div>
       <div className="px-1 pt-4 flex flex-col-reverse sm:flex-row sm:justify-between gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={onClose} disabled={isSubmitting}>

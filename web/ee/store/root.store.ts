@@ -1,12 +1,24 @@
 // plane web store
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
-import { IIssueTypesStore, IssueTypes } from "@/plane-web/store/issue-types";
+import {
+  IIssuePropertiesActivityStore,
+  IIssueTypesStore,
+  IssuePropertiesActivityStore,
+  IssueTypes,
+} from "@/plane-web/store/issue-types";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import {
   IWorkspaceSubscriptionStore,
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
+import { IWorkspaceFeatureStore, WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
+import {
+  IProjectFilterStore,
+  ProjectFilterStore,
+  IWorkspaceProjectStatesStore,
+  WorkspaceProjectStatesStore,
+} from "@/plane-web/store/workspace-project-states";
 import {
   IWorkspaceWorklogStore,
   WorkspaceWorklogStore,
@@ -23,7 +35,11 @@ export class RootStore extends CoreRootStore {
   workspaceWorklogs: IWorkspaceWorklogStore;
   workspaceWorklogDownloads: IWorkspaceWorklogDownloadStore;
   featureFlags: IFeatureFlagsStore;
+  workspaceFeatures: IWorkspaceFeatureStore;
+  workspaceProjectStates: IWorkspaceProjectStatesStore;
+  projectFilter: IProjectFilterStore;
   issueTypes: IIssueTypesStore;
+  issuePropertiesActivity: IIssuePropertiesActivityStore;
 
   constructor() {
     super();
@@ -33,7 +49,11 @@ export class RootStore extends CoreRootStore {
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
+    this.workspaceFeatures = new WorkspaceFeatureStore(this);
+    this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
+    this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
+    this.projectFilter = new ProjectFilterStore(this);
   }
 
   resetOnSignOut() {
@@ -44,6 +64,10 @@ export class RootStore extends CoreRootStore {
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
+    this.workspaceFeatures = new WorkspaceFeatureStore(this);
+    this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
+    this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
+    this.projectFilter = new ProjectFilterStore(this);
   }
 }

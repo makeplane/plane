@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@plane/ui";
@@ -15,13 +15,14 @@ import { EWorklogDownloadLoader } from "@/plane-web/constants/workspace-worklog"
 import { useWorklogDownload, useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 
 type TWorkspaceWorklogDownloadItem = {
+  workspaceSlug: string;
   worklogDownloadId: string;
 };
 
 export const WorkspaceWorklogDownloadItem: FC<TWorkspaceWorklogDownloadItem> = observer((props) => {
-  const { worklogDownloadId } = props;
+  const { workspaceSlug, worklogDownloadId } = props;
   // hooks
-  const { loader } = useWorkspaceWorklogDownloads();
+  const { loader, getWorkspaceWorklogDownloads } = useWorkspaceWorklogDownloads();
   const { asJson: worklogDownload } = useWorklogDownload(worklogDownloadId);
   const {
     workspace: { getWorkspaceMemberDetails },
@@ -47,6 +48,18 @@ export const WorkspaceWorklogDownloadItem: FC<TWorkspaceWorklogDownloadItem> = o
     ) : (
       worklogDownload?.name || `Export to ${worklogDownload.provider}`
     );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (["processing", "queued"].includes(worklogDownload?.status ?? "")) {
+        getWorkspaceWorklogDownloads(workspaceSlug, EWorklogDownloadLoader.MUTATION_LOADER);
+      } else {
+        clearInterval(interval);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [workspaceSlug, worklogDownload?.status]);
 
   if (!worklogDownload) return <></>;
 

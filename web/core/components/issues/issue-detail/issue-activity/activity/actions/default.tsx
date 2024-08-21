@@ -24,7 +24,7 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
   return (
     <IssueActivityBlockComponent
       activityId={activityId}
-      icon={<LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />}
+      icon={<LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
       ends={ends}
     >
       <>{activity.verb === "created" ? " created the issue." : " deleted an issue."}</>

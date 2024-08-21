@@ -1,8 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { AlignLeft, InfoIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 // ui
-import { Loader, Logo, Tooltip } from "@plane/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -15,7 +15,8 @@ import {
   MemberValueSelect,
   DateValueSelect,
   OptionValueSelect,
-} from "@/plane-web/components/issue-types/values";
+  IssuePropertyLogo,
+} from "@/plane-web/components/issue-types";
 import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
 // plane web types
 import {
@@ -56,10 +57,8 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   const IssuePropertyDetail = () => (
     <>
       <div className="flex-shrink-0 grid place-items-center">
-        {propertyDetail?.logo_props?.in_use ? (
-          <Logo logo={propertyDetail.logo_props} size={16} type="lucide" customColor="text-custom-text-300" />
-        ) : (
-          <AlignLeft className={cn("w-4 h-4 text-custom-text-300")} />
+        {propertyDetail?.logo_props?.in_use && (
+          <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-custom-text-300" />
         )}
       </div>
       <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
@@ -120,6 +119,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
             isMultiSelect={propertyDetail.is_multi}
             buttonClassName="h-8"
             onOptionValueChange={onPropertyValueChange}
+            showOptionDetails
           />
         )}
       </>
@@ -159,8 +159,6 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
-  const isPropertyMultiLineText =
-    propertyTypeKey === "TEXT" && propertyDetail?.settings?.display_format === "multi-line";
 
   const CurrentPropertyAttribute = isPropertyValuesLoading ? (
     <Loader className="w-full min-h-8">
@@ -175,37 +173,29 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   return (
     <>
       {variant === "create" && (
-        <div
-          className={cn("w-full flex items-start justify-center gap-1.5 py-1", isPropertyMultiLineText && "flex-col")}
-        >
-          <div
-            className={cn(
-              "w-1/3 md:w-1/2 h-8 flex flex-shrink-0 gap-1.5 items-center",
-              isPropertyMultiLineText && "w-full"
-            )}
-          >
+        <div className={cn("w-full flex flex-shrink-0 items-start justify-center py-1")}>
+          <div className={cn("w-2/5 h-8 flex flex-shrink-0 gap-1.5 items-center")}>
             <IssuePropertyDetail />
           </div>
-          <div className="w-full h-full min-h-8 flex flex-col gap-0.5">{CurrentPropertyAttribute}</div>
+          <div className="w-3/5 h-full min-h-8 flex flex-col gap-0.5 pl-3">{CurrentPropertyAttribute}</div>
         </div>
       )}
       {variant === "update" && (
-        <div
-          className={cn(
-            "flex w-full items-start gap-x-3 gap-y-1 min-h-8",
-            isPropertyMultiLineText && "flex-col items-start"
-          )}
-        >
+        <div className={cn("flex w-full items-start gap-y-1 min-h-8")}>
           <div
             className={cn(
               "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-custom-text-300",
-              isPeekOverview ? "w-1/4" : "w-2/5",
-              isPropertyMultiLineText && "w-full"
+              isPeekOverview ? "w-1/4" : "w-2/5"
             )}
           >
             <IssuePropertyDetail />
           </div>
-          <div className="relative h-full min-h-8 w-full flex-grow flex flex-col gap-0.5">
+          <div
+            className={cn("relative h-full min-h-8 flex flex-col gap-0.5 pl-3", {
+              "w-3/4": isPeekOverview,
+              "w-3/5": !isPeekOverview,
+            })}
+          >
             {CurrentPropertyAttribute}
           </div>
         </div>

@@ -103,6 +103,33 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get current existing workspace invitations where accepted is False
+        # TODO: Uncomment this code block after implementing the workspace_member_check function
+        # workspace_invitations = (
+        #     WorkspaceMemberInvite.objects.filter(
+        #         workspace_id=workspace.id,
+        #     )
+        #     .annotate(
+        #         user_email=F("email"), user_id=F("id"), user_role=F("role")
+        #     )
+        #     .values("user_email", "user_id", "user_role")
+        # )
+
+        # # Check the invite flow
+        # allowed_status, allowed_admin_members, allowed_guest_viewers = (
+        #     workspace_member_check(workspace_invitations, emails, slug)
+        # )
+
+        # if not allowed_status:
+        #     return Response(
+        #         {
+        #             "error": "You cannot invite more users than the allowed limit",
+        #             "allowed_admin_members": allowed_admin_members,
+        #             "allowed_guest_viewers": allowed_guest_viewers,
+        #         },
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
+
         workspace_invitations = []
         for email in emails:
             try:
@@ -153,6 +180,61 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+    # TODO: Uncomment this code block after implementing the workspace_member_check function
+    # def partial_update(self, request, slug, pk):
+    #     workspace_invitations = (
+    #         WorkspaceMemberInvite.objects.filter(
+    #             ~Q(id=pk),
+    #             workspace__slug=slug,
+    #         )
+    #         .annotate(
+    #             user_email=F("email"), user_id=F("id"), user_role=F("role")
+    #         )
+    #         .values("user_email", "user_id", "user_role")
+    #     )
+
+    #     workspace_invitation = WorkspaceMemberInvite.objects.get(
+    #         pk=pk, workspace__slug=slug
+    #     )
+
+    #     # Check the invite flow
+    #     allowed_status, allowed_admin_members, allowed_guest_viewers = (
+    #         workspace_member_check(
+    #             workspace_invitations,
+    #             [
+    #                 {
+    #                     "email": workspace_invitation.email,
+    #                     "role": request.data.get(
+    #                         "role", workspace_invitation.role
+    #                     ),
+    #                 }
+    #             ],
+    #             slug,
+    #         )
+    #     )
+
+    #     if not allowed_status:
+    #         return Response(
+    #             {
+    #                 "error": "You cannot invite more users than the allowed limit",
+    #                 "allowed_admin_members": allowed_admin_members,
+    #                 "allowed_guest_viewers": allowed_guest_viewers,
+    #             },
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+
+    #     if not status:
+    #         return Response(
+    #             {
+    #                 "error": "You cannot invite more users than the allowed limit",
+    #                 "allowed_admin_members": allowed_admin_members,
+    #                 "allowed_guest_viewers": allowed_guest_viewers,
+    #             },
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+
+    #     return super().partial_update(request, slug, pk)
 
     def destroy(self, request, slug, pk):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(

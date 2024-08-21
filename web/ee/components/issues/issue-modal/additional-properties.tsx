@@ -2,57 +2,44 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-// hooks
+// ui
 import { Loader } from "@plane/ui";
-import { useProject } from "@/hooks/store";
+// hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web components
 import { IssueAdditionalPropertyValuesCreate } from "@/plane-web/components/issue-types/";
 // plane web hooks
-import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueAdditionalPropertiesProps = {
   issueId: string | undefined;
   issueTypeId: string | null;
   projectId: string;
   workspaceSlug: string;
-  issuePropertyValues?: TIssuePropertyValues;
-  issuePropertyValueErrors?: TIssuePropertyValueErrors;
-  setIssuePropertyValues?: React.Dispatch<React.SetStateAction<TIssuePropertyValues>>;
 };
 
 export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps> = observer((props) => {
-  const {
-    issueId,
-    issueTypeId,
-    projectId,
-    workspaceSlug,
-    issuePropertyValues,
-    issuePropertyValueErrors,
-    setIssuePropertyValues,
-  } = props;
+  const { issueId, issueTypeId, projectId, workspaceSlug } = props;
   // store hooks
-  const { getProjectById } = useProject();
-  const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
+  const { issuePropertyValues, setIssuePropertyValues } = useIssueModal();
+  const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
+    useIssueTypes();
   // derived values
-  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_DISPLAY");
-  const projectDetails = getProjectById(projectId);
+  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
-  const isIssueTypesEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;
 
   // This has to be on root level because of global level issue update, where we haven't fetch the details yet.
   useEffect(() => {
-    if (projectId && isIssueTypesEnabled) {
+    if (projectId && isIssueTypeDisplayEnabled) {
       fetchAllPropertiesAndOptions(workspaceSlug?.toString(), projectId);
     }
-  }, [fetchAllPropertiesAndOptions, isIssueTypesEnabled, projectId, workspaceSlug]);
+  }, [fetchAllPropertiesAndOptions, isIssueTypeDisplayEnabled, projectId, workspaceSlug]);
 
   if (!issuePropertyValues || !setIssuePropertyValues) return;
 
   return (
     <>
-      {isIssueTypesEnabled && (
+      {isIssueTypeDisplayEnabled && (
         <>
           {!issueTypeId || issuePropertiesLoader === "init-loader" ? (
             <Loader className="space-y-4 py-2">
@@ -67,9 +54,6 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
               issueTypeId={issueTypeId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              issuePropertyDefaultValues={issuePropertyValues}
-              issuePropertyValueErrors={issuePropertyValueErrors}
-              setIssuePropertyValues={setIssuePropertyValues}
             />
           )}
         </>

@@ -19,8 +19,9 @@ import {
   useUser,
   useCommandPalette,
 } from "@/hooks/store";
+// plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // images
-import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
@@ -46,7 +47,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-  const { fetchAllPropertiesAndOptions } = useIssueTypes();
+  const { isIssueTypeEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -103,10 +104,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
-
-  const isIssueTypeEnabled =
-    projectExists?.is_issue_type_enabled && useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
+  const isIssueTypeEnabled = isIssueTypeEnabledForProject(
+    workspaceSlug?.toString(),
+    projectId?.toString(),
+    "ISSUE_TYPE_DISPLAY"
+  );
   // fetching all issue types and properties
   useSWR(
     workspaceSlug && projectId && isIssueTypeEnabled
@@ -128,6 +130,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       </div>
     );
 
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
   // check if the user don't have permission to access the project
   if (projectExists && projectId && hasPermissionToProject[projectId.toString()] === false) return <JoinProject />;
 

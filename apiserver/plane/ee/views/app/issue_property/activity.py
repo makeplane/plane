@@ -7,6 +7,8 @@ from plane.ee.serializers import IssuePropertyActivitySerializer
 from plane.ee.models import IssuePropertyActivity
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import ProjectEntityPermission
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyActivityEndpoint(BaseAPIView):
@@ -15,7 +17,13 @@ class IssuePropertyActivityEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, issue_id):
+        # Get the filters
+        filters = {}
+        if request.GET.get("created_at__gt", None) is not None:
+            filters = {"created_at__gt": request.GET.get("created_at__gt")}
+        
         # Get the order by
         order_by = request.GET.get("order_by", "-created_at")
 
@@ -24,6 +32,7 @@ class IssuePropertyActivityEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_id=issue_id,
+            **filters
         ).order_by(order_by)
 
         # Serialize the data

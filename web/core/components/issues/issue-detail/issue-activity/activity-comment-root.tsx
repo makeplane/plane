@@ -2,7 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// plane wev components
+// plane web components
+import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
 // plane web constants
 import { TActivityFilters, filterActivityOnSelectedFilters } from "@/plane-web/constants/issues";
@@ -53,6 +54,11 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
           />
         ) : activityComment.activity_type === "ACTIVITY" ? (
           <IssueActivityItem
+            activityId={activityComment.id}
+            ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
+          />
+        ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
+          <IssueAdditionalPropertiesActivity
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
           />

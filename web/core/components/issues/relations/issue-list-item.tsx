@@ -10,6 +10,8 @@ import { RelationIssueProperty } from "@/components/issues/relations";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
 import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
@@ -91,15 +93,23 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
       {issue && (
         <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
           <span className="size-5 flex-shrink-0" />
-          <div className="flex w-full cursor-pointer items-center gap-2">
+          <div className="flex w-full cursor-pointer items-center gap-3">
             <div
               className="h-2 w-2 flex-shrink-0 rounded-full"
               style={{
                 backgroundColor: currentIssueStateDetail?.color ?? "#737373",
               }}
             />
-            <div className="flex-shrink-0 text-xs text-custom-text-200">
-              {projectDetail?.identifier}-{issue?.sequence_id}
+            <div className="flex-shrink-0">
+              {projectDetail && (
+                <IssueIdentifier
+                  projectId={projectDetail.id}
+                  issueTypeId={issue.type_id}
+                  projectIdentifier={projectDetail.identifier}
+                  issueSequenceId={issue.sequence_id}
+                  textContainerClassName="text-xs text-custom-text-200"
+                />
+              )}
             </div>
 
             <ControlLink

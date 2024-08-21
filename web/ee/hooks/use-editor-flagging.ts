@@ -23,6 +23,8 @@ export const useEditorFlagging = (
   // extensions disabled in the document editor
   const documentEditor: TExtensions[] = [];
   if (!isIssueEmbedEnabled) documentEditor.push("issue-embed");
+  // Temporarily disabled
+  documentEditor.push("ai");
 
   return {
     documentEditor,

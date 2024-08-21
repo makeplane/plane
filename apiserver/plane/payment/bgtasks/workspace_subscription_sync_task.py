@@ -4,24 +4,36 @@ import os
 
 # Django imports
 from django.conf import settings
-from django.db.models import F
+from django.db.models import F, Q
 
 # Third party imports
 from celery import shared_task
 
 # Module imports
-from plane.db.models import Workspace, WorkspaceMember
+from plane.db.models import WorkspaceMember
+from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def workspace_member_sync_payment_task(slug):
-    try:
-        # Do not run this task if payment server base url is not set
-        if settings.PAYMENT_SERVER_BASE_URL:
-            # workspace from slug
-            workspace = Workspace.objects.filter(slug=slug).first()
-            workspace_id = str(workspace.id)
+def workspace_billing_task(batch_size=1000, offset=0):
+    # Get total count of workspaces
+    total_workspaces = WorkspaceLicense.objects.filter(~Q(plan="FREE")).count()
+
+    # Process one batch of workspaces
+    end_offset = min(offset + batch_size, total_workspaces)
+
+    # Get the workspaces that are not free
+    workspaces = WorkspaceLicense.objects.filter(~Q(plan="FREE"))[
+        offset:end_offset
+    ].values("workspace_id", "workspace__slug")
+
+    # Loop through workspaces in the current batch
+    for workspace in workspaces:
+        # Check if workspace subscription
+        try:
+            workspace_id = str(workspace["workspace_id"])
+            workspace_slug = workspace["workspace__slug"]
 
             # Get all active workspace members
             workspace_members = (
@@ -46,7 +58,7 @@ def workspace_member_sync_payment_task(slug):
             response = requests.patch(
                 f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{workspace_id}/subscriptions/",
                 json={
-                    "slug": slug,
+                    "slug": workspace_slug,
                     "workspace_id": str(workspace_id),
                     "members_list": list(workspace_members),
                 },
@@ -65,45 +77,6 @@ def workspace_member_sync_payment_task(slug):
             # Invalid request
             else:
                 return
-        else:
-            return
-    except requests.exceptions.RequestException as e:
-        log_exception(e)
-        return
-    except Exception as e:
-        log_exception(e)
-        return
-
-
-@shared_task
-def workspace_billing_task(batch_size=1000, offset=0):
-    # Get total count of workspaces
-    total_workspaces = Workspace.objects.count()
-
-    # Process one batch of workspaces
-    end_offset = min(offset + batch_size, total_workspaces)
-    workspaces = Workspace.objects.all()[offset:end_offset].values(
-        "id", "slug"
-    )
-
-    # Loop through workspaces in the current batch
-    for workspace in workspaces:
-        # Check if workspace subscription
-        try:
-            response = requests.get(
-                f"{settings.PAYMENT_SERVER_BASE_URL}/api/subscriptions/status/{str(workspace['id'])}/",
-                headers={
-                    "content-type": "application/json",
-                    "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                },
-            )
-            # Check if the response is successful
-            response.raise_for_status()
-            # Return the response
-            response = response.json()
-            # Check if the response contains the product key
-            if response.get("status"):
-                workspace_member_sync_payment_task.delay(workspace["slug"])
         except Exception as e:
             log_exception(e)
 

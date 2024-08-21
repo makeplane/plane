@@ -3,7 +3,7 @@ import { useRef, useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-import { LogoSpinner } from "@/components/common";
+import { Spinner } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
 
@@ -69,7 +69,7 @@ const SiloIframe: React.FC<CustomIframeProps> = ({ srcBase }) => {
           hidden: isLoaded,
         })}
       >
-        <LogoSpinner />
+        <Spinner />
       </div>
     </div>
   );

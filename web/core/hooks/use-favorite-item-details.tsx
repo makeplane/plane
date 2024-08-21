@@ -6,14 +6,14 @@ import {
 import { useProject, usePage, useProjectView, useCycle, useModule } from "@/hooks/store";
 
 export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorite) => {
-  const favoriteItemId = favorite.entity_data.id;
+  const favoriteItemId = favorite?.entity_data?.id;
   const favoriteItemLogoProps = favorite?.entity_data?.logo_props;
   const favoriteItemName = favorite?.entity_data.name || favorite?.name;
   const favoriteItemEntityType = favorite?.entity_type;
 
   // store hooks
   const { getViewById } = useProjectView();
-  const { currentProjectDetails } = useProject();
+  const { getProjectById } = useProject();
   const { getCycleById } = useCycle();
   const { getModuleById } = useModule();
 
@@ -22,6 +22,8 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
   const viewDetails = getViewById(favoriteItemId ?? "");
   const cycleDetail = getCycleById(favoriteItemId ?? "");
   const moduleDetail = getModuleById(favoriteItemId ?? "");
+
+  const currentProjectDetails = getProjectById(favorite.project_id ?? "");
 
   let itemIcon;
   let itemTitle;

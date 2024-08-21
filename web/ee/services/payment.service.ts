@@ -41,6 +41,14 @@ export class PaymentService extends APIService {
       });
   }
 
+  async refreshWorkspaceCurrentPlan(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/license-refresh/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getWorkspaceSubscriptionPageLink(workspaceSlug: string) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/`)
       .then((response) => response?.data)
@@ -51,6 +59,25 @@ export class PaymentService extends APIService {
 
   async getPaymentLink(data = {}) {
     return this.post(`/api/payments/website/payment-link/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getFreeTrialSubscription(workspaceSlug: string, payload: { product_id: string; price_id: string }) {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/trial-subscriptions/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async modifyTrailSubscription(
+    workspaceSlug: string,
+    payload: { price_id: string }
+  ): Promise<{ session_url: string }> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/trial-subscriptions/upgrade/`, payload)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -53,6 +53,7 @@ class IssueFlatSerializer(BaseSerializer):
             "sequence_id",
             "sort_order",
             "is_draft",
+            "type_id",
         ]
 
 
@@ -147,7 +148,7 @@ class IssueCreateSerializer(BaseSerializer):
         if not issue_type:
             # Get default issue type
             issue_type = IssueType.objects.filter(
-                project_id=project_id, is_default=True
+                project_issue_types__project_id=project_id, is_default=True
             ).first()
             issue_type = issue_type
 
@@ -730,6 +731,7 @@ class IssueLiteSerializer(DynamicBaseSerializer):
             "id",
             "sequence_id",
             "project_id",
+            "type_id",
         ]
         read_only_fields = fields
 

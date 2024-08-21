@@ -3,26 +3,35 @@ import requests
 
 # Django imports
 from django.conf import settings
-from django.db.models import CharField
-from django.db.models.functions import Cast
+from django.utils import timezone
+from django.db.models import F
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import (
     WorkspaceUserPermission,
 )
-from plane.db.models import WorkspaceMember, Workspace
+from plane.db.models import WorkspaceMember
+from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+)
 
 
 class ProductEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceUserPermission,
     ]
+
+    """
+    Get the product details for the workspace based on the number of paid users and free users
+    """
 
     def get(self, request, slug):
         try:
@@ -76,24 +85,71 @@ class ProductEndpoint(BaseAPIView):
             )
 
 
+class WebsiteUserWorkspaceEndpoint(BaseAPIView):
+    """
+    Get the workspaces where the user is admin
+    """
+
+    def get(self, request):
+        try:
+            # Get all the workspaces where the user is admin
+            workspace_ids = WorkspaceMember.objects.filter(
+                member=request.user,
+                is_active=True,
+                role=20,
+            ).values_list("workspace_id", flat=True)
+
+            # Fetch the workspaces from the workspace license
+            workspace_licenses = (
+                WorkspaceLicense.objects.filter(workspace_id__in=workspace_ids)
+                .annotate(slug=F("workspace__slug"))
+                .annotate(name=F("workspace__name"))
+                .annotate(logo=F("workspace__logo"))
+                .annotate(product=F("plan"))
+                .values(
+                    "workspace_id",
+                    "slug",
+                    "name",
+                    "logo",
+                    "product",
+                    "trial_end_date",
+                    "has_activated_free_trial",
+                    "has_added_payment_method",
+                    "current_period_end_date",
+                    "is_offline_payment",
+                    "subscription",
+                )
+            )
+
+            # Get the workspace details
+            return Response(workspace_licenses, status=status.HTTP_200_OK)
+
+        except requests.exceptions.RequestException as e:
+            if e.response.status_code == 400:
+                return Response(
+                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                )
+            log_exception(e)
+            return Response(
+                {"error": "error in fetching workspace products"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
 class WorkspaceProductEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceUserPermission,
     ]
 
+    """
+    Get the product details for the workspace
+    """
+
     def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-                workspace = Workspace.objects.get(slug=slug)
-                response = requests.get(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace.id)}/",
-                    headers={
-                        "content-type": "application/json",
-                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                    },
-                )
-                response.raise_for_status()
-                response = response.json()
+                # Resync the workspace license
+                response = resync_workspace_license(workspace_slug=slug)
                 return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response(
@@ -108,60 +164,97 @@ class WorkspaceProductEndpoint(BaseAPIView):
             )
 
 
-class WebsiteUserWorkspaceEndpoint(BaseAPIView):
+class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
+    def post(self, request, slug):
+        # Resync the workspace license
+        _ = resync_workspace_license(workspace_slug=slug, force=True)
 
-    def get(self, request):
-        try:
-            # Get all the workspaces where the user is admin
-            workspace_query = (
-                WorkspaceMember.objects.filter(
-                    member=request.user,
-                    is_active=True,
-                    role=20,
-                )
-                .annotate(uuid_str=Cast("workspace_id", CharField()))
-                .values(
-                    "uuid_str",
-                    "workspace__slug",
-                    "workspace__name",
-                    "workspace__logo",
-                )
+        # Return the response
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceLicenseSyncEndpoint(BaseAPIView):
+    """This endpoint is used to sync the workspace license from the payment server"""
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        # Check if the request is authorized
+        if (
+            request.headers.get("x-api-key")
+            != settings.PAYMENT_SERVER_AUTH_TOKEN
+        ):
+            return Response(
+                {"error": "Unauthorized"},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
-            workspaces = [
-                {
-                    "workspace_id": workspace["uuid_str"],
-                    "slug": workspace["workspace__slug"],
-                    "name": workspace["workspace__name"],
-                    "logo": workspace["workspace__logo"],
-                }
-                for workspace in workspace_query
-            ]
+        # Get the workspace ID from the request
+        workspace_id = request.data.get("workspace_id")
 
-            if settings.PAYMENT_SERVER_BASE_URL:
-                response = requests.post(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/user-workspace-products/",
-                    headers={
-                        "content-type": "application/json",
-                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                    },
-                    json={"workspaces": workspaces},
-                )
-                response.raise_for_status()
-                response = response.json()
-                return Response(response, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    {"error": "error fetching product details"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        except requests.exceptions.RequestException as e:
-            if e.response.status_code == 400:
-                return Response(
-                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                )
-            log_exception(e)
+        # Return an error if the workspace ID is not present
+        if not workspace_id:
             return Response(
-                {"error": "error in fetching workspace products"},
+                {"error": "Workspace ID is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Check if the workspace license is present
+        workspace_license = WorkspaceLicense.objects.filter(
+            workspace_id=workspace_id
+        ).first()
+
+        # If the workspace license is present, then fetch the license from the payment server and update it
+        if workspace_license:
+            workspace_license.is_cancelled = request.data.get(
+                "is_cancelled", False
+            )
+            workspace_license.purchased_seats = request.data.get(
+                "purchased_seats", 0
+            )
+            workspace_license.free_seats = request.data.get("free_seats", 12)
+            workspace_license.current_period_end_date = request.data.get(
+                "current_period_end_date"
+            )
+            workspace_license.recurring_interval = request.data.get("interval")
+            workspace_license.plan = request.data.get("plan")
+            workspace_license.last_synced_at = timezone.now()
+            workspace_license.trial_end_date = request.data.get(
+                "trial_end_date"
+            )
+            workspace_license.has_activated_free_trial = request.data.get(
+                "has_activated_free_trial", False
+            )
+            workspace_license.has_added_payment_method = request.data.get(
+                "has_added_payment_method", False
+            )
+            workspace_license.subscription = request.data.get("subscription")
+            workspace_license.save()
+        # If the workspace license is not present, then fetch the license from the payment server and create it
+        else:
+            # Create the workspace license
+            workspace_license = WorkspaceLicense.objects.create(
+                workspace_id=workspace_id,
+                is_cancelled=request.data.get("is_cancelled", False),
+                purchased_seats=request.data.get("purchased_seats", 0),
+                free_seats=request.data.get("free_seats", 12),
+                current_period_end_date=request.data.get(
+                    "current_period_end_date"
+                ),
+                recurring_interval=request.data.get("interval"),
+                plan=request.data.get("plan"),
+                last_synced_at=timezone.now(),
+                trial_end_date=request.data.get("trial_end_date"),
+                has_activated_free_trial=request.data.get(
+                    "has_activated_free_trial", False
+                ),
+                has_added_payment_method=request.data.get(
+                    "has_added_payment_method", False
+                ),
+                subscription=request.data.get("subscription"),
+            )
+
+        # Return the response
+        return Response(status=status.HTTP_204_NO_CONTENT)

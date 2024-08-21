@@ -3,13 +3,12 @@ import { observer } from "mobx-react";
 // plane web hooks
 import { IssuePropertyOptionItem } from "@/plane-web/components/issue-types/properties/attributes";
 // plane web types
-import { TIssuePropertyOptionCreateList } from "@/plane-web/types";
+import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 
 type TIssuePropertyCreateOptionItem = {
-  issueTypeId: string;
-  issuePropertyId: string | undefined;
-  propertyOptionCreateListData?: TIssuePropertyOptionCreateList;
-  updateCreateListData?: (value: TIssuePropertyOptionCreateList) => void;
+  propertyOptionCreateListData: TIssuePropertyOptionCreateUpdateData;
+  updateCreateListData: (value: TIssuePropertyOptionCreateUpdateData) => void;
+  error?: string;
 };
 
 export const IssuePropertyCreateOptionItem = observer(
@@ -17,16 +16,14 @@ export const IssuePropertyCreateOptionItem = observer(
     props: TIssuePropertyCreateOptionItem,
     ref: React.Ref<HTMLDivElement>
   ) {
-    const { issueTypeId, issuePropertyId, propertyOptionCreateListData, updateCreateListData } = props;
+    const { propertyOptionCreateListData, updateCreateListData, error } = props;
 
     return (
-      <div ref={ref} className="w-full px-1 pr-2">
+      <div ref={ref} className="w-full pr-2.5">
         <IssuePropertyOptionItem
-          issueTypeId={issueTypeId}
-          issuePropertyId={issuePropertyId}
-          operationMode="create"
-          propertyOptionCreateListData={propertyOptionCreateListData}
-          updateCreateListData={updateCreateListData}
+          propertyOptionData={propertyOptionCreateListData}
+          updateOptionData={updateCreateListData}
+          error={error}
         />
       </div>
     );

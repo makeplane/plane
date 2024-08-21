@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { getButtonStyling } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
@@ -10,18 +11,22 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useInstance, useUser, useWorkspace } from "@/hooks/store";
 // plane web components
 import IntegrationGuide from "@/plane-web/components/integration/guide";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
 
 const ImportsPage = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     userProfile: { data: userProfile },
     membership: { currentWorkspaceRole },
   } = useUser();
+  const { config } = useInstance();
+
   const { currentWorkspace } = useWorkspace();
 
   // derived values
@@ -29,7 +34,7 @@ const ImportsPage = observer(() => {
   const isDarkMode = userProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
-  const isSiloIntegrationEnabled = useFlag(currentWorkspace?.slug, "SILO_INTEGRATION");
+  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
 
   if (!isAdmin)
     return (
@@ -41,11 +46,11 @@ const ImportsPage = observer(() => {
       </>
     );
 
-  if (!isSiloIntegrationEnabled)
+  if (!isSiloIntegrationEnabled || !config?.silo_base_url)
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="flex h-full flex-col gap-10 rounded-xl px-8">
+        <div className="flex h-full flex-col gap-10 rounded-xl md:pr-9 pr-4">
           <div className="flex items-center border-b border-custom-border-100 py-3.5">
             <h3 className="text-xl font-medium">Imports</h3>
           </div>
@@ -100,7 +105,7 @@ const ImportsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto py-8 pr-9">
+      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto md:pr-9 pr-4">
         <div className="flex items-center border-b border-custom-border-100 py-3.5 flex-shrink-0">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>

@@ -47,7 +47,7 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
       <Input
         id={`number_input_${propertyDetail.id}`}
         type="number"
-        value={data?.[0]}
+        value={data?.[0] ?? ""}
         onChange={handleChange}
         className={cn(
           "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0",
@@ -72,7 +72,7 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
           }
           document.body?.removeAttribute("data-delay-outside-click");
         }}
-        placeholder="Enter a number"
+        placeholder="Add number"
         inputSize={numberInputSize}
         disabled={isDisabled}
         hasError={Boolean(error)}

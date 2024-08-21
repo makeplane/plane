@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 import {
   IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
   IIssueActivityStore as IIssueActivityStoreCe,
@@ -46,6 +44,8 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     const activities = this.getActivitiesByIssueId(issueId) || [];
     const comments = this.store.issue.issueDetail.comment.getCommentsByIssueId(issueId) || [];
     const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId) || [];
+    const additionalPropertiesActivities =
+      this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId) || [];
 
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
@@ -77,6 +77,16 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
+    additionalPropertiesActivities.forEach((activityId) => {
+      const activity = this.store.issuePropertiesActivity.getPropertyActivityById(activityId);
+      if (!activity || !activity.id) return;
+      activityComments.push({
+        id: activity.id,
+        activity_type: EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
+        created_at: activity.created_at,
+      });
+    });
+
     activityComments = sortBy(activityComments, "created_at");
 
     return activityComments;
@@ -91,10 +101,24 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
   ) => {
     try {
       this.loader = loaderType;
-      // fetching the worklogs for the issue
-      if (this.store.workspaceWorklogs.isWorklogsEnabledByProjectId(projectId)) {
-        await this.store.workspaceWorklogs.getWorklogsByIssueId(workspaceSlug, projectId, issueId);
-      }
+      // check if worklogs are enabled for the project
+      const isWorklogsEnabled = this.store.workspaceWorklogs.isWorklogsEnabledByProjectId(projectId);
+      // check if issue types are enabled for the project
+      const isIssueTypesDisplayEnabled = this.store.issueTypes.isIssueTypeEnabledForProject(
+        workspaceSlug,
+        projectId,
+        "ISSUE_TYPE_DISPLAY"
+      );
+      await Promise.all([
+        // fetching the worklogs for the issue if worklogs are enabled
+        isIssueTypesDisplayEnabled &&
+          this.store.issuePropertiesActivity.fetchPropertyActivities(workspaceSlug, projectId, issueId),
+        // fetching the activities for issue custom properties if issue types are enabled
+        isWorklogsEnabled && this.store.workspaceWorklogs.getWorklogsByIssueId(workspaceSlug, projectId, issueId),
+      ]).catch((error) => {
+        throw error;
+      });
+      // fetching the activities for the issue
       const activities = await super.fetchActivities(workspaceSlug, projectId, issueId, loaderType);
       return activities;
     } catch (error) {

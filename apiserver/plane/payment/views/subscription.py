@@ -13,6 +13,9 @@ from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import Workspace
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+)
 
 
 class SubscriptionEndpoint(BaseAPIView):
@@ -95,7 +98,10 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                 )
                 # Check if the response is successful
                 response.raise_for_status()
-                # Check if the response contains the product key
+
+                # Refetch the workspace license
+                resync_workspace_license(workspace_slug=workspace.slug)
+                # Return the response
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(
                 {"error": "error in checking workspace subscription"},

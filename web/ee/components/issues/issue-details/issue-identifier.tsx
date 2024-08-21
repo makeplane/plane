@@ -4,48 +4,71 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
-// hooks
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useFlag, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
-type TIssueIdentifierProps = {
-  issueId: string;
+type TIssueIdentifierBaseProps = {
   projectId: string;
-  iconSize?: number;
-  iconContainerSize?: number;
+  size?: "sm" | "md" | "lg";
   textContainerClassName?: string;
 };
 
+type TIssueIdentifierFromStore = TIssueIdentifierBaseProps & {
+  issueId: string;
+};
+
+type TIssueIdentifierWithDetails = TIssueIdentifierBaseProps & {
+  issueTypeId?: string | null;
+  projectIdentifier: string;
+  issueSequenceId: string | number;
+};
+
+type TIssueIdentifierProps = TIssueIdentifierFromStore | TIssueIdentifierWithDetails;
+
 export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
-  const { issueId, projectId, iconSize = 12, iconContainerSize = 18, textContainerClassName = "" } = props;
+  const { projectId, size = "sm", textContainerClassName = "" } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { getProjectById, getProjectIdentifierById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { loader: issueTypesLoader } = useIssueTypes();
+  const { loader: issueTypesLoader, isIssueTypeEnabledForProject } = useIssueTypes();
+  // Determine if the component is using store data or not
+  const isUsingStoreData = "issueId" in props;
   // derived values
-  const issue = getIssueById(issueId);
-  const projectDetails = getProjectById(projectId);
-  const issueType = useIssueType(issue?.type_id);
-  const isIssueTypeDisplayEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
+  const issue = isUsingStoreData ? getIssueById(props.issueId) : null;
+  const issueTypeId = isUsingStoreData ? issue?.type_id : props.issueTypeId;
+  const issueType = useIssueType(issueTypeId);
+  const projectIdentifier = isUsingStoreData ? getProjectIdentifierById(projectId) : props.projectIdentifier;
+  const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
+  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+    workspaceSlug?.toString(),
+    projectId,
+    "ISSUE_TYPE_DISPLAY"
+  );
 
-  if (!isIssueTypeDisplayEnabled || !projectDetails?.is_issue_type_enabled) {
-    return (
-      <BaseIssueIdentifier
-        issueId={issueId}
-        projectId={projectId}
-        iconSize={iconSize}
-        iconContainerSize={iconContainerSize}
-        textContainerClassName={textContainerClassName}
-      />
-    );
+  if (!isIssueTypeDisplayEnabled) {
+    const baseProps = {
+      projectId,
+      size,
+      textContainerClassName,
+    };
+    const identifierProps = isUsingStoreData
+      ? { issueId: props.issueId }
+      : {
+          issueTypeId: props.issueTypeId,
+          projectIdentifier: props.projectIdentifier,
+          issueSequenceId: props.issueSequenceId,
+        };
+    return <BaseIssueIdentifier {...baseProps} {...identifierProps} />;
   }
 
   if (issueTypesLoader === "init-loader") {
@@ -57,16 +80,11 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   }
 
   return (
-    <Tooltip tooltipContent={issueType?.name} position="top-left">
+    <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-left">
       <div className="flex flex-shrink-0 items-center space-x-2">
-        <IssueTypeLogo
-          icon_props={issueType?.logo_props?.icon}
-          size={iconSize}
-          containerSize={iconContainerSize}
-          isDefault={issueType?.is_default}
-        />
+        <IssueTypeLogo icon_props={issueType?.logo_props?.icon} size={size} isDefault={issueType?.is_default} />
         <span className={cn("text-base font-medium text-custom-text-300", textContainerClassName)}>
-          {getProjectIdentifierById(issue?.project_id)}-{issue?.sequence_id}
+          {projectIdentifier}-{issueSequenceId}
         </span>
       </div>
     </Tooltip>

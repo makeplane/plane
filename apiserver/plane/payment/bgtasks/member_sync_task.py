@@ -11,6 +11,9 @@ from celery import shared_task
 # Module imports
 from plane.db.models import WorkspaceMember, Workspace
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+)
 
 
 @shared_task
@@ -55,15 +58,10 @@ def member_sync_task(slug):
                 },
             )
 
-            # Check if response is successful
-            if response.status_code == 200:
-                return
-            # Workspace does not have a subscription
-            elif response.status_code == 404:
-                return
-            # Invalid request
-            else:
-                return
+            response.raise_for_status()
+
+            # Refresh workspace license
+            resync_workspace_license(slug, force=True)
         else:
             return
     except requests.exceptions.RequestException as e:

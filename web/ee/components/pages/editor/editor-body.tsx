@@ -21,6 +21,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 // store
@@ -68,7 +69,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const pageDescription = page?.description_html;
@@ -80,7 +81,8 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     members: workspaceMemberDetails,
     user: currentUser ?? undefined,
   });
-
+  // editor flaggings
+  const { documentEditor } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
   const { isFullWidth } = usePageFilters();
   // issue-embed
@@ -180,6 +182,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                   },
                 },
               }}
+              disabledExtensions={documentEditor}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef

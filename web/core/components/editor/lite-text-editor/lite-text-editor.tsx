@@ -94,11 +94,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           }
         }}
         handleAccessChange={handleAccessChange}
-        handleSubmit={() => {
-          if (isMutableRefObject<EditorRefApi>(ref)) {
-            rest.onEnterKeyPress?.(ref.current?.getHTML() ?? "");
-          }
-        }}
+        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isCommentEmpty={isEmpty}
         isSubmitting={isSubmitting}
         showAccessSpecifier={showAccessSpecifier}

@@ -47,6 +47,12 @@ class IssueSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        queryset=IssueType.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Issue
@@ -130,19 +136,14 @@ class IssueSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue_type_id = validated_data.get("type_id")
+        issue_type = validated_data.pop("type", None)
 
-        if issue_type_id:
-            # Check if issue type is valid
-            issue_type = IssueType.objects.filter(
-                project_id=project_id, id=issue_type_id, is_active=True
-            ).first()
-        else:
+        if not issue_type:
             # Get default issue type
             issue_type = IssueType.objects.filter(
-                project_id=project_id,
-                is_default=True,
+                project_issue_types__project_id=project_id, is_default=True
             ).first()
+            issue_type = issue_type
 
         issue = Issue.objects.create(
             **validated_data,

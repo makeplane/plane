@@ -3,12 +3,10 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
-// hooks
-import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useFlag, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
@@ -30,16 +28,19 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
-    const { getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } = useIssueTypes();
+    const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
+      useIssueTypes();
     const issueType = useIssueType(issueTypeId);
-    const { getProjectById } = useProject();
+    const { fetchPropertyActivities } = useIssuePropertiesActivity();
     // derived values
-    const isIssueTypeDisplayEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY");
-    const projectDetails = getProjectById(projectId);
+    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+      workspaceSlug?.toString(),
+      projectId,
+      "ISSUE_TYPE_DISPLAY"
+    );
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
     const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
-    const isIssueTypeEnabled = isIssueTypeDisplayEnabled && projectDetails?.is_issue_type_enabled;
 
     // fetch issue custom property values
     useEffect(() => {
@@ -56,8 +57,8 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
             setIsLoading(false);
           });
       }
-      if (isIssueTypeEnabled) fetchIssuePropertyValues();
-    }, [fetchAllPropertiesAndOptions, isIssueTypeEnabled, issueId, projectId, workspaceSlug]);
+      if (isIssueTypeDisplayEnabled) fetchIssuePropertyValues();
+    }, [fetchAllPropertiesAndOptions, isIssueTypeDisplayEnabled, issueId, projectId, workspaceSlug]);
 
     const handlePropertyValueChange = async (propertyId: string, value: string[]) => {
       const beforeUpdateValue = issuePropertyValues[propertyId];
@@ -68,14 +69,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       // update the property value
       await issuePropertyValuesService
         .update(workspaceSlug, projectId, issueId, propertyId, value)
-        .then(() => {
-          // TODO: remove
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Property update successfully.",
-          });
-        })
+        .then(async () => await fetchPropertyActivities(workspaceSlug, projectId, issueId))
         .catch((error) => {
           // revert the value if update fails
           setIssuePropertyValues((prev) => ({
@@ -91,7 +85,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     };
 
     // if issue types are not enabled, return null
-    if (!isIssueTypeEnabled) return null;
+    if (!isIssueTypeDisplayEnabled) return null;
 
     if (issuePropertiesLoader === "init-loader") {
       return (

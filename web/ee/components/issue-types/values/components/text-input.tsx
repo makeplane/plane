@@ -69,7 +69,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
           <Input
             id={`single_line_text_${propertyDetail.id}`}
             type="text"
-            value={data?.[0]}
+            value={data?.[0] ?? ""}
             onChange={handleInputChange}
             className={commonClassNames}
             onClick={() => {
@@ -82,7 +82,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
               }
               document.body?.removeAttribute("data-delay-outside-click");
             }}
-            placeholder="Enter some text"
+            placeholder="Add text"
             hasError={Boolean(error)}
           />
           {Boolean(error) && (
@@ -97,7 +97,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
         <>
           <TextArea
             id={`multi_line_text_${propertyDetail.id}`}
-            value={data?.[0]}
+            value={data?.[0] ?? ""}
             onChange={handleTextAreaChange}
             className={cn(
               commonClassNames,

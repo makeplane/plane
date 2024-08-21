@@ -6,12 +6,14 @@ import {
   ISSUE_PROPERTY_TYPE_DETAILS,
 } from "@/plane-web/constants/issue-properties";
 // plane web types
+import { IIssueProperty } from "@/plane-web/store/issue-types";
 import {
   EIssuePropertyRelationType,
   EIssuePropertyType,
   TDateAttributeDisplayOptions,
   TIssueProperty,
   TIssuePropertyTypeKeys,
+  TIssuePropertyValues,
   TTextAttributeDisplayOptions,
 } from "@/plane-web/types";
 
@@ -77,4 +79,13 @@ export const getIssuePropertyAttributeDisplayName = (
     default:
       return "";
   }
+};
+
+// helper function to get the default value for every property
+export const getPropertiesDefaultValues = (properties: IIssueProperty<EIssuePropertyType>[]): TIssuePropertyValues => {
+  const defaultValues: TIssuePropertyValues = {};
+  properties?.forEach((property) => {
+    if (property.id && property.default_value) defaultValues[property.id] = property.default_value ?? [];
+  });
+  return defaultValues;
 };

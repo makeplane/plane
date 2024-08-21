@@ -1,107 +1,50 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { v4 } from "uuid";
 // ui
 import { GripVertical } from "lucide-react";
-import { setToast, Sortable, TOAST_TYPE, Tooltip } from "@plane/ui";
-// plane web components
+import { Sortable, Tooltip } from "@plane/ui";
 import {
   IssuePropertyCreateOptionItem,
   IssuePropertyOptionItem,
 } from "@/plane-web/components/issue-types/properties/attributes";
 // plane web hooks
-import { useIssueProperty, useIssueType } from "@/plane-web/hooks/store";
-import { IIssuePropertyOption } from "@/plane-web/store/issue-types";
+import { usePropertyOptions } from "@/plane-web/hooks/store";
 // plane web types
-import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateList } from "@/plane-web/types";
+import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 
 type TIssuePropertyOptionsRoot = {
-  issueTypeId: string;
   issuePropertyId: string | undefined;
-  issuePropertyOptionCreateList: TIssuePropertyOptionCreateList[];
-  handleIssuePropertyOptionCreateList: (mode: TCreationListModes, value: TIssuePropertyOptionCreateList) => void;
-};
-
-const defaultIssuePropertyOption: Partial<Partial<TIssuePropertyOption>> = {
-  id: undefined,
-  name: undefined,
-  is_default: false,
+  error?: string;
 };
 
 export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer((props) => {
-  const { issueTypeId, issuePropertyId, issuePropertyOptionCreateList, handleIssuePropertyOptionCreateList } = props;
+  const { issuePropertyId, error } = props;
   // store hooks
-  const issueType = useIssueType(issueTypeId);
-  const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
+  const { propertyOptions, handlePropertyOptionsList } = usePropertyOptions();
   // derived values
-  const sortedActivePropertyOptions = issueProperty?.sortedActivePropertyOptions;
+  const sortedActivePropertyOptions = propertyOptions.filter((item) => item.id);
+  const createListData = propertyOptions.filter((item) => !item.id && item.key);
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const secondLastElementRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const scrollIntoElementView = () => {
     if (secondLastElementRef.current) {
       secondLastElementRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
       // get the input element and focus on it
       const inputElement = secondLastElementRef.current.querySelector("input");
       inputElement?.focus();
     }
-  }, [issuePropertyOptionCreateList]);
+  };
 
   useEffect(() => {
-    const emptyOptions = issuePropertyOptionCreateList.filter((item) => !item.name).length;
+    scrollIntoElementView();
+  }, []);
 
-    if (emptyOptions < 2) {
-      const optionsToAdd = 2 - emptyOptions;
-      const newOptions = Array.from({ length: optionsToAdd }, () => ({
-        key: v4(),
-        ...defaultIssuePropertyOption,
-      }));
-      newOptions.forEach((option) => handleIssuePropertyOptionCreateList("add", option));
-    }
-  }, [handleIssuePropertyOptionCreateList, issuePropertyOptionCreateList]);
-
-  // handlers
-  const handleOptionCreate = async (propertyId: string, value: TIssuePropertyOptionCreateList) => {
-    // get issue property details from the store
-    const issueProperty = issueType?.getPropertyById(propertyId);
-    if (!issueProperty) return;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { key, ...payload } = value;
-
-    await issueProperty
-      .createPropertyOption(payload)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Property option created successfully.`,
-        });
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to create issue property option. Please try again!`,
-        });
-      })
-      .finally(() => {
-        handleIssuePropertyOptionCreateList("remove", value);
-      });
-  };
-
-  const handleIssuePropertyOptionCreate = (value: TIssuePropertyOptionCreateList) => {
-    // If issuePropertyId is present, then create the property option directly
-    if (issuePropertyId) {
-      handleOptionCreate(issuePropertyId, value);
-    } else {
-      // Else, update the create list
-      handleIssuePropertyOptionCreateList("update", value);
-    }
-  };
-
-  const handleOptionsDragAndDrop = (data: TIssuePropertyOption[], movedItem?: IIssuePropertyOption) => {
+  const handleOptionsDragAndDrop = (
+    data: TIssuePropertyOptionCreateUpdateData[],
+    movedItem?: TIssuePropertyOptionCreateUpdateData
+  ) => {
     if (!sortedActivePropertyOptions || !issuePropertyId || !movedItem) return;
 
     // Function to calculate new sort_order
@@ -123,11 +66,7 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
     // get the new sort order
     const newSortOrder = calculateSortOrder(prevItem?.sort_order, nextItem?.sort_order);
 
-    // update the sort order of the changed item
-    const updatePropertyOption = issueProperty?.getPropertyOptionById(movedItem.id)?.updatePropertyOption;
-    if (issuePropertyId && updatePropertyOption) {
-      updatePropertyOption(issuePropertyId, { sort_order: newSortOrder });
-    }
+    handlePropertyOptionsList("update", { id: movedItem.id, sort_order: newSortOrder });
   };
 
   return (
@@ -135,42 +74,56 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
       <div className="text-xs font-medium text-custom-text-300 p-1">Add options</div>
       <div
         ref={containerRef}
-        className="flex flex-col items-center, py-1 space-y-1.5 -mr-2 max-h-36 vertical-scrollbar scrollbar-xs"
+        className="flex flex-col items-center py-1 -mr-1.5 space-y-1.5 max-h-36 overflow-scroll vertical-scrollbar scrollbar-xs"
       >
         {sortedActivePropertyOptions && sortedActivePropertyOptions?.length > 0 && (
           <Sortable
             data={sortedActivePropertyOptions}
-            render={(propertyOption: IIssuePropertyOption) => (
-              <div key={propertyOption.id} className="flex w-full items-center gap-0.5">
+            render={(propertyOption: TIssuePropertyOptionCreateUpdateData) => (
+              <div key={propertyOption.id} className="flex group w-full items-center">
                 <Tooltip tooltipContent="Drag to rearrange">
-                  <div className="rounded-sm flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-grab">
-                    <GripVertical size={14} className="text-custom-text-200" />
+                  <div className="rounded-sm flex-shrink-0 w-3 relative flex justify-center items-center transition-colors cursor-grab">
+                    <GripVertical size={12} className="hidden group-hover:block text-custom-text-200" />
                   </div>
                 </Tooltip>
                 <IssuePropertyOptionItem
-                  issueTypeId={issueTypeId}
-                  issuePropertyId={issuePropertyId}
                   optionId={propertyOption.id}
-                  operationMode="update"
+                  propertyOptionData={propertyOption}
+                  updateOptionData={(value) => {
+                    handlePropertyOptionsList("update", value);
+                  }}
                 />
               </div>
             )}
-            containerClassName="w-full pr-1"
-            onChange={(data: IIssuePropertyOption[], movedItem?: IIssuePropertyOption) =>
-              handleOptionsDragAndDrop(data, movedItem)
+            containerClassName="w-full -ml-0.5 pr-2.5"
+            onChange={(
+              data: TIssuePropertyOptionCreateUpdateData[],
+              movedItem?: TIssuePropertyOptionCreateUpdateData
+            ) => handleOptionsDragAndDrop(data, movedItem)}
+            keyExtractor={(option: TIssuePropertyOptionCreateUpdateData, index) =>
+              option.id?.toString() ?? index.toString()
             }
-            keyExtractor={(option: IIssuePropertyOption, index) => option.id?.toString() ?? index.toString()}
           />
         )}
-        {issuePropertyOptionCreateList.map((issuePropertyOption, index) => (
-          <IssuePropertyCreateOptionItem
-            key={issuePropertyOption.key}
-            ref={index === issuePropertyOptionCreateList.length - 2 ? secondLastElementRef : undefined}
-            issueTypeId={issueTypeId}
-            issuePropertyId={issuePropertyId}
-            propertyOptionCreateListData={issuePropertyOption}
-            updateCreateListData={handleIssuePropertyOptionCreate}
-          />
+        {createListData.map((issuePropertyOption, index) => (
+          <div key={issuePropertyOption.key} className="flex group w-full items-center">
+            <Tooltip tooltipContent="Save to enable drag-and-rearrange">
+              <div className="rounded-sm flex-shrink-0 w-3 relative flex justify-center items-center transition-colors cursor-not-allowed">
+                <GripVertical size={12} className="hidden group-hover:block text-custom-text-400" />
+              </div>
+            </Tooltip>
+            <IssuePropertyCreateOptionItem
+              ref={index === createListData.length - 2 ? secondLastElementRef : undefined}
+              propertyOptionCreateListData={issuePropertyOption}
+              updateCreateListData={(value) => {
+                handlePropertyOptionsList("update", value);
+                setTimeout(() => {
+                  scrollIntoElementView();
+                }, 0);
+              }}
+              error={index === 0 ? error : undefined}
+            />
+          </div>
         ))}
       </div>
     </div>

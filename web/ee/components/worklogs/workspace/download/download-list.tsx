@@ -37,7 +37,11 @@ export const WorkspaceWorklogDownloadList: FC<TWorkspaceWorklogDownloadList> = o
             <WorklogDownloadEmptyScreen />
           ) : (
             worklogDownloadIds.map((downloadId) => (
-              <WorkspaceWorklogDownloadItem worklogDownloadId={downloadId} key={downloadId} />
+              <WorkspaceWorklogDownloadItem
+                workspaceSlug={workspaceSlug}
+                worklogDownloadId={downloadId}
+                key={downloadId}
+              />
             ))
           )}
         </>

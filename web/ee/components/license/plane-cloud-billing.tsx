@@ -26,6 +26,9 @@ export const PlaneCloudBilling: React.FC = observer(() => {
   // derived values
   const endDate = currentWorkspaceSubscribedPlanDetail?.current_period_end_date;
   const isSubscriptionCancelled = currentWorkspaceSubscribedPlanDetail?.is_canceled;
+  const isInTrialPeriod =
+    !currentWorkspaceSubscribedPlanDetail?.has_added_payment_method &&
+    !!currentWorkspaceSubscribedPlanDetail?.trial_end_date;
 
   const handleSubscriptionPageRedirection = () => {
     setIsLoading(true);
@@ -102,26 +105,44 @@ export const PlaneCloudBilling: React.FC = observer(() => {
               <div className="flex items-center gap-2">
                 <Image src={PlaneLogo} alt="Plane pro" width={24} height={24} />
                 <h4 className="text-2xl mb-1 leading-6 font-bold">Plane Pro</h4>
-                {isSubscriptionCancelled ? (
-                  <div className="text-center text-sm text-red-500 font-medium">
-                    (Expires on: {renderFormattedDate(endDate)})
-                  </div>
-                ) : (
-                    <div className="text-center text-sm text-custom-text-200 font-medium">
-                      (Renew on: {renderFormattedDate(endDate)})
-                    </div>
+                {!currentWorkspaceSubscribedPlanDetail.is_offline_payment && (
+                  <>
+                    {isInTrialPeriod && (
+                      <>
+                        <div className="flex-shrink-0 p-1 px-2 uppercase bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
+                          Free Trial
+                        </div>
+                        <div className="text-center text-sm text-custom-text-200 font-medium">
+                          (Free trial ends on:{" "}
+                          {renderFormattedDate(currentWorkspaceSubscribedPlanDetail?.trial_end_date)})
+                        </div>
+                      </>
+                    )}
+                    {!isInTrialPeriod &&
+                      (isSubscriptionCancelled ? (
+                        <div className="text-center text-sm text-red-500 font-medium">
+                          (Expires on: {renderFormattedDate(endDate)})
+                        </div>
+                      ) : (
+                        <div className="text-center text-sm text-custom-text-200 font-medium">
+                          (Renew on: {renderFormattedDate(endDate)})
+                        </div>
+                      ))}
+                  </>
                 )}
               </div>
-              <div>
-                <Button
-                  variant="neutral-primary"
-                  className="cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
-                  onClick={handleSubscriptionPageRedirection}
-                >
-                  {isLoading ? "Redirecting to Stripe..." : "Manage your subscriptions"}
-                  <ExternalLink className="h-3 w-3" strokeWidth={2} />
-                </Button>
-              </div>
+              {!currentWorkspaceSubscribedPlanDetail.is_offline_payment && (
+                <div>
+                  <Button
+                    variant="neutral-primary"
+                    className="cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
+                    onClick={handleSubscriptionPageRedirection}
+                  >
+                    {isLoading ? "Redirecting to Stripe..." : "Manage your subscriptions"}
+                    <ExternalLink className="h-3 w-3" strokeWidth={2} />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}

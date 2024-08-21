@@ -8,6 +8,8 @@ import {
 } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
+// plane web lib
+import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
 // plane web types
 import { TCreationListModes } from "@/plane-web/types";
 
@@ -27,11 +29,11 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
   const properties = issueType?.properties;
 
   return (
-    <div className="w-full mt-2 flow-root">
+    <div className="w-full mt-1 flow-root">
       <div className="overflow-x-auto horizontal-scrollbar scrollbar-sm">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="w-full">
-            <div className="flex items-center mx-7 px-1 gap-1.5 border-b-[0.5px] border-custom-border-200">
+            <div className="flex items-center mx-6 px-3 gap-1.5 border-b-[0.5px] border-custom-border-200">
               <div className="w-48 grow py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">Name</div>
               <div className="w-36 py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">Type</div>
               <div className="w-36 py-1.5 text-left text-sm font-medium text-custom-text-300 truncate">Attributes</div>
@@ -44,22 +46,32 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
             <div ref={containerRef} className="w-full min-h-36 max-h-72 overflow-y-auto py-2 px-6 transition-all">
               {properties &&
                 properties.map((property) => (
-                  <IssuePropertyListItem
+                  <IssuePropertyOptionsProvider
                     key={property.id}
                     issueTypeId={issueTypeId}
                     issuePropertyId={property.id}
-                    handleIssuePropertyCreateList={handleIssuePropertyCreateList}
-                  />
+                  >
+                    <IssuePropertyListItem
+                      issueTypeId={issueTypeId}
+                      issuePropertyId={property.id}
+                      handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+                    />
+                  </IssuePropertyOptionsProvider>
                 ))}
               {/* Issue properties create list */}
               {issuePropertyCreateList.map((issueProperty, index) => (
-                <IssuePropertyCreateListItem
+                <IssuePropertyOptionsProvider
                   key={issueProperty.key}
-                  ref={index === issuePropertyCreateList.length - 1 ? lastElementRef : undefined}
                   issueTypeId={issueTypeId}
-                  issuePropertyCreateListData={issueProperty}
-                  handleIssuePropertyCreateList={handleIssuePropertyCreateList}
-                />
+                  issuePropertyId={issueProperty.id}
+                >
+                  <IssuePropertyCreateListItem
+                    ref={index === issuePropertyCreateList.length - 1 ? lastElementRef : undefined}
+                    issueTypeId={issueTypeId}
+                    issuePropertyCreateListData={issueProperty}
+                    handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+                  />
+                </IssuePropertyOptionsProvider>
               ))}
             </div>
           </div>

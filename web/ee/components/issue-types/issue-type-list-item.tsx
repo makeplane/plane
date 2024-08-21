@@ -12,11 +12,13 @@ import { useIssueType } from "@/plane-web/hooks/store";
 type TIssueTypeListItem = {
   issueTypeId: string;
   isOpen: boolean;
+  isCollapseDisabled: boolean;
   onToggle: (issueTypeId: string) => void;
+  onEditIssueTypeIdChange: (issueTypeId: string) => void;
 };
 
 export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
-  const { issueTypeId, isOpen, onToggle } = props;
+  const { issueTypeId, isOpen, isCollapseDisabled, onToggle, onEditIssueTypeIdChange } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -36,44 +38,59 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
           isOpen={isOpen}
           onToggle={() => onToggle(issueTypeId)}
           title={
-            <div className="flex items-center w-full px-2 gap-2 cursor-pointer">
+            <div
+              className={cn("flex items-center w-full px-2 gap-2 cursor-pointer", {
+                "cursor-not-allowed": isCollapseDisabled,
+              })}
+            >
               <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
                   <ChevronRight
                     className={cn("flex-shrink-0 size-4 transition-all", {
                       "rotate-90 text-custom-text-100": isOpen,
                       "text-custom-text-300": !isOpen,
+                      "text-custom-text-400 opacity-70": isCollapseDisabled,
                     })}
                   />
                 </div>
                 <IssueTypeLogo
                   icon_props={issueTypeDetail?.logo_props?.icon}
-                  size={26}
-                  containerSize={38}
+                  size="xl"
                   isDefault={issueTypeDetail?.is_default}
                   containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
                 />
                 <div className="flex flex-col items-start justify-start whitespace-normal">
-                  <div className="flex gap-4 text-left">
+                  <div className="flex gap-4 text-left items-center">
                     <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
+                    {!issueTypeDetail?.is_active && (
+                      <div className="py-0.5 px-3 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
+                        Disabled
+                      </div>
+                    )}
                   </div>
                   <div className="text-sm text-custom-text-300 text-left line-clamp-1">
                     {issueTypeDetail?.description}
                   </div>
                 </div>
               </div>
-              <div className="flex-shrink-0 flex gap-4">
+              <div className="flex-shrink-0 flex">
                 {issueTypeDetail?.is_default && (
-                  <div className="py-1 px-4 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
+                  <div
+                    className={cn(
+                      "py-0.5 px-2 text-xs rounded text-custom-primary-100 bg-transparent border border-custom-primary-100 cursor-default font-medium"
+                    )}
+                  >
                     Default
                   </div>
                 )}
-                {!issueTypeDetail?.is_active && (
-                  <div className="flex-shrink-0 py-0.5 px-2 text-xs rounded font-medium text-red-600 bg-red-600/10">
-                    Disabled
-                  </div>
-                )}
-                {!issueTypeDetail?.is_default && <IssueTypeQuickActions issueTypeId={issueTypeId} />}
+                <div>
+                  {!issueTypeDetail?.is_default && (
+                    <IssueTypeQuickActions
+                      issueTypeId={issueTypeId}
+                      onEditIssueTypeIdChange={onEditIssueTypeIdChange}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           }

@@ -52,7 +52,7 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
         <button
           type="button"
           className={cn(
-            "w-full flex items-center justify-between px-1.5 py-1 text-sm gap-1 bg-custom-background-100 hover:bg-custom-background-80 border-[0.5px] border-custom-border-300 rounded cursor-pointer outline-none",
+            "property-title-dropdown w-full flex items-center justify-between px-1.5 py-1 text-sm gap-1 bg-custom-background-100 hover:bg-custom-background-80 border-[0.5px] border-custom-border-300 rounded cursor-pointer outline-none",
             Boolean(error) && "border-red-500",
             !propertyDetail.display_name && "py-2"
           )}

@@ -11,7 +11,7 @@ export const PROJECT_SETTINGS = {
   ...PROJECT_SETTINGS_CE,
   "issue-types": {
     key: "issue-types",
-    label: "Issue types",
+    label: "Issue Types",
     href: `/settings/issue-types/`,
     access: EUserProjectRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/issue-types/`,

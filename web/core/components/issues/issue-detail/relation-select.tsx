@@ -21,22 +21,22 @@ export type TRelationObject = { className: string; icon: (size: number) => React
 export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
   relates_to: {
     className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <RelatedIcon height={size} width={size} />,
+    icon: (size) => <RelatedIcon height={size} width={size} className="text-custom-text-200" />,
     placeholder: "Add related issues",
   },
   blocking: {
     className: "bg-yellow-500/20 text-yellow-700",
-    icon: (size) => <XCircle size={size} />,
+    icon: (size) => <XCircle size={size} className="text-custom-text-200" />,
     placeholder: "None",
   },
   blocked_by: {
     className: "bg-red-500/20 text-red-700",
-    icon: (size) => <CircleDot size={size} />,
+    icon: (size) => <CircleDot size={size} className="text-custom-text-200" />,
     placeholder: "None",
   },
   duplicate: {
     className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <CopyPlus size={size} />,
+    icon: (size) => <CopyPlus size={size} className="text-custom-text-200" />,
     placeholder: "None",
   },
 };

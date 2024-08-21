@@ -46,5 +46,10 @@ export const ActivityFilterRoot: FC<TActivityFilterRoot> = observer((props) => {
     };
   });
 
-  return <ActivityFilter selectedFilters={selectedFilters} filterOptions={filters} />;
+  const filteredSelectedFilters = selectedFilters.filter((filter) => {
+    if (!isFeatureFlagged && filter === EActivityFilterTypeEE.WORKLOG) return false;
+    return true;
+  });
+
+  return <ActivityFilter selectedFilters={filteredSelectedFilters} filterOptions={filters} />;
 });

@@ -7,10 +7,11 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// icons
+// types
 import { IWorkspaceSearchResults } from "@plane/types";
-// hooks
+// ui
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+// components
 import {
   ChangeIssueAssignee,
   ChangeIssuePriority,
@@ -23,8 +24,11 @@ import {
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { EmptyState } from "@/components/empty-state";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
+// fetch-keys
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+// hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -35,12 +39,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
-
-// ui
-// components
-// types
-// fetch-keys
-// constants
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();

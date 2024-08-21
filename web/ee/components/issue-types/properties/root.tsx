@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { v4 } from "uuid";
@@ -46,11 +46,18 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastElementRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const scrollIntoElementView = () => {
     if (lastElementRef.current) {
-      lastElementRef.current.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+      lastElementRef.current.scrollIntoView({ behavior: "auto", block: "nearest", inline: "start" });
+      const propertyTitleDropdownElement = lastElementRef.current.querySelector(
+        "button.property-title-dropdown"
+      ) as HTMLButtonElement | null;
+      setTimeout(() => {
+        propertyTitleDropdownElement?.focus();
+        propertyTitleDropdownElement?.click();
+      }, 50);
     }
-  }, [issuePropertyCreateList]);
+  };
 
   // handlers
   const handleIssuePropertyCreateList = (mode: TCreationListModes, value: TIssuePropertyCreateList) => {
@@ -74,7 +81,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
 
   return (
     <div className="bg-custom-background-100 border border-custom-border-200 rounded-lg">
-      <div className="pt-6">
+      <div className="pt-4">
         <div className="w-full flex gap-2 items-center px-6">
           <div className="text-base font-semibold">Properties</div>
         </div>
@@ -101,13 +108,15 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
         <Button
           variant="accent-primary"
           size="sm"
-          onClick={() =>
+          onClick={() => {
             handleIssuePropertyCreateList("add", {
               key: v4(),
               ...defaultIssueProperty,
-            })
-          }
-          disabled={!issueType?.is_active}
+            });
+            setTimeout(() => {
+              scrollIntoElementView();
+            }, 0);
+          }}
         >
           <Plus className="h-3.5 w-3.5" />
           Add new property

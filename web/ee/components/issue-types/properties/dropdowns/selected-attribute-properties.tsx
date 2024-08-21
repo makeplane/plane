@@ -7,42 +7,28 @@ import {
   MemberPickerAttributes,
   NumberAttributes,
   TextAttributes,
+  TIssuePropertyFormError,
 } from "@/plane-web/components/issue-types/properties";
 // plane web helpers
 import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
 // plane web types
-import {
-  EIssuePropertyType,
-  TCreationListModes,
-  TIssueProperty,
-  TOperationMode,
-  TIssuePropertyOptionCreateList,
-  TIssuePropertyTypeKeys,
-} from "@/plane-web/types";
+import { EIssuePropertyType, TIssueProperty, TOperationMode, TIssuePropertyTypeKeys } from "@/plane-web/types";
 
 type TSelectedPropertyAttributesProps = {
   issueTypeId: string;
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
   currentOperationMode: TOperationMode;
-  issuePropertyOptionCreateList: TIssuePropertyOptionCreateList[];
   onPropertyDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType>>(
     key: K,
     value: TIssueProperty<EIssuePropertyType>[K],
     shouldSync?: boolean
   ) => void;
-  handleIssuePropertyOptionCreateList: (mode: TCreationListModes, value: TIssuePropertyOptionCreateList) => void;
   disabled?: boolean;
+  error?: TIssuePropertyFormError;
 };
 
 export const SelectedAttributeProperties = observer((props: TSelectedPropertyAttributesProps) => {
-  const {
-    issueTypeId,
-    propertyDetail,
-    currentOperationMode,
-    issuePropertyOptionCreateList,
-    onPropertyDetailChange,
-    handleIssuePropertyOptionCreateList,
-  } = props;
+  const { issueTypeId, propertyDetail, currentOperationMode, onPropertyDetailChange, error } = props;
 
   const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
     TEXT: (
@@ -66,9 +52,8 @@ export const SelectedAttributeProperties = observer((props: TSelectedPropertyAtt
         issueTypeId={issueTypeId}
         dropdownPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.OPTION>>}
         currentOperationMode={currentOperationMode}
-        issuePropertyOptionCreateList={issuePropertyOptionCreateList}
         onDropdownDetailChange={onPropertyDetailChange}
-        handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
+        error={error}
       />
     ),
     BOOLEAN: (

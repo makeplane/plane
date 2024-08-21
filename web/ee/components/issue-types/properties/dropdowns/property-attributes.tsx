@@ -9,46 +9,32 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
-import { SelectedAttributeProperties } from "@/plane-web/components/issue-types/properties";
+import { SelectedAttributeProperties, TIssuePropertyFormError } from "@/plane-web/components/issue-types/properties";
 // plane web helpers
 import { getIssuePropertyAttributeDisplayName } from "@/plane-web/helpers/issue-properties.helper";
 // plane web types
-import {
-  EIssuePropertyType,
-  TCreationListModes,
-  TIssueProperty,
-  TOperationMode,
-  TIssuePropertyOptionCreateList,
-} from "@/plane-web/types";
+import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TPropertyAttributesDropdownProps = {
   issueTypeId: string;
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
   currentOperationMode: TOperationMode | null;
-  issuePropertyOptionCreateList: TIssuePropertyOptionCreateList[];
   onPropertyDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType>>(
     key: K,
     value: TIssueProperty<EIssuePropertyType>[K],
     shouldSync?: boolean
   ) => void;
-  handleIssuePropertyOptionCreateList: (mode: TCreationListModes, value: TIssuePropertyOptionCreateList) => void;
   disabled?: boolean;
+  error?: TIssuePropertyFormError;
 };
 
 export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDropdownProps) => {
-  const {
-    issueTypeId,
-    propertyDetail,
-    currentOperationMode,
-    issuePropertyOptionCreateList,
-    handleIssuePropertyOptionCreateList,
-    onPropertyDetailChange,
-    disabled,
-  } = props;
+  const { issueTypeId, propertyDetail, currentOperationMode, onPropertyDetailChange, disabled, error } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // derived values
+  const doesAttributeHasError = Boolean(error?.is_multi) || Boolean(error?.options);
   const attributeDisplayName = getIssuePropertyAttributeDisplayName(propertyDetail);
   // list of property types that should not be allowed to change attributes
   const DISABLE_ATTRIBUTE_CHANGE_LIST = [EIssuePropertyType.BOOLEAN, EIssuePropertyType.DATETIME];
@@ -62,7 +48,12 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
     (propertyDetail.property_type && DISABLE_ATTRIBUTE_CHANGE_LIST.includes(propertyDetail.property_type))
   ) {
     return (
-      <span className="px-2 py-0.5 font-medium text-custom-text-300 bg-custom-background-80/40 rounded">
+      <span
+        className={cn(
+          "px-2 py-0.5 font-medium text-custom-text-300 rounded",
+          !currentOperationMode && "bg-custom-background-80/40"
+        )}
+      >
         {attributeDisplayName ?? ""}
       </span>
     );
@@ -79,6 +70,7 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
               {
                 "bg-custom-background-90 cursor-not-allowed": disabled,
                 "py-2": !attributeDisplayName,
+                "border-red-500": doesAttributeHasError,
               }
             )}
             disabled={disabled}
@@ -101,9 +93,8 @@ export const PropertyAttributesDropdown = observer((props: TPropertyAttributesDr
               issueTypeId={issueTypeId}
               propertyDetail={propertyDetail}
               currentOperationMode={currentOperationMode}
-              issuePropertyOptionCreateList={issuePropertyOptionCreateList}
               onPropertyDetailChange={onPropertyDetailChange}
-              handleIssuePropertyOptionCreateList={handleIssuePropertyOptionCreateList}
+              error={error}
             />
           </div>
         </Popover.Panel>,

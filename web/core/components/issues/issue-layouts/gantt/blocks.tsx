@@ -2,13 +2,14 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// hooks
 // ui
 import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+// hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type Props = {
