@@ -624,6 +624,7 @@ export class CycleStore implements ICycleStore {
       .then((response) => {
         runInAction(() => {
           set(this.cycleMap, [cycleId, "archived_at"], response.archived_at);
+          if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);
         });
       })
       .catch((error) => {
