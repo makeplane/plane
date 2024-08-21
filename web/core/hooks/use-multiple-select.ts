@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo } from "react";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
+//
+import useReloadConfirmations from "./use-reload-confirmation";
 
 export type TEntityDetails = {
   entityID: string;
@@ -51,6 +53,15 @@ export const useMultipleSelect = (props: Props) => {
     getIsEntityActive,
     getEntityDetailsFromEntityID,
   } = useMultipleSelectStore();
+
+  useReloadConfirmations(
+    selectedEntityIds && selectedEntityIds.length > 0,
+    "Are you sure you would want to leave the page, all the selected bulk issues will be cleared",
+    true,
+    () => {
+      clearSelection();
+    }
+  );
 
   const groups = useMemo(() => Object.keys(entities), [entities]);
 
