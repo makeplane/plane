@@ -148,7 +148,7 @@ const Details: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           />
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent" />
+          <div className="hidden rounded absolute group-hover/project-card:flex inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent" />
         </div>
         <div className="flex gap-2 absolute top-2 right-2" data-prevent-nprogress>
           {(isOwner || !isArchived) && (

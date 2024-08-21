@@ -110,30 +110,21 @@ export class WorkspaceFeatureStore implements IWorkspaceFeatureStore {
     workspaceSlug: string,
     payload: Partial<TWorkspaceFeature>
   ): Promise<TWorkspaceFeatures | undefined> => {
-    const currentWorkspaceFeatures = this.workspaceFeatures?.[workspaceSlug];
     try {
+      this.loader = EWorkspaceFeatureLoader.MUTATION_LOADER;
+      const workspaceFeatures = await workspaceFeatureService.updateWorkspaceFeature(workspaceSlug, payload);
+      if (workspaceFeatures?.is_project_grouping_enabled) {
+        this.store.projectRoot.project.fetchProjects(workspaceSlug);
+      }
       runInAction(() => {
-        this.loader = EWorkspaceFeatureLoader.MUTATION_LOADER;
         Object.entries(payload).forEach(([key, value]) => {
           if (this.workspaceFeatures) {
             set(this.workspaceFeatures, [workspaceSlug, key], value);
           }
         });
       });
-      const workspaceFeatures = await workspaceFeatureService.updateWorkspaceFeature(workspaceSlug, payload);
-      if (workspaceFeatures?.is_project_grouping_enabled) {
-        this.store.projectRoot.project.fetchProjects(workspaceSlug);
-      }
       return workspaceFeatures;
     } catch (error) {
-      runInAction(() => {
-        Object.entries(payload).forEach(([key]) => {
-          if (this.workspaceFeatures && currentWorkspaceFeatures) {
-            const featureKey = key as EWorkspaceFeatures;
-            set(this.workspaceFeatures, [workspaceSlug, key], currentWorkspaceFeatures[featureKey]);
-          }
-        });
-      });
       throw error;
     } finally {
       runInAction(() => (this.loader = undefined));

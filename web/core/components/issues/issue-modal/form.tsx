@@ -25,7 +25,7 @@ import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
@@ -89,6 +89,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
+  const { getStateById } = useProjectState();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
@@ -220,6 +221,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     const projectDetails = getProjectById(issue.project_id);
     if (!projectDetails) return;
 
+    const stateDetails = getStateById(issue.state_id);
+
     setSelectedParentIssue({
       id: issue.id,
       name: issue.name,
@@ -227,8 +230,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       project__identifier: projectDetails.identifier,
       project__name: projectDetails.name,
       sequence_id: issue.sequence_id,
+      type_id: issue.type_id,
+      state__color: stateDetails?.color,
     } as ISearchIssueResponse);
-  }, [watch, getIssueById, getProjectById, selectedParentIssue]);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
   // executing this useEffect when isDirty changes
   useEffect(() => {

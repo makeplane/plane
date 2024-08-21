@@ -12,24 +12,30 @@ export const IssueNumberPropertyActivity: FC<TIssueAdditionalPropertiesActivityI
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
-  const propertyName = propertyDetail?.display_name?.toLowerCase();
+  const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
   return (
     <>
       {activityDetail.action === "created" && (
         <>
-          set {propertyName} to <span className="font-medium text-custom-text-100">{activityDetail?.new_value}.</span>
+          set <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{activityDetail?.new_value}.</span>
         </>
       )}
       {activityDetail.action === "updated" && (
         <>
-          updated {propertyName} from{" "}
-          <span className="font-medium text-custom-text-100">{activityDetail?.old_value}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{activityDetail?.new_value}.</span>
+          changed <span className="font-medium text-custom-text-100">{activityDetail?.old_value}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{activityDetail?.new_value}</span> in{" "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>
       )}
-      {activityDetail.action === "deleted" && <>removed {propertyName}.</>}
+      {activityDetail.action === "deleted" && (
+        <>
+          removed <span className="font-medium text-custom-text-100">{activityDetail?.old_value}</span> from{" "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span>.
+        </>
+      )}
     </>
   );
 });

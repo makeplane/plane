@@ -607,6 +607,12 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
 
         cycle.archived_at = timezone.now()
         cycle.save()
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(
             {"archived_at": str(cycle.archived_at)},
             status=status.HTTP_200_OK,

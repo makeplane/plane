@@ -3,10 +3,9 @@ import { useRef, useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-import { LogoSpinner } from "@/components/common";
+import { Spinner } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
-import { Spinner } from "@plane/ui";
 
 interface CustomIframeProps {
   srcBase: string;

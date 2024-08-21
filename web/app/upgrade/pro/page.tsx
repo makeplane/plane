@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { InfoIcon } from "lucide-react";
+import { Button, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { RadioInput } from "@/components/estimates";
 // hooks
@@ -55,8 +56,18 @@ export default function UpgradePlanPage() {
         label="Choose your edition"
         options={Object.keys(PLANE_EDITIONS).map((edition) => ({
           label: (
-            <div className="flex flex-col gap-1">
-              <div className="text-base font-medium">{PLANE_EDITIONS[edition].title}</div>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 text-base font-medium">
+                <div>{PLANE_EDITIONS[edition].title}</div>
+                {edition === "self-hosted" && (
+                  <Tooltip position="right" tooltipContent="ETA: Mid-September">
+                    <div className="flex items-center gap-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full">
+                      Coming soon
+                      <InfoIcon className="w-3 h-3" />
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
               <div className="text-sm text-onboarding-text-300">{PLANE_EDITIONS[edition].description}</div>
             </div>
           ),
@@ -65,8 +76,8 @@ export default function UpgradePlanPage() {
         className="w-full"
         labelClassName="text-center text-3xl font-semibold pb-6"
         wrapperClassName="w-full flex flex-col gap-4"
-        fieldClassName="border border-custom-border-200 rounded-md py-2 px-4 items-start"
-        buttonClassName="size-3.5 mt-1"
+        fieldClassName="border border-custom-border-200 rounded-md py-4 px-6 items-start gap-3"
+        buttonClassName="size-5 mt-1"
         selected={selectedEdition}
         onChange={(value) => setSelectedEdition(value)}
       />

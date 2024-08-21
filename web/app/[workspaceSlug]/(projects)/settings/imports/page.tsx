@@ -11,7 +11,7 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useInstance, useUser, useWorkspace } from "@/hooks/store";
 // plane web components
 import IntegrationGuide from "@/plane-web/components/integration/guide";
 // plane web hooks
@@ -25,6 +25,8 @@ const ImportsPage = observer(() => {
     userProfile: { data: userProfile },
     membership: { currentWorkspaceRole },
   } = useUser();
+  const { config } = useInstance();
+
   const { currentWorkspace } = useWorkspace();
 
   // derived values
@@ -44,7 +46,7 @@ const ImportsPage = observer(() => {
       </>
     );
 
-  if (!isSiloIntegrationEnabled)
+  if (!isSiloIntegrationEnabled || !config?.silo_base_url)
     return (
       <>
         <PageHead title={pageTitle} />

@@ -1,15 +1,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { cn } from "@plane/editor";
 import { Button } from "@plane/ui";
 import { JoinProjectModal } from "@/components/project";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   project: TProject;
+  className?: string;
 };
 const JoinButton: React.FC<Props> = (props) => {
-  const { project } = props;
+  const { project, className } = props;
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
   const { workspaceSlug } = useParams();
   const router = useRouter();
@@ -29,9 +31,10 @@ const JoinButton: React.FC<Props> = (props) => {
         <Link
           href={`/${workspaceSlug}/projects/${project.id}/issues`}
           tabIndex={-1}
-          className={
-            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none mt-2 flex-end m-2 bg-green-500/20 text-green-500 hover:bg-green-500/10 hover:text-green-500 focus:bg-green-500/20"
-          }
+          className={cn(
+            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none my-0 flex-end bg-green-500/20 text-green-500 hover:bg-green-500/10 hover:text-green-500 focus:bg-green-500/20",
+            className
+          )}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -46,9 +49,10 @@ const JoinButton: React.FC<Props> = (props) => {
         <Button
           tabIndex={-1}
           variant="accent-primary"
-          className={
-            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none mt-2 flex-end m-2"
-          }
+          className={cn(
+            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none my-0 flex-end",
+            className
+          )}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

@@ -21,7 +21,7 @@ export const IssueMemberPropertyActivity: FC<TIssueAdditionalPropertiesActivityI
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
-  const propertyName = propertyDetail?.display_name?.toLowerCase();
+  const propertyName = propertyDetail?.display_name;
   const workspaceDetail = activityDetail?.workspace ? getWorkspaceById(activityDetail.workspace) : null;
 
   const MemberDetail = ({ id }: TMemberDetail) => {
@@ -43,20 +43,22 @@ export const IssueMemberPropertyActivity: FC<TIssueAdditionalPropertiesActivityI
     <>
       {activityDetail.action === "created" && activityDetail.new_value ? (
         <>
-          added a new {propertyName} <MemberDetail id={activityDetail.new_value as string} />.
+          selected <MemberDetail id={activityDetail.new_value} /> as member(s) for{" "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>
       ) : (
         activityDetail.action === "deleted" &&
         activityDetail.old_value && (
           <>
-            removed the {propertyName} <MemberDetail id={activityDetail.old_value} />.
+            deselected <MemberDetail id={activityDetail.old_value} /> from the previous selection in{" "}
+            <span className="font-medium text-custom-text-100">{propertyName}</span>.
           </>
         )
       )}
       {activityDetail.action === "updated" && activityDetail.old_value && activityDetail.new_value && (
         <>
-          updated {propertyName} from <MemberDetail id={activityDetail.old_value} /> to{" "}
-          <MemberDetail id={activityDetail.new_value} />.
+          changed <MemberDetail id={activityDetail.old_value} /> to <MemberDetail id={activityDetail.new_value} /> in{" "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>
       )}
     </>

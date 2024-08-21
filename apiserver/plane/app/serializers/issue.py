@@ -731,6 +731,7 @@ class IssueLiteSerializer(DynamicBaseSerializer):
             "id",
             "sequence_id",
             "project_id",
+            "type_id",
         ]
         read_only_fields = fields
 

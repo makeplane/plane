@@ -10,7 +10,7 @@ import {
   ProjectStateGroupList,
 } from "@/plane-web/components/workspace-project-states";
 // plane web hooks
-import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import { useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types
 
 type TWorkspaceProjectStatesRoot = {
@@ -25,6 +25,7 @@ export const WorkspaceProjectStatesRoot: FC<TWorkspaceProjectStatesRoot> = obser
   const {} = useAppTheme();
   // hooks
   const { loader, getProjectStateIdsWithGroupingByWorkspaceId } = useWorkspaceProjectStates();
+  const { loader: workspaceLoader } = useWorkspaceFeatures();
 
   // derived values
   const groupedProjectStateIds = getProjectStateIdsWithGroupingByWorkspaceId(workspaceId);
@@ -32,7 +33,7 @@ export const WorkspaceProjectStatesRoot: FC<TWorkspaceProjectStatesRoot> = obser
   return (
     <div className="space-y-3">
       {isProjectGroupingEnabled && groupedProjectStateIds ? (
-        loader ? (
+        loader || workspaceLoader ? (
           <WorkspaceProjectStatesLoader />
         ) : (
           <ProjectStateGroupList

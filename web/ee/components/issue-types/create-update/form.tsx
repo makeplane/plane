@@ -3,6 +3,8 @@
 import { FormEvent, useState } from "react";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // plane web components
 import { IssueTypeIconPicker } from "@/plane-web/components/issue-types";
 // plane web types
@@ -47,7 +49,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = (props) => {
     <form onSubmit={handleIssueTypeFormSubmit}>
       <div className="space-y-3 p-5 pb-2">
         <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Issue type</h3>
-        <div className="flex items-start gap-2 w-full">
+        <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
           <IssueTypeIconPicker
             isOpen={isEmojiPickerOpen}
             handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}

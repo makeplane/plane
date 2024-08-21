@@ -16,7 +16,6 @@ from plane.app.serializers import IssueAttachmentSerializer
 from plane.db.models import IssueAttachment
 from plane.app.permissions import allow_permission, ROLE
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.app.permissions import allow_permission, ROLE
 
 
 class IssueAttachmentEndpoint(BaseAPIView):

@@ -297,5 +297,5 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
-    ),
+    )
 ]
