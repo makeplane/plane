@@ -222,11 +222,7 @@ export class Storage {
 
     const parsingEnd = performance.now();
 
-    const times = {
-      IssueQuery: end - start,
-      Parsing: parsingEnd - parsingStart,
-    };
-
+    const grouping = performance.now();
     if (groupByProperty && page === "0") {
       if (subGroupByProperty) {
         issueResults = getSubGroupedIssueResults(issueResults);
@@ -234,7 +230,13 @@ export class Storage {
         issueResults = getGroupedIssueResults(issueResults);
       }
     }
+    const groupingEnd = performance.now();
 
+    const times = {
+      IssueQuery: end - start,
+      Parsing: parsingEnd - parsingStart,
+      Grouping: groupingEnd - grouping,
+    };
     console.log(issueResults);
     console.table(times);
 
@@ -250,7 +252,7 @@ export class Storage {
       next_page_results,
       total_pages,
     };
-    console.log("#### OUT", out);
+    // console.log("#### OUT", out);
 
     return out;
   };

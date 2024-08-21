@@ -1,5 +1,6 @@
 import { persistence } from "../storage.sqlite";
 import { GROUP_BY_MAP, ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
+import { getOrderByFragment, translateQueryParams } from "./query.utils";
 import { wrapDateTime, filterConstructor } from "./utils";
 const SPECIAL_ORDER_BY = [
   "labels__name",
@@ -10,38 +11,12 @@ const SPECIAL_ORDER_BY = [
   "-module__name",
 ];
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const {
-    order_by,
-    cursor,
-    per_page,
-    labels,
-    sub_issue,
-    assignees,
-    state,
-    cycle,
-    group_by,
-    sub_group_by,
-    module,
-    ...otherProps
-  } = queries;
-
-  if (state) otherProps.state_id = state;
-  if (cycle) otherProps.cycle_id = cycle;
-  if (module) otherProps.module_ids = module;
-  if (labels) otherProps.label_ids = labels;
-  if (assignees) otherProps.assignee_ids = assignees;
-
-  let orderByString = "";
-  if (order_by) {
-    //if order_by starts with "-" then sort in descending order
-    if (order_by.startsWith("-")) {
-      orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC, created_at DESC`;
-    } else {
-      orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC, created_at DESC`;
-    }
-  }
+  const { order_by, cursor, per_page, group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
+  const orderByString = getOrderByFragment(order_by);
   const [pageSize, page, offset] = cursor.split(":");
+
   const filterString = filterConstructor(otherProps);
+  const subFilterString = subFilterConstructor(queries);
 
   let sql = "";
   if (group_by) {
@@ -65,15 +40,18 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
         JOIN issues i ON im.issue_id = i.id
         WHERE im.key = '${translatedGroupBy}'  -- param for group
         AND i.project_id = '${projectId}'  -- Project ID
-        ${filterString}
+        ${filterString} ${subFilterString}
         ) rs
       JOIN issues i ON rs.issue_id = i.id
       WHERE rs.rank <= ${per_page};`;
     } else {
       sql = `
         SELECT j.* FROM (
-          SELECT 	i.*,i.${translatedGroupBy} as group_id, i.${translatedSubGroupBy} as sub_group_id,
-                  ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy}, i.${translatedSubGroupBy} ${orderByString} ) as rank, 
+          SELECT 	i.*,i.${translatedGroupBy} as group_id, 
+          -- i.${translatedSubGroupBy} as sub_group_id,
+                  ROW_NUMBER() OVER (PARTITION BY i.${translatedGroupBy} 
+                  -- , i.${translatedSubGroupBy} 
+                  ${orderByString} ) as rank, 
                   COUNT(*) OVER (PARTITION by i.${translatedGroupBy}) as total_issues 
 
                   FROM issues AS i LEFT JOIN issue_meta as im ON i.id = im.issue_id 
@@ -167,4 +145,34 @@ export const stageIssueInserts = (issue: any) => {
       });
     }
   });
+};
+
+const subFilterConstructor = (queries: any) => {
+  // return "";
+  let { group_by, sub_group_by } = queries;
+  group_by = GROUP_BY_MAP[group_by];
+  sub_group_by = GROUP_BY_MAP[sub_group_by];
+  const fields = new Set();
+  if (ARRAY_FIELDS.includes(sub_group_by)) {
+    fields.add(sub_group_by);
+  }
+  if (ARRAY_FIELDS.includes(group_by)) {
+    fields.add(group_by);
+  }
+
+  ARRAY_FIELDS.forEach((field: string) => {
+    if (queries[field]) {
+      fields.add(field);
+    }
+  });
+
+  if (fields.size === 0) {
+    return "";
+  }
+
+  let sql = "";
+
+  sql += 'AND im.key IN ("' + Array.from(fields).join('","') + '")';
+
+  return sql;
 };
