@@ -1697,23 +1697,6 @@ def issue_activity(
         )
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
-            # Don't send activities if the actor is a bot
-            try:
-                if settings.PROXY_BASE_URL:
-                    for issue_activity in issue_activities_created:
-                        headers = {"Content-Type": "application/json"}
-                        issue_activity_json = json.dumps(
-                            IssueActivitySerializer(issue_activity).data,
-                            cls=DjangoJSONEncoder,
-                        )
-                        _ = requests.post(
-                            f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
-                            json=issue_activity_json,
-                            headers=headers,
-                        )
-            except Exception as e:
-                log_exception(e)
-
             for activity in issue_activities_created:
                 webhook_activity.delay(
                     event=(
