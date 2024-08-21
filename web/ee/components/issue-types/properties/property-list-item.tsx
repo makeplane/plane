@@ -419,6 +419,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       <div className="relative w-16 whitespace-nowrap text-right text-sm font-medium">
         <IssuePropertyQuickActions
           currentOperationMode={issuePropertyOperationMode}
+          isPropertyDisabled={!issuePropertyData.is_active}
           isSubmitting={isSubmitting}
           onCreateUpdate={handleCreateUpdate}
           onDiscard={handleDiscard}

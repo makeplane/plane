@@ -13,7 +13,7 @@ export const PROJECT_SETTINGS = {
     key: "issue-types",
     label: "Issue Types",
     href: `/settings/issue-types/`,
-    access: EUserProjectRoles.MEMBER,
+    access: EUserProjectRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/issue-types/`,
     Icon: SettingIcon,
   },

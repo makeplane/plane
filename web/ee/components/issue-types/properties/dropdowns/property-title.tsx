@@ -39,7 +39,7 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
         <span className="px-1 truncate">{propertyDetail.display_name ?? ""}</span>
         {propertyDetail.description && (
           <Tooltip tooltipContent={propertyDetail.description} position="right" disabled={!propertyDetail.description}>
-            <InfoIcon className="w-3 h-3 text-custom-text-300 cursor-pointer" />
+            <InfoIcon className="flex-shrink-0 w-3 h-3 text-custom-text-300 cursor-pointer" />
           </Tooltip>
         )}
       </div>
@@ -58,8 +58,8 @@ export const PropertyTitleDropdown = observer((props: TPropertyTitleDropdownProp
           )}
           ref={setReferenceElement}
         >
-          <span className="text-custom-text-200">{propertyDetail.display_name ?? ""}</span>
-          <ChevronDown className="h-3 w-3" aria-hidden="true" />
+          <span className="text-custom-text-200 truncate">{propertyDetail.display_name ?? ""}</span>
+          <ChevronDown className="flex-shrink-0 h-3 w-3" aria-hidden="true" />
         </button>
       </Popover.Button>
       {createPortal(

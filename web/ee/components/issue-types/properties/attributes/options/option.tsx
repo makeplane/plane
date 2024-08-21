@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
 // ui
@@ -45,12 +46,17 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
 
   // handle create/ update operation
   const handleCreateUpdate = async () => {
+    // return if no change in data
+    if (isEqual(propertyOptionCreateData.name, optionData.name)) return;
+    // trim option name
+    const optionDataToUpdate = { ...optionData, name: optionData.name?.trim() };
+    setOptionData(optionDataToUpdate);
     // return if option name is same as previous or empty
-    if (!optionData.name) return;
+    if (!optionDataToUpdate.name) return;
     // check for duplicate option name
-    if (checkForDuplicate({ identifier: optionData.id ?? key, value: optionData.name })) return;
+    if (checkForDuplicate({ identifier: optionDataToUpdate.id ?? key, value: optionDataToUpdate.name })) return;
     // handle option data update
-    updateOptionData({ key, ...optionData });
+    updateOptionData({ key, ...optionDataToUpdate });
   };
 
   // handle changes in option local data
