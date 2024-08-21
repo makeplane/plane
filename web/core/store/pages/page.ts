@@ -443,6 +443,7 @@ export class Page implements IPage {
     runInAction(() => {
       this.archived_at = response.archived_at;
     });
+    if (this.rootStore.favorite.entityMap[this.id]) this.rootStore.favorite.removeFavoriteFromStore(this.id);
   };
 
   /**
