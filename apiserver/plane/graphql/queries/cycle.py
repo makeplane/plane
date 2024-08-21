@@ -7,6 +7,10 @@ import strawberry
 # Python Standard Library Imports
 from asgiref.sync import sync_to_async
 
+# Django Imports
+from django.utils import timezone
+from django.db.models import Q
+
 # Strawberry Imports
 from strawberry.types import Info
 from strawberry.scalars import JSON
@@ -38,13 +42,25 @@ class CycleQuery:
         slug: str,
         project: strawberry.ID,
     ) -> list[CycleType]:
+        # get cycles those are current and upcoming cycles based on the start_date and end_date
         cycles = await sync_to_async(list)(
-            Cycle.objects.filter(workspace__slug=slug)
-            .filter(project_id=project)
+            Cycle.objects.filter(workspace__slug=slug, project_id=project)
             .filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(
+                Q(start_date__isnull=True, end_date__isnull=True)
+                | Q(
+                    start_date__lte=timezone.now().date(),
+                    end_date__gte=timezone.now().date(),
+                )
+                | (
+                    Q(start_date__isnull=False)
+                    & Q(start_date__gte=timezone.now().date())
+                )
+            )
+            .order_by("start_date")
         )
         return cycles
 

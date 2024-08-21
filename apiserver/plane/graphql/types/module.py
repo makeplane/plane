@@ -14,6 +14,7 @@ from plane.db.models import Module, Issue
 # Third-party library imports
 from asgiref.sync import sync_to_async
 
+
 @strawberry_django.type(Module)
 class ModuleType:
     name: str

@@ -7,8 +7,9 @@ from .queries.workspace import (
     WorkspaceMembersQuery,
     WorkspaceIssuesInformationQuery,
     WorkspaceIssuesQuery,
+    YourWorkQuery,
 )
-from .queries.users import UserQuery
+from .queries.users import UserQuery, UserFavoritesQuery, UserRecentVisitQuery
 from .queries.users import ProfileQuery
 from .queries.project import ProjectQuery, ProjectMembersQuery
 from .queries.label import LabelQuery, WorkspaceLabelQuery
@@ -83,6 +84,9 @@ class Query(
     CycleIssueQuery,
     ModuleQuery,
     ModuleIssueQuery,
+    YourWorkQuery,
+    UserFavoritesQuery,
+    UserRecentVisitQuery,
     IssueLinkQuery,
     IssuesInformationQuery,
     WorkspaceIssuesInformationQuery,

@@ -69,8 +69,7 @@ class CycleType:
     async def completed_issues(self, info: Info) -> int:
         total_issues = await sync_to_async(
             lambda: Issue.issue_objects.filter(
-                issue_cycle__cycle_id=self.id,
-                state__group="completed"
+                issue_cycle__cycle_id=self.id, state__group="completed"
             ).count()
         )()
         return total_issues

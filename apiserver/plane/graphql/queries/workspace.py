@@ -5,13 +5,19 @@ from asgiref.sync import sync_to_async
 
 # Strawberry Imports
 from strawberry.types import Info
-
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
 
+# Django Imports
+from django.db.models import Q
+
 # Module Imports
-from plane.graphql.types.workspace import WorkspaceType, WorkspaceMemberType
-from plane.db.models import Workspace, WorkspaceMember, Issue
+from plane.graphql.types.workspace import (
+    WorkspaceType,
+    WorkspaceMemberType,
+    WorkspaceYourWorkType,
+)
+from plane.db.models import Workspace, WorkspaceMember, Issue, Project, Page
 from plane.graphql.utils.issue_filters import issue_filters
 from plane.graphql.types.issue import (
     IssuesInformationType,
@@ -133,3 +139,63 @@ class WorkspaceIssuesQuery:
         )
 
         return paginate(results_object=issues, cursor=cursor)
+
+
+# workspace your work
+@strawberry.type
+class YourWorkQuery:
+    @strawberry.field(
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
+    )
+    async def yourWork(
+        self,
+        info: Info,
+        slug: str,
+    ) -> WorkspaceYourWorkType:
+        # projects
+        projects = await sync_to_async(list)(
+            Project.objects.filter(workspace__slug=slug)
+            .filter(
+                Q(
+                    project_projectmember__member=info.context.user,
+                    project_projectmember__is_active=True,
+                )
+            )
+            .values_list("id", flat=True)
+        )
+
+        # issues
+        issues = await sync_to_async(list)(
+            Issue.objects.filter(workspace__slug=slug)
+            .filter(
+                Q(
+                    project__project_projectmember__member=info.context.user,
+                    project__project_projectmember__is_active=True,
+                    state__group__in=["unstarted", "started"],
+                    assignees__in=[info.context.user],
+                ),
+            )
+            .values_list("id", flat=True)
+        )
+
+        # pages
+        pages = await sync_to_async(list)(
+            Page.objects.filter(workspace__slug=slug)
+            .filter(
+                Q(
+                    projects__project_projectmember__member=info.context.user,
+                    projects__project_projectmember__is_active=True,
+                    archived_at__isnull=True,
+                    owned_by=info.context.user,
+                ),
+            )
+            .values_list("id", flat=True)
+        )
+
+        your_work = WorkspaceYourWorkType(
+            projects=len(projects), issues=len(issues), pages=len(pages)
+        )
+
+        return your_work

@@ -130,8 +130,8 @@ class IssueMutation:
         name: Optional[str] = None,
         state: Optional[str] = None,
         priority: Optional[str] = None,
-        labels: list[strawberry.ID] = None,
-        assignees: list[strawberry.ID] = None,
+        labels: Optional[list[strawberry.ID]] = None,
+        assignees: Optional[list[strawberry.ID]] = None,
         description: Optional[str] = None,
         parent: Optional[str] = None,
         estimatePoint: Optional[str] = None,
@@ -293,7 +293,6 @@ class IssueAttachmentMutation:
         issue: strawberry.ID,
         attachment: strawberry.ID,
     ) -> bool:
-
         issue_attachment = await sync_to_async(IssueAttachment.objects.get)(
             id=attachment,
             issue_id=issue,

@@ -37,7 +37,8 @@ class ModuleQuery:
         info: Info,
         slug: str,
         project: strawberry.ID,
-    ) -> list[ModuleType]:
+        cursor: Optional[str] = None,
+    ) -> PaginatorResponse[ModuleType]:
         modules = await sync_to_async(list)(
             Module.objects.filter(workspace__slug=slug)
             .filter(project_id=project)
@@ -46,7 +47,8 @@ class ModuleQuery:
                 project__project_projectmember__is_active=True,
             )
         )
-        return modules
+
+        return paginate(results_object=modules, cursor=cursor)
 
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
@@ -66,6 +68,29 @@ class ModuleQuery:
             project__project_projectmember__is_active=True,
         )
         return module
+
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def moduleIds(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        moduleIds: list[strawberry.ID],
+    ) -> list[ModuleType]:
+        modules = await sync_to_async(list)(
+            Module.objects.filter(workspace__slug=slug)
+            .filter(
+                project_id=project,
+                id__in=moduleIds,
+            )
+            .filter(
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+        )
+        return modules
 
 
 # module issues information query

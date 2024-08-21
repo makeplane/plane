@@ -134,7 +134,10 @@ class CycleIssueMutation:
         issue: strawberry.ID,
     ) -> bool:
         cycle_issue = await sync_to_async(CycleIssue.objects.filter)(
-            cycle_id=cycle, project_id=project, workspace__slug=slug, issue_id=issue
+            cycle_id=cycle,
+            project_id=project,
+            workspace__slug=slug,
+            issue_id=issue,
         )
         await sync_to_async(issue_activity.delay)(
             type="cycle.activity.deleted",
