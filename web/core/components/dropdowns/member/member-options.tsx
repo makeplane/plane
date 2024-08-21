@@ -88,7 +88,7 @@ export const MemberOptions = observer((props: Props) => {
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20"
+        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-[19]"
         ref={setPopperElement}
         style={{
           ...styles.popper,

@@ -12,14 +12,15 @@ export const IssueBooleanPropertyActivity: FC<TIssueAdditionalPropertiesActivity
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
-  const propertyName = propertyDetail?.display_name?.toLowerCase();
+  const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
   return (
     <>
       {activityDetail.new_value && (
         <>
-          {activityDetail.action === "created" ? "set" : "updated"} {propertyName} to{" "}
+          {activityDetail.action === "created" ? "set " : "updated "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
           <span className="font-medium text-custom-text-100">
             {activityDetail?.new_value === "true" ? "True" : "False"}.
           </span>

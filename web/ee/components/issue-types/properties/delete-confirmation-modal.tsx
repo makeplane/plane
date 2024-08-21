@@ -8,13 +8,14 @@ import { cn } from "@/helpers/common.helper";
 
 type TProps = {
   isOpen: boolean;
+  isDisabledAlready: boolean;
   onClose: () => void;
   onDisable: () => Promise<void>;
   onDelete: () => Promise<void>;
 };
 
 export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
-  const { isOpen, onClose, onDisable, onDelete } = props;
+  const { isOpen, isDisabledAlready, onClose, onDisable, onDelete } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -50,7 +51,7 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
           <h3 className="text-lg font-medium">Delete this property</h3>
           <div className="py-1 pb-4 text-center sm:text-left text-sm text-custom-text-200">
             <p>Deletion of properties may lead to loss of existing data.</p>
-            <p>Do you want to disable the property instead?</p>
+            {!isDisabledAlready && <p>Do you want to disable the property instead?</p>}
           </div>
         </div>
       </div>
@@ -59,15 +60,17 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
           Cancel
         </Button>
         <div className="flex flex-col sm:flex-row gap-2 items-center sm:justify-end">
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={handleDisable}
-            className="w-full"
-            disabled={isSubmitting}
-          >
-            Yes, disable it
-          </Button>
+          {!isDisabledAlready && (
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={handleDisable}
+              className="w-full"
+              disabled={isSubmitting}
+            >
+              Yes, disable it
+            </Button>
+          )}
           <Button
             variant="danger"
             size="sm"
@@ -76,7 +79,7 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
             className="w-full"
             disabled={isSubmitting}
           >
-            No, delete it
+            {isDisabledAlready ? "Yes, delete it" : "No, delete it"}
           </Button>
         </div>
       </div>
