@@ -8,6 +8,7 @@ import { getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
+import { getParagraphCount } from "@/helpers/common";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // plane editor providers
@@ -248,6 +249,11 @@ export const useEditor = (props: CustomEditorProps) => {
           // replace selected text with the content provided
           editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
+      },
+      documentInfo: {
+        characters: editorRef.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef.current?.state),
+        words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
       },
     }),
     [editorRef, savedSelection, fileHandler.upload]
