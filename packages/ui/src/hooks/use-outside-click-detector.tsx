@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 // TODO: move it to helpers package
-const useOutsideClickDetector = (ref: React.RefObject<HTMLElement>, callback: () => void) => {
+const useOutsideClickDetector = (ref: React.RefObject<HTMLElement>, callback: () => void, useCapture = false) => {
   const handleClick = (event: MouseEvent) => {
     if (ref.current && !ref.current.contains(event.target as Node)) {
       // get all the element with attribute name data-prevent-outside-click
@@ -31,10 +31,10 @@ const useOutsideClickDetector = (ref: React.RefObject<HTMLElement>, callback: ()
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handleClick, useCapture);
 
     return () => {
-      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("mousedown", handleClick, useCapture);
     };
   });
 };
