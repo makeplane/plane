@@ -40,26 +40,35 @@ export const IssueBlocksList: FC<Props> = (props) => {
     <div className="relative h-full w-full">
       {issueIds &&
         issueIds.length > 0 &&
-        issueIds.map((issueId: string, index: number) => (
-          <IssueBlockRoot
-            key={issueId}
-            issueIds={issueIds}
-            issueId={issueId}
-            issuesMap={issuesMap}
-            updateIssue={updateIssue}
-            quickActions={quickActions}
-            canEditProperties={canEditProperties}
-            displayProperties={displayProperties}
-            nestingLevel={0}
-            spacingLeft={0}
-            containerRef={containerRef}
-            selectionHelpers={selectionHelpers}
-            groupId={groupId}
-            isLastChild={index === issueIds.length - 1}
-            isDragAllowed={isDragAllowed}
-            canDropOverIssue={canDropOverIssue}
-          />
-        ))}
+        issueIds.map((issueId: string, index: number) => {
+          // Check if issue is created within 30 seconds
+          const shouldRenderByDefault =
+            new Date().getTime() - new Date(issuesMap[issueId].created_at).getTime() < 30000;
+
+          return (
+            issuesMap[issueId].created_at && (
+              <IssueBlockRoot
+                key={issueId}
+                issueIds={issueIds}
+                issueId={issueId}
+                issuesMap={issuesMap}
+                updateIssue={updateIssue}
+                quickActions={quickActions}
+                canEditProperties={canEditProperties}
+                displayProperties={displayProperties}
+                nestingLevel={0}
+                spacingLeft={0}
+                containerRef={containerRef}
+                selectionHelpers={selectionHelpers}
+                groupId={groupId}
+                isLastChild={index === issueIds.length - 1}
+                isDragAllowed={isDragAllowed}
+                canDropOverIssue={canDropOverIssue}
+                shouldRenderByDefault={shouldRenderByDefault}
+              />
+            )
+          );
+        })}
     </div>
   );
 };

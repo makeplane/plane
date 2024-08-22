@@ -36,6 +36,7 @@ type Props = {
   canDropOverIssue: boolean;
   isParentIssueBeingDragged?: boolean;
   isLastChild?: boolean;
+  shouldRenderByDefault?: boolean;
 };
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
@@ -56,6 +57,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     isParentIssueBeingDragged = false,
     isLastChild = false,
     selectionHelpers,
+    shouldRenderByDefault,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -126,6 +128,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}
+        defaultValue={shouldRenderByDefault}
       >
         <IssueBlock
           issueId={issueId}
@@ -165,6 +168,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             isDragAllowed={isDragAllowed}
             canDropOverIssue={canDropOverIssue}
             isParentIssueBeingDragged={isParentIssueBeingDragged || isCurrentBlockDragging}
+            shouldRenderByDefault={isExpanded}
           />
         ))}
       {isLastChild && <DropIndicator classNames={"absolute z-[2]"} isVisible={instruction === "DRAG_BELOW"} />}
