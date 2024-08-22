@@ -353,6 +353,22 @@
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
+
+  /* For WebKit-based browsers (Safari, Chrome) */
+  -webkit-text-size-adjust: 100%;
+
+  /* For Firefox */
+  -moz-text-size-adjust: 100%;
+
+  /* For Microsoft browsers */
+  -ms-text-size-adjust: 100%;
+
+  /* For standard support */
+  text-size-adjust: 100%;
+}
+
+input {
+  touch-action: manipulation;
 }
 
 body {
