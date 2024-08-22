@@ -21,7 +21,6 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
   // form data
   const {
     handleSubmit,
-    watch,
     control,
     reset,
     formState: { isSubmitting, dirtyFields },
