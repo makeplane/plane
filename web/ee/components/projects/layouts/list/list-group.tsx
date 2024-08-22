@@ -70,7 +70,7 @@ export const ListGroup = observer((props: Props) => {
 
   return groupedProjectIds.length > 0 ? (
     <div ref={groupRef} className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-2 pr-3 py-1">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-4 pr-3 py-1">
         <HeaderGroupByCard
           groupID={group}
           icon={details?.icon}

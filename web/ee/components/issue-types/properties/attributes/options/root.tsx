@@ -92,6 +92,11 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
                   updateOptionData={(value) => {
                     handlePropertyOptionsList("update", value);
                   }}
+                  scrollIntoNewOptionView={() => {
+                    setTimeout(() => {
+                      scrollIntoElementView();
+                    }, 0);
+                  }}
                 />
               </div>
             )}
@@ -117,6 +122,8 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
               propertyOptionCreateListData={issuePropertyOption}
               updateCreateListData={(value) => {
                 handlePropertyOptionsList("update", value);
+              }}
+              scrollIntoNewOptionView={() => {
                 setTimeout(() => {
                   scrollIntoElementView();
                 }, 0);

@@ -30,23 +30,26 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
   const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
-  const { setPropertyOptions } = usePropertyOptions();
+  const { propertyOptions, setPropertyOptions } = usePropertyOptions();
   // derived values
   const isAnyIssueAttached = issueType?.issue_exists;
   const isOptionDefaultDisabled = dropdownPropertyDetail.is_multi === undefined || !!dropdownPropertyDetail.is_required;
   // helpers
   const resetToSingleSelectDefault = () => {
-    const firstDefaultOption = dropdownPropertyDetail.default_value?.[0];
+    const firstDefaultOption = propertyOptions?.find((option) => option.is_default);
+    const firstDefaultOptionIdentifier = firstDefaultOption?.id ?? firstDefaultOption?.key;
     // Update property options
     setPropertyOptions((prevOptions) => {
       if (!prevOptions) return [];
       return prevOptions.map((option) => ({
         ...option,
-        is_default: option.id === firstDefaultOption,
+        is_default:
+          !!firstDefaultOptionIdentifier &&
+          (option.id === firstDefaultOptionIdentifier || option.key === firstDefaultOptionIdentifier),
       }));
     });
     // Update default value
-    const newDefaultValue = firstDefaultOption ? [firstDefaultOption] : [];
+    const newDefaultValue = firstDefaultOptionIdentifier ? [firstDefaultOptionIdentifier] : [];
     onDropdownDetailChange("default_value", newDefaultValue);
   };
 

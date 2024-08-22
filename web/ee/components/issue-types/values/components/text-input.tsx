@@ -62,6 +62,15 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
     className
   );
 
+  const handleTextValueChange = () => {
+    // trim and filter empty values
+    const trimmedValue = data.map((val) => val.trim()).filter((val) => val);
+    // update property data
+    if (!isEqual(value, trimmedValue)) {
+      onTextValueChange(trimmedValue);
+    }
+  };
+
   switch (display_format) {
     case "single-line":
       return (
@@ -77,9 +86,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
               document.body?.setAttribute("data-delay-outside-click", "true");
             }}
             onBlur={() => {
-              if (!isEqual(value, data)) {
-                onTextValueChange(data);
-              }
+              handleTextValueChange();
               document.body?.removeAttribute("data-delay-outside-click");
             }}
             placeholder="Add text"
@@ -109,9 +116,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
               document.body?.setAttribute("data-delay-outside-click", "true");
             }}
             onBlur={() => {
-              if (!isEqual(value, data)) {
-                onTextValueChange(data);
-              }
+              handleTextValueChange();
               document.body?.removeAttribute("data-delay-outside-click");
             }}
             placeholder="Describe..."
