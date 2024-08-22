@@ -16,6 +16,7 @@
   "dependencies": {
     "@hocuspocus/extension-database": "^2.11.3",
     "@hocuspocus/extension-logger": "^2.11.3",
+    "@hocuspocus/extension-redis": "^2.13.5",
     "@hocuspocus/server": "^2.11.3",
     "@plane/editor": "*",
     "@plane/types": "*",

@@ -1,4 +1,6 @@
 import { Server } from "@hocuspocus/server";
+import { Redis } from "@hocuspocus/extension-redis";
+
 import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
@@ -42,6 +44,10 @@ const server = Server.configure({
     }
   },
   extensions: [
+    new Redis({
+      host: process.env.REDIS_HOST || "localhost",
+      port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+    }),
     new Logger(),
     new Database({
       fetch: async ({
@@ -63,12 +69,12 @@ const server = Server.configure({
               const fetchedData = await fetchPageDescriptionBinary(
                 params,
                 pageId,
-                cookie
+                cookie,
               );
               resolve(fetchedData);
             }
           } catch (error) {
-            console.error("Error in fetching document", error)
+            console.error("Error in fetching document", error);
           }
         });
       },
@@ -92,13 +98,14 @@ const server = Server.configure({
               await updatePageDescription(params, pageId, state, cookie);
             }
           } catch (error) {
-            console.error("Error in updating document", error)
+            console.error("Error in updating document", error);
           }
         });
       },
     }),
   ],
 });
+
 const { app }: { app: Application } = expressWs(express());
 
 app.set("port", process.env.PORT || 3000);
