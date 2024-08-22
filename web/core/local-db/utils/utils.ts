@@ -73,12 +73,18 @@ export const filterConstructor = (filters: any) => {
     const value = filters[key] ? filters[key].split(",") : "";
     if (!value) return;
     if (ARRAY_FIELDS.includes(key)) {
-      sql += ` AND im.key='${key}' AND value IN ('${value.join("','")}')`;
+      sql += ` AND m.key='${key}' AND value IN ('${value.join("','")}')`;
     } else {
       sql += ` AND ${key} in ('${value.join("','")}')`;
     }
   });
+  debugger;
   return sql;
+};
+
+export const isFilterJoinRequired = (filters: any) => {
+  const keys = Object.keys(filters);
+  return keys.some((key) => ARRAY_FIELDS.includes(key));
 };
 
 export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: string; total_issues: number })[]): any => {
@@ -101,7 +107,6 @@ export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: strin
 
   return groupedResults;
 };
-
 
 export const getSubGroupedIssueResults = (
   issueResults: (TIssue & { group_id: string; total_issues: number; sub_group_id: string })[]
@@ -154,4 +159,3 @@ export const getSubGroupedIssueResults = (
 
   return subGroupedResults;
 };
-

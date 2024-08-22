@@ -111,9 +111,7 @@ export class Storage {
     // Load labels, members, states, modules, cycles
 
     const sync = this.syncIssues(projectId);
-    if (this.getStatus(projectId) === "syncing") {
-      this.setSync(projectId, sync);
-    }
+    this.setSync(projectId, sync);
   };
 
   syncIssues = async (projectId: string) => {
@@ -122,6 +120,8 @@ export class Storage {
       info(`Project ${projectId} is already loading or syncing`);
       return;
     }
+
+    await this.getSync(projectId);
 
     const queryParams: { cursor: string; updated_at__gt?: string } = {
       cursor: `${PAGE_SIZE}:0:0`,
