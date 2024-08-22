@@ -21,6 +21,13 @@ x-app-env: &app-env
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
     - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
+
+    # RabbitMQ Settings
+    - RABBITMQ_HOST=${RABBITMQ_HOST:-plane-mq}
+    - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+    - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
+    - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_PASSWORD:-guest}
+    - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST:-plane}
     # Application secret
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
@@ -153,6 +160,13 @@ services:
     volumes:
       - redisdata:/data
 
+  plane-mq:
+    <<: *app-env
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+
   plane-minio:
     <<: *app-env
     image: minio/minio:latest
@@ -179,6 +193,7 @@ services:
 volumes:
   pgdata:
   redisdata:
+  rabbitmqdata:
   uploads:
   logs_api:
   logs_worker:
