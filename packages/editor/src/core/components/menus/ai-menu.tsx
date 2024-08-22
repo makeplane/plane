@@ -87,6 +87,7 @@ export const AIFeaturesMenu: React.FC<Props> = (props) => {
     >
       <div ref={menuRef} className="z-10">
         {menu?.({
+          isOpen: isPopupVisible,
           onClose: hidePopup,
         })}
       </div>
