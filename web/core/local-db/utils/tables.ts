@@ -2,7 +2,7 @@ import createIndexes from "./indexes";
 
 export const createIssuesTable = (SQLITE: any) => {
   const sqlstr = `CREATE TABLE IF NOT EXISTS issues (
-      id TEXT, 
+      id TEXT UNIQUE, 
       name TEXT, 
       state_id TEXT, 
       sort_order REAL, 
@@ -36,7 +36,10 @@ export const createIssueMetaTable = (SQLITE: any) => {
   const sqlstr = `CREATE TABLE IF NOT EXISTS issue_meta (
       issue_id TEXT, 
       key TEXT, 
-      value TEXT);`;
+      value TEXT,
+      UNIQUE(issue_id, key,value)  
+)
+      ;`;
   SQLITE.exec(sqlstr);
 };
 

@@ -1,7 +1,7 @@
 import { persistence } from "../storage.sqlite";
-import { GROUP_BY_MAP, ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
-import { getOrderByFragment, translateQueryParams } from "./query.utils";
-import { wrapDateTime, filterConstructor } from "./utils";
+import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
+import { getOrderByFragment, isMetaJoinRequired, translateQueryParams } from "./query.utils";
+import { filterConstructor } from "./utils";
 const SPECIAL_ORDER_BY = [
   "labels__name",
   "-labels__name",
@@ -11,19 +11,91 @@ const SPECIAL_ORDER_BY = [
   "-module__name",
 ];
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
+  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...otherProps } =
+    translateQueryParams(queries);
   const orderByString = getOrderByFragment(order_by);
   const [pageSize, page, offset] = cursor.split(":");
 
   const filterString = filterConstructor(otherProps);
   const subFilterString = subFilterConstructor(queries);
 
+  const translatedGroupBy = GROUP_BY_MAP[group_by];
+  const translatedSubGroupBy = GROUP_BY_MAP[sub_group_by];
+  // If group by or sub_group_by is present, check if we need a join.
+  const metaJoinRequired = isMetaJoinRequired(translatedGroupBy, translatedSubGroupBy);
   let sql = "";
+
+  if (sub_group_by) {
+    // CASE #1 Both are multi fields
+    if (ARRAY_FIELDS.includes(translatedGroupBy) && ARRAY_FIELDS.includes(translatedSubGroupBy)) {
+      sql = `
+          --- ARRAY ARRAY
+          SELECT DISTINCT i.*,rs.group_id, rs.sub_group_id, rs.total_issues FROM (
+                SELECT m.issue_id, m.value as group_id, msg.value as sub_group_id,
+                RANK() OVER (PARTITION BY m.value,msg.value ${orderByString}) as rank,
+                COUNT(*) OVER (PARTITION BY m.value, msg.value) as total_issues
+                FROM issues i
+                LEFT JOIN issue_meta m ON  i.id = m.issue_id
+                LEFT JOIN issue_meta msg ON i.id = msg.issue_id
+                
+                WHERE i.project_id = '${projectId}' AND m.key = '${GROUP_BY_MAP[group_by]}' AND msg.key = '${GROUP_BY_MAP[sub_group_by]}'
+                ${filterString}
+                ) rs
+          JOIN issues i ON i.id = rs.issue_id
+          JOIN issue_meta im ON i.id = im.issue_id
+          WHERE rs.rank <= ${per_page} 
+      `;
+      console.log("###", sql);
+      return sql;
+    }
+
+    debugger;
+    // CASE #2 Group by is multi field && sub group by is single field
+    if (ARRAY_FIELDS.includes(translatedGroupBy) && !ARRAY_FIELDS.includes(translatedSubGroupBy)) {
+      sql = `
+        --- ARRAY SINGLE
+        SELECT DISTINCT i.*,rs.group_id, rs.sub_group_id, rs.total_issues   FROM (
+              SELECT m.issue_id, m.value as group_id, i.${translatedSubGroupBy} as sub_group_id,
+              RANK() OVER (PARTITION BY m.value, i.${translatedSubGroupBy} ${orderByString}) as rank,
+              COUNT(*) OVER (PARTITION BY m.value, i.${translatedSubGroupBy}) as total_issues
+              FROM issues i
+              LEFT JOIN issue_meta m ON  i.id = m.issue_id
+               
+              WHERE i.project_id = '${projectId}' AND m.key = '${GROUP_BY_MAP[group_by]}'
+              ${filterString}
+              ) rs
+        RIGHT JOIN issues i ON i.id = rs.issue_id
+        JOIN issue_meta im ON i.id = im.issue_id
+        WHERE rs.rank <= ${per_page} 
+  `;
+      console.log("###", sql);
+      return sql;
+    }
+  }
+
+  // if (group_by) {
+  //   if (metaJoinRequired) {
+  //     sql = `
+  //         SELECT DISTINCT i.*,rs.group_id, rs.total_issues FROM (
+  //               SELECT m.issue_id, m.value as group_id,
+  //               RANK() OVER (PARTITION BY m.value ${orderByString}) as rank,
+  //               COUNT(*) OVER (PARTITION BY m.value) as total_issues
+  //               FROM issue_meta m
+  //               LEFT JOIN issues i ON  i.id = m.issue_id
+  //               WHERE i.project_id = '${projectId}' AND m.key = '${GROUP_BY_MAP[group_by]}'
+  //               ${filterString}
+  //               ) rs
+  //         JOIN issues i ON i.id = rs.issue_id
+  //         JOIN issue_meta im ON i.id = im.issue_id
+  //         WHERE rs.rank <= ${per_page}
+  //     `;
+  //   }
+  //   console.log("###", sql);
+  //   return sql;
+  // }
   if (group_by) {
     console.log("###", group_by);
 
-    const translatedGroupBy = GROUP_BY_MAP[group_by];
-    const translatedSubGroupBy = GROUP_BY_MAP[sub_group_by];
     // Check if group by is by array field
     if (ARRAY_FIELDS.includes(translatedGroupBy)) {
       sql = `
@@ -109,7 +181,7 @@ export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectI
   sql = sql.replace("SELECT *", "SELECT COUNT(DISTINCT i.id) as total_count");
   // Remove everything after group by i.id
   sql = `${sql.split("group by i.id")[0]};`;
-
+  console.log("### COUNT", sql);
   return sql;
 };
 
@@ -131,17 +203,22 @@ export const stageIssueInserts = (issue: any) => {
   }); // Will fail when the values have a comma
 
   persistence.db.exec({
-    sql: `insert into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    sql: `INSERT OR REPLACE  into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     bind: values,
   });
   arrayFields.forEach((field) => {
     const values = issue[field];
-    if (values) {
+    if (values && values.length) {
       values.forEach((val: any) => {
         persistence.db.exec({
-          sql: `insert into issue_meta(issue_id,key,value) values (?,?,?)`,
+          sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
           bind: [issue_id, field, val],
         });
+      });
+    } else {
+      persistence.db.exec({
+        sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
+        bind: [issue_id, field, ""],
       });
     }
   });

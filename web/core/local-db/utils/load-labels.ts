@@ -4,7 +4,7 @@ import { persistence } from "../storage.sqlite";
 const stageLabelInserts = (label: any) => {
   const { id, name, color, parent = "", project_id, sort_order, workspace_id } = label;
 
-  const query = `INSERT INTO labels (id, name, color, parent, project_id, sort_order, workspace_id) VALUES ('${id}', '${name}', '${color}', '${parent}', '${project_id}', '${sort_order}', '${workspace_id}');`;
+  const query = `INSERT OR REPLACE INTO labels (id, name, color, parent, project_id, sort_order, workspace_id) VALUES ('${id}', '${name}', '${color}', '${parent}', '${project_id}', '${sort_order}', '${workspace_id}');`;
   persistence.db.exec(query);
 };
 export const loadLabels = async (workspaceSlug: string, batchSize = 500) => {
