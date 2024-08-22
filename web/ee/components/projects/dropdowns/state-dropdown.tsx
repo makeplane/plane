@@ -15,9 +15,10 @@ export type TStateDropdown = {
   className?: string;
   value: string;
   disabled: boolean;
+  optionsClassName?: string;
 };
 export const StateDropdown: FC<TStateDropdown> = observer((props) => {
-  const { workspaceId, onChange, value, disabled, buttonClassName = "", className = "" } = props;
+  const { workspaceId, onChange, value, disabled, buttonClassName = "", className = "", optionsClassName = "" } = props;
   // hooks
   const { getProjectStateById, getProjectStateIdsWithGroupingByWorkspaceId } = useWorkspaceProjectStates();
 
@@ -62,7 +63,7 @@ export const StateDropdown: FC<TStateDropdown> = observer((props) => {
       buttonClassName={buttonClassName}
       className={className}
       disabled={disabled}
-      optionsClassName="z-[19]"
+      optionsClassName={optionsClassName}
       noChevron
     />
   );

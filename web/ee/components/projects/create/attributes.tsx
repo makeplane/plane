@@ -34,6 +34,7 @@ const ProjectAttributes: React.FC<Props> = (props) => {
               workspaceId={currentWorkspace.id}
               buttonClassName="h-7"
               disabled={false}
+              optionsClassName="z-20"
             />
           )}
         />

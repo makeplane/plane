@@ -3,8 +3,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
-import { Tooltip } from "@plane/ui";
+import { cn } from "@plane/editor";
+import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // plane web components
+import { useUser } from "@/hooks/store";
 import { BulkDeleteConfirmationModal } from "@/plane-web/components/issues";
 
 type Props = {
@@ -18,6 +20,7 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   // store hooks
   const { projectId, workspaceSlug } = useParams();
+  const { canPerformProjectAdminActions } = useUser();
 
   return (
     <>
@@ -31,11 +34,23 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
-      <Tooltip tooltipHeading="Delete" tooltipContent="">
+      <Tooltip
+        tooltipHeading="Delete"
+        tooltipContent={canPerformProjectAdminActions ? "" : "You don't have permission to perform this action."}
+      >
         <button
           type="button"
-          className="outline-none grid place-items-center"
-          onClick={() => setIsBulkDeleteModalOpen(true)}
+          className={cn("outline-none grid place-items-center", {
+            "cursor-not-allowed text-custom-text-400": !canPerformProjectAdminActions,
+          })}
+          onClick={() =>
+            canPerformProjectAdminActions
+              ? setIsBulkDeleteModalOpen(true)
+              : setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: "You don't have permission to perform this action.",
+                })
+          }
         >
           <Trash2 className="size-4" />
         </button>
