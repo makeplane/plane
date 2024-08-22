@@ -29,10 +29,11 @@ from plane.db.models import (
 )
 
 from plane.ee.views.base import BaseViewSet
-
+from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.error_codes import ERROR_CODES
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -371,21 +372,58 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, pk):
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
+
+        if page.is_locked:
+            return Response(
+                {
+                    "error_code": ERROR_CODES["PAGE_LOCKED"],
+                    "error_message": "PAGE_LOCKED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if page.archived_at:
+            return Response(
+                {
+                    "error_code": ERROR_CODES["PAGE_ARCHIVED"],
+                    "error_message": "PAGE_ARCHIVED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Serialize the existing instance
+        existing_instance = json.dumps(
+            {
+                "description_html": page.description_html,
+            },
+            cls=DjangoJSONEncoder,
         )
 
+        # Get the base64 data from the request
         base64_data = request.data.get("description_binary")
 
+        # If base64 data is provided
         if base64_data:
             # Decode the base64 data to bytes
             new_binary_data = base64.b64decode(base64_data)
-
+            # capture the page transaction
+            if request.data.get("description_html"):
+                page_transaction.delay(
+                    new_value=request.data,
+                    old_value=existing_instance,
+                    page_id=pk,
+                )
             # Store the updated binary data
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
             page.save()
+            # Return a success response
+            page_version.delay(
+                page_id=page.id,
+                existing_instance=existing_instance,
+                user_id=request.user.id,
+            )
             return Response({"message": "Updated successfully"})
         else:
             return Response({"error": "No binary data provided"})
