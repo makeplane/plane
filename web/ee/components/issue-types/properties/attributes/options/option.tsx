@@ -15,11 +15,12 @@ type TIssuePropertyOptionItem = {
   optionId?: string;
   propertyOptionData: TIssuePropertyOptionCreateUpdateData;
   updateOptionData: (value: TIssuePropertyOptionCreateUpdateData) => void;
+  scrollIntoNewOptionView: () => void;
   error?: string;
 };
 
 export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((props) => {
-  const { optionId, propertyOptionData, updateOptionData, error: optionsError } = props;
+  const { optionId, propertyOptionData, updateOptionData, scrollIntoNewOptionView, error: optionsError } = props;
   // store hooks
   const { propertyOptions } = usePropertyOptions();
   // derived values
@@ -71,7 +72,12 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
         id={`option-${optionId}-${key}`}
         value={optionData.name}
         onChange={(e) => handleOptionDataChange("name", e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && !!optionData.name && e.currentTarget.blur()}
+        onKeyDown={(e) => {
+          if (["Enter", "Tab"].includes(e.key) && !!optionData.name) {
+            e.currentTarget.blur();
+            scrollIntoNewOptionView();
+          }
+        }}
         onBlur={() => handleCreateUpdate()}
         placeholder={"Add option"}
         className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {

@@ -42,6 +42,15 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
     setData([newValue]);
   };
 
+  const handleNumberValueChange = () => {
+    // trim and filter empty values
+    const trimmedValue = data.map((val) => val.trim()).filter((val) => val);
+    // update property data
+    if (!isEqual(value, trimmedValue)) {
+      onNumberValueChange(trimmedValue);
+    }
+  };
+
   return (
     <>
       <Input
@@ -63,13 +72,7 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
         }}
         onWheel={(e) => e.currentTarget.blur()}
         onBlur={() => {
-          if (!isEqual(value, data)) {
-            if (data[0].trim() === "") {
-              onNumberValueChange([]);
-            } else {
-              onNumberValueChange(data);
-            }
-          }
+          handleNumberValueChange();
           document.body?.removeAttribute("data-delay-outside-click");
         }}
         placeholder="Add number"
