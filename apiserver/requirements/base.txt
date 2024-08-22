@@ -17,6 +17,7 @@ django-cors-headers==4.3.1
 # celery
 celery==5.4.0
 django_celery_beat==2.6.0
+django-celery-results==2.5.1
 # file serve
 whitenoise==6.6.0
 # fake data
