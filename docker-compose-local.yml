@@ -1,12 +1,3 @@
-networks:
-  dev_env:
-    driver: bridge
-
-volumes:
-  redisdata:
-  uploads:
-  pgdata:
-
 services:
   plane-redis:
     image: valkey/valkey:7.2.5-alpine
@@ -15,6 +6,16 @@ services:
       - dev_env
     volumes:
       - redisdata:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    env_file:
+      - .env
 
   plane-minio:
     image: minio/minio
@@ -179,3 +180,13 @@ services:
       - api
       - space
       - admin
+
+volumes:
+  redisdata:
+  uploads:
+  pgdata:
+  rabbitmqdata:
+
+networks:
+  dev_env:
+    driver: bridge

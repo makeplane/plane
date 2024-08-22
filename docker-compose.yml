@@ -121,6 +121,16 @@ services:
     volumes:
       - redisdata:/data
 
+  plane-mq:
+    container_name: plane-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+
   plane-minio:
     container_name: plane-minio
     image: minio/minio
@@ -154,3 +164,4 @@ volumes:
   pgdata:
   redisdata:
   uploads:
+  rabbitmqdata:
