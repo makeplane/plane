@@ -60,11 +60,12 @@ func RunHealthCheck(h HealthCheckRunner, statuses []*healthcheck.HealthCheckStat
 		}
 	}
 
-	monitorApi := prime_api.NewMonitorApi(h.GetCredentials().Host, h.GetCredentials().LicenseKey, h.GetCredentials().LicenseVersion, h.GetCredentials().MachineSignature)
+	credentials := h.GetCredentials()
+	monitorApi := prime_api.NewMonitorApi(credentials.Host, credentials.MachineSignature, credentials.InstanceId, credentials.AppVersion)
 	errorCode := monitorApi.PostServiceStatus(prime_api.StatusPayload{
 		Status:  statusMap,
 		Meta:    metaMap,
-		Version: h.GetCredentials().LicenseVersion,
+		Version: h.GetCredentials().AppVersion,
 	})
 
 	if errorCode != 0 {

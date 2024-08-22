@@ -20,8 +20,8 @@ type TProPlanPrice = {
 };
 
 const PRO_PLAN_PRICES: TProPlanPrice[] = [
-  { key: "monthly", price: "$7", recurring: "month" },
-  { key: "yearly", price: "$5", recurring: "year" },
+  { key: "monthly", price: "$8", recurring: "month" },
+  { key: "yearly", price: "$6", recurring: "year" },
 ];
 
 export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
@@ -55,7 +55,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                   {price.recurring === "year" && ("Yearly" as string)}
                   {price.recurring === "year" && (
                     <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 ml-1 text-xs">
-                      -28%
+                      -25%
                     </span>
                   )}
                 </>
@@ -68,10 +68,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
             <Tab.Panel key={price.key}>
               <div className="pt-6 pb-4 text-center font-semibold">
                 <div className="text-2xl">Plane Pro</div>
-                <div className="text-3xl">
-                  {price.recurring === "month" && "$7"}
-                  {price.recurring === "year" && "$5"}
-                </div>
+                <div className="text-3xl">{price.price}</div>
                 <div className="text-sm text-custom-text-300">a user per month</div>
               </div>
               <div className="flex justify-center w-full">

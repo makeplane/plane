@@ -4,8 +4,11 @@ FROM golang:alpine3.20 as Build
 WORKDIR /app
 
 RUN apk update && \
-    apk add git && \
-    go install github.com/goreleaser/goreleaser/v2@latest
+	apk add git && \
+	go install github.com/goreleaser/goreleaser/v2@latest
+
+ARG PRIVATE_KEY
+ENV PRIVATE_KEY=$PRIVATE_KEY
 
 COPY . .
 

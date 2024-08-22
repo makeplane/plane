@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
-import useSWR from "swr";
+import { usePathname, useSearchParams } from "next/navigation";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
-import { ProPlanCloudUpgradeModal, PaidPlanSuccessModal } from "@/plane-web/components/license";
+import { ProPlanCloudUpgradeModal } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -19,36 +18,23 @@ export const CloudEditionBadge = observer(() => {
   // router
   const router = useAppRouter();
   const pathname = usePathname();
-  const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
-  // states
-  const [isProPlanSuccessModalOpen, setProPlanSuccessModalOpen] = useState(false);
   // hooks
   const { captureEvent } = useEventTracker();
   const {
     isProPlanModalOpen,
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     toggleProPlanModal,
-    fetchWorkspaceSubscribedPlan,
+    handleSuccessModalToggle,
   } = useWorkspaceSubscription();
-  // fetch workspace current plane information
-  useSWR(
-    workspaceSlug ? `WORKSPACE_CURRENT_PLAN_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchWorkspaceSubscribedPlan(workspaceSlug.toString()) : null,
-    {
-      errorRetryCount: 2,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
 
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
     if (paymentStatus === "success" && subscriptionDetail?.product === "PRO") {
       router.replace(pathname, {}, { showProgressBar: false });
-      setProPlanSuccessModalOpen(true);
+      handleSuccessModalToggle({ isOpen: true, variant: "PRO" });
     }
-  }, [pathname, router, searchParams, subscriptionDetail?.product]);
+  }, [pathname, router, searchParams, subscriptionDetail?.product, handleSuccessModalToggle]);
 
   const handleProPlanPurchaseModalOpen = () => {
     toggleProPlanModal(true);
@@ -56,16 +42,11 @@ export const CloudEditionBadge = observer(() => {
   };
 
   const handlePaidPlanSuccessModalOpen = () => {
-    setProPlanSuccessModalOpen(true);
+    handleSuccessModalToggle({ isOpen: true, variant: "PRO" });
     captureEvent("pro_plan_details_modal_opened", {});
   };
 
-  if (!subscriptionDetail)
-    return (
-      <Loader className="flex h-full">
-        <Loader.Item height="30px" width="95%" />
-      </Loader>
-    );
+  if (!subscriptionDetail) return null;
 
   const renderButtonText = () => {
     if (!subscriptionDetail.subscription) {
@@ -123,17 +104,11 @@ export const CloudEditionBadge = observer(() => {
 
   return (
     <>
-      <PaidPlanSuccessModal
-        variant="PRO"
-        isOpen={isProPlanSuccessModalOpen}
-        handleClose={() => setProPlanSuccessModalOpen(false)}
-      />
-
       <ProPlanCloudUpgradeModal
         isOpen={isProPlanModalOpen}
         handleClose={() => toggleProPlanModal(false)}
         yearlyPlan={false}
-        handleSuccessModal={() => setProPlanSuccessModalOpen(true)}
+        handleSuccessModal={() => handleSuccessModalToggle({ isOpen: true, variant: "PRO" })}
       />
 
       {showPaymentButton() && (
@@ -157,6 +132,13 @@ export const CloudEditionBadge = observer(() => {
           <Image src={PlaneLogo} alt="Plane Pro" width={14} height={14} />
           Plane Pro
         </Button>
+      )}
+
+      {/* Fallback text */}
+      {!showPaymentButton() && !showPlaneProButton && (
+        <div className="w-full cursor-default rounded-md bg-green-500/10 px-2 py-1 text-center text-xs font-medium text-green-500 outline-none leading-6">
+          Enterprise Edition
+        </div>
       )}
     </>
   );

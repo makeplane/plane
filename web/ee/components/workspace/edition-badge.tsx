@@ -1,32 +1,50 @@
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import useSWR from "swr";
 // ui
-import { Tooltip } from "@plane/ui";
-// hooks
-import { useInstance } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { Loader } from "@plane/ui";
 // plane web components
-import { PlaneOneEditionBadge, CloudEditionBadge } from "@/plane-web/components/license";
-// assets
-import packageJson from "package.json";
+import { CloudEditionBadge, PaidPlanSuccessModal, SelfManagedEditionBadge } from "@/plane-web/components/license";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceEditionBadge = observer(() => {
+  // params
+  const { workspaceSlug } = useParams();
   // hooks
-  const { isMobile } = usePlatformOS();
-  const { instance, config } = useInstance();
+  const {
+    successPlanModalDetails,
+    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    handleSuccessModalToggle,
+    fetchWorkspaceSubscribedPlan,
+  } = useWorkspaceSubscription();
 
-  if (config?.payment_server_base_url) {
-    return <CloudEditionBadge />;
-  }
+  // fetch workspace current plane information
+  useSWR(
+    workspaceSlug ? `WORKSPACE_CURRENT_PLAN_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceSubscribedPlan(workspaceSlug.toString()) : null,
+    {
+      errorRetryCount: 2,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
+  );
 
-  if (instance?.product === "plane-one") {
-    return <PlaneOneEditionBadge />;
-  }
+  if (!subscriptionDetail)
+    return (
+      <Loader className="flex h-full">
+        <Loader.Item height="30px" width="95%" />
+      </Loader>
+    );
 
   return (
-    <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-      <div className="w-full cursor-default rounded-md bg-green-500/10 px-2 py-1 text-center text-xs font-medium text-green-500 outline-none leading-6">
-        Enterprise Edition
-      </div>
-    </Tooltip>
+    <>
+      <PaidPlanSuccessModal
+        variant={successPlanModalDetails.variant}
+        isOpen={successPlanModalDetails.isOpen}
+        handleClose={() => handleSuccessModalToggle({ isOpen: false, variant: successPlanModalDetails.variant })}
+      />
+      {subscriptionDetail.is_self_managed ? <SelfManagedEditionBadge /> : <CloudEditionBadge />}
+    </>
   );
 });

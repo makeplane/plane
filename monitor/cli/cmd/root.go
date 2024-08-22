@@ -15,10 +15,13 @@ import (
 )
 
 var CmdLogger = logger.NewHandler(nil)
-var LICENSE_KEY = ""
 var MACHINE_SIGNATURE = ""
-var LICENSE_VERSION = ""
+var APP_DOMAIN = ""
+var APP_VERSION = ""
+var INSTANCE_ID = ""
+var PORT = "8080"
 var HOST = "https://prime.plane.so"
+var PRIVATE_KEY = ``
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -29,16 +32,26 @@ var rootCmd = &cobra.Command{
 			HOST = host
 		}
 
-		if licenseKey := os.Getenv(constants.LICENSE_KEY); licenseKey == "" {
-			return fmt.Errorf(error_msgs.LICENSE_ABSENT)
+		if appDomain := os.Getenv(constants.APP_DOMAIN); appDomain == "" {
+			return fmt.Errorf(error_msgs.APP_DOMAIN_ABSENT)
 		} else {
-			LICENSE_KEY = licenseKey
+			APP_DOMAIN = appDomain
 		}
 
-		if licenseVersion := os.Getenv(constants.LICENSE_VERSION); licenseVersion == "" {
-			return fmt.Errorf(error_msgs.LICENSE_VERSION_ABSENT)
+		if appVersion := os.Getenv(constants.APP_VERSION); appVersion == "" {
+			return fmt.Errorf(error_msgs.APP_VERSION_ABSENT)
 		} else {
-			LICENSE_VERSION = licenseVersion
+			APP_VERSION = appVersion
+		}
+
+		if port := os.Getenv(constants.PORT); port != "" {
+			PORT = port
+		}
+
+		if instanceId := os.Getenv(constants.INSTANCE_ID); instanceId == "" {
+			return fmt.Errorf(error_msgs.INSTANCE_ID_ABSENT)
+		} else {
+			INSTANCE_ID = instanceId
 		}
 
 		if machineSignature := os.Getenv(constants.MACHINE_SIGNATURE); machineSignature == "" {
@@ -52,7 +65,7 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(privateKey string) {
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

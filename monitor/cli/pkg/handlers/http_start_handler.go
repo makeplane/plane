@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 
+	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
 	"github.com/makeplane/plane-ee/monitor/lib/router"
 )
@@ -15,14 +16,19 @@ type HTTPHandler struct {
 }
 
 type HTTPHandlerOptions struct {
-	Host   string
-	Port   string
-	Logger logger.Handler
+	Api        *prime_api.IPrimeMonitorApi
+	Host       string
+	Port       string
+	Logger     logger.Handler
+	PrivateKey string
 }
 
 func NewHttpHandler(options HTTPHandlerOptions) *HTTPHandler {
 	router := router.NewMonitorRouter(router.MonitorRouterOptions{
-		Logger: &options.Logger,
+		Logger:     &options.Logger,
+		AppName:    "Monitor",
+		Api:        options.Api,
+		PrivateKey: options.PrivateKey,
 	})
 	router.SetLogger(options.Logger)
 	return &HTTPHandler{

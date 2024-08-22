@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.conf import settings
@@ -94,6 +95,8 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
+                "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0")
+                == "0",
             }
         else:
             return {
@@ -107,6 +110,8 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
+                "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0")
+                == "0",
             }
     # If the license is not present, then fetch the license from the payment server and create it
     else:
@@ -151,4 +156,5 @@ def resync_workspace_license(workspace_slug, force=False):
             "has_activated_free_trial": workspace_license.has_activated_free_trial,
             "has_added_payment_method": workspace_license.has_added_payment_method,
             "subscription": workspace_license.subscription,
+            "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0") == "0",
         }

@@ -2,6 +2,7 @@ version: 2
 
 builds:
   - main: ./main.go
+    ldflags: "-s -w -X main.PRIVATE_KEY={{.Env.PRIVATE_KEY}}"
     id: "prime-monitor"
     dir: ./cli
     binary: prime-monitor
