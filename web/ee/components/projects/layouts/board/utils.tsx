@@ -60,7 +60,7 @@ export const groupDetails = (
         title: stateGroup?.title || "State Group",
         icon: <ProjectStateIcon projectStateGroup={groupKey} width="14" height="14" />,
         prePopulatedPayload: {
-          state_id: states && states[0].id,
+          state_id: states && states.length > 0 && states[0].id,
         },
       };
     }
