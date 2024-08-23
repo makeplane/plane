@@ -21,6 +21,7 @@ from plane.graphql.types.issue import (
     IssueUserPropertyType,
     IssueCommentActivityType,
     IssuePropertyActivityType,
+    IssueTypesType,
 )
 from plane.db.models import (
     Issue,
@@ -28,6 +29,7 @@ from plane.db.models import (
     IssueUserProperty,
     IssueComment,
     CommentReaction,
+    IssueType,
 )
 from plane.graphql.utils.issue_filters import issue_filters
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
@@ -297,3 +299,81 @@ class IssueCommentActivityQuery:
         )
 
         return issue_comments
+
+
+# User profile issues
+@strawberry.type
+class WorkspaceIssuesQuery:
+    @strawberry.field(
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
+    )
+    async def workspace_issues(
+        self,
+        info: Info,
+        slug: str,
+        filters: Optional[JSON] = {},
+        orderBy: Optional[str] = "-created_at",
+        cursor: Optional[str] = None,
+    ) -> list[IssuesType]:
+        workspace_issues = await sync_to_async(list)(
+            Issue.issue_objects.filter(
+                project__project_projectmember__member=info.context.user,
+                project__projectmember__is_active=True,
+                workspace__slug=slug,
+            )
+            .select_related("actor", "issue", "project", "workspace")
+            .order_by(orderBy, "-created_at")
+            .filter(**filters)
+        )
+
+        return paginate(results_object=workspace_issues, cursor=cursor)
+
+
+@strawberry.type
+class SubIssuesQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def sub_issues(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        issue: strawberry.ID,
+        cursor: Optional[str] = None,
+    ) -> PaginatorResponse[IssuesType]:
+        sub_issues = await sync_to_async(list)(
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                parent_id=issue,
+            )
+            .filter(
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels")
+            .order_by("-created_at")
+        )
+
+        return paginate(results_object=sub_issues, cursor=cursor)
+
+
+@strawberry.type
+class IssueTypesTypeQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+    )
+    async def issueTypes(
+        self, info: Info, slug: str
+    ) -> list[IssueTypesType]:
+        issue_types = await sync_to_async(list)(
+            IssueType.objects.filter(
+                workspace__slug=slug
+            )
+            .distinct()
+        )
+
+        return issue_types

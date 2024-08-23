@@ -30,6 +30,6 @@ class IssueLinkQuery:
         issue_links = await sync_to_async(list)(
             IssueLink.objects.filter(
                 issue_id=issue, workspace__slug=slug, project_id=project
-            )
+            ).order_by("-created_at")
         )
         return issue_links
