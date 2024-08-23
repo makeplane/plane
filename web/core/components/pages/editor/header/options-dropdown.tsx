@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
@@ -11,6 +11,7 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
 
@@ -25,8 +26,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page, handleSaveDescription } = props;
   // router
   const router = useRouter();
-  const pathname = usePathname();
-  const currentSearchParams = useSearchParams();
   // store values
   const {
     archived_at,
@@ -44,6 +43,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
   const handleArchivePage = async () =>
     await archive().catch(() =>
@@ -153,9 +154,10 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       key: "version-history",
       action: () => {
         // add query param, version=current to the route
-        const updatedSearchParams = new URLSearchParams(currentSearchParams.toString());
-        updatedSearchParams.set("version", "current");
-        router.push(pathname + "?" + updatedSearchParams.toString());
+        const updatedRoute = updateQueryParams({
+          paramsToAdd: { version: "current" },
+        });
+        router.push(updatedRoute);
       },
       label: "Version history",
       icon: History,

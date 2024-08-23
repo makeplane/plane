@@ -13,6 +13,7 @@ import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay } from "@/com
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageDescription } from "@/hooks/use-page-description";
+import { useQueryParams } from "@/hooks/use-query-params";
 // services
 import { ProjectPageVersionService } from "@/services/page";
 const projectPageVersionService = new ProjectPageVersionService();
@@ -58,6 +59,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
     projectId,
     workspaceSlug,
   });
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
@@ -89,8 +92,10 @@ export const PageRoot = observer((props: TPageRootProps) => {
   }, [version]);
 
   const handleCloseVersionsOverlay = () => {
-    setIsVersionsOverlayOpen(false);
-    router.push(`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`);
+    const updatedRoute = updateQueryParams({
+      paramsToRemove: ["version"],
+    });
+    router.push(updatedRoute);
   };
 
   return (

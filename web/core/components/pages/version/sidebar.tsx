@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
 // plane types
 import { TPageVersion } from "@plane/types";
@@ -9,6 +8,8 @@ import { Loader } from "@plane/ui";
 import { PlaneVersionsSidebarListItem } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useQueryParams } from "@/hooks/use-query-params";
 
 type Props = {
   activeVersion: string | null;
@@ -18,16 +19,13 @@ type Props = {
 
 export const PageVersionsSidebar: React.FC<Props> = (props) => {
   const { activeVersion, handleClose, versions } = props;
-  // params
-  const pathname = usePathname();
-  const currentSearchParams = useSearchParams();
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
-  const getVersionLink = (versionID: string) => {
-    // add query param, version=current to the route
-    const updatedSearchParams = new URLSearchParams(currentSearchParams.toString());
-    updatedSearchParams.set("version", versionID);
-    return pathname + "?" + updatedSearchParams.toString();
-  };
+  const getVersionLink = (versionID: string) =>
+    updateQueryParams({
+      paramsToAdd: { version: versionID },
+    });
 
   return (
     <div className="flex-shrink-0 py-4 border-l border-custom-border-200 flex flex-col">
