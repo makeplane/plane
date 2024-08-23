@@ -355,10 +355,6 @@
   -webkit-font-smoothing: antialiased;
 }
 
-input {
-  touch-action: manipulation;
-}
-
 body {
   color: rgba(var(--color-text-100));
 }

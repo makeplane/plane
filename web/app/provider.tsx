@@ -33,7 +33,6 @@ const ToastWithTheme = () => {
 export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
-
   return (
     <>
       <AppProgressBar height="4px" color="#3F76FF" options={{ showSpinner: false }} shallowRouting />
