@@ -5,6 +5,7 @@ import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
+import { isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
@@ -40,12 +41,8 @@ export const IssueBlocksList: FC<Props> = (props) => {
     <div className="relative h-full w-full">
       {issueIds &&
         issueIds.length > 0 &&
-        issueIds.map((issueId: string, index: number) => {
-          // Check if issue is created within 30 seconds
-          const shouldRenderByDefault =
-            new Date().getTime() - new Date(issuesMap[issueId].created_at).getTime() < 30000;
-
-          return (
+        issueIds.map(
+          (issueId: string, index: number) =>
             issuesMap[issueId].created_at && (
               <IssueBlockRoot
                 key={issueId}
@@ -64,11 +61,10 @@ export const IssueBlocksList: FC<Props> = (props) => {
                 isLastChild={index === issueIds.length - 1}
                 isDragAllowed={isDragAllowed}
                 canDropOverIssue={canDropOverIssue}
-                shouldRenderByDefault={shouldRenderByDefault}
+                shouldRenderByDefault={isIssueNew(issuesMap[issueId])}
               />
             )
-          );
-        })}
+        )}
     </div>
   );
 };
