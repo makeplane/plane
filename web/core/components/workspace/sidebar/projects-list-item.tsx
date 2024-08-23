@@ -8,7 +8,7 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import {
   PenSquare,
@@ -126,7 +126,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
-  // router params
+  // router
+  const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   // pathname
   const pathname = usePathname();
@@ -281,6 +282,17 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     else setIsProjectListOpen(false);
   }, [URLProjectId]);
 
+  const handleItemClick = () => {
+    const isDifferentProject = URLProjectId !== project.id;
+    if (!isProjectListOpen) {
+      router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+      if (isDifferentProject && isMobile) {
+        toggleSidebar();
+      }
+    }
+    setIsProjectListOpen((prev) => !prev);
+  };
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
@@ -337,7 +349,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 <Disclosure.Button
                   as="button"
                   className="size-8 aspect-square flex-shrink-0 grid place-items-center"
-                  onClick={() => setIsProjectListOpen(!isProjectListOpen)}
+                  onClick={handleItemClick}
                 >
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     <Logo logo={project.logo_props} size={16} />
@@ -359,7 +371,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
                         "justify-center": isSidebarCollapsed,
                       })}
-                      onClick={() => setIsProjectListOpen(!isProjectListOpen)}
+                      onClick={handleItemClick}
                     >
                       <div className="size-4 grid place-items-center flex-shrink-0">
                         <Logo logo={project.logo_props} size={16} />
