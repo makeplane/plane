@@ -56,7 +56,7 @@ export const useMultipleSelect = (props: Props) => {
 
   useReloadConfirmations(
     selectedEntityIds && selectedEntityIds.length > 0,
-    "Are you sure you would want to leave the page, all the selected bulk issues will be cleared",
+    "Are you sure you want to leave? Your current bulk operation selections will be lost.",
     true,
     () => {
       clearSelection();
