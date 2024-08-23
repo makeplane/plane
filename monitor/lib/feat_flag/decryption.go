@@ -8,7 +8,6 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 
 	"github.com/youmark/pkcs8"
@@ -19,9 +18,9 @@ import (
 
 /* ------------------------ Controller Methods ------------------------------- */
 // Takes in the private key and returns the decrypted feature flags
-func GetDecryptedJson(privateKeyBytes []byte, encryptedFeatureFlag EncryptedData, out interface{}) error {
+func GetDecryptedJson(base64EncodedKey string, encryptedFeatureFlag EncryptedData, out interface{}) error {
 	// Parse the private key
-	rsaPrivateKey, err := parsePrivateKey(privateKeyBytes)
+	rsaPrivateKey, err := parsePrivateKey(base64EncodedKey)
 	if err != nil {
 		return fmt.Errorf("failed to parse private key: %v", err)
 	}
@@ -38,13 +37,13 @@ func GetDecryptedJson(privateKeyBytes []byte, encryptedFeatureFlag EncryptedData
 
 /* ---------------------- Helper Functions ---------------------------- */
 // Parses the private key given to the rsa.PrivateKey type
-func parsePrivateKey(pemEncodedKey []byte) (*rsa.PrivateKey, error) {
-	block, _ := pem.Decode(pemEncodedKey)
-	if block == nil {
-		return nil, fmt.Errorf("failed to parse PEM block containing the key")
+func parsePrivateKey(base64EncodedKey string) (*rsa.PrivateKey, error) {
+	decodedKey, err := base64.StdEncoding.DecodeString(base64EncodedKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode base64 key: %v", err)
 	}
 
-	privateKey, err := pkcs8.ParsePKCS8PrivateKey(block.Bytes)
+	privateKey, err := pkcs8.ParsePKCS8PrivateKey(decodedKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse RSA private key: %v", err)
 	}

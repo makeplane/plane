@@ -98,7 +98,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, ke
 	}
 
 	var decryptedFlags map[string]interface{}
-	err := feat_flag.GetDecryptedJson([]byte(key), feat_flag.EncryptedData{
+	err := feat_flag.GetDecryptedJson(key, feat_flag.EncryptedData{
 		CipherText: flags.CipherText,
 		AesKey:     flags.AesKey,
 		Nonce:      flags.Nonce,
@@ -174,7 +174,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	}
 
 	var decryptedFlags map[string]interface{}
-	err := feat_flag.GetDecryptedJson([]byte(key), feat_flag.EncryptedData{
+	err := feat_flag.GetDecryptedJson(key, feat_flag.EncryptedData{
 		CipherText: flags.CipherText,
 		AesKey:     flags.AesKey,
 		Nonce:      flags.Nonce,
@@ -217,7 +217,7 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayloa
 	}
 
 	var decryptedFlags map[string]interface{}
-	err := feat_flag.GetDecryptedJson([]byte(key), feat_flag.EncryptedData{
+	err := feat_flag.GetDecryptedJson(key, feat_flag.EncryptedData{
 		CipherText: flags.CipherText,
 		AesKey:     flags.AesKey,
 		Nonce:      flags.Nonce,
@@ -270,7 +270,7 @@ func handleWorkspaceAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPa
 	}
 
 	var decryptedFlags map[string]interface{}
-	err := feat_flag.GetDecryptedJson([]byte(key), feat_flag.EncryptedData{
+	err := feat_flag.GetDecryptedJson(key, feat_flag.EncryptedData{
 		CipherText: flags.CipherText,
 		AesKey:     flags.AesKey,
 		Nonce:      flags.Nonce,

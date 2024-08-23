@@ -59,7 +59,7 @@ func refreshFlags(ctx context.Context, consumer chan<- map[string]interface{}, o
 
 	// Initial flag retrieval with retry logic
 	err := retry(maxRetries, retryInterval, func() error {
-		return GetDecryptedJson([]byte(options.PrivateKey), options.EncryptedFlagDataGetter(), &flags)
+		return GetDecryptedJson(options.PrivateKey, options.EncryptedFlagDataGetter(), &flags)
 	})
 
 	if err != nil {
@@ -75,7 +75,7 @@ func refreshFlags(ctx context.Context, consumer chan<- map[string]interface{}, o
 		case <-timeout:
 			// Refresh the flags with retry logic
 			err := retry(maxRetries, retryInterval, func() error {
-				return GetDecryptedJson([]byte(options.PrivateKey), options.EncryptedFlagDataGetter(), &flags)
+				return GetDecryptedJson(options.PrivateKey, options.EncryptedFlagDataGetter(), &flags)
 			})
 
 			if err == nil {
@@ -88,7 +88,7 @@ func refreshFlags(ctx context.Context, consumer chan<- map[string]interface{}, o
 		case <-refreshFlagSignal:
 			// Refresh the flags with retry logic
 			err := retry(maxRetries, retryInterval, func() error {
-				return GetDecryptedJson([]byte(options.PrivateKey), options.EncryptedFlagDataGetter(), &flags)
+				return GetDecryptedJson(options.PrivateKey, options.EncryptedFlagDataGetter(), &flags)
 			})
 			if err == nil {
 				currentInterval = options.FlagRefeshInterval

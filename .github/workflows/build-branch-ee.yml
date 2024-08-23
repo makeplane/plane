@@ -494,12 +494,14 @@ jobs:
 
             cat monitor/public_key.pem
 
-            prv_key=$(cat monitor/private_key.pem)
-            echo "PRIVATE_KEY=$prv_key" >> $GITHUB_ENV
+            PRIVATE_KEY=$(cat monitor/private_key.pem | base64 -w 0)
           else
-            echo ${{ vars.DEFAULT_PRIME_PUBLIC_KEY }}
-            echo "PRIVATE_KEY=${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}" >> $GITHUB_ENV
+            echo "${{ vars.DEFAULT_PRIME_PUBLIC_KEY }}"
+            # Assuming DEFAULT_PRIME_PRIVATE_KEY is not base64 encoded
+            PRIVATE_KEY=$(echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}" | base64 -w 0)
           fi
+
+          echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
 
       - name: Build and Push Monitor to Docker Container Registry
         uses: docker/build-push-action@v5.1.0
@@ -510,7 +512,7 @@ jobs:
           tags: ${{ env.MONITOR_TAG }}
           push: true
           build-args: |
-            PRIVATE_KEY=${{ env.PRIVATE_KEY }}
+            PRIVATE_KEY="${{ env.PRIVATE_KEY }}"
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
