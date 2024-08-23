@@ -3,6 +3,7 @@ import React, { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
+import {TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // helper
@@ -34,35 +35,60 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   // handlers
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const currentFile: File = acceptedFiles[0];
-      if (!currentFile || !workspaceSlug) return;
+        const currentFile: File = acceptedFiles[0];
+        if (!currentFile || !workspaceSlug) return;
 
-      const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
-        type: currentFile.type,
-      });
-      const formData = new FormData();
-      formData.append("asset", uploadedFile);
-      formData.append(
-        "attributes",
-        JSON.stringify({
-          name: uploadedFile.name,
-          size: uploadedFile.size,
+        const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
+          type: currentFile.type,
+        });
+        const formData = new FormData();
+        formData.append("asset", uploadedFile);
+        formData.append(
+          "attributes",
+          JSON.stringify({
+            name: uploadedFile.name,
+            size: uploadedFile.size,
+          })
+        );
+        setIsLoading(true);
+        handleAttachmentOperations.create(formData)
+        .catch(()=>{
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "File could not be attached. Try uploading again.",
+          })
         })
-      );
-      setIsLoading(true);
-      handleAttachmentOperations.create(formData).finally(() => {
-        setLastWidgetAction("attachments");
-        setIsLoading(false);
+        .finally(() => {
+          setLastWidgetAction("attachments");
+          setIsLoading(false);
       });
     },
     [handleAttachmentOperations, workspaceSlug]
   );
+  const handleFileRejection = useCallback(() => {
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: "Error!",
+      message: "File size too large. Max file size: 5MB.",
+    })
+  }, []);
+
+  const handleError = useCallback(()=>{
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: "Error!",
+      message: "Some error occurred. Try uploading the file again.",
+    })
+  },[]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
+    onDropRejected: handleFileRejection,
+    onError: handleError,
   });
 
   return (
