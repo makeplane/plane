@@ -8,7 +8,9 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
+	"strings"
 
 	"github.com/youmark/pkcs8"
 )
@@ -25,6 +27,8 @@ func GetDecryptedJson(base64EncodedKey string, encryptedFeatureFlag EncryptedDat
 		return fmt.Errorf("failed to parse private key: %v", err)
 	}
 
+	// decrypt with the pem key
+
 	// Decrypt the feature flag
 	decryptedData, err := decryptWithPrivateKey(encryptedFeatureFlag, rsaPrivateKey)
 	if err != nil {
@@ -35,15 +39,51 @@ func GetDecryptedJson(base64EncodedKey string, encryptedFeatureFlag EncryptedDat
 	return json.Unmarshal(decryptedData, out)
 }
 
+func decodeBase64Key(base64EncodedKey string) ([]byte, error) {
+	// Remove any whitespace from the encoded key
+	base64EncodedKey = strings.TrimSpace(base64EncodedKey)
+
+	// Remove any line breaks or spaces within the string
+	base64EncodedKey = strings.ReplaceAll(base64EncodedKey, "\n", "")
+	base64EncodedKey = strings.ReplaceAll(base64EncodedKey, "\r", "")
+	base64EncodedKey = strings.ReplaceAll(base64EncodedKey, " ", "")
+
+	// Check if the length of the string is a multiple of 4, if not, pad with '='
+	if len(base64EncodedKey)%4 != 0 {
+		padding := 4 - (len(base64EncodedKey) % 4)
+		base64EncodedKey += strings.Repeat("=", padding)
+	}
+
+	// Try standard base64 decoding
+	decodedKey, err := base64.StdEncoding.DecodeString(base64EncodedKey)
+	if err == nil {
+		return decodedKey, nil
+	}
+
+	// If standard decoding fails, try URL-safe base64 decoding
+	decodedKey, err = base64.URLEncoding.DecodeString(base64EncodedKey)
+	if err == nil {
+		return decodedKey, nil
+	}
+
+	// If both methods fail, return an error
+	return nil, fmt.Errorf("failed to decode base64 key: %v", err)
+}
+
 /* ---------------------- Helper Functions ---------------------------- */
 // Parses the private key given to the rsa.PrivateKey type
 func parsePrivateKey(base64EncodedKey string) (*rsa.PrivateKey, error) {
-	decodedKey, err := base64.StdEncoding.DecodeString(base64EncodedKey)
+	decodedKey, err := decodeBase64Key(base64EncodedKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode base64 key: %v", err)
 	}
 
-	privateKey, err := pkcs8.ParsePKCS8PrivateKey(decodedKey)
+	block, _ := pem.Decode(decodedKey)
+	if block == nil {
+		return nil, fmt.Errorf("failed to parse PEM block containing the key")
+	}
+
+	privateKey, err := pkcs8.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse RSA private key: %v", err)
 	}
