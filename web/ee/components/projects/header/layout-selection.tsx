@@ -25,7 +25,6 @@ export const ProjectLayoutSelection: FC<TProjectLayoutSelection> = observer((pro
   // derived values
   const selectedLayout = filters?.layout || EProjectLayouts.TABLE;
 
-  console.log("selectedLayout", selectedLayout);
   return (
     <>
       <CustomMenu
