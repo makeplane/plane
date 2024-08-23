@@ -29,6 +29,9 @@ var StartCmd = &cobra.Command{
 
 		db.Initialize()
 
+		// If we are upgraded, we need to update all the licenses present inside the
+		// DB to the current version
+
 		// Establish signals for catching signal interrupts
 		sigs := make(chan os.Signal, 1)
 		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -76,6 +79,12 @@ var StartCmd = &cobra.Command{
 		}()
 
 		// Registering the Jobs to the cron handler
+		worker.RegisterJob("Update Feature Flags", func(ctx context.Context) {
+			err := handlers.UpdateFlagsHandler(ctx, api)
+			if err != nil {
+				CmdLogger.Error(ctx, err.Error())
+			}
+		})
 		worker.RegisterJob("Prime Scheduler", cronHandler.Start)
 		worker.RegisterJob("Prime Monitor Router", httpHandler.StartHttpServer)
 		worker.RegisterJob("Activate Current Instance", func(ctx context.Context) {

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -86,8 +87,11 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, ke
 		return nil
 	}
 
+	// Taking precondition that APP_VERSION will be verfied at the time of startup
+	APP_VERSION := os.Getenv("APP_VERSION")
+
 	var flags db.Flags
-	record = db.Db.Model(&db.Flags{}).Where("license_id = ?", license.ID).First(&flags)
+	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]bool{
@@ -164,8 +168,10 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 		return nil
 	}
 
+	APP_VERSION := os.Getenv("APP_VERSION")
+
 	var flags db.Flags
-	record = db.Db.Model(&db.Flags{}).Where("license_id = ?", license.ID).First(&flags)
+	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]interface{}{},
@@ -205,8 +211,10 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayloa
 		return nil
 	}
 
+	APP_VERSION := os.Getenv("APP_VERSION")
+
 	var flags db.Flags
-	record = db.Db.Model(&db.Flags{}).Where("license_id = ?", license.ID).First(&flags)
+	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]bool{
@@ -260,8 +268,10 @@ func handleWorkspaceAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPa
 		return nil
 	}
 
+	APP_VERSION := os.Getenv("APP_VERSION")
+
 	var flags db.Flags
-	record = db.Db.Model(&db.Flags{}).Where("license_id = ?", license.ID).First(&flags)
+	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]interface{}{},
