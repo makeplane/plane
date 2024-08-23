@@ -133,7 +133,7 @@ class Command(BaseCommand):
                 last_checked_at=timezone.now(),
                 user_count=User.objects.filter(is_bot=False).count(),
                 domain=domain,
-                product=data.get("Plane Enterprise Edition"),
+                product=data.get("product", "Plane Enterprise Edition"),
             )
 
             self.update_change_log(release_notes)
