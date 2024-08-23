@@ -126,8 +126,8 @@ export const useEditor = (props: CustomEditorProps) => {
   useImperativeHandle(
     forwardedRef,
     () => ({
-      clearEditor: () => {
-        editorRef.current?.commands.clearContent();
+      clearEditor: (emitUpdate = false) => {
+        editorRef.current?.commands.clearContent(emitUpdate);
       },
       setEditorValue: (content: string) => {
         editorRef.current?.commands.setContent(content);

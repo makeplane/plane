@@ -1,8 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
@@ -23,6 +23,10 @@ type Props = {
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page, handleSaveDescription } = props;
+  // router
+  const router = useRouter();
+  const pathname = usePathname();
+  const currentSearchParams = useSearchParams();
   // store values
   const {
     archived_at,
@@ -144,6 +148,18 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
+    },
+    {
+      key: "version-history",
+      action: () => {
+        // add query param, version=current to the route
+        const updatedSearchParams = new URLSearchParams(currentSearchParams.toString());
+        updatedSearchParams.set("version", "current");
+        router.push(pathname + "?" + updatedSearchParams.toString());
+      },
+      label: "Version history",
+      icon: History,
+      shouldRender: true,
     },
   ];
 
