@@ -167,7 +167,40 @@ class PageLogSerializer(BaseSerializer):
 class PageVersionSerializer(BaseSerializer):
     class Meta:
         model = PageVersion
-        fields = "__all__"
+        fields = [
+            "id",
+            "workspace",
+            "page",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "page",
+        ]
+
+
+class PageVersionDetailSerializer(BaseSerializer):
+    class Meta:
+        model = PageVersion
+        fields = [
+            "id",
+            "workspace",
+            "page",
+            "last_saved_at",
+            "description_binary",
+            "description_html",
+            "description_json",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
         read_only_fields = [
             "workspace",
             "page",
