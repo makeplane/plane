@@ -49,7 +49,19 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 		record := db.Db.Model(&db.License{}).Where("workspace_id = ? AND workspace_slug = ?", workspaceId, payload.WorkspaceSlug).First(&license)
 
 		if record.Error != nil {
-			ctx.Status(fiber.StatusOK)
+			// If the record is not found, return a free workspace
+			ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
+				Plan:                 "FREE",
+				PurchasedSeats:       0,
+				FreeSeats:            payload.FreeSeats,
+				CurrentPeriodEndDate: nil,
+				IsCancelled:          false,
+				Interval:             "MONTHLY",
+				IsOfflinePayment:     false,
+				HasAddedPayment:      false,
+				HasActivatedFree:     false,
+			})
+
 		}
 
 		// Send the response back to the client

@@ -7,6 +7,8 @@ RUN apk update && \
 	apk add git && \
 	go install github.com/goreleaser/goreleaser/v2@latest
 
+RUN apk add build-base
+
 ARG PRIVATE_KEY
 ENV PRIVATE_KEY=$PRIVATE_KEY
 

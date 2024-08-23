@@ -7,7 +7,7 @@ builds:
     dir: ./cli
     binary: prime-monitor
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
     goos:
       - linux
       - darwin
