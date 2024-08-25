@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
 import {TOAST_TYPE, setToast } from "@plane/ui";
 // constants
@@ -34,7 +34,28 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
 
   // handlers
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    (acceptedFiles: File[], rejectedFiles:FileRejection[] ) => {
+      const totalAcceptedFiles = acceptedFiles.length;
+      const totalRejectedFiles = rejectedFiles.length;
+      const totalUploadedFiles = totalAcceptedFiles + totalRejectedFiles;
+      if(totalUploadedFiles>1){
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Only one file can be uploaded at a time.",
+        })
+        return;
+      }
+      if(totalRejectedFiles>0){
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "File size too large. Max file size: 5MB.",
+        })
+        return;
+      }
+
+
         const currentFile: File = acceptedFiles[0];
         if (!currentFile || !workspaceSlug) return;
 
@@ -66,29 +87,13 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
     },
     [handleAttachmentOperations, workspaceSlug]
   );
-  const handleFileRejection = useCallback(() => {
-    setToast({
-      type: TOAST_TYPE.ERROR,
-      title: "Error!",
-      message: "File size too large. Max file size: 5MB.",
-    })
-  }, []);
 
-  const handleError = useCallback(()=>{
-    setToast({
-      type: TOAST_TYPE.ERROR,
-      title: "Error!",
-      message: "Some error occurred. Try uploading the file again.",
-    })
-  },[]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
-    onDropRejected: handleFileRejection,
-    onError: handleError,
   });
 
   return (

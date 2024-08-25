@@ -12,7 +12,7 @@ import { IssueAttachmentsListItem } from "./attachment-list-item";
 // types
 import { IssueAttachmentDeleteModal } from "./delete-attachment-modal";
 import { TAttachmentOperations } from "./root";
-
+//yeh meri original state hai
 
 type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
 
@@ -39,11 +39,29 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles:FileRejection[] ) => {
-      const acc = acceptedFiles.length;
-      const rej = rejectedFiles.length;
-        if(rej===0 && acc ===1){
-          const currentFile: File = acceptedFiles[0];
+      const totalAcceptedFiles = acceptedFiles.length;
+      const totalRejectedFiles = rejectedFiles.length;
+      console.log(`acc: ${totalAcceptedFiles} rej: ${totalRejectedFiles}`)
+      const totalUploadedFiles = totalAcceptedFiles + totalRejectedFiles;
+      if(totalUploadedFiles>1){
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Only one file can be uploaded at a time.",
+        })
+        return;
+      }
+      if(totalRejectedFiles>0){
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "File size too large. Max file size: 5MB.",
+        })
+        return;
+      }
+      const currentFile: File = acceptedFiles[0];
           if (!currentFile || !workspaceSlug) return;
+
           const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
             type: currentFile.type,
           });
@@ -58,27 +76,14 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
           );
           setIsLoading(true);
           handleAttachmentOperations.create(formData)
-            .catch(()=>{
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "File could not be attached. Try uploading again.",
-              })
+          .catch(()=>{
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Error!",
+              message: "File could not be attached. Try uploading again.",
             })
-            .finally(() => setIsLoading(false));
-        } else if(rej==1 && acc==0){
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "File size too large. Max file size: 5MB.",
           })
-        } else{
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Only one file can be uploaded at a time.",
-          })
-        }
+          .finally(() => setIsLoading(false));
     },
     [handleAttachmentOperations, workspaceSlug]
   );
