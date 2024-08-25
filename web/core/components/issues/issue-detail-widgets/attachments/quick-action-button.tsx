@@ -35,27 +35,9 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   // handlers
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles:FileRejection[] ) => {
-      const totalAcceptedFiles = acceptedFiles.length;
-      const totalRejectedFiles = rejectedFiles.length;
-      const totalUploadedFiles = totalAcceptedFiles + totalRejectedFiles;
-      if(totalUploadedFiles>1){
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Only one file can be uploaded at a time.",
-        })
-        return;
-      }
-      if(totalRejectedFiles>0){
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "File size too large. Max file size: 5MB.",
-        })
-        return;
-      }
+      const totalAttachedFiles = acceptedFiles.length + rejectedFiles.length;
 
-
+      if(rejectedFiles.length===0){
         const currentFile: File = acceptedFiles[0];
         if (!currentFile || !workspaceSlug) return;
 
@@ -84,6 +66,17 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
           setLastWidgetAction("attachments");
           setIsLoading(false);
       });
+      return;
+      }
+
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: (totalAttachedFiles>1)?
+        "Only one file can be uploaded at a time." :
+        "File size too large. Max file size: 5MB.",
+      })
+      return;
     },
     [handleAttachmentOperations, workspaceSlug]
   );

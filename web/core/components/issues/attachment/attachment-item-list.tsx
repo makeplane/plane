@@ -39,51 +39,45 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles:FileRejection[] ) => {
-      const totalAcceptedFiles = acceptedFiles.length;
-      const totalRejectedFiles = rejectedFiles.length;
-      console.log(`acc: ${totalAcceptedFiles} rej: ${totalRejectedFiles}`)
-      const totalUploadedFiles = totalAcceptedFiles + totalRejectedFiles;
-      if(totalUploadedFiles>1){
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Only one file can be uploaded at a time.",
-        })
-        return;
-      }
-      if(totalRejectedFiles>0){
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "File size too large. Max file size: 5MB.",
-        })
-        return;
-      }
-      const currentFile: File = acceptedFiles[0];
-          if (!currentFile || !workspaceSlug) return;
+      const totalAttachedFiles = acceptedFiles.length +  rejectedFiles.length;
 
-          const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
-            type: currentFile.type,
-          });
-          const formData = new FormData();
-          formData.append("asset", uploadedFile);
-          formData.append(
-            "attributes",
-            JSON.stringify({
-              name: uploadedFile.name,
-              size: uploadedFile.size,
-            })
-          );
-          setIsLoading(true);
-          handleAttachmentOperations.create(formData)
-          .catch(()=>{
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "File could not be attached. Try uploading again.",
-            })
+      if(rejectedFiles.length===0){
+        const currentFile: File = acceptedFiles[0];
+        if (!currentFile || !workspaceSlug) return;
+
+        const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
+          type: currentFile.type,
+        });
+        const formData = new FormData();
+        formData.append("asset", uploadedFile);
+        formData.append(
+          "attributes",
+          JSON.stringify({
+            name: uploadedFile.name,
+            size: uploadedFile.size,
           })
-          .finally(() => setIsLoading(false));
+        );
+        setIsLoading(true);
+        handleAttachmentOperations.create(formData)
+        .catch(()=>{
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "File could not be attached. Try uploading again.",
+          })
+        })
+        .finally(() => setIsLoading(false));
+        return;
+      }
+
+      setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: (totalAttachedFiles>1)?
+            "Only one file can be uploaded at a time." :
+            "File size too large. Max file size: 5MB.",
+      })
+      return;
     },
     [handleAttachmentOperations, workspaceSlug]
   );
