@@ -12,7 +12,7 @@ export const createIssueIndexes = async () => {
     "cycle_id",
   ];
 
-  const promises = [];
+  const promises: Promise<any>[] = [];
 
   promises.push(persistence.db.exec({ sql: `CREATE UNIQUE INDEX issues_issue_id_idx ON issues (id)` }));
 
@@ -31,7 +31,7 @@ export const createIssueMetaIndexes = async () => {
 
 export const createLabelIndexes = async () => {
   const columns = ["name", "id", "project_id"];
-  const promises = [];
+  const promises: Promise<any>[] = [];
   columns.forEach((column) => {
     promises.push(persistence.db.exec({ sql: `CREATE INDEX labels_${column}_idx ON labels (${column})` }));
   });
@@ -44,7 +44,7 @@ const createIndexes = async () => {
   try {
     await Promise.all(promises);
   } catch (e) {
-    console.log(e.result.message);
+    console.log((e as Error).message);
   }
   log("### Indexes created in", `${performance.now() - start}ms`);
 };

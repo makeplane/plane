@@ -8,7 +8,9 @@ import { issueFilterQueryConstructor, issueFilterCountQueryConstructor } from ".
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
-
+declare module "@sqlite.org/sqlite-wasm" {
+  export function sqlite3Worker1Promiser(...args: any): any;
+}
 const PAGE_SIZE = 1000;
 const log = console.log;
 const error = console.error;
@@ -42,7 +44,14 @@ export class Storage {
 
   initialize = async (workspaceSlug: string): Promise<boolean> => {
     this.workspaceInitPromise = this._initialize(workspaceSlug);
-    await this.workspaceInitPromise;
+    try {
+      await this.workspaceInitPromise;
+      return true;
+    } catch (err) {
+      error(err);
+      this.status = "error";
+      return false;
+    }
   };
 
   _initialize = async (workspaceSlug: string): Promise<boolean> => {
@@ -187,7 +196,7 @@ export class Storage {
 
   getIssues = async (projectId: string, queries: any, config: any) => {
     console.log("#### Queries", queries);
-    if (this.getStatus(projectId) === "loading" || window.DISABLE_LOCAL) {
+    if (this.getStatus(projectId) === "loading" || (window as any).DISABLE_LOCAL) {
       info(`Project ${projectId} is loading, falling back to server`);
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(this.workspaceSlug, projectId, queries);
@@ -208,8 +217,10 @@ export class Storage {
 
     const [pageSize, page, offset] = cursor.split(":");
 
-    const groupByProperty = EIssueGroupBYServerToProperty[group_by as typeof EIssueGroupBYServerToProperty];
-    const subGroupByProperty = EIssueGroupBYServerToProperty[sub_group_by as typeof EIssueGroupBYServerToProperty];
+    const groupByProperty: string =
+      EIssueGroupBYServerToProperty[group_by as keyof typeof EIssueGroupBYServerToProperty];
+    const subGroupByProperty =
+      EIssueGroupBYServerToProperty[sub_group_by as keyof typeof EIssueGroupBYServerToProperty];
 
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => {

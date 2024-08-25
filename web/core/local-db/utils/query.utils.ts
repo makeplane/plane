@@ -10,12 +10,12 @@ export const translateQueryParams = (queries: any) => {
   if (module) otherProps.module_ids = module;
   if (labels) otherProps.label_ids = labels;
   if (assignees) otherProps.assignee_ids = assignees;
-  if (group_by) otherProps.group_by = GROUP_BY_MAP[group_by];
-  if (sub_group_by) otherProps.sub_group_by = GROUP_BY_MAP[sub_group_by];
+  if (group_by) otherProps.group_by = GROUP_BY_MAP[group_by as keyof typeof GROUP_BY_MAP];
+  if (sub_group_by) otherProps.sub_group_by = GROUP_BY_MAP[sub_group_by as keyof typeof GROUP_BY_MAP];
   if (priority) {
     otherProps.priority_proxy = priority
       .split(",")
-      .map((priority: string) => PRIORITY_MAP[priority])
+      .map((priority: string) => PRIORITY_MAP[priority as keyof typeof PRIORITY_MAP])
       .join(",");
   }
 
@@ -53,7 +53,7 @@ export const isMetaJoinRequired = (groupBy: string, subGroupBy: string) =>
 export const getMetaKeysFragment = (queries: any) => {
   const { group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
 
-  const fields = new Set();
+  const fields: Set<string> = new Set();
   if (ARRAY_FIELDS.includes(group_by)) {
     fields.add(group_by);
   }
@@ -77,10 +77,10 @@ export const getMetaKeysFragment = (queries: any) => {
   return sql;
 };
 
-export const getMetaKeys = (queries: any) => {
+export const getMetaKeys = (queries: any): string[] => {
   const { group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
 
-  const fields = new Set();
+  const fields: Set<string> = new Set();
   if (ARRAY_FIELDS.includes(group_by)) {
     fields.add(group_by);
   }
@@ -118,8 +118,8 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   const filterJoinFields = getMetaKeys(otherProps);
 
-  let issueTableFilterFields = getSingleFilterFields(queries);
-  issueTableFilterFields = issueTableFilterFields.length ? "," + issueTableFilterFields.join(",") : "";
+  const temp = getSingleFilterFields(queries);
+  const issueTableFilterFields = temp.length ? "," + temp.join(",") : "";
 
   const joinsRequired = areJoinsRequired(queries);
 
@@ -193,7 +193,7 @@ export const singleFilterConstructor = (queries: any) => {
   return sql;
 };
 
-const getSingleFilterFields = (queries) => {
+const getSingleFilterFields = (queries: any) => {
   debugger;
   const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...otherProps } =
     translateQueryParams(queries);

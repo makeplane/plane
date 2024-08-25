@@ -53,7 +53,8 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    return await persistence.getIssues(projectId, queries, config);
+    const response = await persistence.getIssues(projectId, queries, config);
+    return response as TIssuesResponse;
   }
 
   async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {

@@ -1,5 +1,5 @@
 import { persistence } from "../storage.sqlite";
-import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
+import { PRIORITY_MAP } from "./constants";
 import {
   getFilteredRowsForGrouping,
   getMetaKeys,
@@ -93,7 +93,7 @@ const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
 
 export const stageIssueInserts = (issue: any) => {
   const issue_id = issue.id;
-  issue.priority_proxy = PRIORITY_MAP[issue.priority];
+  issue.priority_proxy = PRIORITY_MAP[issue.priority as keyof typeof PRIORITY_MAP];
   const keys = Object.keys(issue).join(",");
 
   const values = Object.values(issue).map((val) => {
@@ -126,34 +126,4 @@ export const stageIssueInserts = (issue: any) => {
       });
     }
   });
-};
-
-const subFilterConstructor = (queries: any) => {
-  // return "";
-  let { group_by, sub_group_by } = queries;
-  group_by = GROUP_BY_MAP[group_by];
-  sub_group_by = GROUP_BY_MAP[sub_group_by];
-  const fields = new Set();
-  if (ARRAY_FIELDS.includes(sub_group_by)) {
-    fields.add(sub_group_by);
-  }
-  if (ARRAY_FIELDS.includes(group_by)) {
-    fields.add(group_by);
-  }
-
-  ARRAY_FIELDS.forEach((field: string) => {
-    if (queries[field]) {
-      fields.add(field);
-    }
-  });
-
-  if (fields.size === 0) {
-    return "";
-  }
-
-  let sql = "";
-
-  sql += 'AND im.key IN ("' + Array.from(fields).join('","') + '")';
-
-  return sql;
 };
