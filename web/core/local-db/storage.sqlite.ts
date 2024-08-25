@@ -220,6 +220,8 @@ export class Storage {
       return issue;
     });
 
+    console.log("#### Issue Results", issueResults.length);
+
     const parsingEnd = performance.now();
 
     const grouping = performance.now();
@@ -252,7 +254,6 @@ export class Storage {
       next_page_results,
       total_pages,
     };
-    // console.log("#### OUT", out);
 
     return out;
   };

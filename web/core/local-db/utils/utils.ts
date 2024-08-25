@@ -1,7 +1,6 @@
 import pick from "lodash/pick";
-import { rootStore } from "@/lib/store-context";
 import { TIssue } from "@plane/types";
-import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
+import { rootStore } from "@/lib/store-context";
 import { updateIssue } from "./load-issues";
 
 export const log = console.log;
@@ -56,35 +55,6 @@ export const wrapDateTime = (field: string) => {
     return `datetime(${field})`;
   }
   return field;
-};
-
-export const filterConstructor = (filters: any) => {
-  let sql = "";
-  if (filters.priority) {
-    filters.priority_proxy = filters.priority
-      .split(",")
-      .map((priority: string) => PRIORITY_MAP[priority])
-      .join(",");
-    delete filters.priority;
-  }
-  const keys = Object.keys(filters);
-
-  keys.forEach((key) => {
-    const value = filters[key] ? filters[key].split(",") : "";
-    if (!value) return;
-    if (ARRAY_FIELDS.includes(key)) {
-      sql += ` AND m.key='${key}' AND value IN ('${value.join("','")}')`;
-    } else {
-      sql += ` AND ${key} in ('${value.join("','")}')`;
-    }
-  });
-  debugger;
-  return sql;
-};
-
-export const isFilterJoinRequired = (filters: any) => {
-  const keys = Object.keys(filters);
-  return keys.some((key) => ARRAY_FIELDS.includes(key));
 };
 
 export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: string; total_issues: number })[]): any => {
