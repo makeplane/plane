@@ -57,7 +57,7 @@ export class Storage {
   _initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (this.status === "initializing") {
       console.warn(`Initialization already in progress for workspace ${workspaceSlug}`);
-      return true;
+      return false;
     }
     if (this.status === "ready") {
       console.warn(`Already initialized for workspace ${workspaceSlug}`);
@@ -116,7 +116,7 @@ export class Storage {
     loadLabels(this.workspaceSlug);
   };
 
-  syncProject = async (projectId: string) => {
+  syncProject = (projectId: string) => {
     // Load labels, members, states, modules, cycles
 
     const sync = this.syncIssues(projectId);
@@ -129,8 +129,12 @@ export class Storage {
       info(`Project ${projectId} is already loading or syncing`);
       return;
     }
+    const syncPromise = this.getSync(projectId);
 
-    await this.getSync(projectId);
+    if (syncPromise) {
+      // Redundant check?
+      return;
+    }
 
     const queryParams: { cursor: string; updated_at__gt?: string } = {
       cursor: `${PAGE_SIZE}:0:0`,
@@ -168,6 +172,7 @@ export class Storage {
     console.log("### Time taken to add issues", performance.now() - start);
 
     this.setStatus(projectId, "ready");
+    this.setSync(projectId, undefined);
   };
 
   getIssueCount = async (projectId: string) => {
@@ -275,8 +280,8 @@ export class Storage {
   };
 
   getSync = (projectId: string) => this.projectStatus[projectId]?.issues?.sync;
-  setSync = (projectId: string, sync: Promise<void>) => {
-    this.projectStatus[projectId].issues.sync = sync;
+  setSync = (projectId: string, sync: Promise<void> | undefined) => {
+    set(this.projectStatus, `${projectId}.issues.sync`, sync);
   };
 }
 
