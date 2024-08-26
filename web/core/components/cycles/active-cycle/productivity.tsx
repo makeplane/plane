@@ -1,5 +1,4 @@
 import { FC, Fragment } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ICycle, TCyclePlotType } from "@plane/types";
@@ -34,17 +33,8 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   const plotType: TCyclePlotType = (cycle && getPlotTypeByCycleId(cycle.id)) || "burndown";
 
   const onChange = async (value: TCyclePlotType) => {
-    console.log(value, "value");
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;
     setPlotType(cycle.id, value);
-    // try {
-    //   setLoader(true);
-    //   await fetchCycleDetails(workspaceSlug, projectId, cycle.id);
-    //   setLoader(false);
-    // } catch (error) {
-    //   setLoader(false);
-    //   setPlotType(cycle.id, plotType);
-    // }
   };
 
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
@@ -95,14 +85,10 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                     <span>Current</span>
                   </div>
                 </div>
-                {isEmpty(cycle.progress_snapshot) ? (
-                  <Loader className="h-3 w-[40px]">
-                    <Loader.Item width="100p%" height="100%" />
-                  </Loader>
-                ) : plotType === "points" ? (
-                  <span>{`Pending points - ${cycle.progress_snapshot.backlog_estimate_points + cycle.progress_snapshot.unstarted_estimate_points + cycle.progress_snapshot.started_estimate_points}`}</span>
+                {plotType === "points" ? (
+                  <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
-                  <span>{`Pending issues - ${cycle.progress_snapshot.backlog_issues + cycle.progress_snapshot.unstarted_issues + cycle.progress_snapshot.started_issues}`}</span>
+                  <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
                 )}
               </div>
 

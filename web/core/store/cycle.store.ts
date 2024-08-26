@@ -107,7 +107,7 @@ export class CycleStore implements ICycleStore {
       // observables
       loader: observable.ref,
       cycleMap: observable,
-      plotType: observable.ref,
+      plotType: observable,
       activeCycleIdMap: observable,
       fetchedMap: observable,
       // computed
@@ -484,11 +484,11 @@ export class CycleStore implements ICycleStore {
    *  @returns
    */
   fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) =>
-    await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((cycle) => {
+    await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
       runInAction(() => {
-        set(this.cycleMap, [cycleId, "progress_snapshot"], cycle);
+        set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], ...progress });
       });
-      return cycle;
+      return progress;
     });
 
   /**
