@@ -116,7 +116,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     issueBlockRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
   });
 
-  if (!issueId || !issuesMap[issueId].created_at) return null;
+  if (!issueId || !issuesMap[issueId]?.created_at) return null;
 
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   return (
