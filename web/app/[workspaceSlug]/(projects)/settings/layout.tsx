@@ -25,7 +25,7 @@ export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
           </div>
           <div className="flex flex-col relative w-full overflow-hidden">
             <MobileWorkspaceSettingsTabs />
-            <div className="w-full pl-4 md:pl-0 md:py-8 py-2 overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
+            <div className="h-full w-full pl-4 md:pl-0 md:py-8 py-2 overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
               {children}
             </div>
           </div>

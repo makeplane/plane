@@ -13,8 +13,8 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useCommandPalette, useInstance, useTransient } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-import { PlaneVersionNumber } from "@/plane-web/components/global";
+// plane web components
+import { PlaneChangelogs, PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 
 const HELP_OPTIONS = [
@@ -148,6 +148,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                     </span>
                   </Link>
                 ))}
+
                 {config?.intercom_app_id && config?.is_intercom_enabled && (
                   <button
                     type="button"
@@ -160,6 +161,8 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                     <span className="text-xs">Chat with us</span>
                   </button>
                 )}
+
+                <PlaneChangelogs />
               </div>
               <div className="px-2 pb-1 pt-2 text-[10px]">
                 <PlaneVersionNumber />
