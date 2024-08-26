@@ -5,7 +5,6 @@ import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
-import { isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
@@ -41,30 +40,26 @@ export const IssueBlocksList: FC<Props> = (props) => {
     <div className="relative h-full w-full">
       {issueIds &&
         issueIds.length > 0 &&
-        issueIds.map(
-          (issueId: string, index: number) =>
-            issuesMap[issueId].created_at && (
-              <IssueBlockRoot
-                key={issueId}
-                issueIds={issueIds}
-                issueId={issueId}
-                issuesMap={issuesMap}
-                updateIssue={updateIssue}
-                quickActions={quickActions}
-                canEditProperties={canEditProperties}
-                displayProperties={displayProperties}
-                nestingLevel={0}
-                spacingLeft={0}
-                containerRef={containerRef}
-                selectionHelpers={selectionHelpers}
-                groupId={groupId}
-                isLastChild={index === issueIds.length - 1}
-                isDragAllowed={isDragAllowed}
-                canDropOverIssue={canDropOverIssue}
-                shouldRenderByDefault={isIssueNew(issuesMap[issueId])}
-              />
-            )
-        )}
+        issueIds.map((issueId: string, index: number) => (
+          <IssueBlockRoot
+            key={issueId}
+            issueIds={issueIds}
+            issueId={issueId}
+            issuesMap={issuesMap}
+            updateIssue={updateIssue}
+            quickActions={quickActions}
+            canEditProperties={canEditProperties}
+            displayProperties={displayProperties}
+            nestingLevel={0}
+            spacingLeft={0}
+            containerRef={containerRef}
+            selectionHelpers={selectionHelpers}
+            groupId={groupId}
+            isLastChild={index === issueIds.length - 1}
+            isDragAllowed={isDragAllowed}
+            canDropOverIssue={canDropOverIssue}
+          />
+        ))}
     </div>
   );
 };

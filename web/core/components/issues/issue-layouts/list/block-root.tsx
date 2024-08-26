@@ -16,7 +16,7 @@ import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // types
-import { HIGHLIGHT_CLASS, getIssueBlockId } from "../utils";
+import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
@@ -116,7 +116,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     issueBlockRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
   });
 
-  if (!issueId) return null;
+  if (!issueId || !issuesMap[issueId].created_at) return null;
 
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   return (
@@ -128,7 +128,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}
-        defaultValue={shouldRenderByDefault}
+        defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
       >
         <IssueBlock
           issueId={issueId}
