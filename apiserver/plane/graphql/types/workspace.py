@@ -33,10 +33,6 @@ class WorkspaceMemberType:
     role: int
     is_active: bool
 
-    async def member(self) -> UserType:
-        member = await sync_to_async(self.member)()
-        return member
-
 
 # workspace your work
 @strawberry.type
