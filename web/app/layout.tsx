@@ -31,10 +31,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   minimumScale: 1,
   initialScale: 1,
-  width: "device-width",
-  userScalable: false,
-  viewportFit: "cover",
   maximumScale: 1,
+  userScalable: false,
+  width: "device-width",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
