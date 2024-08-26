@@ -1107,27 +1107,27 @@ class CycleProgressEndpoint(BaseAPIView):
 
         return Response(
             {
-                "backlog_estimate_point": aggregate_estimates[
+                "backlog_estimate_points": aggregate_estimates[
                     "backlog_estimate_point"
                 ]
                 or 0,
-                "unstarted_estimate_point": aggregate_estimates[
+                "unstarted_estimate_points": aggregate_estimates[
                     "unstarted_estimate_point"
                 ]
                 or 0,
-                "started_estimate_point": aggregate_estimates[
+                "started_estimate_points": aggregate_estimates[
                     "started_estimate_point"
                 ]
                 or 0,
-                "cancelled_estimate_point": aggregate_estimates[
+                "cancelled_estimate_points": aggregate_estimates[
                     "cancelled_estimate_point"
                 ]
                 or 0,
-                "completed_estimate_point": aggregate_estimates[
+                "completed_estimate_points": aggregate_estimates[
                     "completed_estimate_points"
                 ]
                 or 0,
-                "total_estimate_point": aggregate_estimates[
+                "total_estimate_points": aggregate_estimates[
                     "total_estimate_points"
                 ],
                 "backlog_issues": backlog_issues,
