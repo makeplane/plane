@@ -330,8 +330,8 @@ jobs:
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v5.1.0
         with:
-          context: ./nginx
-          file: ./nginx/Dockerfile
+          context: ./caddy
+          file: ./caddy/Dockerfile
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.PROXY_TAG }}
           push: true
