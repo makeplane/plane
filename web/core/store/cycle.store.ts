@@ -230,13 +230,11 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.router.projectId;
     if (!projectId) return null;
-    console.log("this.cycleMap", { ...this.cycleMap["eca9a3b1-650a-433f-9edf-712b01af49d5"] });
     const activeCycle = Object.keys(this.cycleMap ?? {}).find(
       (cycleId) =>
         this.cycleMap?.[cycleId]?.project_id === projectId &&
         this.cycleMap?.[cycleId]?.status?.toLowerCase() === "current"
     );
-    console.log("activeCycle", activeCycle);
     return activeCycle || null;
   }
 
