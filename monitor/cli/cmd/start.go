@@ -87,7 +87,7 @@ var StartCmd = &cobra.Command{
 		}()
 
 		// Registering the Jobs to the cron handler
-		worker.RegisterJob("Update Feature Flags", func(ctx context.Context) {
+		worker.RegisterJob("Resync Instance Licenses", func(ctx context.Context) {
 			err := handlers.UpdateFlagsHandler(ctx, api)
 			if err != nil {
 				CmdLogger.Error(ctx, err.Error())

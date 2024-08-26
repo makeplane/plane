@@ -88,6 +88,8 @@ type FlagDataResponse struct {
 }
 
 type WorkspaceProductPayload struct {
-	FreeSeats     int    `json:"free_seats"`
-	WorkspaceSlug string `json:"workspace_slug"`
+	FreeSeats     int               `json:"free_seats"`
+	WorkspaceSlug string            `json:"workspace_slug"`
+	MembersList   []WorkspaceMember `json:"members_list"`
+	OwnerEmail    string            `json:"owner_email"`
 }

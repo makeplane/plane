@@ -135,6 +135,18 @@ def workspace_member_check(current_invite_list, requested_invite_list, slug):
                 - requested_invited_guest_viewers
             )
 
+            # If the left over seats are less than or equal to 0 then return false
+            if check_admin_members and check_guest_viewers:
+                allowed_admin_members = left_over_admin_member_seats > 0
+                allowed_guest_viewers = left_over_guest_viewer_seats > 0
+
+                return (
+                    allowed_admin_members and allowed_guest_viewers,
+                    max(left_over_admin_member_seats, 0),
+                    max(left_over_guest_viewer_seats, 0),
+                )
+
+            # If the left over seats are less than or equal to 0 then return false
             if check_admin_members:
                 return (
                     left_over_admin_member_seats > 0,
