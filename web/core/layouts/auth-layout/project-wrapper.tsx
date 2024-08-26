@@ -53,14 +53,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
 
-  useSWRImmutable(
-    workspaceSlug && projectId ? `PROJECT_SYNC_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? async () => {
-          await persistence.syncProject(projectId.toString());
-        }
-      : null
-  );
   useSWR(
     workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     workspaceSlug && projectId

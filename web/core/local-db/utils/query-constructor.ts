@@ -110,6 +110,11 @@ export const stageIssueInserts = (issue: any) => {
     sql: `INSERT OR REPLACE  into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     bind: values,
   });
+
+  persistence.db.exec({
+    sql: `DELETE from issue_meta where issue_id='${issue_id}'`,
+  });
+
   arrayFields.forEach((field) => {
     const values = issue[field];
     if (values && values.length) {
@@ -120,6 +125,7 @@ export const stageIssueInserts = (issue: any) => {
         });
       });
     } else {
+      // Added for empty fields?
       persistence.db.exec({
         sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
         bind: [issue_id, field, ""],

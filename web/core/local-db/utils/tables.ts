@@ -59,9 +59,9 @@ export const createTables = async (SQLITE: any) => {
   await createIssueMetaTable(SQLITE);
   await createLabelsTable(SQLITE);
 
-  try {
-    await createIndexes();
-  } catch (e) {
-    console.error(e);
-  }
+  // try {
+  //   await createIndexes();
+  // } catch (e) {
+  //   console.error(e);
+  // }
 };

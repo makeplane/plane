@@ -1,10 +1,12 @@
-import set from "lodash/set";
-import { EIssueGroupBYServerToProperty } from "@plane/constants";
 import { IssueService } from "@/services/issue/issue.service";
+import { EIssueGroupBYServerToProperty } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import set from "lodash/set";
 import { ARRAY_FIELDS } from "./utils/constants";
+import createIndexes from "./utils/indexes";
 import { addIssuesBulk } from "./utils/load-issues";
 import { loadLabels } from "./utils/load-labels";
-import { issueFilterQueryConstructor, issueFilterCountQueryConstructor } from "./utils/query-constructor";
+import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
@@ -32,6 +34,7 @@ export class Storage {
 
   constructor() {
     this.db = null;
+
     // this.issueService = new IssueService();
   }
 
@@ -119,13 +122,18 @@ export class Storage {
   syncProject = (projectId: string) => {
     // Load labels, members, states, modules, cycles
 
-    const sync = this.syncIssues(projectId);
+    this.syncIssues(projectId);
+  };
+
+  syncIssues = (projectId: string) => {
+    const sync = this._syncIssues(projectId);
     this.setSync(projectId, sync);
   };
 
-  syncIssues = async (projectId: string) => {
+  _syncIssues = async (projectId: string) => {
     console.log("### Sync started");
-    if (this.getStatus(projectId) === "loading" || this.getStatus(projectId) === "syncing") {
+    let status = this.getStatus(projectId);
+    if (status === "loading" || status === "syncing") {
       info(`Project ${projectId} is already loading or syncing`);
       return;
     }
@@ -147,6 +155,7 @@ export class Storage {
     }
 
     this.setStatus(projectId, syncedAt ? "syncing" : "loading");
+    status = this.getStatus(projectId);
 
     log(`### ${syncedAt ? "Syncing" : "Loading"} issues to local db for project ${projectId}`);
 
@@ -171,6 +180,14 @@ export class Storage {
 
     console.log("### Time taken to add issues", performance.now() - start);
 
+    if (status === "loading") {
+      await createIndexes();
+      setToast({
+        title: "Project synced",
+        message: `in ${Math.round((performance.now() - start) / 1000)}s`,
+        type: TOAST_TYPE.SUCCESS,
+      });
+    }
     this.setStatus(projectId, "ready");
     this.setSync(projectId, undefined);
   };
@@ -201,6 +218,7 @@ export class Storage {
 
   getIssues = async (projectId: string, queries: any, config: any) => {
     console.log("#### Queries", queries);
+
     if (this.getStatus(projectId) === "loading" || (window as any).DISABLE_LOCAL) {
       info(`Project ${projectId} is loading, falling back to server`);
       const issueService = new IssueService();
