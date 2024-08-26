@@ -34,8 +34,6 @@ export const translateQueryParams = (queries: any) => {
 };
 
 export const getOrderByFragment = (order_by: string) => {
-  debugger;
-
   let orderByString = "";
   if (!order_by) return orderByString;
 
@@ -194,7 +192,6 @@ export const singleFilterConstructor = (queries: any) => {
 };
 
 const getSingleFilterFields = (queries: any) => {
-  debugger;
   const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...otherProps } =
     translateQueryParams(queries);
 
