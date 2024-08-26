@@ -188,13 +188,11 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
           this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
             viewId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
+            "mutation"
           );
           break;
         }

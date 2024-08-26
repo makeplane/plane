@@ -183,13 +183,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
+          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             filters: _filters.filters,
           });

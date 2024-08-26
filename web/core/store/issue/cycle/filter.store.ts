@@ -195,14 +195,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
-            cycleId
-          );
+         this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
+           workspaceSlug,
+           projectId,
+           "mutation",
+           cycleId
+         );
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             filters: _filters.filters,
           });

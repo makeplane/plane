@@ -194,12 +194,10 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
               set(this.filters, [moduleId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
             });
           });
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
           this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
+            "mutation",
             moduleId
           );
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
