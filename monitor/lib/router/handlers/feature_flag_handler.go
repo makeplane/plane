@@ -50,6 +50,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, ke
 	var license db.License
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
+		fmt.Println("Error fetching license", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]bool{
 				payload.FeatureKey: false,
@@ -61,6 +62,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, ke
 	var userLicense db.UserLicense
 	record = db.Db.Model(&db.UserLicense{}).Where("user_id = ? AND license_id = ?", payload.UserID, license.ID).First(&userLicense)
 	if record.Error != nil {
+		fmt.Println("Error fetching user license", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]bool{
 				payload.FeatureKey: false,
@@ -139,6 +141,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	var license db.License
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
+		fmt.Println("Error fetching license", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]interface{}{},
 		})
@@ -148,6 +151,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	var userLicense db.UserLicense
 	record = db.Db.Model(&db.UserLicense{}).Where("user_id = ? AND license_id = ?", payload.UserID, license.ID).First(&userLicense)
 	if record.Error != nil {
+		fmt.Println("Error fetching user license", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]interface{}{},
 		})
@@ -155,6 +159,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	}
 
 	if !userLicense.IsActive {
+		fmt.Println("User is not active")
 		ctx.JSON(fiber.Map{
 			"values": map[string]interface{}{},
 		})
@@ -162,6 +167,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	}
 
 	if license.ProductType == "FREE" {
+		fmt.Println("Product type is free")
 		ctx.JSON(fiber.Map{
 			"values": map[string]interface{}{},
 		})
@@ -173,6 +179,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	var flags db.Flags
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
+		fmt.Println("Error fetching flags", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]interface{}{},
 		})
@@ -187,6 +194,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 		Tag:        flags.Tag,
 	}, &decryptedFlags)
 	if err != nil {
+		fmt.Println("Error decrypting flags", err)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]interface{}{},
 		})
