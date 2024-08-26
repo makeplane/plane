@@ -125,6 +125,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
         placement={placements}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
+        useCaptureForOutsideClick
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {
