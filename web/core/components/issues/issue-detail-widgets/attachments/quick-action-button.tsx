@@ -74,7 +74,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
         title: "Error!",
         message: (totalAttachedFiles>1)?
         "Only one file can be uploaded at a time." :
-        "File size too large. Max file size: 5MB.",
+        "The file must be 5MB or less.",
       })
       return;
     },

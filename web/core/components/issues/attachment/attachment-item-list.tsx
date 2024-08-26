@@ -12,7 +12,6 @@ import { IssueAttachmentsListItem } from "./attachment-list-item";
 // types
 import { IssueAttachmentDeleteModal } from "./delete-attachment-modal";
 import { TAttachmentOperations } from "./root";
-//yeh meri original state hai
 
 type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
 
@@ -75,7 +74,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
             title: "Error!",
             message: (totalAttachedFiles>1)?
             "Only one file can be uploaded at a time." :
-            "File size too large. Max file size: 5MB.",
+            "The file must be 5MB or less.",
       })
       return;
     },
