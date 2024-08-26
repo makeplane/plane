@@ -43,8 +43,8 @@ export const CommandPalette: FC = observer(() => {
   const { platform } = usePlatformOS();
   const {
     data: currentUser,
-    canPerformProjectCreateActions,
-    canPerformWorkspaceCreateActions,
+    canPerformProjectMemberActions,
+    canPerformWorkspaceMemberActions,
     canPerformAnyCreateAction,
     canPerformProjectAdminActions,
   } = useUser();
@@ -103,15 +103,15 @@ export const CommandPalette: FC = observer(() => {
   // auth
   const performProjectCreateActions = useCallback(
     (showToast: boolean = true) => {
-      if (!canPerformProjectCreateActions && showToast)
+      if (!canPerformProjectMemberActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
 
-      return canPerformProjectCreateActions;
+      return canPerformProjectMemberActions;
     },
-    [canPerformProjectCreateActions]
+    [canPerformProjectMemberActions]
   );
 
   const performProjectBulkDeleteActions = useCallback(
@@ -129,14 +129,14 @@ export const CommandPalette: FC = observer(() => {
 
   const performWorkspaceCreateActions = useCallback(
     (showToast: boolean = true) => {
-      if (!canPerformWorkspaceCreateActions && showToast)
+      if (!canPerformWorkspaceMemberActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
-      return canPerformWorkspaceCreateActions;
+      return canPerformWorkspaceMemberActions;
     },
-    [canPerformWorkspaceCreateActions]
+    [canPerformWorkspaceMemberActions]
   );
 
   const performAnyProjectCreateActions = useCallback(

@@ -14,7 +14,7 @@ from .. import BaseViewSet
 from plane.app.serializers import IssueLinkSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import IssueLink
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueLinkViewSet(BaseViewSet):

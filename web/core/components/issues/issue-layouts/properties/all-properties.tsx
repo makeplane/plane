@@ -32,8 +32,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
-import { IssuePropertyLabels } from "../properties/labels";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssuePropertyLabels } from "./labels";
+import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 
 export interface IIssueProperties {
   issue: TIssue;

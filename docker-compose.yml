@@ -101,7 +101,7 @@ services:
 
   plane-db:
     container_name: plane-db
-    image: postgres:15.2-alpine
+    image: postgres:15.7-alpine
     restart: always
     command: postgres -c 'max_connections=1000'
     volumes:

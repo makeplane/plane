@@ -79,7 +79,17 @@
   -moz-appearance: textfield;
 }
 
+/* Placeholder only for the first line in an empty editor. */
 .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: rgb(var(--color-text-400));
+  pointer-events: none;
+  height: 0;
+}
+
+/* Display Placeholders on every new line. */
+.ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
   float: left;
   color: rgb(var(--color-text-400));
@@ -108,14 +118,6 @@
 .ProseMirror code::before,
 .ProseMirror code::after {
   display: none;
-}
-
-.ProseMirror .is-empty::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: rgb(var(--color-text-400));
-  pointer-events: none;
-  height: 0;
 }
 
 /* Custom image styles */

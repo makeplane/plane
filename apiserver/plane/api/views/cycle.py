@@ -26,7 +26,7 @@ from plane.api.serializers import (
     CycleSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
@@ -544,6 +544,12 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         cycle.archived_at = timezone.now()
         cycle.save()
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, cycle_id):

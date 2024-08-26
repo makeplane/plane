@@ -6,7 +6,7 @@ import { IMentionHighlight, IMentionSuggestion, TDisplayConfig, TEditorCommands,
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
   getHTML: () => string;
-  clearEditor: () => void;
+  clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;
 };
@@ -20,6 +20,8 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   isEditorReadyToDiscard: () => boolean;
   setSynced: () => void;
   hasUnsyncedChanges: () => boolean;
+  getSelectedText: () => string | null;
+  insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
 }
 
 export interface IEditorProps {

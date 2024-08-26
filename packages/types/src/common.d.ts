@@ -19,5 +19,6 @@ export type TLogoProps = {
   icon?: {
     name?: string;
     color?: string;
+    background_color?: string;
   };
 };

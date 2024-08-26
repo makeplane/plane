@@ -1,3 +1,4 @@
+export * from "./auth-banner";
 export * from "./email-config-switch";
 export * from "./password-config-switch";
 export * from "./authentication-method-card";

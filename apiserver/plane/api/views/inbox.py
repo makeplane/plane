@@ -16,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.api.serializers import InboxIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Inbox,
     InboxIssue,
