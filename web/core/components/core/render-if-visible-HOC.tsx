@@ -10,6 +10,7 @@ type Props = {
   as?: keyof JSX.IntrinsicElements;
   classNames?: string;
   placeholderChildren?: ReactNode;
+  defaultValue?: boolean;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -20,10 +21,11 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     horizontalOffset = 0,
     as = "div",
     children,
+    defaultValue = false,
     classNames = "",
     placeholderChildren = null, //placeholder children
   } = props;
-  const [shouldVisible, setShouldVisible] = useState<boolean>();
+  const [shouldVisible, setShouldVisible] = useState<boolean>(defaultValue);
   const placeholderHeight = useRef<string>(defaultHeight);
   const intersectionRef = useRef<HTMLElement | null>(null);
 
