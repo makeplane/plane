@@ -74,7 +74,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
             title: "Error!",
             message: (totalAttachedFiles>1)?
             "Only one file can be uploaded at a time." :
-            "The file must be 5MB or less.",
+            "File must be 5MB or less.",
       })
       return;
     },
