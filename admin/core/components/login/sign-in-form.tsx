@@ -102,9 +102,9 @@ export const InstanceSignInForm: FC = (props) => {
 
   useEffect(() => {
     if (errorCode) {
-      const errorhandler = authErrorHandler(errorCode?.toString() as EAuthenticationErrorCodes);
-      if (errorhandler) {
-        setErrorInfo(errorhandler);
+      const errorDetail = authErrorHandler(errorCode?.toString() as EAuthenticationErrorCodes);
+      if (errorDetail) {
+        setErrorInfo(errorDetail);
       }
     }
   }, [errorCode]);
@@ -124,11 +124,7 @@ export const InstanceSignInForm: FC = (props) => {
         {errorData.type && errorData?.message ? (
           <Banner type="error" message={errorData?.message} />
         ) : (
-          <>
-            {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-              <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
-            )}
-          </>
+          <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}</>
         )}
 
         <form
