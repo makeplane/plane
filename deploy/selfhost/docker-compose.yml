@@ -167,7 +167,7 @@ services:
     image: rabbitmq:3.13.6-management-alpine
     restart: always
     volumes:
-      - rabbitmqdata:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
     <<: *app-env
@@ -195,9 +195,10 @@ services:
 volumes:
   pgdata:
   redisdata:
-  rabbitmqdata:
+  
   uploads:
   logs_api:
   logs_worker:
   logs_beat-worker:
   logs_migrator:
+  rabbitmq_data:

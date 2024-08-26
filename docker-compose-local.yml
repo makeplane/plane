@@ -13,7 +13,7 @@ services:
     networks:
       - dev_env
     volumes:
-      - rabbitmqdata:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
     env_file:
       - .env
     environment:
@@ -189,7 +189,7 @@ volumes:
   redisdata:
   uploads:
   pgdata:
-  rabbitmqdata:
+  rabbitmq_data:
 
 networks:
   dev_env:

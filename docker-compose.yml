@@ -132,7 +132,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
     volumes:
-      - rabbitmqdata:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
     container_name: plane-minio
@@ -167,4 +167,4 @@ volumes:
   pgdata:
   redisdata:
   uploads:
-  rabbitmqdata:
+  rabbitmq_data:
