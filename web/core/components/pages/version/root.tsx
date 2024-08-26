@@ -1,8 +1,7 @@
-import useSWR from "swr";
 // plane types
 import { TPageVersion } from "@plane/types";
 // components
-import { PageVersionsMainContent, PageVersionsSidebar } from "@/components/pages";
+import { PageVersionsMainContent, PageVersionsSidebarRoot } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -18,11 +17,6 @@ type Props = {
 
 export const PageVersionsOverlay: React.FC<Props> = (props) => {
   const { activeVersion, fetchAllVersions, fetchVersionDetails, handleRestore, isOpen, onClose, pageId } = props;
-
-  const { data: versionsList } = useSWR(
-    pageId && isOpen ? `PAGE_VERSIONS_LIST_${pageId}` : null,
-    pageId && isOpen ? () => fetchAllVersions(pageId) : null
-  );
 
   const handleClose = () => {
     onClose();
@@ -44,7 +38,13 @@ export const PageVersionsOverlay: React.FC<Props> = (props) => {
         handleRestore={handleRestore}
         pageId={pageId}
       />
-      <PageVersionsSidebar activeVersion={activeVersion} handleClose={handleClose} versions={versionsList} />
+      <PageVersionsSidebarRoot
+        activeVersion={activeVersion}
+        fetchAllVersions={fetchAllVersions}
+        handleClose={handleClose}
+        isOpen={isOpen}
+        pageId={pageId}
+      />
     </div>
   );
 };
