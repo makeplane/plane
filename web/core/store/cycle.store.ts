@@ -4,7 +4,14 @@ import sortBy from "lodash/sortBy";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { ICycle, CycleDateCheckData, TCyclePlotType } from "@plane/types";
+import {
+  ICycle,
+  CycleDateCheckData,
+  TCyclePlotType,
+  TProgressSnapshot,
+  TCycleEstimateDistribution,
+  TCycleDistribution,
+} from "@plane/types";
 // helpers
 import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
 import { getDate } from "@/helpers/date-time.helper";
@@ -55,6 +62,13 @@ export interface ICycleStore {
   fetchArchivedCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchArchivedCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
+  fetchActiveCycleProgress: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TProgressSnapshot>;
+  fetchActiveCycleAnalytics: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    analytic_type: string
+  ) => Promise<TCycleDistribution | TCycleEstimateDistribution>;
   // crud
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
   updateCycleDetails: (
@@ -113,6 +127,8 @@ export class CycleStore implements ICycleStore {
       fetchActiveCycle: action,
       fetchArchivedCycles: action,
       fetchArchivedCycleDetails: action,
+      fetchActiveCycleProgress: action,
+      fetchActiveCycleAnalytics: action,
       fetchCycleDetails: action,
       createCycle: action,
       updateCycleDetails: action,
@@ -214,11 +230,13 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.router.projectId;
     if (!projectId) return null;
+    console.log("this.cycleMap", { ...this.cycleMap["eca9a3b1-650a-433f-9edf-712b01af49d5"] });
     const activeCycle = Object.keys(this.cycleMap ?? {}).find(
       (cycleId) =>
         this.cycleMap?.[cycleId]?.project_id === projectId &&
         this.cycleMap?.[cycleId]?.status?.toLowerCase() === "current"
     );
+    console.log("activeCycle", activeCycle);
     return activeCycle || null;
   }
 
@@ -403,6 +421,7 @@ export class CycleStore implements ICycleStore {
         runInAction(() => {
           response.forEach((cycle) => {
             set(this.cycleMap, [cycle.id], cycle);
+            cycle.status?.toLowerCase() === "current" && set(this.activeCycleIdMap, [cycle.id], true);
           });
           set(this.fetchedMap, projectId, true);
           this.loader = false;
@@ -456,6 +475,43 @@ export class CycleStore implements ICycleStore {
       });
       return response;
     });
+
+  /**
+   * @description fetches active cycle progress
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   *  @returns
+   */
+  fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((cycle) => {
+      runInAction(() => {
+        set(this.cycleMap, [cycleId, "progress_snapshot"], cycle);
+      });
+      return cycle;
+    });
+
+  /**
+   * @description fetches active cycle analytics
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   *  @returns
+   */
+  fetchActiveCycleAnalytics = async (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    analytic_type: string
+  ) =>
+    await this.cycleService
+      .workspaceActiveCyclesAnalytics(workspaceSlug, projectId, cycleId, analytic_type)
+      .then((cycle) => {
+        runInAction(() => {
+          set(this.cycleMap, [cycleId, analytic_type === "points" ? "estimate_distribution" : "distribution"], cycle);
+        });
+        return cycle;
+      });
 
   /**
    * @description fetches cycle details
