@@ -94,7 +94,6 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
@@ -104,7 +103,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, viewId, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out

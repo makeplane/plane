@@ -176,7 +176,6 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, cycleId, undefined, undefined, undefined);
@@ -186,7 +185,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined once errored out

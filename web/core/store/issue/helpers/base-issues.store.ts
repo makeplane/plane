@@ -455,7 +455,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     options: IssuePaginationOptions,
     workspaceSlug: string,
     projectId?: string,
-    id?: string
+    id?: string,
+    shouldClearPaginationOptions = true
   ) {
     // Process the Issue Response to get the following data from it
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
@@ -465,6 +466,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
+      this.clear(shouldClearPaginationOptions);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
