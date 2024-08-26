@@ -32,7 +32,7 @@ export const CloudEditionBadge = observer(() => {
     const paymentStatus = searchParams.get("payment");
     if (paymentStatus === "success" && subscriptionDetail?.product === "PRO") {
       router.replace(pathname, {}, { showProgressBar: false });
-      handleSuccessModalToggle({ isOpen: true, variant: "PRO" });
+      handleSuccessModalToggle(true);
     }
   }, [pathname, router, searchParams, subscriptionDetail?.product, handleSuccessModalToggle]);
 
@@ -42,7 +42,7 @@ export const CloudEditionBadge = observer(() => {
   };
 
   const handlePaidPlanSuccessModalOpen = () => {
-    handleSuccessModalToggle({ isOpen: true, variant: "PRO" });
+    handleSuccessModalToggle(true);
     captureEvent("pro_plan_details_modal_opened", {});
   };
 
@@ -108,7 +108,7 @@ export const CloudEditionBadge = observer(() => {
         isOpen={isProPlanModalOpen}
         handleClose={() => toggleProPlanModal(false)}
         yearlyPlan={false}
-        handleSuccessModal={() => handleSuccessModalToggle({ isOpen: true, variant: "PRO" })}
+        handleSuccessModal={() => handleSuccessModalToggle(true)}
       />
 
       {showPaymentButton() && (

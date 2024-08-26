@@ -47,7 +47,7 @@ export const SelfManagedEditionBadge = observer(() => {
           tabIndex={-1}
           variant="accent-primary"
           className="w-full cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
-          onClick={() => handleSuccessModalToggle({ isOpen: true, variant: "PRO" })}
+          onClick={() => handleSuccessModalToggle(true)}
         >
           <Image src={PlaneLogo} alt="Plane Pro" width={14} height={14} />
           Plane Pro

@@ -3,8 +3,6 @@ import { set } from "lodash";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IWorkspaceProductSubscription } from "@plane/types";
-// plane web components
-import { TSuccessModalVariant } from "@/plane-web/components/license";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
 // plane web store
@@ -16,18 +14,13 @@ type TWorkspaceSubscriptionMap = {
   [workspaceSlug: string]: IWorkspaceProductSubscription;
 };
 
-type TSuccessModalDetails = {
-  isOpen: boolean;
-  variant: TSuccessModalVariant;
-};
-
 export interface IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap;
   isProPlanModalOpen: boolean;
-  successPlanModalDetails: TSuccessModalDetails;
+  isSuccessPlanModalOpen: boolean;
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
   toggleProPlanModal: (value?: boolean) => void;
-  handleSuccessModalToggle: (detail: Partial<TSuccessModalDetails>) => void;
+  handleSuccessModalToggle: (isOpen?: boolean) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
   freeTrialSubscription: (workspaceSlug: string, payload: { product_id: string; price_id: string }) => Promise<void>;
@@ -36,13 +29,13 @@ export interface IWorkspaceSubscriptionStore {
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap = {};
   isProPlanModalOpen = false;
-  successPlanModalDetails: TSuccessModalDetails = { isOpen: false, variant: "PRO" };
+  isSuccessPlanModalOpen: boolean = false;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
       subscribedPlan: observable,
       isProPlanModalOpen: observable.ref,
-      successPlanModalDetails: observable,
+      isSuccessPlanModalOpen: observable,
       currentWorkspaceSubscribedPlanDetail: computed,
       toggleProPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
@@ -60,11 +53,8 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     this.isProPlanModalOpen = value ?? !this.isProPlanModalOpen;
   };
 
-  handleSuccessModalToggle = (detail: Partial<TSuccessModalDetails>) => {
-    this.successPlanModalDetails = {
-      isOpen: detail.isOpen ?? !this.successPlanModalDetails.isOpen,
-      variant: detail.variant ? detail.variant : this.successPlanModalDetails.variant,
-    };
+  handleSuccessModalToggle = (isOpen?: boolean) => {
+    this.isSuccessPlanModalOpen = isOpen ?? !this.isSuccessPlanModalOpen;
   };
 
   fetchWorkspaceSubscribedPlan = async (workspaceSlug: string) => {

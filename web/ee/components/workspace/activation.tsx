@@ -20,8 +20,7 @@ export const SubscriptionActivation: FC<TSubscriptionActivation> = observer((pro
   // router
   const router = useAppRouter();
   // hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, handleSuccessModalToggle } =
-    useWorkspaceSubscription();
+  const { handleSuccessModalToggle } = useWorkspaceSubscription();
   const { activateSubscription } = useSelfHostedSubscription();
   // states
   const [activationKey, setActivationKey] = useState<string | undefined>(undefined);
@@ -51,13 +50,7 @@ export const SubscriptionActivation: FC<TSubscriptionActivation> = observer((pro
         title: "Done!",
         message: subscriptionResponse?.message || "Workspace subscription activated successfully.",
       });
-      setTimeout(() => {
-        if (subscriptionDetail?.product === "PRO") {
-          handleSuccessModalToggle({ isOpen: true, variant: "PRO" });
-        } else if (subscriptionDetail?.product === "ONE") {
-          handleSuccessModalToggle({ isOpen: true, variant: "ONE" });
-        }
-      }, 1000);
+      handleSuccessModalToggle(true);
     } catch (error) {
       const activationError = error as unknown as { response: { data: { error: string } } };
       const errorMessage = activationError?.response?.data?.error || "Something went wrong. Please try again.";

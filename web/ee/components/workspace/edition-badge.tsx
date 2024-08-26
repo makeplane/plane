@@ -13,7 +13,7 @@ export const WorkspaceEditionBadge = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const {
-    successPlanModalDetails,
+    isSuccessPlanModalOpen,
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     handleSuccessModalToggle,
     fetchWorkspaceSubscribedPlan,
@@ -39,11 +39,13 @@ export const WorkspaceEditionBadge = observer(() => {
 
   return (
     <>
-      <PaidPlanSuccessModal
-        variant={successPlanModalDetails.variant}
-        isOpen={successPlanModalDetails.isOpen}
-        handleClose={() => handleSuccessModalToggle({ isOpen: false, variant: successPlanModalDetails.variant })}
-      />
+      {["PRO", "ONE"].includes(subscriptionDetail.product) && (
+        <PaidPlanSuccessModal
+          variant={subscriptionDetail.product as "PRO" | "ONE"}
+          isOpen={isSuccessPlanModalOpen}
+          handleClose={() => handleSuccessModalToggle(false)}
+        />
+      )}
       {subscriptionDetail.is_self_managed ? <SelfManagedEditionBadge /> : <CloudEditionBadge />}
     </>
   );
