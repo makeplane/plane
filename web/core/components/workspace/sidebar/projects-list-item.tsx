@@ -35,6 +35,7 @@ import {
   DropIndicator,
   DragHandle,
   Intake,
+  ControlLink,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -283,13 +284,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   }, [URLProjectId]);
 
   const handleItemClick = () => {
-    const isDifferentProject = URLProjectId !== project.id;
-    if (!isProjectListOpen) {
-      router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-      if (isDifferentProject && isMobile) {
-        toggleSidebar();
-      }
-    }
+    if (!isProjectListOpen && !isMobile) router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
     setIsProjectListOpen((prev) => !prev);
   };
 
@@ -297,7 +292,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
-      <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={isProjectListOpen}>
+      <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={isProjectListOpen} as="div">
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
@@ -340,22 +335,19 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
               </Tooltip>
             )}
             {isSidebarCollapsed ? (
-              <Link
+              <ControlLink
                 href={`/${workspaceSlug}/projects/${project.id}/issues`}
                 className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
                   "justify-center": isSidebarCollapsed,
                 })}
+                onClick={handleItemClick}
               >
-                <Disclosure.Button
-                  as="button"
-                  className="size-8 aspect-square flex-shrink-0 grid place-items-center"
-                  onClick={handleItemClick}
-                >
+                <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     <Logo logo={project.logo_props} size={16} />
                   </div>
                 </Disclosure.Button>
-              </Link>
+              </ControlLink>
             ) : (
               <>
                 <Tooltip
@@ -364,21 +356,24 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   disabled={!isSidebarCollapsed}
                   isMobile={isMobile}
                 >
-                  <Link href={`/${workspaceSlug}/projects/${project.id}/issues`} className="flex-grow flex truncate">
+                  <ControlLink
+                    href={`/${workspaceSlug}/projects/${project.id}/issues`}
+                    className="flex-grow flex truncate"
+                    onClick={handleItemClick}
+                  >
                     <Disclosure.Button
                       as="button"
                       type="button"
                       className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
                         "justify-center": isSidebarCollapsed,
                       })}
-                      onClick={handleItemClick}
                     >
                       <div className="size-4 grid place-items-center flex-shrink-0">
                         <Logo logo={project.logo_props} size={16} />
                       </div>
                       <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
                     </Disclosure.Button>
-                  </Link>
+                  </ControlLink>
                 </Tooltip>
                 <CustomMenu
                   customButton={
