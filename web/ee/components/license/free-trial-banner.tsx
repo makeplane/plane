@@ -54,8 +54,9 @@ export const FreeTrialBanner: FC = observer(() => {
               rel="noopener noreferrer"
               className="underline underline-offset-4 hover:font-bold transition-all"
             >
-              Pro features.
+              Pro features
             </a>
+            .
           </div>
           <div className="flex-shrink-0">
             <Button variant="outline-primary" size="sm" onClick={() => setPricingModalOpen(true)}>

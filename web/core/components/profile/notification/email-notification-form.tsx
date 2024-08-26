@@ -21,11 +21,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
   // form data
   const {
     handleSubmit,
-    watch,
     control,
-    setValue,
     reset,
-    formState: { isSubmitting, isDirty, dirtyFields },
+    formState: { isSubmitting, dirtyFields },
   } = useForm<IUserEmailNotificationSettings>({
     defaultValues: {
       ...data,
@@ -93,9 +91,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               render={({ field: { value, onChange } }) => (
                 <Checkbox
                   checked={value}
-                  indeterminate={!value && watch("issue_completed")}
                   onChange={() => {
-                    setValue("issue_completed", !value, { shouldDirty: true });
                     onChange(!value);
                   }}
                   containerClassName="mx-2"
@@ -155,7 +151,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
       </div>
       <div className="flex items-center py-12">
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>

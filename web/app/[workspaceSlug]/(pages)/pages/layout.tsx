@@ -26,7 +26,7 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
         >
           <>
             <PagesAppCommandPalette />
-            <div className="relative flex h-screen w-full overflow-hidden">
+            <div className="relative flex h-full w-full overflow-hidden">
               <PagesAppSidebar />
               <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
                 {children}
