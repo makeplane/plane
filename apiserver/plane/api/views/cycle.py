@@ -544,6 +544,12 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         cycle.archived_at = timezone.now()
         cycle.save()
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, cycle_id):

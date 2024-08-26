@@ -15,7 +15,7 @@ class ExportIssuesEndpoint(BaseAPIView):
     model = ExporterHistory
     serializer_class = ExporterHistorySerializer
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -62,7 +62,9 @@ class ExportIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
+    )
     def get(self, request, slug):
         exporter_history = ExporterHistory.objects.filter(
             workspace__slug=slug,

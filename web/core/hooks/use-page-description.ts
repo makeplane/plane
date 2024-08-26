@@ -1,20 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
-
+// plane editor
 import {
   EditorRefApi,
   proseMirrorJSONToBinaryString,
   applyUpdates,
   generateJSONfromHTMLForDocumentEditor,
 } from "@plane/editor";
-
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import useAutoSave from "@/hooks/use-auto-save";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-
 // services
 import { ProjectPageService } from "@/services/page";
+// store
 import { IPage } from "@/store/pages/page";
 
 const projectPageService = new ProjectPageService();
@@ -183,6 +182,19 @@ export const usePageDescription = (props: Props) => {
     ]
   );
 
+  const manuallyUpdateDescription = async (descriptionHTML: string) => {
+    const { contentJSON, editorSchema } = generateJSONfromHTMLForDocumentEditor(descriptionHTML ?? "<p></p>");
+    const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
+
+    try {
+      editorRef.current?.clearEditor(true);
+      await updateDescription(yDocBinaryString, descriptionHTML ?? "<p></p>");
+      await mutateDescriptionYJS();
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   useAutoSave(handleSaveDescription);
 
   return {
@@ -190,5 +202,6 @@ export const usePageDescription = (props: Props) => {
     isDescriptionReady,
     pageDescriptionYJS,
     handleSaveDescription,
+    manuallyUpdateDescription,
   };
 };

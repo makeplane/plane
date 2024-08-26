@@ -6,7 +6,7 @@ import { IMentionHighlight, IMentionSuggestion, TDisplayConfig, TEditorCommands,
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
   getHTML: () => string;
-  clearEditor: () => void;
+  clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;
 };

@@ -53,7 +53,7 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
             # Return permission denied if no conditions are met
             return Response(
                 {"error": "You don't have the required permissions."},
-                status=status.HTTP_401_UNAUTHORIZED,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         return _wrapped_view

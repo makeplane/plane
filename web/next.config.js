@@ -4,10 +4,6 @@ require("dotenv").config({ path: ".env" });
 // const path = require("path");
 
 const { withSentryConfig } = require("@sentry/nextjs");
-const withPWA = require("next-pwa")({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-});
 
 const nextConfig = {
   trailingSlash: true,
@@ -133,10 +129,8 @@ const sentryConfig = {
   automaticVercelMonitors: true,
 };
 
-const config = withPWA(nextConfig);
-
 if (parseInt(process.env.SENTRY_MONITORING_ENABLED || "0", 10)) {
-  module.exports = withSentryConfig(config, sentryConfig);
+  module.exports = withSentryConfig(nextConfig, sentryConfig);
 } else {
-  module.exports = config;
+  module.exports = nextConfig;
 }

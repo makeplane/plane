@@ -13,12 +13,13 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from rest_framework import status
 from django.db import transaction
 
 # Third party imports
+from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import (
     allow_permission,
     ROLE,
@@ -46,10 +47,8 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
-
-# Module imports
+from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
-
 from plane.db.models import (
     UserFavorite,
 )
@@ -134,8 +133,23 @@ class WorkspaceViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
+    def retrieve(self, request, slug, pk):
+        issue_view = self.get_queryset().filter(pk=pk).first()
+        serializer = IssueViewSerializer(issue_view)
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=None,
+            entity_name="view",
+            entity_identifier=pk,
+            user_id=request.user.id,
+        )
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
+        allowed_roles=[],
         level="WORKSPACE",
         creator=True,
         model=IssueView,
@@ -145,19 +159,6 @@ class WorkspaceViewViewSet(BaseViewSet):
             pk=pk,
             workspace__slug=slug,
         )
-        if not (
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                is_active=True,
-            ).exists()
-            and workspace_view.owned_by_id != request.user.id
-        ):
-            return Response(
-                {"error": "You do not have permission to delete this view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         workspace_member = WorkspaceMember.objects.filter(
             workspace__slug=slug,
@@ -443,6 +444,27 @@ class IssueViewViewSet(BaseViewSet):
             queryset, many=True, fields=fields if fields else None
         ).data
         return Response(views, status=status.HTTP_200_OK)
+
+    allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
+    )
+
+    def retrieve(self, request, slug, project_id, pk):
+        issue_view = (
+            self.get_queryset().filter(pk=pk, project_id=project_id).first()
+        )
+        serializer = IssueViewSerializer(issue_view)
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="view",
+            entity_identifier=pk,
+            user_id=request.user.id,
+        )
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
 
     allow_permission(allowed_roles=[], creator=True, model=IssueView)
 
