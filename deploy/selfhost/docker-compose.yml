@@ -27,7 +27,8 @@ x-app-env: &app-env
     - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
     - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
     - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_PASSWORD:-guest}
-    - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST:-plane}
+    - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-plane}
+    - RABBITMQ_VHOST=${RABBITMQ_VHOST:-plane}
     # Application secret
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
@@ -101,6 +102,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+
 
   worker:
     <<: *app-env

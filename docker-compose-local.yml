@@ -16,6 +16,10 @@ services:
       - rabbitmqdata:/var/lib/rabbitmq
     env_file:
       - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
 
   plane-minio:
     image: minio/minio
