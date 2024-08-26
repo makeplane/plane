@@ -1355,7 +1355,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
         return Response(
             {
                 "assignees": assignee_distribution,
-                "label": label_distribution,
+                "labels": label_distribution,
                 "completion_chart": completion_chart,
             },
             status=status.HTTP_200_OK,

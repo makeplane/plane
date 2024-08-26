@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // types
 import { ICycle, IIssueFilterOptions } from "@plane/types";
@@ -16,47 +17,50 @@ import { useProjectState } from "@/hooks/store";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle | null;
+  workspaceSlug: string;
+  projectId: string;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
 };
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
-  const { cycle, handleFiltersUpdate } = props;
+  const { handleFiltersUpdate, cycle } = props;
   // store hooks
   const { groupedProjectStates } = useProjectState();
 
+  // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
     color: group.color,
   }));
-
+  const progressData = cycle?.progress_snapshot;
   const groupedIssues: any = cycle
     ? {
-        completed: cycle.completed_issues,
-        started: cycle.started_issues,
-        unstarted: cycle.unstarted_issues,
-        backlog: cycle.backlog_issues,
+        completed: progressData?.completed_issues,
+        started: progressData?.started_issues,
+        unstarted: progressData?.unstarted_issues,
+        backlog: progressData?.backlog_issues,
       }
     : {};
 
-  return cycle ? (
+  return !isEmpty(progressData) ? (
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <h3 className="text-base text-custom-text-300 font-semibold">Progress</h3>
-          {cycle.total_issues > 0 && (
+          {progressData.total_issues > 0 && (
             <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
-              {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
+              {`${progressData.completed_issues + progressData.cancelled_issues}/${progressData.total_issues - progressData.cancelled_issues} ${
+                progressData.completed_issues + progressData.cancelled_issues > 1 ? "Issues" : "Issue"
               } closed`}
             </span>
           )}
         </div>
-        {cycle.total_issues > 0 && <LinearProgressIndicator size="lg" data={progressIndicatorData} />}
+        {progressData.total_issues > 0 && <LinearProgressIndicator size="lg" data={progressIndicatorData} />}
       </div>
 
-      {cycle.total_issues > 0 ? (
+      {progressData.total_issues > 0 ? (
         <div className="flex flex-col gap-5">
           {Object.keys(groupedIssues).map((group, index) => (
             <>
@@ -88,11 +92,11 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
               )}
             </>
           ))}
-          {cycle.cancelled_issues > 0 && (
+          {progressData.cancelled_issues > 0 && (
             <span className="flex items-center gap-2 text-sm text-custom-text-300">
               <span>
-                {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "issues are" : "issue is"
+                {`${progressData.cancelled_issues} cancelled ${
+                  progressData.cancelled_issues > 1 ? "issues are" : "issue is"
                 } excluded from this report.`}{" "}
               </span>
             </span>
