@@ -217,7 +217,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
           onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId || isMobile}
+          disabled={!!issue?.tempId}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"
