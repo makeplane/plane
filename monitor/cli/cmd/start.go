@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -29,6 +30,11 @@ var StartCmd = &cobra.Command{
 		}
 
 		db.Initialize()
+		_, err = feat_flag.ParsePrivateKey(PRIVATE_KEY)
+
+		if err != nil {
+			return err
+		}
 
 		feat_flag.ParsePrivateKey(PRIVATE_KEY)
 

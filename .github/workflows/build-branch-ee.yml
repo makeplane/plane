@@ -509,7 +509,7 @@ jobs:
           tags: ${{ env.MONITOR_TAG }}
           push: true
           build-args: |
-            PRIVATE_KEY="${{ env.PRIVATE_KEY }}"
+            PRIVATE_KEY=${{ env.PRIVATE_KEY }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
