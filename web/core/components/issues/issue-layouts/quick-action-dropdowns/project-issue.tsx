@@ -174,6 +174,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
+        useCaptureForOutsideClick
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {
