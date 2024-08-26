@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
+	"github.com/makeplane/plane-ee/monitor/lib/feat_flag"
 	"github.com/makeplane/plane-ee/monitor/pkg/constants/descriptors"
 	"github.com/makeplane/plane-ee/monitor/pkg/db"
 	"github.com/makeplane/plane-ee/monitor/pkg/handlers"
@@ -28,6 +29,8 @@ var StartCmd = &cobra.Command{
 		}
 
 		db.Initialize()
+
+		feat_flag.ParsePrivateKey(PRIVATE_KEY)
 
 		// If we are upgraded, we need to update all the licenses present inside the
 		// DB to the current version

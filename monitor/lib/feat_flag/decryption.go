@@ -22,7 +22,7 @@ import (
 // Takes in the private key and returns the decrypted feature flags
 func GetDecryptedJson(base64EncodedKey string, encryptedFeatureFlag EncryptedData, out interface{}) error {
 	// Parse the private key
-	rsaPrivateKey, err := parsePrivateKey(base64EncodedKey)
+	rsaPrivateKey, err := ParsePrivateKey(base64EncodedKey)
 	if err != nil {
 		return fmt.Errorf("failed to parse private key: %v", err)
 	}
@@ -60,19 +60,13 @@ func decodeBase64Key(base64EncodedKey string) ([]byte, error) {
 		return decodedKey, nil
 	}
 
-	// If standard decoding fails, try URL-safe base64 decoding
-	decodedKey, err = base64.URLEncoding.DecodeString(base64EncodedKey)
-	if err == nil {
-		return decodedKey, nil
-	}
-
 	// If both methods fail, return an error
 	return nil, fmt.Errorf("failed to decode base64 key: %v", err)
 }
 
 /* ---------------------- Helper Functions ---------------------------- */
 // Parses the private key given to the rsa.PrivateKey type
-func parsePrivateKey(base64EncodedKey string) (*rsa.PrivateKey, error) {
+func ParsePrivateKey(base64EncodedKey string) (*rsa.PrivateKey, error) {
 	decodedKey, err := decodeBase64Key(base64EncodedKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode base64 key: %v", err)

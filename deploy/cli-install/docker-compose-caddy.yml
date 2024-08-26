@@ -84,6 +84,8 @@ services:
     <<: *monitor-env
     image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
+    volumes:
+      - ${INSTALL_DIR}/data/monitor:/app
 
   space:
     <<: *app-env

@@ -88,7 +88,7 @@ sb360QcVBrcdb4shNVVK4zBG
 -----END PRIVATE KEY-----`
 
 	// Decode the provided private key
-	privKey, err := parsePrivateKey([]byte(privateKeyPEM))
+	privKey, err := ParsePrivateKey([]byte(privateKeyPEM))
 	if err != nil {
 		t.Fatalf("Failed to parse private key: %v", err)
 	}
