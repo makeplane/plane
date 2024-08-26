@@ -22,34 +22,32 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
     placement: "bottom-start",
   });
 
-  const readTime = () => {
-    const wordsCount = editorRef?.documentInfo.words;
-    if (!wordsCount) return "0m";
-    const readTimeInSeconds = Number(getReadTimeFromWordsCount(editorRef?.documentInfo.words).toFixed(0));
-    if (readTimeInSeconds < 60) return `${readTimeInSeconds}s`;
-    return `${Math.ceil(readTimeInSeconds / 60)}m`;
+  const secondsToReadableTime = () => {
+    const wordsCount = editorRef?.documentInfo.words || 0;
+    const readTimeInSeconds = Number(getReadTimeFromWordsCount(wordsCount).toFixed(0));
+    return readTimeInSeconds < 60 ? `${readTimeInSeconds}s` : `${Math.ceil(readTimeInSeconds / 60)}m`;
   };
 
   const documentInfoCards = [
     {
       key: "words-count",
       title: "Words",
-      count: editorRef?.documentInfo.words,
+      info: editorRef?.documentInfo.words,
     },
     {
       key: "characters-count",
       title: "Characters",
-      count: editorRef?.documentInfo.characters,
+      info: editorRef?.documentInfo.characters,
     },
     {
       key: "paragraphs-count",
       title: "Paragraphs",
-      count: editorRef?.documentInfo.paragraphs,
+      info: editorRef?.documentInfo.paragraphs,
     },
     {
-      key: "reading-time",
+      key: "read-time",
       title: "Read time",
-      count: readTime(),
+      info: secondsToReadableTime(),
     },
   ];
 
@@ -67,7 +65,7 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
         >
           {documentInfoCards.map((card) => (
             <div key={card.key} className="p-2 bg-custom-background-90 rounded">
-              <h6 className="text-base font-semibold">{card.count}</h6>
+              <h6 className="text-base font-semibold">{card.info}</h6>
               <p className="mt-1.5 text-sm text-custom-text-300">{card.title}</p>
             </div>
           ))}
