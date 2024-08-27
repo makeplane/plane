@@ -26,7 +26,7 @@ interface IActiveCycleDetails {
 
 export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
   const { workspaceSlug, projectId } = props;
-  const { currentProjectActiveCycle, currentProjectActiveCycleId } = useCycle();
+  const { currentProjectActiveCycle, currentProjectActiveCycleId, loader } = useCycle();
   const {
     handleFiltersUpdate,
     cycle: activeCycle,
@@ -34,7 +34,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
   } = useCyclesDetails({ workspaceSlug, projectId, cycleId: currentProjectActiveCycleId });
 
   // show loader if active cycle is loading
-  if (!currentProjectActiveCycle)
+  if (!currentProjectActiveCycle && loader)
     return (
       <Loader>
         <Loader.Item height="250px" />
