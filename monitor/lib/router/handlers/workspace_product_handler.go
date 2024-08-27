@@ -102,6 +102,8 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 				HasAddedPaymentMethod: data.HasAddedPayment,
 				HasActivatedFreeTrial: data.HasActivatedFree,
 			}
+			// Save the license record to the database
+			db.Db.Create(license)
 
 			// Fetch the feature flags if the product is not free
 			if data.ProductType != "FREE" {
@@ -147,8 +149,6 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 
 				return nil
 			}
-			// Save the license record to the database
-			db.Db.Create(license)
 
 			// Send the response back to the client
 			ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
