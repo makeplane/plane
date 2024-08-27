@@ -13,8 +13,8 @@ from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
 
 # Module Imports
-from plane.db.models import Module, Issue
-from plane.graphql.types.module import ModuleType
+from plane.db.models import Module, Issue, ModuleUserProperties
+from plane.graphql.types.module import ModuleType, ModuleUserPropertyType
 from plane.graphql.types.issue import (
     IssuesInformationType,
     IssuesInformationObjectType,
@@ -91,6 +91,34 @@ class ModuleQuery:
             )
         )
         return modules
+
+
+# module issue user properties
+@strawberry.type
+class ModuleIssueUserPropertyQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def moduleIssueUserProperties(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        module: strawberry.ID,
+    ) -> ModuleUserPropertyType:
+        module_issue_property = await sync_to_async(
+            lambda: ModuleUserProperties.objects.filter(
+                workspace__slug=slug, project_id=project, module_id=module
+            )
+            .filter(
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+            .order_by("-created_at")
+            .first()
+        )()
+
+        return module_issue_property
 
 
 # module issues information query

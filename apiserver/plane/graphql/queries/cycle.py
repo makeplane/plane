@@ -17,8 +17,8 @@ from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
 
 # Module Imports
-from plane.db.models import Cycle, Issue
-from plane.graphql.types.cycle import CycleType
+from plane.db.models import Cycle, Issue, CycleUserProperties
+from plane.graphql.types.cycle import CycleType, CycleUserPropertyType
 from plane.graphql.types.issue import (
     IssuesInformationType,
     IssuesInformationObjectType,
@@ -82,6 +82,34 @@ class CycleQuery:
             project__project_projectmember__is_active=True,
         )
         return cycle
+
+
+# cycle issue user properties
+@strawberry.type
+class CycleIssueUserPropertyQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def cycleIssueUserProperties(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        cycle: strawberry.ID,
+    ) -> CycleUserPropertyType:
+        cycle_issue_property = await sync_to_async(
+            lambda: CycleUserProperties.objects.filter(
+                workspace__slug=slug, project_id=project, cycle_id=cycle
+            )
+            .filter(
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+            .order_by("-created_at")
+            .first()
+        )()
+
+        return cycle_issue_property
 
 
 # cycle issues information query

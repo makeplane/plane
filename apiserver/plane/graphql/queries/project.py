@@ -71,6 +71,50 @@ class ProjectQuery:
 
         return paginate(results_object=project, cursor=cursor)
 
+    @strawberry.field(
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
+    )
+    async def project(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+    ) -> Optional[ProjectType]:
+        def get_project() -> Optional[ProjectType]:
+            return (
+                Project.objects.filter(
+                    workspace__slug=slug,
+                    pk=project,
+                    archived_at__isnull=True,
+                )
+                .annotate(
+                    is_favorite=Exists(
+                        UserFavorite.objects.filter(
+                            user=info.context.user,
+                            entity_identifier=OuterRef("pk"),
+                            entity_type="project",
+                            project_id=OuterRef("pk"),
+                        )
+                    )
+                )
+                .annotate(
+                    is_member=Exists(
+                        ProjectMember.objects.filter(
+                            member=info.context.user,
+                            project_id=OuterRef("pk"),
+                            workspace__slug=slug,
+                            is_active=True,
+                        )
+                    )
+                )
+                .first()
+            )
+
+        project = await sync_to_async(get_project)()
+        return project
+
 
 @strawberry.type
 class ProjectMembersQuery:
