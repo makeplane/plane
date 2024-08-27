@@ -752,7 +752,6 @@ class IssuePaginatedViewSet(BaseViewSet):
             "updated_by",
             "is_draft",
             "archived_at",
-            "deleted_at",
             "module_ids",
             "label_ids",
             "assignee_ids",
