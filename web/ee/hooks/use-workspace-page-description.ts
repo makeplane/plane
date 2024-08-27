@@ -178,6 +178,19 @@ export const useWorkspacePageDescription = (props: Props) => {
     ]
   );
 
+  const manuallyUpdateDescription = async (descriptionHTML: string) => {
+    const { contentJSON, editorSchema } = generateJSONfromHTMLForDocumentEditor(descriptionHTML ?? "<p></p>");
+    const yDocBinaryString = proseMirrorJSONToBinaryString(contentJSON, "default", editorSchema);
+
+    try {
+      editorRef.current?.clearEditor(true);
+      await updateDescription(yDocBinaryString, descriptionHTML ?? "<p></p>");
+      await mutateDescriptionYJS();
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   useAutoSave(handleSaveDescription);
 
   return {
@@ -185,5 +198,6 @@ export const useWorkspacePageDescription = (props: Props) => {
     isDescriptionReady,
     pageDescriptionYJS,
     handleSaveDescription,
+    manuallyUpdateDescription,
   };
 };
