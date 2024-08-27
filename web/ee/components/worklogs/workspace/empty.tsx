@@ -13,10 +13,10 @@ export const WorklogEmptyScreen: FC = () => {
   return (
     <div className="w-[600px] m-auto mt-12">
       <div className="flex flex-col gap-1.5 flex-shrink">
-        <h3 className="text-xl font-semibold">No worklogs yet</h3>
+        <h3 className="text-xl font-semibold">See timesheets for any member in any project.</h3>
         <p className="text-sm">
-          Issue types distinguish different kinds of work in unique ways, helping you to identify, categorize, and
-          report on your team’s work more effectively.
+          When you log time via Tracked time in issue properties, you will see detailed timesheets here. Any member can
+          log time in any issue in any project in your workspace.
         </p>
       </div>
       <Image
