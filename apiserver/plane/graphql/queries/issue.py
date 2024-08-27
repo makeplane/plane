@@ -364,16 +364,13 @@ class SubIssuesQuery:
 @strawberry.type
 class IssueTypesTypeQuery:
     @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
     )
-    async def issueTypes(
-        self, info: Info, slug: str
-    ) -> list[IssueTypesType]:
+    async def issueTypes(self, info: Info, slug: str) -> list[IssueTypesType]:
         issue_types = await sync_to_async(list)(
-            IssueType.objects.filter(
-                workspace__slug=slug
-            )
-            .distinct()
+            IssueType.objects.filter(workspace__slug=slug).distinct()
         )
 
         return issue_types

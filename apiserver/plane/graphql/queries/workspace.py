@@ -158,7 +158,8 @@ class YourWorkQuery:
         projects = await sync_to_async(list)(
             Project.objects.filter(workspace__slug=slug)
             .filter(
-                Q(
+                Q(created_by=info.context.user)
+                & Q(
                     project_projectmember__member=info.context.user,
                     project_projectmember__is_active=True,
                 )

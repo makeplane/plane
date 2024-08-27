@@ -9,6 +9,8 @@ from strawberry.scalars import JSON
 
 # Module imports
 from plane.db.models import Notification
+from plane.graphql.types.users import UserType
+from plane.graphql.types.project import ProjectType
 
 
 @strawberry_django.type(Notification)
@@ -19,7 +21,7 @@ class NotificationType:
     message_html = Optional[str]
     message_stripped = Optional[str]
     sender: str
-    triggered_by: strawberry.ID
+    triggered_by: Optional[UserType]
     receiver: strawberry.ID
     read_at: Optional[datetime]
     snoozed_till: Optional[datetime]
@@ -28,21 +30,13 @@ class NotificationType:
     entity_identifier: strawberry.ID
     data: JSON
     workspace: strawberry.ID
-    project: strawberry.ID
+    project: Optional[ProjectType]
     created_at: datetime
     updated_at: datetime
 
     @strawberry.field
     def workspace(self) -> int:
         return self.workspace_id
-
-    @strawberry.field
-    def project(self) -> int:
-        return self.project_id
-
-    @strawberry.field
-    def triggered_by(self) -> int:
-        return self.triggered_by_id
 
     @strawberry.field
     def receiver(self) -> int:
