@@ -19,6 +19,8 @@ from plane.app.permissions import WorkspaceEntityPermission
 from plane.ee.serializers import (
     WorkspacePageSerializer,
     WorkspacePageDetailSerializer,
+    WorkspacePageVersionSerializer,
+    WorkspacePageVersionDetailSerializer,
 )
 from plane.db.models import (
     Page,
@@ -26,9 +28,10 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     DeployBoard,
+    PageVersion,
 )
 
-from plane.ee.views.base import BaseViewSet
+from plane.ee.views.base import BaseViewSet, BaseAPIView
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -371,6 +374,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         )
         return response
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def partial_update(self, request, slug, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug)
 
@@ -427,3 +431,27 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             return Response({"message": "Updated successfully"})
         else:
             return Response({"error": "No binary data provided"})
+
+
+class WorkspacePageVersionEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def get(self, request, slug, page_id, pk=None):
+        # Check if pk is provided
+        if pk:
+            # Return a single page version
+            page_version = PageVersion.objects.get(
+                workspace__slug=slug,
+                page_id=page_id,
+                pk=pk,
+            )
+            # Serialize the page version
+            serializer = WorkspacePageVersionDetailSerializer(page_version)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        # Return all page versions
+        page_versions = PageVersion.objects.filter(
+            workspace__slug=slug,
+            page_id=page_id,
+        )
+        # Serialize the page versions
+        serializer = WorkspacePageVersionSerializer(page_versions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
