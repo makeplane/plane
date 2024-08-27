@@ -166,7 +166,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   ];
 
   return (
-    <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
+    <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
       <CustomMenu.MenuItem
         className="hidden md:flex w-full items-center justify-between gap-2"
         onClick={() => handleFullWidth(!isFullWidth)}
