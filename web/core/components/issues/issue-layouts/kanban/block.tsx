@@ -122,7 +122,6 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
-  const { isMobile } = usePlatformOS();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
