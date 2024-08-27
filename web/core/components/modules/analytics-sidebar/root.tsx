@@ -63,7 +63,6 @@ type Props = {
   moduleId: string;
   handleClose: () => void;
   isArchived?: boolean;
-  isPeekMode?: boolean;
 };
 
 // TODO: refactor this component
