@@ -18,6 +18,9 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
 
     persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((issue: any) => {
+      if (!issue.type_id) {
+        issue.type_id = "";
+      }
       stageIssueInserts(issue);
     });
     await persistence.db.exec("COMMIT;");
