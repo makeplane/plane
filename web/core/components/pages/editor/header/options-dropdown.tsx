@@ -1,8 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
@@ -11,6 +11,7 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
 
@@ -23,6 +24,8 @@ type Props = {
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page, handleSaveDescription } = props;
+  // router
+  const router = useRouter();
   // store values
   const {
     archived_at,
@@ -40,6 +43,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
   const handleArchivePage = async () =>
     await archive().catch(() =>
@@ -144,6 +149,19 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
+    },
+    {
+      key: "version-history",
+      action: () => {
+        // add query param, version=current to the route
+        const updatedRoute = updateQueryParams({
+          paramsToAdd: { version: "current" },
+        });
+        router.push(updatedRoute);
+      },
+      label: "Version history",
+      icon: History,
+      shouldRender: true,
     },
   ];
 

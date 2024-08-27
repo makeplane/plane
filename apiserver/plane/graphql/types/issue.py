@@ -254,7 +254,11 @@ class IssueTypesType:
     name: str
     description: str
     logo_props: JSON
-    sort_order: float
     is_default: bool
-    weight: int
+    level: int
     is_active: bool
+
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id

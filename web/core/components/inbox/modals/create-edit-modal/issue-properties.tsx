@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { LayoutPanelTop } from "lucide-react";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // components
 import {
   CycleDropdown,
@@ -94,7 +95,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
         <div className="h-7">
           <DateDropdown
             value={data?.start_date || null}
-            onChange={(date) => (date ? handleData("start_date", renderFormattedPayloadDate(date)) : null)}
+            onChange={(date) => handleData("start_date", date ? renderFormattedPayloadDate(date) : "")}
             buttonVariant="border-with-text"
             minDate={minDate ?? undefined}
             placeholder="Start date"
@@ -106,7 +107,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       <div className="h-7">
         <DateDropdown
           value={data?.target_date || null}
-          onChange={(date) => (date ? handleData("target_date", renderFormattedPayloadDate(date)) : null)}
+          onChange={(date) => handleData("target_date", date ? renderFormattedPayloadDate(date) : "")}
           buttonVariant="border-with-text"
           minDate={minDate ?? undefined}
           placeholder="Due date"
@@ -157,18 +158,43 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       {/* add parent */}
       {isVisible && (
         <>
-          <button
-            type="button"
-            className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
-            onClick={() => setParentIssueModalOpen(true)}
-          >
-            <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-            <span className="whitespace-nowrap">
-              {selectedParentIssue
-                ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-                : `Add parent`}
-            </span>
-          </button>
+          {selectedParentIssue ? (
+            <CustomMenu
+              customButton={
+                <button
+                  type="button"
+                  className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                >
+                  <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                  <span className="whitespace-nowrap">
+                    {selectedParentIssue
+                      ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+                      : `Add parent`}
+                  </span>
+                </button>
+              }
+              placement="bottom-start"
+            >
+              <>
+                <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
+                  Change parent issue
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem className="!p-1" onClick={() => handleData("parent_id", "")}>
+                  Remove parent issue
+                </CustomMenu.MenuItem>
+              </>
+            </CustomMenu>
+          ) : (
+            <button
+              type="button"
+              className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+              onClick={() => setParentIssueModalOpen(true)}
+            >
+              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+              <span className="whitespace-nowrap">Add parent</span>
+            </button>
+          )}
+
           <ParentIssuesListModal
             isOpen={parentIssueModalOpen}
             handleClose={() => setParentIssueModalOpen(false)}

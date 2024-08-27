@@ -11,7 +11,6 @@ from strawberry.permission import PermissionExtension
 from typing import Optional
 from asgiref.sync import sync_to_async
 
-# Django imports
 
 # Module imports
 from plane.graphql.types.issue import IssuesType, IssueUserPropertyType
@@ -26,6 +25,7 @@ from plane.db.models import (
     IssueLabel,
     Workspace,
     IssueAttachment,
+    IssueSubscriber,
 )
 
 
@@ -262,12 +262,6 @@ class IssueUserPropertyMutation:
 
 @strawberry.type
 class IssueAttachmentMutation:
-    # @strawberry.field(
-    #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    # )
-    # async def create_issue_attachment(
-    # ) -> IssueAttachment:
-    #     pass
 
     # @strawberry.mutation(
     #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
@@ -275,11 +269,17 @@ class IssueAttachmentMutation:
     # def upload_file(self, file: Upload, info: Info) -> bool:
     #     content = file.read()
     #     filename = file.filename
+#     @strawberry.mutation(
+#         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+#     )
+#     async def upload_file(self, file: Upload, info: Info) -> bool:
+#         content = await sync_to_async(file.read)()
+#         filename = file.filename
 
-    #     # Save the file using Django's file storage
-    #     # file_name = default_storage.save(filename, content)
+#         # Save the file using Django's file storage
+#         await sync_to_async(default_storage.save)(filename, content)
 
-    #     return True
+#         return True
 
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
@@ -299,4 +299,41 @@ class IssueAttachmentMutation:
             workspace__slug=slug,
         )
         await sync_to_async(issue_attachment.delete)()
+        return True
+
+
+@strawberry.type
+class IssueSubscriptionMutation:
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def subscribeIssue(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        issue: strawberry.ID,
+    ) -> bool:
+        issue = await sync_to_async(IssueSubscriber.objects.create)(
+            issue_id=issue, project_id=project, subscriber=info.context.user
+        )
+        return True
+
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def unSubscribeIssue(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        issue: strawberry.ID,
+    ) -> bool:
+        issue_subscriber = await sync_to_async(IssueSubscriber.objects.get)(
+            issue_id=issue,
+            subscriber=info.context.user,
+            project_id=project,
+            workspace__slug=slug,
+        )
+        await sync_to_async(issue_subscriber.delete)()
         return True

@@ -117,6 +117,11 @@ class UserFavoriteType:
     created_at: datetime
     updated_at: datetime
     deleted_at: Optional[datetime]
+    project: Optional[strawberry.ID]
+
+    @strawberry.field
+    def project(self) -> int:
+        return self.project_id
 
     @strawberry.field
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:
@@ -204,6 +209,15 @@ class UserRecentVisitType:
     created_at: datetime
     updated_at: datetime
     deleted_at: Optional[datetime]
+    project: Optional[strawberry.ID]
+
+    @strawberry.field
+    def project(self) -> int:
+        return self.project_id
+    
+    @strawberry.field
+    def user(self) -> int:
+        return self.user_id
 
     @strawberry.field
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:

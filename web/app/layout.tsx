@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import Script from "next/script";
 // styles
 import "@/styles/globals.css";
@@ -10,6 +10,7 @@ import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web components
+import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
 import { FreeTrialBanner } from "@/plane-web/components/license/free-trial-banner";
 // local
 import { AppProvider } from "./provider";
@@ -28,6 +29,15 @@ export const metadata: Metadata = {
   twitter: {
     site: "@planepowers",
   },
+};
+
+export const viewport: Viewport = {
+  minimumScale: 1,
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  width: "device-width",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -53,10 +63,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
         <link rel="manifest" href="/manifest.json" />
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
-        />
         {/* preloading */}
         <link rel="preload" href={`${API_BASE_URL}/api/instances/`} as="fetch" crossOrigin="use-credentials" />
         <link rel="preload" href={`${API_BASE_URL}/api/users/me/ `} as="fetch" crossOrigin="use-credentials" />
@@ -69,15 +75,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="use-credentials"
         />
       </head>
-      <body>
-        <div id="context-menu-portal" />
+      <body className={`h-screen w-screen`}>
         <AppProvider>
-          <div className={`h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col`}>
+          <DesktopAppProviderRoot />
+          <div className={`app-container h-full w-full flex flex-col overflow-hidden`}>
+            <div id="context-menu-portal" />
             <div className="flex-shrink-0">
               {/* free trial banner */}
               <FreeTrialBanner />
             </div>
-            <div className="w-full h-full overflow-hidden">{children}</div>
+            <div className="h-full w-full overflow-hidden bg-custom-background-100">{children}</div>
           </div>
         </AppProvider>
       </body>

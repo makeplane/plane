@@ -48,7 +48,7 @@ export const PROJECT_LAYOUT_MAP: TProjectLayoutMap = {
   },
   [EProjectLayouts.TABLE]: {
     key: EProjectLayouts.TABLE,
-    title: "Table Layout",
+    title: "List Layout",
     label: "Table",
     icon: List,
     selectivelyHide: false,
