@@ -102,6 +102,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+      - plane-mq
 
 
   worker:
@@ -117,6 +118,7 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   beat-worker:
     <<: *app-env
@@ -131,6 +133,7 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   migrator:
     <<: *app-env
