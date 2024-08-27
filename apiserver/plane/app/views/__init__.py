@@ -98,6 +98,8 @@ from .cycle.base import (
     CycleUserPropertiesEndpoint,
     CycleViewSet,
     TransferCycleIssueEndpoint,
+    CycleAnalyticsEndpoint,
+    CycleProgressEndpoint,
 )
 from .cycle.issue import (
     CycleIssueViewSet,

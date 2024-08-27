@@ -16,31 +16,33 @@ import { useProjectState } from "@/hooks/store";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle | null;
+  workspaceSlug: string;
+  projectId: string;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
 };
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
-  const { cycle, handleFiltersUpdate } = props;
+  const { handleFiltersUpdate, cycle } = props;
   // store hooks
   const { groupedProjectStates } = useProjectState();
 
+  // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
     color: group.color,
   }));
-
   const groupedIssues: any = cycle
     ? {
-        completed: cycle.completed_issues,
-        started: cycle.started_issues,
-        unstarted: cycle.unstarted_issues,
-        backlog: cycle.backlog_issues,
+        completed: cycle?.completed_issues,
+        started: cycle?.started_issues,
+        unstarted: cycle?.unstarted_issues,
+        backlog: cycle?.backlog_issues,
       }
     : {};
 
-  return cycle ? (
+  return cycle && cycle.hasOwnProperty("started_issues") ? (
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
