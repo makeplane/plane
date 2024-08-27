@@ -18,11 +18,9 @@ from django.core import serializers
 # Module imports
 from plane.graphql.permissions.project import (
     ProjectMemberPermission,
+    ProjectBasePermission,
 )
-from plane.db.models import (
-    CycleIssue,
-    Cycle,
-)
+from plane.db.models import CycleIssue, Cycle, UserFavorite
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 
@@ -134,7 +132,10 @@ class CycleIssueMutation:
         issue: strawberry.ID,
     ) -> bool:
         cycle_issue = await sync_to_async(CycleIssue.objects.filter)(
-            cycle_id=cycle, project_id=project, workspace__slug=slug, issue_id=issue
+            cycle_id=cycle,
+            project_id=project,
+            workspace__slug=slug,
+            issue_id=issue,
         )
         await sync_to_async(issue_activity.delay)(
             type="cycle.activity.deleted",
@@ -153,5 +154,48 @@ class CycleIssueMutation:
             origin=info.context.request.META.get("HTTP_ORIGIN"),
         )
         await sync_to_async(cycle_issue.delete)()
+
+        return True
+
+
+@strawberry.type
+class CycleFavoriteMutation:
+
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def favoriteCycle(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        cycle: strawberry.ID,
+    ) -> bool:
+        _ = await sync_to_async(UserFavorite.objects.create)(
+            entity_identifier=cycle,
+            entity_type="cycle",
+            user=info.context.user,
+            project_id=project,
+        )
+        return True
+
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def unFavoriteCycle(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        cycle: strawberry.ID,
+    ) -> bool:
+        cycle_favorite = await sync_to_async(UserFavorite.objects.get)(
+            entity_identifier=cycle,
+            entity_type="cycle",
+            user=info.context.user,
+            workspace__slug=slug,
+            project_id=project,
+        )
+        await sync_to_async(cycle_favorite.delete)()
 
         return True

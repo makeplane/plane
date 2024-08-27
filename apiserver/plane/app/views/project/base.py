@@ -614,8 +614,8 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
         project.archived_at = timezone.now()
         project.save()
         UserFavorite.objects.filter(
+            project_id=project_id,
             workspace__slug=slug,
-            project=project_id,
         ).delete()
         return Response(
             {"archived_at": str(project.archived_at)},

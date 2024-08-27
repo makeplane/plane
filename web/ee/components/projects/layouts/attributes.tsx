@@ -101,6 +101,7 @@ const Attributes: React.FC<Props> = observer((props) => {
           tabIndex={5}
           buttonClassName="z-1 px-2 py-0 h-5"
           className="h-5 my-auto"
+          projectId={project.id}
           disabled={!isEditingAllowed || isArchived}
           showTooltip
           button={

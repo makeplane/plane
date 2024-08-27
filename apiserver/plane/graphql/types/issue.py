@@ -20,11 +20,25 @@ from plane.db.models import (
     IssueComment,
     CycleIssue,
     ModuleIssue,
+    IssueType,
 )
 
 
+@strawberry.type
+class IssuesInformationObjectType:
+    totalIssues: int
+    groupInfo: Optional[JSON]
+
+
+@strawberry.type
+class IssuesInformationType:
+    all: Optional[IssuesInformationObjectType]
+    active: Optional[IssuesInformationObjectType]
+    backlog: Optional[IssuesInformationObjectType]
+
+
 @strawberry_django.type(Issue)
-class IssueType:
+class IssuesType:
     id: strawberry.ID
     workspace: strawberry.ID
     project: strawberry.ID
@@ -51,9 +65,9 @@ class IssueType:
     updated_by: strawberry.ID
     created_at: datetime
     updated_at: datetime
-    sequence_id: int
     cycle: Optional[strawberry.ID]
     modules: Optional[list[strawberry.ID]]
+    type: Optional[strawberry.ID]
 
     @strawberry.field
     def state(self) -> int:
@@ -78,6 +92,10 @@ class IssueType:
     @strawberry.field
     def created_by(self) -> int:
         return self.created_by_id
+
+    @strawberry.field
+    def type(self) -> int:
+        return self.type_id
 
     @strawberry.field
     async def assignees(self) -> Optional[list[strawberry.ID]]:
@@ -227,3 +245,20 @@ class IssueLiteType:
     # @strawberry.field
     # def project(self) -> int:
     #     return self.project_id
+
+
+@strawberry_django.type(IssueType)
+class IssueTypesType:
+    id: strawberry.ID
+    workspace: strawberry.ID
+    name: str
+    description: str
+    logo_props: JSON
+    is_default: bool
+    level: int
+    is_active: bool
+
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id

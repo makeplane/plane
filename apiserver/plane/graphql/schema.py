@@ -5,26 +5,41 @@ from strawberry_django.optimizer import DjangoOptimizerExtension
 from .queries.workspace import (
     WorkspaceQuery,
     WorkspaceMembersQuery,
+    WorkspaceIssuesInformationQuery,
     WorkspaceIssuesQuery,
+    YourWorkQuery,
 )
-from .queries.users import UserQuery
+from .queries.users import UserQuery, UserFavoritesQuery, UserRecentVisitQuery
 from .queries.users import ProfileQuery
 from .queries.project import ProjectQuery, ProjectMembersQuery
 from .queries.label import LabelQuery, WorkspaceLabelQuery
 from .queries.state import StateQuery, WorkspaceStateQuery
 from .queries.notification import NotificationQuery
 from .queries.issue import (
+    IssuesInformationQuery,
     IssueQuery,
     RecentIssuesQuery,
     IssueUserPropertyQuery,
     IssuePropertiesActivityQuery,
     IssueCommentActivityQuery,
+    SubIssuesQuery,
+    IssueTypesTypeQuery,
 )
-from .queries.page import PageQuery
-from .queries.cycle import CycleQuery, CycleIssueQuery
-from .queries.module import ModuleQuery, ModuleIssueQuery
+from .queries.page import PageQuery, UserPageQuery
+from .queries.cycle import (
+    CycleQuery,
+    CycleIssuesInformationQuery,
+    CycleIssueQuery,
+)
+from .queries.module import (
+    ModuleQuery,
+    ModuleIssuesInformationQuery,
+    ModuleIssueQuery,
+)
 from .queries.search import ProjectSearchQuery
 from .queries.attachment import IssueAttachmentQuery
+from .queries.link import IssueLinkQuery
+from .queries.estimate import EstimatePointQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -37,12 +52,16 @@ from .mutations.issue import (
     IssueMutation,
     IssueUserPropertyMutation,
     IssueAttachmentMutation,
+    IssueSubscriptionMutation
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
 from .mutations.page import PageFavoriteMutation
-from .mutations.cycle import CycleIssueMutation
-from .mutations.module import ModuleIssueMutation
+from .mutations.cycle import CycleIssueMutation, CycleFavoriteMutation
+from .mutations.module import ModuleIssueMutation, ModuleFavoriteMutation
+from .mutations.link import IssueLinkMutation
+from .mutations.favorite import UserFavoriteMutation
+
 
 # combined query class for all
 @strawberry.type
@@ -71,6 +90,18 @@ class Query(
     CycleIssueQuery,
     ModuleQuery,
     ModuleIssueQuery,
+    YourWorkQuery,
+    UserFavoritesQuery,
+    UserRecentVisitQuery,
+    IssueLinkQuery,
+    IssuesInformationQuery,
+    WorkspaceIssuesInformationQuery,
+    CycleIssuesInformationQuery,
+    ModuleIssuesInformationQuery,
+    SubIssuesQuery,
+    IssueTypesTypeQuery,
+    EstimatePointQuery,
+    UserPageQuery,
 ):
     pass
 
@@ -91,6 +122,11 @@ class Mutation(
     IssueAttachmentMutation,
     CycleIssueMutation,
     ModuleIssueMutation,
+    IssueLinkMutation,
+    IssueSubscriptionMutation,
+    CycleFavoriteMutation,
+    ModuleFavoriteMutation,
+    UserFavoriteMutation,
 ):
     pass
 

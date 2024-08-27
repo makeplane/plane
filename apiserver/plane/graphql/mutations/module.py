@@ -16,11 +16,9 @@ from django.utils import timezone
 # Module imports
 from plane.graphql.permissions.project import (
     ProjectMemberPermission,
+    ProjectBasePermission,
 )
-from plane.db.models import (
-    Project,
-    ModuleIssue,
-)
+from plane.db.models import Project, ModuleIssue, UserFavorite
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 
@@ -39,9 +37,7 @@ class ModuleIssueMutation:
         module: strawberry.ID,
         issues: JSON,
     ) -> bool:
-
         project = await sync_to_async(Project.objects.get)(pk=project)
-        print("issue", issues)
         # Create ModuleIssues asynchronously
         await sync_to_async(
             lambda: ModuleIssue.objects.bulk_create(
@@ -113,5 +109,48 @@ class ModuleIssueMutation:
 
         # Delete the module issue in a synchronous context
         await sync_to_async(module_issue.delete)()
+
+        return True
+
+
+@strawberry.type
+class ModuleFavoriteMutation:
+
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def favoriteModule(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        module: strawberry.ID,
+    ) -> bool:
+        _ = await sync_to_async(UserFavorite.objects.create)(
+            entity_identifier=module,
+            entity_type="module",
+            user=info.context.user,
+            project_id=project,
+        )
+        return True
+
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def unFavoriteModule(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        module: strawberry.ID,
+    ) -> bool:
+        module_favorite = await sync_to_async(UserFavorite.objects.get)(
+            entity_identifier=module,
+            entity_type="module",
+            user=info.context.user,
+            workspace__slug=slug,
+            project_id=project,
+        )
+        await sync_to_async(module_favorite.delete)()
 
         return True
