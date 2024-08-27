@@ -11,16 +11,17 @@
     "export": "next export"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.4.0",
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.13",
     "@mui/material": "^5.14.1",
+    "@plane/constants": "*",
     "@plane/editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
-    "@plane/constants": "*",
     "@sentry/nextjs": "^8",
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
