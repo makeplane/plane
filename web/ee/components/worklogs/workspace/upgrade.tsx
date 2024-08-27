@@ -21,10 +21,9 @@ export const WorkspaceWorklogsUpgrade: FC = observer(() => {
       <ProPlanCloudUpgradeModal isOpen={isProPlanModalOpen} handleClose={() => toggleProPlanModal(false)} />
       <div className="flex flex-col gap-5 items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5">
         <div className="flex flex-col gap-1.5 flex-shrink">
-          <h3 className="text-xl font-semibold">Unlock worklogs with Plane pro</h3>
+          <h3 className="text-xl font-semibold">Get detailed time-tracking reports from your workspace</h3>
           <p className="text-sm">
-            Issue types distinguish different kinds of work in unique ways, helping you to identify, categorize, and
-            report on your team’s work more effectively.
+            Set date ranges for logged time by any member in any project in your workspace and get full CSVs in a click.
           </p>
         </div>
         <Image

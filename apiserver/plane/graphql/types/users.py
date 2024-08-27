@@ -109,7 +109,7 @@ class UserFavoriteEntityData:
 class UserFavoriteType:
     id: strawberry.ID
     entity_type: str
-    entity_identifier: str
+    entity_identifier: Optional[str]
     name: Optional[str]
     is_folder: bool
     sequence: float
@@ -214,7 +214,7 @@ class UserRecentVisitType:
     @strawberry.field
     def project(self) -> int:
         return self.project_id
-    
+
     @strawberry.field
     def user(self) -> int:
         return self.user_id

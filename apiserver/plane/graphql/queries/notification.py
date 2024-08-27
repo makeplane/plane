@@ -28,7 +28,6 @@ from typing import Optional, List
 
 @strawberry.type
 class NotificationQuery:
-
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
