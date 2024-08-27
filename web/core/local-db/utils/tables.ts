@@ -26,6 +26,7 @@ export const createIssuesTable = (SQLITE: any) => {
       cycle_id TEXT, 
       link_count INTEGER, 
       attachment_count INTEGER, 
+      type_id TEXT,
       label_ids TEXT, 
       assignee_ids TEXT, 
       module_ids TEXT);`;

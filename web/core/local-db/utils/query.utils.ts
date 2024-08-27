@@ -121,6 +121,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   const joinsRequired = areJoinsRequired(queries);
 
+  const orderByFragment = getOrderByFragment(queries.order_by);
   let sql = "";
   if (!joinsRequired) {
     sql = `WITH fi as (SELECT *`;
@@ -134,7 +135,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     return sql;
   }
 
-  sql = `WITH fi AS (SELECT * FROM (`;
+  sql = `WITH fi AS (`;
   sql += `SELECT i.id,i.created_at ${issueTableFilterFields} `;
   if (group_by) {
     if (ARRAY_FIELDS.includes(group_by)) {
@@ -168,9 +169,10 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     `;
   }
 
-  sql += ` WHERE i.project_id = '${projectId}' ${singleFilterConstructor(otherProps)} group by i.id`;
+  sql += ` WHERE i.project_id = '${projectId}' ${singleFilterConstructor(otherProps)} 
+  `;
 
-  sql += `) AS slim LEFT JOIN issues ON slim.id = issues.id)
+  sql += `)
   `;
   return sql;
 };
@@ -196,7 +198,7 @@ const getSingleFilterFields = (queries: any) => {
     translateQueryParams(queries);
 
   const fields = new Set();
-  if (order_by) fields.add(order_by);
+  if (order_by && !order_by.includes("created_at")) fields.add(order_by.replace("-", ""));
 
   const keys = Object.keys(otherProps);
 

@@ -25,9 +25,12 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 
   if (sub_group_by) {
     sql = getFilteredRowsForGrouping(projectId, queries);
-    sql += `, rn AS ( SELECT fi.*,
-    RANK() OVER (PARTITION BY group_id, sub_group_id ${orderByString}) as rank,
-    COUNT(*) OVER (PARTITION by group_id, sub_group_id) as total_issues from fi) SELECT * FROM rn
+    sql += `, ranked_issues AS ( SELECT fi.*,
+    ROW_NUMBER() OVER (PARTITION BY group_id, sub_group_id ${orderByString}) as rank,
+    COUNT(*) OVER (PARTITION by group_id, sub_group_id) as total_issues from fi) 
+    SELECT ri.*, i.*
+    FROM ranked_issues ri
+    JOIN issues i ON ri.id = i.id
     WHERE rank <= ${per_page}
 
     `;
@@ -38,10 +41,13 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   }
   if (group_by) {
     sql = getFilteredRowsForGrouping(projectId, queries);
-    sql += `, rn AS ( SELECT fi.*,
-    RANK() OVER (PARTITION BY group_id ${orderByString}) as rank,
-    COUNT(*) OVER (PARTITION by group_id) as total_issues from fi) SELECT * FROM rn
-    WHERE rank <= ${per_page}
+    sql += `, ranked_issues AS ( SELECT fi.*,
+    ROW_NUMBER() OVER (PARTITION BY group_id ${orderByString}) as rank,
+    COUNT(*) OVER (PARTITION by group_id) as total_issues FROM fi)
+    SELECT ri.*, i.*
+    FROM ranked_issues ri
+    JOIN issues i ON ri.id = i.id
+        WHERE rank <= ${per_page}
     `;
 
     console.log("###", sql);
@@ -54,7 +60,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     const name = order_by.replace("-", "");
     sql = `SELECT i.*, s.name as ${name} from issues i`;
   } else {
-    sql = `SELECT * from issues i`;
+    sql = `SELECT i.* from issues i`;
   }
   filterJoinFields.forEach((field: string) => {
     const value = otherProps[field] || "";
@@ -67,7 +73,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     LEFT JOIN issue_meta label_ids ON i.id = label_ids.issue_id AND label_ids.key = 'label_ids'
     INNER JOIN labels s ON s.id = label_ids.value`;
   }
-  sql += ` WHERE i.project_id = '${projectId}'    ${singleFilterConstructor(otherProps)} group by i.id`;
+  sql += ` WHERE i.project_id = '${projectId}'    ${singleFilterConstructor(otherProps)} group by i.id  `;
   sql += orderByString;
 
   // Add offset and paging to query
@@ -82,7 +88,7 @@ export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectI
   const { group_by, sub_group_by, order_by, ...otherProps } = queries;
   let sql = issueFilterQueryConstructor(workspaceSlug, projectId, otherProps);
 
-  sql = sql.replace("SELECT *", "SELECT COUNT(DISTINCT i.id) as total_count");
+  sql = sql.replace("SELECT i.*", "SELECT COUNT(DISTINCT i.id) as total_count");
   // Remove everything after group by i.id
   sql = `${sql.split("group by i.id")[0]};`;
   console.log("### COUNT", sql);
@@ -107,7 +113,7 @@ export const stageIssueInserts = (issue: any) => {
   }); // Will fail when the values have a comma
 
   persistence.db.exec({
-    sql: `INSERT OR REPLACE  into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    sql: `INSERT OR REPLACE  into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     bind: values,
   });
 
