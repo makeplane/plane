@@ -9,6 +9,10 @@ import {
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import {
+  ISelfHostedSubscriptionStore,
+  SelfHostedSubscriptionStore,
+} from "@/plane-web/store/subscription/self-hosted-subscription.store";
+import {
   IWorkspaceSubscriptionStore,
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
@@ -35,6 +39,7 @@ export class RootStore extends CoreRootStore {
   workspaceWorklogs: IWorkspaceWorklogStore;
   workspaceWorklogDownloads: IWorkspaceWorklogDownloadStore;
   featureFlags: IFeatureFlagsStore;
+  selfHostedSubscription: ISelfHostedSubscriptionStore;
   workspaceFeatures: IWorkspaceFeatureStore;
   workspaceProjectStates: IWorkspaceProjectStatesStore;
   projectFilter: IProjectFilterStore;
@@ -49,6 +54,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
+    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
@@ -64,6 +70,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore();
+    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);

@@ -24,15 +24,15 @@ class Command(BaseCommand):
         )
 
     def get_instance_from_prime(
-        self, machine_signature, license_key, prime_host
+        self, machine_signature, instance_id, prime_host
     ):
         try:
             response = requests.get(
-                f"{prime_host}/api/instance/me/",
+                f"{prime_host}/api/v2/instances/me/",
                 headers={
                     "Content-Type": "application/json",
                     "X-Machine-Signature": str(machine_signature),
-                    "X-Api-Key": str(license_key),
+                    "x-instance-id": str(instance_id),
                 },
             )
             response.raise_for_status()
@@ -43,15 +43,15 @@ class Command(BaseCommand):
             return {}
 
     def get_instance_release_notes(
-        self, machine_signature, license_key, prime_host
+        self, machine_signature, instance_id, prime_host
     ):
         try:
             response = requests.get(
-                f"{prime_host}/api/instance/release-notes/",
+                f"{prime_host}/api/v2/release-notes/",
                 headers={
                     "Content-Type": "application/json",
                     "X-Machine-Signature": str(machine_signature),
-                    "X-Api-Key": str(license_key),
+                    "x-instance-id": str(instance_id),
                 },
             )
             response.raise_for_status()
@@ -91,10 +91,10 @@ class Command(BaseCommand):
         instance = Instance.objects.first()
 
         # Get the environment variables
-        license_version = os.environ.get("LICENSE_VERSION", False)
+        app_version = os.environ.get("APP_VERSION", False)
         prime_host = os.environ.get("PRIME_HOST", False)
-        license_key = os.environ.get("LICENSE_KEY", False)
-        domain = os.environ.get("LICENSE_DOMAIN", False)
+        domain = os.environ.get("APP_DOMAIN", False)
+        instance_id = os.environ.get("INSTANCE_ID", False)
         # Get the machine signature from the options
         machine_signature = options.get(
             "machine_signature", "machine-signature"
@@ -107,16 +107,20 @@ class Command(BaseCommand):
         if instance is None:
 
             # If license version is not provided then read from package.json
-            if license_version and license_key and prime_host:
+            if app_version and prime_host and instance_id:
                 data = self.get_instance_from_prime(
-                    machine_signature, license_key, prime_host
+                    machine_signature=machine_signature,
+                    instance_id=instance_id,
+                    prime_host=prime_host,
                 )
                 release_notes = self.get_instance_release_notes(
-                    machine_signature, license_key, prime_host
+                    machine_signature=machine_signature,
+                    instance_id=instance_id,
+                    prime_host=prime_host,
                 )
             else:
                 data = {}
-                license_version = self.get_fallback_version()
+                app_version = self.get_fallback_version()
                 release_notes = []
 
             # Make a call to the Prime Server to get the instance
@@ -124,8 +128,8 @@ class Command(BaseCommand):
                 instance_name="Plane Enterprise Edition",
                 instance_id=data.get("instance_id", secrets.token_hex(12)),
                 license_key=None,
-                current_version=data.get("user_version", license_version),
-                latest_version=data.get("latest_version", license_version),
+                current_version=data.get("user_version", app_version),
+                latest_version=data.get("latest_version", app_version),
                 last_checked_at=timezone.now(),
                 user_count=User.objects.filter(is_bot=False).count(),
                 domain=domain,
@@ -138,29 +142,33 @@ class Command(BaseCommand):
         else:
             data = {}
             # Fetch the instance from the Prime Server
-            if license_version and license_key and prime_host:
+            if app_version and instance_id and prime_host:
                 data = self.get_instance_from_prime(
-                    machine_signature, license_key, prime_host
+                    machine_signature=machine_signature,
+                    instance_id=instance_id,
+                    prime_host=prime_host,
                 )
                 release_notes = self.get_instance_release_notes(
-                    machine_signature, license_key, prime_host
+                    machine_signature=machine_signature,
+                    instance_id=instance_id,
+                    prime_host=prime_host,
                 )
-                data["user_version"] = license_version
+                data["user_version"] = app_version
             else:
-                license_version = self.get_fallback_version()
+                app_version = self.get_fallback_version()
                 release_notes = []
 
             # Update the instance
             instance.instance_id = data.get(
                 "instance_id", instance.instance_id
             )
-            instance.product = data.get("product", instance.product)
             instance.latest_version = data.get(
                 "latest_version", instance.latest_version
             )
             instance.current_version = data.get(
                 "user_version", instance.current_version
             )
+            instance.product = "Plane Enterprise Edition"
             instance.user_count = User.objects.filter(is_bot=False).count()
             instance.last_checked_at = timezone.now()
             # Save the instance

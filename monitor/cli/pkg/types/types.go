@@ -1,8 +1,9 @@
 package types
 
 type Credentials struct {
-	LicenseKey       string
 	MachineSignature string
 	Host             string
-	LicenseVersion   string
+	AppVersion       string
+	AppDomain        string
+	InstanceId       string
 }

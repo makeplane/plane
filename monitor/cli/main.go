@@ -7,6 +7,8 @@ import (
 	"github.com/makeplane/plane-ee/monitor/cmd"
 )
 
+var PRIVATE_KEY = ``
+
 func main() {
-	cmd.Execute()
+	cmd.Execute(PRIVATE_KEY)
 }

@@ -3,6 +3,7 @@ export * from "./plane-one-billing";
 export * from "./plane-cloud-billing";
 export * from "./plane-one-badge";
 export * from "./cloud-badge";
+export * from "./self-managed-badge";
 export * from "./pro-plan-upgrade";
 export * from "./pro-plan-cloud-upgrade-modal";
 export * from "./pro-plan-self-host-upgrade-modal";

@@ -7,6 +7,7 @@ from .views import (
     WebsitePaymentLinkEndpoint,
     WebsiteUserWorkspaceEndpoint,
     SubscriptionEndpoint,
+    WorkspaceLicenseEndpoint,
     UpgradeSubscriptionEndpoint,
     FeatureFlagProxyEndpoint,
     WorkspaceLicenseRefreshEndpoint,
@@ -45,6 +46,11 @@ urlpatterns = [
         "workspaces/<str:slug>/subscriptions/",
         SubscriptionEndpoint.as_view(),
         name="subscription",
+    ),
+    path(
+        "workspaces/<str:slug>/licenses/",
+        WorkspaceLicenseEndpoint.as_view(),
+        name="license-activate",
     ),
     path(
         "workspaces/<str:slug>/subscriptions/upgrade/",

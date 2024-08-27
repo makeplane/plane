@@ -12,7 +12,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS += ("scout_apm.django",)  # noqa
 
-if os.environ.get("IS_MULTI_CLOUD", "0") == "1":
+if os.environ.get("IS_MULTI_TENANT", "0") == "1":
     SECURE_SSL_REDIRECT = True
 else:
     SECURE_SSL_REDIRECT = False

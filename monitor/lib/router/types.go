@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
 )
 
 type MonitorRouterOptions struct {
+	Api               *prime_api.IPrimeMonitorApi
 	Logger            *logger.Handler
 	AppName           string
 	PrintRoutes       bool
@@ -15,6 +17,7 @@ type MonitorRouterOptions struct {
 	Decoder           func(data []byte, v interface{}) error
 	DisableKeepAlive  bool
 	ReduceMemoryUsage bool
+	PrivateKey        string
 }
 
 type ErrorCode int
