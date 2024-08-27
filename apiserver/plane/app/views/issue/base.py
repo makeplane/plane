@@ -704,7 +704,7 @@ class IssuePaginatedViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", False)
-        updated_at = request.GET.get("updated_at__gte", False)
+        updated_at = request.GET.get("updated_at__gte", None)
 
         # required fields
         required_fields = [
