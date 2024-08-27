@@ -5,6 +5,7 @@ from plane.ee.views import (
     WorkspacePagePublishEndpoint,
     WorkspacePageViewSet,
     WorkspacePagesDescriptionViewSet,
+    WorkspacePageVersionEndpoint,
 )
 
 
@@ -78,5 +79,15 @@ urlpatterns = [
             }
         ),
         name="page-description",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/versions/",
+        WorkspacePageVersionEndpoint.as_view(),
+        name="workspace-page-version",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/versions/<uuid:pk>/",
+        WorkspacePageVersionEndpoint.as_view(),
+        name="workspace-page-version",
     ),
 ]
