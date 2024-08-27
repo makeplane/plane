@@ -26,18 +26,19 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
     { key: "desc", label: "Descending", isSelected: isDescending },
   ];
 
+  const buttonClassName = isMobile
+    ? "flex items-center text-sm text-custom-text-200"
+    : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
+
+  const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
+
   return (
     <CustomMenu
       customButton={
-        <span
-          className={`${isMobile ? "flex items-center text-sm text-custom-text-200" : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`}`}
-        >
+        <span className={buttonClassName}>
           {!isMobile && <ArrowDownWideNarrow className="h-3 w-3" />}
           <span className="flex-shrink-0"> {orderByDetails?.label}</span>
-          <ChevronDown
-            className={`${isMobile ? "ml-2 h-4 w-4 text-custom-text-200 flex-shrink-0" : "h-3 w-3"}`}
-            strokeWidth={2}
-          />
+          <ChevronDown className={chevronClassName} strokeWidth={2} />
         </span>
       }
       placement="bottom-end"
