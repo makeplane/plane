@@ -74,15 +74,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="use-credentials"
         />
       </head>
-      <body>
-        <div id="context-menu-portal" />
+      <body className={`h-screen w-screen`}>
         <AppProvider>
-          <div className={`h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col`}>
+          <div className={`app-container h-full w-full flex flex-col overflow-hidden`}>
+            <div id="context-menu-portal" />
             <div className="flex-shrink-0">
               {/* free trial banner */}
               <FreeTrialBanner />
             </div>
-            <div className="w-full h-full overflow-hidden relative">{children}</div>
+            <div className="h-full w-full overflow-hidden bg-custom-background-100">{children}</div>
           </div>
         </AppProvider>
       </body>
