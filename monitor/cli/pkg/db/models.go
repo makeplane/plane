@@ -8,7 +8,7 @@ import (
 )
 
 type License struct {
-	ID                    uuid.UUID  `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	ID                    uuid.UUID  `json:"id" gorm:"primaryKey;type:uuid"`
 	LicenseKey            string     `json:"license_key" gorm:"not null;uniqueIndex:idx_workspace_license"`
 	InstanceID            uuid.UUID  `json:"instance_id" gorm:"type:uuid"`
 	WorkspaceID           uuid.UUID  `json:"workspace_id" gorm:"type:uuid;not null;unique;uniqueIndex:idx_workspace_license"`
@@ -36,7 +36,7 @@ func (license *License) BeforeCreate(scope *gorm.DB) error {
 }
 
 type UserLicense struct {
-	ID        uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	ID        uuid.UUID `json:"id" gorm:"primaryKey;type:uuid"`
 	LicenseID uuid.UUID `json:"license_id" gorm:"type:uuid;not null"`
 	License   License   `json:"license" gorm:"foreignKey:LicenseID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	UserID    uuid.UUID `json:"user_id" gorm:"type:uuid;not null"`
@@ -54,7 +54,7 @@ func (userLicense *UserLicense) BeforeCreate(scope *gorm.DB) error {
 }
 
 type Flags struct {
-	ID         uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	ID         uuid.UUID `json:"id" gorm:"primaryKey;type:uuid"`
 	LicenseID  uuid.UUID `json:"license_id" gorm:"type:uuid;not null"`
 	License    License   `json:"license" gorm:"foreignKey:LicenseID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Version    string    `json:"version" gorm:"not null"`
