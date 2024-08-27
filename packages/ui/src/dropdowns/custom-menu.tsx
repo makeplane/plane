@@ -92,7 +92,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   useOutsideClickDetector(dropdownRef, closeDropdown, useCaptureForOutsideClick);
 
   let menuItems = (
-    <Menu.Items className={cn("fixed z-10", menuItemsClassName)} static>
+    <Menu.Items data-prevent-outside-click={!!portalElement} className={cn("fixed z-10", menuItemsClassName)} static>
       <div
         className={cn(
           "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
