@@ -1,7 +1,6 @@
 "use client";
 
 import { FC } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // types
 import { ICycle, IIssueFilterOptions } from "@plane/types";
@@ -43,7 +42,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
       }
     : {};
 
-  return !isEmpty(cycle) ? (
+  return cycle && cycle.hasOwnProperty("started_issues") ? (
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">

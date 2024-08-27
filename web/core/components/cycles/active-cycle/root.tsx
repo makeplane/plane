@@ -2,8 +2,6 @@
 
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
-// ui
-import { Loader } from "@plane/ui";
 // components
 import {
   ActiveCycleProductivity,
@@ -15,9 +13,9 @@ import {
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
+import { useCycle } from "@/hooks/store";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 import useCyclesDetails from "./use-cycles-details";
-import { useCycle } from "@/hooks/store";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -26,20 +24,12 @@ interface IActiveCycleDetails {
 
 export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
   const { workspaceSlug, projectId } = props;
-  const { currentProjectActiveCycle, currentProjectActiveCycleId, loader } = useCycle();
+  const { currentProjectActiveCycle, currentProjectActiveCycleId } = useCycle();
   const {
     handleFiltersUpdate,
     cycle: activeCycle,
     cycleIssueDetails,
   } = useCyclesDetails({ workspaceSlug, projectId, cycleId: currentProjectActiveCycleId });
-
-  // show loader if active cycle is loading
-  if (!currentProjectActiveCycle && loader)
-    return (
-      <Loader>
-        <Loader.Item height="250px" />
-      </Loader>
-    );
 
   return (
     <>

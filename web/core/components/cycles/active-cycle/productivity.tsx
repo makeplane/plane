@@ -46,7 +46,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     cycle && plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
-  return cycle && completionChartDistributionData && cycle.progress_snapshot ? (
+  return cycle && completionChartDistributionData ? (
     <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
