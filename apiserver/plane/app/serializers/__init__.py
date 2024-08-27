@@ -92,6 +92,7 @@ from .page import (
     SubPageSerializer,
     PageDetailSerializer,
     PageVersionSerializer,
+    PageVersionDetailSerializer,
 )
 
 from .estimate import (
@@ -121,3 +122,5 @@ from .exporter import ExporterHistorySerializer
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .dashboard import DashboardSerializer, WidgetSerializer
+
+from .favorite import UserFavoriteSerializer

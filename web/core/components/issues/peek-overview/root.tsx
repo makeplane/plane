@@ -34,7 +34,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     peekIssue,
+    setPeekIssue,
     issue: { fetchIssue },
+    fetchActivities,
   } = useIssueDetail();
 
   const { issues } = useIssuesStore();
@@ -42,6 +44,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // state
   const [loader, setLoader] = useState(true);
   const [error, setError] = useState(false);
+
+  const removeRoutePeekId = () => {
+    setPeekIssue(undefined);
+    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+  };
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -67,7 +74,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issues?.updateIssue &&
           (await issues
             .updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(() => {
+            .then(async () => {
+              fetchActivities(workspaceSlug, projectId, issueId);
               captureIssueEvent({
                 eventName: ISSUE_UPDATED,
                 payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -93,16 +101,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          issues?.removeIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
-          });
-          captureIssueEvent({
-            eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: pathname,
+          return issues?.removeIssue(workspaceSlug, projectId, issueId).then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_DELETED,
+              payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              path: pathname,
+            });
+            removeRoutePeekId();
           });
         } catch (error) {
           setToast({
@@ -162,6 +167,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -232,6 +238,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
           });
           await removeFromCyclePromise;
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -267,6 +274,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           addModuleIds,
           removeModuleIds
         );
+        fetchActivities(workspaceSlug, projectId, issueId);
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -293,6 +301,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
           });
           await removeFromModulePromise;
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },

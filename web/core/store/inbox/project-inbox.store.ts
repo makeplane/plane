@@ -336,7 +336,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       else this.loader = "mutation-loading";
       if (loadingType) this.loader = loadingType;
 
-      const status = this.inboxFilters.status && uniq([...this.inboxFilters.status, EInboxIssueStatus.SNOOZED]);
+      const status = this.inboxFilters?.status && uniq([...this.inboxFilters.status, EInboxIssueStatus.SNOOZED]);
       const queryParams = this.inboxIssueQueryParams(
         { ...this.inboxFilters, status },
         this.inboxSorting,
@@ -484,25 +484,23 @@ export class ProjectInboxStore implements IProjectInboxStore {
     const currentIssue = this.inboxIssues?.[inboxIssueId];
     try {
       if (!currentIssue) return;
-      runInAction(() => {
-        set(
-          this,
-          ["inboxIssuePaginationInfo", "total_results"],
-          (this.inboxIssuePaginationInfo?.total_results || 0) - 1
-        );
-        set(this, "inboxIssues", omit(this.inboxIssues, inboxIssueId));
-        set(
-          this,
-          ["inboxIssueIds"],
-          this.inboxIssueIds.filter((id) => id !== inboxIssueId)
-        );
+      await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId).then(() => {
+        runInAction(() => {
+          set(
+            this,
+            ["inboxIssuePaginationInfo", "total_results"],
+            (this.inboxIssuePaginationInfo?.total_results || 0) - 1
+          );
+          set(this, "inboxIssues", omit(this.inboxIssues, inboxIssueId));
+          set(
+            this,
+            ["inboxIssueIds"],
+            this.inboxIssueIds.filter((id) => id !== inboxIssueId)
+          );
+        });
       });
-      await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
     } catch (error) {
       console.error("Error removing the intake issue");
-      set(this.inboxIssues, [inboxIssueId], currentIssue);
-      set(this, ["inboxIssuePaginationInfo", "total_results"], (this.inboxIssuePaginationInfo?.total_results || 0) + 1);
-      set(this, ["inboxIssueIds"], [...this.inboxIssueIds, inboxIssueId]);
       throw error;
     }
   };

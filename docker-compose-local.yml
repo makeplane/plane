@@ -31,7 +31,7 @@ services:
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 
   plane-db:
-    image: postgres:15.2-alpine
+    image: postgres:15.7-alpine
     restart: unless-stopped
     networks:
       - dev_env

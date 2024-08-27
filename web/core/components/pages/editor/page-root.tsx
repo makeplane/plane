@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useSearchParams } from "next/navigation";
 // editor
 import { EditorRefApi, useEditorMarkings } from "@plane/editor";
 // types
@@ -7,10 +8,15 @@ import { TPage } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { PageEditorHeaderRoot, PageEditorBody } from "@/components/pages";
+import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay } from "@/components/pages";
 // hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { usePageDescription } from "@/hooks/use-page-description";
+import { useQueryParams } from "@/hooks/use-query-params";
+// services
+import { ProjectPageVersionService } from "@/services/page";
+const projectPageVersionService = new ProjectPageVersionService();
 // store
 import { IPage } from "@/store/pages/page";
 
@@ -27,17 +33,29 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
+  const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
+  // search params
+  const searchParams = useSearchParams();
   // store hooks
   const { createPage } = useProjectPages();
   // derived values
   const { access, description_html, name } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
+  // project-description
+  const { manuallyUpdateDescription } = usePageDescription({
+    editorRef,
+    page,
+    projectId,
+    workspaceSlug,
+  });
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
@@ -59,8 +77,48 @@ export const PageRoot = observer((props: TPageRootProps) => {
       );
   };
 
+  const version = searchParams.get("version");
+  useEffect(() => {
+    if (!version) {
+      setIsVersionsOverlayOpen(false);
+      return;
+    }
+    setIsVersionsOverlayOpen(true);
+  }, [version]);
+
+  const handleCloseVersionsOverlay = () => {
+    const updatedRoute = updateQueryParams({
+      paramsToRemove: ["version"],
+    });
+    router.push(updatedRoute);
+  };
+
   return (
     <>
+      <PageVersionsOverlay
+        activeVersion={version}
+        fetchAllVersions={async (pageId) => {
+          if (!workspaceSlug || !projectId) return;
+          return await projectPageVersionService.fetchAllVersions(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId
+          );
+        }}
+        fetchVersionDetails={async (pageId, versionId) => {
+          if (!workspaceSlug || !projectId) return;
+          return await projectPageVersionService.fetchVersionById(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId,
+            versionId
+          );
+        }}
+        handleRestore={manuallyUpdateDescription}
+        isOpen={isVersionsOverlayOpen}
+        onClose={handleCloseVersionsOverlay}
+        pageId={page.id ?? ""}
+      />
       <PageEditorHeaderRoot
         editorReady={editorReady}
         editorRef={editorRef}

@@ -76,6 +76,9 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
   fetchParentStats = () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug

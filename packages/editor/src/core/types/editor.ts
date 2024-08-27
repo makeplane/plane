@@ -1,15 +1,23 @@
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
-// hooks
-import { TFileHandler } from "@/hooks/use-editor";
 // types
-import { IMentionHighlight, IMentionSuggestion, TEditorCommands, TEmbedConfig, TServerHandler } from "@/types";
+import {
+  IMentionHighlight,
+  IMentionSuggestion,
+  TAIHandler,
+  TDisplayConfig,
+  TEditorCommands,
+  TEmbedConfig,
+  TExtensions,
+  TFileHandler,
+  TServerHandler,
+} from "@/types";
 
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
   getHTML: () => string;
-  clearEditor: () => void;
+  clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;
 };
@@ -21,11 +29,14 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
+  getSelectedText: () => string | null;
+  insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
 }
 
 // editor props
 export interface IEditorProps {
   containerClassName?: string;
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -36,7 +47,7 @@ export interface IEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
-  onEnterKeyPress?: (descriptionHTML: string) => void;
+  onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
@@ -50,6 +61,8 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+  aiHandler?: TAIHandler;
+  disabledExtensions: TExtensions[];
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
@@ -61,6 +74,7 @@ export interface ICollaborativeDocumentEditor
 // read only editor props
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
+  displayConfig?: TDisplayConfig;
   editorClassName?: string;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;

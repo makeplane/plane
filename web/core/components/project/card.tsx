@@ -110,7 +110,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}, { showProgressBar: false }),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (isOwner || isMember),

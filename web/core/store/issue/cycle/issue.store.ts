@@ -18,7 +18,10 @@ import {
   ViewFlags,
   TBulkOperationsPayload,
 } from "@plane/types";
+// helpers
+import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+//
 import { IIssueRootStore } from "../root.store";
 import { ICycleIssuesFilter } from "./filter.store";
 
@@ -134,7 +137,21 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
    */
   fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
     const cycleId = id ?? this.cycleId;
+
     projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+  };
+
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+    const distributionUpdates = getDistributionPathsPostUpdate(
+      prevIssueState,
+      nextIssueState,
+      this.rootIssueStore.rootStore.state.stateMap,
+      this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
+    );
+
+    const cycleId = id ?? this.cycleId;
+
+    cycleId && this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
   };
 
   /**

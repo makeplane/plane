@@ -7,10 +7,12 @@ import { TIssue } from "@plane/types";
 // hooks
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
-import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
+import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
 //constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks
 import { useIssues, useUser } from "@/hooks/store";
@@ -47,6 +49,9 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
+  // derived values
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 1);
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
@@ -89,7 +94,16 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const quickAdd =
     enableIssueCreation && isAllowed && !isCompletedCycle ? (
-      <GanttQuickAddIssueForm quickAddCallback={quickAddIssue} />
+      <QuickAddIssueRoot
+        layout={EIssueLayoutTypes.GANTT}
+        QuickAddButton={GanttQuickAddIssueButton}
+        containerClassName="sticky bottom-0 z-[1]"
+        prePopulatedData={{
+          start_date: renderFormattedPayloadDate(new Date()),
+          target_date: renderFormattedPayloadDate(targetDate),
+        }}
+        quickAddCallback={quickAddIssue}
+      />
     ) : undefined;
 
   return (

@@ -2,7 +2,13 @@ import { EditorProps } from "@tiptap/pm/view";
 // helpers
 import { cn } from "@/helpers/common";
 
-export function CoreEditorProps(editorClassName: string): EditorProps {
+export type TCoreEditorProps = {
+  editorClassName: string;
+};
+
+export const CoreEditorProps = (props: TCoreEditorProps): EditorProps => {
+  const { editorClassName } = props;
+
   return {
     attributes: {
       class: cn(
@@ -25,4 +31,4 @@ export function CoreEditorProps(editorClassName: string): EditorProps {
       return html.replace(/<img.*?>/g, "");
     },
   };
-}
+};

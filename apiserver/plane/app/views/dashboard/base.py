@@ -43,6 +43,7 @@ from plane.db.models import (
     ProjectMember,
     User,
     Widget,
+    WorkspaceMember,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -51,36 +52,61 @@ from .. import BaseAPIView
 
 
 def dashboard_overview_stats(self, request, slug):
-    assigned_issues = Issue.issue_objects.filter(
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
+    extra_filters = {}
+    if WorkspaceMember.objects.filter(
         workspace__slug=slug,
-        assignees__in=[request.user],
-    ).count()
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        extra_filters = {"created_by": request.user}
 
-    pending_issues_count = Issue.issue_objects.filter(
-        ~Q(state__group__in=["completed", "cancelled"]),
-        target_date__lt=timezone.now().date(),
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        workspace__slug=slug,
-        assignees__in=[request.user],
-    ).count()
+    assigned_issues = (
+        Issue.issue_objects.filter(
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            workspace__slug=slug,
+            assignees__in=[request.user],
+        )
+        .filter(**extra_filters)
+        .count()
+    )
 
-    created_issues_count = Issue.issue_objects.filter(
-        workspace__slug=slug,
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        created_by_id=request.user.id,
-    ).count()
+    pending_issues_count = (
+        Issue.issue_objects.filter(
+            ~Q(state__group__in=["completed", "cancelled"]),
+            target_date__lt=timezone.now().date(),
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            workspace__slug=slug,
+            assignees__in=[request.user],
+        )
+        .filter(**extra_filters)
+        .count()
+    )
 
-    completed_issues_count = Issue.issue_objects.filter(
-        workspace__slug=slug,
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        assignees__in=[request.user],
-        state__group="completed",
-    ).count()
+    created_issues_count = (
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            created_by_id=request.user.id,
+        )
+        .filter(**extra_filters)
+        .count()
+    )
+
+    completed_issues_count = (
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            assignees__in=[request.user],
+            state__group="completed",
+        )
+        .filter(**extra_filters)
+        .count()
+    )
 
     return Response(
         {
@@ -165,6 +191,14 @@ def dashboard_assigned_issues(self, request, slug):
             ),
         )
     )
+
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        assigned_issues = assigned_issues.filter(created_by=request.user)
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -409,6 +443,16 @@ def dashboard_created_issues(self, request, slug):
 def dashboard_issues_by_state_groups(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+    extra_filters = {}
+
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        extra_filters = {"created_by": request.user}
+
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
@@ -416,7 +460,7 @@ def dashboard_issues_by_state_groups(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
-        .filter(**filters)
+        .filter(**filters, **extra_filters)
         .values("state__group")
         .annotate(count=Count("id"))
     )
@@ -439,6 +483,15 @@ def dashboard_issues_by_state_groups(self, request, slug):
 def dashboard_issues_by_priority(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     priority_order = ["urgent", "high", "medium", "low", "none"]
+    extra_filters = {}
+
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        extra_filters = {"created_by": request.user}
 
     issues_by_priority = (
         Issue.issue_objects.filter(
@@ -447,7 +500,7 @@ def dashboard_issues_by_priority(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
-        .filter(**filters)
+        .filter(**filters, **extra_filters)
         .values("priority")
         .annotate(count=Count("id"))
     )

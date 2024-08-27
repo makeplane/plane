@@ -31,8 +31,9 @@ from plane.app.serializers import (
 )
 
 from plane.app.permissions import (
-    ProjectBasePermission,
     ProjectMemberPermission,
+    allow_permission,
+    ROLE,
 )
 from plane.db.models import (
     UserFavorite,
@@ -47,19 +48,17 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
+    WorkspaceMember,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
-
-    permission_classes = [
-        ProjectBasePermission,
-    ]
 
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(
@@ -155,6 +154,10 @@ class ProjectViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def list(self, request, slug):
         fields = [
             field
@@ -173,11 +176,27 @@ class ProjectViewSet(BaseViewSet):
                     projects, many=True
                 ).data,
             )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role__in=[5, 10],
+        ).exists():
+            projects = projects.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
         projects = ProjectListSerializer(
             projects, many=True, fields=fields if fields else None
         ).data
         return Response(projects, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
@@ -246,9 +265,18 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=pk,
+            entity_name="project",
+            entity_identifier=pk,
+            user_id=request.user.id,
+        )
+
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -378,6 +406,7 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def partial_update(self, request, slug, pk=None):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -459,19 +488,21 @@ class ProjectViewSet(BaseViewSet):
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
+        UserFavorite.objects.filter(
+            workspace__slug=slug,
+            project=project_id,
+        ).delete()
         return Response(
             {"archived_at": str(project.archived_at)},
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = None
@@ -480,10 +511,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         name = request.GET.get("name", "").strip().upper()
 
@@ -502,6 +530,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def delete(self, request, slug):
         name = request.data.get("name", "").strip().upper()
 
@@ -599,7 +628,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             user=request.user,
             workspace__slug=slug,
         )
-        project_favorite.delete()
+        project_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

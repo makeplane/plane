@@ -74,22 +74,23 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           </Loader>
         ) : issuesList.length > 0 ? (
           <>
-            <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
+            <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-12 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
-                className={cn("pl-1 flex items-center gap-1 col-span-4", {
-                  "col-span-6": type === "assigned" && tab === "completed",
-                  "col-span-5": type === "created" && tab === "completed",
+                className={cn("pl-1 flex items-center gap-1 col-span-7", {
+                  "col-span-11": type === "assigned" && tab === "completed",
+                  "col-span-9": type === "created" && tab === "completed",
                 })}
               >
                 Issues
-                <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-3 flex items-center text-center justify-center">
+                <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-2 flex items-center text-center justify-center">
                   {widgetStats.count}
                 </span>
               </h6>
-              {["upcoming", "pending"].includes(tab) && <h6 className="text-center">Due date</h6>}
-              {tab === "overdue" && <h6 className="text-center">Due by</h6>}
-              {type === "assigned" && tab !== "completed" && <h6 className="text-center">Blocked by</h6>}
-              {type === "created" && <h6 className="text-center">Assigned to</h6>}
+              <h6 className="text-center col-span-1">Priority</h6>
+              {["upcoming", "pending"].includes(tab) && <h6 className="text-center col-span-2">Due date</h6>}
+              {tab === "overdue" && <h6 className="text-center col-span-2">Due by</h6>}
+              {type === "assigned" && tab !== "completed" && <h6 className="text-center col-span-2">Blocked by</h6>}
+              {type === "created" && <h6 className="text-center col-span-2">Assigned to</h6>}
             </div>
             <div className="px-4 pb-3 mt-2">
               {issuesList.map((issue) => {

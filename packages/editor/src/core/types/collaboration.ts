@@ -1,7 +1,5 @@
 import { Extensions } from "@tiptap/core";
 import { EditorProps } from "@tiptap/pm/view";
-// hooks
-import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
@@ -10,6 +8,8 @@ import {
   EditorRefApi,
   IMentionHighlight,
   IMentionSuggestion,
+  TExtensions,
+  TFileHandler,
   TRealtimeConfig,
   TUserDetails,
 } from "@/types";
@@ -20,6 +20,7 @@ export type TServerHandler = {
 };
 
 type TCollaborativeEditorHookProps = {
+  disabledExtensions?: TExtensions[];
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
@@ -39,7 +40,6 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  setHideDragHandleFunction: (hideDragHandlerFromDragDrop: () => void) => void;
   tabIndex?: number;
 };
 

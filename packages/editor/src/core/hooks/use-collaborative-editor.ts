@@ -2,17 +2,17 @@ import { useEffect, useLayoutEffect, useMemo } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
-// extensions
-import { DragAndDrop } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TCollaborativeEditorProps } from "@/types";
+import { SideMenuExtension } from "@/extensions";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     embedHandler,
@@ -25,7 +25,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     placeholder,
     realtimeConfig,
     serverHandler,
-    setHideDragHandleFunction,
     tabIndex,
     user,
   } = props;
@@ -73,12 +72,16 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     forwardedRef,
     mentionHandler,
     extensions: [
-      DragAndDrop(setHideDragHandleFunction),
+      SideMenuExtension({
+        aiEnabled: !disabledExtensions?.includes("ai"),
+        dragDropEnabled: true,
+      }),
       Collaboration.configure({
         document: provider.document,
       }),
       ...(extensions ?? []),
       ...DocumentEditorAdditionalExtensions({
+        disabledExtensions,
         fileHandler,
         issueEmbedConfig: embedHandler?.issue,
       }),

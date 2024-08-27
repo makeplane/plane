@@ -9,11 +9,14 @@ import {
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+// ui
+import { ContrastIcon, DiceIcon } from "@plane/ui";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 export const commandGroups: {
   [key: string]: {
-    icon: JSX.Element;
+    icon: JSX.Element | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any, projectId: string | undefined) => string;
     title: string;
@@ -31,14 +34,18 @@ export const commandGroups: {
     title: "Cycles",
   },
   issue: {
-    icon: <LayersIcon className="h-3 w-3" />,
+    icon: null,
     itemName: (issue: IWorkspaceIssueSearchResult) => (
-      <h6>
-        <span className="text-xs text-custom-text-300">
-          {issue.project__identifier}-{issue.sequence_id}
-        </span>{" "}
+      <div className="flex gap-2">
+        <IssueIdentifier
+          projectId={issue.project_id}
+          issueTypeId={issue.type_id}
+          projectIdentifier={issue.project__identifier}
+          issueSequenceId={issue.sequence_id}
+          textContainerClassName="text-xs"
+        />{" "}
         {issue.name}
-      </h6>
+      </div>
     ),
     path: (issue: IWorkspaceIssueSearchResult) =>
       `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,

@@ -1,6 +1,8 @@
 import { forwardRef, MutableRefObject } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
 import { IssueWidget } from "@/extensions";
 // helpers
@@ -13,6 +15,7 @@ import { EditorReadOnlyRefApi, ICollaborativeDocumentReadOnlyEditor } from "@/ty
 const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOnlyEditor) => {
   const {
     containerClassName,
+    displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
     forwardedRef,
@@ -49,7 +52,14 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
   });
 
   if (!editor) return null;
-  return <PageRenderer id={id} editor={editor} editorContainerClassName={editorContainerClassName} />;
+  return (
+    <PageRenderer
+      displayConfig={displayConfig}
+      id={id}
+      editor={editor}
+      editorContainerClassName={editorContainerClassName}
+    />
+  );
 };
 
 const CollaborativeDocumentReadOnlyEditorWithRef = forwardRef<

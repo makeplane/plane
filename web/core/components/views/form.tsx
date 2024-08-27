@@ -131,7 +131,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} View</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} view</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
             <EmojiIconPicker

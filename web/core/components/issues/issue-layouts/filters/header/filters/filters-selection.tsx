@@ -2,8 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
+// types
 import { IIssueDisplayFilterOptions, IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
-// hooks
+// components
 import {
   FilterAssignees,
   FilterMentions,
@@ -17,12 +18,12 @@ import {
   FilterTargetDate,
   FilterCycle,
   FilterModule,
-  FilterIssueType,
+  FilterIssueGrouping,
 } from "@/components/issues";
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
-// components
-// types
 // constants
+import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+// plane web components
+import { FilterIssueTypes } from "@/plane-web/components/issues";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -115,6 +116,15 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           </div>
         )}
 
+        {/* issue type */}
+        {isFilterEnabled("issue_type") && (
+          <FilterIssueTypes
+            appliedFilters={filters.issue_type ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("issue_type", val)}
+            searchQuery={filtersSearchQuery}
+          />
+        )}
+
         {/* assignees */}
         {isFilterEnabled("assignees") && (
           <div className="py-2">
@@ -198,7 +208,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* issue type */}
         {isDisplayFilterEnabled("type") && displayFilters && handleDisplayFiltersUpdate && (
           <div className="py-2">
-            <FilterIssueType
+            <FilterIssueGrouping
               selectedIssueType={displayFilters.type}
               handleUpdate={(val) =>
                 handleDisplayFiltersUpdate({

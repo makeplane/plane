@@ -1,18 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 // components
 import { PageRenderer } from "@/components/editors";
-// extensions
-import { IssueWidget } from "@/extensions";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
-// hooks
-import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+// plane editor types
+import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
+import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+import { IssueWidget } from "@/extensions";
 
 const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
+    aiHandler,
     containerClassName,
+    disabledExtensions,
+    displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -26,13 +31,6 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     tabIndex,
     user,
   } = props;
-  // states
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
-  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
-    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
-  };
 
   const extensions = [];
   if (embedHandler?.issue) {
@@ -45,18 +43,18 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   // use document editor
   const { editor } = useCollaborativeEditor({
-    id,
+    disabledExtensions,
     editorClassName,
     embedHandler,
     extensions,
     fileHandler,
-    handleEditorReady,
     forwardedRef,
+    handleEditorReady,
+    id,
     mentionHandler,
     placeholder,
     realtimeConfig,
     serverHandler,
-    setHideDragHandleFunction,
     tabIndex,
     user,
   });
@@ -71,9 +69,10 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   return (
     <PageRenderer
+      displayConfig={displayConfig}
+      aiHandler={aiHandler}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
-      hideDragHandle={hideDragHandleOnMouseLeave}
       id={id}
       tabIndex={tabIndex}
     />

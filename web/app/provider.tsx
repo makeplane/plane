@@ -19,7 +19,7 @@ import { InstanceWrapper } from "@/lib/wrappers";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
-const CrispWrapper = dynamic(() => import("@/lib/wrappers/crisp-wrapper"), { ssr: false });
+const IntercomProvider = dynamic(() => import("@/lib/intercom-provider"), { ssr: false });
 
 export interface IAppProvider {
   children: ReactNode;
@@ -39,15 +39,15 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
           <ToastWithTheme />
-          <InstanceWrapper>
-            <StoreWrapper>
-              <CrispWrapper>
+          <StoreWrapper>
+            <InstanceWrapper>
+              <IntercomProvider>
                 <PostHogProvider>
                   <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
                 </PostHogProvider>
-              </CrispWrapper>
-            </StoreWrapper>
-          </InstanceWrapper>
+              </IntercomProvider>
+            </InstanceWrapper>
+          </StoreWrapper>
         </ThemeProvider>
       </StoreProvider>
     </>

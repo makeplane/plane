@@ -4,10 +4,18 @@ import sortBy from "lodash/sortBy";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { ICycle, CycleDateCheckData, TCyclePlotType } from "@plane/types";
+import {
+  ICycle,
+  CycleDateCheckData,
+  TCyclePlotType,
+  TProgressSnapshot,
+  TCycleEstimateDistribution,
+  TCycleDistribution,
+} from "@plane/types";
 // helpers
 import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
 import { getDate } from "@/helpers/date-time.helper";
+import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { CycleArchiveService } from "@/services/cycle_archive.service";
@@ -44,6 +52,7 @@ export interface ICycleStore {
   getProjectCycleIds: (projectId: string) => string[] | null;
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
   // actions
+  updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
   // fetch
@@ -53,6 +62,13 @@ export interface ICycleStore {
   fetchArchivedCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchArchivedCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
+  fetchActiveCycleProgress: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TProgressSnapshot>;
+  fetchActiveCycleAnalytics: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    analytic_type: string
+  ) => Promise<TCycleDistribution | TCycleEstimateDistribution>;
   // crud
   createCycle: (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => Promise<ICycle>;
   updateCycleDetails: (
@@ -91,7 +107,7 @@ export class CycleStore implements ICycleStore {
       // observables
       loader: observable.ref,
       cycleMap: observable,
-      plotType: observable.ref,
+      plotType: observable,
       activeCycleIdMap: observable,
       fetchedMap: observable,
       // computed
@@ -111,6 +127,8 @@ export class CycleStore implements ICycleStore {
       fetchActiveCycle: action,
       fetchArchivedCycles: action,
       fetchArchivedCycleDetails: action,
+      fetchActiveCycleProgress: action,
+      fetchActiveCycleAnalytics: action,
       fetchCycleDetails: action,
       createCycle: action,
       updateCycleDetails: action,
@@ -401,6 +419,7 @@ export class CycleStore implements ICycleStore {
         runInAction(() => {
           response.forEach((cycle) => {
             set(this.cycleMap, [cycle.id], cycle);
+            cycle.status?.toLowerCase() === "current" && set(this.activeCycleIdMap, [cycle.id], true);
           });
           set(this.fetchedMap, projectId, true);
           this.loader = false;
@@ -456,6 +475,43 @@ export class CycleStore implements ICycleStore {
     });
 
   /**
+   * @description fetches active cycle progress
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   *  @returns
+   */
+  fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
+      runInAction(() => {
+        set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], ...progress });
+      });
+      return progress;
+    });
+
+  /**
+   * @description fetches active cycle analytics
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   *  @returns
+   */
+  fetchActiveCycleAnalytics = async (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    analytic_type: string
+  ) =>
+    await this.cycleService
+      .workspaceActiveCyclesAnalytics(workspaceSlug, projectId, cycleId, analytic_type)
+      .then((cycle) => {
+        runInAction(() => {
+          set(this.cycleMap, [cycleId, analytic_type === "points" ? "estimate_distribution" : "distribution"], cycle);
+        });
+        return cycle;
+      });
+
+  /**
    * @description fetches cycle details
    * @param workspaceSlug
    * @param projectId
@@ -484,6 +540,22 @@ export class CycleStore implements ICycleStore {
       });
       return response;
     });
+
+  /**
+   * This method updates the cycle's stats locally without fetching the updated stats from backend
+   * @param distributionUpdates
+   * @param cycleId
+   * @returns
+   */
+  updateCycleDistribution = (distributionUpdates: DistributionUpdates, cycleId: string) => {
+    const cycle = this.cycleMap[cycleId];
+
+    if (!cycle) return;
+
+    runInAction(() => {
+      updateDistribution(cycle, distributionUpdates);
+    });
+  };
 
   /**
    * @description creates a new cycle
@@ -535,6 +607,7 @@ export class CycleStore implements ICycleStore {
       runInAction(() => {
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
+        if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);
       });
     });
 
@@ -552,7 +625,12 @@ export class CycleStore implements ICycleStore {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
       });
       // updating through api.
-      const response = await this.cycleService.addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId });
+      const response = await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
+        entity_type: "cycle",
+        entity_identifier: cycleId,
+        project_id: projectId,
+        entity_data: { name: this.cycleMap[cycleId].name || "" },
+      });
       return response;
     } catch (error) {
       runInAction(() => {
@@ -575,7 +653,7 @@ export class CycleStore implements ICycleStore {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);
       });
-      const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
+      const response = await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, cycleId);
       return response;
     } catch (error) {
       runInAction(() => {
@@ -600,6 +678,7 @@ export class CycleStore implements ICycleStore {
       .then((response) => {
         runInAction(() => {
           set(this.cycleMap, [cycleId, "archived_at"], response.archived_at);
+          if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);
         });
       })
       .catch((error) => {

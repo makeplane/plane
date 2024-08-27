@@ -12,10 +12,12 @@ export interface IDropdownProps {
   label?: string | JSX.Element;
   maxHeight?: "sm" | "rg" | "md" | "lg";
   noChevron?: boolean;
+  chevronClassName?: string;
   onOpen?: () => void;
   optionsClassName?: string;
   placement?: Placement;
   tabIndex?: number;
+  useCaptureForOutsideClick?: boolean;
 }
 
 export interface ICustomMenuDropdownProps extends IDropdownProps {

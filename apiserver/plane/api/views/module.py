@@ -18,7 +18,7 @@ from plane.api.serializers import (
     ModuleSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueAttachment,
@@ -28,6 +28,7 @@ from plane.db.models import (
     ModuleLink,
     Project,
     ProjectMember,
+    UserFavorite,
 )
 
 from .base import BaseAPIView
@@ -304,6 +305,13 @@ class ModuleAPIEndpoint(BaseAPIView):
         # Delete the module issues
         ModuleIssue.objects.filter(
             module=pk,
+            project_id=project_id,
+        ).delete()
+        # Delete the user favorite module
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -512,7 +520,6 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -627,6 +634,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, pk):
