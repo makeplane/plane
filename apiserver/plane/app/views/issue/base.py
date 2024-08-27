@@ -742,8 +742,8 @@ class IssuePaginatedViewSet(BaseViewSet):
         # querying issues
         base_queryset = Issue.issue_objects.filter(
             workspace__slug=slug, project_id=project_id
-        ).order_by("-updated_at")
-        queryset = self.get_queryset().order_by("-updated_at")
+        ).order_by("updated_at")
+        queryset = self.get_queryset().order_by("updated_at")
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:
