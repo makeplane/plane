@@ -89,11 +89,6 @@ urlpatterns = [
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
-        BulkArchiveIssuesEndpoint.as_view(),
-        name="bulk-archive-issues",
-    ),
     ##
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",

@@ -7,12 +7,12 @@ import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, Triang
 import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { Tooltip } from "@plane/ui";
+// plane web constants
+import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/ce/constants/ai";
 // components
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web constants
-import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
 // plane web services
 import { AIService, TTaskPayload } from "@/services/ai.service";
 import { AskPiMenu } from "./ask-pi-menu";

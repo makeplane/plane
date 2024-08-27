@@ -20,7 +20,8 @@ RUN apk --no-cache add \
     "make" \
     "postgresql-dev" \
     "libc-dev" \
-    "linux-headers"
+    "linux-headers" \
+    "xmlsec-dev"
 
 WORKDIR /code
 
