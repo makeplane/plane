@@ -33,7 +33,6 @@ type Props = {
   cycleId: string;
   handleClose: () => void;
   isArchived?: boolean;
-  isPeekMode?: boolean;
 };
 
 const defaultValues: Partial<ICycle> = {
