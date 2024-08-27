@@ -3671,6 +3671,49 @@
   resolved "https://registry.yarnpkg.com/@tiptap/suggestion/-/suggestion-2.6.5.tgz#0bf4dcc3afcbb451e888a3012bf9d7bd7595d157"
   integrity sha512-yjJUwhkHTfGNOt/zzGRVrkNyBkkfU42mmqCntbrggAVbkw2QDD7QqDpYZOqLGADnkfct6DYiDQHXh1pMYi+Caw==
 
+"@todesktop/client-core@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@todesktop/client-core/-/client-core-1.9.0.tgz#dcd51154a97dc157dff2849ee5bb984e83273cea"
+  integrity sha512-Wuj//ZZ4J0SkAnVjXOryOz37X0nuLNksTZlmMt6wJeeDZql2YNJ72jXuvbULgTYjtpBATLmDGj1NRMvzhLA7aw==
+  dependencies:
+    "@todesktop/client-electron-types" "^27.0.0"
+    "@todesktop/client-electron-updater-types" "^5.2.3"
+    "@todesktop/client-todesktop-runtime-types" "1.5.7-beta.2"
+    "@todesktop/client-util" "^1.2.0"
+    "@types/node" "^18.11.8"
+
+"@todesktop/client-electron-types@^27.0.0":
+  version "27.0.0"
+  resolved "https://registry.yarnpkg.com/@todesktop/client-electron-types/-/client-electron-types-27.0.0.tgz#ecc80c2c0e6c1d553c6539bf15b8e4320785bd6f"
+  integrity sha512-B72qrSVC3yT9C4RnalHitkMQ0yrWsXYL3Wv+Vzu5Uzi0/1C1Lm75vBeuOYSf/bMa96lih59XbwO9RE0w0jGuXA==
+  dependencies:
+    typescript "^4.7.2"
+
+"@todesktop/client-electron-updater-types@^5.2.3":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@todesktop/client-electron-updater-types/-/client-electron-updater-types-5.3.0.tgz#4940f8392a1a6365a771aad73e897c2b3fe9a4b7"
+  integrity sha512-GxtdHFLuN53LGjViVR+S9QxmJy1IMMYW06nnQGeAzPX7NoatYoU+RHV+6XYoe8/GJ+oGAk4f5vRZEPsL/+pWUg==
+
+"@todesktop/client-todesktop-runtime-types@1.5.7-beta.2":
+  version "1.5.7-beta.2"
+  resolved "https://registry.yarnpkg.com/@todesktop/client-todesktop-runtime-types/-/client-todesktop-runtime-types-1.5.7-beta.2.tgz#92c219615d12224a5ac51fe43ec96f3c8e258496"
+  integrity sha512-S1/Njp0PuSmqTmTk0FB5+F+87YULIZnfZCb0U07r+uP9P5He/9JuVGeYH2LpaWWFdq8DbUawB9R9JluojUhmrg==
+
+"@todesktop/client-todesktop-runtime-types@^1.5.7":
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/@todesktop/client-todesktop-runtime-types/-/client-todesktop-runtime-types-1.5.7.tgz#0c16637bc995267a2e608a542a7a6462d819d1bc"
+  integrity sha512-yBMwfbVdgXRuYBsHA43Z5Oj4umaxw+PyUoGT8otMzLlRm1bU2h4TIzWliNh5cDyo7E67B/vWEG2o2pVkZxXW5A==
+
+"@todesktop/client-util@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@todesktop/client-util/-/client-util-1.2.0.tgz#f4a290a43468641b57590209d1b94e20636d8a9c"
+  integrity sha512-cSqmSv5TbVSQmmMUuJ00TXPN6YM2/R+x7vqDZP5qxIjnHgC34gaqdodWsBWji0cxviAnFw1kdIx/RIIcclhcxw==
+  dependencies:
+    "@todesktop/client-electron-types" "^27.0.0"
+    "@todesktop/client-electron-updater-types" "^5.2.3"
+    "@todesktop/client-todesktop-runtime-types" "^1.5.7"
+    nanoid "^4.0.2"
+
 "@types/aria-query@^5.0.1":
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/@types/aria-query/-/aria-query-5.0.4.tgz#1a31c3d378850d2778dabb6374d036dcba4ba708"
@@ -3931,7 +3974,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.1.tgz#5db121e9c5352925bb1f1b892c4ae620e3526799"
   integrity sha512-DZxSZWXxFfOlx7k7Rv4LAyiMroaxa3Ly/7OOzZO8cBNho0YzAi4qlbrx8W27JGqG57IgR/6J7r+nOJWw6kcvZA==
 
-"@types/node@^18.0.0":
+"@types/node@^18.0.0", "@types/node@^18.11.8":
   version "18.19.45"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.45.tgz#a9ebfe4c316a356be7ca11f753ecb2feda6d6bdf"
   integrity sha512-VZxPKNNhjKmaC1SUYowuXSRSMGyQGmQjvvA1xE4QZ0xce2kLtEhPDS+kqpCPBZYgqblCLQ2DAjSzmgCM5auvhA==
@@ -8931,6 +8974,11 @@ nanoid@^3.3.6, nanoid@^3.3.7:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
   integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
 
+nanoid@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.2.tgz#140b3c5003959adbebf521c170f282c5e7f9fb9e"
+  integrity sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==
+
 natural-compare-lite@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare-lite/-/natural-compare-lite-1.4.0.tgz#17b09581988979fddafe0201e931ba933c96cbb4"
@@ -11787,7 +11835,7 @@ typescript@4.7.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
-typescript@4.9.5:
+typescript@4.9.5, typescript@^4.7.2:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
