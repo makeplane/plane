@@ -25,7 +25,7 @@ import {
 } from "@/hooks/store";
 // images
 import { persistence } from "@/local-db/storage.sqlite";
-import emptyProject from "@/public/empty-state/project.svg";
+import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
   children: ReactNode;

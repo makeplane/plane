@@ -13,7 +13,7 @@ import {
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // plane web components
 import useSize from "@/hooks/use-window-size";
@@ -23,6 +23,7 @@ export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
+  const { canPerformWorkspaceMemberActions } = useUser();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const windowSize = useSize();
   // refs
@@ -73,7 +74,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
           })}
         />
         <div
-          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2", {
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2 py-0.5", {
             "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
         >
@@ -85,7 +86,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
               "opacity-0": !sidebarCollapsed,
             })}
           />
-          <SidebarFavoritesMenu />
+          {canPerformWorkspaceMemberActions && <SidebarFavoritesMenu />}
 
           <SidebarProjectsList />
         </div>

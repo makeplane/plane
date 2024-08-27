@@ -557,6 +557,7 @@ export class ModulesStore implements IModuleStore {
       .then((response) => {
         runInAction(() => {
           set(this.moduleMap, [moduleId, "archived_at"], response.archived_at);
+          if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
         });
       })
       .catch((error) => {

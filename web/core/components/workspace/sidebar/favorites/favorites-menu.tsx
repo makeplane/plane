@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { orderBy, uniqBy } from "lodash";
+import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
@@ -22,7 +22,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
-import { FavoriteItem } from "./favorite-item";
+import { FavoriteRoot } from "./favorite-items";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
@@ -33,7 +33,7 @@ export const SidebarFavoritesMenu = observer(() => {
 
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { favoriteIds, favoriteMap, deleteFavorite, removeFromFavoriteFolder } = useFavorite();
+  const { favoriteIds, groupedFavorites, deleteFavorite, removeFromFavoriteFolder } = useFavorite();
   const { workspaceSlug } = useParams();
 
   const { isMobile } = usePlatformOS();
@@ -108,7 +108,7 @@ export const SidebarFavoritesMenu = observer(() => {
           setIsDragging(false);
           const sourceId = source?.data?.id as string | undefined;
           console.log({ sourceId });
-          if (!sourceId || !favoriteMap[sourceId].parent) return;
+          if (!sourceId || !groupedFavorites[sourceId].parent) return;
           handleRemoveFromFavoritesFolder(sourceId);
         },
       })
@@ -133,14 +133,16 @@ export const SidebarFavoritesMenu = observer(() => {
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
               YOUR FAVORITES
             </span>
-            <span className="flex gap-2 flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
-              <FolderPlus
-                onClick={() => {
-                  setCreateNewFolder(true);
-                  !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
-                }}
-                className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
-              />
+            <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
+              <Tooltip tooltipHeading="Create folder" tooltipContent="">
+                <FolderPlus
+                  onClick={() => {
+                    setCreateNewFolder(true);
+                    !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
+                  }}
+                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
+                />
+              </Tooltip>
               <ChevronRight
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
@@ -168,34 +170,43 @@ export const SidebarFavoritesMenu = observer(() => {
               static
             >
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {uniqBy(orderBy(Object.values(favoriteMap), "sequence", "desc"), "id")
-                .filter((fav) => !fav.parent)
-                .map((fav, index) => (
-                  <Tooltip
-                    key={fav.id}
-                    tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
-                    position="right"
-                    className="ml-2"
-                    disabled={!sidebarCollapsed}
-                    isMobile={isMobile}
-                  >
-                    {fav.is_folder ? (
-                      <FavoriteFolder
-                        favorite={fav}
-                        isLastChild={index === favoriteIds.length - 1}
-                        handleRemoveFromFavorites={handleRemoveFromFavorites}
-                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                      />
-                    ) : (
-                      <FavoriteItem
-                        favorite={fav}
-                        handleRemoveFromFavorites={handleRemoveFromFavorites}
-                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                        favoriteMap={favoriteMap}
-                      />
-                    )}
-                  </Tooltip>
-                ))}
+              {Object.keys(groupedFavorites).length === 0 ? (
+                <>
+                  {!sidebarCollapsed && (
+                    <span className="text-custom-text-400 text-xs text-center font-medium py-1">No favorites yet</span>
+                  )}
+                </>
+              ) : (
+                orderBy(Object.values(groupedFavorites), "sequence", "desc")
+                  .filter((fav) => !fav.parent)
+                  .map((fav, index) => (
+                    <Tooltip
+                      key={fav.id}
+                      tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
+                      position="right"
+                      className="ml-2"
+                      disabled={!sidebarCollapsed}
+                      isMobile={isMobile}
+                    >
+                      {fav.is_folder ? (
+                        <FavoriteFolder
+                          favorite={fav}
+                          isLastChild={index === favoriteIds.length - 1}
+                          handleRemoveFromFavorites={handleRemoveFromFavorites}
+                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                        />
+                      ) : (
+                        <FavoriteRoot
+                          workspaceSlug={workspaceSlug.toString()}
+                          favorite={fav}
+                          handleRemoveFromFavorites={handleRemoveFromFavorites}
+                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                          favoriteMap={groupedFavorites}
+                        />
+                      )}
+                    </Tooltip>
+                  ))
+              )}
             </Disclosure.Panel>
           )}
         </Transition>

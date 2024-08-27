@@ -7,6 +7,7 @@ import useSWR from "swr";
 // ui
 import { Button } from "@plane/ui";
 // components
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { WebhookSettingsLoader } from "@/components/ui";
@@ -23,16 +24,15 @@ const WebhooksListPage = observer(() => {
   const { workspaceSlug } = useParams();
   // mobx store
   const {
+    canPerformWorkspaceAdminActions,
     membership: { currentWorkspaceRole },
   } = useUser();
   const { fetchWebhooks, webhooks, clearSecretKey, webhookSecretKey, createWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
 
-  const isAdmin = currentWorkspaceRole === 20;
-
   useSWR(
-    workspaceSlug && isAdmin ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
-    workspaceSlug && isAdmin ? () => fetchWebhooks(workspaceSlug.toString()) : null
+    workspaceSlug && canPerformWorkspaceAdminActions ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
+    workspaceSlug && canPerformWorkspaceAdminActions ? () => fetchWebhooks(workspaceSlug.toString()) : null
   );
 
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhooks` : undefined;
@@ -42,15 +42,9 @@ const WebhooksListPage = observer(() => {
     if (!showCreateWebhookModal && webhookSecretKey) clearSecretKey();
   }, [showCreateWebhookModal, webhookSecretKey, clearSecretKey]);
 
-  if (!isAdmin)
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-        </div>
-      </>
-    );
+  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
+    return <NotAuthorizedView section="settings" />;
+  }
 
   if (!webhooks) return <WebhookSettingsLoader />;
 

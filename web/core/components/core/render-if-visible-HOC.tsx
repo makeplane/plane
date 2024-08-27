@@ -11,6 +11,7 @@ type Props = {
   classNames?: string;
   placeholderChildren?: ReactNode;
   shouldRenderByDefault?: boolean;
+  defaultValue?: boolean;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -21,6 +22,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     horizontalOffset = 0,
     as = "div",
     children,
+    defaultValue = false,
     classNames = "",
     placeholderChildren = null, //placeholder children
     shouldRenderByDefault = false,

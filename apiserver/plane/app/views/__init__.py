@@ -113,6 +113,7 @@ from .issue.base import (
     IssueUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
     DeletedIssuesListViewSet,
+    IssuePaginatedViewSet,
 )
 
 from .issue.activity import (
@@ -156,9 +157,6 @@ from .issue.sub_issue import (
 from .issue.subscriber import (
     IssueSubscriberViewSet,
 )
-
-
-from .issue.bulk_operations import BulkIssueOperationsEndpoint
 
 from .module.base import (
     ModuleViewSet,

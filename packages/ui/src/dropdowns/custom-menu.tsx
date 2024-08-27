@@ -35,6 +35,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     tabIndex,
     closeOnSelect,
     openOnHover = false,
+    useCaptureForOutsideClick = false,
   } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
@@ -88,7 +89,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     }
   };
 
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+  useOutsideClickDetector(dropdownRef, closeDropdown, useCaptureForOutsideClick);
 
   let menuItems = (
     <Menu.Items className={cn("fixed z-10", menuItemsClassName)} static>

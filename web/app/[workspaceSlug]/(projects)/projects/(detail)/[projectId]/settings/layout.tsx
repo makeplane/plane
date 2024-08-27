@@ -1,18 +1,8 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-// ui
-import { Button, LayersIcon } from "@plane/ui";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
 import { AppHeader, ContentWrapper } from "@/components/core";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
-// hooks
-import { useUser } from "@/hooks/store";
 // local components
 import { ProjectSettingHeader } from "./header";
 import { ProjectSettingsSidebar } from "./sidebar";
@@ -21,33 +11,8 @@ export interface IProjectSettingLayout {
   children: ReactNode;
 }
 
-const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
+const ProjectSettingLayout: FC<IProjectSettingLayout> = (props) => {
   const { children } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
-  // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
-
-  const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER;
-
-  if (restrictViewSettings) {
-    return (
-      <NotAuthorizedView
-        type="project"
-        actionButton={
-          //TODO: Create a new component called Button Link to handle such scenarios
-          <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
-            <Button variant="primary" size="md" prependIcon={<LayersIcon />}>
-              Go to issues
-            </Button>
-          </Link>
-        }
-      />
-    );
-  }
-
   return (
     <>
       <AppHeader header={<ProjectSettingHeader />} />
@@ -63,6 +28,6 @@ const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
       </ContentWrapper>
     </>
   );
-});
+};
 
 export default ProjectSettingLayout;

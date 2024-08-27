@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
@@ -25,6 +25,7 @@ export interface IPagesHeaderProps {
 export const PageDetailsHeader = observer(() => {
   // router
   const { workspaceSlug, pageId } = useParams();
+  const searchParams = useSearchParams();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
@@ -54,6 +55,8 @@ export const PageDetailsHeader = observer(() => {
         });
     }
   };
+
+  const isVersionHistoryOverlayActive = !!searchParams.get("version");
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -157,7 +160,7 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </div>
       <PageDetailsHeaderExtraActions />
-      {isContentEditable && (
+      {isContentEditable && !isVersionHistoryOverlayActive && (
         <Button
           variant="primary"
           size="sm"

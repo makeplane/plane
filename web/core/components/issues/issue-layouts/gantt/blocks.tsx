@@ -2,13 +2,15 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// hooks
 // ui
-import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
+import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+// hooks
+import { useIssueDetail, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type Props = {
   issueId: string;
@@ -78,16 +80,12 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
-  const { getStateById } = useProjectState();
-  const { getProjectIdentifierById } = useProject();
   const {
     issue: { getIssueById },
     setPeekIssue,
   } = useIssueDetail();
   // derived values
   const issueDetails = getIssueById(issueId);
-  const projectIdentifier = issueDetails && getProjectIdentifierById(issueDetails?.project_id);
-  const stateDetails = issueDetails && getStateById(issueDetails?.state_id);
 
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
@@ -104,10 +102,13 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
       disabled={!!issueDetails?.tempId}
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
-        {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
-        <div className="flex-shrink-0 text-xs text-custom-text-300">
-          {projectIdentifier} {issueDetails?.sequence_id}
-        </div>
+        {issueDetails?.project_id && (
+          <IssueIdentifier
+            issueId={issueDetails.id}
+            projectId={issueDetails.project_id}
+            textContainerClassName="text-xs text-custom-text-300"
+          />
+        )}
         <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>

@@ -67,6 +67,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
     {
       ...issue,
       name: `${issue.name} (copy)`,
+      sourceIssueId: issue.id,
     },
     ["id"]
   );
@@ -162,6 +163,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         placement={placements}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
+        useCaptureForOutsideClick
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {

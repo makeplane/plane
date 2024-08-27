@@ -14,7 +14,7 @@ export const BlockMenu = (props: BlockMenuProps) => {
 
   const handleClickDragHandle = useCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (target.matches(".drag-handle-dots") || target.matches(".drag-handle-dot")) {
+    if (target.matches("#drag-handle")) {
       event.preventDefault();
 
       popup.current?.setProps({

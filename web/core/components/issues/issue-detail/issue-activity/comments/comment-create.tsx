@@ -7,9 +7,10 @@ import { LiteTextEditor } from "@/components/editor/lite-text-editor/lite-text-e
 // constants
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useIssueDetail, useWorkspace } from "@/hooks/store";
 // editor
 import { TActivityOperations } from "../root";
 
@@ -27,12 +28,14 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const editorRef = useRef<any>(null);
   // store hooks
   const workspaceStore = useWorkspace();
+  const { peekIssue } = useIssueDetail();
   // derived values
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
   // form info
   const {
     handleSubmit,
     control,
+    watch,
     formState: { isSubmitting },
     reset,
   } = useForm<Partial<TIssueComment>>({
@@ -49,8 +52,22 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
       editorRef.current?.clearEditor();
     });
 
+  const commentHTML = watch("comment_html");
+  const isEmpty =
+    commentHTML?.trim() === "" ||
+    commentHTML === "<p></p>" ||
+    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
+
   return (
-    <div>
+    <div
+      className={cn("sticky bottom-0 z-10 bg-custom-background-100 sm:static", {
+        "-bottom-5": !peekIssue,
+      })}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+          handleSubmit(onSubmit)(e);
+      }}
+    >
       <Controller
         name="access"
         control={control}
@@ -65,13 +82,9 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 value={"<p></p>"}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
-                onEnterKeyPress={(commentHTML) => {
-                  const isEmpty =
-                    commentHTML?.trim() === "" ||
-                    commentHTML === "<p></p>" ||
-                    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
+                onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
-                    handleSubmit(onSubmit)();
+                    handleSubmit(onSubmit)(e);
                   }
                 }}
                 ref={editorRef}

@@ -16,14 +16,15 @@ type GanttChartRootProps = {
   getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  enableBlockLeftResize?: boolean;
-  enableBlockRightResize?: boolean;
-  enableBlockMove?: boolean;
-  enableReorder?: boolean;
-  enableAddBlock?: boolean;
-  enableSelection?: boolean;
+  enableBlockLeftResize?: boolean | ((blockId: string) => boolean);
+  enableBlockRightResize?: boolean | ((blockId: string) => boolean);
+  enableBlockMove?: boolean | ((blockId: string) => boolean);
+  enableReorder?: boolean | ((blockId: string) => boolean);
+  enableAddBlock?: boolean | ((blockId: string) => boolean);
+  enableSelection?: boolean | ((blockId: string) => boolean);
   bottomSpacing?: boolean;
   showAllBlocks?: boolean;
+  showToday?: boolean;
 };
 
 export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
@@ -46,6 +47,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
     enableSelection = false,
     bottomSpacing = false,
     showAllBlocks = false,
+    showToday = true,
     quickAdd,
   } = props;
 
@@ -71,6 +73,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
         bottomSpacing={bottomSpacing}
         showAllBlocks={showAllBlocks}
         quickAdd={quickAdd}
+        showToday={showToday}
       />
     </GanttStoreProvider>
   );

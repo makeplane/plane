@@ -245,6 +245,7 @@ const ProfileSettingsPage = observer(() => {
                       placeholder="Enter your first name"
                       className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
                       maxLength={24}
+                      autoComplete="on"
                     />
                   )}
                 />
@@ -269,6 +270,7 @@ const ProfileSettingsPage = observer(() => {
                       placeholder="Enter your last name"
                       className="w-full rounded-md"
                       maxLength={24}
+                      autoComplete="on"
                     />
                   )}
                 />
@@ -296,6 +298,7 @@ const ProfileSettingsPage = observer(() => {
                       className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${
                         errors.email ? "border-red-500" : ""
                       }`}
+                      autoComplete="on"
                       disabled
                     />
                   )}
@@ -387,7 +390,6 @@ const ProfileSettingsPage = observer(() => {
                       label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                       options={timeZoneOptions}
                       onChange={onChange}
-                      optionsClassName="w-full"
                       buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       input

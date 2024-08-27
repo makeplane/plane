@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -8,6 +8,8 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TAIMenuProps,
+  TDisplayConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
@@ -18,7 +20,10 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web components
+import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
@@ -72,7 +77,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -80,13 +84,21 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
-
+  // editor flaggings
+  const { documentEditor } = useEditorFlagging();
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
-  const { issueEmbedProps, issueEmbedReadOnlyProps } = useIssueEmbed(
-    workspaceSlug?.toString() ?? "",
-    projectId?.toString() ?? ""
+  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+
+  const displayConfig: TDisplayConfig = {
+    fontSize,
+    fontStyle,
+  };
+
+  const getAIMenu = useCallback(
+    ({ isOpen, onClose }: TAIMenuProps) => <EditorAIMenu editorRef={editorRef} isOpen={isOpen} onClose={onClose} />,
+    [editorRef]
   );
 
   useEffect(() => {
@@ -140,6 +152,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               onChange={handleDescriptionChange}
               mentionHandler={{
@@ -149,6 +162,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               embedHandler={{
                 issue: issueEmbedProps,
               }}
+              disabledExtensions={documentEditor}
+              aiHandler={{
+                menu: getAIMenu,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -157,12 +174,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
               }}
               embedHandler={{
-                issue: issueEmbedReadOnlyProps,
+                issue: {
+                  widgetCallback: issueEmbedProps.widgetCallback,
+                },
               }}
             />
           )}
