@@ -1,4 +1,4 @@
-from .engine.app import app
+from engine.app import app
 
 if __name__ == "__main__":
     import uvicorn

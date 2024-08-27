@@ -13,6 +13,7 @@ from django.utils import timezone
 
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
+from plane.bgtasks.notifier.issue import notify_issue_activity
 
 # Module imports
 from plane.db.models import (
@@ -1737,6 +1738,15 @@ def issue_activity(
                 )
 
         if notification:
+            notify_issue_activity.delay(
+                "NOTIFY_ISSUE_ACTIVITY",
+                json.dumps(
+                    IssueActivitySerializer(
+                        issue_activities_created, many=True
+                    ).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
             notifications.delay(
                 type=type,
                 issue_id=issue_id,

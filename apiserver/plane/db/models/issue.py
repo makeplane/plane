@@ -14,6 +14,7 @@ from django.db.models import Q
 from plane.utils.html_processor import strip_tags
 
 from .project import ProjectBaseModel
+from plane.bgtasks.notifier import notify_issue_activity
 
 
 def get_default_properties():

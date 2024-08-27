@@ -1,3 +1,3 @@
-from common import Settings
+from .common import Settings
 
 settings = Settings()

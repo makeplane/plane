@@ -1,2 +1,3 @@
 fastapi==0.111.1
+aio-pika==9.4.3
 pydantic==2.8.2
