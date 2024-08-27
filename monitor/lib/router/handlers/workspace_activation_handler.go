@@ -57,25 +57,7 @@ func InitializeFreeWorkspace(api prime_api.IPrimeMonitorApi, key string) func(*f
 			}
 		}
 
-		workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
-		instanceUUID, _ := uuid.Parse(data.InstanceID)
-
-		license := &db.License{
-			LicenseKey:            data.LicenceKey,
-			InstanceID:            instanceUUID,
-			WorkspaceID:           workspaceUUID,
-			Product:               data.Product,
-			ProductType:           data.ProductType,
-			WorkspaceSlug:         data.WorkspaceSlug,
-			Seats:                 data.Seats,
-			FreeSeats:             data.FreeSeats,
-			Interval:              data.Interval,
-			IsOfflinePayment:      data.IsOfflinePayment,
-			IsCancelled:           data.IsCancelled,
-			Subscription:          data.Subscription,
-			HasAddedPaymentMethod: data.HasAddedPayment,
-			HasActivatedFreeTrial: data.HasActivatedFree,
-		}
+		license, _ := convertWorkspaceActivationResponseToLicense(data)
 		db.Db.Create(license)
 
 		// Send the workspace activation message back to the client
@@ -165,6 +147,10 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 			}
 
 			isSynced = false
+		} else {
+			// Update the existing license from the recieved data
+			updateLicense, _ := convertWorkspaceActivationResponseToLicense(data)
+			db.Db.Model(&db.License{}).Where("license_key = ?", payload.LicenceKey).Updates(updateLicense)
 		}
 
 		// Fetch the license associated with the payload
@@ -347,42 +333,8 @@ func GetActivateFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) f
 		}
 
 		workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
-		instanceUUID, _ := uuid.Parse(data.InstanceID)
+		license, _ := convertWorkspaceActivationResponseToLicense(data)
 
-		// Check for the current period end date
-		var currentPeriodEndDate *time.Time
-		if data.CurrentPeriodEndDate.IsZero() {
-			currentPeriodEndDate = nil
-		} else {
-			currentPeriodEndDate = &data.CurrentPeriodEndDate
-		}
-
-		// Check for the trial end date
-		var trialEndDate *time.Time
-		if data.TrialEndDate.IsZero() {
-			trialEndDate = nil
-		} else {
-			trialEndDate = &data.TrialEndDate
-		}
-
-		license := &db.License{
-			LicenseKey:            data.LicenceKey,
-			InstanceID:            instanceUUID,
-			WorkspaceID:           workspaceUUID,
-			Product:               data.Product,
-			ProductType:           data.ProductType,
-			WorkspaceSlug:         data.WorkspaceSlug,
-			Seats:                 data.Seats,
-			FreeSeats:             data.FreeSeats,
-			Interval:              data.Interval,
-			IsOfflinePayment:      data.IsOfflinePayment,
-			IsCancelled:           data.IsCancelled,
-			Subscription:          data.Subscription,
-			CurrentPeriodEndDate:  currentPeriodEndDate,
-			TrialEndDate:          trialEndDate,
-			HasAddedPaymentMethod: data.HasAddedPayment,
-			HasActivatedFreeTrial: data.HasActivatedFree,
-		}
 		// Remove the existing license for the workspace
 		db.Db.Where("workspace_id = ?", workspaceUUID).Delete(&db.License{})
 
@@ -441,4 +393,46 @@ func containsUser(users []db.UserLicense, userID uuid.UUID) bool {
 		}
 	}
 	return false
+}
+
+func convertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActivationResponse) (*db.License, error) {
+	workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
+	instanceUUID, _ := uuid.Parse(data.InstanceID)
+
+	// Check for the current period end date
+	var currentPeriodEndDate *time.Time
+	if data.CurrentPeriodEndDate.IsZero() {
+		currentPeriodEndDate = nil
+	} else {
+		currentPeriodEndDate = &data.CurrentPeriodEndDate
+	}
+
+	// Check for the trial end date
+	var trialEndDate *time.Time
+	if data.TrialEndDate.IsZero() {
+		trialEndDate = nil
+	} else {
+		trialEndDate = &data.TrialEndDate
+	}
+
+	license := &db.License{
+		LicenseKey:            data.LicenceKey,
+		InstanceID:            instanceUUID,
+		WorkspaceID:           workspaceUUID,
+		Product:               data.Product,
+		ProductType:           data.ProductType,
+		WorkspaceSlug:         data.WorkspaceSlug,
+		Seats:                 data.Seats,
+		FreeSeats:             data.FreeSeats,
+		Interval:              data.Interval,
+		IsOfflinePayment:      data.IsOfflinePayment,
+		IsCancelled:           data.IsCancelled,
+		Subscription:          data.Subscription,
+		CurrentPeriodEndDate:  currentPeriodEndDate,
+		TrialEndDate:          trialEndDate,
+		HasAddedPaymentMethod: data.HasAddedPayment,
+		HasActivatedFreeTrial: data.HasActivatedFree,
+	}
+
+	return license, nil
 }
