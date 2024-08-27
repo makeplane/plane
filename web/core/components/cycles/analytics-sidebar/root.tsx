@@ -46,7 +46,7 @@ const cycleService = new CycleService();
 
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { cycleId, handleClose, isArchived, isPeekMode = false } = props;
+  const { cycleId, handleClose, isArchived } = props;
   // states
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
@@ -262,7 +262,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
       <>
         <div
-          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 ${isPeekMode ? "pt-5" : "pt-20"}`}
+          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}
         >
           <div>
             <button

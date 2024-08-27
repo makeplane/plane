@@ -82,7 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* free trial banner */}
               <FreeTrialBanner />
             </div>
-            <div className="w-full h-full overflow-hidden">{children}</div>
+            <div className="w-full h-full overflow-hidden relative">{children}</div>
           </div>
         </AppProvider>
       </body>
