@@ -660,7 +660,6 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
 
 class DeletedIssuesListViewSet(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def get(self, request, slug, project_id):
         filters = {}
@@ -677,6 +676,8 @@ class DeletedIssuesListViewSet(BaseAPIView):
         )
 
         return Response(deleted_issues, status=status.HTTP_200_OK)
+
+
 class IssuePaginatedViewSet(BaseViewSet):
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
