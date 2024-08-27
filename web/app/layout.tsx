@@ -75,8 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="use-credentials"
         />
       </head>
-      <body>
-        <div id="context-menu-portal" />
+      <body className={`h-screen w-screen`}>
         <AppProvider>
           <DesktopAppProviderRoot />
           <div className={`app-container h-full w-full flex flex-col overflow-hidden`}>
