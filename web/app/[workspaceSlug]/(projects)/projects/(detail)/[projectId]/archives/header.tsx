@@ -8,6 +8,7 @@ import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
+import { HeaderContainer } from "@/components/containers";
 import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
@@ -16,8 +17,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TProps = {
-  activeTab: 'issues' | 'cycles' | 'modules';
-}
+  activeTab: "issues" | "cycles" | "modules";
+};
 
 export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   const { activeTab } = props;
@@ -38,8 +39,8 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <HeaderContainer>
+      <HeaderContainer.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -92,7 +93,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
             </Tooltip>
           ) : null}
         </div>
-      </div>
-    </div>
+      </HeaderContainer.LeftItem>
+    </HeaderContainer>
   );
 });

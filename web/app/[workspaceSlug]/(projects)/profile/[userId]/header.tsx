@@ -10,7 +10,7 @@ import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, CustomMenu, UserActivityIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
-import { ProfileIssuesFilter } from "@/components/profile";
+import { HeaderContainer } from "@/components/containers";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
@@ -23,7 +23,7 @@ type TUserProfileHeader = {
 };
 
 export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
-  const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
+  const { userProjectsData, type = undefined } = props;
   // router
   const { workspaceSlug, userId } = useParams();
   // store hooks
@@ -46,8 +46,8 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Work`;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <HeaderContainer>
+      <HeaderContainer.LeftItem>
         <div className="flex w-full justify-between">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -61,7 +61,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               }
             />
           </Breadcrumbs>
-          <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div>
+          {/* <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div> */}
           <div className="flex gap-4 md:hidden">
             <CustomMenu
               maxHeight={"md"}
@@ -104,7 +104,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </HeaderContainer.LeftItem>
+    </HeaderContainer>
   );
 });

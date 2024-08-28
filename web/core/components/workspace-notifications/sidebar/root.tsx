@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { CountChip } from "@/components/common";
+import { RegularRow } from "@/components/containers";
 import {
   NotificationsLoader,
   NotificationEmptyState,
@@ -46,11 +47,11 @@ export const NotificationsSidebar: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <div className="border-b border-custom-border-200">
+        <RegularRow className="h-[3.75rem] border-b border-custom-border-200">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </div>
+        </RegularRow>
 
-        <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
+        <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-page-x relative flex items-center gap-2">
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}

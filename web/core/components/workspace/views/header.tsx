@@ -108,7 +108,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
       <div className="group relative flex border-b border-custom-border-200">
         <div
           ref={containerRef}
-          className="flex w-full items-center overflow-x-auto px-4 horizontal-scrollbar scrollbar-sm"
+          className="flex w-full items-center overflow-x-auto px-page-x horizontal-scrollbar scrollbar-sm"
         >
           {DEFAULT_GLOBAL_VIEWS_LIST.map((tab, index) => (
             <DefaultViewTab key={`${tab.key}-${index}`} tab={tab} />

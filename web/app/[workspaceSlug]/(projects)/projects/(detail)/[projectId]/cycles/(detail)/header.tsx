@@ -13,6 +13,7 @@ import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/u
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { HeaderContainer } from "@/components/containers";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import {
@@ -161,8 +162,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="relative z-[15] w-full items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
+      <HeaderContainer>
+        <HeaderContainer.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
               <Breadcrumbs.BreadcrumbItem
@@ -235,6 +236,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </Breadcrumbs>
           </div>
+        </HeaderContainer.LeftItem>
+        <HeaderContainer.RightItem>
           <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={[
@@ -315,8 +318,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-        </div>
-      </div>
+        </HeaderContainer.RightItem>
+      </HeaderContainer>
     </>
   );
 });

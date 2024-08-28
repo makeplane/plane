@@ -9,6 +9,7 @@ import { Breadcrumbs, CustomMenu } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
+import { HeaderContainer } from "@/components/containers";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
@@ -29,8 +30,8 @@ export const ProjectSettingHeader: FC = observer(() => {
   const projectMemberInfo = currentProjectRole || EUserProjectRoles.GUEST;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <HeaderContainer>
+      <HeaderContainer.LeftItem>
         <div>
           <div className="z-50">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
@@ -84,7 +85,7 @@ export const ProjectSettingHeader: FC = observer(() => {
               )
           )}
         </CustomMenu>
-      </div>
-    </div>
+      </HeaderContainer.LeftItem>
+    </HeaderContainer>
   );
 });

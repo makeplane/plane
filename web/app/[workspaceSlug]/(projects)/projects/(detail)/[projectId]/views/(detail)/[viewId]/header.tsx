@@ -11,6 +11,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { Breadcrumbs, Button, CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { HeaderContainer } from "@/components/containers";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import {
@@ -136,8 +137,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const publishLink = getPublishViewLink(viewDetails?.anchor);
 
   return (
-    <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex items-center gap-2">
+    <HeaderContainer>
+      <HeaderContainer.LeftItem>
         <Breadcrumbs isLoading={loader}>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -208,15 +209,17 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           />
         </Breadcrumbs>
 
-        {viewDetails?.access === EViewAccess.PRIVATE && (
+        {viewDetails?.access === EViewAccess.PRIVATE ? (
           <div className="cursor-default text-custom-text-300">
             <Tooltip tooltipContent={"Private"}>
               <Lock className="h-4 w-4" />
             </Tooltip>
           </div>
+        ) : (
+          <></>
         )}
 
-        {viewDetails?.anchor && publishLink && (
+        {viewDetails?.anchor && publishLink ? (
           <a
             href={publishLink}
             className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
@@ -226,10 +229,12 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
             Live
           </a>
+        ) : (
+          <></>
         )}
-      </div>
-      <div className="flex items-center gap-2">
-        {!viewDetails?.is_locked && (
+      </HeaderContainer.LeftItem>
+      <HeaderContainer.RightItem>
+        {!viewDetails?.is_locked ? (
           <>
             <LayoutSelection
               layouts={[
@@ -278,8 +283,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               />
             </FiltersDropdown>
           </>
+        ) : (
+          <></>
         )}
-        {canUserCreateIssue && (
+        {canUserCreateIssue ? (
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
@@ -289,8 +296,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           >
             Add issue
           </Button>
+        ) : (
+          <></>
         )}
-      </div>
-    </div>
+      </HeaderContainer.RightItem>
+    </HeaderContainer>
   );
 });

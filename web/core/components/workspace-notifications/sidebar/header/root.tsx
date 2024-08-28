@@ -6,6 +6,7 @@ import { Inbox } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { HeaderContainer } from "@/components/containers";
 import { SidebarHamburgerToggle } from "@/components/core";
 import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
 
@@ -18,8 +19,8 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
 
   if (!workspaceSlug) return <></>;
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <HeaderContainer>
+      <HeaderContainer.LeftItem>
         <div className="block bg-custom-sidebar-background-100 md:hidden">
           <SidebarHamburgerToggle />
         </div>
@@ -31,9 +32,10 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
             }
           />
         </Breadcrumbs>
-      </div>
-
-      <NotificationSidebarHeaderOptions workspaceSlug={workspaceSlug} />
-    </div>
+      </HeaderContainer.LeftItem>
+      <HeaderContainer.RightItem>
+        <NotificationSidebarHeaderOptions workspaceSlug={workspaceSlug} />
+      </HeaderContainer.RightItem>
+    </HeaderContainer>
   );
 });

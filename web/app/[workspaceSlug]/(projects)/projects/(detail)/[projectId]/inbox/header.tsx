@@ -8,6 +8,7 @@ import { RefreshCcw } from "lucide-react";
 import { Breadcrumbs, Button, Intake } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { HeaderContainer } from "@/components/containers";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
@@ -30,8 +31,8 @@ export const ProjectInboxHeader: FC = observer(() => {
   const isViewer = currentProjectRole === EUserProjectRoles.VIEWER;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <HeaderContainer>
+      <HeaderContainer.LeftItem>
         <div className="flex items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader}>
             <Breadcrumbs.BreadcrumbItem
@@ -64,23 +65,26 @@ export const ProjectInboxHeader: FC = observer(() => {
             </div>
           )}
         </div>
-      </div>
+      </HeaderContainer.LeftItem>
+      <HeaderContainer.RightItem>
+        {currentProjectDetails?.inbox_view && workspaceSlug && projectId && !isViewer ? (
+          <div className="flex items-center gap-2">
+            <InboxIssueCreateEditModalRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              modalState={createIssueModal}
+              handleModalClose={() => setCreateIssueModal(false)}
+              issue={undefined}
+            />
 
-      {currentProjectDetails?.inbox_view && workspaceSlug && projectId && !isViewer && (
-        <div className="flex items-center gap-2">
-          <InboxIssueCreateEditModalRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            modalState={createIssueModal}
-            handleModalClose={() => setCreateIssueModal(false)}
-            issue={undefined}
-          />
-
-          <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
-            Add issue
-          </Button>
-        </div>
-      )}
-    </div>
+            <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
+              Add issue
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </HeaderContainer.RightItem>
+    </HeaderContainer>
   );
 });
