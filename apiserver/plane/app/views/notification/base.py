@@ -195,8 +195,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
-        level="WORKSPACE",
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def mark_read(self, request, slug, pk):
         notification = Notification.objects.get(
