@@ -19,7 +19,6 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkArchiveIssuesEndpoint,
     IssuePaginatedViewSet,
 )
 
