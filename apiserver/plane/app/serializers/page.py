@@ -171,6 +171,7 @@ class PageVersionSerializer(BaseSerializer):
             "id",
             "workspace",
             "page",
+            "description_html",
             "last_saved_at",
             "owned_by",
             "created_at",
