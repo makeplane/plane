@@ -89,12 +89,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
     workspaceSlug
       ? async () => {
-          persistence.reset();
+          // persistence.reset();
           await persistence.initialize(workspaceSlug.toString());
         }
       : null
   );
 
+  console.log("#### Workspace Wrapper isLoading", isDBInitializing);
   // Load common data
   useSWRImmutable(
     workspaceSlug ? `WORKSPACE_SYNC_${workspaceSlug}` : null,

@@ -1,7 +1,7 @@
-import { IssueService } from "@/services/issue/issue.service";
+import set from "lodash/set";
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import set from "lodash/set";
+import { IssueService } from "@/services/issue/issue.service";
 import { ARRAY_FIELDS } from "./utils/constants";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk } from "./utils/load-issues";
@@ -43,9 +43,16 @@ export class Storage {
     this.status = undefined;
     this.projectStatus = {};
     this.workspaceSlug = "";
+    this.workspaceInitPromise = undefined;
   };
 
   initialize = async (workspaceSlug: string): Promise<boolean> => {
+    if (workspaceSlug !== this.workspaceSlug) {
+      this.reset();
+    }
+    if (this.workspaceInitPromise) {
+      return this.workspaceInitPromise;
+    }
     this.workspaceInitPromise = this._initialize(workspaceSlug);
     try {
       await this.workspaceInitPromise;
