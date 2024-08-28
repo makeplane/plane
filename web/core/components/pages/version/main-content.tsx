@@ -17,10 +17,11 @@ type Props = {
   handleClose: () => void;
   handleRestore: (descriptionHTML: string) => Promise<void>;
   pageId: string;
+  restoreEnabled: boolean;
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, fetchVersionDetails, handleClose, handleRestore, pageId } = props;
+  const { activeVersion, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -37,6 +38,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
   const isCurrentVersionActive = activeVersion === "current";
 
   const handleRestoreVersion = async () => {
+    if (!restoreEnabled) return;
     setIsRestoring(true);
     await handleRestore(versionDetails?.description_html ?? "<p></p>")
       .then(() => {
@@ -88,7 +90,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
             </h6>
-            {!isCurrentVersionActive && (
+            {!isCurrentVersionActive && restoreEnabled && (
               <Button
                 variant="primary"
                 size="sm"
@@ -104,6 +106,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             <PagesVersionEditor
               activeVersion={activeVersion}
               isCurrentVersionActive={isCurrentVersionActive}
+              pageId={pageId}
               versionDetails={versionDetails}
             />
           </div>
