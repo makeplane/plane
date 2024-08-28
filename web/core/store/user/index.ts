@@ -16,6 +16,7 @@ import { CoreRootStore } from "@/store/root.store";
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
 import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
+import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
 
 type TUserErrorStatus = {
@@ -34,6 +35,7 @@ export interface IUserStore {
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore>;
   membership: IUserMembershipStore;
+  permission: IUserPermissionStore;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
@@ -69,6 +71,7 @@ export class UserStore implements IUserStore {
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore> = {};
   membership: IUserMembershipStore;
+  permission: IUserPermissionStore;
   // service
   userService: UserService;
   authService: AuthService;
@@ -78,6 +81,7 @@ export class UserStore implements IUserStore {
     this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
     this.membership = new UserMembershipStore(store);
+    this.permission = new UserPermissionStore(store);
     // service
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -259,6 +263,7 @@ export class UserStore implements IUserStore {
       this.userProfile = new ProfileStore(this.store);
       this.userSettings = new UserSettingsStore();
       this.membership = new UserMembershipStore(this.store);
+      this.permission = new UserPermissionStore(this.store);
     });
   };
 
