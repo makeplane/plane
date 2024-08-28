@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane types
 import { TPageVersion } from "@plane/types";
 // components
-import { PageVersionsMainContent, PageVersionsSidebarRoot } from "@/components/pages";
+import { PagesVersionEditor, PageVersionsMainContent, PageVersionsSidebarRoot } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -44,6 +44,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
     >
       <PageVersionsMainContent
         activeVersion={activeVersion}
+        editorComponent={PagesVersionEditor}
         fetchVersionDetails={fetchVersionDetails}
         handleClose={handleClose}
         handleRestore={handleRestore}
