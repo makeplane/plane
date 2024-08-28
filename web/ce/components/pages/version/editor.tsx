@@ -15,20 +15,21 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 type Props = {
   activeVersion: string | null;
   isCurrentVersionActive: boolean;
+  pageId: string;
   versionDetails: TPageVersion | undefined;
 };
 
 export const PagesVersionEditor: React.FC<Props> = observer((props) => {
-  const { activeVersion, isCurrentVersionActive, versionDetails } = props;
+  const { activeVersion, isCurrentVersionActive, pageId, versionDetails } = props;
   // params
-  const { workspaceSlug, projectId, pageId } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const {
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
-  const { description_html } = usePage(pageId.toString() ?? "");
+  const currentPageDetails = usePage(pageId);
   // derived values
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -94,7 +95,9 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
   return (
     <DocumentReadOnlyEditorWithRef
       id={activeVersion ?? ""}
-      initialValue={(isCurrentVersionActive ? description_html : versionDetails?.description_html) ?? "<p></p>"}
+      initialValue={
+        (isCurrentVersionActive ? currentPageDetails.description_html : versionDetails?.description_html) ?? "<p></p>"
+      }
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"

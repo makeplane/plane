@@ -10,8 +10,10 @@ import { TLogoProps } from "@plane/types";
 import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { PageEditInformationPopover } from "@/components/pages";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -30,7 +32,8 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
+  const page = usePage(pageId?.toString() ?? "");
+  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = page;
   // use platform
   const { isMobile, platform } = usePlatformOS();
   // derived values
@@ -56,6 +59,7 @@ export const PageDetailsHeader = observer(() => {
     }
   };
 
+  const pageTitle = getPageName(name);
   const isVersionHistoryOverlayActive = !!searchParams.get("version");
 
   return (
@@ -146,9 +150,9 @@ export const PageDetailsHeader = observer(() => {
                           }
                         />
                       </div>
-                      <Tooltip tooltipContent={name ?? "Page"} position="bottom" isMobile={isMobile}>
+                      <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
                         <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">
-                          {name ?? "Page"}
+                          {pageTitle}
                         </div>
                       </Tooltip>
                     </div>
@@ -159,6 +163,7 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <PageEditInformationPopover page={page} />
       <PageDetailsHeaderExtraActions />
       {isContentEditable && !isVersionHistoryOverlayActive && (
         <Button

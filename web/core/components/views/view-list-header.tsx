@@ -89,26 +89,28 @@ export const ViewListHeader = observer(() => {
           )}
         </div>
       </div>
-      <ViewOrderByDropdown
-        sortBy={filters.sortBy}
-        sortKey={filters.sortKey}
-        onChange={(val) => {
-          if (val.key) updateFilters("sortKey", val.key);
-          if (val.order) updateFilters("sortBy", val.order);
-        }}
-      />
-      <FiltersDropdown
-        icon={<ListFilter className="h-3 w-3" />}
-        title="Filters"
-        placement="bottom-end"
-        isFiltersApplied={false}
-      >
-        <ViewFiltersSelection
-          filters={filters}
-          handleFiltersUpdate={updateFilters}
-          memberIds={projectMemberIds ?? undefined}
+      <div className="hidden md:flex items-center gap-2">
+        <ViewOrderByDropdown
+          sortBy={filters.sortBy}
+          sortKey={filters.sortKey}
+          onChange={(val) => {
+            if (val.key) updateFilters("sortKey", val.key);
+            if (val.order) updateFilters("sortBy", val.order);
+          }}
         />
-      </FiltersDropdown>
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={false}
+        >
+          <ViewFiltersSelection
+            filters={filters}
+            handleFiltersUpdate={updateFilters}
+            memberIds={projectMemberIds ?? undefined}
+          />
+        </FiltersDropdown>
+      </div>
     </div>
   );
 });
