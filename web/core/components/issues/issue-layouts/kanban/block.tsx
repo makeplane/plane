@@ -70,12 +70,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
               textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
             />
           )}
-          <div
-            className={cn("absolute -top-1 right-0", {
-              "hidden group-hover/kanban-block:block": !isMobile,
-            })}
-            onClick={handleEventPropagation}
-          >
+          <div className="absolute -top-1 right-0" onClick={handleEventPropagation}>
             {quickActions({
               issue,
               parentRef: cardRef,
