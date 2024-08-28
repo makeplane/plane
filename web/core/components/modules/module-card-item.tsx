@@ -25,6 +25,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { BoxContainer } from "../containers";
 
 type Props = {
   moduleId: string;
@@ -176,7 +177,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   return (
     <div className="relative">
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
+        <BoxContainer className="flex h-44 flex-col justify-between rounded">
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
@@ -228,11 +229,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                   <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
                 </div>
               ) : (
-                <span className="text-xs text-custom-text-400">No due date</span>
+                <span className="text-xs text-custom-text-400">No due ddate</span>
               )}
             </div>
           </div>
-        </div>
+        </BoxContainer>
       </Link>
       <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
         {isEditingAllowed && (

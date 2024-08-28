@@ -6,6 +6,7 @@ import useSWR from "swr";
 // ui
 import { Loader } from "@plane/ui";
 // components
+import { BoxContainer } from "@/components/containers";
 import { ActivityMessage, IssueLink } from "@/components/core";
 import { ProfileEmptyState } from "@/components/ui";
 // constants
@@ -39,7 +40,7 @@ export const ProfileActivity = observer(() => {
   return (
     <div className="space-y-2">
       <h3 className="text-lg font-medium">Recent activity</h3>
-      <div className="rounded border border-custom-border-100 p-6">
+      <BoxContainer>
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
             <div className="space-y-5">
@@ -94,7 +95,7 @@ export const ProfileActivity = observer(() => {
             <Loader.Item height="40px" />
           </Loader>
         )}
-      </div>
+      </BoxContainer>
     </div>
   );
 });

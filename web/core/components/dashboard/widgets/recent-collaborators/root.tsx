@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 // types
+import { BoxContainer } from "@/components/containers";
 import { WidgetProps } from "@/components/dashboard/widgets";
 // components
 import { DefaultCollaboratorsList } from "./default-list";
@@ -14,8 +15,8 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <div className="w-full rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 duration-300 hover:shadow-custom-shadow-4xl">
-      <div className="flex flex-col sm:flex-row items-start justify-between px-7 pt-6">
+    <BoxContainer className="w-full">
+      <div className="flex flex-col sm:flex-row items-start justify-between">
         <div>
           <h4 className="text-lg font-semibold text-custom-text-300">Collaborators</h4>
           <p className="mt-2 text-xs font-medium text-custom-text-300">
@@ -42,6 +43,6 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
       ) : (
         <DefaultCollaboratorsList dashboardId={dashboardId} perPage={PER_PAGE} workspaceSlug={workspaceSlug} />
       )}
-    </div>
+    </BoxContainer>
   );
 };

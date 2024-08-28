@@ -1,9 +1,9 @@
 // ui
 import { IDefaultAnalyticsUser } from "@plane/types";
+import { BoxContainer } from "@/components/containers";
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
-// types
 
 type Props = {
   pendingUnAssignedIssuesUser: IDefaultAnalyticsUser | undefined;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, pendingAssignedIssues }) => (
-  <div className="rounded-[10px] border border-custom-border-200 p-3">
+  <BoxContainer>
     <div className="divide-y divide-custom-border-200">
       <div>
         <div className="flex items-center justify-between">
@@ -87,5 +87,5 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
         )}
       </div>
     </div>
-  </div>
+  </BoxContainer>
 );
