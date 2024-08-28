@@ -57,6 +57,7 @@ export const PageDetailsHeader = observer(() => {
     }
   };
 
+  const pageTitle = getPageName(name);
   const isVersionHistoryOverlayActive = !!searchParams.get("version");
 
   return (
@@ -147,9 +148,9 @@ export const PageDetailsHeader = observer(() => {
                           }
                         />
                       </div>
-                      <Tooltip tooltipContent={getPageName(name)} position="bottom" isMobile={isMobile}>
+                      <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
                         <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">
-                          {getPageName(name)}
+                          {pageTitle}
                         </div>
                       </Tooltip>
                     </div>
