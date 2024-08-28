@@ -45,7 +45,7 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
   // store hooks
   const { createPage } = useWorkspacePages();
   // derived values
-  const { access, description_html, name } = page;
+  const { access, description_html, name, isContentEditable } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
   // page description
@@ -115,6 +115,7 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
         isOpen={isVersionsOverlayOpen}
         onClose={handleCloseVersionsOverlay}
         pageId={page.id ?? ""}
+        restoreEnabled={isContentEditable}
       />
       <PageEditorHeaderRoot
         editorRef={editorRef}
