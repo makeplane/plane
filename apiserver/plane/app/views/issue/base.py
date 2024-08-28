@@ -736,6 +736,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "id",
             "name",
             "state_id",
+            "state__group",
             "sort_order",
             "completed_at",
             "estimate_point",
@@ -758,7 +759,6 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
-            "state_group",
         ]
 
         if is_description_required:
@@ -802,8 +802,6 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
-        ).annotate(
-            state_group=F("state__group"),
         )
 
         paginated_data = paginate(
