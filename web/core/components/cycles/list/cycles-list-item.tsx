@@ -109,7 +109,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
       appendTitleElement={
         <button
           onClick={openCycleOverview}
-          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
+          className={`z-[1] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
         >
           <Info className="h-4 w-4 text-custom-text-400" />
         </button>

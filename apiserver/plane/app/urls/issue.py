@@ -20,6 +20,7 @@ from plane.app.views import (
     IssueViewSet,
     LabelViewSet,
     BulkArchiveIssuesEndpoint,
+    IssuePaginatedViewSet,
 )
 
 urlpatterns = [
@@ -37,6 +38,12 @@ urlpatterns = [
             }
         ),
         name="project-issue",
+    ),
+    # updated v1 paginated issues
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/v2/issues/",
+        IssuePaginatedViewSet.as_view({"get": "list"}),
+        name="project-issues-paginated",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
@@ -303,5 +310,5 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
-    )
+    ),
 ]
