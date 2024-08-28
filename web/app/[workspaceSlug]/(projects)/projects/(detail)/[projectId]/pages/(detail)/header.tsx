@@ -12,6 +12,7 @@ import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE,
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -56,6 +57,7 @@ export const PageDetailsHeader = observer(() => {
     }
   };
 
+  const pageTitle = getPageName(name);
   const isVersionHistoryOverlayActive = !!searchParams.get("version");
 
   return (
@@ -146,9 +148,9 @@ export const PageDetailsHeader = observer(() => {
                           }
                         />
                       </div>
-                      <Tooltip tooltipContent={name ?? "Page"} position="bottom" isMobile={isMobile}>
+                      <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
                         <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">
-                          {name ?? "Page"}
+                          {pageTitle}
                         </div>
                       </Tooltip>
                     </div>
