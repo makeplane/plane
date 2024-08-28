@@ -2,8 +2,6 @@ import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";
 import { stageIssueInserts } from "./query-constructor";
 
-const PAGE_SIZE = 1000;
-
 export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
 export const addIssue = async (issue: any) => {
@@ -50,12 +48,3 @@ export const syncDeletesToLocal = async (workspaceId: string, projectId: string)
     response.map(async (issue) => deleteIssueFromLocal(issue));
   }
 };
-
-// export const syncLocalData = async (workspaceId: string, projectId: string) => {
-//   persistence.syncInProgress = Promise.all([
-//     syncDeletesToLocal(workspaceId, projectId),
-//     syncUpdatesToLocal(workspaceId, projectId),
-//   ]);
-
-//   await persistence.syncInProgress;
-// };

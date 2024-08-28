@@ -52,6 +52,25 @@ export class IssueService extends APIService {
       });
   }
 
+  async getIssuesForSync(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/v2/issues/`,
+      {
+        params: queries,
+      },
+      config
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
     const response = await persistence.getIssues(projectId, queries, config);
     return response as TIssuesResponse;

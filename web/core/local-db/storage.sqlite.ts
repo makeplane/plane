@@ -144,14 +144,14 @@ export class Storage {
       return;
     }
 
-    const queryParams: { cursor: string; updated_at__gt?: string } = {
+    const queryParams: { cursor: string; updated_at__gte?: string } = {
       cursor: `${PAGE_SIZE}:0:0`,
     };
 
     const syncedAt = await this.getLastSyncTime(projectId);
 
     if (syncedAt) {
-      queryParams["updated_at__gt"] = syncedAt;
+      queryParams["updated_at__gte"] = syncedAt;
     }
 
     this.setStatus(projectId, syncedAt ? "syncing" : "loading");
@@ -162,15 +162,14 @@ export class Storage {
     const start = performance.now();
     const issueService = new IssueService();
 
-    const response = await issueService.getIssuesFromServer(this.workspaceSlug, projectId, queryParams);
+    const response = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
     addIssuesBulk(response.results, 500);
 
     if (response.total_pages > 1) {
       const promiseArray = [];
       for (let i = 1; i < response.total_pages; i++) {
-        promiseArray.push(
-          issueService.getIssuesFromServer(this.workspaceSlug, projectId, { cursor: `${PAGE_SIZE}:${i}:0` })
-        );
+        queryParams.cursor = `${PAGE_SIZE}:${i}:0`;
+        promiseArray.push(issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams));
       }
       const pages = await Promise.all(promiseArray);
       for (const page of pages) {
