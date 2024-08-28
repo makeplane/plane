@@ -8,11 +8,15 @@ import { TPageVersion } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
-// plane web components
-import { PagesVersionEditor } from "@/plane-web/components/pages";
 
 type Props = {
   activeVersion: string | null;
+  editorComponent: React.FC<{
+    activeVersion: string | null;
+    isCurrentVersionActive: boolean;
+    pageId: string;
+    versionDetails: TPageVersion | undefined;
+  }>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleClose: () => void;
   handleRestore: (descriptionHTML: string) => Promise<void>;
@@ -21,7 +25,8 @@ type Props = {
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } = props;
+  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } =
+    props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -63,6 +68,8 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     setIsRetrying(false);
   };
 
+  const VersionEditor = editorComponent;
+
   return (
     <div className="flex-grow flex flex-col">
       {versionDetailsError ? (
@@ -103,7 +110,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             )}
           </div>
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-            <PagesVersionEditor
+            <VersionEditor
               activeVersion={activeVersion}
               isCurrentVersionActive={isCurrentVersionActive}
               pageId={pageId}

@@ -8,6 +8,12 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   activeVersion: string | null;
+  editorComponent: React.FC<{
+    activeVersion: string | null;
+    isCurrentVersionActive: boolean;
+    pageId: string;
+    versionDetails: TPageVersion | undefined;
+  }>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleRestore: (descriptionHTML: string) => Promise<void>;
@@ -20,6 +26,7 @@ type Props = {
 export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
   const {
     activeVersion,
+    editorComponent,
     fetchAllVersions,
     fetchVersionDetails,
     handleRestore,
@@ -44,6 +51,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
     >
       <PageVersionsMainContent
         activeVersion={activeVersion}
+        editorComponent={editorComponent}
         fetchVersionDetails={fetchVersionDetails}
         handleClose={handleClose}
         handleRestore={handleRestore}
