@@ -10,6 +10,7 @@ import { TLogoProps } from "@plane/types";
 import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { PageEditInformationPopover } from "@/components/pages";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
@@ -30,7 +31,8 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
+  const page = usePage(pageId?.toString() ?? "");
+  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = page;
   // use platform
   const { isMobile, platform } = usePlatformOS();
   // derived values
@@ -159,6 +161,7 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <PageEditInformationPopover page={page} />
       <PageDetailsHeaderExtraActions />
       {isContentEditable && !isVersionHistoryOverlayActive && (
         <Button
