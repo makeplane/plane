@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // types
-import { IProjectView, IIssueFilterOptions } from "@plane/types";
+import { IProjectView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
@@ -34,7 +34,7 @@ const defaultValues: Partial<IProjectView> = {
   description: "",
   access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
-  display_filters: getComputedDisplayFilters(),
+  display_filters: { ...getComputedDisplayFilters(), group_by: "state" },
 };
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
@@ -224,46 +224,87 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
             <AccessController control={control} />
             <Controller
               control={control}
-              name="display_filters.layout"
-              render={({ field: { onChange, value } }) => (
-                <LayoutDropDown
-                  onChange={(selectedValue: EIssueLayoutTypes) => onChange(selectedValue)}
-                  value={value}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="filters"
-              render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters" tabIndex={3}>
-                  <FilterSelection
-                    filters={filters ?? {}}
-                    handleFiltersUpdate={(key, value) => {
-                      const newValues = filters?.[key] ?? [];
-
-                      if (Array.isArray(value)) {
-                        value.forEach((val) => {
-                          if (!newValues.includes(val)) newValues.push(val);
-                        });
-                      } else {
-                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-                        else newValues.push(value);
-                      }
-
-                      onChange({
-                        ...filters,
-                        [key]: newValues,
-                      });
-                    }}
-                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
-                    labels={projectLabels ?? undefined}
-                    memberIds={projectMemberIds ?? undefined}
-                    states={projectStates}
-                    cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                    moduleViewDisabled={!currentProjectDetails?.module_view}
+              name="display_filters"
+              render={({ field: { onChange: onDisplayFiltersChange, value: displayFilters } }) => (
+                <>
+                  {/* layout dropdown */}
+                  <LayoutDropDown
+                    onChange={(selectedValue: EIssueLayoutTypes) =>
+                      onDisplayFiltersChange({
+                        ...displayFilters,
+                        layout: selectedValue,
+                      })
+                    }
+                    value={displayFilters.layout}
                   />
-                </FiltersDropdown>
+
+                  {/* filters dropdown */}
+                  <Controller
+                    control={control}
+                    name="filters"
+                    render={({ field: { onChange, value: filters } }) => (
+                      <FiltersDropdown title="Filters" tabIndex={3}>
+                        <FilterSelection
+                          filters={filters ?? {}}
+                          handleFiltersUpdate={(key, value) => {
+                            const newValues = filters?.[key] ?? [];
+
+                            if (Array.isArray(value)) {
+                              value.forEach((val) => {
+                                if (!newValues.includes(val)) newValues.push(val);
+                              });
+                            } else {
+                              if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+                              else newValues.push(value);
+                            }
+
+                            onChange({
+                              ...filters,
+                              [key]: newValues,
+                            });
+                          }}
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
+                          labels={projectLabels ?? undefined}
+                          memberIds={projectMemberIds ?? undefined}
+                          states={projectStates}
+                          cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                          moduleViewDisabled={!currentProjectDetails?.module_view}
+                        />
+                      </FiltersDropdown>
+                    )}
+                  />
+
+                  {/* display filters dropdown */}
+                  <Controller
+                    control={control}
+                    name="display_properties"
+                    render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
+                      <FiltersDropdown title="Display">
+                        <DisplayFiltersSelection
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
+                          displayFilters={displayFilters ?? {}}
+                          handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+                            onDisplayFiltersChange({
+                              ...displayFilters,
+                              ...updatedDisplayFilter,
+                            });
+                          }}
+                          displayProperties={displayProperties ?? {}}
+                          handleDisplayPropertiesUpdate={(
+                            updatedDisplayProperties: Partial<IIssueDisplayProperties>
+                          ) => {
+                            onDisplayPropertiesChange({
+                              ...displayProperties,
+                              ...updatedDisplayProperties,
+                            });
+                          }}
+                          cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                          moduleViewDisabled={!currentProjectDetails?.module_view}
+                        />
+                      </FiltersDropdown>
+                    )}
+                  />
+                </>
               )}
             />
           </div>
