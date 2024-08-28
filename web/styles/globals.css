@@ -707,3 +707,22 @@ div.web-view-spinner div.bar12 {
 .epr-search-container > .epr-icn-search {
   color: rgb(var(--color-text-400)) !important;
 }
+
+/* Desktop application */
+html.todesktop body {
+  padding: 8px;
+  padding-top: 36px;
+}
+
+html.todesktop .app-container {
+  border: 1px solid rgb(var(--color-border-200));
+  border-radius: 6px;
+}
+
+html.todesktop .header {
+  -webkit-app-region: drag;
+}
+
+html.todesktop .header button {
+  -webkit-app-region: no-drag;
+}

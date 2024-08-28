@@ -10,7 +10,7 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // plane web types
-import { TEmbedConfig } from "@/plane-editor/types";
+import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig } from "@/types";
 
@@ -20,7 +20,7 @@ interface IDocumentReadOnlyEditor {
   containerClassName: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  embedHandler: TEmbedConfig;
+  embedHandler: TReadOnlyEmbedConfig;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {

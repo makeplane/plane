@@ -35,7 +35,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.cache import cache_response, invalidate_cache
-
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
 
 
@@ -140,12 +140,48 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # TODO: Check if the workspace has reached the maximum limit of admins or guests
+        # allowed, allowed_admins, allowed_guests = workspace_member_check(
+        #     slug=slug,
+        #     current_invite_list=[],
+        #     requested_invite_list=[],
+        # )
+
+        # if "role" in request.data:
+        #     requested_role = int(request.data.get("role"))
+
+        #     if (
+        #         requested_role > 10
+        #         and allowed_admins is not None
+        #         and allowed_admins - 1 < 0
+        #     ):
+        #         return Response(
+        #             {
+        #                 "error": "You cannot update the role to admin as the workspace has reached the maximum limit of admins"
+        #             },
+        #             status=status.HTTP_400_BAD_REQUEST,
+        #         )
+
+        #     if (
+        #         requested_role <= 10
+        #         and allowed_guests is not None
+        #         and allowed_guests - 1 < 0
+        #     ):
+        #         return Response(
+        #             {
+        #                 "error": "You cannot update the role to guest or viewer as the workspace has reached the maximum limit of guests"
+        #             },
+        #             status=status.HTTP_400_BAD_REQUEST,
+        #         )
+
         serializer = WorkSpaceMemberSerializer(
             workspace_member, data=request.data, partial=True
         )
 
         if serializer.is_valid():
             serializer.save()
+            # Sync workspace members
+            member_sync_task.delay(slug)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -221,6 +257,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Sync workspace members
+        member_sync_task.delay(slug)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
@@ -288,6 +328,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # # Sync workspace members
+        member_sync_task.delay(slug)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
