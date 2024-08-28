@@ -13,6 +13,7 @@ import {
   Link,
   Trash2,
   MoveRight,
+  Copy
 } from "lucide-react";
 import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -93,6 +94,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
+  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/inbox/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
@@ -159,6 +161,15 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Link copied",
+        message: "Issue link copied to clipboard",
+      })
+    );
+
+  const handleCopyIntakeIssueLink = () =>
+    copyUrlToClipboard(intakeIssueLink).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
@@ -362,6 +373,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
+                    <CustomMenu.MenuItem onClick={handleCopyIntakeIssueLink}>
+                      <div className="flex items-center gap-2">
+                        <Copy size={14} strokeWidth={2} />
+                        Copy
+                      </div>
+                    </CustomMenu.MenuItem>
                   </CustomMenu>
                 )}
               </>
