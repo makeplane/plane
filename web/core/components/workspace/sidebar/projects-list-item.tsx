@@ -393,6 +393,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   )}
                   customButtonClassName="grid place-items-center"
                   placement="bottom-start"
+                  useCaptureForOutsideClick
                 >
                   {!isViewerOrGuest && (
                     <CustomMenu.MenuItem
