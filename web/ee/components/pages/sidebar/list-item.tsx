@@ -10,6 +10,7 @@ import { Tooltip } from "@plane/ui";
 import { Logo } from "@/components/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -53,7 +54,7 @@ export const PagesAppSidebarListItem: React.FC<Props> = observer((props) => {
             <FileText className="size-3.5" />
           )}
         </span>
-        {!isCollapsed && <p className="truncate text-sm">{page.name}</p>}
+        {!isCollapsed && <p className="truncate text-sm">{getPageName(page.name)}</p>}
       </Link>
     </Tooltip>
   );

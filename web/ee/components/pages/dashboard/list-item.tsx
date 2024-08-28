@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // components
 import { Logo } from "@/components/common";
+// helpers
+import { getPageName } from "@/helpers/page.helper";
 // plane web components
 import { WorkspacePageQuickActions } from "@/plane-web/components/pages";
 // plane web hooks
@@ -33,7 +35,7 @@ export const PagesAppDashboardListItem: React.FC<Props> = (props) => {
               <FileText className="size-3.5 text-custom-text-300" />
             )}
           </span>
-          <p className="text-custom-text-200 text-sm">{page.name}</p>
+          <p className="text-custom-text-200 text-sm">{getPageName(page.name)}</p>
         </div>
       </Link>
       {/* quick actions dropdown */}
