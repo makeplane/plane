@@ -54,7 +54,7 @@ export const DesktopAppNavigation = observer(() => {
   };
 
   const commonNavigationButtonClasses =
-    "size-6 flex items-center justify-center rounded cursor-pointer text-custom-text-200";
+    "size-6 flex items-center justify-center rounded cursor-pointer text-custom-text-300";
 
   return (
     <div className="flex">
@@ -63,7 +63,7 @@ export const DesktopAppNavigation = observer(() => {
           onClick={() => handleNavigation("backward")}
           className={cn(commonNavigationButtonClasses, {
             "text-custom-text-400 opacity-70 cursor-not-allowed": isBackwardNavigationDisabled,
-            "hover:bg-custom-background-90 hover:text-custom-text-100": !isBackwardNavigationDisabled,
+            "hover:bg-custom-background-90 hover:text-custom-text-200": !isBackwardNavigationDisabled,
           })}
           disabled={isBackwardNavigationDisabled}
         >
@@ -75,7 +75,7 @@ export const DesktopAppNavigation = observer(() => {
           onClick={() => handleNavigation("forward")}
           className={cn(commonNavigationButtonClasses, {
             "text-custom-text-400 opacity-70 cursor-not-allowed": isForwardNavigationDisabled,
-            "hover:bg-custom-background-90 hover:text-custom-text-100": !isForwardNavigationDisabled,
+            "hover:bg-custom-background-90 hover:text-custom-text-200": !isForwardNavigationDisabled,
           })}
           disabled={isForwardNavigationDisabled}
         >
