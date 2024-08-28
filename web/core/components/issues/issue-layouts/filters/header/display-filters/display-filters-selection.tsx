@@ -78,20 +78,22 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       )}
 
       {/* sub-group by */}
-      {isDisplayFilterEnabled("sub_group_by") && displayFilters?.layout === "kanban" && (
-        <div className="py-2">
-          <FilterSubGroupBy
-            displayFilters={displayFilters}
-            handleUpdate={(val) =>
-              handleDisplayFiltersUpdate({
-                sub_group_by: val,
-              })
-            }
-            subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
-            ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
-          />
-        </div>
-      )}
+      {isDisplayFilterEnabled("sub_group_by") &&
+        displayFilters?.group_by !== null &&
+        displayFilters?.layout === "kanban" && (
+          <div className="py-2">
+            <FilterSubGroupBy
+              displayFilters={displayFilters}
+              handleUpdate={(val) =>
+                handleDisplayFiltersUpdate({
+                  sub_group_by: val,
+                })
+              }
+              subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
+              ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
+            />
+          </div>
+        )}
 
       {/* order by */}
       {isDisplayFilterEnabled("order_by") && !isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by) && (
