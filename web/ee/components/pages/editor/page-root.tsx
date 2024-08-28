@@ -29,6 +29,7 @@ type TPageRootProps = {
 };
 
 export const WorkspacePageRoot = observer((props: TPageRootProps) => {
+  const { workspaceSlug, page } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
@@ -39,7 +40,6 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, page } = props;
   // search params
   const searchParams = useSearchParams();
   // store hooks

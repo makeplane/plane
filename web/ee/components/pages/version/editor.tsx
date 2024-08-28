@@ -9,37 +9,37 @@ import { Loader } from "@plane/ui";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web components
+import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useWorkspacePageDetails } from "@/plane-web/hooks/store";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 
 type Props = {
   activeVersion: string | null;
   isCurrentVersionActive: boolean;
+  pageId: string;
   versionDetails: TPageVersion | undefined;
 };
 
 export const PagesVersionEditor: React.FC<Props> = observer((props) => {
-  const { activeVersion, isCurrentVersionActive, versionDetails } = props;
+  const { activeVersion, isCurrentVersionActive, pageId, versionDetails } = props;
   // params
-  const { workspaceSlug, projectId, pageId } = useParams();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const {
     getUserDetails,
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { description_html } = useWorkspacePageDetails(pageId.toString() ?? "");
+  const currentPageDetails = useWorkspacePageDetails(pageId);
   // derived values
   const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
   // use-mention
   const { mentionHighlights } = useWorkspaceMention({
     workspaceSlug: workspaceSlug?.toString() ?? "",
     members: workspaceMemberDetails,
-    user: currentUser ?? undefined,
+    user: currentUser,
   });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
@@ -91,10 +91,13 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
       </div>
     );
 
+  const description = isCurrentVersionActive ? currentPageDetails.description_html : versionDetails?.description_html;
+  if (description === undefined || description?.trim() === "") return null;
+
   return (
     <DocumentReadOnlyEditorWithRef
       id={activeVersion ?? ""}
-      initialValue={(isCurrentVersionActive ? description_html : versionDetails?.description_html) ?? "<p></p>"}
+      initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"
@@ -103,7 +106,13 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
       }}
       embedHandler={{
         issue: {
-          widgetCallback: issueEmbedProps.widgetCallback,
+          widgetCallback: ({ issueId, projectId: projectIdFromEmbed, workspaceSlug: workspaceSlugFromEmbed }) => {
+            const resolvedProjectId = projectIdFromEmbed ?? "";
+            const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
+            return (
+              <IssueEmbedCard issueId={issueId} projectId={resolvedProjectId} workspaceSlug={resolvedWorkspaceSlug} />
+            );
+          },
         },
       }}
     />
