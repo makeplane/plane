@@ -22,7 +22,7 @@ type Props = {
   versionDetails: TPageVersion | undefined;
 };
 
-export const PagesVersionEditor: React.FC<Props> = observer((props) => {
+export const WorkspacePagesVersionEditor: React.FC<Props> = observer((props) => {
   const { activeVersion, isCurrentVersionActive, pageId, versionDetails } = props;
   // params
   const { workspaceSlug } = useParams();

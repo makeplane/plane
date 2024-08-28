@@ -13,7 +13,7 @@ import { PageEditorHeaderRoot, PageVersionsOverlay } from "@/components/pages";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
-import { WorkspacePageEditorBody } from "@/plane-web/components/pages";
+import { WorkspacePageEditorBody, WorkspacePagesVersionEditor } from "@/plane-web/components/pages";
 // plane web hooks
 import { useWorkspacePages } from "@/plane-web/hooks/store";
 import { useWorkspacePageDescription } from "@/plane-web/hooks/use-workspace-page-description";
@@ -103,6 +103,7 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
     <>
       <PageVersionsOverlay
         activeVersion={version}
+        editorComponent={WorkspacePagesVersionEditor}
         fetchAllVersions={async (pageId) => {
           if (!workspaceSlug) return;
           return await workspacePageVersionService.fetchAllVersions(workspaceSlug.toString(), pageId);

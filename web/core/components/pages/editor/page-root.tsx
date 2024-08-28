@@ -8,7 +8,7 @@ import { TPage } from "@plane/types";
 // plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay } from "@/components/pages";
+import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersionEditor } from "@/components/pages";
 // hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -102,6 +102,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
     <>
       <PageVersionsOverlay
         activeVersion={version}
+        editorComponent={PagesVersionEditor}
         fetchAllVersions={async (pageId) => {
           if (!workspaceSlug || !projectId) return;
           return await projectPageVersionService.fetchAllVersions(
