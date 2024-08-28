@@ -11,6 +11,7 @@ import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
+import { HeaderContainer } from "@/components/containers";
 import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
@@ -22,8 +23,8 @@ export const WorkspaceDashboardHeader = () => {
 
   return (
     <>
-      <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-        <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
+      <HeaderContainer>
+        <HeaderContainer.LeftItem>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
@@ -32,8 +33,8 @@ export const WorkspaceDashboardHeader = () => {
               />
             </Breadcrumbs>
           </div>
-        </div>
-        <div className="flex items-center gap-3 px-3">
+        </HeaderContainer.LeftItem>
+        <HeaderContainer.RightItem>
           <a
             onClick={() =>
               captureEvent(CHANGELOG_REDIRECTED, {
@@ -67,8 +68,8 @@ export const WorkspaceDashboardHeader = () => {
             />
             <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
           </a>
-        </div>
-      </div>
+        </HeaderContainer.RightItem>
+      </HeaderContainer>
     </>
   );
 };
