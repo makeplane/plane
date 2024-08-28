@@ -1,11 +1,10 @@
 "use client";
 
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, X } from "lucide-react";
-import { Combobox } from "@headlessui/react";
 // ui
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { ComboDropDown, DiceIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -27,6 +26,7 @@ type Props = TDropdownProps & {
   projectId: string | undefined;
   showCount?: boolean;
   onClose?: () => void;
+  renderByDefault?: boolean;
 } & (
     | {
         multiple: false;
@@ -170,6 +170,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
+    renderByDefault = true,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -207,73 +208,78 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     }
   }, [isOpen]);
 
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full w-full outline-none hover:bg-custom-background-80",
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+        >
+          <DropdownButton
+            className={buttonClassName}
+            isActive={isOpen}
+            tooltipHeading="Module"
+            tooltipContent={
+              Array.isArray(value)
+                ? `${value
+                    .map((moduleId) => getModuleNameById(moduleId))
+                    .toString()
+                    .replaceAll(",", ", ")}`
+                : ""
+            }
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+          >
+            <ButtonContent
+              disabled={disabled}
+              dropdownArrow={dropdownArrow}
+              dropdownArrowClassName={dropdownArrowClassName}
+              hideIcon={hideIcon}
+              hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+              placeholder={placeholder}
+              showCount={showCount}
+              showTooltip={showTooltip}
+              value={value}
+              onChange={onChange as any}
+            />
+          </DropdownButton>
+        </button>
+      )}
+    </>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
       {...comboboxProps}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full w-full outline-none hover:bg-custom-background-80",
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <DropdownButton
-              className={buttonClassName}
-              isActive={isOpen}
-              tooltipHeading="Module"
-              tooltipContent={
-                Array.isArray(value)
-                  ? `${value
-                      .map((moduleId) => getModuleNameById(moduleId))
-                      .toString()
-                      .replaceAll(",", ", ")}`
-                  : ""
-              }
-              showTooltip={showTooltip}
-              variant={buttonVariant}
-            >
-              <ButtonContent
-                disabled={disabled}
-                dropdownArrow={dropdownArrow}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
-                placeholder={placeholder}
-                showCount={showCount}
-                showTooltip={showTooltip}
-                value={value}
-                onChange={onChange as any}
-              />
-            </DropdownButton>
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && projectId && (
         <ModuleOptions
           isOpen={isOpen}
@@ -283,6 +289,6 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           multiple={multiple}
         />
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });
