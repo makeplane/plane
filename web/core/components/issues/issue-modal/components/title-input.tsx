@@ -19,13 +19,19 @@ type TIssueTitleInputProps = {
 
 export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
   const { control, issueTitleRef, errors, handleFormChange } = props;
-
+  const validateWhitespace = (value: string) => {
+    if (value.trim() === "") {
+      return "Title is required";
+    }
+    return undefined;
+  };
   return (
     <>
       <Controller
         control={control}
         name="name"
         rules={{
+          validate: validateWhitespace,
           required: "Title is required",
           maxLength: {
             value: 255,
