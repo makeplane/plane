@@ -32,6 +32,7 @@
     "@plane/ui": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
+    "@tiptap/extension-character-count": "^2.6.5",
     "@tiptap/extension-collaboration": "^2.3.2",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",

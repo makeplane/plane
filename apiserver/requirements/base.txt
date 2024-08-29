@@ -61,4 +61,3 @@ zxcvbn==4.4.28
 pytz==2024.1
 # jwt
 PyJWT==2.8.0
-
