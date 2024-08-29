@@ -24,10 +24,10 @@ const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
 export const createTables = async () => {
   persistence.db.exec("BEGIN TRANSACTION;");
 
+  persistence.db.exec(createTableSQLfromSchema("issues", issueSchema));
+  persistence.db.exec(createTableSQLfromSchema("issue_meta", issueMetaSchema));
   persistence.db.exec(createTableSQLfromSchema("modules", moduleSchema));
   persistence.db.exec(createTableSQLfromSchema("labels", labelSchema));
-  persistence.db.exec(createTableSQLfromSchema("issue_meta", issueMetaSchema));
-  persistence.db.exec(createTableSQLfromSchema("issues", issueSchema));
   persistence.db.exec(createTableSQLfromSchema("states", stateSchema));
   persistence.db.exec(createTableSQLfromSchema("cycles", cycleSchema));
   persistence.db.exec(createTableSQLfromSchema("estimate_points", estimatePointSchema));

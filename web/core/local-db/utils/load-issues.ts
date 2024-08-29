@@ -1,6 +1,7 @@
 import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";
-import { stageIssueInserts } from "./query-constructor";
+import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
+import { issueSchema } from "./schemas";
 
 export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
@@ -47,4 +48,59 @@ export const syncDeletesToLocal = async (workspaceId: string, projectId: string)
   if (Array.isArray(response)) {
     response.map(async (issue) => deleteIssueFromLocal(issue));
   }
+};
+
+export const stageIssueInserts = (issue: any) => {
+  const issue_id = issue.id;
+  issue.priority_proxy = PRIORITY_MAP[issue.priority as keyof typeof PRIORITY_MAP];
+
+  const keys = Object.keys(issueSchema);
+  const sanitizedIssue = keys.reduce((acc: any, key) => {
+    if (issue[key]) {
+      acc[key] = issue[key];
+    }
+    return acc;
+  }, {});
+
+  const columns = "'" + Object.keys(sanitizedIssue).join("','") + "'";
+
+  const values = Object.values(sanitizedIssue)
+    .map((value) => {
+      if (value === null) {
+        return "";
+      }
+      if (typeof value === "object") {
+        return `'${JSON.stringify(value)}'`;
+      }
+      if (typeof value === "string") {
+        return `'${value}'`;
+      }
+      return value;
+    })
+    .join(", ");
+
+  const query = `INSERT OR REPLACE INTO issues (${columns}) VALUES (${values});`;
+  persistence.db.exec(query);
+
+  persistence.db.exec({
+    sql: `DELETE from issue_meta where issue_id='${issue_id}'`,
+  });
+
+  ARRAY_FIELDS.forEach((field) => {
+    const values = issue[field];
+    if (values && values.length) {
+      values.forEach((val: any) => {
+        persistence.db.exec({
+          sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
+          bind: [issue_id, field, val],
+        });
+      });
+    } else {
+      // Added for empty fields?
+      persistence.db.exec({
+        sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
+        bind: [issue_id, field, ""],
+      });
+    }
+  });
 };

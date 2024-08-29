@@ -1,5 +1,6 @@
 import {
   getFilteredRowsForGrouping,
+  getIssueFieldsFragment,
   getMetaKeys,
   getOrderByFragment,
   singleFilterConstructor,
@@ -24,12 +25,14 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 
   let sql = "";
 
+  const fieldsFragment = getIssueFieldsFragment();
+
   if (sub_group_by) {
     sql = getFilteredRowsForGrouping(projectId, queries);
     sql += `, ranked_issues AS ( SELECT fi.*,
     ROW_NUMBER() OVER (PARTITION BY group_id, sub_group_id ${orderByString}) as rank,
     COUNT(*) OVER (PARTITION by group_id, sub_group_id) as total_issues from fi) 
-    SELECT ri.*, i.*
+    SELECT ri.*, ${fieldsFragment}
     FROM ranked_issues ri
     JOIN issues i ON ri.id = i.id
     WHERE rank <= ${per_page}
@@ -45,7 +48,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     sql += `, ranked_issues AS ( SELECT fi.*,
     ROW_NUMBER() OVER (PARTITION BY group_id ${orderByString}) as rank,
     COUNT(*) OVER (PARTITION by group_id) as total_issues FROM fi)
-    SELECT ri.*, i.*
+    SELECT ri.*, ${fieldsFragment}
     FROM ranked_issues ri
     JOIN issues i ON ri.id = i.id
         WHERE rank <= ${per_page}
