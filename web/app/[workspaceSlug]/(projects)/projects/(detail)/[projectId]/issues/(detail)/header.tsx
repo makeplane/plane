@@ -4,10 +4,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 // ui
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, LayersIcon, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-import { HeaderContainer } from "@/components/containers";
 import { IssueDetailQuickActions } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -30,8 +29,8 @@ export const ProjectIssueDetailsHeader = observer(() => {
   const isSidebarCollapsed = issueDetailSidebarCollapsed;
 
   return (
-    <HeaderContainer>
-      <HeaderContainer.LeftItem>
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -76,8 +75,8 @@ export const ProjectIssueDetailsHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </HeaderContainer.LeftItem>
-      <HeaderContainer.RightItem>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
         <IssueDetailQuickActions
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
@@ -88,7 +87,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
             className={cn("h-4 w-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")}
           />
         </button>
-      </HeaderContainer.RightItem>
-    </HeaderContainer>
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });

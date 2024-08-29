@@ -5,10 +5,9 @@ import { useParams } from "next/navigation";
 // icons
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, LayersIcon, Tooltip, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
-import { HeaderContainer } from "@/components/containers";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -47,88 +46,86 @@ export const ProjectIssuesHeader = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <>
-      <HeaderContainer>
-        <HeaderContainer.LeftItem>
-          <div className="flex items-center gap-2.5">
-            <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    href={`/${workspaceSlug}/projects`}
-                    label={currentProjectDetails?.name ?? "Project"}
-                    icon={
-                      currentProjectDetails ? (
-                        currentProjectDetails && (
-                          <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                          </span>
-                        )
-                      ) : (
-                        <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                          <Briefcase className="h-4 w-4" />
+    <CustomHeader>
+      <CustomHeader.LeftItem>
+        <div className="flex items-center gap-2.5">
+          <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/projects`}
+                  label={currentProjectDetails?.name ?? "Project"}
+                  icon={
+                    currentProjectDetails ? (
+                      currentProjectDetails && (
+                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                          <Logo logo={currentProjectDetails?.logo_props} size={16} />
                         </span>
                       )
-                    }
-                  />
-                }
-              />
-
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
-              />
-            </Breadcrumbs>
-            {issuesCount && issuesCount > 0 ? (
-              <Tooltip
-                isMobile={isMobile}
-                tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
-                position="bottom"
-              >
-                <CountChip count={issuesCount} />
-              </Tooltip>
-            ) : null}
-          </div>
-          {currentProjectDetails?.anchor ? (
-            <a
-              href={publishedURL}
-              className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-              Public
-              <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
-            </a>
-          ) : (
-            <></>
-          )}
-        </HeaderContainer.LeftItem>
-        <HeaderContainer.RightItem>
-          <div className="hidden gap-3 md:flex">
-            <HeaderFilters
-              projectId={projectId}
-              currentProjectDetails={currentProjectDetails}
-              workspaceSlug={workspaceSlug}
-              canUserCreateIssue={canUserCreateIssue}
+                    ) : (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                        <Briefcase className="h-4 w-4" />
+                      </span>
+                    )
+                  }
+                />
+              }
             />
-          </div>
-          {canUserCreateIssue ? (
-            <Button
-              onClick={() => {
-                setTrackElement("Project issues page");
-                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-              }}
-              size="sm"
+
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+            />
+          </Breadcrumbs>
+          {issuesCount && issuesCount > 0 ? (
+            <Tooltip
+              isMobile={isMobile}
+              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
+              position="bottom"
             >
-              <div className="hidden sm:block">Add</div> Issue
-            </Button>
-          ) : (
-            <></>
-          )}
-        </HeaderContainer.RightItem>
-      </HeaderContainer>
-    </>
+              <CountChip count={issuesCount} />
+            </Tooltip>
+          ) : null}
+        </div>
+        {currentProjectDetails?.anchor ? (
+          <a
+            href={publishedURL}
+            className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+            Public
+            <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+          </a>
+        ) : (
+          <></>
+        )}
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
+        <div className="hidden gap-3 md:flex">
+          <HeaderFilters
+            projectId={projectId}
+            currentProjectDetails={currentProjectDetails}
+            workspaceSlug={workspaceSlug}
+            canUserCreateIssue={canUserCreateIssue}
+          />
+        </div>
+        {canUserCreateIssue ? (
+          <Button
+            onClick={() => {
+              setTrackElement("Project issues page");
+              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+            }}
+            size="sm"
+          >
+            <div className="hidden sm:block">Add</div> Issue
+          </Button>
+        ) : (
+          <></>
+        )}
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });

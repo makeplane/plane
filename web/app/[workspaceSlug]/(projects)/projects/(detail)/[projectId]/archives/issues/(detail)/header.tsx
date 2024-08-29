@@ -4,10 +4,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, LayersIcon, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-import { HeaderContainer } from "@/components/containers";
 import { IssueDetailQuickActions } from "@/components/issues";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
@@ -37,8 +36,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
   );
 
   return (
-    <HeaderContainer>
-      <HeaderContainer.LeftItem>
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <Breadcrumbs isLoading={loader}>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -89,14 +88,14 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
             }
           />
         </Breadcrumbs>
-      </HeaderContainer.LeftItem>
-      <HeaderContainer.RightItem>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
         <IssueDetailQuickActions
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
           issueId={archivedIssueId.toString()}
         />
-      </HeaderContainer.RightItem>
-    </HeaderContainer>
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });

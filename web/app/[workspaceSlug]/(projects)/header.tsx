@@ -7,11 +7,10 @@ import { Home, Zap } from "lucide-react";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // ui
-import { Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
-import { HeaderContainer } from "@/components/containers";
 import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
@@ -23,8 +22,8 @@ export const WorkspaceDashboardHeader = () => {
 
   return (
     <>
-      <HeaderContainer>
-        <HeaderContainer.LeftItem>
+      <CustomHeader>
+        <CustomHeader.LeftItem>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
@@ -33,8 +32,8 @@ export const WorkspaceDashboardHeader = () => {
               />
             </Breadcrumbs>
           </div>
-        </HeaderContainer.LeftItem>
-        <HeaderContainer.RightItem>
+        </CustomHeader.LeftItem>
+        <CustomHeader.RightItem>
           <a
             onClick={() =>
               captureEvent(CHANGELOG_REDIRECTED, {
@@ -68,8 +67,8 @@ export const WorkspaceDashboardHeader = () => {
             />
             <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
           </a>
-        </HeaderContainer.RightItem>
-      </HeaderContainer>
+        </CustomHeader.RightItem>
+      </CustomHeader>
     </>
   );
 };

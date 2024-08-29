@@ -311,7 +311,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
       <>
         <div
-          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 ${isPeekMode ? "pt-5" : "pt-20"}`}
+          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}
         >
           <div>
             <button

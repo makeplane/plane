@@ -8,10 +8,9 @@ import { Layers, Lock } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, Tooltip, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-import { HeaderContainer } from "@/components/containers";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import {
@@ -137,8 +136,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const publishLink = getPublishViewLink(viewDetails?.anchor);
 
   return (
-    <HeaderContainer>
-      <HeaderContainer.LeftItem>
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <Breadcrumbs isLoading={loader}>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -232,8 +231,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         ) : (
           <></>
         )}
-      </HeaderContainer.LeftItem>
-      <HeaderContainer.RightItem>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
         {!viewDetails?.is_locked ? (
           <>
             <LayoutSelection
@@ -299,7 +298,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         ) : (
           <></>
         )}
-      </HeaderContainer.RightItem>
-    </HeaderContainer>
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });

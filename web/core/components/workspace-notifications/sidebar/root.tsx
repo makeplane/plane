@@ -4,8 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { CustomHeader, CustomRow } from "@plane/ui";
 import { CountChip } from "@/components/common";
-import { RegularRow } from "@/components/containers";
 import {
   NotificationsLoader,
   NotificationEmptyState,
@@ -47,15 +47,15 @@ export const NotificationsSidebar: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <RegularRow className="h-[3.75rem] border-b border-custom-border-200">
+        <CustomRow variant="regular" className="h-[3.75rem] border-b border-custom-border-200 flex">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </RegularRow>
+        </CustomRow>
 
-        <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-page-x relative flex items-center gap-2">
+        <CustomHeader variant="secondary" className="flex">
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}
-              className="h-full px-3 relative flex flex-col cursor-pointer"
+              className="h-full px-3 relative cursor-pointer"
               onClick={() => currentNotificationTab != tab.value && setCurrentNotificationTab(tab.value)}
             >
               <div
@@ -76,12 +76,10 @@ export const NotificationsSidebar: FC = observer(() => {
               )}
             </div>
           ))}
-        </div>
+        </CustomHeader>
 
         {/* applied filters */}
-        <div className="flex-shrink-0">
-          <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
-        </div>
+        <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
 
         {/* rendering notifications */}
         {loader === "init-loader" ? (

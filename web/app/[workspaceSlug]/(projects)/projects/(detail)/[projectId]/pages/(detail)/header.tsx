@@ -7,11 +7,19 @@ import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import {
+  Breadcrumbs,
+  Button,
+  EmojiIconPicker,
+  EmojiIconPickerTypes,
+  TOAST_TYPE,
+  Tooltip,
+  setToast,
+  CustomHeader,
+} from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
-import { HeaderContainer } from "@/components/containers";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
@@ -60,8 +68,8 @@ export const PageDetailsHeader = observer(() => {
   const isVersionHistoryOverlayActive = !!searchParams.get("version");
 
   return (
-    <HeaderContainer>
-      <HeaderContainer.LeftItem>
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -159,8 +167,8 @@ export const PageDetailsHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </HeaderContainer.LeftItem>
-      <HeaderContainer.RightItem>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
         <PageDetailsHeaderExtraActions />
         {isContentEditable && !isVersionHistoryOverlayActive ? (
           <Button
@@ -183,7 +191,7 @@ export const PageDetailsHeader = observer(() => {
         ) : (
           <></>
         )}
-      </HeaderContainer.RightItem>
-    </HeaderContainer>
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });

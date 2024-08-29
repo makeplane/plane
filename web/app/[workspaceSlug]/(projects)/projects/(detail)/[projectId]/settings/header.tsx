@@ -5,11 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
-import { Breadcrumbs, CustomMenu } from "@plane/ui";
+import { Breadcrumbs, CustomMenu, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
-import { HeaderContainer } from "@/components/containers";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
@@ -30,8 +29,8 @@ export const ProjectSettingHeader: FC = observer(() => {
   const projectMemberInfo = currentProjectRole || EUserProjectRoles.GUEST;
 
   return (
-    <HeaderContainer>
-      <HeaderContainer.LeftItem>
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <div>
           <div className="z-50">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
@@ -85,7 +84,7 @@ export const ProjectSettingHeader: FC = observer(() => {
               )
           )}
         </CustomMenu>
-      </HeaderContainer.LeftItem>
-    </HeaderContainer>
+      </CustomHeader.LeftItem>
+    </CustomHeader>
   );
 });

@@ -9,11 +9,10 @@ import { ArrowRight, PanelRight } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip, CustomHeader } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
-import { HeaderContainer } from "@/components/containers";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import {
@@ -162,8 +161,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         moduleDetails={moduleDetails ?? undefined}
       />
-      <HeaderContainer>
-        <HeaderContainer.LeftItem>
+      <CustomHeader>
+        <CustomHeader.LeftItem>
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -234,8 +233,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               }
             />
           </Breadcrumbs>
-        </HeaderContainer.LeftItem>
-        <HeaderContainer.RightItem>
+        </CustomHeader.LeftItem>
+        <CustomHeader.RightItem>
           <div className="hidden gap-2 md:flex">
             <LayoutSelection
               layouts={[
@@ -318,8 +317,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               className={cn("block h-4 w-4 md:hidden", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")}
             />
           </button>
-        </HeaderContainer.RightItem>
-      </HeaderContainer>
+        </CustomHeader.RightItem>
+      </CustomHeader>
     </>
   );
 });

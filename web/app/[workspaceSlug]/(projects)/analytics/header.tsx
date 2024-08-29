@@ -6,11 +6,10 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { BarChart2, PanelRight } from "lucide-react";
 // ui
-import { Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // helpers
-import { HeaderContainer } from "@/components/containers";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
@@ -37,34 +36,32 @@ export const WorkspaceAnalyticsHeader = observer(() => {
   }, [toggleWorkspaceAnalyticsSidebar, workspaceAnalyticsSidebarCollapsed]);
 
   return (
-    <>
-      <HeaderContainer>
-        <HeaderContainer.LeftItem>
-          <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Analytics" icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />} />}
+    <CustomHeader variant="primary">
+      <CustomHeader.LeftItem>
+        <Breadcrumbs>
+          <Breadcrumbs.BreadcrumbItem
+            type="text"
+            link={<BreadcrumbLink label="Analytics" icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />} />}
+          />
+        </Breadcrumbs>
+        {analytics_tab === "custom" ? (
+          <button
+            className="block md:hidden"
+            onClick={() => {
+              toggleWorkspaceAnalyticsSidebar();
+            }}
+          >
+            <PanelRight
+              className={cn(
+                "block h-4 w-4 md:hidden",
+                !workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
+              )}
             />
-          </Breadcrumbs>
-          {analytics_tab === "custom" ? (
-            <button
-              className="block md:hidden"
-              onClick={() => {
-                toggleWorkspaceAnalyticsSidebar();
-              }}
-            >
-              <PanelRight
-                className={cn(
-                  "block h-4 w-4 md:hidden",
-                  !workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
-                )}
-              />
-            </button>
-          ) : (
-            <></>
-          )}
-        </HeaderContainer.LeftItem>
-      </HeaderContainer>
-    </>
+          </button>
+        ) : (
+          <></>
+        )}
+      </CustomHeader.LeftItem>
+    </CustomHeader>
   );
 });

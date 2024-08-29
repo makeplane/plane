@@ -4,11 +4,10 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // ui
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
 // helpers
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
-import { HeaderContainer } from "@/components/containers";
 import { EPageAccess } from "@/constants/page";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
@@ -31,8 +30,8 @@ export const PagesListHeader = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <HeaderContainer>
-      <HeaderContainer.LeftItem>
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -57,8 +56,8 @@ export const PagesListHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </HeaderContainer.LeftItem>
-      <HeaderContainer.RightItem>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
         {canUserCreatePage ? (
           <div className="flex items-center gap-2">
             <Button
@@ -78,7 +77,7 @@ export const PagesListHeader = observer(() => {
         ) : (
           <></>
         )}
-      </HeaderContainer.RightItem>
-    </HeaderContainer>
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });

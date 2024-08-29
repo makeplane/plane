@@ -47,7 +47,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex items-start justify-between gap-1.5">
+    <div className="flex items-start justify-between gap-1.5 my-auto w-full">
       <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
         {/* Applied filters */}
         {Object.entries(appliedFilters ?? {}).map(([key, value]) => {
@@ -132,7 +132,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
           </p>
         }
       >
-        <span className="bg-custom-background-80 rounded-full text-sm font-medium py-1 px-2.5">
+        <span className="bg-custom-background-80 rounded-full text-sm font-medium py-1 px-2.5 my-auto">
           {filteredProjects}/{totalProjects}
         </span>
       </Tooltip>
