@@ -168,15 +168,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       })
     );
 
-  // const handleCopyIntakeIssueLink = () =>
-  //   copyUrlToClipboard(intakeIssueLink).then(() =>
-  //     setToast({
-  //       type: TOAST_TYPE.SUCCESS,
-  //       title: "Link copied",
-  //       message: "Issue link copied to clipboard",
-  //     })
-  //   );
-
   const currentIssueIndex = filteredInboxIssueIds.findIndex((issueId) => issueId === currentInboxIssueId) ?? 0;
 
   const handleInboxIssueNavigation = useCallback(
