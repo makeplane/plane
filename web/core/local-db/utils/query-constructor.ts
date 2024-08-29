@@ -62,9 +62,9 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   const filterJoinFields = getMetaKeys(queries);
   if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     const name = order_by.replace("-", "");
-    sql = `SELECT i.*, s.name as ${name} from issues i`;
+    sql = `SELECT  ${fieldsFragment} , s.name as ${name} from issues i`;
   } else {
-    sql = `SELECT i.* from issues i`;
+    sql = `SELECT ${fieldsFragment} from issues i`;
   }
   filterJoinFields.forEach((field: string) => {
     const value = otherProps[field] || "";
