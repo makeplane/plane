@@ -299,6 +299,13 @@ export class Storage {
     return out;
   };
 
+  getIssue = async (issueId: string) => {
+    const issue = await runQuery(`select * from issues where id='${issueId}'`);
+    if (issue.length) {
+      return issue[0];
+    }
+    return;
+  };
   getStatus = (projectId: string) => this.projectStatus[projectId]?.issues?.status || undefined;
   setStatus = (projectId: string, status: "loading" | "ready" | "error" | "syncing" | undefined = undefined) => {
     set(this.projectStatus, `${projectId}.issues.status`, status);
