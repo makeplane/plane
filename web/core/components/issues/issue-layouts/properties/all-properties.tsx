@@ -284,6 +284,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             projectId={issue.project_id}
             disabled={isReadOnly}
             buttonVariant="border-with-text"
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -298,6 +299,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             disabled={isReadOnly}
             buttonVariant="border-without-text"
             buttonClassName="border"
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -312,6 +314,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             defaultOptions={defaultLabelOptions}
             onChange={handleLabel}
             disabled={isReadOnly}
+            renderByDefault={isMobile}
             hideDropdownArrow
           />
         </div>
@@ -328,6 +331,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -346,6 +350,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
             clearIconClassName="!text-custom-text-100"
             disabled={isReadOnly}
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -365,6 +370,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             showTooltip={issue?.assignee_ids?.length === 0}
             placeholder="Assignees"
             tooltipContent=""
+            renderByDefault={isMobile}
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -379,6 +385,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               value={issue?.module_ids ?? []}
               onChange={handleModule}
               disabled={isReadOnly}
+              renderByDefault={isMobile}
               multiple
               buttonVariant="border-with-text"
               showCount
@@ -399,6 +406,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               onChange={handleCycle}
               disabled={isReadOnly}
               buttonVariant="border-with-text"
+              renderByDefault={isMobile}
               showTooltip
             />
           </div>
@@ -415,6 +423,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               projectId={issue.project_id}
               disabled={isReadOnly}
               buttonVariant="border-with-text"
+              renderByDefault={isMobile}
               showTooltip
             />
           </div>
