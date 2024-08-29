@@ -5,7 +5,7 @@ import { IssueService } from "@/services/issue/issue.service";
 import { ARRAY_FIELDS } from "./utils/constants";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk } from "./utils/load-issues";
-import { loadLabels } from "./utils/load-labels";
+import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
@@ -123,7 +123,7 @@ export class Storage {
 
   syncWorkspace = async () => {
     await this.workspaceInitPromise;
-    loadLabels(this.workspaceSlug);
+    loadWorkSpaceData(this.workspaceSlug);
   };
 
   syncProject = (projectId: string) => {
@@ -151,8 +151,9 @@ export class Storage {
       return;
     }
 
-    const queryParams: { cursor: string; updated_at__gte?: string } = {
+    const queryParams: { cursor: string; updated_at__gte?: string; description: boolean } = {
       cursor: `${PAGE_SIZE}:0:0`,
+      description: true,
     };
 
     const syncedAt = await this.getLastSyncTime(projectId);

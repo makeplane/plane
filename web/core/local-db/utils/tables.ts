@@ -1,68 +1,37 @@
-import createIndexes from "./indexes";
+import { persistence } from "../storage.sqlite";
+import {
+  labelSchema,
+  moduleSchema,
+  Schema,
+  issueMetaSchema,
+  issueSchema,
+  stateSchema,
+  cycleSchema,
+  estimatePointSchema,
+  memberSchema,
+} from "./schemas";
 
-export const createIssuesTable = (SQLITE: any) => {
-  const sqlstr = `CREATE TABLE IF NOT EXISTS issues (
-      id TEXT UNIQUE, 
-      name TEXT, 
-      state_id TEXT, 
-      sort_order REAL, 
-      completed_at TEXT, 
-      estimate_point REAL, 
-      priority TEXT, 
-      priority_proxy INTEGER, 
-      start_date TEXT, 
-      target_date TEXT, 
-      sequence_id INTEGER, 
-      project_id TEXT, 
-      parent_id TEXT, 
-      created_at TEXT, 
-      updated_at TEXT, 
-      created_by TEXT, 
-      updated_by TEXT, 
-      is_draft INTEGER, 
-      archived_at TEXT, 
-      state__group TEXT, 
-      sub_issues_count INTEGER, 
-      cycle_id TEXT, 
-      link_count INTEGER, 
-      attachment_count INTEGER, 
-      type_id TEXT,
-      label_ids TEXT, 
-      assignee_ids TEXT, 
-      module_ids TEXT);`;
-  SQLITE.exec(sqlstr);
+const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
+  let sql = `CREATE TABLE IF NOT EXISTS ${tableName} (`;
+  sql += Object.keys(schema)
+    .map((key) => `'${key}' ${schema[key]}`)
+    .join(", ");
+  sql += `);`;
+  console.log("#####", sql);
+  return sql;
 };
 
-export const createIssueMetaTable = (SQLITE: any) => {
-  const sqlstr = `CREATE TABLE IF NOT EXISTS issue_meta (
-      issue_id TEXT, 
-      key TEXT, 
-      value TEXT,
-      UNIQUE(issue_id, key,value)  
-)
-      ;`;
-  SQLITE.exec(sqlstr);
-};
+export const createTables = async () => {
+  persistence.db.exec("BEGIN TRANSACTION;");
 
-export const createLabelsTable = (SQLITE: any) => {
-  const sqlstr = `CREATE TABLE IF NOT EXISTS labels (
-      id TEXT UNIQUE, 
-      name TEXT, 
-      color TEXT,
-      parent TEXT,
-      project_id TEXT,
-      sort_order INTEGER,
-      workspace_id TEXT);`;
-  SQLITE.exec(sqlstr);
-};
-export const createTables = async (SQLITE: any) => {
-  await createIssuesTable(SQLITE);
-  await createIssueMetaTable(SQLITE);
-  await createLabelsTable(SQLITE);
+  persistence.db.exec(createTableSQLfromSchema("modules", moduleSchema));
+  persistence.db.exec(createTableSQLfromSchema("labels", labelSchema));
+  persistence.db.exec(createTableSQLfromSchema("issue_meta", issueMetaSchema));
+  persistence.db.exec(createTableSQLfromSchema("issues", issueSchema));
+  persistence.db.exec(createTableSQLfromSchema("states", stateSchema));
+  persistence.db.exec(createTableSQLfromSchema("cycles", cycleSchema));
+  persistence.db.exec(createTableSQLfromSchema("estimate_points", estimatePointSchema));
+  persistence.db.exec(createTableSQLfromSchema("members", memberSchema));
 
-  // try {
-  //   await createIndexes();
-  // } catch (e) {
-  //   console.error(e);
-  // }
+  persistence.db.exec("COMMIT;");
 };

@@ -1,5 +1,3 @@
-import { persistence } from "../storage.sqlite";
-import { PRIORITY_MAP } from "./constants";
 import {
   getFilteredRowsForGrouping,
   getMetaKeys,
@@ -7,17 +5,20 @@ import {
   singleFilterConstructor,
   translateQueryParams,
 } from "./query.utils";
-export const SPECIAL_ORDER_BY = [
-  "labels__name",
-  "-labels__name",
-  "assignee__name",
-  "-assignee__name",
-  "module__name",
-  "-module__name",
-];
+export const SPECIAL_ORDER_BY = {
+  labels__name: "labels",
+  "-labels__name": "labels",
+  assignees__first_name: "members",
+  "-assignees__first_name": "members",
+  issue_module__module__name: "modules",
+  "-issue_module__module__name": "modules",
+  issue_cycle__cycle__name: "cycles",
+  "-issue_cycle__cycle__name": "cycles",
+  state__name: "states",
+  "-state__name": "states",
+};
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...otherProps } =
-    translateQueryParams(queries);
+  const { order_by, cursor, per_page, group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
   const orderByString = getOrderByFragment(order_by);
   const [pageSize, page, offset] = cursor.split(":");
 
@@ -56,7 +57,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   }
 
   const filterJoinFields = getMetaKeys(queries);
-  if (order_by && SPECIAL_ORDER_BY.includes(order_by)) {
+  if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     const name = order_by.replace("-", "");
     sql = `SELECT i.*, s.name as ${name} from issues i`;
   } else {
@@ -68,10 +69,35 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     `;
   });
 
-  if (order_by && SPECIAL_ORDER_BY.includes(order_by)) {
-    sql += ` 
-    LEFT JOIN issue_meta label_ids ON i.id = label_ids.issue_id AND label_ids.key = 'label_ids'
-    INNER JOIN labels s ON s.id = label_ids.value`;
+  if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+    if (order_by.includes("cycle")) {
+      sql += ` 
+      LEFT JOIN cycles s on i.cycle_id = s.id`;
+    }
+    if (order_by.includes("estimate_point")) {
+      sql += `
+      LEFT JOIN estimate_points s on i.estimate_point = s.id`;
+    }
+    if (order_by.includes("state")) {
+      sql += `
+      LEFT JOIN states s on i.state_id = s.id`;
+    }
+    if (order_by.includes("label")) {
+      sql += ` 
+      LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'label_ids'
+      INNER JOIN labels s ON s.id = sm.value`;
+    }
+    if (order_by.includes("module")) {
+      sql += ` 
+      LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'module_ids'
+      INNER JOIN modules s ON s.id = sm.value`;
+    }
+
+    if (order_by.includes("assignee")) {
+      sql += ` 
+      LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'assignee_ids'
+      INNER JOIN members s ON s.id = sm.value`;
+    }
   }
   sql += ` WHERE i.project_id = '${projectId}'    ${singleFilterConstructor(otherProps)} group by i.id  `;
   sql += orderByString;
@@ -91,51 +117,5 @@ export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectI
   sql = sql.replace("SELECT i.*", "SELECT COUNT(DISTINCT i.id) as total_count");
   // Remove everything after group by i.id
   sql = `${sql.split("group by i.id")[0]};`;
-  console.log("### COUNT", sql);
   return sql;
-};
-
-const arrayFields = ["label_ids", "assignee_ids", "module_ids"];
-
-export const stageIssueInserts = (issue: any) => {
-  const issue_id = issue.id;
-  issue.priority_proxy = PRIORITY_MAP[issue.priority as keyof typeof PRIORITY_MAP];
-  const keys = Object.keys(issue).join(",");
-
-  const values = Object.values(issue).map((val) => {
-    if (val === null) {
-      return "";
-    }
-    if (typeof val === "object") {
-      return JSON.stringify(val);
-    }
-    return val;
-  }); // Will fail when the values have a comma
-
-  persistence.db.exec({
-    sql: `INSERT OR REPLACE  into issues(${keys}) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    bind: values,
-  });
-
-  persistence.db.exec({
-    sql: `DELETE from issue_meta where issue_id='${issue_id}'`,
-  });
-
-  arrayFields.forEach((field) => {
-    const values = issue[field];
-    if (values && values.length) {
-      values.forEach((val: any) => {
-        persistence.db.exec({
-          sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
-          bind: [issue_id, field, val],
-        });
-      });
-    } else {
-      // Added for empty fields?
-      persistence.db.exec({
-        sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
-        bind: [issue_id, field, ""],
-      });
-    }
-  });
 };

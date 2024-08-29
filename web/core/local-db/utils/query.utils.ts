@@ -1,4 +1,5 @@
 import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
+import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
 
 export const translateQueryParams = (queries: any) => {
@@ -121,7 +122,6 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   const joinsRequired = areJoinsRequired(queries);
 
-  const orderByFragment = getOrderByFragment(queries.order_by);
   let sql = "";
   if (!joinsRequired) {
     sql = `WITH fi as (SELECT *`;
@@ -181,6 +181,9 @@ export const singleFilterConstructor = (queries: any) => {
   const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...filters } = translateQueryParams(queries);
 
   let sql = "";
+  if (!sub_issue) {
+    sql += ` AND parent_id IS NOT NULL `;
+  }
   const keys = Object.keys(filters);
 
   keys.forEach((key) => {
@@ -209,4 +212,10 @@ const getSingleFilterFields = (queries: any) => {
   });
 
   return Array.from(fields);
+};
+
+export const getIssueFieldsFragment = () => {
+  const [description_html, ...keys] = Object.keys(issueSchema);
+  const sql = `  ('${keys.join("','")}')`;
+  return sql;
 };
