@@ -1012,7 +1012,7 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 
 class CycleProgressEndpoint(BaseAPIView):
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
 
         aggregate_estimates = (
@@ -1148,7 +1148,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
 class CycleAnalyticsEndpoint(BaseAPIView):
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         analytic_type = request.GET.get("type", "issues")
         cycle = (

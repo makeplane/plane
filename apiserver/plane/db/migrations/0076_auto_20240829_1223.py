@@ -14,7 +14,7 @@ def update_workspace_project_member_role(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0074_deploy_board_and_project_issues"),
+        ("db", "0075_alter_fileasset_asset"),
     ]
 
     operations = [
