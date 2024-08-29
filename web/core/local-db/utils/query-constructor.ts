@@ -113,11 +113,13 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 };
 
 export const issueFilterCountQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
+  //@todo Very crude way to extract count from the actual query. Needs to be refactored
   // Remove group by from the query to fallback to non group query
   const { group_by, sub_group_by, order_by, ...otherProps } = queries;
   let sql = issueFilterQueryConstructor(workspaceSlug, projectId, otherProps);
+  const fieldsFragment = getIssueFieldsFragment();
 
-  sql = sql.replace("SELECT i.*", "SELECT COUNT(DISTINCT i.id) as total_count");
+  sql = sql.replace(`SELECT ${fieldsFragment}`, "SELECT COUNT(DISTINCT i.id) as total_count");
   // Remove everything after group by i.id
   sql = `${sql.split("group by i.id")[0]};`;
   return sql;
