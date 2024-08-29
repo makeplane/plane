@@ -43,6 +43,7 @@ class ProjectType:
     is_favorite: bool
     total_members: int
     total_issues: int
+    total_active_issues: int
 
     @strawberry.field
     def workspace(self) -> int:
@@ -79,6 +80,15 @@ class ProjectType:
             lambda: Issue.issue_objects.filter(project_id=self.id).count()
         )()
         return projects
+
+    @strawberry.field
+    async def total_active_issues(self, info: Info) -> int:
+        project_active_issues = await sync_to_async(
+            lambda: Issue.issue_objects.filter(project_id=self.id)
+            .filter(state__group__in=["unstarted", "started"])
+            .count()
+        )()
+        return project_active_issues
 
 
 @strawberry_django.type(ProjectMember)

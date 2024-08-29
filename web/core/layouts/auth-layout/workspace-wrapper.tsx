@@ -70,7 +70,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch project states
   useSWR(
-    workspaceSlug && currentWorkspace && isProjectStateEnabled ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace && isProjectStateEnabled ? `WORKSPACE_PROJECT_STATES_${workspaceSlug}` : null,
     () =>
       workspaceSlug && currentWorkspace && isProjectStateEnabled ? fetchProjectStates(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false }

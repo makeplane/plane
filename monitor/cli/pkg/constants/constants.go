@@ -9,10 +9,10 @@ const (
 
 // -------------- Env variables constants -------------------
 const (
-	LICENSE_KEY       = "LICENSE_KEY"
 	MACHINE_SIGNATURE = "MACHINE_SIGNATURE"
 	PRIME_HOST        = "PRIME_HOST"
-	LICENSE_DOMAIN    = "LICENSE_DOMAIN"
-	LICENSE_VERSION   = "LICENSE_VERSION"
-	LICENSE_CUID      = "LICENSE_DOMAIN"
+	APP_DOMAIN        = "APP_DOMAIN"
+	APP_VERSION       = "APP_VERSION"
+	INSTANCE_ID       = "INSTANCE_ID"
+	PORT              = "PORT"
 )

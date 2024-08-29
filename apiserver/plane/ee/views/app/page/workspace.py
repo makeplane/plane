@@ -19,6 +19,8 @@ from plane.app.permissions import WorkspaceEntityPermission
 from plane.ee.serializers import (
     WorkspacePageSerializer,
     WorkspacePageDetailSerializer,
+    WorkspacePageVersionSerializer,
+    WorkspacePageVersionDetailSerializer,
 )
 from plane.db.models import (
     Page,
@@ -26,13 +28,15 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     DeployBoard,
+    PageVersion,
 )
 
-from plane.ee.views.base import BaseViewSet
-
+from plane.ee.views.base import BaseViewSet, BaseAPIView
+from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.error_codes import ERROR_CODES
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -370,22 +374,84 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         )
         return response
 
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def partial_update(self, request, slug, pk):
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
+
+        if page.is_locked:
+            return Response(
+                {
+                    "error_code": ERROR_CODES["PAGE_LOCKED"],
+                    "error_message": "PAGE_LOCKED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if page.archived_at:
+            return Response(
+                {
+                    "error_code": ERROR_CODES["PAGE_ARCHIVED"],
+                    "error_message": "PAGE_ARCHIVED",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Serialize the existing instance
+        existing_instance = json.dumps(
+            {
+                "description_html": page.description_html,
+            },
+            cls=DjangoJSONEncoder,
         )
 
+        # Get the base64 data from the request
         base64_data = request.data.get("description_binary")
 
+        # If base64 data is provided
         if base64_data:
             # Decode the base64 data to bytes
             new_binary_data = base64.b64decode(base64_data)
-
+            # capture the page transaction
+            if request.data.get("description_html"):
+                page_transaction.delay(
+                    new_value=request.data,
+                    old_value=existing_instance,
+                    page_id=pk,
+                )
             # Store the updated binary data
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
             page.save()
+            # Return a success response
+            page_version.delay(
+                page_id=page.id,
+                existing_instance=existing_instance,
+                user_id=request.user.id,
+            )
             return Response({"message": "Updated successfully"})
         else:
             return Response({"error": "No binary data provided"})
+
+
+class WorkspacePageVersionEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def get(self, request, slug, page_id, pk=None):
+        # Check if pk is provided
+        if pk:
+            # Return a single page version
+            page_version = PageVersion.objects.get(
+                workspace__slug=slug,
+                page_id=page_id,
+                pk=pk,
+            )
+            # Serialize the page version
+            serializer = WorkspacePageVersionDetailSerializer(page_version)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        # Return all page versions
+        page_versions = PageVersion.objects.filter(
+            workspace__slug=slug,
+            page_id=page_id,
+        )
+        # Serialize the page versions
+        serializer = WorkspacePageVersionSerializer(page_versions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -12,18 +12,21 @@ export const IssueTextPropertyActivity: FC<TIssueAdditionalPropertiesActivityIte
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
-  const propertyName = propertyDetail?.display_name?.toLowerCase();
+  const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
   return (
     <>
       {activityDetail.new_value ? (
         <>
-          {activityDetail.action === "created" ? "set " : "updated "}
-          {propertyName} to <span className="font-medium text-custom-text-100">{activityDetail?.new_value}.</span>
+          {activityDetail.action === "created" ? "set " : "changed "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{`"${activityDetail?.new_value}"`}.</span>
         </>
       ) : (
-        <>removed {propertyName}.</>
+        <>
+          cleared the previous text in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+        </>
       )}
     </>
   );

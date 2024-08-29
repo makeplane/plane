@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { TextArea } from "@plane/ui";
@@ -23,10 +24,22 @@ type TTextAttributesProps = {
 
 export const TextAttributes = observer((props: TTextAttributesProps) => {
   const { issueTypeId, textPropertyDetail, currentOperationMode, onTextDetailChange } = props;
+  const [data, setData] = useState<string[]>([]);
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
   const isAnyIssueAttached = issueType?.issue_exists;
+
+  useEffect(() => {
+    setData(textPropertyDetail.default_value ?? []);
+  }, [textPropertyDetail.default_value]);
+
+  const handleReadOnlyFieldChange = () => {
+    // trim and filter empty values
+    const trimmedValue = data.map((val) => val.trim()).filter((val) => val);
+    // update readonly data
+    onTextDetailChange("default_value", trimmedValue);
+  };
 
   return (
     <>
@@ -39,6 +52,9 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
             onChange={(value) => {
               onTextDetailChange("settings", value as TIssueProperty<EIssuePropertyType.TEXT>["settings"]);
               onTextDetailChange("default_value", []);
+              if (value?.display_format === "readonly") {
+                onTextDetailChange("is_required", false);
+              }
             }}
             isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
           />
@@ -49,8 +65,10 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
           <div className="text-xs font-medium text-custom-text-300">Read only data</div>
           <TextArea
             id="default_value"
-            value={textPropertyDetail.default_value?.[0]}
-            onChange={(e) => onTextDetailChange("default_value", [e.target.value])}
+            value={data?.[0] ?? ""}
+            onChange={(e) => setData([e.target.value])}
+            onKeyDown={(e) => e.key === "Enter" && !!data[0] && e.currentTarget.blur()}
+            onBlur={() => handleReadOnlyFieldChange()}
             className="w-full max-h-28 resize-none text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300 rounded"
             tabIndex={1}
             textAreaSize="xs"

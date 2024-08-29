@@ -82,8 +82,12 @@ tmp/
 dist
 .temp/
 deploy/selfhost/plane-app/
+
 ## Storybook
 *storybook.log
 output.css
+
+# Monitor
 monitor/prime.key
 monitor/prime.key.pub
+monitor.db

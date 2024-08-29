@@ -39,18 +39,20 @@ export interface IProjectFilterStore extends IProjectFilterHelper {
   ) => TProjectsLayoutStructure[T] | undefined;
   // helpers actions
   // actions
-  initWorkspaceFilters: (workspaceSlug: string) => void;
-  updateScope: (workspaceSlug: string, scope: TProjectScope) => void;
-  updateLayout: (workspaceSlug: string, layout: TProjectLayouts) => void;
+  initWorkspaceFilters: (workspaceSlug: string, scope?: EProjectScope) => void;
+  updateScope: (workspaceSlug: string, scope: TProjectScope, setLocalStorage?: boolean) => void;
+  updateLayout: (workspaceSlug: string, layout: TProjectLayouts, setLocalStorage?: boolean) => void;
   updateAttributes: <T extends keyof TProjectAttributes>(
     workspaceSlug: string,
     key: T,
-    values: TProjectAttributes[T]
+    values: TProjectAttributes[T],
+    setLocalStorage?: boolean
   ) => void;
   updateDisplayFilters: <T extends keyof TProjectDisplayFilters>(
     workspaceSlug: string,
     key: T,
-    values: TProjectDisplayFilters[T]
+    values: TProjectDisplayFilters[T],
+    setLocalStorage?: boolean
   ) => void;
   bulkUpdateDisplayFilters: (workspaceSlug: string, values: Partial<TProjectDisplayFilters>) => void;
   updateSearchQuery: (query: string | undefined) => void;
@@ -203,33 +205,31 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    * @param { string } workspaceSlug
    * @returns { void }
    */
-  initWorkspaceFilters = (workspaceSlug: string): void => {
-    if (Object.keys(this.scopeMap).includes(workspaceSlug)) return;
+  initWorkspaceFilters = (workspaceSlug: string, scope?: EProjectScope): void => {
     const savedFilters = this.handleProjectLocalFilters.get(workspaceSlug);
 
-    if (!this.scopeMap[workspaceSlug]) {
-      this.updateScope(
-        workspaceSlug,
-        savedFilters.scope ||
-          (this.scopeProjectsCount[EProjectScope.MY_PROJECTS] > 0
-            ? EProjectScope.MY_PROJECTS
-            : EProjectScope.ALL_PROJECTS)
-      );
-    }
+    this.updateScope(
+      workspaceSlug,
+      scope ||
+        (this.scopeProjectsCount[EProjectScope.MY_PROJECTS] > 0
+          ? EProjectScope.MY_PROJECTS
+          : EProjectScope.ALL_PROJECTS)
+    );
+
     if (!this.layoutMap[workspaceSlug]) {
-      this.updateLayout(workspaceSlug, savedFilters.layout || EProjectLayouts.GALLERY);
+      this.updateLayout(workspaceSlug, savedFilters?.layout || EProjectLayouts.GALLERY, false);
     }
     if (!this.attributesMap[workspaceSlug]) {
-      this.updateAttributes(workspaceSlug, "priority", []);
-      this.updateAttributes(workspaceSlug, "state", []);
-      this.updateAttributes(workspaceSlug, "lead", []);
-      this.updateAttributes(workspaceSlug, "members", []);
-      this.updateAttributes(workspaceSlug, "access", []);
+      this.updateAttributes(workspaceSlug, "priority", savedFilters?.attributes?.priority || [], false);
+      this.updateAttributes(workspaceSlug, "state", savedFilters?.attributes?.state || [], false);
+      this.updateAttributes(workspaceSlug, "lead", savedFilters?.attributes?.lead || [], false);
+      this.updateAttributes(workspaceSlug, "members", savedFilters?.attributes?.members || [], false);
+      this.updateAttributes(workspaceSlug, "access", savedFilters?.attributes?.access || [], false);
     }
     if (!this.displayFiltersMap[workspaceSlug]) {
-      this.updateDisplayFilters(workspaceSlug, "group_by", "states");
-      this.updateDisplayFilters(workspaceSlug, "sort_by", "manual");
-      this.updateDisplayFilters(workspaceSlug, "sort_order", "asc");
+      this.updateDisplayFilters(workspaceSlug, "group_by", savedFilters?.display_filters?.group_by || "states", false);
+      this.updateDisplayFilters(workspaceSlug, "sort_by", savedFilters?.display_filters?.sort_by || "manual", false);
+      this.updateDisplayFilters(workspaceSlug, "sort_order", savedFilters?.display_filters?.sort_order || "asc", false);
     }
   };
 
@@ -239,9 +239,9 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    * @param { TProjectScope } scope
    * @returns { void }
    */
-  updateScope = (workspaceSlug: string, scope: TProjectScope): void => {
+  updateScope = (workspaceSlug: string, scope: TProjectScope, setLocalStorage = true): void => {
     set(this.scopeMap, workspaceSlug, scope);
-    this.handleProjectLocalFilters.set("scope", workspaceSlug, { scope });
+    setLocalStorage && this.handleProjectLocalFilters.set("scope", workspaceSlug, { scope });
   };
 
   /**
@@ -250,9 +250,9 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    * @param { TProjectLayouts } layout
    * @returns { void }
    */
-  updateLayout = (workspaceSlug: string, layout: TProjectLayouts): void => {
+  updateLayout = (workspaceSlug: string, layout: TProjectLayouts, setLocalStorage = true): void => {
     set(this.layoutMap, workspaceSlug, layout);
-    this.handleProjectLocalFilters.set("layout", workspaceSlug, { layout });
+    setLocalStorage && this.handleProjectLocalFilters.set("layout", workspaceSlug, { layout });
   };
 
   /**
@@ -265,9 +265,14 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
   updateAttributes = <T extends keyof TProjectAttributes>(
     workspaceSlug: string,
     key: T,
-    values: TProjectAttributes[T]
+    values: TProjectAttributes[T],
+    setLocalStorage = true
   ): void => {
     set(this.attributesMap, [workspaceSlug, key], values);
+    setLocalStorage &&
+      this.handleProjectLocalFilters.set("attributes", workspaceSlug, {
+        attributes: { ...this.attributesMap[workspaceSlug], [key]: values },
+      });
   };
 
   /**
@@ -280,9 +285,14 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
   updateDisplayFilters = <T extends keyof TProjectDisplayFilters>(
     workspaceSlug: string,
     key: T,
-    values: TProjectDisplayFilters[T]
+    values: TProjectDisplayFilters[T],
+    setLocalStorage = true
   ): void => {
     set(this.displayFiltersMap, [workspaceSlug, key], values);
+    setLocalStorage &&
+      this.handleProjectLocalFilters.set("display_filters", workspaceSlug, {
+        display_filters: { ...this.displayFiltersMap[workspaceSlug], [key]: values },
+      });
   };
 
   /**

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // constants
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
@@ -57,7 +57,12 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
             "cursor-not-allowed text-custom-text-400": !canAllIssuesBeArchived,
           })}
           onClick={() => {
-            if (canAllIssuesBeArchived) setIsBulkArchiveModalOpen(true);
+            canAllIssuesBeArchived
+              ? setIsBulkArchiveModalOpen(true)
+              : setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: "Only cancelled or completed issues can be archived.",
+                });
           }}
         >
           <ArchiveIcon className="size-4" />

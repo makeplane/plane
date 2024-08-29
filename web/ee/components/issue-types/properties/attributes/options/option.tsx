@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
 // ui
@@ -14,11 +15,12 @@ type TIssuePropertyOptionItem = {
   optionId?: string;
   propertyOptionData: TIssuePropertyOptionCreateUpdateData;
   updateOptionData: (value: TIssuePropertyOptionCreateUpdateData) => void;
+  scrollIntoNewOptionView: () => void;
   error?: string;
 };
 
 export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((props) => {
-  const { optionId, propertyOptionData, updateOptionData, error: optionsError } = props;
+  const { optionId, propertyOptionData, updateOptionData, scrollIntoNewOptionView, error: optionsError } = props;
   // store hooks
   const { propertyOptions } = usePropertyOptions();
   // derived values
@@ -45,12 +47,17 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
 
   // handle create/ update operation
   const handleCreateUpdate = async () => {
+    // return if no change in data
+    if (isEqual(propertyOptionCreateData.name, optionData.name)) return;
+    // trim option name
+    const optionDataToUpdate = { ...optionData, name: optionData.name?.trim() };
+    setOptionData(optionDataToUpdate);
     // return if option name is same as previous or empty
-    if (!optionData.name) return;
+    if (!optionDataToUpdate.name) return;
     // check for duplicate option name
-    if (checkForDuplicate({ identifier: optionData.id ?? key, value: optionData.name })) return;
+    if (checkForDuplicate({ identifier: optionDataToUpdate.id ?? key, value: optionDataToUpdate.name })) return;
     // handle option data update
-    updateOptionData({ key, ...optionData });
+    updateOptionData({ key, ...optionDataToUpdate });
   };
 
   // handle changes in option local data
@@ -65,7 +72,12 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
         id={`option-${optionId}-${key}`}
         value={optionData.name}
         onChange={(e) => handleOptionDataChange("name", e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && !!optionData.name && e.currentTarget.blur()}
+        onKeyDown={(e) => {
+          if (["Enter", "Tab"].includes(e.key) && !!optionData.name) {
+            e.currentTarget.blur();
+            scrollIntoNewOptionView();
+          }
+        }}
         onBlur={() => handleCreateUpdate()}
         placeholder={"Add option"}
         className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {

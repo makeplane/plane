@@ -198,6 +198,14 @@ class IssuePropertyEndpoint(BaseAPIView):
                     # Reset the default options if the property is required
                     if issue_property.is_required:
                         self.reset_options_default(issue_property)
+                    # Reset the default options if property is not multi and more than one default value
+                    if not issue_property.is_multi and IssuePropertyOption.objects.filter(
+                        property_id=issue_property.id,
+                        workspace_id=issue_property.workspace_id,
+                        project_id=issue_property.project_id,
+                        is_default=True,
+                        ).count() > 1:
+                        self.reset_options_default(issue_property)
                     self.update_property_default_options(issue_property)
 
                 except IntegrityError:
@@ -296,6 +304,14 @@ class IssuePropertyEndpoint(BaseAPIView):
                 )
                 # Reset the default options if the property is required
                 if issue_property.is_required:
+                    self.reset_options_default(issue_property)
+                # Reset the default options if property is not multi and more than one default value
+                if not issue_property.is_multi and IssuePropertyOption.objects.filter(
+                    property_id=issue_property.id,
+                    workspace_id=issue_property.workspace_id,
+                    project_id=issue_property.project_id,
+                    is_default=True,
+                    ).count() > 1:
                     self.reset_options_default(issue_property)
                 self.update_property_default_options(issue_property)
 

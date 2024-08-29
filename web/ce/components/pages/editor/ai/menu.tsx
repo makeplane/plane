@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
 // plane editor
@@ -20,6 +20,7 @@ const aiService = new AIService();
 
 type Props = {
   editorRef: RefObject<EditorRefApi>;
+  isOpen: boolean;
   onClose: () => void;
 };
 
@@ -57,7 +58,7 @@ const TONES_LIST = [
 ];
 
 export const EditorAIMenu: React.FC<Props> = (props) => {
-  const { editorRef, onClose } = props;
+  const { editorRef, isOpen, onClose } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
   const [response, setResponse] = useState<string | undefined>(undefined);
@@ -125,6 +126,14 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
     editorRef.current?.insertText(response, insertOnNextLine);
     onClose();
   };
+
+  // reset on close
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveTask(null);
+      setResponse(undefined);
+    }
+  }, [isOpen]);
 
   return (
     <div

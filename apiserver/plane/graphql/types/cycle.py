@@ -13,7 +13,8 @@ from asgiref.sync import sync_to_async
 
 
 # Module Imports
-from plane.db.models import Cycle, Issue
+from plane.db.models import Cycle, Issue, CycleUserProperties
+from plane.graphql.types.users import UserType
 
 
 @strawberry_django.type(Cycle)
@@ -23,7 +24,6 @@ class CycleType:
     description: Optional[str]
     start_date: Optional[date]
     end_date: Optional[date]
-    owned_by: strawberry.ID
     view_props: Optional[JSON]
     sort_order: Optional[float]
     external_source: Optional[str]
@@ -39,10 +39,7 @@ class CycleType:
     updated_at: datetime
     total_issues: int
     completed_issues: int
-
-    @strawberry.field
-    def owned_by(self) -> int:
-        return self.owned_by_id
+    owned_by: Optional[UserType]
 
     @strawberry.field
     def project(self) -> int:
@@ -67,10 +64,50 @@ class CycleType:
 
     @strawberry.field
     async def completed_issues(self, info: Info) -> int:
-        total_issues = await sync_to_async(
+        completed_issues = await sync_to_async(
             lambda: Issue.issue_objects.filter(
-                issue_cycle__cycle_id=self.id,
-                state__group="completed"
+                issue_cycle__cycle_id=self.id, state__group="completed"
             ).count()
         )()
-        return total_issues
+        return completed_issues
+
+    @strawberry.field
+    async def assignees_count(self) -> int:
+        issue_assignees_count = await sync_to_async(
+            lambda: Issue.issue_objects.filter(
+                issue_cycle__cycle_id=self.id,
+                issue_cycle__issue__assignees__id__isnull=False,
+            )
+            .values("issue_cycle__issue__assignees__id")
+            .distinct()
+            .count()
+        )()
+        return issue_assignees_count
+
+
+@strawberry_django.type(CycleUserProperties)
+class CycleUserPropertyType:
+    display_filters: JSON
+    display_properties: JSON
+    filters: JSON
+    id: strawberry.ID
+    user: strawberry.ID
+    workspace: strawberry.ID
+    project: strawberry.ID
+    cycle: strawberry.ID
+
+    @strawberry.field
+    def user(self) -> int:
+        return self.user_id
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id
+
+    @strawberry.field
+    def project(self) -> int:
+        return self.project_id
+
+    @strawberry.field
+    def cycle(self) -> int:
+        return self.cycle_id

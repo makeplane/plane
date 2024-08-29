@@ -21,9 +21,6 @@ SIGNATURE=$(echo "$HOSTNAME$MAC_ADDRESS$CPU_INFO$MEMORY_INFO$DISK_INFO" | sha256
 MACHINE_SIGNATURE=${MACHINE_SIGNATURE:-$SIGNATURE}
 export SKIP_ENV_VAR=1
 
-# License check
-python manage.py license_check
-
 # Register instance
 python manage.py register_instance_ee "$MACHINE_SIGNATURE"
 
@@ -35,5 +32,8 @@ python manage.py create_bucket
 
 # Clear Cache before starting to remove stale values
 python manage.py clear_cache
+
+# Clear workspace licenses
+python manage.py clear_workspace_licenses
 
 exec gunicorn -w "$GUNICORN_WORKERS" -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:"${PORT:-8000}" --max-requests 1200 --max-requests-jitter 1000 --access-logfile -

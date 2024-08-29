@@ -13,41 +13,42 @@ export const IssueDropdownPropertyActivity: FC<TIssueAdditionalPropertiesActivit
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
-  const propertyName = propertyDetail?.display_name?.toLowerCase();
+  const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
   return (
     <>
       {activityDetail.action === "created" && activityDetail.new_value ? (
         <>
-          added{" "}
+          selected{" "}
           <span className="font-medium text-custom-text-100">
             {issueProperty?.getPropertyOptionById(activityDetail?.new_value)?.name}
           </span>{" "}
-          to {propertyName}.
+          as value(s) for <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>
       ) : (
         activityDetail.action === "deleted" &&
         activityDetail.old_value && (
           <>
-            removed{" "}
+            deselected{" "}
             <span className="font-medium text-custom-text-100">
               {issueProperty?.getPropertyOptionById(activityDetail?.old_value)?.name}
             </span>{" "}
-            from {propertyName}.
+            from the previous selection in <span className="font-medium text-custom-text-100">{propertyName}</span>.
           </>
         )
       )}
       {activityDetail.action === "updated" && activityDetail.old_value && activityDetail.new_value && (
         <>
-          updated {propertyName} from{" "}
+          changed{" "}
           <span className="font-medium text-custom-text-100">
             {issueProperty?.getPropertyOptionById(activityDetail?.old_value)?.name}
           </span>{" "}
           to{" "}
           <span className="font-medium text-custom-text-100">
-            {issueProperty?.getPropertyOptionById(activityDetail?.new_value)?.name}.
-          </span>
+            {issueProperty?.getPropertyOptionById(activityDetail?.new_value)?.name}
+          </span>{" "}
+          in <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>
       )}
     </>

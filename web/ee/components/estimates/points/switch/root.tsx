@@ -71,6 +71,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
       handleEstimatePointError(prevValue[index].key, "", "", undefined, "delete");
       return prevValue;
     });
+    setSwitchLoader(false);
   };
 
   const isValidEstimatePoints = (estimateSystemSwitchType: TEstimateSystemKeys) => {
@@ -167,6 +168,8 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           message: "Created and Enabled successfully",
         });
         handleClose();
+        setSwitchLoader(false);
+      } else {
         setSwitchLoader(false);
       }
     } catch (error) {

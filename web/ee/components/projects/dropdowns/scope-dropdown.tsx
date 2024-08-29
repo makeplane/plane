@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@plane/editor";
 import { CustomMenu } from "@plane/ui";
@@ -21,6 +22,7 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
   const { workspaceSlug, className } = props;
   // hooks
   const { scopeProjectsCount, filters, updateScope, updateLayout } = useProjectFilter();
+  const router = useRouter();
 
   // derived values
   const selectedScope = filters?.scope || EProjectScope.ALL_PROJECTS;
@@ -53,6 +55,7 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
         key={scope.key}
         className="flex items-center gap-2 truncate"
         onClick={() => {
+          router.push(`?show-all-projects=${scope.key === EProjectScope.ALL_PROJECTS}`);
           updateScope(workspaceSlug, scope.key);
           if (
             scope.key === EProjectScope.ALL_PROJECTS &&

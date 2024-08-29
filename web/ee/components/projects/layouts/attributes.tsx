@@ -21,9 +21,19 @@ type Props = {
   currentWorkspace: IWorkspace;
   cta?: React.ReactNode;
   dateClassname?: string;
+  containerClass?: string;
 };
 const Attributes: React.FC<Props> = observer((props) => {
-  const { project, isArchived, handleUpdateProject, workspaceSlug, currentWorkspace, cta, dateClassname } = props;
+  const {
+    project,
+    isArchived,
+    handleUpdateProject,
+    workspaceSlug,
+    currentWorkspace,
+    cta,
+    dateClassname,
+    containerClass = "",
+  } = props;
   const projectMembersIds = project.members?.map((member) => member.member_id);
 
   const { getUserDetails } = useMember();
@@ -41,7 +51,7 @@ const Attributes: React.FC<Props> = observer((props) => {
     e.preventDefault();
   };
   return (
-    <div className="flex gap-2 flex-wrap p-2 " data-prevent-nprogress>
+    <div className={cn("flex gap-2 flex-wrap p-2", containerClass)} data-prevent-nprogress>
       <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
         <StateDropdown
           value={project.state_id || ""}
@@ -49,6 +59,7 @@ const Attributes: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug.toString()}
           workspaceId={currentWorkspace.id}
           disabled={!isEditingAllowed || isArchived}
+          optionsClassName="z-[19]"
           buttonClassName={cn(
             "z-1 h-5 px-2 py-0 text-left rounded group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
           )}
@@ -90,6 +101,7 @@ const Attributes: React.FC<Props> = observer((props) => {
           tabIndex={5}
           buttonClassName="z-1 px-2 py-0 h-5"
           className="h-5 my-auto"
+          projectId={project.id}
           disabled={!isEditingAllowed || isArchived}
           showTooltip
           button={

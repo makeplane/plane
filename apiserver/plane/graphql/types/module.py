@@ -9,10 +9,12 @@ from strawberry.types import Info
 from strawberry.scalars import JSON
 
 # Module Imports
-from plane.db.models import Module, Issue
+from plane.db.models import Module, Issue, ModuleUserProperties
+from plane.graphql.types.users import UserType
 
 # Third-party library imports
 from asgiref.sync import sync_to_async
+
 
 @strawberry_django.type(Module)
 class ModuleType:
@@ -30,7 +32,6 @@ class ModuleType:
     description_html: Optional[str]
     start_date: Optional[date]
     target_date: Optional[date]
-    lead: Optional[strawberry.ID]
     members: Optional[list[strawberry.ID]]
     view_props: Optional[JSON]
     sort_order: float
@@ -40,6 +41,7 @@ class ModuleType:
     logo_props: Optional[JSON]
     total_issues: int
     completed_issues: int
+    lead: Optional[UserType]
 
     @strawberry.field
     def project(self) -> int:
@@ -70,3 +72,44 @@ class ModuleType:
             ).count()
         )()
         return total_issues
+
+    @strawberry.field
+    async def assignees_count(self) -> int:
+        issue_assignees_count = await sync_to_async(
+            lambda: Issue.issue_objects.filter(
+                issue_module__module_id=self.id,
+                issue_module__issue__assignees__id__isnull=False,
+            )
+            .values("issue_module__issue__assignees__id")
+            .distinct()
+            .count()
+        )()
+        return issue_assignees_count
+
+
+@strawberry_django.type(ModuleUserProperties)
+class ModuleUserPropertyType:
+    display_filters: JSON
+    display_properties: JSON
+    filters: JSON
+    id: strawberry.ID
+    user: strawberry.ID
+    workspace: strawberry.ID
+    project: strawberry.ID
+    module: strawberry.ID
+
+    @strawberry.field
+    def user(self) -> int:
+        return self.user_id
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id
+
+    @strawberry.field
+    def project(self) -> int:
+        return self.project_id
+
+    @strawberry.field
+    def module(self) -> int:
+        return self.module_id
