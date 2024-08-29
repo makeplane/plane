@@ -10,6 +10,8 @@ import { useEventTracker, useProject, useUser } from "@/hooks/store";
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 // plane web constants
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+// plane web hooks
+import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   workspaceSlug: string;
@@ -23,6 +25,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
+  const isWorklogEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
@@ -81,7 +84,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                         <h4 className="text-sm font-medium leading-5">{featureItem.title}</h4>
                         {featureItem.isPro && (
                           <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge />
+                            <UpgradeBadge
+                              flag={
+                                featureItem.property === "is_time_tracking_enabled"
+                                  ? E_FEATURE_FLAGS.ISSUE_WORKLOG
+                                  : undefined
+                              }
+                            />
                           </Tooltip>
                         )}
                       </div>
@@ -90,9 +99,16 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   </div>
 
                   <ToggleSwitch
-                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                    value={Boolean(
+                      currentProjectDetails?.[featureItem.property as keyof IProject] &&
+                        (featureItem.property === "is_time_tracking_enabled" ? isWorklogEnabled : true)
+                    )}
                     onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                    disabled={!featureItem.isEnabled || !isAdmin}
+                    disabled={
+                      !featureItem.isEnabled || !isAdmin || featureItem.property === "is_time_tracking_enabled"
+                        ? !isWorklogEnabled
+                        : false
+                    }
                     size="sm"
                   />
                 </div>

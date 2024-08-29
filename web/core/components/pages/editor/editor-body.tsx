@@ -14,14 +14,13 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { EditorAIMenu } from "@/ce/components/pages/editor/ai";
+import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
-import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -70,7 +69,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     project: { getProjectMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const pageDescription = page?.description_html;
@@ -85,7 +84,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     user: currentUser ?? undefined,
   });
   // editor flaggings
-  const { documentEditor } = useEditorFlagging();
+  const { documentEditor } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
