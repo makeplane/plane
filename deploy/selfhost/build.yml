@@ -26,5 +26,5 @@ services:
   proxy:
     image: ${DOCKERHUB_USER:-local}/plane-proxy:${APP_RELEASE:-latest}
     build:
-      context: ./nginx
+      context: ./caddy
       dockerfile: ./Dockerfile
