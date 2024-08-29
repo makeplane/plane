@@ -72,7 +72,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           className="!min-w-[38rem]"
         />
       )}
-      <PageInfoPopover page={page} />
+      <PageInfoPopover editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current} />
       <PageOptionsDropdown
         editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
         handleDuplicatePage={handleDuplicatePage}

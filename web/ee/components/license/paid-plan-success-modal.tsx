@@ -15,8 +15,10 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 import PlaneOneLogo from "@/public/plane-logos/plane-one-silver.svg";
 
+export type TSuccessModalVariant = "PRO" | "ONE";
+
 export type PaidPlanSuccessModalProps = {
-  variant: "PRO" | "ONE";
+  variant: TSuccessModalVariant;
   isOpen: boolean;
   handleClose: () => void;
 };

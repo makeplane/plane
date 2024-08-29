@@ -1,9 +1,11 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import F
 
 # Module imports
 from plane.db.models import Workspace, WorkspaceMember
@@ -14,6 +16,25 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
 
     # If the number of free seats is less than 12, set it to 12
     workspace_free_seats = 12 if free_seats <= 12 else free_seats
+    owner_email = Workspace.objects.get(slug=workspace_slug).owner.email
+    # Get all active workspace members
+    workspace_members = (
+        WorkspaceMember.objects.filter(
+            workspace_id=workspace_id,
+            is_active=True,
+            member__is_bot=False,
+        )
+        .annotate(
+            user_email=F("member__email"),
+            user_id=F("member__id"),
+            user_role=F("role"),
+        )
+        .values("user_email", "user_id", "user_role")
+    )
+
+    # Convert user_id to string
+    for member in workspace_members:
+        member["user_id"] = str(member["user_id"])
 
     response = requests.post(
         f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace_id)}/",
@@ -24,6 +45,8 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
         json={
             "workspace_slug": str(workspace_slug),
             "free_seats": workspace_free_seats,
+            "owner_email": owner_email,
+            "members_list": list(workspace_members),
         },
     )
     response.raise_for_status()
@@ -94,6 +117,8 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
+                "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0")
+                == "0",
             }
         else:
             return {
@@ -107,6 +132,8 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
+                "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0")
+                == "0",
             }
     # If the license is not present, then fetch the license from the payment server and create it
     else:
@@ -151,4 +178,5 @@ def resync_workspace_license(workspace_slug, force=False):
             "has_activated_free_trial": workspace_license.has_activated_free_trial,
             "has_added_payment_method": workspace_license.has_added_payment_method,
             "subscription": workspace_license.subscription,
+            "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0") == "0",
         }

@@ -53,6 +53,9 @@ x-app-env: &app-env
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+    - SSL_VERIFY=${SSL_VERIFY:-1}
+    - FEATURE_FLAG_SERVER_BASE_URL=${FEATURE_FLAG_SERVER_BASE_URL:-http://monitor:8080}
+    - PAYMENT_SERVER_BASE_URL=${PAYMENT_SERVER_BASE_URL:-http://monitor:8080}
 
 services:
   admin:
@@ -81,6 +84,8 @@ services:
     <<: *monitor-env
     image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
+    volumes:
+      - ${INSTALL_DIR}/data/monitor:/app
 
   space:
     <<: *app-env

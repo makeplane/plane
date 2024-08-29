@@ -2,11 +2,11 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { CycleDetailsSidebar } from "@/components/cycles";
+import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
 // constants
 // import { EIssuesStoreType } from "@/constants/issue";
@@ -24,18 +24,17 @@ const CycleDetailPage = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
-  const { fetchCycleDetails, getCycleById } = useCycle();
+  const { getCycleById, loader } = useCycle();
   const { getProjectById } = useProject();
   // const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // hooks
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
-  // fetching cycle details
-  const { error } = useSWR(
-    workspaceSlug && projectId && cycleId ? `CYCLE_DETAILS_${cycleId.toString()}` : null,
-    workspaceSlug && projectId && cycleId
-      ? () => fetchCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
-      : null
-  );
+
+  useCyclesDetails({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: projectId.toString(),
+    cycleId: cycleId.toString(),
+  });
   // derived values
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
   const cycle = cycleId ? getCycleById(cycleId.toString()) : undefined;
@@ -52,7 +51,7 @@ const CycleDetailPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      {error ? (
+      {!cycle && !loader ? (
         <EmptyState
           image={emptyCycle}
           title="Cycle does not exist"

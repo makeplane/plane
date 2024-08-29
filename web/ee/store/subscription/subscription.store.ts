@@ -17,8 +17,10 @@ type TWorkspaceSubscriptionMap = {
 export interface IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap;
   isProPlanModalOpen: boolean;
+  isSuccessPlanModalOpen: boolean;
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
   toggleProPlanModal: (value?: boolean) => void;
+  handleSuccessModalToggle: (isOpen?: boolean) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
   freeTrialSubscription: (workspaceSlug: string, payload: { product_id: string; price_id: string }) => Promise<void>;
@@ -27,11 +29,13 @@ export interface IWorkspaceSubscriptionStore {
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap = {};
   isProPlanModalOpen = false;
+  isSuccessPlanModalOpen: boolean = false;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
       subscribedPlan: observable,
       isProPlanModalOpen: observable.ref,
+      isSuccessPlanModalOpen: observable,
       currentWorkspaceSubscribedPlanDetail: computed,
       toggleProPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
@@ -49,6 +53,10 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     this.isProPlanModalOpen = value ?? !this.isProPlanModalOpen;
   };
 
+  handleSuccessModalToggle = (isOpen?: boolean) => {
+    this.isSuccessPlanModalOpen = isOpen ?? !this.isSuccessPlanModalOpen;
+  };
+
   fetchWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
     try {
       const response = await paymentService.getWorkspaceCurrentPlan(workspaceSlug);
@@ -56,6 +64,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
         set(this.subscribedPlan, workspaceSlug, {
           product: response?.product || "FREE",
           is_canceled: response?.is_canceled || false,
+          is_self_managed: response?.is_self_managed || false,
           interval: response?.interval || null,
           current_period_end_date: response?.current_period_end_date,
           is_offline_payment: response?.is_offline_payment || false,
@@ -72,6 +81,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
         set(this.subscribedPlan, workspaceSlug, {
           product: "FREE",
           is_canceled: false,
+          is_self_managed: false,
           interval: null,
           current_period_end_date: null,
         });
@@ -91,6 +101,8 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   freeTrialSubscription = async (workspaceSlug: string, payload: { product_id: string; price_id: string }) => {
     try {
       await paymentService.getFreeTrialSubscription(workspaceSlug, payload);
+      // license check
+      await this.refreshWorkspaceSubscribedPlan(workspaceSlug);
       // fetching workspace subscribed plan and feature flags
       await Promise.all([
         this.fetchWorkspaceSubscribedPlan(workspaceSlug),

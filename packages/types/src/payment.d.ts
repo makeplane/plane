@@ -7,7 +7,7 @@ export type IPaymentProductPrice = {
   workspace_amount: number;
 };
 
-export type TProductSubscriptionType = "FREE" | "PRO" | "ULTIMATE";
+export type TProductSubscriptionType = "FREE" | "ONE" | "PRO" | "ULTIMATE";
 
 export type IPaymentProduct = {
   description: string;
@@ -20,6 +20,7 @@ export type IPaymentProduct = {
 export type IWorkspaceProductSubscription = {
   product: TProductSubscriptionType;
   is_canceled?: boolean;
+  is_self_managed: boolean;
   interval?: "month" | "year" | null;
   current_period_end_date: string | null;
   is_offline_payment: boolean;

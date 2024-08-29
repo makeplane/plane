@@ -11,22 +11,34 @@ import (
 
 type IPrimeMonitorApi interface {
 	PostServiceStatus(StatusPayload) ErrorCode
+	GetFeatureFlags(licenseKey string) (*FlagDataResponse, ErrorCode)
+	ActivateInstance() ErrorCode
+	DeactivateInstance() ErrorCode
+	SyncWorkspace(WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode)
+	ActivateWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
+	ActivateFreeWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
 }
 
 type PrimeMonitorApi struct {
 	host             string
-	apiKey           string
+	instanceId       string
+	appVersion       string
 	client           string
 	version          string
 	machineSignature string
 }
 
-func NewMonitorApi(host, apiKey, version, machineSignature string) IPrimeMonitorApi {
+type FlagsPayload struct {
+	EncryptedData string `json:"encrypted_data"`
+}
+
+func NewMonitorApi(host, machineSignature, instanceId, appVersion string) IPrimeMonitorApi {
 	return &PrimeMonitorApi{
 		host:             host,
-		apiKey:           apiKey,
+		instanceId:       instanceId,
+		appVersion:       appVersion,
 		client:           "Prime-Monitor",
-		version:          version,
+		version:          appVersion,
 		machineSignature: machineSignature,
 	}
 }
@@ -36,19 +48,106 @@ func (api *PrimeMonitorApi) SetClient(client string) {
 }
 
 var (
-	API_PREFIX       = "/api"
-	MONITOR_ENDPOINT = API_PREFIX + "/monitor/"
+	API_PREFIX              = "/api/v2"
+	MONITOR_ENDPOINT        = API_PREFIX + "/monitor/"
+	FEATURE_FLAGS           = API_PREFIX + "/flags/"
+	INSTANCE_PREFIX         = API_PREFIX + "/instances"
+	ACTIVATE_INSTANCE       = INSTANCE_PREFIX + "/activate/"
+	DEACTIVATE_INSTANCE     = INSTANCE_PREFIX + "/deactivate/"
+	UPGRADE_INSTANCE        = INSTANCE_PREFIX + "/upgrade/"
+	FREE_WORKSPACE_ACTIVATE = API_PREFIX + "/licenses/initialize/"
+	WORKSPACE_ACTIVATE      = API_PREFIX + "/licenses/activate/"
+	SYNC_WORKSPACE          = API_PREFIX + "/licenses/sync/"
 )
 
-// ----------------------- Controller Methods ------------------------------
-
+/* ----------------------- Controller Methods ------------------------------ */
 // Posts the status of the services given, to the prime server, returns error if
 // hinderer, else doesn't return anything
 func (api *PrimeMonitorApi) PostServiceStatus(payload StatusPayload) ErrorCode {
 	_, err := api.post(api.host+MONITOR_ENDPOINT, payload)
 	if err != nil {
-		fmt.Println(err)
 		return UNABLE_TO_POST_SERVICE_STATUS
+	}
+	return 0
+}
+
+func (api *PrimeMonitorApi) ActivateFreeWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode) {
+	resp, err := api.post(api.host+FREE_WORKSPACE_ACTIVATE, payload)
+	if err != nil {
+		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+	}
+	data := WorkspaceActivationResponse{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+	}
+	return &data, 0
+}
+
+// Activating a paid licensed workspace
+func (api *PrimeMonitorApi) ActivateWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode) {
+	resp, err := api.post(api.host+WORKSPACE_ACTIVATE, payload)
+	if err != nil {
+		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+	}
+	data := WorkspaceActivationResponse{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+	}
+	return &data, 0
+}
+
+func (api *PrimeMonitorApi) GetFeatureFlags(licenseKey string) (*FlagDataResponse, ErrorCode) {
+	flagData, err := api.post(api.host+FEATURE_FLAGS, map[string]string{
+		"license_key": licenseKey,
+		"version":     api.version,
+	})
+	if err != nil {
+		return nil, UNABLE_TO_GET_FEATURE_FLAGS
+	}
+	data := FlagDataResponse{}
+	err = json.Unmarshal(flagData, &data)
+	if err != nil {
+		return nil, UNABLE_TO_PARSE_FEATURE_FLAGS
+	}
+	return &data, 0
+}
+
+func (api *PrimeMonitorApi) SyncWorkspace(payload WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode) {
+	resp, err := api.post(api.host+SYNC_WORKSPACE, payload)
+	if err != nil {
+		return nil, UNABLE_TO_SYNC_WORKSPACE
+	}
+	data := WorkspaceActivationResponse{}
+	err = json.Unmarshal(resp, &data)
+
+	if err != nil {
+		return nil, UNABLE_TO_SYNC_WORKSPACE
+	}
+	return &data, 0
+}
+
+func (api *PrimeMonitorApi) ActivateInstance() ErrorCode {
+	_, err := api.post(api.host+ACTIVATE_INSTANCE, nil)
+	if err != nil {
+		return UNABLE_TO_ACTIVATE_WORKSPACE
+	}
+	return 0
+}
+
+func (api *PrimeMonitorApi) DeactivateInstance() ErrorCode {
+	_, err := api.post(api.host+DEACTIVATE_INSTANCE, nil)
+	if err != nil {
+		return UNABLE_TO_ACTIVATE_WORKSPACE
+	}
+	return 0
+}
+
+func (api *PrimeMonitorApi) UpgradeInstance() ErrorCode {
+	_, err := api.post(api.host+UPGRADE_INSTANCE, nil)
+	if err != nil {
+		return UNABLE_TO_ACTIVATE_WORKSPACE
 	}
 	return 0
 }
@@ -87,7 +186,7 @@ func (api *PrimeMonitorApi) prepareRequest(method, urlStr string, body io.Reader
 	}
 
 	headers := map[string]string{
-		"X-Api-Key":           api.apiKey,
+		"X-Instance-Id":       api.instanceId,
 		"X-Machine-Signature": api.machineSignature,
 		"X-Client":            api.client,
 		"X-License-Version":   api.version,

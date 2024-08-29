@@ -108,18 +108,6 @@ jobs:
             monitor:
               - monitor/**
 
-      - name: Generate Keypair
-        run: |
-          if [ "${{ github.event_name }}" == "release" ]; then 
-            ssh-keygen -t ed25519 -m PEM -f monitor/prime.key -N ""
-            echo "-----------------"
-            echo ""
-            cat monitor/prime.key.pub
-            echo ""
-            echo "-----------------"
-          else
-            echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}"  > monitor/prime.key
-          fi
 
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
@@ -498,6 +486,20 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Generate Keypair
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then 
+            openssl genrsa -out monitor/private_key.pem 2048            
+          else
+            echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}" > monitor/private_key.pem
+          fi
+          openssl rsa -in monitor/private_key.pem -pubout -out monitor/public_key.pem
+          cat monitor/public_key.pem
+
+          # Generating the private key env for the generated keys
+          PRIVATE_KEY=$(cat monitor/private_key.pem | base64 -w 0)
+          echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
+
       - name: Build and Push Monitor to Docker Container Registry
         uses: docker/build-push-action@v5.1.0
         with:
@@ -506,6 +508,8 @@ jobs:
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.MONITOR_TAG }}
           push: true
+          build-args: |
+            PRIVATE_KEY=${{ env.PRIVATE_KEY }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -545,4 +549,3 @@ jobs:
 
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
 
-          rm -rf ~/${{ env.ARTIFACT_SUFFIX }}

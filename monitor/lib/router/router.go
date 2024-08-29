@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	primelogger "github.com/makeplane/plane-ee/monitor/lib/logger"
 	"github.com/makeplane/plane-ee/monitor/lib/router/routes"
 )
@@ -43,7 +44,7 @@ func NewMonitorRouter(config MonitorRouterOptions) *MonitorRouter {
 		app:    app,
 		logger: config.Logger,
 	}
-	router.bindRoutes()
+	router.bindRoutes(config.Api, config.PrivateKey)
 	router.bindMiddlewares()
 
 	return router
@@ -69,9 +70,10 @@ func (r *MonitorRouter) Stop() error {
 }
 
 // ----------------------- Fiber App Binding ---------------------
-func (r *MonitorRouter) bindRoutes() {
-	v1 := r.app.Group("/api/v1")
+func (r *MonitorRouter) bindRoutes(api *prime_api.IPrimeMonitorApi, privateKey string) {
+	v1 := r.app.Group("/api")
 	routes.RegisterDnsRoute(&v1, r.logger)
+	routes.RegisterFeatureFlags(&v1, r.logger, api, privateKey)
 }
 
 func (r *MonitorRouter) bindMiddlewares() {

@@ -7,4 +7,5 @@ use (
 	./lib/logger
 	./lib/api
 	./lib/router
+	./lib/feat_flag
 )
