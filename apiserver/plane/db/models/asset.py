@@ -7,26 +7,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import FileExtensionValidator
 
-# Third party imports
-import magic
-
 # Module import
 from .base import BaseModel
-
-
-def validate_file_type(file):
-    # Read the first 2048 bytes to determine the file type
-    file_header = file.read(2048)
-    file_type = magic.from_buffer(file_header, mime=True)
-    file.seek(0)  # Reset file pointer
-
-    # List of allowed MIME types
-    allowed_types = ["image/jpeg", "image/png"]
-
-    if file_type not in allowed_types:
-        raise ValidationError(
-            f"Unsupported file type: {file_type}. Allowed types are JPEG and PNG."
-        )
 
 
 def get_upload_path(instance, filename):
@@ -51,7 +33,6 @@ class FileAsset(BaseModel):
         upload_to=get_upload_path,
         validators=[
             FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"]),
-            validate_file_type,
             file_size,
         ],
     )
