@@ -19,23 +19,30 @@ class UserSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
+            "email",
+            "username",
+            "token",
             "created_at",
             "updated_at",
             "is_superuser",
             "is_staff",
+            "is_managed",
             "last_active",
             "last_login_time",
             "last_logout_time",
             "last_login_ip",
             "last_logout_ip",
             "last_login_uagent",
+            "last_location",
+            "last_login_medium",
+            "created_location",
             "token_updated_at",
             "is_bot",
             "is_password_autoset",
             "is_email_verified",
             "is_active",
+            "token_updated_at",
         ]
-        extra_kwargs = {"password": {"write_only": True}}
 
         # If the user has already filled first name or last name then he is onboarded
         def get_is_onboarded(self, obj):
@@ -208,9 +215,15 @@ class ProfileSerializer(BaseSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
+        read_only_fields = [
+            "user",
+        ]
 
 
 class AccountSerializer(BaseSerializer):
     class Meta:
         model = Account
         fields = "__all__"
+        read_only_fields = [
+            "user",
+        ]
