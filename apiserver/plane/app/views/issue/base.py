@@ -61,7 +61,6 @@ from plane.utils.global_paginator import paginate
 
 
 class IssueListEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)

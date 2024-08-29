@@ -11,7 +11,7 @@ import { LogOut } from "lucide-react";
 // hooks
 import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
-import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
+import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // images
@@ -38,6 +38,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
+  const { fetchUserWorkspaceInfo, fetchUserProjectPermissions } = useUserPermissions();
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
@@ -48,6 +49,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECT_MEMBERS_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching workspace projects

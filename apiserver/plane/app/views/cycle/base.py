@@ -494,7 +494,6 @@ class CycleViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         start_date = request.data.get("start_date", False)
@@ -563,7 +562,6 @@ class CycleFavoriteViewSet(BaseViewSet):
 
 
 class TransferCycleIssueEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
@@ -974,7 +972,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
 
 class CycleUserPropertiesEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, cycle_id):
         cycle_properties = CycleUserProperties.objects.get(
@@ -1011,10 +1008,8 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 
 
 class CycleProgressEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
-
         aggregate_estimates = (
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
@@ -1144,7 +1139,6 @@ class CycleProgressEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-
 
 class CycleAnalyticsEndpoint(BaseAPIView):
 
