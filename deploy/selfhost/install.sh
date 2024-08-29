@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BRANCH=${BRANCH:-master}
+RELEASE_TAG="v0.22-dev"
 SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
@@ -166,11 +167,13 @@ function syncEnvFile(){
                 updateEnvFile "$key" "$value" "$DOCKER_ENV_PATH"
             fi
         done < "$DOCKER_ENV_PATH"
+        # Replace APP_RELEASE with the latest value
+        updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     fi
     echo "Environment variables synced successfully" >&2
 }
 
-function buildYourOwnImage(){
+function buildYourOwnImage() {
     echo "Building images locally..."
 
     export DOCKERHUB_USER="myplane"
@@ -232,8 +235,25 @@ function download() {
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
 
-    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
-    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
+    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://github.com/makeplane/plane/releases/download/$RELEASE_TAG/docker-compose.yaml?$(date +%s)
+    if [ $? -ne 0 ]; then
+        # 2nd attempt to download the file for backward compatibility
+        curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
+        if [ $? -ne 0 ]; then
+            echo "Failed to download the docker-compose.yaml file. Exiting..."
+            exit 1
+        fi
+    fi
+
+    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://github.com/makeplane/plane/releases/download/$RELEASE_TAG/variables.env?$(date +%s)
+    if [ $? -ne 0 ]; then
+        # 2nd attempt to download the file for backward compatibility
+        curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
+        if [ $? -ne 0 ]; then
+            echo "Failed to download the variables.env file. Exiting..."
+            exit 1
+        fi
+    fi
 
     if [ -f "$DOCKER_ENV_PATH" ];
     then
@@ -339,7 +359,7 @@ function upgrade() {
     stopServices
 
     echo
-    echo "***** DOWNLOADING STABLE VERSION ****"
+    echo "***** DOWNLOADING $APP_RELEASE VERSION ****"
     install
 
     echo "***** PLEASE VALIDATE AND START SERVICES ****"

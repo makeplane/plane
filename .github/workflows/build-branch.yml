@@ -339,3 +339,52 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  publish_assets:
+    if : ${{ github.event_name == 'release' }}
+    runs-on: ubuntu-latest
+    needs: [branch_build_push_web, branch_build_push_admin, branch_build_push_space, branch_build_push_apiserver, branch_build_push_proxy]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Update shell script branch
+        run: |
+          sed -i "s/^RELEASE_TAG=.*/RELEASE_TAG=${{ github.event.release.tag_name }}/" ./deploy/selfhost/install.sh
+          sed -i "s/^export APP_RELEASE=.*/export APP_RELEASE=${{ github.event.release.tag_name }}/g" ./deploy/selfhost/install.sh
+          sed -i "s/APP_RELEASE=stable/APP_RELEASE=${{ github.event.release.tag_name }}/g" ./deploy/selfhost/install.sh
+
+          sed -i "s/^APP_RELEASE=.*/APP_RELEASE=${{ github.event.release.tag_name }}/" ./deploy/selfhost/variables.env
+
+          echo "Release Upload URL :::: ${{ github.event.release.upload_url }}"
+          
+      - name: Upload docker-compose.yaml
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./deploy/selfhost/docker-compose.yml
+          asset_name: docker-compose.yaml
+          asset_content_type: application/octet-stream
+
+      - name: Upload variables.env
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./deploy/selfhost/variables.env
+          asset_name: variables.env
+          asset_content_type: application/octet-stream
+
+      - name: Upload setup.sh
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./deploy/selfhost/install.sh
+          asset_name: setup.sh
+          asset_content_type: application/octet-stream
