@@ -20,6 +20,11 @@ export type EditorReadOnlyRefApi = {
   clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;
+  documentInfo: {
+    characters: number;
+    paragraphs: number;
+    words: number;
+  };
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

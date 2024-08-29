@@ -1,4 +1,4 @@
-import { Selection } from "@tiptap/pm/state";
+import { EditorState, Selection } from "@tiptap/pm/state";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -58,4 +58,13 @@ export const isValidHttpUrl = (string: string): boolean => {
   }
 
   return url.protocol === "http:" || url.protocol === "https:";
+};
+
+export const getParagraphCount = (editorState: EditorState | undefined) => {
+  if (!editorState) return 0;
+  let paragraphCount = 0;
+  editorState.doc.descendants((node) => {
+    if (node.type.name === "paragraph" && node.content.size > 0) paragraphCount++;
+  });
+  return paragraphCount;
 };

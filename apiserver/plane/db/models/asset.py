@@ -1,11 +1,11 @@
 # Python imports
 from uuid import uuid4
 
+# Django import
 from django.conf import settings
 from django.core.exceptions import ValidationError
-
-# Django import
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 # Module import
 from .base import BaseModel
@@ -32,6 +32,7 @@ class FileAsset(BaseModel):
     asset = models.FileField(
         upload_to=get_upload_path,
         validators=[
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"]),
             file_size,
         ],
     )

@@ -10,8 +10,10 @@ import { TLogoProps } from "@plane/types";
 import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+import { PageEditInformationPopover } from "@/components/pages";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -29,7 +31,8 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { name, logo_props, updatePageLogo } = usePage(pageId?.toString() ?? "");
+  const page = usePage(pageId?.toString() ?? "");
+  const { name, logo_props, updatePageLogo } = page;
   // use platform
   const { isMobile } = usePlatformOS();
 
@@ -52,6 +55,8 @@ export const PageDetailsHeader = observer(() => {
         });
     }
   };
+
+  const pageTitle = getPageName(name);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -141,9 +146,9 @@ export const PageDetailsHeader = observer(() => {
                           }
                         />
                       </div>
-                      <Tooltip tooltipContent={name ?? "Page"} position="bottom" isMobile={isMobile}>
+                      <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
                         <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">
-                          {name ?? "Page"}
+                          {pageTitle}
                         </div>
                       </Tooltip>
                     </div>
@@ -154,6 +159,7 @@ export const PageDetailsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <PageEditInformationPopover page={page} />
       <PageDetailsHeaderExtraActions />
     </div>
   );

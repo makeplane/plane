@@ -46,7 +46,7 @@ const server = Server.configure({
   extensions: [
     new Redis({
       host: process.env.REDIS_HOST || "localhost",
-      port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+      port: Number(process.env.REDIS_PORT || 6379),
     }),
     new Logger(),
     new Database({
