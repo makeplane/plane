@@ -48,3 +48,19 @@ export type TPageFilters = {
 };
 
 export type TPageEmbedType = "mention" | "issue";
+
+export type TPageVersion = {
+  created_at: string;
+  created_by: string;
+  deleted_at: string | null;
+  description_binary?: string | null;
+  description_html?: string | null;
+  description_json?: object;
+  id: string;
+  last_saved_at: string;
+  owned_by: string;
+  page: string;
+  updated_at: string;
+  updated_by: string;
+  workspace: string;
+}

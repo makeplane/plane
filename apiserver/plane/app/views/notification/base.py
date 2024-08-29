@@ -244,7 +244,6 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
 
 class UnreadNotificationEndpoint(BaseAPIView):
-
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
         level="WORKSPACE",
@@ -286,7 +285,6 @@ class UnreadNotificationEndpoint(BaseAPIView):
 
 
 class MarkAllReadNotificationViewSet(BaseViewSet):
-
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
     )
@@ -373,9 +371,6 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
     serializer_class = UserNotificationPreferenceSerializer
 
     # request the object
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
     def get(self, request):
         user_notification_preference = UserNotificationPreference.objects.get(
             user=request.user
@@ -386,9 +381,6 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update the object
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
     def patch(self, request):
         user_notification_preference = UserNotificationPreference.objects.get(
             user=request.user

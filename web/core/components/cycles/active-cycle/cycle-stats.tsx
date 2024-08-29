@@ -1,8 +1,8 @@
 "use client";
 
 import { FC, Fragment, useCallback, useRef, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
@@ -16,7 +16,6 @@ import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
@@ -27,6 +26,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -34,10 +34,11 @@ export type ActiveCycleStatsProps = {
   cycle: ICycle | null;
   cycleId?: string | null;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  cycleIssueDetails: ActiveCycleIssueDetails;
 };
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
-  const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate } = props;
+  const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
@@ -57,21 +58,12 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     }
   };
   const {
-    issues: { getActiveCycleById, fetchActiveCycleIssues, fetchNextActiveCycleIssues },
+    issues: { fetchNextActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
   const {
     issue: { getIssueById },
     setPeekIssue,
   } = useIssueDetail();
-
-  useSWR(
-    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycleId ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycleId) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  const cycleIssueDetails = cycleId ? getActiveCycleById(cycleId) : { nextPageResults: false };
-
   const loadMoreIssues = useCallback(() => {
     if (!cycleId) return;
     fetchNextActiveCycleIssues(workspaceSlug, projectId, cycleId);
@@ -87,6 +79,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
       <Loader.Item height="30px" />
     </Loader>
   );
+
   return cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <Tab.Group
@@ -248,7 +241,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle ? (
+            {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
                 cycle.distribution?.assignees?.map((assignee, index) => {
                   if (assignee.assignee_id)
@@ -306,7 +299,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle ? (
+            {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
                 cycle.distribution.labels?.map((label, index) => (
                   <SingleProgressStats

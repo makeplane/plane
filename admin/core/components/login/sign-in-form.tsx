@@ -8,8 +8,16 @@ import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common";
 // helpers
+import {
+  authErrorHandler,
+  EAuthenticationErrorCodes,
+  EErrorAlertType,
+  TAuthErrorInfo,
+} from "@/helpers/authentication.helper";
+
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { AuthService } from "@/services/auth.service";
+import { AuthBanner } from "../authentication";
 // ui
 // icons
 
@@ -53,6 +61,7 @@ export const InstanceSignInForm: FC = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -91,6 +100,15 @@ export const InstanceSignInForm: FC = (props) => {
     [formData.email, formData.password, isSubmitting]
   );
 
+  useEffect(() => {
+    if (errorCode) {
+      const errorDetail = authErrorHandler(errorCode?.toString() as EAuthenticationErrorCodes);
+      if (errorDetail) {
+        setErrorInfo(errorDetail);
+      }
+    }
+  }, [errorCode]);
+
   return (
     <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
       <div className="relative flex flex-col space-y-6">
@@ -103,7 +121,11 @@ export const InstanceSignInForm: FC = (props) => {
           </p>
         </div>
 
-        {errorData.type && errorData?.message && <Banner type="error" message={errorData?.message} />}
+        {errorData.type && errorData?.message ? (
+          <Banner type="error" message={errorData?.message} />
+        ) : (
+          <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}</>
+        )}
 
         <form
           className="space-y-4"
