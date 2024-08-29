@@ -59,7 +59,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
             : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
         } ${isLabelGroup && "-top-0.5"}`}
       >
-        <CustomMenu ellipsis>
+        <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
           {customMenuItems.map(
             ({ isVisible, onClick, CustomIcon, text, key }) =>
               isVisible && (

@@ -1,7 +1,7 @@
 # Python imports
 import json
 
-# Django improts
+# Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from django.db.models import Q, Value, UUIDField
@@ -184,13 +184,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
-
         # Inbox view
-        if inbox is None and not project.inbox_view:
+        if inbox is None:
             return Response(
                 {
                     "error": "Inbox is not enabled for this project enable it through the project's api"

@@ -57,10 +57,10 @@ from plane.utils.paginator import (
 from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.global_paginator import paginate
 
 
 class IssueListEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
@@ -599,7 +599,6 @@ class IssueViewSet(BaseViewSet):
 
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
     def patch(self, request, slug, project_id):
         issue_property = IssueUserProperty.objects.get(
@@ -630,10 +629,8 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN])
     def delete(self, request, slug, project_id):
-
         issue_ids = request.data.get("issue_ids", [])
 
         if not len(issue_ids):
@@ -654,3 +651,141 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             {"message": f"{total_issues} issues were deleted"},
             status=status.HTTP_200_OK,
         )
+
+
+class IssuePaginatedViewSet(BaseViewSet):
+    def get_queryset(self):
+        workspace_slug = self.kwargs.get("slug")
+        project_id = self.kwargs.get("project_id")
+
+        return (
+            Issue.issue_objects.filter(
+                workspace__slug=workspace_slug, project_id=project_id
+            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        ).distinct()
+
+    def process_paginated_result(self, fields, results, timezone):
+        paginated_data = results.values(*fields)
+
+        # converting the datetime fields in paginated data
+        datetime_fields = ["created_at", "updated_at"]
+        paginated_data = user_timezone_converter(
+            paginated_data, datetime_fields, timezone
+        )
+
+        return paginated_data
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    def list(self, request, slug, project_id):
+        cursor = request.GET.get("cursor", None)
+        is_description_required = request.GET.get("description", False)
+        updated_at = request.GET.get("updated_at__gte", None)
+
+        # required fields
+        required_fields = [
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "is_draft",
+            "archived_at",
+            "deleted_at",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "link_count",
+            "attachment_count",
+            "sub_issues_count",
+        ]
+
+        if is_description_required:
+            required_fields.append("description_html")
+
+        # querying issues
+        base_queryset = Issue.issue_objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).order_by("updated_at")
+        queryset = self.get_queryset().order_by("updated_at")
+
+        # filtering issues by greater then updated_at given by the user
+        if updated_at:
+            base_queryset = base_queryset.filter(updated_at__gte=updated_at)
+            queryset = queryset.filter(updated_at__gte=updated_at)
+
+        queryset = queryset.annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True)
+                    & Q(assignees__member_project__is_active=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True)
+                    & Q(issue_module__module__archived_at__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+
+        paginated_data = paginate(
+            base_queryset=base_queryset,
+            queryset=queryset,
+            cursor=cursor,
+            on_result=lambda results: self.process_paginated_result(
+                required_fields, results, request.user.user_timezone
+            ),
+        )
+
+        return Response(paginated_data, status=status.HTTP_200_OK)

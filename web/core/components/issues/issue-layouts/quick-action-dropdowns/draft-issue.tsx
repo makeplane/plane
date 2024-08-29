@@ -115,6 +115,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         placement={placements}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
+        useCaptureForOutsideClick
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {

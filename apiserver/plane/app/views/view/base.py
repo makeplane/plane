@@ -149,7 +149,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         )
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
+        allowed_roles=[],
         level="WORKSPACE",
         creator=True,
         model=IssueView,
@@ -159,19 +159,6 @@ class WorkspaceViewViewSet(BaseViewSet):
             pk=pk,
             workspace__slug=slug,
         )
-        if not (
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                is_active=True,
-            ).exists()
-            and workspace_view.owned_by_id != request.user.id
-        ):
-            return Response(
-                {"error": "You do not have permission to delete this view"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         workspace_member = WorkspaceMember.objects.filter(
             workspace__slug=slug,
