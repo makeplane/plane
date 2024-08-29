@@ -16,11 +16,18 @@ from .base import BaseSerializer
 class UserSerializer(BaseSerializer):
     class Meta:
         model = User
-        fields = "__all__"
+        # Exclude password field from the serializer
+        fields = [
+            field.name
+            for field in User._meta.fields
+            if field.name != "password"
+        ]
+        # Make all system fields and email read only
         read_only_fields = [
             "id",
-            "email",
             "username",
+            "mobile_number",
+            "email",
             "token",
             "created_at",
             "updated_at",
@@ -36,7 +43,6 @@ class UserSerializer(BaseSerializer):
             "last_location",
             "last_login_medium",
             "created_location",
-            "token_updated_at",
             "is_bot",
             "is_password_autoset",
             "is_email_verified",
