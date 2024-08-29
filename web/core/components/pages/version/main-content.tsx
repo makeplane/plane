@@ -71,7 +71,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
   const VersionEditor = editorComponent;
 
   return (
-    <div className="flex-grow flex flex-col">
+    <div className="flex-grow flex flex-col overflow-hidden">
       {versionDetailsError ? (
         <div className="flex-grow grid place-items-center">
           <div className="flex flex-col items-center gap-4 text-center">
