@@ -159,8 +159,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     }
   };
 
-  const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+  const handleCopyIssueLink = (path: string) =>
+    copyUrlToClipboard(path).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
@@ -168,14 +168,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       })
     );
 
-  const handleCopyIntakeIssueLink = () =>
-    copyUrlToClipboard(intakeIssueLink).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link copied",
-        message: "Issue link copied to clipboard",
-      })
-    );
+  // const handleCopyIntakeIssueLink = () =>
+  //   copyUrlToClipboard(intakeIssueLink).then(() =>
+  //     setToast({
+  //       type: TOAST_TYPE.SUCCESS,
+  //       title: "Link copied",
+  //       message: "Issue link copied to clipboard",
+  //     })
+  //   );
 
   const currentIssueIndex = filteredInboxIssueIds.findIndex((issueId) => issueId === currentInboxIssueId) ?? 0;
 
@@ -327,7 +327,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   prependIcon={<Link className="h-2.5 w-2.5" />}
                   size="sm"
-                  onClick={handleCopyIssueLink}
+                  onClick={() => handleCopyIssueLink(issueLink)}
                 >
                   Copy issue link
                 </Button>
@@ -365,6 +365,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
+                    <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(intakeIssueLink)}>
+                      <div className="flex items-center gap-2">
+                        <Copy size={14} strokeWidth={2} />
+                        Copy issue link
+                      </div>
+                    </CustomMenu.MenuItem>
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
@@ -373,12 +379,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
-                    <CustomMenu.MenuItem onClick={handleCopyIntakeIssueLink}>
-                      <div className="flex items-center gap-2">
-                        <Copy size={14} strokeWidth={2} />
-                        Copy
-                      </div>
-                    </CustomMenu.MenuItem>
+                    
                   </CustomMenu>
                 )}
               </>
@@ -391,7 +392,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         <InboxIssueActionsMobileHeader
           inboxIssue={inboxIssue}
           isSubmitting={isSubmitting}
-          handleCopyIssueLink={handleCopyIssueLink}
+          handleCopyIssueLink={() => handleCopyIssueLink(issueLink)}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
           handleIssueSnoozeAction={handleIssueSnoozeAction}
