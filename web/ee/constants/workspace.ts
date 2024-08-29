@@ -55,7 +55,7 @@ export const WORKSPACE_SETTINGS = {
 export const WORKSPACE_SETTINGS_LINKS = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
-  WORKSPACE_SETTINGS["activation"],
+  // WORKSPACE_SETTINGS["activation"], // FIXME: Temporary hide this tab
   WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
   WORKSPACE_SETTINGS["integrations"],
