@@ -44,7 +44,7 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
 
     element.addEventListener("mouseenter", onHover);
 
-    () => {
+    return () => {
       element?.removeEventListener("mouseenter", onHover);
     };
   }, [dropDownButtonRef, shouldRender]);

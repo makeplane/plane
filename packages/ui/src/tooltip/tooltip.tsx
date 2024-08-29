@@ -58,7 +58,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({
 
     element.addEventListener("mouseenter", onHover);
 
-    () => {
+    return () => {
       element?.removeEventListener("mouseenter", onHover);
     };
   }, [toolTipRef, shouldRender]);
