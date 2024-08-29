@@ -177,7 +177,7 @@ export const ProjectsBaseHeader = observer(() => {
             />
           </FiltersDropdown>
         </div>
-        {isAuthorizedUser && (
+        {isAuthorizedUser && !isArchived && (
           <Button
             size="sm"
             onClick={() => {

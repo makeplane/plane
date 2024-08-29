@@ -69,11 +69,13 @@ const Root = observer(() => {
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
-          currentWorkspaceAppliedDisplayFilters?.length !== 0) && (
+          (currentWorkspaceAppliedDisplayFilters?.length !== 0 &&
+            !(currentWorkspaceAppliedDisplayFilters?.length==1 && 
+              !(currentWorkspaceAppliedDisplayFilters?.indexOf("archived_projects")===-1)))) && (
           <div className="border-b border-custom-border-200 px-5 py-3">
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
-              appliedDisplayFilters={currentWorkspaceAppliedDisplayFilters ?? []}
+              appliedDisplayFilters={currentWorkspaceAppliedDisplayFilters?.filter(filter => filter !== "archived_projects") ?? []}
               handleClearAllFilters={handleClearAllFilters}
               handleRemoveFilter={handleRemoveFilter}
               handleRemoveDisplayFilter={handleRemoveDisplayFilter}
