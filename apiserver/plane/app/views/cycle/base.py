@@ -378,6 +378,7 @@ class CycleViewSet(BaseViewSet):
         data = (
             self.get_queryset()
             .filter(pk=pk)
+            .filter(archived_at__isnull=True)
             .annotate(
                 sub_issues=Issue.issue_objects.filter(
                     project_id=self.kwargs.get("project_id"),
@@ -416,6 +417,13 @@ class CycleViewSet(BaseViewSet):
             )
             .first()
         )
+
+        if data is None:
+            return Response(
+                {"error": "Cycle not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         queryset = queryset.first()
 
         recent_visited_task.delay(

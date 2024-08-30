@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 # Module imports
 from plane.db.models import Page, PageLog
 from celery import shared_task
+from plane.utils.exception_logger import log_exception
 
 
 def extract_components(value, tag):
@@ -34,42 +35,48 @@ def extract_components(value, tag):
 
 @shared_task
 def page_transaction(new_value, old_value, page_id):
-    page = Page.objects.get(pk=page_id)
-    new_page_mention = PageLog.objects.filter(page_id=page_id).exists()
+    try:
+        page = Page.objects.get(pk=page_id)
+        new_page_mention = PageLog.objects.filter(page_id=page_id).exists()
 
-    old_value = json.loads(old_value) if old_value else {}
+        old_value = json.loads(old_value) if old_value else {}
 
-    new_transactions = []
-    deleted_transaction_ids = set()
+        new_transactions = []
+        deleted_transaction_ids = set()
 
-    # TODO - Add "issue-embed-component", "img", "todo" components
-    components = ["mention-component"]
-    for component in components:
-        old_mentions = extract_components(old_value, component)
-        new_mentions = extract_components(new_value, component)
+        # TODO - Add "issue-embed-component", "img", "todo" components
+        components = ["mention-component"]
+        for component in components:
+            old_mentions = extract_components(old_value, component)
+            new_mentions = extract_components(new_value, component)
 
-        new_mentions_ids = {mention["id"] for mention in new_mentions}
-        old_mention_ids = {mention["id"] for mention in old_mentions}
-        deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)
+            new_mentions_ids = {mention["id"] for mention in new_mentions}
+            old_mention_ids = {mention["id"] for mention in old_mentions}
+            deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)
 
-        new_transactions.extend(
-            PageLog(
-                transaction=mention["id"],
-                page_id=page_id,
-                entity_identifier=mention["entity_identifier"],
-                entity_name=mention["entity_name"],
-                workspace_id=page.workspace_id,
-                created_at=timezone.now(),
-                updated_at=timezone.now(),
+            new_transactions.extend(
+                PageLog(
+                    transaction=mention["id"],
+                    page_id=page_id,
+                    entity_identifier=mention["entity_identifier"],
+                    entity_name=mention["entity_name"],
+                    workspace_id=page.workspace_id,
+                    created_at=timezone.now(),
+                    updated_at=timezone.now(),
+                )
+                for mention in new_mentions
+                if mention["id"] not in old_mention_ids or not new_page_mention
             )
-            for mention in new_mentions
-            if mention["id"] not in old_mention_ids or not new_page_mention
+
+        # Create new PageLog objects for new transactions
+        PageLog.objects.bulk_create(
+            new_transactions, batch_size=10, ignore_conflicts=True
         )
 
-    # Create new PageLog objects for new transactions
-    PageLog.objects.bulk_create(
-        new_transactions, batch_size=10, ignore_conflicts=True
-    )
-
-    # Delete the removed transactions
-    PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()
+        # Delete the removed transactions
+        PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()
+    except Page.DoesNotExist:
+        return
+    except Exception as e:
+        log_exception(e)
+        return
