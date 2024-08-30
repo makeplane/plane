@@ -669,8 +669,8 @@ class DeletedIssuesListViewSet(BaseAPIView):
             Issue.all_objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                deleted_at__isnull=False,
             )
+            .filter(Q(archived_at__isnull=False) | Q(deleted_at__isnull=False))
             .filter(**filters)
             .values_list("id", flat=True)
         )
