@@ -26,7 +26,7 @@ export interface IUserPermissionStore {
   // observables
   workspaceUserInfo: Record<string, IWorkspaceMemberMe>; // workspaceSlug -> IWorkspaceMemberMe
   projectUserInfo: Record<string, Record<string, IProjectMember>>; // workspaceSlug -> projectId -> IProjectMember
-  projectPermissions: Record<string, IUserProjectsRole>; // workspaceSlug -> IUserProjectsRole
+  workspaceProjectsPermissions: Record<string, IUserProjectsRole>; // workspaceSlug -> IUserProjectsRole
   // computed
   // computed helpers
   workspaceInfoBySlug: (workspaceSlug: string) => IWorkspaceMemberMe | undefined;
@@ -55,7 +55,7 @@ export class UserPermissionStore implements IUserPermissionStore {
   // constants
   workspaceUserInfo: Record<string, IWorkspaceMemberMe> = {};
   projectUserInfo: Record<string, Record<string, IProjectMember>> = {};
-  projectPermissions: Record<string, IUserProjectsRole> = {};
+  workspaceProjectsPermissions: Record<string, IUserProjectsRole> = {};
   // observables
 
   constructor(private store: CoreRootStore) {
@@ -63,7 +63,7 @@ export class UserPermissionStore implements IUserPermissionStore {
       // observables
       workspaceUserInfo: observable,
       projectUserInfo: observable,
-      projectPermissions: observable,
+      workspaceProjectsPermissions: observable,
       // computed
       // actions
       fetchUserWorkspaceInfo: action,
@@ -97,7 +97,7 @@ export class UserPermissionStore implements IUserPermissionStore {
   projectPermissionsByWorkspaceSlugAndProjectId = computedFn(
     (workspaceSlug: string, projectId: string): IUserProjectsRole | undefined => {
       if (!workspaceSlug || !projectId) return undefined;
-      return this.projectPermissions?.[workspaceSlug]?.[projectId] || undefined;
+      return this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId] || undefined;
     }
   );
 
@@ -183,7 +183,7 @@ export class UserPermissionStore implements IUserPermissionStore {
       runInAction(() => {
         unset(this.workspaceUserInfo, workspaceSlug);
         unset(this.projectUserInfo, workspaceSlug);
-        unset(this.projectPermissions, workspaceSlug);
+        unset(this.workspaceProjectsPermissions, workspaceSlug);
       });
     } catch (error) {
       console.error("Error user leaving the workspace", error);
@@ -203,7 +203,7 @@ export class UserPermissionStore implements IUserPermissionStore {
       if (response) {
         runInAction(() => {
           set(this.projectUserInfo, [workspaceSlug, projectId], response);
-          set(this.projectPermissions, [workspaceSlug, projectId], response.role);
+          set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], response.role);
         });
       }
       return response;
@@ -222,7 +222,7 @@ export class UserPermissionStore implements IUserPermissionStore {
     try {
       const response = await workspaceService.getWorkspaceUserProjectsRole(workspaceSlug);
       runInAction(() => {
-        set(this.projectPermissions, [workspaceSlug], response);
+        set(this.workspaceProjectsPermissions, [workspaceSlug], response);
       });
       return response;
     } catch (error) {
@@ -242,7 +242,7 @@ export class UserPermissionStore implements IUserPermissionStore {
       const response = await userService.joinProject(workspaceSlug, [projectId]);
       if (response) {
         runInAction(() => {
-          set(this.projectPermissions, [workspaceSlug, projectId], response);
+          set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], response);
         });
       }
       return response;
@@ -262,7 +262,8 @@ export class UserPermissionStore implements IUserPermissionStore {
     try {
       await userService.leaveProject(workspaceSlug, projectId);
       runInAction(() => {
-        unset(this.projectPermissions, [workspaceSlug, projectId]);
+        unset(this.workspaceProjectsPermissions, [workspaceSlug, projectId]);
+        unset(this.projectUserInfo, [workspaceSlug, projectId]);
       });
     } catch (error) {
       console.error("Error user leaving the project", error);

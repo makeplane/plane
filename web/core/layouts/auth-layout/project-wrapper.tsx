@@ -20,10 +20,10 @@ import {
   useCommandPalette,
   useUserPermissions,
 } from "@/hooks/store";
-// images
-import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// images
+import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
@@ -59,7 +59,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
   // fetching user project member information
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_INFORMATION_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? `PROJECT_ME_INFORMATION_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project labels
