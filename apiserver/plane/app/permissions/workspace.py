@@ -6,8 +6,8 @@ from plane.db.models import WorkspaceMember
 
 
 # Permission Mappings
-Owner = 20
-Admin = 15
+Admin = 20
+Member = 15
 Guest = 5
 
 
@@ -30,7 +30,7 @@ class WorkSpaceBasePermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 member=request.user,
                 workspace__slug=view.workspace_slug,
-                role__in=[Owner, Admin],
+                role__in=[Admin, Member],
                 is_active=True,
             ).exists()
 
@@ -39,7 +39,7 @@ class WorkSpaceBasePermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 member=request.user,
                 workspace__slug=view.workspace_slug,
-                role=Owner,
+                role=Admin,
                 is_active=True,
             ).exists()
 
@@ -52,7 +52,7 @@ class WorkspaceOwnerPermission(BasePermission):
         return WorkspaceMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role=Owner,
+            role=Admin,
         ).exists()
 
 
@@ -64,7 +64,7 @@ class WorkSpaceAdminPermission(BasePermission):
         return WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=view.workspace_slug,
-            role__in=[Owner, Admin],
+            role__in=[Admin, Member],
             is_active=True,
         ).exists()
 
@@ -85,7 +85,7 @@ class WorkspaceEntityPermission(BasePermission):
         return WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=view.workspace_slug,
-            role__in=[Owner, Admin],
+            role__in=[Admin, Member],
             is_active=True,
         ).exists()
 
