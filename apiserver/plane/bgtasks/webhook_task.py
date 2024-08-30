@@ -152,7 +152,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
             retry_count=str(self.request.retries),
         )
 
-    except webhook.DoesNotExist:
+    except Webhook.DoesNotExist:
         return
     except requests.RequestException as e:
         # Log the failed webhook request
