@@ -75,10 +75,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="use-credentials"
         />
       </head>
-      <body className={`h-screen w-screen`}>
+      <body className={`h-screen w-full`}>
         <AppProvider>
           <DesktopAppProviderRoot />
-          <div className={`app-container h-full w-full flex flex-col overflow-hidden`}>
+          <div className={`app-container h-full w-full`}>
             <div id="context-menu-portal" />
             <div className="flex-shrink-0">
               {/* free trial banner */}

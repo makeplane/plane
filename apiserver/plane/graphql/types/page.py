@@ -12,6 +12,7 @@ from strawberry.scalars import JSON
 
 # Module imports
 from plane.db.models import Page
+from plane.graphql.types.project import ProjectLiteType
 
 
 @strawberry_django.type(Page)
@@ -71,5 +72,7 @@ class PageType:
 class PageLiteType:
     id: strawberry.ID
     name: str
-    project_ids: list[strawberry.ID]
-    # owned_by: strawberry.ID
+
+    @strawberry.field
+    def projects(self) -> list[ProjectLiteType]:
+        return self.projects.all()

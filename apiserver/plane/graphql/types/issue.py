@@ -242,10 +242,6 @@ class IssueLiteType:
     def workspace(self) -> int:
         return self.workspace_id
 
-    # @strawberry.field
-    # def project(self) -> int:
-    #     return self.project_id
-
 
 @strawberry_django.type(IssueType)
 class IssueTypesType:
@@ -257,7 +253,6 @@ class IssueTypesType:
     is_default: bool
     level: int
     is_active: bool
-
 
     @strawberry.field
     def workspace(self) -> int:
