@@ -11,9 +11,10 @@ import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleC
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
-import { useProject, useProjectState, useUser } from "@/hooks/store";
+import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -24,11 +25,9 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
+  const { allowPermissions } = useUserPermissions();
 
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
 
@@ -57,7 +56,12 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     default_state: defaultState,
   };
 
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    currentProjectDetails?.workspace_detail?.slug,
+    currentProjectDetails?.id
+  );
 
   return (
     <>

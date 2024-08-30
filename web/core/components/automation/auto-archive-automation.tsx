@@ -10,9 +10,10 @@ import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -25,12 +26,16 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails } = useProject();
 
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    currentProjectDetails?.workspace_detail.slug,
+    currentProjectDetails?.id
+  );
 
   return (
     <>

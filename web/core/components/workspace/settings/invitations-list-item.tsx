@@ -11,8 +11,9 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   invitationId: string;
@@ -28,6 +29,8 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const {
     membership: { currentWorkspaceMemberInfo, currentWorkspaceRole },
   } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
@@ -58,13 +61,16 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   if (!invitationDetails) return null;
 
   // is the current logged in user admin
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+
   // role change access-
   // 1. user cannot change their own role
   // 2. only admin or member can change role
   // 3. user cannot change role of higher role
-  const hasRoleChangeAccess =
-    currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
+  const hasRoleChangeAccess = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   if (!currentWorkspaceMemberInfo) return null;
 

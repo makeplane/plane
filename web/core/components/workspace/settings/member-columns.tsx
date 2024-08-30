@@ -7,7 +7,8 @@ import { IUser, IWorkspaceMember } from "@plane/types";
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
-import { useMember, useUser } from "@/hooks/store";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -24,7 +25,6 @@ type NameProps = {
 
 type AccountTypeProps = {
   rowData: RowData;
-  currentWorkspaceRole: EUserWorkspaceRoles | undefined;
   workspaceSlug: string;
 };
 
@@ -81,13 +81,15 @@ export const NameColumn: React.FC<NameProps> = (props) => {
 };
 
 export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
-  const { rowData, currentWorkspaceRole, workspaceSlug } = props;
+  const { rowData, workspaceSlug } = props;
   // form info
   const {
     control,
     formState: { errors },
   } = useForm();
   // store hooks
+  const { allowPermissions } = useUserPermissions();
+
   const {
     workspace: { updateMember },
   } = useMember();
@@ -95,7 +97,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
 
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isAdminRole = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdminRole = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const isRoleNonEditable = isCurrentUser || !isAdminRole;
 
   return (

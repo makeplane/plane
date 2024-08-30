@@ -5,7 +5,6 @@ import { action, makeObservable, observable, runInAction, computed } from "mobx"
 import { IUser } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -44,18 +43,6 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
-
-  // workspace level
-  canPerformWorkspaceAdminActions: boolean; // TODO: to be removed
-  canPerformWorkspaceMemberActions: boolean; // TODO: to be removed
-  canPerformWorkspaceViewerActions: boolean; // TODO: to be removed
-  canPerformWorkspaceGuestActions: boolean; // TODO: to be removed
-
-  // project level
-  canPerformProjectAdminActions: boolean; // TODO: to be removed
-  canPerformProjectMemberActions: boolean; // TODO: to be removed
-  canPerformProjectViewerActions: boolean; // TODO: to be removed
-  canPerformProjectGuestActions: boolean; // TODO: to be removed
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
@@ -105,16 +92,6 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action,
       // computed
-      canPerformWorkspaceAdminActions: computed,
-      canPerformWorkspaceMemberActions: computed,
-      canPerformWorkspaceViewerActions: computed,
-      canPerformWorkspaceGuestActions: computed,
-
-      canPerformProjectAdminActions: computed,
-      canPerformProjectMemberActions: computed,
-      canPerformProjectViewerActions: computed,
-      canPerformProjectGuestActions: computed,
-
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
     });
@@ -291,71 +268,5 @@ export class UserStore implements IUserStore {
   get canPerformAnyCreateAction() {
     const filteredProjects = this.fetchProjectsWithCreatePermissions();
     return filteredProjects ? Object.keys(filteredProjects).length > 0 : false;
-  }
-
-  /**
-   * @description returns true if user has workspace admin actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceAdminActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  }
-
-  /**
-   * @description returns true if user has workspace member actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceMemberActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-  }
-
-  /**
-   * @description returns true if user has workspace viewer actions permissions
-   * @returns {boolean}
-   */
-
-  get canPerformWorkspaceViewerActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= 10;
-  }
-
-  /**
-   * @description returns true if user has workspace guest actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceGuestActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.GUEST;
-  }
-
-  /**
-   * @description returns true if user has project admin actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectAdminActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole === EUserProjectRoles.ADMIN;
-  }
-
-  /**
-   * @description returns true if user has project member actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectMemberActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.MEMBER;
-  }
-
-  /**
-   * @description returns true if user has project viewer actions permissions
-   * @returns {boolean}
-   */
-
-  get canPerformProjectViewerActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= 10;
-  }
-
-  /**
-   * @description returns true if user has project guest actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectGuestActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.GUEST;
   }
 }

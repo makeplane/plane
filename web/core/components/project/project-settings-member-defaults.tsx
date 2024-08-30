@@ -12,9 +12,10 @@ import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { MemberSelect } from "@/components/project";
 // constants
 import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 // types
 
 const defaultValues: Partial<IProject> = {
@@ -26,12 +27,16 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    currentProjectDetails?.workspace_detail?.slug,
+    currentProjectDetails?.id
+  );
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members

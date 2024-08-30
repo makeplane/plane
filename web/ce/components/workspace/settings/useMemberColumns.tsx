@@ -10,10 +10,7 @@ export const useMemberColumns = () => {
 
   const { workspaceSlug } = useParams();
 
-  const {
-    membership: { currentWorkspaceRole },
-    data: currentUser,
-  } = useUser();
+  const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
 
   const getFormattedDate = (dateStr: string) => {
@@ -50,13 +47,7 @@ export const useMemberColumns = () => {
     {
       key: "Account Type",
       content: "Account Type",
-      tdRender: (rowData: RowData) => (
-        <AccountTypeColumn
-          rowData={rowData}
-          currentWorkspaceRole={currentWorkspaceRole}
-          workspaceSlug={workspaceSlug as string}
-        />
-      ),
+      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
     },
 
     {

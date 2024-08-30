@@ -14,8 +14,8 @@ import {
 // plane web services
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // services
-import userService from "@/services/user.service";
 import projectMemberService from "@/services/project/project-member.service";
+import userService from "@/services/user.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 
