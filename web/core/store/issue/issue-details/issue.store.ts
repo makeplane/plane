@@ -93,8 +93,6 @@ export class IssueStore implements IIssueStore {
     if (!issue) throw new Error("Issue not found");
 
     this.addIssueToStore(issue);
-    // adds issue to local store
-    updateIssue(issue);
 
     // store handlers from issue detail
     // parent

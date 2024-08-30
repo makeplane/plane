@@ -13,7 +13,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
-import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { addIssue, addIssuesBulk, deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { APIService } from "@/services/api.service";
 
@@ -104,7 +104,12 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, {
       params: queries,
     })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (response.data) {
+          addIssue(response?.data);
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -114,7 +119,12 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/list/`, {
       params: { issues: issueIds.join(",") },
     })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (response?.data && Array.isArray(response?.data)) {
+          addIssuesBulk(response.data);
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
