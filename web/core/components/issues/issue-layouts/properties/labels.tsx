@@ -10,7 +10,7 @@ import { Combobox } from "@headlessui/react";
 // types
 import { IIssueLabel } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { ComboDropDown, Tooltip } from "@plane/ui";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
@@ -32,6 +32,7 @@ export interface IIssuePropertyLabels {
   noLabelBorder?: boolean;
   placeholderText?: string;
   onClose?: () => void;
+  renderByDefault?: boolean;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -50,6 +51,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     maxRender = 2,
     noLabelBorder = false,
     placeholderText,
+    renderByDefault = true,
   } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -217,8 +219,26 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     </div>
   );
 
+  const comboButton = (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
+        disabled
+          ? "cursor-not-allowed text-custom-text-200"
+          : value.length <= maxRender
+            ? "cursor-pointer"
+            : "cursor-pointer hover:bg-custom-background-80"
+      }  ${buttonClassName}`}
+      onClick={handleOnClick}
+    >
+      {label}
+      {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+    </button>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       className={`w-auto max-w-full flex-shrink-0 text-left ${className}`}
@@ -226,26 +246,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       onChange={onChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
       multiple
     >
-      <Combobox.Button as={Fragment}>
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
-            disabled
-              ? "cursor-not-allowed text-custom-text-200"
-              : value.length <= maxRender
-                ? "cursor-pointer"
-                : "cursor-pointer hover:bg-custom-background-80"
-          }  ${buttonClassName}`}
-          onClick={handleOnClick}
-        >
-          {label}
-          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
-        </button>
-      </Combobox.Button>
-
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
@@ -307,6 +311,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });
