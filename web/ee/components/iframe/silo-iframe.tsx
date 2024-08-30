@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
+import { useUser } from "@/hooks/store";
 
 interface CustomIframeProps {
   srcBase: string;
@@ -18,6 +19,9 @@ const SiloIframe: React.FC<CustomIframeProps> = ({ srcBase }) => {
   const ref = useRef<HTMLIFrameElement>(null);
   const { resolvedTheme } = useTheme();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const {
+    userProfile: { data: userProfile },
+  } = useUser();
 
   const { data: serviceApiToken } = useSWR(
     workspaceSlug ? `SERVICE_API_TOKEN_${workspaceSlug}` : null,
@@ -58,7 +62,7 @@ const SiloIframe: React.FC<CustomIframeProps> = ({ srcBase }) => {
     <div className="relative h-full w-full">
       <iframe
         ref={ref}
-        src={`${srcBase}&token=${serviceApiToken}`}
+        src={`${srcBase}&token=${serviceApiToken}&user=${userProfile.id}`}
         className={cn("w-full h-full opacity-0 absolute top-0 left-0", {
           "opacity-100": isLoaded,
         })}
