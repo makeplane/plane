@@ -17,9 +17,10 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "@/hooks/store";
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {
@@ -37,10 +38,8 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const { workspaceLabels } = useLabel();
   const { globalViewMap, updateGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  const {
-    data,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -120,7 +119,10 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   // add a placeholder object instead of appliedFilters if it is undefined
   const areFiltersEqual = getAreFiltersEqual(appliedFilters ?? {}, issueFilters, viewDetails);
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 

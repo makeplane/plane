@@ -11,17 +11,18 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
 import { PageHead } from "@/components/core";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const AutomationSettingsPage = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    canPerformProjectAdminActions,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
+
+  // derived values
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const handleChange = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
@@ -38,7 +39,7 @@ const AutomationSettingsPage = observer(() => {
   // derived values
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
 
-  if (currentProjectRole && !canPerformProjectAdminActions) {
+  if (workspaceUserInfo && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

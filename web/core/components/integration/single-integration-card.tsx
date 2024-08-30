@@ -12,9 +12,10 @@ import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useUser, useInstance } from "@/hooks/store";
+import { useInstance, useUserPermissions } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 // icons
 import GithubLogo from "@/public/services/github.png";
@@ -48,11 +49,9 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const { workspaceSlug } = useParams();
   // store hooks
   const { config } = useInstance();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
-  const isUserAdmin = currentWorkspaceRole === 20;
+  const isUserAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const { isMobile } = usePlatformOS();
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,

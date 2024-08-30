@@ -12,14 +12,13 @@ import { Breadcrumbs, Button } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useMember, useProjectFilter, useUserPermissions } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectsBaseHeader = observer(() => {
   // router
@@ -31,9 +30,8 @@ export const ProjectsBaseHeader = observer(() => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const pathname = usePathname();
 
   const {
@@ -52,7 +50,10 @@ export const ProjectsBaseHeader = observer(() => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
   // auth
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
   const isArchived = pathname.includes("/archives");
 
   const handleFilters = useCallback(

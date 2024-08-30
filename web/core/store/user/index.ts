@@ -46,16 +46,16 @@ export interface IUserStore {
   // computed
 
   // workspace level
-  canPerformWorkspaceAdminActions: boolean;
-  canPerformWorkspaceMemberActions: boolean;
-  canPerformWorkspaceViewerActions: boolean;
-  canPerformWorkspaceGuestActions: boolean;
+  canPerformWorkspaceAdminActions: boolean; // TODO: to be removed
+  canPerformWorkspaceMemberActions: boolean; // TODO: to be removed
+  canPerformWorkspaceViewerActions: boolean; // TODO: to be removed
+  canPerformWorkspaceGuestActions: boolean; // TODO: to be removed
 
   // project level
-  canPerformProjectAdminActions: boolean;
-  canPerformProjectMemberActions: boolean;
-  canPerformProjectViewerActions: boolean;
-  canPerformProjectGuestActions: boolean;
+  canPerformProjectAdminActions: boolean; // TODO: to be removed
+  canPerformProjectMemberActions: boolean; // TODO: to be removed
+  canPerformProjectViewerActions: boolean; // TODO: to be removed
+  canPerformProjectGuestActions: boolean; // TODO: to be removed
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }

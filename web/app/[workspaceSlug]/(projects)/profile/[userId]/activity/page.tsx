@@ -11,7 +11,8 @@ import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 const PER_PAGE = 100;
 
@@ -21,13 +22,7 @@ const ProfileActivityPage = observer(() => {
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
   // router
-
-  const { userId } = useParams();
-  // store hooks
-  const { data: currentUser } = useUser();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -47,8 +42,10 @@ const ProfileActivityPage = observer(() => {
       />
     );
 
-  const canDownloadActivity =
-    currentUser?.id === userId && !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const canDownloadActivity = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
     <>

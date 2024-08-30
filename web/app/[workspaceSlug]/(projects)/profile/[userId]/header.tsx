@@ -12,9 +12,9 @@ import { BreadcrumbLink } from "@/components/common";
 // components
 import { ProfileIssuesFilter } from "@/components/profile";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { cn } from "@/helpers/common.helper";
-import { useAppTheme, useUser } from "@/hooks/store";
+import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -28,14 +28,15 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { workspaceSlug, userId } = useParams();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
-  const {
-    membership: { currentWorkspaceRole },
-    data: currentUser,
-  } = useUser();
+  const { data: currentUser } = useUser();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   // derived values
-  const isAuthorized = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.VIEWER;
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
-  if (!currentWorkspaceRole) return null;
+  if (!workspaceUserInfo) return null;
 
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 

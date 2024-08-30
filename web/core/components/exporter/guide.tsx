@@ -17,10 +17,11 @@ import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
-import { EUserWorkspaceRoles, EXPORTERS_LIST } from "@/constants/workspace";
+import { EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -37,11 +38,9 @@ const IntegrationGuide = observer(() => {
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");
   // store hooks
-  const {
-    data: currentUser,
-    canPerformAnyCreateAction,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data: currentUser, canPerformAnyCreateAction } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { workspaceProjectIds } = useProject();
 
   const { data: exporterServices } = useSWR(
@@ -61,7 +60,7 @@ const IntegrationGuide = observer(() => {
   };
 
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   useEffect(() => {
     const interval = setInterval(() => {

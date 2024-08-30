@@ -7,20 +7,24 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectStateRoot } from "@/components/project-states";
 // hook
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const StatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store
   const { currentProjectDetails } = useProject();
-  const {
-    canPerformProjectMemberActions,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - States` : undefined;
+  // derived values
+  const canPerformProjectMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
-  if (currentProjectRole && !canPerformProjectMemberActions) {
+  if (workspaceUserInfo && !canPerformProjectMemberActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 
