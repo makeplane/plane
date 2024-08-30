@@ -50,6 +50,17 @@ export class Storage {
     this.workspaceInitPromise = undefined;
   };
 
+  clearStorage = async () => {
+    try {
+      const storageManager = window.navigator.storage;
+      const fileSystemDirectoryHandle = await storageManager.getDirectory();
+      //@ts-ignore
+      await fileSystemDirectoryHandle.remove({ recursive: true });
+    } catch (e) {
+      console.error("Error clearing sqlite sync storage", e);
+    }
+  };
+
   initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
