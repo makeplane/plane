@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -8,6 +8,8 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
+  TAIMenuProps,
+  TDisplayConfig,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
@@ -19,7 +21,7 @@ import { cn } from "@/helpers/common.helper";
 import { useMember, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
-import { IssueEmbedCard } from "@/plane-web/components/pages";
+import { EditorAIMenu, IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
@@ -84,9 +86,19 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   // editor flaggings
   const { documentEditor } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
   const { fetchIssues } = useWorkspaceIssueEmbed(workspaceSlug?.toString() ?? "");
+
+  const displayConfig: TDisplayConfig = {
+    fontSize,
+    fontStyle,
+  };
+
+  const getAIMenu = useCallback(
+    ({ isOpen, onClose }: TAIMenuProps) => <EditorAIMenu editorRef={editorRef} isOpen={isOpen} onClose={onClose} />,
+    [editorRef]
+  );
 
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
@@ -145,6 +157,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               onChange={handleDescriptionChange}
               mentionHandler={{
@@ -183,6 +196,9 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                 },
               }}
               disabledExtensions={documentEditor}
+              aiHandler={{
+                menu: getAIMenu,
+              }}
             />
           ) : (
             <DocumentReadOnlyEditorWithRef
@@ -191,6 +207,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               initialValue={pageDescription ?? "<p></p>"}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
+              displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
                 highlights: mentionHighlights,
