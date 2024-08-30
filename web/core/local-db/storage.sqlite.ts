@@ -1,7 +1,11 @@
 import set from "lodash/set";
+// plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
+import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
+// services
 import { IssueService } from "@/services/issue/issue.service";
+//
 import { ARRAY_FIELDS } from "./utils/constants";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk } from "./utils/load-issues";
@@ -10,9 +14,12 @@ import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from ".
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
+
+
 declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
 }
+
 const PAGE_SIZE = 1000;
 const log = console.log;
 const error = console.error;
@@ -30,12 +37,9 @@ export class Storage {
   projectStatus: Record<string, TProjectStatus> = {};
   workspaceSlug: string = "";
   workspaceInitPromise: Promise<boolean> | undefined;
-  // issueService: any;
 
   constructor() {
     this.db = null;
-
-    // this.issueService = new IssueService();
   }
 
   reset = () => {
@@ -113,7 +117,7 @@ export class Storage {
       );
       this.status = "ready";
       // Your SQLite code here.
-      await createTables(this.db);
+      await createTables();
     } catch (err) {
       error(err);
     }
@@ -254,11 +258,7 @@ export class Storage {
 
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => {
-      ARRAY_FIELDS.forEach((field: string) => {
-        issue[field] = issue[field] ? JSON.parse(issue[field]) : [];
-      });
-
-      return issue;
+      return formatLocalIssue(issue);
     });
 
     console.log("#### Issue Results", issueResults.length);
@@ -300,9 +300,9 @@ export class Storage {
   };
 
   getIssue = async (issueId: string) => {
-    const issue = await runQuery(`select * from issues where id='${issueId}'`);
-    if (issue.length) {
-      return issue[0];
+    const issues = await runQuery(`select * from issues where id='${issueId}'`);
+    if (issues.length) {
+      return formatLocalIssue(issues[0]);
     }
     return;
   };
@@ -318,3 +318,16 @@ export class Storage {
 }
 
 export const persistence = new Storage();
+
+/**
+ * format the issue fetched from local db into an issue
+ * @param issue 
+ * @returns 
+ */
+export const formatLocalIssue = (issue: any)  => {
+  const currIssue = issue;
+  ARRAY_FIELDS.forEach((field: string) => {
+    currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
+  });
+  return currIssue as TIssue;
+}
