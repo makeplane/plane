@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
-import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
@@ -155,6 +155,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex gap-2">
             <AccessController control={control} />
+            {/* filters dropdown */}
             <Controller
               control={control}
               name="filters"
@@ -184,6 +185,39 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                     memberIds={workspaceMemberIds ?? undefined}
                   />
                 </FiltersDropdown>
+              )}
+            />
+
+            {/* display filters dropdown */}
+            <Controller
+              control={control}
+              name="display_filters"
+              render={({ field: { onChange: onDisplayFiltersChange, value: displayFilters } }) => (
+                <Controller
+                  control={control}
+                  name="display_properties"
+                  render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
+                    <FiltersDropdown title="Display">
+                      <DisplayFiltersSelection
+                        layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                        displayFilters={displayFilters ?? {}}
+                        handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+                          onDisplayFiltersChange({
+                            ...displayFilters,
+                            ...updatedDisplayFilter,
+                          });
+                        }}
+                        displayProperties={displayProperties ?? {}}
+                        handleDisplayPropertiesUpdate={(updatedDisplayProperties: Partial<IIssueDisplayProperties>) => {
+                          onDisplayPropertiesChange({
+                            ...displayProperties,
+                            ...updatedDisplayProperties,
+                          });
+                        }}
+                      />
+                    </FiltersDropdown>
+                  )}
+                />
               )}
             />
           </div>
