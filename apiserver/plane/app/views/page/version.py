@@ -5,16 +5,18 @@ from rest_framework.response import Response
 # Module imports
 from plane.db.models import PageVersion
 from ..base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
-from plane.app.serializers import PageVersionSerializer
+from plane.app.serializers import (
+    PageVersionSerializer,
+    PageVersionDetailSerializer,
+)
+from plane.app.permissions import allow_permission, ROLE
 
 
 class PageVersionEndpoint(BaseAPIView):
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
+    )
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided
         if pk:
@@ -25,7 +27,7 @@ class PageVersionEndpoint(BaseAPIView):
                 pk=pk,
             )
             # Serialize the page version
-            serializer = PageVersionSerializer(page_version)
+            serializer = PageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Return all page versions
         page_versions = PageVersion.objects.filter(

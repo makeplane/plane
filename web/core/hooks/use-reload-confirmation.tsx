@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
 //TODO: remove temp flag isActive later and use showAlert as the source of truth
-const useReloadConfirmations = (isActive = true) => {
-  const [showAlert, setShowAlert] = useState(false);
+const useReloadConfirmations = (isActive = true, message?: string, defaultShowAlert = false, onLeave?: () => void) => {
+  const [showAlert, setShowAlert] = useState(defaultShowAlert);
+
+  const alertMessage = message ?? "Are you sure you want to leave? Changes you made may not be saved.";
 
   const handleBeforeUnload = useCallback(
     (event: BeforeUnloadEvent) => {
@@ -28,8 +30,10 @@ const useReloadConfirmations = (isActive = true) => {
       const isAnchorTargetBlank = anchorElement.getAttribute("target") === "_blank";
       if (isAnchorTargetBlank) return;
       // show confirm dialog
-      const leave = confirm("Are you sure you want to leave? Changes you made may not be saved.");
-      if (!leave) {
+      const isLeaving = confirm(alertMessage);
+      if (isLeaving) {
+        onLeave && onLeave();
+      } else {
         event.preventDefault();
         event.stopPropagation();
       }

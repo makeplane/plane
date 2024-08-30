@@ -607,3 +607,15 @@ export const isSubGrouped = (groupedIssueIds: TGroupedIssues) => {
 
   return true;
 };
+
+/**
+ * This Method returns if the issue is new or not
+ * @param issue
+ * @returns
+ */
+export const isIssueNew = (issue: TIssue) => {
+  const createdDate = new Date(issue.created_at);
+  const currentDate = new Date();
+  const diff = currentDate.getTime() - createdDate.getTime();
+  return diff < 30000;
+};

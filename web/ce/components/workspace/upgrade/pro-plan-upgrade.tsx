@@ -15,19 +15,33 @@ type TProPiceFrequency = "month" | "year";
 
 type TProPlanPrice = {
   key: string;
-  price: string;
+  currency: string;
+  price: number;
   recurring: TProPiceFrequency;
 };
 
+// constants
+export const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMonth: number): number => {
+  const monthlyCost = monthlyPrice * 12;
+  const yearlyCost = yearlyPricePerMonth * 12;
+  const amountSaved = monthlyCost - yearlyCost;
+  const discountPercentage = (amountSaved / monthlyCost) * 100;
+  return Math.floor(discountPercentage);
+};
+
 const PRO_PLAN_PRICES: TProPlanPrice[] = [
-  { key: "monthly", price: "$7", recurring: "month" },
-  { key: "yearly", price: "$5", recurring: "year" },
+  { key: "monthly", currency: "$", price: 8, recurring: "month" },
+  { key: "yearly", currency: "$", price: 6, recurring: "year" },
 ];
 
 export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
   const { basePlan, features, verticalFeatureList = false, extraFeatures } = props;
   // states
   const [selectedPlan, setSelectedPlan] = useState<TProPiceFrequency>("month");
+  // derived
+  const monthlyPrice = PRO_PLAN_PRICES.find((price) => price.recurring === "month")?.price ?? 0;
+  const yearlyPrice = PRO_PLAN_PRICES.find((price) => price.recurring === "year")?.price ?? 0;
+  const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
   // env
   const PRO_PLAN_MONTHLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_PAYMENT_URL ?? "https://plane.so/pro";
   const PRO_PLAN_YEARLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_PAYMENT_URL ?? "https://plane.so/pro";
@@ -55,7 +69,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                   {price.recurring === "year" && ("Yearly" as string)}
                   {price.recurring === "year" && (
                     <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 ml-1 text-xs">
-                      -28%
+                      -{yearlyDiscount}%
                     </span>
                   )}
                 </>
@@ -69,8 +83,8 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
               <div className="pt-6 pb-4 text-center font-semibold">
                 <div className="text-2xl">Plane Pro</div>
                 <div className="text-3xl">
-                  {price.recurring === "month" && "$7"}
-                  {price.recurring === "year" && "$5"}
+                  {price.currency}
+                  {price.price}
                 </div>
                 <div className="text-sm text-custom-text-300">a user per month</div>
               </div>
