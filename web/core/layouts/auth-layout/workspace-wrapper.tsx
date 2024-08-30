@@ -46,21 +46,23 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
 
   // fetching user workspace information
+  // TODO: Remove this before the merge
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECT_MEMBERS_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLE_INFORMATION_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
   // fetching workspace projects
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
