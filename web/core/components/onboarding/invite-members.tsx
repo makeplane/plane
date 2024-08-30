@@ -23,12 +23,14 @@ import { IUser, IWorkspace } from "@plane/types";
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MEMBER_INVITED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles, ROLE, ROLE_DETAILS } from "@/constants/workspace";
+import { ROLE, ROLE_DETAILS } from "@/constants/workspace";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // assets
@@ -47,7 +49,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
   role_active: boolean;
 };
 

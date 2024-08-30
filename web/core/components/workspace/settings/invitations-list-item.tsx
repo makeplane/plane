@@ -9,7 +9,7 @@ import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { ROLE } from "@/constants/workspace";
 // hooks
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -116,7 +116,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
               </div>
             }
             value={invitationDetails.role}
-            onChange={(value: EUserWorkspaceRoles) => {
+            onChange={(value: EUserPermissions) => {
               if (!workspaceSlug || !value) return;
 
               updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {

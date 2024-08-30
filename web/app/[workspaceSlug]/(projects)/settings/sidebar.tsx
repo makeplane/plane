@@ -6,11 +6,10 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 
 export const WorkspaceSettingsSidebar = observer(() => {
@@ -22,7 +21,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
 
-  const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
+  const workspaceMemberInfo = currentWorkspaceRole || EUserPermissions.GUEST;
 
   return (
     <div className="flex w-80 flex-col gap-6 px-5">

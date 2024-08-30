@@ -11,12 +11,12 @@ import { NotificationAppSidebarOption } from "@/components/workspace-notificatio
 // constants
 import { SIDEBAR_USER_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 export const SidebarUserMenu = observer(() => {
   // store hooks
@@ -32,7 +32,7 @@ export const SidebarUserMenu = observer(() => {
   // pathname
   const pathname = usePathname();
   // computed
-  const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
+  const workspaceMemberInfo = currentWorkspaceRole || EUserPermissions.GUEST;
 
   const getHref = (link: any) =>
     `/${workspaceSlug}${link.href}${link.key === "your-work" ? `/${currentUser?.id}` : ""}`;

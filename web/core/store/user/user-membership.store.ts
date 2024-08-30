@@ -4,8 +4,7 @@ import { action, observable, runInAction, makeObservable, computed } from "mobx"
 // types
 import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole, IProjectMemberLite } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 import { ProjectMemberService } from "@/services/project";
@@ -32,12 +31,12 @@ export interface IUserMembershipStore {
   // computed
   currentProjectMemberInfo: IProjectMember | undefined;
   currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
-  currentProjectRole: EUserProjectRoles | undefined;
-  currentWorkspaceRole: EUserWorkspaceRoles | undefined;
+  currentProjectRole: EUserPermissions | undefined;
+  currentWorkspaceRole: EUserPermissions | undefined;
   currentWorkspaceAllProjectsRole: IUserProjectsRole | undefined;
 
   // computed functions
-  currentProjectRoleByProjectId: (projectId: string) => EUserProjectRoles | undefined;
+  currentProjectRoleByProjectId: (projectId: string) => EUserPermissions | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;
@@ -167,7 +166,7 @@ export class UserMembershipStore implements IUserMembershipStore {
   /**
    * Returns the current project role by project id
    * @param projectId
-   * @returns EUserProjectRoles
+   * @returns EUserPermissions
    */
   currentProjectRoleByProjectId = (projectId: string) => this.projectMemberInfo[projectId]?.role || undefined;
 

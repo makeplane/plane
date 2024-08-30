@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable, reaction, runInAction } f
 import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserProjectRoles } from "@/constants/project";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
@@ -213,7 +213,7 @@ export class Page implements IPage {
    */
   get canCurrentUserEditPage() {
     const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
   }
 
   /**
@@ -221,7 +221,7 @@ export class Page implements IPage {
    */
   get canCurrentUserDuplicatePage() {
     const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
   }
 
   /**
@@ -229,7 +229,7 @@ export class Page implements IPage {
    */
   get canCurrentUserLockPage() {
     const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
   }
 
   /**
@@ -244,7 +244,7 @@ export class Page implements IPage {
    */
   get canCurrentUserArchivePage() {
     const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || currentUserProjectRole === EUserProjectRoles.ADMIN;
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
@@ -252,7 +252,7 @@ export class Page implements IPage {
    */
   get canCurrentUserDeletePage() {
     const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || currentUserProjectRole === EUserProjectRoles.ADMIN;
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
@@ -268,7 +268,7 @@ export class Page implements IPage {
     return (
       !isArchived &&
       !isLocked &&
-      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserProjectRoles.MEMBER))
+      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserPermissions.MEMBER))
     );
   }
 

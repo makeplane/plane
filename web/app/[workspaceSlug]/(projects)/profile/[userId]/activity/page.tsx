@@ -2,17 +2,15 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/profile";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+import { useUserPermissions } from "@/hooks/store";
+// plane-web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const PER_PAGE = 100;
 

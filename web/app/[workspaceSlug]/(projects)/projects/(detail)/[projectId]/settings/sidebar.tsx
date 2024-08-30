@@ -8,12 +8,11 @@ import { useParams, usePathname } from "next/navigation";
 import { Loader } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web constants
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingsSidebar = observer(() => {
   const { workspaceSlug, projectId } = useParams();
@@ -23,7 +22,7 @@ export const ProjectSettingsSidebar = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const projectMemberInfo = currentProjectRole || EUserProjectRoles.GUEST;
+  const projectMemberInfo = currentProjectRole || EUserPermissions.GUEST;
 
   if (!currentProjectRole) {
     return (

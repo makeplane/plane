@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { IWorkspaceMember } from "@plane/types";
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useUser, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 }
 
 export const useProjectColumns = () => {

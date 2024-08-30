@@ -13,7 +13,6 @@ import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -23,6 +22,7 @@ import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
@@ -45,7 +45,7 @@ export const SidebarWorkspaceMenu = observer(() => {
   // derived values
   const isWorkspaceMenuOpen = !!storedValue;
   // auth
-  const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
+  const workspaceMemberInfo = currentWorkspaceRole || EUserPermissions.GUEST;
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {

@@ -9,14 +9,13 @@ import { IProjectView } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -37,7 +36,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   } = useUser();
   // auth
   const isOwner = view?.owned_by === data?.id;
-  const isAdmin = !!currentProjectRole && currentProjectRole == EUserProjectRoles.ADMIN;
+  const isAdmin = !!currentProjectRole && currentProjectRole == EUserPermissions.ADMIN;
 
   const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
     !!view.anchor,

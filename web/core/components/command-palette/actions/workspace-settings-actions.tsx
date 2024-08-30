@@ -4,12 +4,12 @@ import { Command } from "cmdk";
 // hooks
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+
 // hooks
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane wev constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 
 type Props = {
@@ -27,7 +27,7 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
     membership: { currentWorkspaceRole },
   } = useUser();
   // derived values
-  const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
+  const workspaceMemberInfo = currentWorkspaceRole || EUserPermissions.GUEST;
 
   const redirect = (path: string) => {
     closePalette();

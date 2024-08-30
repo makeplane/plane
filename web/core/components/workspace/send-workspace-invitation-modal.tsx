@@ -9,9 +9,10 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { ROLE } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // types
 
 type Props = {
@@ -22,7 +23,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 };
 
 type FormValues = {

@@ -7,12 +7,12 @@ import { Earth, Info, Lock, Minus } from "lucide-react";
 import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { PageQuickActions } from "@/components/pages/dropdowns";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useMember, usePage, useProject } from "@/hooks/store";
+// plane-web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   workspaceSlug: string;
@@ -34,7 +34,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const project = getProjectById(projectId);
-  const isViewerOrGuest = project?.member_role && [EUserProjectRoles.GUEST].includes(project.member_role);
+  const isViewerOrGuest = project?.member_role && [EUserPermissions.GUEST].includes(project.member_role);
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers

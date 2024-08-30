@@ -41,7 +41,6 @@ import {
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -594,9 +593,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}
                                 userAuth={{
-                                  isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                                  isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                                  isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
+                                  isGuest: currentProjectRole === EUserPermissions.GUEST,
+                                  isMember: currentProjectRole === EUserPermissions.MEMBER,
+                                  isOwner: currentProjectRole === EUserPermissions.ADMIN,
                                 }}
                                 disabled={isArchived}
                               />

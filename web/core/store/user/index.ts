@@ -4,9 +4,9 @@ import { action, makeObservable, observable, runInAction, computed } from "mobx"
 // types
 import { IUser } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -150,7 +150,7 @@ export class UserStore implements IUserStore {
     return (
       (allWorkspaceRoles &&
         Object.keys(allWorkspaceRoles)
-          .filter((key) => allWorkspaceRoles[key] >= EUserProjectRoles.MEMBER)
+          .filter((key) => allWorkspaceRoles[key] >= EUserPermissions.MEMBER)
           .reduce(
             (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceRoles[key]), res),
             {}

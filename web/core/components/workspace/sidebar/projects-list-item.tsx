@@ -41,8 +41,6 @@ import {
 import { Logo } from "@/components/common";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
 import { SidebarNavItem } from "@/components/sidebar";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -50,6 +48,7 @@ import { useAppTheme, useEventTracker, useProject, useUser } from "@/hooks/store
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
@@ -71,37 +70,37 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     Icon: LayersIcon,
-    access: EUserProjectRoles.GUEST,
+    access: EUserPermissions.GUEST,
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     Icon: ContrastIcon,
-    access: EUserProjectRoles.MEMBER,
+    access: EUserPermissions.MEMBER,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     Icon: DiceIcon,
-    access: EUserProjectRoles.MEMBER,
+    access: EUserPermissions.MEMBER,
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
     Icon: Layers,
-    access: EUserProjectRoles.GUEST,
+    access: EUserPermissions.GUEST,
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     Icon: FileText,
-    access: EUserProjectRoles.MEMBER,
+    access: EUserPermissions.MEMBER,
   },
   {
     name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/inbox`,
     Icon: Intake,
-    access: EUserProjectRoles.GUEST,
+    access: EUserPermissions.GUEST,
   },
 ];
 
@@ -135,8 +134,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   // derived values
   const project = getProjectById(projectId);
   // auth
-  const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
-  const isViewerOrGuest = project?.member_role && [EUserProjectRoles.GUEST].includes(project.member_role);
+  const isAdmin = project?.member_role === EUserPermissions.ADMIN;
+  const isViewerOrGuest = project?.member_role && [EUserPermissions.GUEST].includes(project.member_role);
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !project) return;
