@@ -15,7 +15,7 @@ import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
 // hooks
-import { useIssues, useLabel, useProjectState, useProjectView, useUser } from "@/hooks/store";
+import { useIssues, useLabel, useProjectState, useProjectView, useUser, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
@@ -30,6 +30,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
   const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   // derived values

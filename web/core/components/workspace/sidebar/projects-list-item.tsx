@@ -508,7 +508,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     : undefined;
                   return (
                     <>
-                      {currentRole >= item.access && (
+                      {currentRole && currentRole >= item.access && (
                         <Tooltip
                           key={item.name}
                           isMobile={isMobile}

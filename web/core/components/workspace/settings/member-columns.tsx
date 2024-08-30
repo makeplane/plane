@@ -113,7 +113,8 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
           render={({ field: { value } }) => (
             <CustomSelect
               value={value}
-              onChange=.log({ value, workspaceSlug }, "onChange");
+              onChange={(value: EUserPermissions) => {
+                console.log({ value, workspaceSlug }, "onChange");
                 if (!workspaceSlug) return;
 
                 updateMember(workspaceSlug.toString(), rowData.member.id, {
@@ -141,7 +142,8 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               input
             >
               {Object.keys(ROLE).map((item) => (
-                <CustomSelect.Opunknown as keyof typeof ROLE]}
+                <CustomSelect.Option key={item} value={item as unknown as EUserPermissions}>
+                  {ROLE[item as unknown as keyof typeof ROLE]}
                 </CustomSelect.Option>
               ))}
             </CustomSelect>
