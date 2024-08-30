@@ -3,7 +3,7 @@ import unset from "lodash/unset";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
+import { IProjectMember, IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
 // plane web types
 import {
   EUserPermissions,
@@ -15,6 +15,7 @@ import {
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // services
 import userService from "@/services/user.service";
+import projectMemberService from "@/services/project/project-member.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 
@@ -24,7 +25,8 @@ const workspaceService = new WorkspaceService();
 export interface IUserPermissionStore {
   // observables
   workspaceUserInfo: Record<string, IWorkspaceMemberMe>; // workspaceSlug -> IWorkspaceMemberMe
-  projectPermissions: Record<string, IUserProjectsRole>; // workspaceSlug  -> IUserProjectsRole
+  projectUserInfo: Record<string, Record<string, IProjectMember>>; // workspaceSlug -> projectId -> IProjectMember
+  projectPermissions: Record<string, IUserProjectsRole>; // workspaceSlug -> IUserProjectsRole
   // computed
   // computed helpers
   workspaceInfoBySlug: (workspaceSlug: string) => IWorkspaceMemberMe | undefined;
@@ -43,6 +45,7 @@ export interface IUserPermissionStore {
   // actions
   fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe | undefined>;
   leaveWorkspace: (workspaceSlug: string) => Promise<void>;
+  fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember | undefined>;
   fetchUserProjectPermissions: (workspaceSlug: string) => Promise<IUserProjectsRole | undefined>;
   joinProject: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -51,6 +54,7 @@ export interface IUserPermissionStore {
 export class UserPermissionStore implements IUserPermissionStore {
   // constants
   workspaceUserInfo: Record<string, IWorkspaceMemberMe> = {};
+  projectUserInfo: Record<string, Record<string, IProjectMember>> = {};
   projectPermissions: Record<string, IUserProjectsRole> = {};
   // observables
 
@@ -58,11 +62,13 @@ export class UserPermissionStore implements IUserPermissionStore {
     makeObservable(this, {
       // observables
       workspaceUserInfo: observable,
+      projectUserInfo: observable,
       projectPermissions: observable,
       // computed
       // actions
       fetchUserWorkspaceInfo: action,
       leaveWorkspace: action,
+      fetchUserProjectInfo: action,
       fetchUserProjectPermissions: action,
       joinProject: action,
       leaveProject: action,
@@ -176,10 +182,33 @@ export class UserPermissionStore implements IUserPermissionStore {
       await userService.leaveWorkspace(workspaceSlug);
       runInAction(() => {
         unset(this.workspaceUserInfo, workspaceSlug);
+        unset(this.projectUserInfo, workspaceSlug);
         unset(this.projectPermissions, workspaceSlug);
       });
     } catch (error) {
       console.error("Error user leaving the workspace", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Fetches the user's project information
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @returns { Promise<void | undefined> }
+   */
+  fetchUserProjectInfo = async (workspaceSlug: string, projectId: string): Promise<IProjectMember | undefined> => {
+    try {
+      const response = await projectMemberService.projectMemberMe(workspaceSlug, projectId);
+      if (response) {
+        runInAction(() => {
+          set(this.projectUserInfo, [workspaceSlug, projectId], response);
+          set(this.projectPermissions, [workspaceSlug, projectId], response.role);
+        });
+      }
+      return response;
+    } catch (error) {
+      console.error("Error fetching user project information", error);
       throw error;
     }
   };

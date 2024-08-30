@@ -18,9 +18,12 @@ import {
   useProjectView,
   useUser,
   useCommandPalette,
+  useUserPermissions,
 } from "@/hooks/store";
 // images
 import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
@@ -33,8 +36,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
-    membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
+    membership: { projectMemberInfo },
   } = useUser();
+  const { fetchUserProjectInfo, allowPermissions } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
@@ -55,7 +59,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
   // fetching user project member information
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_INFORMATION_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching project labels
@@ -100,10 +104,18 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  // derived values
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
+  const hasPermissionToCurrentProject = projectId
+    ? allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+        EUserPermissionsLevel.PROJECT
+      )
+    : undefined;
 
   // check if the project member apis is loading
-  if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)
+  if (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -113,10 +125,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && projectId && hasPermissionToProject[projectId.toString()] === false) return <JoinProject />;
+  if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
 
   // check if the project info is not found.
-  if (!loader && !projectExists && projectId && !!hasPermissionToProject[projectId.toString()] === false)
+  if (!loader && !projectExists && projectId && !!hasPermissionToCurrentProject === false)
     return (
       <div className="container grid h-screen place-items-center bg-custom-background-100">
         <EmptyState

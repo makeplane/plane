@@ -1140,8 +1140,8 @@ class CycleProgressEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-
 class CycleAnalyticsEndpoint(BaseAPIView):
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         analytic_type = request.GET.get("type", "issues")

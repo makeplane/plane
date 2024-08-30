@@ -8,8 +8,8 @@ from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 ROLE_CHOICES = (
-    (20, "Owner"),
-    (15, "Admin"),
+    (20, "Admin"),
+    (15, "Member"),
     (5, "Guest"),
 )
 
