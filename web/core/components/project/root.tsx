@@ -30,6 +30,12 @@ const Root = observer(() => {
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
 
+  const isArchived = pathname.includes("/archives");
+
+  const allowedDisplayFilters = currentWorkspaceAppliedDisplayFilters?.filter(
+    (filter) => filter !== "archived_projects"
+  ) ?? [];
+
   const handleRemoveFilter = useCallback(
     (key: keyof TProjectFilters, value: string | null) => {
       if (!workspaceSlug) return;
@@ -55,25 +61,24 @@ const Root = observer(() => {
     if (!workspaceSlug) return;
     clearAllFilters(workspaceSlug.toString());
     clearAllAppliedDisplayFilters(workspaceSlug.toString());
+    if (isArchived) updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    if (pathname.includes("/archives")) {
-      updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
-    } else {
-      updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
-    }
+    isArchived ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true }) :
+    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
   }, [pathname]);
+
   return (
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
-          currentWorkspaceAppliedDisplayFilters?.length !== 0) && (
+          (allowedDisplayFilters.length>0)) && (
           <div className="border-b border-custom-border-200 px-5 py-3">
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
-              appliedDisplayFilters={currentWorkspaceAppliedDisplayFilters ?? []}
+              appliedDisplayFilters={allowedDisplayFilters}
               handleClearAllFilters={handleClearAllFilters}
               handleRemoveFilter={handleRemoveFilter}
               handleRemoveDisplayFilter={handleRemoveDisplayFilter}
