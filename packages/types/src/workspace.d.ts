@@ -5,7 +5,7 @@ import type {
   IUserLite,
   IWorkspaceViewProps,
 } from "@plane/types";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserProjectRoles } from "./enums";
 
 export interface IWorkspace {
   readonly id: string;
@@ -36,7 +36,7 @@ export interface IWorkspaceMemberInvitation {
   id: string;
   message: string;
   responded_at: Date;
-  role: EUserPermissions;
+  role: EUserProjectRoles;
   token: string;
   workspace: {
     id: string;
@@ -47,7 +47,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: EUserPermissions }[];
+  emails: { email: string; role: EUserProjectRoles }[];
 }
 
 export type Properties = {
@@ -69,7 +69,7 @@ export type Properties = {
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
-  role: EUserPermissions;
+  role: EUserProjectRoles;
   created_at?: string;
   avatar?: string;
   email?: string;
@@ -86,7 +86,7 @@ export interface IWorkspaceMemberMe {
   default_props: IWorkspaceViewProps;
   id: string;
   member: string;
-  role: EUserPermissions;
+  role: EUserProjectRoles;
   updated_at: Date;
   updated_by: string;
   view_props: IWorkspaceViewProps;
