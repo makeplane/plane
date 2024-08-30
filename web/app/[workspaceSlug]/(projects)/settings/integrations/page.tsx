@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -46,7 +46,7 @@ const WorkspaceIntegrationsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto py-8 pr-9">
+      <section className="w-full overflow-y-auto pr-9">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
           {appIntegrations ? (

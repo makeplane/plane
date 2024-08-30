@@ -28,7 +28,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
       defaultOptions={defaultLabelOptions}
       onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
       className="h-11 w-full border-b-[0.5px] border-custom-border-200"
-      buttonClassName="px-2.5 h-full group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
+      buttonClassName="px-2.5 h-full group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
       hideDropdownArrow
       maxRender={1}
       disabled={disabled}

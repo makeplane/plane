@@ -1,8 +1,9 @@
 import { Fragment, forwardRef } from "react";
+import { CustomRow } from "@plane/ui";
 import { getRandomInt, getRandomLength } from "../utils";
 
 export const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
-  <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
+  <CustomRow ref={ref} className="flex items-center justify-between h-11 py-3 border-b border-custom-border-200">
     <div className="flex items-center gap-3">
       <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
       <span className={`h-5 w-${getRandomLength(["32", "52", "72"])} bg-custom-background-80 rounded animate-pulse`} />
@@ -18,19 +19,19 @@ export const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
         </Fragment>
       ))}
     </div>
-  </div>
+  </CustomRow>
 ));
 
 ListLoaderItemRow.displayName = "ListLoaderItemRow";
 
 const ListSection = ({ itemCount }: { itemCount: number }) => (
   <div className="flex flex-shrink-0 flex-col">
-    <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
+    <CustomRow className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 py-1">
       <div className="flex items-center gap-2 py-1.5 w-full">
         <span className="h-6 w-6 bg-custom-background-80 rounded animate-pulse" />
         <span className="h-6 w-24 bg-custom-background-80 rounded animate-pulse" />
       </div>
-    </div>
+    </CustomRow>
     <div className="relative h-full w-full">
       {[...Array(itemCount)].map((_, index) => (
         <ListLoaderItemRow key={index} />

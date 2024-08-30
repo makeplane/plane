@@ -9,7 +9,7 @@ import { Disclosure } from "@headlessui/react";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { CustomRow, Loader } from "@plane/ui";
 // components
 import {
   ActiveCycleProductivity,
@@ -87,14 +87,14 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
       <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
         {({ open }) => (
           <>
-            <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
+            <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
               <CycleListGroupHeader title="Active cycle" type="current" isExpanded={open} />
             </Disclosure.Button>
             <Disclosure.Panel>
               {!currentProjectActiveCycle ? (
                 <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
               ) : (
-                <div className="flex flex-col bg-custom-background-90 border-b border-custom-border-200">
+                <div className="flex flex-col border-b border-custom-border-200">
                   {currentProjectActiveCycleId && (
                     <CyclesListItem
                       key={currentProjectActiveCycleId}
@@ -104,7 +104,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                       className="!border-b-transparent"
                     />
                   )}
-                  <div className="bg-custom-background-100 pt-3 pb-6 px-6">
+                  <CustomRow className="bg-custom-background-100 pt-3 pb-6">
                     <div className="grid grid-cols-1 bg-custom-background-100 gap-3 lg:grid-cols-2 xl:grid-cols-3">
                       <ActiveCycleProgress cycle={activeCycle} handleFiltersUpdate={handleFiltersUpdate} />
                       <ActiveCycleProductivity
@@ -120,7 +120,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                         handleFiltersUpdate={handleFiltersUpdate}
                       />
                     </div>
-                  </div>
+                  </CustomRow>
                 </div>
               )}
             </Disclosure.Panel>

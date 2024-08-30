@@ -5,6 +5,7 @@ import useSWR from "swr";
 // types
 import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // components
+import { ContentWrapper } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import {
   ProfileActivity,
@@ -40,7 +41,7 @@ export default function ProfileOverviewPage() {
   return (
     <>
       <PageHead title="Your work" />
-      <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9 vertical-scrollbar scrollbar-md">
+      <ContentWrapper className="space-y-7">
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />
         <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
@@ -48,7 +49,7 @@ export default function ProfileOverviewPage() {
           <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
         </div>
         <ProfileActivity />
-      </div>
+      </ContentWrapper>
     </>
   );
 }

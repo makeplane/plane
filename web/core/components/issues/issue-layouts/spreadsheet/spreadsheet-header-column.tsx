@@ -28,7 +28,7 @@ export const SpreadsheetHeaderColumn = observer((props: Props) => {
       shouldRenderProperty={() => shouldRenderProperty}
     >
       <th
-        className="h-11 w-full min-w-36 max-w-48 items-center bg-custom-background-90 text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-custom-border-100"
+        className="h-11 w-full min-w-36 max-w-48 items-center bg-custom-background-90 text-sm font-medium py-1 border border-b-0 border-t-0 border-custom-border-100"
         ref={tableHeaderCellRef}
         tabIndex={0}
       >

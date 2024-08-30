@@ -93,7 +93,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
               return (
                 <div
                   key={moduleId}
-                  className="flex max-w-full items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-custom-text-200"
+                  className="flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-custom-text-200"
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (

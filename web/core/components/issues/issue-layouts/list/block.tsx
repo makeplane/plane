@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, CustomRow } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
@@ -133,10 +133,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const keyMinWidth = ((projectIdentifier?.length ?? 0) + 5) * 7;
 
   return (
-    <div
+    <CustomRow
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent",
+        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
         {
           "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "border-custom-border-400": isIssueActive,
@@ -172,7 +172,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 }
                 disabled={issue.project_id === projectId}
               >
-                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1.5">
                   <MultipleSelectEntityAction
                     className={cn(
                       "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
@@ -189,7 +189,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </Tooltip>
             )}
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 pl-2" style={{ minWidth: `${keyMinWidth}px` }}>
+              <div className="flex-shrink-0">
                 {issue.project_id && (
                   <IssueIdentifier
                     issueId={issueId}
@@ -291,6 +291,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           </div>
         )}
       </div>
-    </div>
+    </CustomRow>
   );
 });

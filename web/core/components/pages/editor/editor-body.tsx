@@ -14,6 +14,7 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
+import { CustomRow } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -70,7 +71,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     project: { getProjectMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const pageDescription = page?.description_html;
@@ -110,8 +111,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
-      <div
-        className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full p-5 duration-200 md:block", {
+      <CustomRow
+        className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full py-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
           "w-[10rem] lg:w-[14rem]": !isFullWidth,
           "w-[5%]": isFullWidth,
@@ -123,7 +124,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             markings={markings}
           />
         )}
-      </div>
+      </CustomRow>
       <div
         className={cn("h-full w-full pt-5 duration-200", {
           "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,

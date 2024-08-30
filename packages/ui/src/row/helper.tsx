@@ -8,5 +8,5 @@ export interface IRowProperties {
 }
 export const rowStyle: IRowProperties = {
   regular: "px-page-x",
-  hugging: "px-0",
+  hugging: "px-0 py-0",
 };

@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { CustomHeader, CustomRow } from "@plane/ui";
+import { ContentWrapper, CustomHeader, CustomRow } from "@plane/ui";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
@@ -89,9 +89,9 @@ export const NotificationsSidebar: FC = observer(() => {
         ) : (
           <>
             {notificationIds && notificationIds.length > 0 ? (
-              <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+              <ContentWrapper variant="hugging">
                 <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
-              </div>
+              </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">
                 <NotificationEmptyState />
