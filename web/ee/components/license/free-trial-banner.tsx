@@ -32,7 +32,7 @@ export const FreeTrialBanner: FC = observer(() => {
   // validating for offline payment
   if (subscriptionDetail.is_offline_payment || !subscriptionDetail.trial_end_date) return <></>;
   // if the days left is more than the max days left then don't show the banner
-  if (daysLeft > MAX_DAYS_LEFT) return <></>;
+  if (daysLeft > MAX_DAYS_LEFT || daysLeft < 0) return <></>;
 
   return (
     <>
