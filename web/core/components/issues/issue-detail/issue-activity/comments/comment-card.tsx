@@ -83,8 +83,6 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
 
-  console.log("isEmpty", isEmpty);
-
   if (!comment || !currentUser) return <></>;
   return (
     <IssueCommentBlock
