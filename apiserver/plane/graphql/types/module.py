@@ -87,6 +87,13 @@ class ModuleType:
         return issue_assignees_count
 
 
+@strawberry_django.type(Module)
+class ModuleLiteType:
+    id: strawberry.ID
+    name: str
+    project: strawberry.ID
+
+
 @strawberry_django.type(ModuleUserProperties)
 class ModuleUserPropertyType:
     display_filters: JSON

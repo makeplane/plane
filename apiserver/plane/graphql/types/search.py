@@ -5,9 +5,14 @@ import strawberry
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.issue import IssueLiteType
 from plane.graphql.types.page import PageLiteType
+from plane.graphql.types.module import ModuleLiteType
+from plane.graphql.types.cycle import CycleLiteType
+
 
 @strawberry.type
-class ProjectSearchType:
+class GlobalSearchType:
     projects: list[ProjectLiteType]
     issues: list[IssueLiteType]
     pages: list[PageLiteType]
+    modules: list[ModuleLiteType]
+    cycles: list[CycleLiteType]

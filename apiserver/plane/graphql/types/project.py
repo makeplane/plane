@@ -118,10 +118,3 @@ class ProjectLiteType:
     id: strawberry.ID
     name: str
     identifier: str
-    # workspace: str
-    # is_member: bool
-    # is_favorite: bool
-
-    # @strawberry.field
-    # def workspace(self) -> int:
-    #     return self.workspace_id

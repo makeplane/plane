@@ -38,7 +38,7 @@ from .queries.module import (
     ModuleIssueQuery,
     ModuleIssueUserPropertyQuery,
 )
-from .queries.search import ProjectSearchQuery
+from .queries.search import GlobalSearchQuery
 from .queries.attachment import IssueAttachmentQuery
 from .queries.link import IssueLinkQuery
 from .queries.estimate import EstimatePointQuery
@@ -94,7 +94,7 @@ class Query(
     PageQuery,
     WorkspaceLabelQuery,
     WorkspaceStateQuery,
-    ProjectSearchQuery,
+    GlobalSearchQuery,
     IssueAttachmentQuery,
     CycleQuery,
     CycleIssueQuery,
