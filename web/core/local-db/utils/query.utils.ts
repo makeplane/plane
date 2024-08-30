@@ -124,7 +124,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   let sql = "";
   if (!joinsRequired) {
-    sql = `WITH fi as (SELECT *`;
+    sql = `WITH fi as (SELECT i.id,i.created_at ${issueTableFilterFields}`;
     if (group_by) {
       sql += `, i.${group_by} as group_id`;
     }
