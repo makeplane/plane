@@ -30,6 +30,10 @@ const Root = observer(() => {
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
 
+  const allowedDisplayFilters = currentWorkspaceAppliedDisplayFilters?.filter(
+    (filter) => filter !== "archived_projects"
+  ) ?? [];
+
   const handleRemoveFilter = useCallback(
     (key: keyof TProjectFilters, value: string | null) => {
       if (!workspaceSlug) return;
@@ -64,18 +68,17 @@ const Root = observer(() => {
       updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
     }
   }, [pathname]);
+
   return (
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
-          (currentWorkspaceAppliedDisplayFilters?.length !== 0 &&
-            !(currentWorkspaceAppliedDisplayFilters?.length==1 && 
-              !(currentWorkspaceAppliedDisplayFilters?.indexOf("archived_projects")===-1)))) && (
+          (allowedDisplayFilters.length>0)) && (
           <div className="border-b border-custom-border-200 px-5 py-3">
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
-              appliedDisplayFilters={currentWorkspaceAppliedDisplayFilters?.filter(filter => filter !== "archived_projects") ?? []}
+              appliedDisplayFilters={allowedDisplayFilters}
               handleClearAllFilters={handleClearAllFilters}
               handleRemoveFilter={handleRemoveFilter}
               handleRemoveDisplayFilter={handleRemoveDisplayFilter}
