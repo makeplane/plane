@@ -46,10 +46,11 @@ import { EUserProjectRoles } from "@/constants/project";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker, useProjectEstimates } from "@/hooks/store";
+import { useModule, useUser, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -81,6 +82,8 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
     useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
@@ -283,7 +286,10 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       ? "0 Issue"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <div className="relative">

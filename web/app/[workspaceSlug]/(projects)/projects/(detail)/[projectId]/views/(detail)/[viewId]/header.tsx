@@ -19,7 +19,6 @@ import {
   EIssueLayoutTypes,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -35,8 +34,9 @@ import {
   useProject,
   useProjectState,
   useProjectView,
-  useUser,
+  useUserPermissions,
 } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
@@ -47,9 +47,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { setTrackElement } = useEventTracker();
   const { toggleCreateIssueModal } = useCommandPalette();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
@@ -131,8 +130,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
 
-  const canUserCreateIssue =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const publishLink = getPublishViewLink(viewDetails?.anchor);
 
   return (

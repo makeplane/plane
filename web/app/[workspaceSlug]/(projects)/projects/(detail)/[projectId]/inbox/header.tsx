@@ -9,10 +9,9 @@ import { Breadcrumbs, Button, Intake } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -20,14 +19,16 @@ export const ProjectInboxHeader: FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
   const { loader } = useProjectInbox();
 
   // derived value
-  const isViewer = currentProjectRole === EUserProjectRoles.VIEWER;
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -66,7 +67,7 @@ export const ProjectInboxHeader: FC = observer(() => {
         </div>
       </div>
 
-      {currentProjectDetails?.inbox_view && workspaceSlug && projectId && !isViewer && (
+      {currentProjectDetails?.inbox_view && workspaceSlug && projectId && isAuthorized && (
         <div className="flex items-center gap-2">
           <InboxIssueCreateEditModalRoot
             workspaceSlug={workspaceSlug.toString()}

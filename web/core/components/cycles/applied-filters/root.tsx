@@ -3,9 +3,10 @@ import { X } from "lucide-react";
 import { TCycleFilters } from "@plane/types";
 // hooks
 import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
-import { EUserProjectRoles } from "@/constants/project";
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 // components
 // helpers
 // types
@@ -23,15 +24,15 @@ const DATE_FILTERS = ["start_date", "end_date"];
 export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   if (!appliedFilters) return null;
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
-  const isEditingAllowed = alwaysAllowEditing || (currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER);
+  const isEditingAllowed =
+    alwaysAllowEditing ||
+    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">

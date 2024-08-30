@@ -21,7 +21,6 @@ import {
   EIssueLayoutTypes,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -34,14 +33,15 @@ import {
   useModule,
   useProject,
   useProjectState,
-  useUser,
   useIssues,
   useCommandPalette,
+  useUserPermissions,
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -83,9 +83,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const { projectModuleIds, getModuleById } = useModule();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
@@ -149,8 +147,10 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   // derived values
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
-  const canUserCreateIssue =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 

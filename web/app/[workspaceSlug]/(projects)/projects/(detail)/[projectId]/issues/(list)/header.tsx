@@ -20,7 +20,6 @@ import {
   EIssueLayoutTypes,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -30,13 +29,14 @@ import {
   useLabel,
   useProject,
   useProjectState,
-  useUser,
   useMember,
   useCommandPalette,
+  useUserPermissions,
 } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectIssuesHeader = observer(() => {
   // states
@@ -54,9 +54,7 @@ export const ProjectIssuesHeader = observer(() => {
   } = useIssues(EIssuesStoreType.PROJECT);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
@@ -110,8 +108,10 @@ export const ProjectIssuesHeader = observer(() => {
   const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
   const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
 
-  const canUserCreateIssue =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
