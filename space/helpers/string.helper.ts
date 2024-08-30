@@ -52,7 +52,7 @@ export const checkEmailValidity = (email: string): boolean => {
 
 export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] = []) => {
   // Remove HTML tags using regex
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: ["img", ...allowedHTMLTags] });
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
@@ -68,7 +68,9 @@ export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] 
 export const isCommentEmpty = (comment: string | undefined): boolean => {
   // return true if comment is undefined
   if (!comment) return true;
-  return comment?.trim() === "" || comment === "<p></p>" || isEmptyHtmlString(comment ?? "", ["mention-component"]);
+  return (
+    comment?.trim() === "" || comment === "<p></p>" || isEmptyHtmlString(comment ?? "", ["img", "mention-component"])
+  );
 };
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");

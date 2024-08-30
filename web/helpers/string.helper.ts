@@ -232,7 +232,7 @@ export const checkEmailValidity = (email: string): boolean => {
 
 export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] = []) => {
   // Remove HTML tags using regex
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: ["img", ...allowedHTMLTags] });
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
