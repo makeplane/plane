@@ -30,6 +30,8 @@ const Root = observer(() => {
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
 
+  const isArchived = pathname.includes("/archives");
+
   const allowedDisplayFilters = currentWorkspaceAppliedDisplayFilters?.filter(
     (filter) => filter !== "archived_projects"
   ) ?? [];
@@ -59,14 +61,12 @@ const Root = observer(() => {
     if (!workspaceSlug) return;
     clearAllFilters(workspaceSlug.toString());
     clearAllAppliedDisplayFilters(workspaceSlug.toString());
+    if (isArchived) updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    if (pathname.includes("/archives")) {
-      updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
-    } else {
-      updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
-    }
+    isArchived ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true }) :
+    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
   }, [pathname]);
 
   return (
