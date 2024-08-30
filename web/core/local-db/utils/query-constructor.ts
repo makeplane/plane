@@ -62,7 +62,11 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   const filterJoinFields = getMetaKeys(queries);
   if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     const name = order_by.replace("-", "");
-    sql = `SELECT  ${fieldsFragment} , s.name as ${name} from issues i`;
+    if (order_by.includes("assignee")) {
+      sql = `SELECT  ${fieldsFragment} , s.first_name as ${name} from issues i`;
+    } else {
+      sql = `SELECT  ${fieldsFragment} , s.name as ${name} from issues i`;
+    }
   } else {
     sql = `SELECT ${fieldsFragment} from issues i`;
   }

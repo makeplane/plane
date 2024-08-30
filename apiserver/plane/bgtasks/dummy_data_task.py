@@ -490,12 +490,15 @@ def create_issue_assignees(workspace, project, user_id, issue_count):
 def create_issue_labels(workspace, project, user_id, issue_count):
     # labels
     labels = Label.objects.filter(project=project).values_list("id", flat=True)
-    issues = random.sample(
-        list(
+    # issues = random.sample(
+    #     list(
+    #         Issue.objects.filter(project=project).values_list("id", flat=True)
+    #     ),
+    #     int(issue_count / 2),
+    # )
+    issues = list(
             Issue.objects.filter(project=project).values_list("id", flat=True)
-        ),
-        int(issue_count / 2),
-    )
+        ) 
     shuffled_labels = list(labels)
 
     # Bulk issue
@@ -503,7 +506,7 @@ def create_issue_labels(workspace, project, user_id, issue_count):
     for issue in issues:
         random.shuffle(shuffled_labels)
         for label in random.sample(
-            shuffled_labels, random.randint(0, 3)
+            shuffled_labels, random.randint(0, 5)
         ):
             bulk_issue_labels.append(
                 IssueLabel(
@@ -554,12 +557,15 @@ def create_module_issues(workspace, project, user_id, issue_count):
     modules = Module.objects.filter(project=project).values_list(
         "id", flat=True
     )
-    issues = random.sample(
-        list(
+    # issues = random.sample(
+    #     list(
+    #         Issue.objects.filter(project=project).values_list("id", flat=True)
+    #     ),
+    #     int(issue_count / 2),
+    # )
+    issues = list(
             Issue.objects.filter(project=project).values_list("id", flat=True)
-        ),
-        int(issue_count / 2),
-    )
+        ) 
 
     shuffled_modules = list(modules)
 
@@ -568,7 +574,7 @@ def create_module_issues(workspace, project, user_id, issue_count):
     for issue in issues:
         random.shuffle(shuffled_modules)
         for module in random.sample(
-            shuffled_modules, random.randint(0, 3)
+            shuffled_modules, random.randint(0, 5)
         ):
             bulk_module_issues.append(
                 ModuleIssue(
