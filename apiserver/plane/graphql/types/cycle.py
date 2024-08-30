@@ -85,6 +85,13 @@ class CycleType:
         return issue_assignees_count
 
 
+@strawberry_django.type(Cycle)
+class CycleLiteType:
+    id: strawberry.ID
+    name: str
+    project: strawberry.ID
+
+
 @strawberry_django.type(CycleUserProperties)
 class CycleUserPropertyType:
     display_filters: JSON
