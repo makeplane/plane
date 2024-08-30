@@ -37,9 +37,9 @@ export interface IUserPermissionStore {
   allowPermissions: (
     allowPermissions: TUserPermissions[],
     level: TUserPermissionsLevel,
-    onPermissionAllowed?: () => boolean,
     workspaceSlug?: string,
-    projectId?: string
+    projectId?: string,
+    onPermissionAllowed?: () => boolean
   ) => boolean;
   // action helpers
   // actions
@@ -105,18 +105,18 @@ export class UserPermissionStore implements IUserPermissionStore {
    * @description Returns whether the user has the permission to perform an action
    * @param { TUserPermissions[] } allowPermissions
    * @param { TUserPermissionsLevel } level
-   * @param { () => boolean } onPermissionAllowed
    * @param { string } workspaceSlug
    * @param { string } projectId
+   * @param { () => boolean } onPermissionAllowed
    * @returns { boolean }
    */
   allowPermissions = computedFn(
     (
       allowPermissions: TUserPermissions[],
       level: TUserPermissionsLevel,
-      onPermissionAllowed?: () => boolean,
       workspaceSlug?: string,
-      projectId?: string
+      projectId?: string,
+      onPermissionAllowed?: () => boolean
     ) => {
       const { workspaceSlug: currentWorkspaceSlug, projectId: currentProjectId } = this.store.router;
       if (!workspaceSlug) workspaceSlug = currentWorkspaceSlug;

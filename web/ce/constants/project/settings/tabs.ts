@@ -18,7 +18,7 @@ export const PROJECT_SETTINGS = {
     key: "members",
     label: "Members",
     href: `/settings/members`,
-    access: EUserProjectRoles.VIEWER,
+    access: EUserProjectRoles.MEMBER,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
     Icon: SettingIcon,
   },

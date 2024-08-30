@@ -9,14 +9,12 @@ import JSONLogo from "@/public/services/json.svg";
 
 export enum EUserWorkspaceRoles {
   GUEST = 5,
-  VIEWER = 10,
   MEMBER = 15,
   ADMIN = 20,
 }
 
 export const ROLE = {
   5: "Guest",
-  10: "Viewer",
   15: "Member",
   20: "Admin",
 };
@@ -24,10 +22,6 @@ export const ROLE = {
 export const ROLE_DETAILS = {
   5: {
     title: "Guest",
-    description: "External members of organizations can be invited as guests.",
-  },
-  10: {
-    title: "Viewer",
     description: "External members of organizations can be invited as guests.",
   },
   15: {

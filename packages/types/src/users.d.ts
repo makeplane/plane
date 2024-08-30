@@ -134,7 +134,6 @@ export interface IUserActivityResponse {
 export type UserAuth = {
   isMember: boolean;
   isOwner: boolean;
-  isViewer: boolean;
   isGuest: boolean;
 };
 

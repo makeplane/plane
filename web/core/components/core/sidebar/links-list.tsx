@@ -30,7 +30,7 @@ export const LinksList: React.FC<Props> = observer((props) => {
   // derived values
   const currentModule = getModuleById(moduleId);
   const moduleLinks = currentModule?.link_module || undefined;
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
+  const isNotAllowed = userAuth.isGuest || disabled;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);

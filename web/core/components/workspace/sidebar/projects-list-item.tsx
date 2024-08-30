@@ -77,13 +77,13 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     Icon: ContrastIcon,
-    access: EUserProjectRoles.VIEWER,
+    access: EUserProjectRoles.MEMBER,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     Icon: DiceIcon,
-    access: EUserProjectRoles.VIEWER,
+    access: EUserProjectRoles.MEMBER,
   },
   {
     name: "Views",
@@ -95,7 +95,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     Icon: FileText,
-    access: EUserProjectRoles.VIEWER,
+    access: EUserProjectRoles.MEMBER,
   },
   {
     name: "Intake",
@@ -136,8 +136,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const project = getProjectById(projectId);
   // auth
   const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
-  const isViewerOrGuest =
-    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
+  const isViewerOrGuest = project?.member_role && [EUserProjectRoles.GUEST].includes(project.member_role);
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !project) return;

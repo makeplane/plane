@@ -315,7 +315,7 @@ export class UserStore implements IUserStore {
    */
 
   get canPerformWorkspaceViewerActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.VIEWER;
+    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= 10;
   }
 
   /**
@@ -348,7 +348,7 @@ export class UserStore implements IUserStore {
    */
 
   get canPerformProjectViewerActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.VIEWER;
+    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= 10;
   }
 
   /**

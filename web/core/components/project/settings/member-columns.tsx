@@ -104,9 +104,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOrViewer = [EUserWorkspaceRoles.GUEST, EUserWorkspaceRoles.VIEWER].includes(
-      currentMemberWorkspaceRole
-    );
+    const isGuestOrViewer = [EUserWorkspaceRoles.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
       Object.entries(ROLE).filter(([key]) => !isGuestOrViewer || [5, 10].includes(parseInt(key)))

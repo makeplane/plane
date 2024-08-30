@@ -5,8 +5,6 @@ export const getUserRole = (role: EUserWorkspaceRoles | EUserProjectRoles) => {
   switch (role) {
     case EUserWorkspaceRoles.GUEST:
       return "GUEST";
-    case EUserWorkspaceRoles.VIEWER:
-      return "VIEWER";
     case EUserWorkspaceRoles.MEMBER:
       return "MEMBER";
     case EUserWorkspaceRoles.ADMIN:

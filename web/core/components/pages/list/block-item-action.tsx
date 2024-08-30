@@ -34,8 +34,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const project = getProjectById(projectId);
-  const isViewerOrGuest =
-    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
+  const isViewerOrGuest = project?.member_role && [EUserProjectRoles.GUEST].includes(project.member_role);
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers
