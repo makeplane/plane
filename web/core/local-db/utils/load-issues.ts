@@ -1,3 +1,4 @@
+import { TIssue } from "@plane/types";
 import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";
 import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
@@ -35,7 +36,7 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
   persistence.db.exec("COMMIT;");
 };
 
-export const updateIssue = async (issue: any) => {
+export const updateIssue = async (issue: TIssue) => {
   const issue_id = issue.id;
   // delete the issue and its meta data
   await deleteIssueFromLocal(issue_id);

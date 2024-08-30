@@ -8,6 +8,8 @@ import { EUserProjectRoles } from "@/constants/project";
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -268,6 +270,7 @@ export class UserStore implements IUserStore {
    */
   signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
+    await persistence.clearStorage();
     this.store.resetOnSignOut();
   };
 
