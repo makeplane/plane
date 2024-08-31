@@ -10,7 +10,6 @@ import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web components
-import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
 import { FreeTrialBanner } from "@/plane-web/components/license/free-trial-banner";
 // local
 import { AppProvider } from "./provider";
@@ -75,16 +74,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="use-credentials"
         />
       </head>
-      <body className={`h-screen w-full`}>
+      <body>
+        <div id="context-menu-portal" />
         <AppProvider>
-          <DesktopAppProviderRoot />
-          <div className={`app-container h-full w-full`}>
-            <div id="context-menu-portal" />
+          <div className={`h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col`}>
             <div className="flex-shrink-0">
               {/* free trial banner */}
               <FreeTrialBanner />
             </div>
-            <div className="h-full w-full overflow-hidden bg-custom-background-100">{children}</div>
+            <div className="w-full h-full overflow-hidden relative">{children}</div>
           </div>
         </AppProvider>
       </body>
