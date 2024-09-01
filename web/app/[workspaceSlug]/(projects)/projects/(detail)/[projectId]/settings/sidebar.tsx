@@ -9,7 +9,7 @@ import { Loader } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -18,10 +18,10 @@ export const ProjectSettingsSidebar = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // mobx store
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, projectUserInfo } = useUserPermissions();
+
+  // derived values
+  const currentProjectRole = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]?.role;
 
   if (!currentProjectRole) {
     return (
